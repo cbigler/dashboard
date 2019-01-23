@@ -40,7 +40,7 @@ export default async function hourlyBreakdown(report): Promise<ReportHourlyBreak
   // Group together all count buckets, one group per (columnKey + hours)
   // Aggregate all buckets in each (columnKey + hours) into a "bucketArray"
   const bucketsByColumn: any[] = [];
-  data.sort((a, b) => a.timestamp > b.timestamp).forEach(bucket => {
+  data.sort((a, b) => moment.utc(a.timestamp).diff(moment.utc(b.timestamp))).forEach(bucket => {
 
     // Determine values for the unique columnKey and its index in the grouped array, if it exists yet
     const bucketTimestamp = parseISOTimeAtSpace(bucket.timestamp, space);
