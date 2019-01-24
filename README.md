@@ -69,7 +69,7 @@ In order to add a new page, create one of each of these:
 - Create the new page with the `npm make-component`
   [utility](https://github.com/DensityCo/dashboard/tree/trunk/utilities):
 ```sh
-dashboard/ $ npm make-component
+dashboard/ $ npm run make-component
 npm make-component v0.27.5
 $ ./utilities/make-component
 Let's make a new component.
