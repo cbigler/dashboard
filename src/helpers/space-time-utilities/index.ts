@@ -215,7 +215,6 @@ export async function requestCountsForLocalRange(space, start, end, params={}) {
         lastBucket.interval.analytics.entrances += gapBucket.interval.analytics.entrances;
         lastBucket.interval.analytics.exits += gapBucket.interval.analytics.exits;
         lastBucket.interval.analytics.events += gapBucket.interval.analytics.events;
-        lastBucket.interval.analytics.events += gapBucket.interval.analytics.events;
         lastBucket.interval.analytics.max = Math.max(lastBucket.interval.analytics.max, gapBucket.interval.analytics.max);
         lastBucket.interval.analytics.min = Math.min(lastBucket.interval.analytics.min, gapBucket.interval.analytics.min);
         lastBucket.interval.end = gapBucket.interval.end;
