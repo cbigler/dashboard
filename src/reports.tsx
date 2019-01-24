@@ -4,6 +4,7 @@ import ReportAverageMeetingSize from '@density/ui-report-average-meeting-size';
 import ReportTimeSegmentBreakdown from '@density/ui-report-time-segment-breakdown';
 import ReportTotalVisits from '@density/ui-report-total-visits';
 import ReportTotalVisitsRollup from '@density/ui-report-total-visits-rollup';
+import ReportDailyPeaks from '@density/ui-report-daily-peaks';
 import ReportDailyVisitsPerSegment from '@density/ui-report-daily-visits-per-segment';
 import ReportSurpassedCapacity from '@density/ui-report-surpassed-capacity';
 import ReportComparativePerformance from '@density/ui-report-comparative-performance';
@@ -15,6 +16,7 @@ import ReportWastedSpace from '@density/ui-report-wasted-space';
 import averageMeetingSize from './actions/collection/dashboards/report-calculations/average-meeting-size';
 import totalVisitsOneSpace from './actions/collection/dashboards/report-calculations/total-visits-one-space';
 import totalVisitsRollup from './actions/collection/dashboards/report-calculations/total-visits-rollup';
+import dailyPeaks from './actions/collection/dashboards/report-calculations/daily-peaks';
 import dailyVisitsPerSegment from './actions/collection/dashboards/report-calculations/daily-visits-per-segment';
 import averageTimeSegmentBreakdown from './actions/collection/dashboards/report-calculations/average-time-segment-breakdown';
 import surpassedCapacity from './actions/collection/dashboards/report-calculations/surpassed-capacity';
@@ -81,6 +83,10 @@ const REPORTS: {[key: string]: ReportDefinition} = {
         maximumNumberOfRows: 7,
       },
     }),
+  },
+  DAILY_PEAKS: {
+    component: ReportDailyPeaks,
+    calculations: dailyPeaks,
   },
   DAILY_VISITS: {
     component: ReportDailyVisitsPerSegment,
