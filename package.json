@@ -38,7 +38,7 @@
     "@density/ui-radio-button": "^1.1.0",
     "@density/ui-report-average-meeting-size": "^0.1.0",
     "@density/ui-report-comparative-performance": "^1.0.4",
-    "@density/ui-report-daily-peaks": "^0.0.2",
+    "@density/ui-report-daily-peaks": "^0.1.2",
     "@density/ui-report-daily-visits-per-segment": "^1.0.1",
     "@density/ui-report-hourly-breakdown": "^2.1.6",
     "@density/ui-report-loading": "^0.1.3",

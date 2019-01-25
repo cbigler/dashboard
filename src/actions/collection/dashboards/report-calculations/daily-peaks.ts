@@ -9,11 +9,20 @@ import { core } from '../../../../client';
 import { convertTimeRangeToDaysAgo } from './helpers';
 
 const VALUE_EXTRACTORS = {
-  VISITS: bucket => Math.ceil(bucket.interval.analytics.entrances / 5),
+  VISITS_PER_MINUTE: bucket => Math.ceil(bucket.interval.analytics.entrances / 5),
+  VISITS_PER_HOUR: bucket => bucket.interval.analytics.entrances,
   OCCUPANCY: bucket => bucket.interval.analytics.max,
 };
 
+const BUCKET_LENGTHS = {
+  VISITS_PER_MINUTE: 300,
+  VISITS_PER_HOUR: 3600,
+  OCCUPANCY: 300
+}
+
 export default async function dailyPeaks(report) {
+  const metric = report.settings.metric || 'VISITS_PER_MINUTE';
+
   const space: any = objectSnakeToCamel(await core.spaces.get({ id: report.settings.spaceId }));
   const timeSegmentGroup: any = objectSnakeToCamel(await core.time_segment_groups.get({ id: report.settings.timeSegmentGroupId }));
   const timeRange = convertTimeRangeToDaysAgo(space, report.settings.timeRange);
@@ -30,7 +39,7 @@ export default async function dailyPeaks(report) {
   const buckets = await fetchAllPages(page => {
     return core.spaces.counts({
       id: report.settings.spaceId,
-      interval: '5m',
+      interval: `${BUCKET_LENGTHS[metric]}s`,
       start_time: formatInISOTimeAtSpace(timeRange.start, space),
       end_time: formatInISOTimeAtSpace(timeRange.end, space),
       time_segment_groups: report.settings.timeSegmentGroupId,
@@ -42,15 +51,15 @@ export default async function dailyPeaks(report) {
   // Group together all counts fetched into buckets for each day.
   const bucketsByDay = {}
   buckets.forEach(bucket => {
-    const bucketValue = VALUE_EXTRACTORS[report.settings.metric || 'VISITS'](bucket);
+    const bucketValue = VALUE_EXTRACTORS[metric](bucket);
     const localTime = parseISOTimeAtSpace(bucket.timestamp, space);
     const day = localTime.clone().format('YYYY-MM-DD');
     if (bucketsByDay[day]) {
       if (localTime < bucketsByDay[day].start) {
         bucketsByDay[day].start = localTime;
       }
-      if (localTime.clone().add(5, 'minutes') > bucketsByDay[day].end) {
-        bucketsByDay[day].end = localTime.clone().add(5, 'minutes');
+      if (localTime.clone().add(BUCKET_LENGTHS[metric], 'seconds') > bucketsByDay[day].end) {
+        bucketsByDay[day].end = localTime.clone().add(BUCKET_LENGTHS[metric], 'seconds');
       }
       if (bucketValue > bucketsByDay[day].maxBucket.value) {
         bucketsByDay[day].maxBucket = {value: bucketValue, timestamp: localTime};
@@ -62,7 +71,7 @@ export default async function dailyPeaks(report) {
     } else {
       bucketsByDay[day] = {
         start: localTime,
-        end: localTime.clone().add(5, 'minutes'),
+        end: localTime.clone().add(BUCKET_LENGTHS[metric], 'seconds'),
         maxBucket: {value: bucketValue, timestamp: localTime},
         data: [{
           timestamp: localTime,
@@ -73,6 +82,15 @@ export default async function dailyPeaks(report) {
   });
 
   const data: any[] = Object.values(bucketsByDay);
+  data.forEach(day => {
+    if (day.data.length > 0) {
+      const lastBucket = day.data[day.data.length - 1];
+      day.data.push({
+        timestamp: lastBucket.timestamp.clone().add(BUCKET_LENGTHS[metric], 'seconds'),
+        value: lastBucket.value
+      });
+    }
+  });
 
   return {
     title: report.name,
@@ -81,8 +99,8 @@ export default async function dailyPeaks(report) {
     spaces: [space.name],
     data,
 
+    metric: metric,
     curveType: report.settings.curveType,
     numberOfBands: report.settings.numberOfBands,
-    metric: report.settings.metric,
   };
 }
