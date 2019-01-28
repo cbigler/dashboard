@@ -78,6 +78,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
               expanded={true}
             />
           ) : null}
+          <AppBarTransparent />
         </div>
       </div>
     ),
