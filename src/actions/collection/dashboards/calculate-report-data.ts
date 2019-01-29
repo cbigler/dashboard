@@ -1,12 +1,13 @@
 import { REPORTS } from '@density/reports';
 import { getActiveEnvironments } from '../../../components/environment-switcher/index';
+import fields from '../../../fields';
 
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 
 export default function collectionDashboardsCalculateReportData(reports) {
   return async (dispatch, getState) => {
-    const baseUrl = (getActiveEnvironments([{slug: 'core'}]) as any).core;
+    const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
 
     return Promise.all(reports.map(async report => {

@@ -20,6 +20,7 @@ import mixpanelTrack from './helpers/mixpanel-track/index';
 import unsafeHandleWindowResize from './helpers/unsafe-handle-window-resize';
 import unsafeNavigateToLandingPage from './helpers/unsafe-navigate-to-landing-page/index';
 import unsafeSetSettingsFlagConstructor from './helpers/unsafe-set-settings-flag/index';
+import fields from './fields';
 
 // The main app component that renders everything.
 import App from './components/app/index';
@@ -78,31 +79,6 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-
-const fields = [
-  {
-    name: 'Core API',
-    slug: 'core',
-    defaults: {
-      'production': 'https://api.density.io/v2',
-      'staging': 'https://core-staging.density.io/v2',
-      'local': 'http://localhost:8000/v2',
-      'env (REACT_APP_CORE_API_URL)': process.env.REACT_APP_CORE_API_URL,
-    },
-    default: process.env.REACT_APP_ENVIRONMENT || 'production',
-  },
-  {
-    name: 'Accounts API',
-    slug: 'accounts',
-    defaults: {
-      'production': 'https://accounts.density.io/v1',
-      'staging': 'https://accounts-staging.density.io/v1',
-      'local': 'http://localhost:8001/v1',
-      'env (REACT_APP_ACCOUNTS_API_URL)': process.env.REACT_APP_ACCOUNTS_API_URL,
-    },
-    default: process.env.REACT_APP_ENVIRONMENT || 'production',
-  },
-];
 function setServiceLocations(environments, goFast) {
   core.config({core: environments.core, goFast});
   accounts.config({host: environments.accounts});
