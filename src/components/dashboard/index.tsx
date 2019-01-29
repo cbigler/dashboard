@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 
 import DashboardReportGrid from '@density/ui-dashboard-report-grid';
 
-import ReportLoading from '@density/ui-report-loading';
+import { ReportLoading } from '@density/reports';
 
 import AppBar from '@density/ui-app-bar';
 import AppFrame from '@density/ui-app-frame';
