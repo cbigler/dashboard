@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import FormLabel from '../form-label/index';
 
 import InputBox from '@density/ui-input-box';

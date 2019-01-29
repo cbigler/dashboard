@@ -73,8 +73,8 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
           />
           {report ? (
             <Report
-              report={report}
-              reportData={reportData}
+              report={report as any}
+              reportData={reportData as any}
               expanded={true}
             />
           ) : null}
