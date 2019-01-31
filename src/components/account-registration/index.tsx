@@ -130,7 +130,7 @@ export class AccountRegistration extends React.Component<any, any> {
                   className="account-registration-checkbox"
                   onChange={e => this.setState({coreConsent: e.target.checked})}
                 />
-                <label htmlFor="account-registration-core-consent">I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/Density-Terms-and-Conditions-1.0.0.pdf" target="_blank" rel="noopener noreferrer">Terms of Service</a>.</label>
+                <label className="account-registration-consent-label" htmlFor="account-registration-core-consent">I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/msa" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</label>
               </div>
 
               <div className="account-registration-consent">
@@ -140,7 +140,7 @@ export class AccountRegistration extends React.Component<any, any> {
                   className="account-registration-checkbox"
                   onChange={e => this.setState({marketingConsent: e.target.checked})}
                 />
-                <label htmlFor="account-registration-marketing-consent">I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</label>
+                <label className="account-registration-consent-label" htmlFor="account-registration-marketing-consent">I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</label>
               </div>
             </div>
 
@@ -151,7 +151,7 @@ export class AccountRegistration extends React.Component<any, any> {
               disabled={!(
                 this.state.password.length > 0 &&
                 this.state.password === this.state.passwordConfirmation &&
-                this.state.fullName.length > 0 && 
+                this.state.fullName.length > 0 &&
                 (this.state.fullName.indexOf(' ') >= 0 || this.state.nickname.length > 0) &&
                 this.state.email.indexOf('@') >= 0 &&
                 this.state.coreConsent
