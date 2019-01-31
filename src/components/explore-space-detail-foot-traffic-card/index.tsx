@@ -97,7 +97,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
     }
 
     if (space) {
-      const largestCount = calculatedData.state === 'COMPLETE' ? (
+      const largestCount = calculatedData.state === 'COMPLETE' && calculatedData.data ? (
         calculatedData.data.reduce((acc, i) => i.count > acc.count ? i : acc, {count: -1})
       ) : null;
 
