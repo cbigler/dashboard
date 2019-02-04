@@ -35,8 +35,6 @@ export function ExploreSpaceHeader({
 
       <div className="explore-space-header-container">
         <div className="explore-space-header">
-          <h1 className="explore-space-header-text">{space.name}</h1>
-
           {/* Attempt to display a nicer representation of the time zone, but fall back on the time zone name */}
           <div className="explore-space-header-row">
             <div className="explore-space-header-capacity">
@@ -67,26 +65,6 @@ export function ExploreSpaceHeader({
                 })[space.timeZone] || space.timeZone}
               </span>
             </div>
-          </div>
-
-          <div className="explore-space-header-hierarchy">
-            {
-              getParentsOfSpace(spaces.data, space).reverse()
-                .slice(0, -1) /* Remove the final space */
-                .map(id => spaces.data.find(s => s.id === id))
-                .map(space => space.name)
-                .reduce((acc, name) => {
-                  return [
-                    ...acc,
-                    <IconChevronRight color="cinder" width={10} height={10} key={`${name}-arrow`} />,
-                    <span
-                      className="explore-space-header-hierarchy-level"
-                      key={name}
-                    >{name}</span>,
-                  ];
-                }, [])
-                .slice(1)
-            }
           </div>
         </div>
       </div>

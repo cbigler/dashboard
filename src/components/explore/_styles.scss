@@ -1,0 +1,154 @@
+.explore-appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-grow: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 80px;
+  padding: 0 32px;
+  border-bottom: 1px solid #E8E8ED;
+}
+
+.explore-appbar-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: 20px;
+}
+
+.explore-appbar-subnav {
+  display: flex;
+  box-sizing: border-box;
+  height: 80px;
+}
+
+.explore-subnav-link {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  font-size: 16px;
+  color: $gray-cinder;
+  text-decoration: none;
+}
+
+.explore-subnav-link.selected {
+  color: $brand-primary-new;
+  border-bottom-color: $brand-primary-new;
+}
+
+.explore-app-frame-sidebar-list {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow-y: auto;
+  padding-bottom: 60px;
+}
+
+.explore-app-frame-sidebar-list-item {
+  display: block;
+  text-decoration: none;
+  color: $gray-darker;
+}
+
+.explore-sidebar-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  transition: all 250ms ease-in-out;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 32px;
+}
+
+.explore-sidebar-item-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.explore-sidebar-item-name {
+  margin-right: auto;
+  margin-bottom: -3px;
+  padding-right: 12px;
+  padding-left: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+a.explore-app-frame-sidebar-list-item .explore-sidebar-item-name:hover {
+  color: $brand-primary-new;
+}
+
+.explore-sidebar-item.selected .explore-sidebar-item-name {
+  color: $brand-primary-new;
+}
+
+.explore-app-frame-sidebar-list:first-child .campus-container:first-child .campus {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.explore-app-frame-sidebar-list:first-child .space-container:first-child {
+  margin-top: 20px;
+}
+
+.explore-app-frame-sidebar-list:first-child .building-container:first-child {
+  margin-top: 20px;
+}
+
+.explore-app-frame-sidebar-list:first-child .floor-container:first-child {
+  margin-top: 20px;
+}
+
+.explore-app-frame-sidebar-list-item.campus {
+  font-weight: bold;
+  font-size: 14px;
+  color: $gray-dark;
+  margin-top: 20px;
+  border-top: 1px solid $gray-light;
+}
+
+.explore-app-frame-sidebar-list-item.campus .explore-sidebar-item {
+  border-bottom: 1px solid $gray-light;
+  padding: 17px 0;
+}
+
+.explore-app-frame-sidebar-list-item.campus .explore-sidebar-item-name {
+  padding-left: 0;
+}
+
+.explore-app-frame-sidebar-list-item.building {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+  color: $gray-cinder;
+}
+
+.explore-app-frame-sidebar-list-item.floor {
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 20px;
+  color: $gray-cinder;
+}
+
+.explore-app-frame-sidebar-list-item.space {
+  margin-left: 28px;
+  color: $gray-cinder;
+}
+
+.explore-app-frame-sidebar-list-item.space svg {
+  opacity: 0.5;
+}
+
+.loading-spaces {
+  margin-left: 32px;
+  margin-top: 20px;
+  color: $gray-light;
+}

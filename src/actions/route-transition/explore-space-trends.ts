@@ -205,7 +205,7 @@ export function calculateUtilization(space) {
 
     // Which time segment group was selected?
     const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
-
+    
     // And, with the knowlege of the selected space, which time segment within that time segment
     // group is applicable to this space?
     const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(

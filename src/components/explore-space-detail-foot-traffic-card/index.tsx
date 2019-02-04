@@ -36,6 +36,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
       timeSegment,
       timeSegmentGroup,
       calculatedData,
+      chartWidth,
 
       onRefresh,
     } = this.props;
@@ -146,7 +147,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
           <CardBody className="explore-space-detail-foot-traffic-card-body">
             {calculatedData.state === 'COMPLETE' && chartData.length > 0 ? <LineChartComponent
               timeZone={space.timeZone}
-              svgWidth={975}
+              svgWidth={chartWidth}
               svgHeight={350}
 
               xAxisStart={startTime}

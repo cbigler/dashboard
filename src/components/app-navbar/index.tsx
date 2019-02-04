@@ -134,7 +134,7 @@ export default function AppNavbar({page, settings}) {
             name="Dashboards"
           /> : null}
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
-            isSelected={() => ['EXPLORE_SPACE_LIST', 'EXPLORE_SPACE_DETAIL'].includes(page)}
+            isSelected={() => ['EXPLORE', 'EXPLORE_SPACE_DETAIL', 'EXPLORE_SPACE_TRENDS', 'EXPLORE_SPACE_DAILY', 'EXPLORE_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={false}
             path="#/spaces/explore"
             icon={IconGlobe}

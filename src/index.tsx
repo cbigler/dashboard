@@ -37,7 +37,7 @@ import createRouter from '@density/conduit';
 import routeTransitionLogin from './actions/route-transition/login';
 import routeTransitionLogout from './actions/route-transition/logout';
 import routeTransitionSensorsList from './actions/route-transition/sensors-list';
-import routeTransitionExploreSpaceList from './actions/route-transition/explore-space-list';
+import routeTransitionExplore from './actions/route-transition/explore';
 import routeTransitionExploreSpaceTrends from './actions/route-transition/explore-space-trends';
 import routeTransitionExploreSpaceDaily from './actions/route-transition/explore-space-daily';
 import routeTransitionExploreSpaceDataExport from './actions/route-transition/explore-space-data-export';
@@ -156,7 +156,7 @@ router.addRoute('spaces/insights/:id/data-export', redirect(id => `spaces/explor
 router.addRoute('dashboards', () => routeTransitionDashboardList());
 router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(id));
 
-router.addRoute('spaces/explore', () => routeTransitionExploreSpaceList());
+router.addRoute('spaces/explore', () => routeTransitionExplore());
 router.addRoute('spaces/explore/:id/trends', id => routeTransitionExploreSpaceTrends(id));
 router.addRoute('spaces/explore/:id/daily', id => routeTransitionExploreSpaceDaily(id));
 router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));

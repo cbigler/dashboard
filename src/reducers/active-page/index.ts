@@ -1,5 +1,5 @@
 import { ROUTE_TRANSITION_LOGIN } from '../../actions/route-transition/login';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_LIST } from '../../actions/route-transition/explore-space-list';
+import { ROUTE_TRANSITION_EXPLORE } from '../../actions/route-transition/explore';
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../actions/route-transition/live-space-detail';
 import { ROUTE_TRANSITION_ACCOUNT } from '../../actions/route-transition/account';
@@ -32,8 +32,8 @@ export default function activePage(state=initialState, action) {
     return "LIVE_SPACE_LIST";
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
     return "LIVE_SPACE_DETAIL";
-  case ROUTE_TRANSITION_EXPLORE_SPACE_LIST:
-    return "EXPLORE_SPACE_LIST";
+  case ROUTE_TRANSITION_EXPLORE:
+    return "EXPLORE";
   case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
     return "EXPLORE_SPACE_TRENDS";
   case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:

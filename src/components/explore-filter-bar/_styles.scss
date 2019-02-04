@@ -1,15 +1,14 @@
 .explore-filter-bar {
   font-size: $font-size-base;
-  background-color: #fff;
   color: $gray-cinder;
 
   padding-top: 20px;
   padding-bottom: 20px;
 
   // Remove the paddings from the width.
-  width: calc(100% - 18px - 18px);
-  padding-left: 18px;
-  padding-right: 18px;
+  width: calc(100% - 32px - 32px);
+  padding-left: 32px;
+  padding-right: 32px;
 }
 .explore-filter-bar.no-select {
   user-select: none;
@@ -33,7 +32,6 @@
 }
 
 .explore-filter-bar-items {
-  max-width: 980px;
   width: 100%;
   margin: 0px auto;
 

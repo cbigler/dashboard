@@ -61,160 +61,177 @@ export function isOutsideRange(startISOTime, datePickerInput, day) {
   return false;
 }
 
-function ExploreSpaceTrends({
-  spaces,
-  space,
-  activeModal,
-  timeSegmentGroups,
-  onChangeSpaceFilter,
-  onChangeTimeSegmentGroup,
-  onChangeDateRange,
-}) {
-  if (space) {
-    const spaceTimeSegmentGroupArray = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...timeSegmentGroups.data.filter(tsg => {
-        return space.timeSegmentGroups.find(i => i.id === tsg.id);
-      })
-    ];
+class ExploreSpaceTrends extends React.Component<any, any> {
+  container: any;
+  state = { width: 0 }
 
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-      return i.id === spaces.filters.timeSegmentGroupId;
-    });
+  componentDidMount() {
+    this.resizeCharts()
+    window.addEventListener('resize', this.resizeCharts);
+  }
 
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // group is applicable to this space?
-    const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
-      selectedTimeSegmentGroup,
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeCharts);
+  }
+
+  resizeCharts = () => {
+    const width = this.container.offsetWidth - 80;
+    this.setState({width});
+  }
+
+  render() {
+    const {
+      spaces,
       space,
-    );
+      activeModal,
+      timeSegmentGroups,
+      onChangeSpaceFilter,
+      onChangeTimeSegmentGroup,
+      onChangeDateRange,
+    } = this.props;
 
-    return <div className="explore-space-trends-page">
-      <Subnav visible>
-        <SubnavItem active href={`#/spaces/explore/${spaces.selected}/trends`}>Trends</SubnavItem>
-        <SubnavItem href={`#/spaces/explore/${spaces.selected}/daily`}>Daily</SubnavItem>
-        <SubnavItem href={`#/spaces/explore/${spaces.selected}/data-export`}>Data Export</SubnavItem>
-      </Subnav>
+    if (space) {
+      const spaceTimeSegmentGroupArray = [
+        DEFAULT_TIME_SEGMENT_GROUP,
+        ...timeSegmentGroups.data.filter(tsg => {
+          return space.timeSegmentGroups.find(i => i.id === tsg.id);
+        })
+      ];
 
-      {spaces.filters.startDate && spaces.filters.endDate ? (
-        <ExploreFilterBar>
-          <ExploreFilterBarItem label="Time Segment">
-            <InputBox
-              type="select"
-              className="explore-space-trends-time-segment-box"
-              value={selectedTimeSegmentGroup.id}
-              choices={spaceTimeSegmentGroupArray.map(ts => {
-                const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
-                  ts,
+      // Which time segment group was selected?
+      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
+        return i.id === spaces.filters.timeSegmentGroupId;
+      });
+
+      // And, with the knowlege of the selected space, which time segment within that time segment
+      // group is applicable to this space?
+      const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
+        selectedTimeSegmentGroup,
+        space,
+      );
+
+      return <div className="explore-space-trends-page" ref={r => { this.container = r; }}>
+        {spaces.filters.startDate && spaces.filters.endDate ? (
+          <ExploreFilterBar>
+            <ExploreFilterBarItem label="Time Segment">
+              <InputBox
+                type="select"
+                className="explore-space-trends-time-segment-box"
+                value={selectedTimeSegmentGroup.id}
+                choices={spaceTimeSegmentGroupArray.map(ts => {
+                  const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
+                    ts,
+                    space,
+                  );
+                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
+                  return {
+                    id: ts.id,
+                    label: `${ts.name} (${prettyPrintHoursMinutes(
+                      getCurrentLocalTimeAtSpace(space)
+                        .startOf('day')
+                        .add(startSeconds, 'seconds')
+                    )} - ${prettyPrintHoursMinutes(
+                      getCurrentLocalTimeAtSpace(space)
+                        .startOf('day')
+                        .add(endSeconds, 'seconds')
+                    )})`,
+                  };
+                })}
+                width={300}
+                onChange={value => onChangeTimeSegmentGroup(space, value.id)}
+              />
+            </ExploreFilterBarItem>
+            <ExploreFilterBarItem label="Date Range">
+              <DateRangePicker
+                startDate={formatForReactDates(
+                  parseISOTimeAtSpace(spaces.filters.startDate, space),
                   space,
-                );
-                const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
-                return {
-                  id: ts.id,
-                  label: `${ts.name} (${prettyPrintHoursMinutes(
-                    getCurrentLocalTimeAtSpace(space)
-                      .startOf('day')
-                      .add(startSeconds, 'seconds')
-                  )} - ${prettyPrintHoursMinutes(
-                    getCurrentLocalTimeAtSpace(space)
-                      .startOf('day')
-                      .add(endSeconds, 'seconds')
-                  )})`,
-                };
-              })}
-              width={300}
-              onChange={value => onChangeTimeSegmentGroup(space, value.id)}
-            />
-          </ExploreFilterBarItem>
-          <ExploreFilterBarItem label="Date Range">
-            <DateRangePicker
-              startDate={formatForReactDates(
-                parseISOTimeAtSpace(spaces.filters.startDate, space),
-                space,
-              )}
-              endDate={formatForReactDates(
-                parseISOTimeAtSpace(spaces.filters.endDate, space),
-                space,
-              )}
-              onChange={({startDate, endDate}) => {
-                startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
-                endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
+                )}
+                endDate={formatForReactDates(
+                  parseISOTimeAtSpace(spaces.filters.endDate, space),
+                  space,
+                )}
+                onChange={({startDate, endDate}) => {
+                  startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
+                  endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
 
-                // If the user selected over 14 days, then clamp them back to 14 days.
-                if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-                  endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
-                }
+                  // If the user selected over 14 days, then clamp them back to 14 days.
+                  if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
+                    endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+                  }
 
-                // Only update the start and end data if one of them has changed from its previous
-                // value
-                if (
-                  formatInISOTime(startDate) !== spaces.filters.startDate || 
-                  formatInISOTime(endDate) !== spaces.filters.endDate
-                ) {
+                  // Only update the start and end data if one of them has changed from its previous
+                  // value
+                  if (
+                    formatInISOTime(startDate) !== spaces.filters.startDate || 
+                    formatInISOTime(endDate) !== spaces.filters.endDate
+                  ) {
+                    onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                  }
+                }}
+                // Within the component, store if the user has selected the start of end date picker
+                // input
+                focusedInput={spaces.filters.datePickerInput}
+                onFocusChange={(focused, a) => {
+                  onChangeSpaceFilter(space, 'datePickerInput', focused);
+                }}
+
+                // On mobile, make the calendar one month wide and left aligned.
+                // On desktop, the calendar is two months wide and right aligned.
+                numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
+
+                isOutsideRange={day => isOutsideRange(
+                  spaces.filters.startDate,
+                  spaces.filters.datePickerInput,
+                  day
+                )}
+
+                // common ranges functionality
+                commonRanges={getCommonRangesForSpace(space)}
+                onSelectCommonRange={({startDate, endDate}) => {
                   onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
-                }
-              }}
-              // Within the component, store if the user has selected the start of end date picker
-              // input
-              focusedInput={spaces.filters.datePickerInput}
-              onFocusChange={(focused, a) => {
-                onChangeSpaceFilter(space, 'datePickerInput', focused);
-              }}
-
-              // On mobile, make the calendar one month wide and left aligned.
-              // On desktop, the calendar is two months wide and right aligned.
-              numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
-
-              isOutsideRange={day => isOutsideRange(
-                spaces.filters.startDate,
-                spaces.filters.datePickerInput,
-                day
-              )}
-
-              // common ranges functionality
-              commonRanges={getCommonRangesForSpace(space)}
-              onSelectCommonRange={({startDate, endDate}) => {
-                onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
-              }}
-            />
-          </ExploreFilterBarItem>
-        </ExploreFilterBar>
-      ) : null}
-
-      <ErrorBar
-        message={spaces.error || timeSegmentGroups.error}
-        modalOpen={activeModal.name !== null}
-      />
-
-      <ExploreSpaceHeader />
-
-      {spaces.filters.startDate && spaces.filters.endDate ? (
-        <div className="explore-space-trends-container">
-          <div className="explore-space-trends">
-            <div className="explore-space-trends-item">
-              <UtilizationCard
-                space={space}
-                startDate={spaces.filters.startDate}
-                endDate={spaces.filters.endDate}
-                timeSegmentGroup={selectedTimeSegmentGroup}
-                timeSegment={applicableTimeSegment}
+                }}
               />
-            </div>
-            <div className="explore-space-trends-item">
-              <DailyMetricsCard
-                space={space}
-                startDate={spaces.filters.startDate}
-                endDate={spaces.filters.endDate}
-                timeSegmentGroup={selectedTimeSegmentGroup}
-              />
+            </ExploreFilterBarItem>
+          </ExploreFilterBar>
+        ) : null}
+
+        <ErrorBar
+          message={spaces.error || timeSegmentGroups.error}
+          modalOpen={activeModal.name !== null}
+        />
+
+        <ExploreSpaceHeader />
+
+        {spaces.filters.startDate && spaces.filters.endDate ? (
+          <div className="explore-space-trends-container" >
+            <div className="explore-space-trends" ref={r => { this.container = r; }}>
+              <div className="explore-space-trends-item">
+                <UtilizationCard
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
+                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegment={applicableTimeSegment}
+                  chartWidth={this.state.width}
+                />
+              </div>
+              <div className="explore-space-trends-item">
+                <DailyMetricsCard
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
+                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  chartWidth={this.state.width}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      ) : null}
-    </div>;
-  } else {
-    return <br />;
+        ) : null}
+      </div>;
+    } else {
+      return <div ref={r => { this.container = r; }}></div>;
+    }
   }
 }
 

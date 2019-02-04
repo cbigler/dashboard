@@ -109,6 +109,7 @@ describe('Explore space daily metrics chart', function() {
       endDate="2017-01-01T00:00:00-05:00"
       timeSegmentGroup={DEFAULT_TIME_SEGMENT_GROUP}
       timeSegment={DEFAULT_TIME_SEGMENT}
+      chartWidth={900}
       calculatedData={{
         state: 'COMPLETE',
         data: {
@@ -159,6 +160,7 @@ describe('Explore space daily metrics chart', function() {
       endDate="2017-01-01T00:00:00-05:00"
       timeSegmentGroup={DEFAULT_TIME_SEGMENT_GROUP}
       timeSegment={DEFAULT_TIME_SEGMENT}
+      chartWidth={900}
       calculatedData={{
         state: 'COMPLETE',
         data: {
@@ -200,6 +202,7 @@ describe('Explore space daily metrics chart', function() {
       endDate="2017-01-01T00:00:00-05:00"
       timeSegmentGroup={DEFAULT_TIME_SEGMENT_GROUP}
       timeSegment={DEFAULT_TIME_SEGMENT}
+      chartWidth={900}
       calculatedData={{
         state: 'COMPLETE',
         data: {

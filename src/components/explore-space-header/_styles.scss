@@ -1,26 +1,13 @@
 .explore-space-header-container {
-  // Remove the paddings from the width.
-  width: calc(100% - 18px - 18px);
-  padding-left: 18px;
-  padding-right: 18px;
+  // padding-top: 20px;
 }
 
 .explore-space-header {
-  max-width: 980px;
-  width: 100%;
   margin: 0px auto;
-  padding-left: 0px;
-}
-
-.explore-space-header-text {
-  margin-top: 40px;
-  font-size: 24px;
-  font-weight: 500;
-  color: $gray-cinder;
-
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding-top: 0;
+  padding-bottom: 32px;
+  padding-left: 32px;
+  padding-right: 32px;
 }
 
 .explore-space-header-row {
@@ -44,7 +31,6 @@
 .explore-space-header-capacity-set-link,
 .explore-space-header-capacity-update-link {
   text-decoration: underline;
-  margin-left: 10px;
   cursor: pointer;
   color: $brand-primary;
 }
@@ -62,7 +48,7 @@
 
 .explore-space-header-hierarchy {
   margin-top: 30px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   font-size: 14px;
   font-weight: normal;
 }

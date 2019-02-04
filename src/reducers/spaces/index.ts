@@ -12,8 +12,11 @@ import { COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE } from '../../actions/collecti
 import { COLLECTION_SPACES_COUNT_CHANGE } from '../../actions/collection/spaces/count-change';
 import { COLLECTION_SPACES_SET_EVENTS } from '../../actions/collection/spaces/set-events';
 
+
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../actions/route-transition/live-space-detail';
+import { ROUTE_TRANSITION_EXPLORE } from '../../actions/route-transition/explore';
+// import { ROUTE_TRANSITION_EXPLORE_CHANGE_SPACE } from '../../actions/route-transition/explore-change-space';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../actions/route-transition/explore-space-trends';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transition/explore-space-daily';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
@@ -69,6 +72,18 @@ const initialState = {
     */
   },
 };
+
+function getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, currentTimeSegmentGroupId) {
+  let timeSegmentGroupId = currentTimeSegmentGroupId;
+  if (!currentSelectedSpace) {
+    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
+  } else if (!(currentSelectedSpace.timeSegmentGroups.map(ts => ts.id).includes(currentTimeSegmentGroupId))) {
+    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
+  } else if (currentTimeSegmentGroupId == null) {
+    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
+  }
+  return timeSegmentGroupId;
+}
 
 export default function spaces(state=initialState, action) {
   switch (action.type) {
@@ -140,10 +155,36 @@ export default function spaces(state=initialState, action) {
 
   // When the user changes the active space, update it in the store.
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
+  case ROUTE_TRANSITION_EXPLORE:
+    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
+    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
+    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+
+    return {
+      ...state, 
+      error: null, 
+      selected: null,
+      filters: {
+        ...state.filters,
+        timeSegmentGroupId: newTimeSegmentGroupId
+      }
+    };
   case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
   case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
-    return {...state, error: null, selected: action.id};
+    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
+    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
+    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+    
+    return {
+      ...state, 
+      error: null, 
+      selected: action.id,
+      filters: {
+        ...state.filters,
+        timeSegmentGroupId: newTimeSegmentGroupId
+      }
+    };
   case ROUTE_TRANSITION_LIVE_SPACE_LIST:
     return {...state, error: null};
 

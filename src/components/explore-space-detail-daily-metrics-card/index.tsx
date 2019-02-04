@@ -65,6 +65,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
     const {
       spaces,
       calculatedData,
+      chartWidth,
 
       space,
       startDate,
@@ -149,7 +150,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 return <div className="large-timespan-chart">
                   <LineChartComponent
                     timeZone={space.timeZone}
-                    svgWidth={975}
+                    svgWidth={chartWidth}
                     svgHeight={370}
 
                     xAxis={xAxisDailyTick({
@@ -225,7 +226,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                         value: i.value,
                       };
                     })}
-                    width={975}
+                    width={chartWidth}
                     height={350}
                   />
                 </div>;

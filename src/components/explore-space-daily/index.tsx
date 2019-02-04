@@ -31,120 +31,136 @@ import {
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 
-export function ExploreSpaceDaily({
-  spaces,
-  space,
-  timeSegmentGroups,
-  activeModal,
-  onChangeSpaceFilter,
-  onChangeDate,
-  onChangeTimeSegmentGroup,
-}) {
-  if (space) {
-    const spaceTimeSegmentGroupArray = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...timeSegmentGroups.data.filter(tsg => {
-        return space.timeSegmentGroups.find(i => i.id === tsg.id);
-      })
-    ];
+class ExploreSpaceDaily extends React.Component<any, any> {
+  container: any;
+  state = { width: 0 }
 
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-      return i.id === spaces.filters.timeSegmentGroupId;
-    });
+  componentDidMount() {
+    this.resizeCharts()
+    window.addEventListener('resize', this.resizeCharts);
+  }
 
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // group is applicable to this space?
-    const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
-      selectedTimeSegmentGroup,
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeCharts);
+  }
+
+  resizeCharts = () => {
+    const width = this.container.offsetWidth - 80;
+    this.setState({width});
+  }
+
+  render() {
+    const {
+      spaces,
       space,
-    );
+      timeSegmentGroups,
+      activeModal,
+      onChangeSpaceFilter,
+      onChangeDate,
+      onChangeTimeSegmentGroup,
+    } = this.props;
 
-    return <div className="explore-space-daily-page">
-      <Subnav visible>
-        <SubnavItem href={`#/spaces/explore/${spaces.selected}/trends`}>Trends</SubnavItem>
-        <SubnavItem active href={`#/spaces/explore/${spaces.selected}/daily`}>Daily</SubnavItem>
-        <SubnavItem href={`#/spaces/explore/${spaces.selected}/data-export`}>Data Export</SubnavItem>
-      </Subnav>
+    if (space) {
+      const spaceTimeSegmentGroupArray = [
+        DEFAULT_TIME_SEGMENT_GROUP,
+        ...timeSegmentGroups.data.filter(tsg => {
+          return space.timeSegmentGroups.find(i => i.id === tsg.id);
+        })
+      ];
 
-      <ExploreFilterBar>
-        <ExploreFilterBarItem label="Day">
-          <DatePicker
-            date={formatForReactDates(parseISOTimeAtSpace(spaces.filters.date, space), space)}
-            onChange={date => onChangeDate(space, formatInISOTime(parseFromReactDates(date, space)))}
+      // Which time segment group was selected?
+      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
+        return i.id === spaces.filters.timeSegmentGroupId;
+      });
 
-            focused={spaces.filters.datePickerFocused}
-            onFocusChange={({focused}) => onChangeSpaceFilter('datePickerFocused', focused)}
-            arrowRightDisabled={
-              parseISOTimeAtSpace(spaces.filters.date, space).format('MM/DD/YYYY') ===
-              getCurrentLocalTimeAtSpace(space).format('MM/DD/YYYY')
-            }
+      // And, with the knowlege of the selected space, which time segment within that time segment
+      // group is applicable to this space?
+      const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
+        selectedTimeSegmentGroup,
+        space,
+      );
 
-            isOutsideRange={day => !isInclusivelyBeforeDay(
-              day,
-              getCurrentLocalTimeAtSpace(space).startOf('day'),
-            )}
-          />
-        </ExploreFilterBarItem>
-        <ExploreFilterBarItem label="Time Segment">
-          <InputBox
-            type="select"
-            className="explore-space-daily-time-segment-box"
-            value={selectedTimeSegmentGroup.id}
-            choices={spaceTimeSegmentGroupArray.map(ts => {
-              const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
-                ts,
-                space,
-              );
-              const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
-              return {
-                id: ts.id,
-                label: `${ts.name} (${prettyPrintHoursMinutes(
-                  getCurrentLocalTimeAtSpace(space)
-                  .startOf('day')
-                  .add(startSeconds, 'seconds')
-                )} - ${prettyPrintHoursMinutes(
-                  getCurrentLocalTimeAtSpace(space)
-                  .startOf('day')
-                  .add(endSeconds, 'seconds')
-                )})`,
-              };
-            })}
-            width={300}
-            onChange={value => onChangeTimeSegmentGroup(space, value.id)}
-          />
-        </ExploreFilterBarItem>
-      </ExploreFilterBar>
+      return <div className="explore-space-daily-page" ref={r => { this.container = r; }}>
+        <ExploreFilterBar>
+          <ExploreFilterBarItem label="Day">
+            <DatePicker
+              date={formatForReactDates(parseISOTimeAtSpace(spaces.filters.date, space), space)}
+              onChange={date => onChangeDate(space, formatInISOTime(parseFromReactDates(date, space)))}
 
-      <ErrorBar
-        message={spaces.error || timeSegmentGroups.error}
-        modalOpen={activeModal.name !== null}
-      />
+              focused={spaces.filters.datePickerFocused}
+              onFocusChange={({focused}) => onChangeSpaceFilter('datePickerFocused', focused)}
+              arrowRightDisabled={
+                parseISOTimeAtSpace(spaces.filters.date, space).format('MM/DD/YYYY') ===
+                getCurrentLocalTimeAtSpace(space).format('MM/DD/YYYY')
+              }
 
-      <ExploreSpaceHeader />
-
-      <div className="explore-space-daily-container">
-        <div className="explore-space-daily">
-          <div className="explore-space-daily-item">
-            <FootTrafficCard
-              space={space}
-              date={spaces.filters.date}
-              timeSegmentGroup={selectedTimeSegmentGroup}
-              timeSegment={applicableTimeSegment}
+              isOutsideRange={day => !isInclusivelyBeforeDay(
+                day,
+                getCurrentLocalTimeAtSpace(space).startOf('day'),
+              )}
             />
-          </div>
-          <div className="explore-space-daily-item">
-            <RawEventsCard
-              space={space}
-              date={spaces.filters.date}
-              timeSegmentGroup={selectedTimeSegmentGroup}
+          </ExploreFilterBarItem>
+          <ExploreFilterBarItem label="Time Segment">
+            <InputBox
+              type="select"
+              className="explore-space-daily-time-segment-box"
+              value={selectedTimeSegmentGroup.id}
+              choices={spaceTimeSegmentGroupArray.map(ts => {
+                const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
+                  ts,
+                  space,
+                );
+                const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
+                return {
+                  id: ts.id,
+                  label: `${ts.name} (${prettyPrintHoursMinutes(
+                    getCurrentLocalTimeAtSpace(space)
+                    .startOf('day')
+                    .add(startSeconds, 'seconds')
+                  )} - ${prettyPrintHoursMinutes(
+                    getCurrentLocalTimeAtSpace(space)
+                    .startOf('day')
+                    .add(endSeconds, 'seconds')
+                  )})`,
+                };
+              })}
+              width={300}
+              onChange={value => onChangeTimeSegmentGroup(space, value.id)}
             />
+          </ExploreFilterBarItem>
+        </ExploreFilterBar>
+
+        <ErrorBar
+          message={spaces.error || timeSegmentGroups.error}
+          modalOpen={activeModal.name !== null}
+        />
+
+        <ExploreSpaceHeader />
+
+        <div className="explore-space-daily-container">
+          <div className="explore-space-daily">
+            <div className="explore-space-daily-item">
+              <FootTrafficCard
+                space={space}
+                date={spaces.filters.date}
+                timeSegmentGroup={selectedTimeSegmentGroup}
+                timeSegment={applicableTimeSegment}
+                chartWidth={this.state.width}
+              />
+            </div>
+            <div className="explore-space-daily-item">
+              <RawEventsCard
+                space={space}
+                date={spaces.filters.date}
+                timeSegmentGroup={selectedTimeSegmentGroup}
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </div>;
-  } else {
-    return <br />;
+      </div>;
+    } else {
+      return <div ref={r => { this.container = r; }}></div>;
+    }
   }
 }
 

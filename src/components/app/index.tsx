@@ -6,7 +6,7 @@ import routeTransitionLogout from '../../actions/route-transition/logout';
 import { connect } from 'react-redux';
 
 import TokenList from '../dev-token-list/index';
-import ExploreSpaceList from '../explore-space-list/index';
+import Explore from '../explore/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
@@ -68,14 +68,12 @@ function ActivePage({activePage, settings}) {
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
-  case "EXPLORE_SPACE_LIST":
-    return <ExploreSpaceList />;
+  case "EXPLORE":
+    return <Explore activePage={activePage} />;
   case "EXPLORE_SPACE_TRENDS":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <ExploreSpaceTrends />;
   case "EXPLORE_SPACE_DAILY":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <ExploreSpaceDaily />;
   case "EXPLORE_SPACE_DATA_EXPORT":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <ExploreSpaceDataExport />;
+    return stringToBoolean(settings.insightsPageLocked) ? null : <Explore activePage={activePage} />;
   case "SENSORS_LIST":
     return <SensorsList />;
   case "ACCOUNT":

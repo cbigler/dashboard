@@ -67,6 +67,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
   render() {
     const {
       calculatedData,
+      chartWidth,
 
       space,
       startDate,
@@ -379,7 +380,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
               <div className="explore-space-detail-utilization-card-daily-breakdown-chart">
                 <LineChartComponent
                   timeZone={space.timeZone}
-                  svgWidth={965}
+                  svgWidth={chartWidth}
                   svgHeight={350}
 
                   xAxis={xAxisDailyTick({

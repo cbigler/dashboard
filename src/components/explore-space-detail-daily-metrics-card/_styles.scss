@@ -10,9 +10,7 @@
 
   border-top: 1px solid $gray-light;
 
-  // Make the chart horizontally scrolalble below widths of 978px.
   overflow-x: auto;
-  & > div { width: 978px; }
 }
 .explore-space-detail-daily-metrics-card-body .short-timespan-chart {
   padding-bottom: 20px;
