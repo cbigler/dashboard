@@ -154,10 +154,10 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         An Average Week
         <InfoPopup horizontalIconOffset={8}>
           <p className="explore-space-detail-utilization-card-popup-p">
-            Utilization for time segment <strong>{timeSegmentGroup.name}</strong> over the
-            time period of <strong>{parseISOTimeAtSpace(startDate, space).format('MM/DD/YYYY')}</strong> -{' '}
-            <strong>{parseISOTimeAtSpace(endDate, space).format('MM/DD/YYYY')}</strong>, grouped and averaged
-            by day of week.
+            Utilization for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+            <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
+            <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
+            grouped and averaged by day of week.
           </p>
 
           <p className="explore-space-detail-utilization-card-popup-p">
@@ -166,8 +166,8 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           </p>
 
           <p className="explore-space-detail-utilization-card-popup-p">
-            Utilization is calculated by dividing visitors by space capacity (with a granularity
-            of 10 minute intervals). Does not include incomplete days of data.
+            Utilization is calculated by dividing occupancy by the total space capacity (with 
+            a granularity of 10 minute intervals). Does not include incomplete days of data.
           </p>
         </InfoPopup>
         <span
@@ -187,10 +187,9 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         <InfoPopup horizontalIconOffset={8}>
           <p className="explore-space-detail-utilization-card-popup-p">
             An average daily breakdown of utilization for
-            time segment <strong>{timeSegmentGroup.name}</strong> over the time period
-            of <strong>{parseISOTimeAtSpace(startDate, space).format('MM/DD/YYYY')}</strong>
-            {' - '}
-            <strong>{parseISOTimeAtSpace(endDate, space).format('MM/DD/YYYY')}</strong>.
+            time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+            <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
+            <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>.
           </p>
 
           <p className="explore-space-detail-utilization-card-popup-p">
@@ -199,7 +198,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           </p>
 
           <p className="explore-space-detail-utilization-card-popup-p">
-            Utilization is calculated by dividing visitors by the space's capacity (with a
+            Utilization is calculated by dividing occupancy by the total space capacity (with a
             granularity of 10 minute intervals). Utilization is then averaged across all days
             within the date range. Does not include incomplete days of data.
           </p>

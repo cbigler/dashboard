@@ -35,8 +35,8 @@ export function ExploreSpaceDetailRawEventsCard({
           Daily Raw Events
           <InfoPopup horizontalIconOffset={8}>
             <p className="explore-space-detail-raw-events-card-popup-p">
-              All events that the doorways within this space have seen over{' '}
-              <strong>{parseISOTimeAtSpace(date, space).format('MM/DD/YYYY')}</strong> during{' '}
+              All events at this space on{' '}
+              <strong>{parseISOTimeAtSpace(date, space).format('MMMM D, YYYY')}</strong> during{' '}
               the time segment <strong>{timeSegmentGroup.name}</strong>.
             </p>
 

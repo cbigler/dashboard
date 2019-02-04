@@ -109,10 +109,9 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
             Foot Traffic
             <InfoPopup horizontalIconOffset={8}>
               <p className="explore-space-detail-foot-traffic-card-popup-p">
-                Count over time for <strong>{timeSegmentGroup.name}</strong> over
-                the time period of{' '}
-                <strong>{moment.utc(date).tz(space.timeZone).format('MM/DD/YYYY')}</strong>, queried
-                in 5 minute intervals.
+                Count over time on <strong>{moment.utc(date).tz(space.timeZone).format('MMMM D, YYYY')}</strong>{' '}
+                during the time segment <strong>{timeSegmentGroup.name}</strong>,{' '}
+                queried in 5 minute intervals.
               </p>
 
               <p className="explore-space-detail-foot-traffic-card-popup-p">

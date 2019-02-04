@@ -154,9 +154,9 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
           CSV Event Export
           <InfoPopup horizontalIconOffset={8}>
             <p className="explore-space-detail-raw-events-export-card-description">
-              Download all events from {parseISOTimeAtSpace(startDate, space).format('MM/DD/YYYY')} -{' '}
-              {parseISOTimeAtSpace(endDate, space).format('MM/DD/YYYY')} in CSV format.
-              Below is a preview of what data is included in the export.
+              Download all events from <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
+              <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong> in CSV format.
+              The preview below shows a portion of the data which will be exported.
             </p>
           </InfoPopup>
           <span
