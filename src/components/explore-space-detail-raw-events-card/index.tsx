@@ -81,6 +81,7 @@ export function ExploreSpaceDetailRawEventsCard({
 
       <RawEventsPager
         disabled={calculatedData.state !== 'COMPLETE'}
+        loading={calculatedData.state === 'LOADING'}
         page={spaces.filters.dailyRawEventsPage}
         totalPages={calculatedData.state === 'COMPLETE' ? Math.ceil(calculatedData.data.total / DAILY_RAW_EVENTS_PAGE_SIZE) : 0}
         totalEvents={calculatedData.state === 'COMPLETE' ? calculatedData.data.total : 0}

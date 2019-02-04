@@ -8,6 +8,9 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
     super(props);
     this.state = { textPage: false };
   }
+  shouldComponentUpdate(props, state, context) {
+    return !props.loading;
+  }
   render() {
     const {
       disabled,

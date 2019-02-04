@@ -18,7 +18,7 @@
 // of the date picker.
 .explore-space-detail-raw-events-card {
   margin-top: 40px;
-  min-height: 421px;
+  overflow: hidden;
 }
 
 // Horizontally and vertically center errors and info messages in the daily metrics card.
@@ -28,7 +28,7 @@
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  height: 355px;
+  height: 496px;
 
   font-size: $font-size-base;
   color: $gray-cinder;
