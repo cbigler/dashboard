@@ -105,7 +105,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                     <strong>Exits</strong>: Total number of events from people exiting the space.
                   </li>
                   <li>
-                    <strong>Peak Counts</strong>: Peak count at any given point in time over the course of the day.
+                    <strong>Peak Occupancy</strong>: Peak count at any point in time during the day.
                   </li>
                 </ul>
               </InfoPopup>
