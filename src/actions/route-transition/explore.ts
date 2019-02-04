@@ -10,16 +10,15 @@ import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree
 
 export const ROUTE_TRANSITION_EXPLORE = 'ROUTE_TRANSITION_EXPLORE';
 
-
-export default function routeTransitionExplore() {
-  function returnSpaceOrFirstChild(space) {
-    if (space.children && space.children.length > 0) {
-      return returnSpaceOrFirstChild(space.children[0])
-    } else {
-      return space
-    }
+function returnSpaceOrFirstChild(space) {
+  if (space.children && space.children.length > 0) {
+    return returnSpaceOrFirstChild(space.children[0])
+  } else {
+    return space
   }
+}
 
+export default function routeTransitionExplore() {  
   return async (dispatch, getState) => {
     dispatch({ type: ROUTE_TRANSITION_EXPLORE });
     let errorThrown;

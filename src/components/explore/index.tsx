@@ -86,6 +86,24 @@ function ExploreSidebarItem({selected, id, name, spaceType, depth, activePage}) 
   }
 }
 
+function RenderExploreSidebarItem(space, activePage, selectedSpace, depth) {
+  return (
+    <div key={space.id} className={`${space.spaceType}-container`}>
+      <ExploreSidebarItem
+        id={space.id}
+        name={space.name}
+        spaceType={space.spaceType}
+        depth={depth}
+        activePage={activePage}
+        selected={selectedSpace ? selectedSpace.id === space.id : false}
+      />
+      {space.children && space.children.map(space => (
+        RenderExploreSidebarItem(space, activePage, selectedSpace, depth+1)
+      ))}
+    </div>
+  )
+}
+
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {
     case 'EXPLORE_SPACE_TRENDS':
@@ -118,24 +136,6 @@ export function Explore({
   const spaceTree = convertSpacesToSpaceTree(filteredSpaces)
   const spaceList = spaces.filters.search ? spacesByName : spaceTree;
 
-  let renderExploreSidebarItem = function(space, activePage, selectedSpace, depth) {
-    return (
-      <div key={space.id} className={`${space.spaceType}-container`}>
-        <ExploreSidebarItem
-          id={space.id}
-          name={space.name}
-          spaceType={space.spaceType}
-          depth={depth}
-          activePage={activePage}
-          selected={selectedSpace ? selectedSpace.id === space.id : false}
-        />
-        {space.children && space.children.map(space => (
-          renderExploreSidebarItem(space, activePage, selectedSpace, depth+1)
-        ))}
-      </div>
-    )
-  }
-
   return (
     <Fragment>
       {/* Main application */}
@@ -156,7 +156,7 @@ export function Explore({
                 <Fragment>
                   {spaceList.length == 0 ? <div className="loading-spaces">Loading Spaces...</div> : null}
                   {spaceList.map(space => (
-                    renderExploreSidebarItem(space, activePage, selectedSpace, 0)
+                    RenderExploreSidebarItem(space, activePage, selectedSpace, 0)
                   ))}
                 </Fragment>
             </nav>
