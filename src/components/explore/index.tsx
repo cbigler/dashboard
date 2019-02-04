@@ -127,9 +127,12 @@ export function Explore({
   if (spaces.filters.search) {
     filteredSpaces = spaceFilter(filteredSpaces, spaces.filters.search);
   }
-  const spacesByName = filteredSpaces.sort(function(a, b) {
+  let spacesByName = filteredSpaces.sort(function(a, b) {
     return a.name.localeCompare(b.name);
   });
+  // only show "spaces" in search results
+  spacesByName.filter(space => space.spaceType == "space");
+
   const spaceTree = convertSpacesToSpaceTree(filteredSpaces)
   const spaceList = spaces.filters.search ? spacesByName : spaceTree;
 

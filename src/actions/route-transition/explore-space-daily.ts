@@ -118,7 +118,7 @@ export function calculateFootTraffic(space) {
   }
 }
 
-export const DAILY_RAW_EVENTS_PAGE_SIZE = 20;
+export const DAILY_RAW_EVENTS_PAGE_SIZE = 10;
 
 export function calculateDailyRawEvents(space) {
   return async (dispatch, getState) => {

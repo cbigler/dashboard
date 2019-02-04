@@ -1,11 +1,11 @@
 .visualization-space-detail-raw-events-pager {
   display: flex;
-  margin-top: 20px;
+  margin-top: 12px;
   font-size: $font-size-base;
 }
 
 .visualization-space-detail-raw-events-pager-total {
-  line-height: 38px;
+  line-height: 36px;
 }
 
 // The middle section, used to provide a freeform imput to move to a new page.
@@ -14,6 +14,7 @@
   align-items: center;
   margin-left: auto;
   margin-right: auto;
+  line-height: 36px;
 }
 .visualization-space-detail-raw-events-pager-picker * { display: inline-block; }
 .visualization-space-detail-raw-events-pager-picker-box {
@@ -30,9 +31,10 @@
   border-radius: $border-radius-base;
 
   outline: none;
-  padding-left: 0px;
-  height: 29px;
+  padding: 0px;
+  height: 36px;
   width: 4em;
+  box-sizing: border-box;
 
   margin-left: 10px;
   margin-right: 10px;
