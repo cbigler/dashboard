@@ -10,8 +10,11 @@ const initialModuleState = {
 };
 
 const initialState = {
-  calculatedReportData: {},
   calculations: {
+    hourlyBreakdown: {
+      ...initialModuleState,
+      data: {}
+    },
     spaceList: {
       ...initialModuleState,
       data: {

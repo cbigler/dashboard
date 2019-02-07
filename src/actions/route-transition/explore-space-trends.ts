@@ -14,6 +14,12 @@ import exploreDataCalculateDataLoading from '../../actions/explore-data/calculat
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
+import { getActiveEnvironments } from '../../components/environment-switcher/index';
+import { getGoFast } from '../../components/environment-switcher/index';
+import fields from '../../fields';
+
+import { REPORTS } from '@density/reports';
+
 import {
   getCurrentLocalTimeAtSpace,
   parseISOTimeAtSpace,
@@ -39,17 +45,25 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
     dispatch(exploreDataCalculateDataLoading('utilization', null));
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdown', null));
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
 
     // Load a list of all time segment groups, which is required in order to render in the time
     // segment list.
+
+    let errorThrown: any = false
     try {
       const timeSegmentGroups = await core.time_segment_groups.list();
-      dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups.results));
     } catch (err) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${err.message}`));
+      errorThrown = err;
+    }
+
+    if(errorThrown) {
+      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${errorThrown.message}`));
+    } else {
+      dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups.results));
     }
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
@@ -86,6 +100,7 @@ export function calculate(space) {
   return dispatch => {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
+    dispatch(calculateHourlyBreakdown(space));
   };
 }
 
@@ -264,3 +279,53 @@ export function calculateUtilization(space) {
     }));
   };
 }
+
+
+export function calculateHourlyBreakdown(space) {
+  return async (dispatch, getState) => {
+    dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
+
+    const {
+      timeSegmentGroupId,
+      metricToDisplay,
+      startDate,
+      endDate,
+    } = getState().spaces.filters;
+
+    const baseUrl = (getActiveEnvironments(fields) as any).core;
+    const token = getState().sessionToken;
+    const fast = getGoFast();
+
+    const report = {
+      id: `rpt_${space.id}`,
+      type: 'HOURLY_BREAKDOWN',
+      name: 'Hourly Breakdown...',
+      settings: {
+        "spaceId": space.id,
+        "timeRange": "LAST_WEEK",
+        "includeWeekends": true,
+        "hourStart": 6,
+        "hourEnd": 20
+      },
+    };
+
+    let data, errorThrown: any = false;
+    try {
+      data = await REPORTS['HOURLY_BREAKDOWN'].calculations(report, { date: startDate, baseUrl, token, fast });
+    } catch (err) {
+      errorThrown = err;
+    }
+
+    if (errorThrown) {
+      // Log the error so a developer can see what whent wrong.
+      console.error(errorThrown); // DON'T REMOVE ME!
+      dispatch(exploreDataCalculateDataError('hourlyBreakdown', errorThrown));
+    } else {
+      dispatch(exploreDataCalculateDataComplete('hourlyBreakdown', {
+        report,
+        data
+      }));
+    }   
+  }
+}
+
