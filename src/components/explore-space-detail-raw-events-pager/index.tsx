@@ -28,10 +28,10 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
         <input
           type="text"
           className="visualization-space-detail-raw-events-pager-picker-box"
-          value={this.state.textPage === false ? page : this.state.textPage}
+          value={!totalPages ? '' : (this.state.textPage === false ? page : this.state.textPage)}
 
           // Disable the box when there are no pages to change to.
-          disabled={totalPages === 0}
+          disabled={!totalPages}
 
           // As the user types, update the internal representation
           onChange={e => this.setState({textPage: e.target.value})}
@@ -46,16 +46,16 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
             this.setState({textPage: false});
           }}
         />
-        <span>of {totalPages}</span>
+        {isNaN(totalPages) ? null : <span>of {totalPages}</span>}
       </div>
       <div className="visualization-space-detail-raw-events-pager-button-group">
         <PagerButtonGroup
           showFirstLastButtons
 
-          disabledStart={totalPages === 0 || page === 1}
-          disabledPrevious={totalPages === 0 || page === 1}
-          disabledNext={totalPages === 0 || page === totalPages || totalPages === 1}
-          disabledEnd={totalPages === 0 || page === totalPages || totalPages === 1}
+          disabledStart={!totalPages || page === 1}
+          disabledPrevious={!totalPages || page === 1}
+          disabledNext={!totalPages || page === totalPages || totalPages === 1}
+          disabledEnd={!totalPages || page === totalPages || totalPages === 1}
 
           onClickStart={() => onChange(1)}
           onClickEnd={() => onChange(totalPages)}

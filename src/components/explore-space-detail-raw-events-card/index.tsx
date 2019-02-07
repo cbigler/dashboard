@@ -96,6 +96,7 @@ export default connect((state: any) => ({
   calculatedData: state.exploreData.calculations.dailyRawEvents,
 }), dispatch => ({
   onRefresh(space) {
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
     dispatch<any>(calculateDailyRawEvents(space));
   },
   onChangePage(space, page) {

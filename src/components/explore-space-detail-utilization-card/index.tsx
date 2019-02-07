@@ -9,7 +9,6 @@ import {
   parseISOTimeAtSpace,
   prettyPrintHoursMinutes,
   getDurationBetweenMomentsInDays,
-  parseDayAtSpace,
 } from '../../helpers/space-time-utilities/index';
 
 import { calculateUtilization } from '../../actions/route-transition/explore-space-trends';
@@ -53,15 +52,15 @@ export const LOADING = 'LOADING',
              ERROR = 'ERROR';
 
 export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any> {
-  calculateAverageUtilization(data=this.props.calculatedData.data.utilizations) {
+  calculateAverageUtilization(data=this.props.calculatedData.data.counts) {
     // No data exists, so render a '-' instead of actual data.
     if (data.length === 0) {
       return null;
     }
 
-    const utilizationSum = data.reduce((acc, i) => acc + i.averageUtilization, 0);
+    const utilizationSum = data.reduce((acc, i) => acc + i, 0);
     const result = utilizationSum / data.length;
-    return Math.round(result * 100) / 100; /* round to the nearest percentage */
+    return Math.round(result * 100) / 10000; /* round to the nearest percentage */
   }
 
   render() {
@@ -72,82 +71,11 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
       space,
       startDate,
       endDate,
-      timeSegment,
+      timeSegments,
       timeSegmentGroup,
 
       onRefresh,
     } = this.props;
-
-    let utilizationsByDay,
-      averageUtilizationDatapoints,
-      peakUtilizationPercentage,
-      peakUtilizationTimestamp,
-      averageUtilizationDatapointsWithTimestamp;
-
-    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-    const timeSegmentDurationInSeconds = endSeconds - startSeconds;
-
-    if (calculatedData.state === 'COMPLETE' && !calculatedData.data.requiresCapacity) {
-      //
-
-      // Calculate the average utilization for each day within the specified time segment.
-      utilizationsByDay = calculatedData.data.utilizations.reduce((acc, i) => {
-        const dayOfWeek = parseDayAtSpace(i.date, space).day();
-        acc[dayOfWeek].push(i);
-        return acc;
-      }, [[], [], [], [], [], [], []]);
-
-
-      // Calculate an average day's utilization graph.
-      averageUtilizationDatapoints = (calculatedData.data.utilizations[0] ? calculatedData.data.utilizations[0].utilization : []).map(_ => 0);
-
-      // The average calculation is split into two parts: the sum and the division.
-      // - The sum part of the average (step 1) occurs below.
-      // - `dataPointCount` contains the number of samples that have been summed together and is the
-      // number that will be divided by later to complete the average.
-      let dataPointCount = 0;
-      calculatedData.data.utilizations.forEach(group => {
-        if (Array.isArray(group.utilization)) {
-          averageUtilizationDatapoints = averageUtilizationDatapoints.map(
-            (i, ct) => i + (group.utilization[ct] || 0) /* ensure that a utilization bucket has data */
-          )
-          dataPointCount += 1;
-        }
-      });
-
-      const initialTimestampRaw = calculatedData.data.counts.length > 0 ? calculatedData.data.counts[0].timestamp : startDate;
-      const initialTimestamp = parseISOTimeAtSpace(initialTimestampRaw, space)
-        .startOf('day')
-        .add(startSeconds, 'seconds');
-
-      averageUtilizationDatapointsWithTimestamp = averageUtilizationDatapoints
-        .map(i => i / dataPointCount) /* second part of calculating average */
-        .map(i => Math.round(i * 1000) / 1000) /* round each number to a single decimal place */
-        .reduce(({timestamp, data}, i, ct) => {
-          // Increment timestamp to get to the next sample's timestamp.
-          timestamp = timestamp.add(timeSegmentDurationInSeconds / averageUtilizationDatapoints.length, 'seconds')
-
-          return {
-            timestamp,
-            data: [
-              ...data,
-              { timestamp: timestamp.format(), value: i * 100 },
-            ],
-          };
-        }, {timestamp: initialTimestamp, data: []}).data;
-
-      // Calculate the peak utilization of the space by getting the peak count within the raw count
-      // data that was fetched and dividing it by the capacity.
-      peakUtilizationPercentage = 0;
-      peakUtilizationTimestamp = null; /* No peak utilization */
-      averageUtilizationDatapointsWithTimestamp.forEach((c, index) => {
-        if (c.value > peakUtilizationPercentage) {
-          peakUtilizationPercentage = c.value;
-          peakUtilizationTimestamp = c.timestamp;
-        }
-      });
-      peakUtilizationPercentage /= 100;
-    }
 
     const averageWeekHeader = (
       <CardHeader>
@@ -289,7 +217,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           </div>
         );
 
-      case calculatedData.data.utilizations.length === 0:
+      case calculatedData.data.counts.length === 0:
         body = (
           <div className="explore-space-detail-utilization-card-body-info">
             <span>No data found in date range.</span>
@@ -314,7 +242,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
               {averageWeekHeader}
               <CardWell type="dark">
                 Average utilization of <CardWellHighlight>
-                  {Math.round(this.calculateAverageUtilization() || 0 * 100)}%
+                  {Math.round(calculatedData.data.averageUtilizationPercentage)}%
                 </CardWellHighlight> during <CardWellHighlight>
                   {timeSegmentGroup.name}
                 </CardWellHighlight>
@@ -324,13 +252,12 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                   <div className="explore-space-detail-utilization-card-grid-item">Day</div>
                   <div className="explore-space-detail-utilization-card-grid-item">Average Utilization</div>
                 </div>
-                {timeSegment.days.map(day => {
-                  const index = DAY_TO_INDEX_IN_UTILIZAITIONS_BY_DAY[day];
-                  return <div className="explore-space-detail-utilization-card-grid-row" key={day}>
-                    <div className="explore-space-detail-utilization-card-grid-item">{day}</div>
+                {calculatedData.data.utilizationsByDay.map(x => {
+                  return <div className="explore-space-detail-utilization-card-grid-row" key={x.day}>
+                    <div className="explore-space-detail-utilization-card-grid-item">{x.day}</div>
                     <div className="explore-space-detail-utilization-card-grid-item">
                       <PercentageBar
-                        percentage={this.calculateAverageUtilization(utilizationsByDay[index])}
+                        percentage={x.average / 100}
                         percentageFormatter={percentage => percentage !== null ? `${formatPercentage(percentage, 0)}%` : null}
                         breakWidth={AVERAGE_WEEKLY_BREAKDOWN_PERCENTAGE_BAR_BREAK_WIDTH_IN_PX}
                       />
@@ -342,7 +269,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
             <Card className="explore-space-detail-utilization-card-average-day">
               {averageDayHeader}
               <CardWell type="dark">
-                {peakUtilizationTimestamp === null ? <span>
+                {calculatedData.data.peakUtilizationTimestamp === null ? <span>
                   <CardWellHighlight>
                     No peak utilization
                     </CardWellHighlight> during <CardWellHighlight>
@@ -369,10 +296,10 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                       }
 
                       return stamp.format(`h:[${minute}]a`).slice(0, -1);
-                    })(peakUtilizationTimestamp)}
+                    })(calculatedData.data.peakUtilizationTimestamp)}
                   </CardWellHighlight> &mdash; around <CardWellHighlight>
-                    {Math.round(peakUtilizationPercentage * space.capacity)} people
-                  </CardWellHighlight> ({Math.round(peakUtilizationPercentage * 100)}% utilization)
+                    {Math.round(calculatedData.data.peakUtilizationPercentage * space.capacity / 100)} people
+                  </CardWellHighlight> ({Math.round(calculatedData.data.peakUtilizationPercentage)}% utilization)
                 </span>}
               </CardWell>
 
@@ -404,7 +331,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                   // 1. The largest point on the graph, if larger than 100. (+ 10% in spacing)
                   // 2. 100.
                   yAxisEnd={Math.max(
-                    Math.max.apply(Math, averageUtilizationDatapointsWithTimestamp.map(i => i.value))+10, /* 1 */
+                    Math.max.apply(Math, calculatedData.data.utilizationsByTime.map(x => Math.max.apply(Math, x.data)))+10, /* 1 */
                     100 /* 2 */
                   )}
 
@@ -434,9 +361,12 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                       name: 'default',
                       type: dataWaterline,
                       verticalBaselineOffset: 10,
-                      data: averageUtilizationDatapointsWithTimestamp.sort(
-                        (a, b) => moment.utc(a.timestamp).valueOf() - moment.utc(b.timestamp).valueOf()
-                      ),
+                      data: calculatedData.data.utilizationsByTime.map(x => {
+                        return {
+                          timestamp: moment.tz(x.time, 'HH:mm', space.timeZone).valueOf(),
+                          value: x.data.reduce((a, n) => a + n) / x.data.length
+                        };
+                      }),
                     },
                   ]}
                 />
