@@ -13,7 +13,6 @@ const initialState = {
   calculations: {
     hourlyBreakdown: {
       ...initialModuleState,
-      data: {}
     },
     spaceList: {
       ...initialModuleState,
@@ -82,6 +81,7 @@ export default function exploreData(state=initialState, action) {
       calculations: {
         ...state.calculations,
         [action.calculation]: {
+          ...state.calculations[action.calculation],
           state: 'ERROR',
           error: action.error,
         },

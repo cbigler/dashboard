@@ -5,7 +5,10 @@ import moment from 'moment';
 
 import InputBox from '@density/ui-input-box';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
+import {
+  calculate as calculateTrendsModules,
+  generateHourlyBreakdownEphemeralReport,
+} from '../../actions/route-transition/explore-space-trends';
 import Report from '@density/reports';
 
 import {
@@ -220,8 +223,12 @@ class ExploreSpaceTrends extends React.Component<any, any> {
               </div>
               <div className="explore-space-trends-item">
                 <Report
-                  report={hourlyBreakdown.data.report}
-                  reportData={{state: hourlyBreakdown.state, data: hourlyBreakdown.data.data}}
+                  report={generateHourlyBreakdownEphemeralReport(space)}
+                  reportData={{
+                    state: hourlyBreakdown.state,
+                    data: hourlyBreakdown.data,
+                    error: hourlyBreakdown.error,
+                  }}
                 />
               </div>
               <div className="explore-space-trends-item">

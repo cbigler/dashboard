@@ -41,7 +41,7 @@ import spaceUtilizationPerGroup, {
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
 
 export default function routeTransitionExploreSpaceTrends(id) {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
     dispatch(exploreDataCalculateDataLoading('utilization', null));
@@ -54,13 +54,14 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // segment list.
 
     let errorThrown: any = false
+    let timeSegmentGroups;
     try {
-      const timeSegmentGroups = await core.time_segment_groups.list();
+      timeSegmentGroups = await core.time_segment_groups.list();
     } catch (err) {
       errorThrown = err;
     }
 
-    if(errorThrown) {
+    if (errorThrown) {
       dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${errorThrown.message}`));
     } else {
       dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups.results));
@@ -281,33 +282,29 @@ export function calculateUtilization(space) {
 }
 
 
+export function generateHourlyBreakdownEphemeralReport(space) {
+  return {
+    id: `rpt_${space.id}`,
+    type: 'HOURLY_BREAKDOWN',
+    name: 'Hourly Breakdown...',
+    settings: {
+      "spaceId": space.id,
+      "timeRange": "LAST_WEEK",
+      "includeWeekends": true,
+      "hourStart": 6,
+      "hourEnd": 20
+    },
+  };
+}
+
 export function calculateHourlyBreakdown(space) {
   return async (dispatch, getState) => {
-    dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
-
-    const {
-      timeSegmentGroupId,
-      metricToDisplay,
-      startDate,
-      endDate,
-    } = getState().spaces.filters;
+    const report = generateHourlyBreakdownEphemeralReport(space);
+    const { startDate } = getState().spaces.filters;
 
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
     const fast = getGoFast();
-
-    const report = {
-      id: `rpt_${space.id}`,
-      type: 'HOURLY_BREAKDOWN',
-      name: 'Hourly Breakdown...',
-      settings: {
-        "spaceId": space.id,
-        "timeRange": "LAST_WEEK",
-        "includeWeekends": true,
-        "hourStart": 6,
-        "hourEnd": 20
-      },
-    };
 
     let data, errorThrown: any = false;
     try {
@@ -321,10 +318,7 @@ export function calculateHourlyBreakdown(space) {
       console.error(errorThrown); // DON'T REMOVE ME!
       dispatch(exploreDataCalculateDataError('hourlyBreakdown', errorThrown));
     } else {
-      dispatch(exploreDataCalculateDataComplete('hourlyBreakdown', {
-        report,
-        data
-      }));
+      dispatch(exploreDataCalculateDataComplete('hourlyBreakdown', data));
     }   
   }
 }
