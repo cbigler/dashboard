@@ -10,6 +10,7 @@ const initialModuleState = {
 };
 
 const initialState = {
+  calculatedReportData: {},
   calculations: {
     spaceList: {
       ...initialModuleState,

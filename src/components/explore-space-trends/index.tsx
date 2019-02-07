@@ -6,6 +6,7 @@ import moment from 'moment';
 import InputBox from '@density/ui-input-box';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
+import Report from '@density/reports';
 
 import {
   getCurrentLocalTimeAtSpace,
@@ -84,6 +85,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       spaces,
       space,
       activeModal,
+      calculatedReportData,
       timeSegmentGroups,
       onChangeSpaceFilter,
       onChangeTimeSegmentGroup,
@@ -102,6 +104,19 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
         return i.id === spaces.filters.timeSegmentGroupId;
       });
+
+      const report = {
+        id: `rpt_${space.id}`,
+        type: 'HOURLY_BREAKDOWN',
+        name: 'Hourly Breakdown...',
+        settings: {
+          "spaceId": space.id,
+          "timeRange": "LAST_WEEK",
+          "includeWeekends": true,
+          "hourStart": 6,
+          "hourEnd": 20
+        },
+      };
 
       // And, with the knowlege of the selected space, which time segment within that time segment
       // group is applicable to this space?
@@ -217,6 +232,12 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 />
               </div>
               <div className="explore-space-trends-item">
+                <Report
+                  report={report}
+                  reportData={{state: 'LOADING', data: null}}
+                />
+              </div>
+              <div className="explore-space-trends-item">
                 <DailyMetricsCard
                   space={space}
                   startDate={spaces.filters.startDate}
@@ -237,6 +258,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
 export default connect((state: any) => {
   return {
+    calculatedReportData: state.exploreData.calculatedReportData,
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
