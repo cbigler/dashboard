@@ -45,7 +45,7 @@ describe('dashboards', () => {
     assert.equal(loadedState.calculatedReportData['rpt_456'].state, 'LOADING');
     assert.equal(loadedState.calculatedReportData['rpt_789'].state, 'LOADING');
 
-    await store.dispatch(collectionDashboardsSelect(DASHBOARDS))
+    await store.dispatch(collectionDashboardsSelect(DASHBOARDS, '2019-01-01'))
 
     const finalState = store.getState();
 

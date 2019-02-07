@@ -6,7 +6,7 @@ import fields from '../../../fields';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 
-export default function collectionDashboardsCalculateReportData(reports) {
+export default function collectionDashboardsCalculateReportData(reports, date) {
   return async (dispatch, getState) => {
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
@@ -59,7 +59,7 @@ export default function collectionDashboardsCalculateReportData(reports) {
         }
 
         try {
-          data = await reportDataCalculationFunction(report, { baseUrl, token, fast });
+          data = await reportDataCalculationFunction(report, { date, baseUrl, token, fast });
         } catch (err) {
           errorThrown = err;
         }

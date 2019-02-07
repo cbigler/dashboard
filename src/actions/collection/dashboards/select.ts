@@ -2,9 +2,9 @@ import collectionDashboardsCalculateReportData from './calculate-report-data';
 
 export const COLLECTION_DASHBOARDS_SELECT = 'COLLECTION_DASHBOARDS_SELECT';
 
-export default function collectionDashboardsSelect(dashboard) {
+export default function collectionDashboardsSelect(dashboard, date) {
   return async dispatch => {
     dispatch({ type: COLLECTION_DASHBOARDS_SELECT, dashboard });
-    await dispatch(collectionDashboardsCalculateReportData(dashboard.reportSet));
+    await dispatch(collectionDashboardsCalculateReportData(dashboard.reportSet, date));
   };
 }

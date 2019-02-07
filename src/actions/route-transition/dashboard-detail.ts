@@ -13,6 +13,7 @@ export default function routeTransitionDashboardDetail(id) {
   return async (dispatch, getState) => {
     dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
 
+    const dashboardDate = getState().miscellaneous.dashboardDate;
     let dashboardSelectionPromise;
 
     // First, if the dashboard already is in the collection, then immediately select it.
@@ -21,7 +22,7 @@ export default function routeTransitionDashboardDetail(id) {
       // The data for the dashboard being selected already exists, so don't "reset the state" as
       // this will show a loading state / remove all dashboards that are already in the collection
       // and that's not desired.
-      dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard));
+      dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
     }
 
     // Though this route is only to load a single dashboard, we need to load all dashboards in order
@@ -61,7 +62,7 @@ export default function routeTransitionDashboardDetail(id) {
       selectedDashboard = dashboards.find(d => d.id === id);
       if (selectedDashboard) {
         dispatch(collectionDashboardsSet(dashboards));
-        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard));
+        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
       } else {
         try {
           selectedDashboard = objectSnakeToCamel(await core.dashboards.detail({id}));
@@ -75,7 +76,7 @@ export default function routeTransitionDashboardDetail(id) {
         }
         dashboards.push(selectedDashboard);
         dispatch(collectionDashboardsSet(dashboards));
-        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard));
+        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
       }
     }
 

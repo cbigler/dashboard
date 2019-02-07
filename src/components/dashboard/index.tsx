@@ -1,9 +1,11 @@
 import React, { Fragment } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
+import moment from 'moment';
 
 import { connect } from 'react-redux';
 
+import colorVariables from '@density/ui/variables/colors.json';
 import DashboardReportGrid from '@density/ui-dashboard-report-grid';
 
 import { ReportLoading } from '@density/reports';
@@ -15,11 +17,15 @@ import AppSidebar from '@density/ui-app-sidebar';
 import AppScrollView from '@density/ui-app-scroll-view';
 import AppBarTransparent from '../app-bar-transparent/index';
 import Report from '../report';
-import { IconMenu, IconChevronRight } from '@density/ui-icons';
+import { IconMenu, IconChevronLeft, IconChevronRight } from '@density/ui-icons';
+import Button from '@density/ui-button';
 
+import stringToBoolean from '../../helpers/string-to-boolean';
+import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
 import showDashboardSidebar from '../../actions/miscellaneous/show-dashboards-sidebar';
 import hideDashboardSidebar from '../../actions/miscellaneous/hide-dashboards-sidebar';
 import resetDashboardReportGridIdentityValue from '../../actions/miscellaneous/reset-dashboard-report-grid-identity-value';
+import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
 
 import hideModal from '../../actions/modal/hide';
 
@@ -192,10 +198,14 @@ function DashboardMainScrollViewContent({
 export function Dashboard({
   dashboards,
   selectedDashboard,
-  dashboardReportGridIdentityValue,
   activeModal,
 
+  date,
   sidebarVisible,
+  dashboardReportGridIdentityValue,
+  settings,
+
+  onDashboardChangeWeek,
   onChangeSidebarVisibility,
   onCloseModal,
 }) {
@@ -237,6 +247,40 @@ export function Dashboard({
         </AppSidebar>
         <AppPane>
           <AppBar
+            // TODO: Replace this with better report time navigation (like MixPanel)
+            rightSpan={settings && stringToBoolean(settings.dashboardWeekScrubber) ? <div style={{
+              flexGrow: 1,
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              marginBottom: -4
+            }}>
+              <div style={{width: 50}}>
+                <Button
+                  style={{backgroundColor: '#FFF'}}
+                  onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
+                >
+                  <IconChevronLeft color={colorVariables.brandPrimaryNew} />
+                </Button>
+              </div>
+              <div style={{padding: 13}}>
+                Reported on{' '}
+                <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+              </div>
+              <div style={{width: 50}}>
+                <Button
+                  style={{backgroundColor: '#FFF'}}
+                  onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                  disabled={moment(date).add(1, 'week') > moment()}
+                >
+                  <IconChevronRight
+                    color={moment(date).add(1, 'week') > moment() ? 
+                      colorVariables.gray :
+                      colorVariables.brandPrimaryNew}
+                  />
+                </Button>
+              </div>
+            </div> : null}
             leftSpan={<DashboardSidebarHideShowIcon
               sidebarVisible={sidebarVisible}
               onChangeSidebarVisibility={onChangeSidebarVisibility}
@@ -262,11 +306,17 @@ export default connect((state: any) => {
     selectedDashboard,
     activeModal: state.activeModal,
 
+    date: state.miscellaneous.dashboardDate,
     sidebarVisible: state.miscellaneous.dashboardSidebarVisible,
     dashboardReportGridIdentityValue: state.miscellaneous.dashboardReportGridIdentityValue,
+    settings: state.user.data && state.user.data.organization.settings,
   };
-}, dispatch => {
+}, (dispatch: any) => {
   return {
+    onDashboardChangeWeek(dashboard, weeks) {
+      dispatch(changeDashboardDate(weeks));
+      dispatch(routeTransitionDashboardDetail(dashboard.id));
+    },
     onChangeSidebarVisibility(visibleState) {
       if (visibleState) {
         dispatch(showDashboardSidebar());
