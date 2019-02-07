@@ -223,7 +223,11 @@ class ExploreSpaceTrends extends React.Component<any, any> {
               </div>
               <div className="explore-space-trends-item">
                 <Report
-                  report={generateHourlyBreakdownEphemeralReport(space)}
+                  report={generateHourlyBreakdownEphemeralReport(
+                    space,
+                    spaces.filters.startDate,
+                    spaces.filters.endDate,
+                  )}
                   reportData={{
                     state: hourlyBreakdown.state,
                     data: hourlyBreakdown.data,

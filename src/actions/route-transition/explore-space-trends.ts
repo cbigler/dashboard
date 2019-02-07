@@ -282,14 +282,18 @@ export function calculateUtilization(space) {
 }
 
 
-export function generateHourlyBreakdownEphemeralReport(space) {
+export function generateHourlyBreakdownEphemeralReport(space, startDate, endDate) {
   return {
     id: `rpt_${space.id}`,
     type: 'HOURLY_BREAKDOWN',
     name: 'Hourly Breakdown...',
     settings: {
       "spaceId": space.id,
-      "timeRange": "LAST_WEEK",
+      "timeRange": {
+        type: 'CUSTOM_RANGE',
+        startDate,
+        endDate,
+      },
       "includeWeekends": true,
       "hourStart": 6,
       "hourEnd": 20
@@ -299,8 +303,8 @@ export function generateHourlyBreakdownEphemeralReport(space) {
 
 export function calculateHourlyBreakdown(space) {
   return async (dispatch, getState) => {
-    const report = generateHourlyBreakdownEphemeralReport(space);
-    const { startDate } = getState().spaces.filters;
+    const { startDate, endDate } = getState().spaces.filters;
+    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate);
 
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
@@ -308,7 +312,12 @@ export function calculateHourlyBreakdown(space) {
 
     let data, errorThrown: any = false;
     try {
-      data = await REPORTS['HOURLY_BREAKDOWN'].calculations(report, { date: startDate, baseUrl, token, fast });
+      data = await REPORTS['HOURLY_BREAKDOWN'].calculations(report, {
+        date: null,
+        baseUrl,
+        token,
+        fast,
+      });
     } catch (err) {
       errorThrown = err;
     }
