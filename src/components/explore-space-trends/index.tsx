@@ -223,6 +223,17 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
+                  metric="VISITS"
+                  title="Hourly Breakdown - Visits"
+                />
+              </div>
+              <div className="explore-space-trends-item">
+                <HourlyBreakdownCard 
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
+                  metric="PEAKS"
+                  title="Hourly Breakdown - Peak Occupancy"
                 />
               </div>
               <div className="explore-space-trends-item">

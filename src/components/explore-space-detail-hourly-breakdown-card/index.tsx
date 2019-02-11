@@ -18,14 +18,22 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, any> {
+export class HourlyBreakdownCard extends React.Component<any, any> {
   render() {
     const {
       space,
       startDate,
       endDate,
-      hourlyBreakdown,
+      hourlyBreakdownVisits,
+      hourlyBreakdownPeaks,
+      metric,
+      title,
     } = this.props;
+
+    let hourlyBreakdown = hourlyBreakdownVisits;
+    if(metric == "PEAKS") {
+      hourlyBreakdown = hourlyBreakdownPeaks;
+    }
 
     let body;
     switch (true) {
@@ -46,7 +54,7 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
           <Card className="explore-space-detail-hourly-breakdown-card">
             <CardLoading indeterminate />
             <CardHeader>
-              Hourly Breakdown
+              {title}
             </CardHeader>
             <div className="explore-space-detail-hourly-breakdown-card-body-info" style={{height: 739}}>
               {body}
@@ -75,6 +83,8 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
               space,
               startDate,
               endDate,
+              metric,
+              title
             )}
             reportData={{
               state: hourlyBreakdown.state,
@@ -92,7 +102,8 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
 }
 
 export default connect((state: any) => ({
-  hourlyBreakdown: state.exploreData.calculations.hourlyBreakdown,
+  hourlyBreakdownVisits: state.exploreData.calculations.hourlyBreakdownVisits,
+  hourlyBreakdownPeaks: state.exploreData.calculations.hourlyBreakdownPeaks,
   spaces: state.spaces
 }), dispatch => ({
-}))(ExploreSpaceDetailHourlyBreakdownCard);
+}))(HourlyBreakdownCard);

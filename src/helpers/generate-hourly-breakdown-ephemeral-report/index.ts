@@ -1,10 +1,11 @@
-export default function generateHourlyBreakdownEphemeralReport(space, startDate, endDate) {
+export default function generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title) {
   return {
     id: `rpt_${space.id}`,
     type: 'HOURLY_BREAKDOWN',
-    name: 'Hourly Breakdown',
+    name: title,
     settings: {
       spaceId: space.id,
+      metric: metric,
       timeRange: {
         type: 'CUSTOM_RANGE',
         startDate,
