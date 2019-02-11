@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { IconMail, IconChevronDown } from '@density/ui-icons';
 import colorVariables from '@density/ui/variables/colors.json';
 
-export default class DashboardDispatchList extends Component<any, any> {
+export default class DashboardDispatchPopupList extends Component<any, any> {
   state = {
     visible: false,
   }
@@ -34,11 +34,25 @@ export default class DashboardDispatchList extends Component<any, any> {
             {dispatches.map(dispatch => (
               <li key={dispatch.id}>
                 {dispatch.name}
-                <button onClick={() => onEditDispatch(dispatch)}>Edit</button>
+                <button
+                  onClick={() => {
+                    this.setState({visible: false}, () => {
+                      onEditDispatch(dispatch);
+                    });
+                  }}
+                  tabIndex={visible ? 0 : -1}
+                >Edit</button>
               </li>
             ))}
           </ul>
-          <button onClick={() => onCreateDispatch()}>Create</button>
+          <button
+            onClick={() => {
+              this.setState({visible: false}, () => {
+                onCreateDispatch();
+              });
+            }}
+            tabIndex={visible ? 0 : -1}
+          >Create</button>
         </div>
       </div>
     );
