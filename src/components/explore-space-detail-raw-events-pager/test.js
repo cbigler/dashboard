@@ -89,7 +89,7 @@ describe('raw events pager', function() {
     assert.equal(component.find('PagerButtonGroup').props().disabledEnd, true);
 
     // Ensure the correct page is shown on the box
-    assert.equal(component.find('.visualization-space-detail-raw-events-pager-picker-box').props().value, '0');
+    assert.equal(component.find('.visualization-space-detail-raw-events-pager-picker-box').props().value, '');
 
     // Ensure the correct number of events are displayed
     assert.equal(component.find('.visualization-space-detail-raw-events-pager-total').text(), '0 Events...');

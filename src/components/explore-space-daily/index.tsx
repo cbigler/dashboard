@@ -14,7 +14,6 @@ import {
 } from '../../helpers/space-time-utilities/index';
 import { calculate as calculateDailyModules } from '../../actions/route-transition/explore-space-daily';
 
-import Subnav, { SubnavItem } from '../subnav/index';
 import ExploreFilterBar, { ExploreFilterBarItem } from '../explore-filter-bar/index';
 import ExploreSpaceHeader from '../explore-space-header/index';
 import FootTrafficCard from '../explore-space-detail-foot-traffic-card/index';
@@ -27,7 +26,7 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentInTimeSegmentGroupForSpace,
+  findTimeSegmentsInTimeSegmentGroupForSpace,
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 
@@ -75,7 +74,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
 
       // And, with the knowlege of the selected space, which time segment within that time segment
       // group is applicable to this space?
-      const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
+      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
         selectedTimeSegmentGroup,
         space,
       );
@@ -106,23 +105,31 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               className="explore-space-daily-time-segment-box"
               value={selectedTimeSegmentGroup.id}
               choices={spaceTimeSegmentGroupArray.map(ts => {
-                const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
+                const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
                   ts,
                   space,
                 );
-                const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
-                return {
-                  id: ts.id,
-                  label: `${ts.name} (${prettyPrintHoursMinutes(
-                    getCurrentLocalTimeAtSpace(space)
-                    .startOf('day')
-                    .add(startSeconds, 'seconds')
-                  )} - ${prettyPrintHoursMinutes(
-                    getCurrentLocalTimeAtSpace(space)
-                    .startOf('day')
-                    .add(endSeconds, 'seconds')
-                  )})`,
-                };
+                if (applicableTimeSegmentsForGroup.length === 1) {
+                  const timeSegment = applicableTimeSegmentsForGroup[0];
+                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                  return {
+                    id: ts.id,
+                    label: `${ts.name} (${prettyPrintHoursMinutes(
+                      getCurrentLocalTimeAtSpace(space)
+                        .startOf('day')
+                        .add(startSeconds, 'seconds')
+                    )} - ${prettyPrintHoursMinutes(
+                      getCurrentLocalTimeAtSpace(space)
+                        .startOf('day')
+                        .add(endSeconds, 'seconds')
+                    )})`,
+                  };
+                } else {
+                  return {
+                    id: ts.id,
+                    label: `${ts.name} (Mixed hours)`
+                  };
+                }
               })}
               width={300}
               onChange={value => onChangeTimeSegmentGroup(space, value.id)}
@@ -144,7 +151,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
                 space={space}
                 date={spaces.filters.date}
                 timeSegmentGroup={selectedTimeSegmentGroup}
-                timeSegment={applicableTimeSegment}
+                timeSegments={applicableTimeSegments}
                 chartWidth={this.state.width}
               />
             </div>
@@ -174,14 +181,17 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     onChangeSpaceFilter(key, value) {
+      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch(collectionSpacesFilter(key, value));
     },
     onChangeTimeSegmentGroup(space, value) {
       dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
+      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch<any>(calculateDailyModules(space));
     },
     onChangeDate(space, value) {
       dispatch(collectionSpacesFilter('date', value));
+      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch<any>(calculateDailyModules(space));
     },
   };

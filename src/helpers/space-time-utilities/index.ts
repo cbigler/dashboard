@@ -26,14 +26,6 @@ export function parseFromReactDates(momentInstance, space) {
   return momentInstance.tz(space.timeZone).startOf('day');
 }
 
-export function parseDayAtSpace(daystamp, space) {
-  return moment.utc(daystamp, 'YYYY-MM-DDZ').tz(space.timeZone);
-}
-
-export function formatDayAtSpace(momentInstance, space) {
-  return momentInstance.tz(space.timeZone).format('YYYY-MM-DDZ');
-}
-
 export function formatInISOTime(timestamp) {
   return timestamp.utc().toISOString();
 }

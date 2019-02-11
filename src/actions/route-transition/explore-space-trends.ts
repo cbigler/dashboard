@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { core } from '../../client';
 
 import collectionSpacesSet from '../collection/spaces/set';
@@ -29,13 +30,8 @@ import {
 
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentInTimeSegmentGroupForSpace,
-  parseStartAndEndTimesInTimeSegment,
+  findTimeSegmentsInTimeSegmentGroupForSpace,
 } from '../../helpers/time-segments/index';
-
-import spaceUtilizationPerGroup, {
-  groupCountsByDay,
-} from '../../helpers/space-utilization/index';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -137,7 +133,7 @@ export function calculateDailyMetrics(space) {
 
     // And, with the knowlege of the selected space, which time segment within that time segment
     // group is applicable to this space?
-    const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
+    const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
       selectedTimeSegmentGroup,
       space,
     );
@@ -174,9 +170,9 @@ export function calculateDailyMetrics(space) {
         metrics: data.filter(i => {
           // Remove days from the dataset that are not in the time segment
           const dayOfWeek = parseISOTimeAtSpace(i.timestamp, space).day();
-          return applicableTimeSegment.days
-            .map(i => DAY_TO_INDEX[i])
-            .indexOf(dayOfWeek) !== -1;
+          return applicableTimeSegments.reduce((acc, ts) => {
+            return [...acc, ...ts.days.map(i => DAY_TO_INDEX[i])];
+          }, []).indexOf(dayOfWeek) !== -1;
         }).map(i => ({
           timestamp: i.timestamp,
           value: (function(i, metric) {
@@ -205,8 +201,6 @@ export function calculateDailyMetrics(space) {
 }
 
 
-const ONE_HOUR_IN_SECONDS = 60 * 60;
-
 export function calculateUtilization(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('utilization', null));
@@ -221,21 +215,11 @@ export function calculateUtilization(space) {
 
     // Which time segment group was selected?
     const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
-    
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // group is applicable to this space?
-    const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
-      selectedTimeSegmentGroup,
-      space,
-    );
 
     if (!space.capacity) {
       dispatch(exploreDataCalculateDataComplete('utilization', { requiresCapacity: true }));
       return;
     }
-
-    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegment);
-    const timeSegmentDurationInSeconds = endSeconds - startSeconds;
 
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
     // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
@@ -248,15 +232,7 @@ export function calculateUtilization(space) {
         end_time: endDate,
         time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? '' : selectedTimeSegmentGroup.id,
 
-        interval: function(timeSegmentDurationInSeconds) {
-          if (timeSegmentDurationInSeconds > 4 * ONE_HOUR_IN_SECONDS) {
-            // For large graphs, fetch data at a coarser resolution.
-            return '10m';
-          } else {
-            // For small graphs, fetch data at a finer resolution.
-            return '2m';
-          }
-        }(timeSegmentDurationInSeconds),
+        interval: '10m',
 
         // Fetch with a large page size to try to minimize the number of requests that will be
         // required.
@@ -265,18 +241,74 @@ export function calculateUtilization(space) {
       });
     });
 
-    // Group into counts into buckets, one bucket for each day.
-    const groups = groupCountsByDay(counts, space);
+    // Variables for rendering the trends page
+    let utilizationsByDay: any[] = [],
+        utilizationsByTime: any[] = [],
+        averageUtilizationPercentage = 0,
+        peakUtilizationPercentage = 0,
+        peakUtilizationTimestamp: any = null;
 
-    // Calculate space utilization using this grouped data.
-    const utilizations = spaceUtilizationPerGroup(space, groups);
+    // Group utilization data for two different charts
+    counts.forEach(item => {
+
+      // Sum all values so we can get the overall average
+      averageUtilizationPercentage += item.interval.analytics.utilization || 0;
+
+      // Group by day of week
+      const dayOfWeek = parseISOTimeAtSpace(item.timestamp, space).format('dddd');
+      const dayUtilization = utilizationsByDay.find(x => x.day === dayOfWeek);
+      if (!dayUtilization) {
+        utilizationsByDay.push({
+          day: dayOfWeek,
+          data: [item.interval.analytics.utilization || 0]
+        });
+      } else {
+        dayUtilization.data.push(item.interval.analytics.utilization || 0);
+      }
+
+      // Group by time of day
+      const timeOfDay = parseISOTimeAtSpace(item.timestamp, space).format('HH:mm');
+      const timeUtilization = utilizationsByTime.find(x => x.time === timeOfDay);
+      if (!timeUtilization) {
+        utilizationsByTime.push({
+          time: timeOfDay,
+          data: [item.interval.analytics.utilization || 0]
+        });
+      } else {
+        timeUtilization.data.push(item.interval.analytics.utilization || 0);
+      }
+    });
+
+    // Average data for grouped days
+    utilizationsByDay.forEach(item => {
+      item.average = item.data.reduce((a, n) => a + n, 0) / item.data.length;
+    });
+
+    // Average data for grouped times (and save peak timestamp)
+    utilizationsByTime.forEach(item => {
+      item.average = item.data.reduce((a, n) => a + n, 0) / item.data.length;
+      if (item.average > peakUtilizationPercentage) {
+        peakUtilizationPercentage = item.average;
+        peakUtilizationTimestamp = moment.tz(item.time, 'HH:mm', space.timeZone).valueOf();
+      }
+    });
+
+    // Process overall average by dividing by length
+    averageUtilizationPercentage /= counts.length;
+
+    // Sort grouped-by-time data
+    utilizationsByTime.sort(
+      (a, b) => moment(a.time, 'HH:mm').valueOf() - moment(b.time, 'HH:mm').valueOf()
+    );
 
     dispatch(exploreDataCalculateDataComplete('utilization', {
       requiresCapacity: false,
-
-      counts,
-      groups,
-      utilizations,
+      utilizationsByDay,
+      utilizationsByTime,
+      averageUtilizationPercentage,
+      peakUtilizationPercentage,
+      peakUtilizationTimestamp,
+      counts
     }));
   };
 }
@@ -286,7 +318,7 @@ export function generateHourlyBreakdownEphemeralReport(space, startDate, endDate
   return {
     id: `rpt_${space.id}`,
     type: 'HOURLY_BREAKDOWN',
-    name: 'Hourly Breakdown...',
+    name: 'Hourly Breakdown',
     settings: {
       "spaceId": space.id,
       "timeRange": {

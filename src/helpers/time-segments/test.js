@@ -2,26 +2,11 @@ import assert from 'assert';
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
   DEFAULT_TIME_SEGMENT,
-  findTimeSegmentInTimeSegmentGroupForSpace,
+  findTimeSegmentsInTimeSegmentGroupForSpace,
   parseTimeInTimeSegmentToSeconds,
 } from './index';
 
 const TIME_SEGMENT_IN_GROUP = {
-  id: 'tsm_ingroup',
-  name: 'Whole Day',
-  start: '00:00:00',
-  end: '23:59:59',
-  days: [
-    'Sunday',
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-  ],
-};
-const TIME_SEGMENT_OUT_OF_GROUP = {
   id: 'tsm_ingroup',
   name: 'Whole Day',
   start: '00:00:00',
@@ -45,7 +30,7 @@ const TIME_SEGMENT_GROUP = {
 const SECONDS_PER_DAY = 86400;
 
 describe('time-segments', function() {
-  describe('findTimeSegmentInTimeSegmentGroupForSpace', () => {
+  describe('findTimeSegmentsInTimeSegmentGroupForSpace', () => {
     it('should find the time segment when given the group and a space that contains the given time segment', () => {
       const SPACE = {
         id: 'spc_myspace',
@@ -53,8 +38,8 @@ describe('time-segments', function() {
         timeSegmentGroups: [ TIME_SEGMENT_GROUP ],
         timeSegments: [ TIME_SEGMENT_IN_GROUP ],
       };
-      const result = findTimeSegmentInTimeSegmentGroupForSpace(TIME_SEGMENT_GROUP, SPACE);
-      assert.deepEqual(result, TIME_SEGMENT_IN_GROUP);
+      const result = findTimeSegmentsInTimeSegmentGroupForSpace(TIME_SEGMENT_GROUP, SPACE);
+      assert.deepEqual(result, [TIME_SEGMENT_IN_GROUP]);
     });
     it('should throw an error if no time segment in the space and the time segment group can be found', () => {
       const SPACE = {
@@ -64,7 +49,7 @@ describe('time-segments', function() {
         timeSegments: [],
       };
       assert.throws(() => {
-        findTimeSegmentInTimeSegmentGroupForSpace(TIME_SEGMENT_GROUP, SPACE);
+        findTimeSegmentsInTimeSegmentGroupForSpace(TIME_SEGMENT_GROUP, SPACE);
       }, new Error(`This space doesn't have an applicable time segment within the selected time segment group.`));
     });
     it('should always be able to find the default time segment in any space', () => {
@@ -74,8 +59,8 @@ describe('time-segments', function() {
         timeSegmentGroups: [],
         timeSegments: [],
       };
-      const result = findTimeSegmentInTimeSegmentGroupForSpace(DEFAULT_TIME_SEGMENT_GROUP, SPACE);
-      assert.deepEqual(result, DEFAULT_TIME_SEGMENT);
+      const result = findTimeSegmentsInTimeSegmentGroupForSpace(DEFAULT_TIME_SEGMENT_GROUP, SPACE);
+      assert.deepEqual(result, [DEFAULT_TIME_SEGMENT]);
     });
   });
   describe('parseTimeInTimeSegmentToSeconds', () => {

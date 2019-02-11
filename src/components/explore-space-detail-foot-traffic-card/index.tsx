@@ -10,6 +10,7 @@ import { IconRefresh } from '@density/ui-icons';
 import InfoPopup from '@density/ui-info-popup';
 
 import {
+  DEFAULT_TIME_SEGMENT_GROUP,
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 
@@ -33,7 +34,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
       space,
 
       date,
-      timeSegment,
+      timeSegments,
       timeSegmentGroup,
       calculatedData,
       chartWidth,
@@ -41,13 +42,24 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
       onRefresh,
     } = this.props;
 
-    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+    const localTimestamp = moment.utc(date).tz(space.timeZone).startOf('day');
+    const dayOfWeek = localTimestamp.format('dddd');
 
-    const startOfDayTime = moment.utc(date).tz(space.timeZone).startOf('day');
-    const startTime = startOfDayTime
+    // Find time segment matching this day of the week, or a default
+    let timeSegment;
+    if (timeSegments) {
+      const timeSegmentIndex = timeSegments.findIndex(x => x.days.indexOf(dayOfWeek) > -1);
+      timeSegment = timeSegments[timeSegmentIndex] || DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+    } else {
+      timeSegment = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+    }
+
+    // Get start and end times from the selected time segment
+    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+    const startTime = localTimestamp
       .clone()
       .add(startSeconds, 'seconds');
-    const endTime = startOfDayTime
+    const endTime = localTimestamp
       .clone()
       .add(endSeconds, 'seconds');
 

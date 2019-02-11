@@ -36,7 +36,7 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentInTimeSegmentGroupForSpace,
+  findTimeSegmentsInTimeSegmentGroupForSpace,
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 
@@ -110,7 +110,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
       // And, with the knowlege of the selected space, which time segment within that time segment
       // group is applicable to this space?
-      const applicableTimeSegment = findTimeSegmentInTimeSegmentGroupForSpace(
+      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
         selectedTimeSegmentGroup,
         space,
       );
@@ -124,23 +124,31 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 className="explore-space-trends-time-segment-box"
                 value={selectedTimeSegmentGroup.id}
                 choices={spaceTimeSegmentGroupArray.map(ts => {
-                  const applicableTimeSegmentForGroup = findTimeSegmentInTimeSegmentGroupForSpace(
+                  const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
                     ts,
                     space,
                   );
-                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(applicableTimeSegmentForGroup);
-                  return {
-                    id: ts.id,
-                    label: `${ts.name} (${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(startSeconds, 'seconds')
-                    )} - ${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(endSeconds, 'seconds')
-                    )})`,
-                  };
+                  if (applicableTimeSegmentsForGroup.length === 1) {
+                    const timeSegment = applicableTimeSegmentsForGroup[0];
+                    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                    return {
+                      id: ts.id,
+                      label: `${ts.name} (${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(startSeconds, 'seconds')
+                      )} - ${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(endSeconds, 'seconds')
+                      )})`,
+                    };
+                  } else {
+                    return {
+                      id: ts.id,
+                      label: `${ts.name} (Mixed hours)`
+                    };
+                  }
                 })}
                 width={300}
                 onChange={value => onChangeTimeSegmentGroup(space, value.id)}
@@ -212,12 +220,11 @@ class ExploreSpaceTrends extends React.Component<any, any> {
           <div className="explore-space-trends-container" >
             <div className="explore-space-trends" ref={r => { this.container = r; }}>
               <div className="explore-space-trends-item">
-                <UtilizationCard
+                <DailyMetricsCard
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
                   timeSegmentGroup={selectedTimeSegmentGroup}
-                  timeSegment={applicableTimeSegment}
                   chartWidth={this.state.width}
                 />
               </div>
@@ -233,14 +240,16 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                     data: hourlyBreakdown.data,
                     error: hourlyBreakdown.error,
                   }}
+                  expanded={true}
                 />
               </div>
               <div className="explore-space-trends-item">
-                <DailyMetricsCard
+                <UtilizationCard
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
                   timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegments={applicableTimeSegments}
                   chartWidth={this.state.width}
                 />
               </div>

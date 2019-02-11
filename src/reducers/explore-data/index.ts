@@ -27,8 +27,6 @@ const initialState = {
       data: {
         requiresCapacity: false,
         counts: [],
-        groups: [],
-        utilizations: [],
       },
     },
     dailyRawEvents: {
