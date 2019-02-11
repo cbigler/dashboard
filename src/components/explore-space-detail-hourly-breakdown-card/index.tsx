@@ -31,7 +31,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
     } = this.props;
 
     let hourlyBreakdown = hourlyBreakdownVisits;
-    if(metric == "PEAKS") {
+    if(metric === "PEAKS") {
       hourlyBreakdown = hourlyBreakdownPeaks;
     }
 
