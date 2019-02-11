@@ -2,9 +2,9 @@ import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import collectionSpacesSet from '../collection/spaces/set';
-import collectionSpacesSetEvents from '../collection/spaces/set-events';
 import collectionDoorwaysSet from '../collection/doorways/set';
 import collectionLinksSet from '../collection/links/set';
+import { collectionSpacesBatchSetEvents } from '../collection/spaces/set-events';
 
 import {
   getCurrentLocalTimeAtSpace,
@@ -40,12 +40,14 @@ export default function routeTransitionLiveSpaceList() {
           end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
         });
       })).then((spaceEventSets: any) => {
-        spaceEventSets.forEach((spaceEventSet, ct) => {
-          dispatch(collectionSpacesSetEvents(spaces.results[ct], spaceEventSet.results.map(i => ({
+        const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
+          acc[spaces.results[index].id] = next.results.map(i => ({ 
             countChange: i.direction,
-            timestamp: i.timestamp,
-          }))));
-        });
+            timestamp: i.timestamp
+          }));
+          return acc;
+        }, {});
+        dispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
       });
     });
   };

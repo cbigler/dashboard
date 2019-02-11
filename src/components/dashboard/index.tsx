@@ -24,7 +24,7 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
 import showDashboardSidebar from '../../actions/miscellaneous/show-dashboards-sidebar';
 import hideDashboardSidebar from '../../actions/miscellaneous/hide-dashboards-sidebar';
-import resetDashboardReportGridIdentityValue from '../../actions/miscellaneous/reset-dashboard-report-grid-identity-value';
+import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
 import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
 
 import hideModal from '../../actions/modal/hide';
@@ -97,7 +97,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
 function DashboardMainScrollViewContent({
   dashboards,
   selectedDashboard,
-  dashboardReportGridIdentityValue,
+  resizeCounter,
 }) {
   if (dashboards.error) {
     return (
@@ -169,7 +169,7 @@ function DashboardMainScrollViewContent({
                     reports={[
                       ...contents.map((report, index) => {
                         return {
-                          id: `${report.id}-${dashboardReportGridIdentityValue}`,
+                          id: `${report.id}-${resizeCounter}`,
                           report: (
                             <Report
                               report={report}
@@ -202,7 +202,7 @@ export function Dashboard({
 
   date,
   sidebarVisible,
-  dashboardReportGridIdentityValue,
+  resizeCounter,
   settings,
 
   onDashboardChangeWeek,
@@ -290,7 +290,7 @@ export function Dashboard({
             <DashboardMainScrollViewContent
               dashboards={dashboards}
               selectedDashboard={selectedDashboard}
-              dashboardReportGridIdentityValue={dashboardReportGridIdentityValue}
+              resizeCounter={resizeCounter}
             />
           </AppScrollView>
         </AppPane>
@@ -308,7 +308,7 @@ export default connect((state: any) => {
 
     date: state.miscellaneous.dashboardDate,
     sidebarVisible: state.miscellaneous.dashboardSidebarVisible,
-    dashboardReportGridIdentityValue: state.miscellaneous.dashboardReportGridIdentityValue,
+    resizeCounter: state.resizeCounter,
     settings: state.user.data && state.user.data.organization.settings,
   };
 }, (dispatch: any) => {
@@ -326,7 +326,7 @@ export default connect((state: any) => {
 
       // Once the animation has completed, force a relayout
       setTimeout(() => {
-        dispatch(resetDashboardReportGridIdentityValue());
+        dispatch(incrementResizeCounter());
       }, 300);
     },
 

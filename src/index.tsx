@@ -56,9 +56,9 @@ import routeTransitionDashboardList from './actions/route-transition/dashboard-l
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
-import collectionSpacesCountChange from './actions/collection/spaces/count-change';
-import collectionSpacesSetEvents from './actions/collection/spaces/set-events';
 import collectionSpacesSet from './actions/collection/spaces/set';
+import collectionSpacesCountChange from './actions/collection/spaces/count-change';
+import { collectionSpacesBatchSetEvents } from './actions/collection/spaces/set-events';
 
 import eventPusherStatusChange from './actions/event-pusher/status-change';
 
@@ -267,13 +267,14 @@ eventSource.on('connected', async () => {
     });
   }));
 
-  spaceEventSets.forEach((spaceEventSet, ct) => {
-    const action = collectionSpacesSetEvents(
-      spaces.results[ct],
-      spaceEventSet.results.map(i => ({ countChange: i.direction, timestamp: i.timestamp }))
-    );
-    store.dispatch(action);
-  });
+  const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
+    acc[spaces.results[index].id] = next.results.map(i => ({ 
+      countChange: i.direction,
+      timestamp: i.timestamp
+    }));
+    return acc;
+  }, {});
+  store.dispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
 });
 
 eventSource.on('space', countChangeEvent => {

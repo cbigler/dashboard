@@ -10,7 +10,10 @@ import { COLLECTION_SPACES_ERROR } from '../../actions/collection/spaces/error';
 import { COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE } from '../../actions/collection/spaces/set-default-time-range'
 
 import { COLLECTION_SPACES_COUNT_CHANGE } from '../../actions/collection/spaces/count-change';
-import { COLLECTION_SPACES_SET_EVENTS } from '../../actions/collection/spaces/set-events';
+import {
+  COLLECTION_SPACES_SET_EVENTS,
+  COLLECTION_SPACES_BATCH_SET_EVENTS,
+} from '../../actions/collection/spaces/set-events';
 
 
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../actions/route-transition/live-space-list';
@@ -228,6 +231,13 @@ export default function spaces(state=initialState, action) {
         ...state.events,
         [action.item.id]: action.events,
       },
+    };
+
+  // Map an initial set of events into a batch of spaces.
+  case COLLECTION_SPACES_BATCH_SET_EVENTS:
+    return {
+      ...state,
+      events: action.events,
     };
 
   // The count on a given space changed. Update the count in the space and add events into the

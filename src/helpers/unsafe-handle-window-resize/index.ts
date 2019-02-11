@@ -1,9 +1,9 @@
-import resetDashboardReportGridIdentityValue from '../../actions/miscellaneous/reset-dashboard-report-grid-identity-value';
+import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
 
 export default function unsafeHandleWindowResize(store) {
   let resizeTimeout: any = false;
   function resizeDispatch() {
-    store.dispatch(resetDashboardReportGridIdentityValue());
+    store.dispatch(incrementResizeCounter());
   }
   function resizeHandler() {
     clearTimeout(resizeTimeout);

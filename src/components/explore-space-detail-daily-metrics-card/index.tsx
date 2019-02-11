@@ -145,6 +145,13 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
           <CardBody className="explore-space-detail-daily-metrics-card-body">
             {calculatedData.state === 'COMPLETE' ? (() => {
               if (calculatedData.data.metrics.length > GRAPH_TYPE_TRANSITION_POINT_IN_DAYS) {
+                const data: any[] = calculatedData.data.metrics.slice().sort(
+                  (a, b) => moment.utc(a.timestamp).valueOf() - moment.utc(b.timestamp).valueOf()
+                );
+                data.push({
+                  timestamp: moment(data[data.length - 1].timestamp).add(1, 'day'),
+                  value: data[data.length - 1].value
+                })
                 // For more than two weeks of data, show the graph chart.
                 return <div className="large-timespan-chart">
                   <LineChartComponent
@@ -206,10 +213,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                         name: 'default',
                         type: dataWaterline,
                         verticalBaselineOffset: 10,
-                        data: calculatedData.data.metrics.sort(
-                          (a, b) =>
-                            moment.utc(a.timestamp).valueOf() - moment.utc(b.timestamp).valueOf()
-                        ),
+                        data,
                       },
                     ]}
                   />
