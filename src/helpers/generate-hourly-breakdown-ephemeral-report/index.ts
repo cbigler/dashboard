@@ -5,6 +5,7 @@ export default function generateHourlyBreakdownEphemeralReport(space, startDate,
     name: 'Hourly Breakdown',
     settings: {
       spaceId: space.id,
+      scrollable: true,
       timeRange: {
         type: 'CUSTOM_RANGE',
         startDate,
