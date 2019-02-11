@@ -16,9 +16,16 @@ export function IntercomDensity({
       name: user.data.fullName
     }
   }
-  return (
-    <Intercom appID="sr9uzcmq" { ...intercomUser } />
-  );
+  if (process.env.REACT_APP_INTERCOM_APP_ID) {
+    return (
+      <Intercom appID={process.env.REACT_APP_INTERCOM_APP_ID} { ...intercomUser } />
+    )
+  } else {
+    return (
+      <div></div>
+    )
+  }
+  
 }
 
 export default connect((state: any) => {

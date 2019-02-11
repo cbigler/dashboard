@@ -81,6 +81,7 @@ jobs:
             # final webapp.
             REACT_APP_MIXPANEL_TOKEN="eb87b138bbb5d556fcf53bebac24b935" \
             REACT_APP_GA_TRACKING_CODE="UA-77313135-1" \
+            REACT_APP_INTERCOM_APP_ID="sr9uzcmq" \
             REACT_APP_ENVIRONMENT="staging" \
             NODE_ENV=production \
             npm run build
@@ -112,6 +113,7 @@ jobs:
             # final webapp.
             REACT_APP_MIXPANEL_TOKEN="eb87b138bbb5d556fcf53bebac24b935" \
             REACT_APP_GA_TRACKING_CODE="UA-77313135-1" \
+            REACT_APP_INTERCOM_APP_ID="sr9uzcmq" \
             REACT_APP_ENVIRONMENT="production" \
             NODE_ENV=production \
             npm run build
