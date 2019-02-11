@@ -19,6 +19,7 @@ import AppBarTransparent from '../app-bar-transparent/index';
 import Report from '../report';
 import { IconMenu, IconChevronLeft, IconChevronRight } from '@density/ui-icons';
 import Button from '@density/ui-button';
+import DashboardDispatchList from '../dashboard-dispatch-list/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
@@ -246,46 +247,64 @@ export function Dashboard({
           </AppScrollView>
         </AppSidebar>
         <AppPane>
-          <AppBar
-            // TODO: Replace this with better report time navigation (like MixPanel)
-            rightSpan={settings && stringToBoolean(settings.dashboardWeekScrubber) ? <div style={{
-              flexGrow: 1,
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-end',
-              marginBottom: -4
-            }}>
-              <div style={{width: 50}}>
-                <Button
-                  style={{backgroundColor: '#FFF'}}
-                  onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
-                >
-                  <IconChevronLeft color={colorVariables.brandPrimaryNew} />
-                </Button>
-              </div>
-              <div style={{padding: 13}}>
-                Reported on{' '}
-                <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-              </div>
-              <div style={{width: 50}}>
-                <Button
-                  style={{backgroundColor: '#FFF'}}
-                  onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-                  disabled={moment(date).add(1, 'week') > moment()}
-                >
-                  <IconChevronRight
-                    color={moment(date).add(1, 'week') > moment() ? 
-                      colorVariables.gray :
-                      colorVariables.brandPrimaryNew}
-                  />
-                </Button>
-              </div>
-            </div> : null}
-            leftSpan={<DashboardSidebarHideShowIcon
+          <div className="dashboard-app-bar">
+            <DashboardSidebarHideShowIcon
               sidebarVisible={sidebarVisible}
               onChangeSidebarVisibility={onChangeSidebarVisibility}
-            />}
-            title={selectedDashboard ? selectedDashboard.name : ""} />
+            />
+
+						<div className="dashboard-app-bar-title">
+              {selectedDashboard ? selectedDashboard.name : ""}
+            </div>
+
+						<DashboardDispatchList
+              dispatches={[
+                {
+                  id: 1,
+                  name: 'My dispatch',
+                },
+                {
+                  id: 2,
+                  name: 'Number two',
+                },
+              ]}
+            />
+
+						{/* TODO: Replace this with better report time navigation (like MixPanel) */}
+						{settings && stringToBoolean(settings.dashboardWeekScrubber) ? <div style={{
+							flexGrow: 1,
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'flex-end',
+							marginBottom: -4
+						}}>
+							<div style={{width: 50}}>
+								<Button
+									style={{backgroundColor: '#FFF'}}
+									onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
+								>
+									<IconChevronLeft color={colorVariables.brandPrimaryNew} />
+								</Button>
+							</div>
+							<div style={{padding: 13}}>
+								Reported on{' '}
+								<strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+							</div>
+							<div style={{width: 50}}>
+								<Button
+									style={{backgroundColor: '#FFF'}}
+									onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+									disabled={moment(date).add(1, 'week') > moment()}
+								>
+									<IconChevronRight
+										color={moment(date).add(1, 'week') > moment() ? 
+											colorVariables.gray :
+											colorVariables.brandPrimaryNew}
+									/>
+								</Button>
+							</div>
+						</div> : null}
+          </div>
           <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
             <DashboardMainScrollViewContent
               dashboards={dashboards}
