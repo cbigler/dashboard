@@ -4,15 +4,15 @@ export function generateHourlyBreakdownEphemeralReport(space, startDate, endDate
     type: 'HOURLY_BREAKDOWN',
     name: 'Hourly Breakdown',
     settings: {
-      "spaceId": space.id,
-      "timeRange": {
+      spaceId: space.id,
+      timeRange: {
         type: 'CUSTOM_RANGE',
         startDate,
         endDate,
       },
-      "includeWeekends": true,
-      "hourStart": 6,
-      "hourEnd": 20
+      includeWeekends: true,
+      hourStart: 6,
+      hourEnd: 20
     },
   };
 }
