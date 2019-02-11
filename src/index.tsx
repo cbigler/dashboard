@@ -24,6 +24,7 @@ import fields from './fields';
 
 // The main app component that renders everything.
 import App from './components/app/index';
+import IntercomDensity from './components/intercom/index';
 
 // The Environment switcher, used to switch between sets of servers that should be communicated
 // with.
@@ -302,7 +303,7 @@ ReactDOM.render(
   <Provider store={store}>
     <div>
       <App />
-
+      <IntercomDensity />
       <EnvironmentSwitcher
         keys={['!', '!', '`', ' ']} // Press '!!` ' to open environment switcher.
         fields={fields}
