@@ -1,0 +1,21 @@
+// Horizontally and vertically center errors and info messages in the 24 hour card.
+.explore-space-detail-hourly-breakdown-card-body-info,
+.explore-space-detail-hourly-breakdown-card-body-error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 405px;
+  margin-left: 20px;
+  margin-right: 10px;
+
+  font-size: $font-size-base;
+  color: $gray-cinder;
+}
+// Errors should be prefixed by the error icon
+.explore-space-detail-hourly-breakdown-card-body-error-icon {
+  color: $brand-danger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+}

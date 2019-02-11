@@ -5,9 +5,7 @@ import moment from 'moment';
 
 import InputBox from '@density/ui-input-box';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
-import Report from '@density/reports';
 
 import {
   getCurrentLocalTimeAtSpace,
@@ -25,6 +23,7 @@ import UtilizationCard from '../explore-space-detail-utilization-card/index';
 import ErrorBar from '../error-bar/index';
 
 import DailyMetricsCard from '../explore-space-detail-daily-metrics-card/index';
+import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/index';
 
 import DateRangePicker from '@density/ui-date-range-picker';
 import gridVariables from '@density/ui/variables/grid.json'
@@ -86,7 +85,6 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       spaces,
       space,
       activeModal,
-      hourlyBreakdown,
       timeSegmentGroups,
       onChangeSpaceFilter,
       onChangeTimeSegmentGroup,
@@ -227,18 +225,10 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 />
               </div>
               <div className="explore-space-trends-item">
-                <Report // hourly breakdown chart, based on current start/end dates in page filter bar
-                  report={generateHourlyBreakdownEphemeralReport(
-                    space,
-                    spaces.filters.startDate,
-                    spaces.filters.endDate,
-                  )}
-                  reportData={{
-                    state: hourlyBreakdown.state,
-                    data: hourlyBreakdown.data,
-                    error: hourlyBreakdown.error,
-                  }}
-                  expanded={true}
+                <HourlyBreakdownCard 
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
                 />
               </div>
               <div className="explore-space-trends-item">
@@ -263,7 +253,6 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
 export default connect((state: any) => {
   return {
-    hourlyBreakdown: state.exploreData.calculations.hourlyBreakdown,
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
