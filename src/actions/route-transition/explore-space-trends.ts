@@ -10,6 +10,7 @@ import collectionSpacesFilter from '../collection/spaces/filter';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
+import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -310,26 +311,6 @@ export function calculateUtilization(space) {
       peakUtilizationTimestamp,
       counts
     }));
-  };
-}
-
-
-export function generateHourlyBreakdownEphemeralReport(space, startDate, endDate) {
-  return {
-    id: `rpt_${space.id}`,
-    type: 'HOURLY_BREAKDOWN',
-    name: 'Hourly Breakdown',
-    settings: {
-      "spaceId": space.id,
-      "timeRange": {
-        type: 'CUSTOM_RANGE',
-        startDate,
-        endDate,
-      },
-      "includeWeekends": true,
-      "hourStart": 6,
-      "hourEnd": 20
-    },
   };
 }
 

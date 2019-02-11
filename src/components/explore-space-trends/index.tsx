@@ -5,10 +5,8 @@ import moment from 'moment';
 
 import InputBox from '@density/ui-input-box';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-import {
-  calculate as calculateTrendsModules,
-  generateHourlyBreakdownEphemeralReport,
-} from '../../actions/route-transition/explore-space-trends';
+import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
+import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 import Report from '@density/reports';
 
 import {
