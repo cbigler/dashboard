@@ -316,6 +316,7 @@ export function calculateUtilization(space) {
 
 export function calculateHourlyBreakdown(space) {
   return async (dispatch, getState) => {
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdown', null));
     const { startDate, endDate } = getState().spaces.filters;
     const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate);
 
