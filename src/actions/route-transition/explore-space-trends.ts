@@ -99,7 +99,7 @@ export function calculate(space) {
   return dispatch => {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Peak Occupancy'));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Avg Peak Occupancy'));
     dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'Visits', 'Hourly Breakdown - Visits'));
   };
 }
