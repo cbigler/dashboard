@@ -13,7 +13,7 @@
 }
 // This element is the subtitle underneath of the main title.
 .account-setup-doorway-list-subtitle {
-  color: $brand-primary;
+  color: $brand-primary-new;
 
   margin-left: 20px;
   margin-right: 20px;
@@ -48,7 +48,7 @@
 }
 .account-setup-doorway-detail-body-header em {
   font-style: normal;
-  color: $brand-primary;
+  color: $brand-primary-new;
   margin-right: 8px; /* Needed to increase the distance between the mdash and the header */
 }
 
@@ -143,7 +143,7 @@
   font-size: $font-size-5;
   font-weight: 500;
 }
-.account-setup-doorway-detail-body-input-label-highlight { color: $brand-primary; margin-left: 10px; }
+.account-setup-doorway-detail-body-input-label-highlight { color: $brand-primary-new; margin-left: 10px; }
 .account-setup-doorway-detail-body-input-label.mounting-space { margin-top: 20px; }
 
 // And, the text boxes that the labels are above are the full width (minus a 14px padding and 2px

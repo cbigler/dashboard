@@ -10,7 +10,7 @@
   font-weight: bold;
 }
 .account-setup-doorway-detail-image-upload-header-edit {
-  color: $brand-primary;
+  color: $brand-primary-new;
   text-decoration: underline;
   cursor: pointer;
 
@@ -60,7 +60,7 @@
 
 // The second visible flex child (in the empty state) is a upload link.
 .account-setup-doorway-detail-image-upload-link {
-  color: $brand-primary;
+  color: $brand-primary-new;
   font-size: $font-size-5;
   text-decoration: underline;
 }

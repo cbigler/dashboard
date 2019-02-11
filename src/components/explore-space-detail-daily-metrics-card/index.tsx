@@ -42,6 +42,8 @@ const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
 // Above this number of days, show the expanded line chart.
 const GRAPH_TYPE_TRANSITION_POINT_IN_DAYS = 14;
 
+const CHART_HEIGHT = 350;
+
 // Given a day on the calendar and the current day, determine if the square on the calendar should
 // be grayed out or not.
 export function isOutsideRange(startISOTime, datePickerInput, day) {
@@ -230,7 +232,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                       };
                     })}
                     width={chartWidth}
-                    height={350}
+                    height={CHART_HEIGHT}
                   />
                 </div>;
               }

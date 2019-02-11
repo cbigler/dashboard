@@ -96,9 +96,8 @@
   box-sizing: border-box;
   background-color: $background;
   border-radius: $border-radius-base;
-  border: none;
   color: $foreground;
-  border: 1px solid $gray-light;
+  border: 1px solid $gray;
   position: relative;
 }
 
@@ -176,7 +175,7 @@
   }
 }
 
-@mixin make-card-well-highlight($color: $brand-primary, $font-weight: $font-weight-3) {
+@mixin make-card-well-highlight($color: $brand-primary-new, $font-weight: $font-weight-3) {
   color: $color;
   white-space: nowrap; /* don't wrap in the middle of a highlighted item */
   font-weight: $font-weight;
@@ -210,7 +209,7 @@
   border-top-right-radius: 4px;
 }
 
-@mixin make-card-loading($color: $brand-primary, $percent: 100%, $height: 2px, $indeterminate: false) {
+@mixin make-card-loading($color: $brand-primary-new, $percent: 100%, $height: 2px, $indeterminate: false) {
   width: $percent;
   height: $height;
   background-color: $color;
@@ -366,7 +365,7 @@ html {
 }
 
 a {
-  color: $brand-primary;
+  color: $brand-primary-new;
 }
 
 p {

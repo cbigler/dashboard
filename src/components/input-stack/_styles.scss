@@ -43,7 +43,7 @@ input {
 }
 
 .input-stack-item-container.input-stack-item-valid::before {
-  background-color: $brand-primary;
+  background-color: $brand-primary-new;
 }
 
 .input-stack-item-container.input-stack-item-error::before {
@@ -52,7 +52,7 @@ input {
 
 .input-stack-item-container.input-stack-item-pending-valid {
   z-index: 2;
-  border-color: $brand-primary;
+  border-color: $brand-primary-new;
 }
 
 .input-stack-item-container.input-stack-item-pending-error {

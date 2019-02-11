@@ -42,6 +42,6 @@
   text-align: center;
   font-size: $font-size-base;
 
-  &:focus { border-color: $brand-primary; }
+  &:focus { border-color: $brand-primary-new; }
   &::placeholder { color: $gray; }
 }

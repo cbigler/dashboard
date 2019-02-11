@@ -13,6 +13,7 @@ import {
   DEFAULT_TIME_SEGMENT_GROUP,
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
+import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
 import { calculateFootTraffic } from '../../actions/route-transition/explore-space-daily';
 
@@ -26,7 +27,7 @@ import {
 import { chartAsReactComponent } from '@density/charts';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
-const ONE_MINUTE_IN_MS = 60 * 1000, ONE_HOUR_IN_MS = ONE_MINUTE_IN_MS * 60;
+const CHART_HEIGHT = 350;
 
 export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any> {
   render() {
@@ -114,6 +115,14 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
         calculatedData.data.reduce((acc, i) => i.count > acc.count ? i : acc, {count: -1})
       ) : null;
 
+      const numberOfTicks = chartWidth >= 640 ? 12 : 6
+      const dayDuration = Math.abs(startTime.diff(endTime, 'seconds')) + 1;
+
+      const yAxisPoints: {value: number, hasShadow: boolean, hasRule?: boolean}[] = [];
+      if (space.capacity) {
+        yAxisPoints.push({value: space.capacity, hasShadow: false, hasRule: true});
+      }
+
       return (
         <Card className="explore-space-detail-card">
           { calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
@@ -159,16 +168,16 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
             {calculatedData.state === 'COMPLETE' && chartData.length > 0 ? <LineChartComponent
               timeZone={space.timeZone}
               svgWidth={chartWidth}
-              svgHeight={350}
+              svgHeight={CHART_HEIGHT}
 
               xAxisStart={startTime}
               xAxisEnd={endTime}
               xAxis={xAxisDailyTick({
-                timeBetweenTicksInMs: 1 * ONE_HOUR_IN_MS,
-                bottomOffset: 20,
+                // Number of milliseconds on chart divided by number of ticks
+                tickResolutionInMs: 1000 * dayDuration / numberOfTicks,
                 formatter: (n) => {
                   // "5a" or "8p"
-                  const timeFormat = moment.utc(n).tz(space.timeZone).format('hA');
+                  const timeFormat = parseISOTimeAtSpace(n, space).format('hA');
                   return timeFormat.slice(0, timeFormat.startsWith('12') ? -1 : -2).toLowerCase();
                 },
               })}
@@ -177,10 +186,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
               yAxisEnd={space.capacity !== null ?  Math.max(space.capacity, largestCount.count) : undefined}
               yAxis={yAxisMinMax({
                 leftOffset: 20,
-                points: [
-                  ...(space.capacity !== null ? [{value: space.capacity, hasShadow: true}] : []),
-                  {value: largestCount.count, hasRule: false, hasShadow: false},
-                ],
+                points: yAxisPoints,
                 showMaximumPoint: false,
               })}
 

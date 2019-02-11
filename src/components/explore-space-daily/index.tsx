@@ -34,18 +34,11 @@ class ExploreSpaceDaily extends React.Component<any, any> {
   container: any;
   state = { width: 0 }
 
-  componentDidMount() {
-    this.resizeCharts()
-    window.addEventListener('resize', this.resizeCharts);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeCharts);
-  }
-
-  resizeCharts = () => {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const width = this.container.offsetWidth - 80;
-    this.setState({width});
+    if (width !== prevState.width) {
+      this.setState({width});
+    }
   }
 
   render() {
@@ -54,6 +47,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
       space,
       timeSegmentGroups,
       activeModal,
+      resizeCounter,
       onChangeSpaceFilter,
       onChangeDate,
       onChangeTimeSegmentGroup,
@@ -177,6 +171,7 @@ export default connect((state: any) => {
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     timeSegmentGroups: state.timeSegmentGroups,
     activeModal: state.activeModal,
+    resizeCounter: state.resizeCounter,
   };
 }, dispatch => {
   return {

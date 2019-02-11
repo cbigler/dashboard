@@ -1,5 +1,6 @@
 .space-card {
   margin-bottom: 20px;
+  overflow: hidden;
 }
 .card .space-card-header {
   color: $gray-cinder;
@@ -19,7 +20,7 @@
 
 .space-card-header-count {
   margin-left: auto;
-  color: $brand-primary;
+  color: $brand-primary-new;
 }
 
 .space-card-capacity-information {
@@ -30,7 +31,7 @@
 // Add a capacity unit after the capacity number indicator above the progress bar.
 .space-card-utilization-percentage { color: $gray; }
 .space-card-utilization-percentage-label { color: $gray-cinder; }
-.space-card-utilization-percentage-label > span { color: $brand-primary; }
+.space-card-utilization-percentage-label > span { color: $brand-primary-new; }
 
 // Add a capacity percent unit after the percentage indicator directly above and right from the
 // progress bar.
@@ -50,7 +51,7 @@
 
   .progress-container, .progress-bar { height: 2px; }
   .progress-container { fill: $gray-lighter; }
-  .progress-bar { fill: $brand-primary; }
+  .progress-bar { fill: $brand-primary-new; }
 
   // The height of the progress bar should be `2px`.
   .linear-progress-chart { height: 2px; }
