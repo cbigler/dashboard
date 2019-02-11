@@ -23,6 +23,7 @@ import UtilizationCard from '../explore-space-detail-utilization-card/index';
 import ErrorBar from '../error-bar/index';
 
 import DailyMetricsCard from '../explore-space-detail-daily-metrics-card/index';
+import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/index';
 
 import DateRangePicker from '@density/ui-date-range-picker';
 import gridVariables from '@density/ui/variables/grid.json'
@@ -215,6 +216,13 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   endDate={spaces.filters.endDate}
                   timeSegmentGroup={selectedTimeSegmentGroup}
                   chartWidth={this.state.width}
+                />
+              </div>
+              <div className="explore-space-trends-item">
+                <HourlyBreakdownCard 
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
                 />
               </div>
               <div className="explore-space-trends-item">
