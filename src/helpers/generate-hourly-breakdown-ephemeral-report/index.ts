@@ -1,4 +1,4 @@
-export function generateHourlyBreakdownEphemeralReport(space, startDate, endDate) {
+export default function generateHourlyBreakdownEphemeralReport(space, startDate, endDate) {
   return {
     id: `rpt_${space.id}`,
     type: 'HOURLY_BREAKDOWN',

@@ -227,7 +227,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 />
               </div>
               <div className="explore-space-trends-item">
-                <Report
+                <Report // hourly breakdown chart, based on current start/end dates in page filter bar
                   report={generateHourlyBreakdownEphemeralReport(
                     space,
                     spaces.filters.startDate,
