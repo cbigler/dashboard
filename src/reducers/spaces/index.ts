@@ -165,7 +165,7 @@ export default function spaces(state=initialState, action) {
     return {
       ...state, 
       error: null, 
-      selected: currentSelectedSpace,
+      selected: currentSelectedSpace.id,
       filters: {
         ...state.filters,
         timeSegmentGroupId: newTimeSegmentGroupId
