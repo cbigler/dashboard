@@ -77,6 +77,10 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
           </Card>;
 
       case hourlyBreakdown.state === 'COMPLETE':
+
+        // Force this one to be scrollable
+        hourlyBreakdown.data.scrollable = true;
+
         return (
           <Report
             report={generateHourlyBreakdownEphemeralReport(

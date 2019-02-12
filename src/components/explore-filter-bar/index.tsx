@@ -8,29 +8,29 @@ export default class ExploreFilterBar extends Component {
   tracker: any;
   filterBar: any;
 
-  state = {
-    isFixed: false,
-  }
+  // state = {
+  //   isFixed: false,
+  // }
 
-  componentDidMount() {
-    window.addEventListener('scroll', this.onScroll);
-  }
-  componentWillUnmount() {
-    window.removeEventListener('scroll', this.onScroll);
-  }
+  // componentDidMount() {
+  //   window.addEventListener('scroll', this.onScroll);
+  // }
+  // componentWillUnmount() {
+  //   window.removeEventListener('scroll', this.onScroll);
+  // }
 
-  onScroll = () => {
-    const position = this.tracker.getBoundingClientRect();
-    const breakPoint = gridVariables.screenSmMin > window.innerWidth ? navbarHeight : 0;
-    const isFixed = position.y < breakPoint;
-    if (this.state.isFixed !== isFixed) {
-      this.setState({isFixed});
-    }
-  }
+  // onScroll = () => {
+  //   const position = this.tracker.getBoundingClientRect();
+  //   const breakPoint = gridVariables.screenSmMin > window.innerWidth ? navbarHeight : 0;
+  //   const isFixed = position.y < breakPoint;
+  //   if (this.state.isFixed !== isFixed) {
+  //     this.setState({isFixed});
+  //   }
+  // }
 
   render() {
     const { children } = this.props;
-    const { isFixed } = this.state;
+    const { isFixed } = { isFixed: false }; //this.state;
 
 
     const bar = (
