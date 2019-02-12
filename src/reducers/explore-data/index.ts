@@ -11,7 +11,10 @@ const initialModuleState = {
 
 const initialState = {
   calculations: {
-    hourlyBreakdown: {
+    hourlyBreakdownVisits: {
+      ...initialModuleState,
+    },
+    hourlyBreakdownPeaks: {
       ...initialModuleState,
     },
     spaceList: {

@@ -42,7 +42,8 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
     dispatch(exploreDataCalculateDataLoading('utilization', null));
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdown', null));
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdownVisits', null));
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdowPeaks', null));
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
@@ -98,7 +99,8 @@ export function calculate(space) {
   return dispatch => {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
-    dispatch(calculateHourlyBreakdown(space));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Average Peak Occupancy'));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits'));
   };
 }
 
@@ -314,11 +316,11 @@ export function calculateUtilization(space) {
   };
 }
 
-export function calculateHourlyBreakdown(space) {
+export function calculateHourlyBreakdown(space, reportName, metric, title) {
   return async (dispatch, getState) => {
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdown', null));
+    dispatch(exploreDataCalculateDataLoading(reportName, null));
     const { startDate, endDate } = getState().spaces.filters;
-    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate);
+    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title);
 
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
@@ -339,9 +341,9 @@ export function calculateHourlyBreakdown(space) {
     if (errorThrown) {
       // Log the error so a developer can see what whent wrong.
       console.error(errorThrown); // DON'T REMOVE ME!
-      dispatch(exploreDataCalculateDataError('hourlyBreakdown', errorThrown));
+      dispatch(exploreDataCalculateDataError(reportName, errorThrown));
     } else {
-      dispatch(exploreDataCalculateDataComplete('hourlyBreakdown', data));
+      dispatch(exploreDataCalculateDataComplete(reportName, data));
     }   
   }
 }
