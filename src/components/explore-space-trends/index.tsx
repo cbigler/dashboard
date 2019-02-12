@@ -225,6 +225,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   endDate={spaces.filters.endDate}
                   metric="VISITS"
                   title="Hourly Breakdown - Visits"
+                  aggregation="NONE"
                 />
               </div>
               <div className="explore-space-trends-item">
@@ -234,6 +235,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   endDate={spaces.filters.endDate}
                   metric="PEAKS"
                   title="Hourly Breakdown - Average Peak Occupancy"
+                  aggregation="AVERAGE"
                 />
               </div>
               <div className="explore-space-trends-item">
