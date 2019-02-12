@@ -28,6 +28,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
       hourlyBreakdownPeaks,
       metric,
       title,
+      aggregation,
     } = this.props;
 
     let hourlyBreakdown = hourlyBreakdownVisits;
@@ -88,7 +89,8 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
               startDate,
               endDate,
               metric,
-              title
+              title,
+              aggregation
             )}
             reportData={{
               state: hourlyBreakdown.state,

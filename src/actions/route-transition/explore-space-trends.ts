@@ -99,8 +99,8 @@ export function calculate(space) {
   return dispatch => {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Average Peak Occupancy'));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits'));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Average Peak Occupancy', "AVERAGE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits', "NONE"));
   };
 }
 
@@ -316,11 +316,11 @@ export function calculateUtilization(space) {
   };
 }
 
-export function calculateHourlyBreakdown(space, reportName, metric, title) {
+export function calculateHourlyBreakdown(space, reportName, metric, title, aggregation) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading(reportName, null));
     const { startDate, endDate } = getState().spaces.filters;
-    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title);
+    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title, aggregation);
 
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
