@@ -18,7 +18,6 @@ const RealTimeCountChart = autoRefreshHoc({
 export function LiveSpaceDetail({
   space,
   events,
-
   spacesLoading,
   spacesError,
 }) {
