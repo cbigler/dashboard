@@ -2,6 +2,7 @@ node_modules/
 build/
 .DS_Store
 
+.python-version
 src/built-css
 npm-debug.log
 .*.sw*
