@@ -227,7 +227,7 @@ export function Dashboard({
       {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
         <DashboardDispatchManagementModal
           visible={activeModal.visible}
-          dispatchSchedule={activeModal.data.dispatch}
+          initialDispatchSchedule={activeModal.data.dispatch}
           onCloseModal={onCloseModal}
         />
       ) : null}
@@ -272,10 +272,18 @@ export function Dashboard({
                 {
                   id: 1,
                   name: 'My dispatch',
+                  owner: {
+                    id: 'usr_xxx',
+                    fullName: 'John Smith',
+                  },
                 },
                 {
                   id: 2,
                   name: 'Number two',
+                  owner: {
+                    id: 'usr_xxx',
+                    fullName: 'John Smith',
+                  },
                 },
               ]}
               onEditDispatch={dispatch => {

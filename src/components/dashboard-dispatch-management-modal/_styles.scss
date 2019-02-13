@@ -75,12 +75,10 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   height: calc(100% - (2 * (#{$dashboard-dispatch-management-modal-app-bar-height} + 1px /* border*/)));
 }
 .dashboard-dispatch-management-modal-split.left {
-  flex-grow: 20; /* FIXME: what's going on with these flex values? Shouldn't they be smaller? */
-  flex-shrink: 20;
+  width: 43%;
 }
 .dashboard-dispatch-management-modal-split.right {
-  flex-grow: 5;
-  flex-shrink: 5;
+  width: 57%;
   background-color: $gray-lightest;
 }
 
@@ -97,6 +95,31 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   background-color: $gray-lightest;
 }
 
+
+
+.dispatch-management-form { padding: 24px; }
+.dispatch-management-form-group { margin-bottom: 32px; }
+.dispatch-management-form-group label {
+  display: block;
+  margin-bottom: 8px;
+}
+.dispatch-management-form-group-container {
+  display: flex;
+  align-items: center;
+}
+.dispatch-management-form-group-day-list {
+  display: flex;
+  margin-left: 16px;
+}
+.dispatch-management-form-group-day-item {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.dispatch-management-form-group-day-status {
+  margin-left: 16px;
+  color: $gray-darker;
+  font-style: italic;
+}
 
 
 
