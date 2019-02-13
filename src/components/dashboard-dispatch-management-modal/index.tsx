@@ -3,80 +3,55 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { IconSearch } from '@density/ui-icons';
 
-type DashboardDispatchManagementModalState = {
-  outerVisibility: string | undefined,
-};
-type DashboardDispatchManagementModalProps = {
-  visible: boolean,
-  dispatchSchedule: any,
-  onCloseModal: any,
-};
-
-export default class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
-  state = {
-    outerVisibility: 'hidden',
-  }
-  timeout: any;
-
-  componentDidMount() {
-    this.timeout = window.setTimeout(() => {
-      this.setState({outerVisibility: undefined});
-    }, 1000);
-  }
-  componentWillUnmount() {
-    window.clearTimeout(this.timeout);
-  }
-
-  render() {
-    const { dispatchSchedule, visible, onCloseModal } = this.props;
-    return ReactDOM.createPortal(
-      (
-        <div
-          className={classnames('dashboard-dispatch-management-modal', {visible})}
-          style={{visibility: this.state.outerVisibility} as any}
-        >
-          <div className="dashboard-dispatch-management-modal-inner">
-            <div className="dashboard-dispatch-management-modal-header-app-bar">
-              {dispatchSchedule ? dispatchSchedule.name : 'New Dispatch'}
+export default function  DashboardDispatchManagementModal({
+  visible,
+  dispatchSchedule,
+  onCloseModal,
+}) {
+  return ReactDOM.createPortal(
+    (
+      <div className={classnames('dashboard-dispatch-management-modal', {visible})}>
+        <div className="dashboard-dispatch-management-modal-inner">
+          <div className="dashboard-dispatch-management-modal-header-app-bar">
+            {dispatchSchedule ? dispatchSchedule.name : 'New Dispatch'}
+          </div>
+          <div className="dashboard-dispatch-management-modal-split-container">
+            <div className="dashboard-dispatch-management-modal-split left">
+              Stuff goes here
+              <pre>{JSON.stringify(dispatchSchedule)}</pre>
             </div>
-            <div className="dashboard-dispatch-management-modal-split-container">
-              <div className="dashboard-dispatch-management-modal-split left">
-                Stuff goes here
-                <pre>{JSON.stringify(dispatchSchedule)}</pre>
-              </div>
-              <div className="dashboard-dispatch-management-modal-split right">
-                <DispatchManagementRecipientList
-                  owner={{
+            <div className="dashboard-dispatch-management-modal-split right">
+              <DispatchManagementRecipientList
+                owner={{
+                  id: 1,
+                  fullName: 'Ryan Gaus',
+                }}
+                recipients={[
+                  {
                     id: 1,
                     fullName: 'Ryan Gaus',
-                  }}
-                  recipients={[
-                    {
-                      id: 1,
-                      fullName: 'Ryan Gaus',
-                    },
-                    {
-                      id: 2,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 3,
-                      fullName: 'Gus Cost',
-                    },
-                  ]}
-                />
-              </div>
-            </div>
-            <div className="dashboard-dispatch-management-modal-footer-app-bar">
-              <span onClick={onCloseModal}>Cancel</span>
-              <button>Save Dispatch</button>
+                  },
+                  {
+                    id: 2,
+                    fullName: 'Robery Grazioli',
+                  },
+                  {
+                    id: 3,
+                    fullName: 'Gus Cost',
+                  },
+                ]}
+              />
             </div>
           </div>
+          <div className="dashboard-dispatch-management-modal-footer-app-bar">
+            <span onClick={onCloseModal}>Cancel</span>
+            <button>Save Dispatch</button>
+          </div>
         </div>
-      ),
-      document.body,
-    );
-  }
+      </div>
+    ),
+    document.body,
+  );
 }
 
 function DispatchManagementRecipientList({
@@ -109,7 +84,13 @@ function DispatchManagementRecipientList({
 function DispatchManagementRecipientIcon({user}) {
   return (
     <div className="dispatch-management-recipient-icon">
-      {user.fullName.split(' ').map(word => word[0].toUpperCase()).join('')}
+      {
+        user.fullName
+        .split(' ')
+        .filter(word => word.length > 0)
+        .map(word => word[0].toUpperCase())
+        .join('')
+      }
     </div>
   );
 }
@@ -128,6 +109,7 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
   input: React.RefObject<HTMLInputElement> = React.createRef();
 
   render() {
+    const { value, onChange } = this.props;
     const { focused } = this.state;
     return (
       <div
@@ -142,10 +124,11 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
         <input
           type="text"
           placeholder="Search through 28 accounts"
-          value=""
+          value={value}
           ref={this.input}
           onFocus={() => this.setState({focused: true})}
           onBlur={() => this.setState({focused: false})}
+          onChange={onChange}
         />
       </div>
     );

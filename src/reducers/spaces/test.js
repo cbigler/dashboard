@@ -134,27 +134,4 @@ describe('spaces', function() {
     // exists.
     assert.equal(resultb.filters.parent, null);
   });
-
-  describe('clearing errors on different actions', function() {
-    it(`should clear an error when modals open`, function() {
-      const initialState = spaces(undefined, {});
-      const errorState = spaces(initialState, collectionSpacesError('My error'));
-
-      // Show the modal
-      const showModalAttemptState = spaces(errorState, showModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(showModalAttemptState, {...initialState, error: null, loading: false});
-    });
-    it(`should clear an error when modals close`, function() {
-      const initialState = spaces(undefined, {});
-      const errorState = spaces(initialState, collectionSpacesError('My error'));
-
-      // Hide the modal
-      const hideModalAttemptState = spaces(errorState, hideModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(hideModalAttemptState, {...initialState, error: null, loading: false});
-    });
-  });
 });

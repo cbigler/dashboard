@@ -118,28 +118,4 @@ describe('links', function() {
       ],
     });
   });
-
-
-  describe('clearing errors on different actions', function() {
-    it(`should clear an error when modals open`, function() {
-      const initialState = links(undefined, {});
-      const errorState = links(initialState, collectionLinksError('My error'));
-
-      // Show the modal
-      const showModalAttemptState = links(errorState, showModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(showModalAttemptState, {...initialState, error: null});
-    });
-    it(`should clear an error when modals close`, function() {
-      const initialState = links(undefined, {});
-      const errorState = links(initialState, collectionLinksError('My error'));
-
-      // Hide the modal
-      const hideModalAttemptState = links(errorState, hideModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(hideModalAttemptState, {...initialState, error: null});
-    });
-  });
 });

@@ -116,28 +116,4 @@ describe('doorways', function() {
     // Initial state should then have error: null
     assert.deepEqual(state, {...initialState, error: null, loading: true});
   });
-
-
-  describe('clearing errors on different actions', function() {
-    it(`should clear an error when modals open`, function() {
-      const initialState = doorways(undefined, {});
-      const errorState = doorways(initialState, collectionDoorwaysError('My error'));
-
-      // Show the modal
-      const showModalAttemptState = doorways(errorState, showModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(showModalAttemptState, {...initialState, error: null, loading: false});
-    });
-    it(`should clear an error when modals close`, function() {
-      const initialState = doorways(undefined, {});
-      const errorState = doorways(initialState, collectionDoorwaysError('My error'));
-
-      // Hide the modal
-      const hideModalAttemptState = doorways(errorState, hideModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(hideModalAttemptState, {...initialState, error: null, loading: false});
-    });
-  });
 });

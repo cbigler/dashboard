@@ -64,7 +64,7 @@ export class Account extends React.Component<any, any> {
           {/* Render any errors from the server */}
           <ErrorBar message={this.state.error} />
 
-          {this.props.activeModal.name === 'account-password-reset' ? <div className="account-password-reset-toast">
+          {this.props.activeModal.name === 'account-password-reset' && this.props.activeModal.visible ? <div className="account-password-reset-toast">
             <Toast
               type="success"
               icon={<span className="account-password-reset-icon">&#xe908;</span>}
@@ -258,7 +258,7 @@ export default connect((state: any) => {
   return {
     onSubmitPassword(currentPassword, password) {
       return dispatch<any>(userResetPassword(currentPassword, password)).then(() => {
-        dispatch(showModal('account-password-reset'));
+        dispatch<any>(showModal('account-password-reset'));
       });
     },
     onSubmitUserUpdate(fullName, nickname, marketingConsent) {

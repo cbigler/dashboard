@@ -93,7 +93,7 @@ describe('Webhook list page', function() {
     assert.notEqual(newWebhook, undefined);
 
     // The modal should no longer be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when creating a new webhook fails', async function() {
     // Mount the connected version of the component.
@@ -191,7 +191,7 @@ describe('Webhook list page', function() {
     assert.notEqual(newWebhook, undefined);
 
     // The modal should not be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when updating a webhook fails', async function() {
     // Mount the connected version of the component.
@@ -282,7 +282,7 @@ describe('Webhook list page', function() {
     assert.equal(store.getState().webhooks.data.length, 0);
 
     // The modal should not be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when destroying a webhook fails', async function() {
     // Mount the connected version of the component.

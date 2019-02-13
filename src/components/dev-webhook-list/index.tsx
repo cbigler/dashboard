@@ -35,7 +35,7 @@ export function WebhookList({
   onCloseModal,
 }) {
   const modals = <div>
-    {activeModal.name === 'webhook-create' ? <WebhookCreateModal
+    {activeModal.name === 'webhook-create' && activeModal.visible ? <WebhookCreateModal
       error={webhooks.error}
       loading={webhooks.loading}
 
@@ -43,7 +43,7 @@ export function WebhookList({
       onDismiss={onCloseModal}
     /> : null}
 
-    {activeModal.name === 'webhook-update' ? <WebhookUpdateModal
+    {activeModal.name === 'webhook-update' && activeModal.visible ? <WebhookUpdateModal
       initialWebhook={activeModal.data.webhook}
       error={webhooks.error}
       loading={webhooks.loading}
@@ -76,7 +76,7 @@ export function WebhookList({
     {subnav}
 
     {/* Render any errors for the page */}
-    <ErrorBar message={webhooks.error} showRefresh modalOpen={Boolean(activeModal.name)} />
+    <ErrorBar message={webhooks.error} showRefresh modalOpen={activeModal.visible} />
 
     <div className="webhook-container">
       <div className="webhook-list-header">
@@ -143,17 +143,23 @@ export default connect((state: any) => {
   return {
     onCreateWebhook(webhook) {
       dispatch<any>(collectionWebhooksCreate(webhook)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
     onUpdateWebhook(webhook) {
       dispatch<any>(collectionWebhooksUpdate(webhook)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
     onDestroyWebhook(webhook) {
       dispatch<any>(collectionWebhooksDestroy(webhook)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
     onFilterWebhookList(value) {
@@ -161,10 +167,10 @@ export default connect((state: any) => {
     },
 
     onOpenModal(name, data) {
-      dispatch(showModal(name, data));
+      dispatch<any>(showModal(name, data));
     },
     onCloseModal() {
-      dispatch(hideModal());
+      dispatch<any>(hideModal());
     },
   };
 })(WebhookList);

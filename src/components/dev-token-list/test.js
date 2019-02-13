@@ -92,7 +92,7 @@ describe('Token list page', function() {
     assert.notEqual(newToken, undefined);
 
     // The modal should no longer be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when creating a token fails', async function() {
     // Mount the connected version of the component.
@@ -189,7 +189,7 @@ describe('Token list page', function() {
     assert.notEqual(newToken, undefined);
 
     // The modal should not longer be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when updating an existing token fails', async function() {
     // Mount the connected version of the component, with a token.
@@ -282,7 +282,7 @@ describe('Token list page', function() {
     assert.equal(store.getState().tokens.data.length, 0);
 
     // The modal should not be visible.
-    assert.equal(store.getState().activeModal.name, null);
+    assert.equal(store.getState().activeModal.visible, false);
   });
   it('should display an error when destroying an existing token fails', async function() {
     // Mount the connected version of the component, with a token.

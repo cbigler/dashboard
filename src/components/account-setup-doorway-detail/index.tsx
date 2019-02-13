@@ -537,7 +537,7 @@ export default connect((state: any) => {
     },
 
     openDoorwaySavedModal() {
-      dispatch(showModal('unit-setup-added-doorway'));
+      dispatch<any>(showModal('unit-setup-added-doorway'));
     },
   };
 })(function AccountSetupDoorwayDetailWrapper(props: any) {

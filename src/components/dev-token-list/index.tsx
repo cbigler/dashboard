@@ -35,14 +35,14 @@ export function TokenList({
   onFilterTokenList,
 }) {
   const modals = <div>
-    {activeModal.name === 'token-create' ? <TokenCreateModal
+    {activeModal.name === 'token-create' && activeModal.visible ? <TokenCreateModal
       loading={tokens.loading}
       error={tokens.error}
 
       onSubmit={onCreateToken}
       onDismiss={onCloseModal}
     /> : null}
-    {activeModal.name === 'token-update' ? <TokenUpdateModal
+    {activeModal.name === 'token-update' && activeModal.visible ? <TokenUpdateModal
       initialToken={activeModal.data.token}
       loading={tokens.loading}
       error={tokens.error}
@@ -74,7 +74,7 @@ export function TokenList({
     {subnav}
 
     {/* Show errors in the tokens collection */}
-    <ErrorBar message={tokens.error} showRefresh modalOpen={Boolean(activeModal.name)} />
+    <ErrorBar message={tokens.error} showRefresh modalOpen={activeModal.visible} />
 
     <div className="token-list-container">
       <div className="token-list-header">
@@ -137,25 +137,31 @@ export default connect((state: any) => {
   return {
     onCreateToken(token) {
       dispatch<any>(collectionTokensCreate(token)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
     onUpdateToken(token) {
       dispatch<any>(collectionTokensUpdate(token)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
     onDestroyToken(token) {
       dispatch<any>(collectionTokensDestroy(token)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
 
     onOpenModal(name, data) {
-      dispatch(showModal(name, data));
+      dispatch<any>(showModal(name, data));
     },
     onCloseModal() {
-      dispatch(hideModal());
+      dispatch<any>(hideModal());
     },
     onFilterTokenList(value) {
       dispatch(collectionTokensFilter('search', value));

@@ -215,19 +215,22 @@ export function Dashboard({
   return (
     <Fragment>
       {/* If an expanded report modal is visible, then render it above the view */}
-      <DashboardExpandedReportModal
-        visible={activeModal.name === 'MODAL_REPORT_EXPANDED'}
-        report={activeModal.data.report}
-        reportData={activeModal.name === 'MODAL_REPORT_EXPANDED' ?
-          dashboards.calculatedReportData[activeModal.data.report.id] : null}
-        onCloseModal={onCloseModal}
-      />
+      {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
+        <DashboardExpandedReportModal
+          visible={activeModal.visible}
+          report={activeModal.data.report}
+          reportData={dashboards.calculatedReportData[activeModal.data.report.id]}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
-      <DashboardDispatchManagementModal
-        visible={activeModal.name === 'MODAL_DISPATCH_MANAGEMENT'}
-        dispatchSchedule={activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? activeModal.data.dispatch : null}
-        onCloseModal={onCloseModal}
-      />
+      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
+        <DashboardDispatchManagementModal
+          visible={activeModal.visible}
+          dispatchSchedule={activeModal.data.dispatch}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
       {/* Main application */}
       <AppFrame>

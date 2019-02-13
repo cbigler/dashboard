@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import hideModal from '../../actions/modal/hide';
@@ -49,7 +49,7 @@ export function AccountSetupDoorwayList({
       detail="Please provide more information about your doorways."
     />
 
-    {activeModal.name === 'unit-setup-added-doorway' ? <div className="account-setup-doorway-list-success-toast">
+    {activeModal.name === 'unit-setup-added-doorway' && activeModal.visible ? <div className="account-setup-doorway-list-success-toast">
       <Toast
         type="success"
         icon={<span className="account-setup-doorway-list-success-toast-icon">&#xe908;</span>}
@@ -141,7 +141,7 @@ export default connect((state: any) => {
       window.location.href = '#/onboarding/doorways/new';
     },
     onHideSuccessToast() {
-      dispatch(hideModal());
+      dispatch<any>(hideModal());
     },
   };
 })(AccountSetupDoorwayList);
