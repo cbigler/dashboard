@@ -139,3 +139,17 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   flex-grow: 1;
   flex-shrink: 1;
 }
+
+
+.dispatch-management-recipient-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: $gray-darker;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 11px;
+}

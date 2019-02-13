@@ -86,10 +86,21 @@ function DispatchManagementRecipientList({
       <div className="dashboard-management-recipient-list">
         <ul>
         {recipients.map(recipient => (
-          <li key={recipient.id}>{recipient.fullName}</li>
+          <li key={recipient.id}>
+            <DispatchManagementRecipientIcon user={recipient} />
+            {recipient.fullName}
+          </li>
         ))}
         </ul>
       </div>
+    </div>
+  );
+}
+
+function DispatchManagementRecipientIcon({user}) {
+  return (
+    <div className="dispatch-management-recipient-icon">
+      {user.fullName.split(' ').map(word => word[0].toUpperCase()).join('')}
     </div>
   );
 }
