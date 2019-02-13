@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
-import gridVariables from '@density/ui/variables/grid.json';
-import { navbarHeight } from '@density/ui-navbar/variables.json';
-
 export default class ExploreFilterBar extends Component {
   tracker: any;
   filterBar: any;
