@@ -3,7 +3,16 @@ import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { IconSearch } from '@density/ui-icons';
 
-export default class DashboardDispatchManagementModal extends Component<any, any> {
+type DashboardDispatchManagementModalState = {
+  outerVisibility: string | undefined,
+};
+type DashboardDispatchManagementModalProps = {
+  visible: boolean,
+  dispatchSchedule: any,
+  onCloseModal: any,
+};
+
+export default class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
   state = {
     outerVisibility: 'hidden',
   }

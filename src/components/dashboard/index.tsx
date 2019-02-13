@@ -225,7 +225,7 @@ export function Dashboard({
 
       <DashboardDispatchManagementModal
         visible={activeModal.name === 'MODAL_DISPATCH_MANAGEMENT'}
-        dispatch={activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? activeModal.data.dispatch : null}
+        dispatchSchedule={activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? activeModal.data.dispatch : null}
         onCloseModal={onCloseModal}
       />
 
