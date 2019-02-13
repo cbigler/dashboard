@@ -84,264 +84,55 @@
   }
 }
 
-// Components:
-
-// Navbar
-@import "../node_modules/@density/ui-navbar/variables.json";
-
-// Card
-// @import "../node_modules/@density/ui-card/variables.json";
-// @import "../node_modules/@density/ui-card/dist/sass";
-@mixin make-card($background: #fff, $foreground: $gray-darker, $padding-horizontal: 20px, $padding-vertical: 20px) {
-  box-sizing: border-box;
-  background-color: $background;
-  border-radius: $border-radius-base;
-  color: $foreground;
-  border: 1px solid $gray-light;
+// TODO: @density/ui Modal styles are needed inline here
+@mixin make-modal($width: 460px) {
   position: relative;
-}
+  margin: 20px auto;
 
-@mixin make-card-header(
-  $color: $gray-darkest,
-  $padding-horizontal: 20px,
-  $padding-vertical: 30px,
-  $font-size: $font-size-3,
-  $font-weight: $font-weight-3
-) {
-  font-family: $font-base;
-  color: $color;
-  font-size: $font-size;
-  font-weight: $font-weight;
-
-  padding: $padding-vertical $padding-horizontal;
-  transform: translate(0px, 2px); /* font baseline hack for sailec */
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: $font-size;
-}
-
-@mixin make-card-title {
-  // Add ellipsis if title is too wide for its container
-  display: inline-block;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@mixin make-card-body(
-  $font-size: $font-size-base,
-  $font-weight: $font-weight-base,
-  $padding-vertical: 20px,
-  $padding-horizontal: 20px
-) {
-  font-family: $font-base;
-  font-size: $font-size;
-
-  padding-top: $padding-vertical;
-  padding-left: $padding-horizontal;
-  padding-right: $padding-horizontal;
-  padding-bottom: 20px;
-}
-
-@mixin make-card-well(
-  $font-size: $font-size-3,
-  $font-weight: $font-weight-3,
-  $color: $gray-cinder,
-  $background: $gray-lightest
-) {
-  font-family: $font-base;
-  font-size: $font-size;
-  font-weight: $font-weight;
-  text-align: center;
-  line-height: 28px;
-  color: $color;
-
-  background-color: $background;
-  padding-top: 80px;
-  padding-bottom: 80px;
-  padding-left: 20px;
-  padding-right: 20px;
-
-  &:first-child, .card-loading-wrapper:first-child + & {
-    border-top-left-radius: $border-radius-base;
-    border-top-right-radius: $border-radius-base;
-  }
-  &:last-child {
-    border-bottom-left-radius: $border-radius-base;
-    border-bottom-right-radius: $border-radius-base;
-  }
-}
-
-@mixin make-card-well-highlight($color: $brand-primary-new, $font-weight: $font-weight-3) {
-  color: $color;
-  white-space: nowrap; /* don't wrap in the middle of a highlighted item */
-  font-weight: $font-weight;
-}
-
-
-@keyframes card-loading-indeterminate-animation {
-  0% {
-    margin-left: 0;
-    width: 0;
-    animation-timing-function: ease-in;
-  }
-  50% {
-    margin-left: 0;
+  // Ensure that the width of the modal is either $width or 100%.
+  width: $width;
+  @media (max-width: $width) {
     width: 100%;
+    height: 100vh;
   }
-  100% {
-    margin-left: 100%;
-    width: 0;
-    animation-timing-function: ease-out;
+
+  & > :last-child {
+    width: 100%;
+    height: 100%;
   }
 }
-@mixin make-card-loading-wrapper($height: 2px) {
-  height: $height;
-  width: 100%;
-  overflow-x: hidden;
+
+@mixin make-modal-backdrop($background: $gray-darker) {
+  background-color: rgba(0, 0, 0, 0.5);
+
+  z-index: 1000;
+
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  overflow-y: auto;
+}
+
+@mixin make-modal-close($color: $gray, $spacing: 15px) {
   position: absolute;
-  left: 0;
-  right: 0;
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
+  top: $spacing;
+  right: $spacing;
 
-@mixin make-card-loading($color: $brand-primary-new, $percent: 100%, $height: 2px, $indeterminate: false) {
-  width: $percent;
-  height: $height;
-  background-color: $color;
-  margin-bottom: -1 * $height;
-
-  @if $indeterminate {
-    // Since the state is indeterminate, the bar has a fixed width.
-    width: 100%;
-    animation-name: card-loading-indeterminate-animation;
-    animation-duration: 1s;
-    animation-iteration-count: infinite;
-  } @else {
-    // As the bar grows, get longer.
-    transition: all 250ms linear;
-  }
-}
-
-@mixin make-card-table(
-  $background: #fff,
-  $foreground: $gray-cinder,
-  $padding-vertical: 20px,
-) {
-  background-color: $background;
-  color: $foreground;
   font-family: $font-base;
-  font-size: 14px;
+  font-size: $font-size-base;
+  font-weight: bold;
 
-  // When the user scrolls to the edge of the card table, show a shadow to indicate that they can
-  // scroll either to the left, right, or in both directions.
-  &-scroll-left { box-shadow: inset 30px 0 20px -30px rgba(0, 0, 0, 0.25); }
-  &-scroll-right { box-shadow: inset -30px 0 20px -30px rgba(0, 0, 0, 0.25); }
-  &-scroll-both {
-    box-shadow: inset 30px 0 20px -30px rgba(0, 0, 0, 0.25),
-                inset -30px 0 20px -30px rgba(0, 0, 0, 0.25);
-  }
-
-
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-
-  table > thead > tr > th {
-    white-space: nowrap;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 5px;
-    line-height: 38px;
-    border-top: 1px solid $gray-lighter;
-    border-bottom: 1px solid $gray-lighter;
-    text-align: left;
-  }
-  table > tbody > tr > td {
-    padding-left: 20px;
-    padding-right: 20px;
-
-    padding-top: 5px;
-    line-height: 38px;
-
-    border-bottom: 1px solid $gray-lighter;
-    text-align: left;
-
-    white-space: nowrap;
-  }
-  table > tbody > tr:last-of-type > td {
-    border-bottom: 1px solid transparent;
-  }
-}
-@mixin make-card-table-scroll {
-  overflow-x: auto;
+  color: $color;
+  cursor: pointer;
+  user-select: none;
 }
 
-// A normal card.
-:global(.card) {
-  @include make-card;
-  :global(.card-header) { @include make-card-header($font-size: $font-size-3, $font-weight: $font-weight-3); }
-  :global(.card-title) { @include make-card-title; }
-  :global(.card-body) { @include make-card-body; }
-}
-
-// A modal card.
-:global(.card-modal) {
-  @include make-card($padding-vertical: 40px, $padding-horizontal: 20px);
-
-  :global(.card-header) {
-    @include make-card-header(
-      $font-size: $font-size-2,
-      $font-weight: $font-weight-2,
-      $padding-vertical: 40px
-    );
-  }
-  :global(.card-body) {
-    @include make-card-body(
-      $padding-vertical: 40px
-    );
-  }
-}
-
-:global(.card-well) { @include make-card-well; }
-:global(.card-well-highlight) { @include make-card-well-highlight; }
-
-:global(.card-well-dark) {
-  @include make-card-well(
-    $color: $gray-dark,
-    $font-weight: 400,
-    $background: $gray-cinder
-  );
-}
-:global(.card-well-dark .card-well-highlight) {
-  @include make-card-well-highlight($color: #fff, $font-weight: 500);
-}
-
-
-:global(.card-loading-wrapper) { @include make-card-loading-wrapper; }
-:global(.card-loading) { @include make-card-loading; }
-:global(.card-loading-indeterminate) { @include make-card-loading($indeterminate: true); }
-:global(.card-dark) {
-  @include make-card($gray-cinder, #fff);
-}
-
-:global(.card-table) { @include make-card-table(#fff, $gray-cinder); }
-:global(.card-table-scroll) { @include make-card-table-scroll; }
-
-// Modal
-@import "../node_modules/@density/ui-modal/variables.json";
-@import "../node_modules/@density/ui-modal/dist/sass";
-
-// Popover
-@import "../node_modules/@density/ui-popover/variables.json";
-@import "../node_modules/@density/ui-popover/dist/sass";
-
-$font-size-x-small: 10px;
+.modal { @include make-modal; }
+.modal-backdrop { @include make-modal-backdrop; }
+.modal-close { @include make-modal-close; }
 
 
 * {
@@ -391,6 +182,7 @@ input[type=input], input[type=password] { &:-webkit-autofill {
 } }
 
 // Densicons is an icon font with Density icons inside.
+// TODO: Import from @density/ui doesn't seem to work
 $cdn-path: "https://densityco.github.io/assets";
 @font-face {
   font-family: 'Densicons';
@@ -402,17 +194,12 @@ $cdn-path: "https://densityco.github.io/assets";
   font-style: normal;
 }
 
-//
 // Charts
-//
 @import "../node_modules/@density/chart-historical-counts/dist/sass";
 @import "../node_modules/@density/chart-real-time-count/dist/sass";
 @import "../node_modules/@density/chart-daily-metrics/dist/sass";
 
-// 
 // Component styles are included below for each component in the src/components folder.
-// 
-
 @import "./components/app/styles";
 @import "./components/app-bar-transparent/styles";
 @import "./components/app-navbar/styles";

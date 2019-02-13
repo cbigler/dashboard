@@ -13,11 +13,17 @@ import {
 
 import { calculateUtilization } from '../../actions/route-transition/explore-space-trends';
 
-import Card, { CardHeader, CardBody, CardLoading, CardWell, CardWellHighlight } from '@density/ui-card';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
-
-import PercentageBar from '@density/ui-percentage-bar';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  CardWell,
+  CardWellHighlight,
+  Icons,
+  InfoPopup,
+  PercentageBar,
+} from '@density/ui';
 
 import formatPercentage from '../../helpers/format-percentage/index';
 
@@ -104,7 +110,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           })}
           onClick={() => onRefresh(space)}
         >
-          <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+          <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
         </span>
       </CardHeader>
     );
@@ -137,7 +143,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           })}
           onClick={() => onRefresh(space)}
         >
-          <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+          <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
         </span>
       </CardHeader>
     );

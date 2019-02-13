@@ -5,9 +5,14 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import 'moment-timezone';
 
-import Card, { CardHeader, CardBody, CardLoading } from '@density/ui-card';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  Icons,
+  InfoPopup,
+} from '@density/ui';
 
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
@@ -145,7 +150,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
               })}
               onClick={() => onRefresh(space)}
             >
-              <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+              <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
             </span>
           </CardHeader>
 

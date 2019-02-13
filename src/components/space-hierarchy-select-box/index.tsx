@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { IconChevronDown } from '@density/ui-icons';
+import { Icons } from '@density/ui';
 
 // Used in `calculateItemRenderOrder` in `SpaceHierarchySelectBox` below.
 function addZeroItemBeforeFirstSpaceOfType(items, zeroItem, spaceType) {
@@ -174,7 +174,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
           <span className="space-hierarchy-select-box-item-highlight">Default</span>
         </span>}
         <div className="input-box-caret">
-          <IconChevronDown color="primary" width={12} height={12} />
+          <Icons.ChevronDown color="primary" width={12} height={12} />
         </div>
       </div>
 

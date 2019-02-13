@@ -15,8 +15,10 @@ import collectionTokensUpdate from '../../actions/collection/tokens/update';
 import collectionTokensFilter from '../../actions/collection/tokens/filter';
 import collectionTokensDestroy from '../../actions/collection/tokens/destroy';
 
-import InputBox from '@density/ui-input-box';
-import InfoPopup from '@density/ui-info-popup';
+import {
+  InputBox,
+  InfoPopup,
+} from '@density/ui';
 
 import Subnav, { SubnavItem } from '../subnav/index';
 

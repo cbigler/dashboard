@@ -2,9 +2,14 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
-import Card, { CardHeader, CardLoading, CardTable } from '@density/ui-card';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
+import {
+  Card,
+  CardHeader,
+  CardLoading,
+  CardTable,
+  Icons,
+  InfoPopup,
+} from '@density/ui';
 
 import RawEventsPager from '../explore-space-detail-raw-events-pager/index';
 import { calculateDailyRawEvents, DAILY_RAW_EVENTS_PAGE_SIZE } from '../../actions/route-transition/explore-space-daily';
@@ -51,7 +56,7 @@ export function ExploreSpaceDetailRawEventsCard({
             })}
             onClick={() => onRefresh(space)}
           >
-            <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+            <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
           </span>
         </CardHeader>
 

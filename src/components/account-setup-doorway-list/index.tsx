@@ -3,10 +3,15 @@ import { connect } from 'react-redux';
 
 import hideModal from '../../actions/modal/hide';
 
-import Button from '@density/ui-button';
-import Card, { CardBody, CardLoading } from '@density/ui-card';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardLoading,
+  Toast,
+} from '@density/ui';
+
 import Subnav, { SubnavItem } from '../subnav/index';
-import Toast from '@density/ui-toast';
 
 import ImageRetry from '../image-retry';
 import AccountSetupHeader from '../account-setup-header/index';

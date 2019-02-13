@@ -1,6 +1,6 @@
 import React from 'react';
 
-import InputBox from '@density/ui-input-box';
+import { InputBox } from '@density/ui';
 import ModalHeaderActionButton from '../modal-header-action-button/index';
 
 export default function TokenCard({token, onClickEdit}) {

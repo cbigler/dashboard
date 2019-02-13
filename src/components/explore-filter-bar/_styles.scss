@@ -17,7 +17,7 @@
 .explore-filter-bar.fixed {
   @media (min-width: $screen-xs-max) {
     position: fixed;
-    top: $navbar-height;
+    top: 53;
     z-index: 999;
     top: 0px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);

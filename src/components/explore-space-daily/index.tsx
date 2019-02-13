@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import InputBox from '@density/ui-input-box';
+import {
+  DatePicker,
+  InputBox,
+} from '@density/ui';
+
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 
 import {
@@ -19,8 +23,6 @@ import ExploreSpaceHeader from '../explore-space-header/index';
 import FootTrafficCard from '../explore-space-detail-foot-traffic-card/index';
 import RawEventsCard from '../explore-space-detail-raw-events-card/index';
 import ErrorBar from '../error-bar/index';
-
-import DatePicker from '@density/ui-date-picker';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Mark from '@density/ui-density-mark';
+import { DensityMark } from '@density/ui';
 
 import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
 
@@ -28,7 +28,7 @@ export function LiveSpaceDetail({
   } else {
     return <div className="live-space-detail">
       <div className="live-space-detail-mark">
-        <Mark size={100} />
+        <DensityMark size={100} />
       </div>
       <div className="live-space-detail-stats">
         <div className="live-space-detail-stats-item">

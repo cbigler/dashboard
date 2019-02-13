@@ -1,11 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import InputBox from '@density/ui-input-box';
-import Card, { CardHeader, CardBody, CardLoading } from '@density/ui-card';
-import FormLabel from '../form-label/index';
-import Button from '@density/ui-button';
-import Toast from '@density/ui-toast';
 
+import {
+  InputBox,
+  Card,
+  CardHeader,
+  CardBody,
+  CardLoading,
+  Button,
+  Toast,
+} from '@density/ui';
+
+import FormLabel from '../form-label/index';
 import ModalHeaderActionButton from '../modal-header-action-button/index';
 import ErrorBar from '../error-bar/index';
 

@@ -2,15 +2,15 @@ import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import InputBox from '@density/ui-input-box';
-import AppBar from '@density/ui-app-bar';
-import AppFrame from '@density/ui-app-frame';
-import AppPane from '@density/ui-app-pane';
-import AppSidebar from '@density/ui-app-sidebar';
-import AppScrollView from '@density/ui-app-scroll-view';
-import AppBarTransparent from '../app-bar-transparent/index';
-import Card, { CardBody, CardLoading, CardWell, CardWellHighlight } from '@density/ui-card';
-import { IconBuilding, IconFolder, IconL, IconChevronRight, IconChevronDown } from '@density/ui-icons';
+import {
+  AppBar,
+  AppFrame,
+  AppPane,
+  AppSidebar,
+  AppScrollView,
+  Icons,
+  InputBox,
+} from '@density/ui';
 
 import filterCollection from '../../helpers/filter-collection/index';
 import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree/index';
@@ -48,13 +48,13 @@ function ExploreSidebarItem({selected, id, name, spaceType, depth, activePage}) 
       icon = "";
       break;
     case 'building':
-      icon = <IconBuilding />;
+      icon = <Icons.Building />;
       break;
     case 'floor':
-      icon = <IconFolder />;
+      icon = <Icons.Folder />;
       break;
     case 'space':
-      icon = <IconL />;
+      icon = <Icons.L />;
       break;
     default:
       icon = "";

@@ -1,7 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { IconCheck, IconNo } from '@density/ui-icons';
+
+import {
+  Button,
+  CardLoading,
+  DensityMark,
+  Icons,
+  Toast,
+} from '@density/ui';
 
 import { accounts } from '../../client';
 import redirectAfterLogin from '../../actions/miscellaneous/redirect-after-login';
@@ -9,10 +16,7 @@ import sessionTokenSet from '../../actions/session-token/set';
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 
 import { InputStackItem, InputStackGroup } from '../input-stack/index';
-import Button from '@density/ui-button';
-import Toast from '@density/ui-toast';
 
-import Mark from '@density/ui-density-mark';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 export const LOGIN = 'LOGIN',
@@ -131,7 +135,7 @@ export class Login extends React.Component<any, any> {
       {this.state.forgotPasswordConfirmation ? <div className="login-toast">
         <Toast
           type="success"
-          icon={<IconCheck color="white" />}
+          icon={<Icons.Check color="white" />}
           onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
         >
           {this.state.forgotPasswordConfirmation}
@@ -170,7 +174,7 @@ export class Login extends React.Component<any, any> {
   render() {
     return <div className="login">
 
-      { this.state.loading ? <div className="login-navbar-loading" /> : null }
+      { this.state.loading ? <CardLoading indeterminate={true} /> : null }
 
       <div className="login-section">
         {/* Render a toast if the password reset process was successful */}
@@ -178,7 +182,7 @@ export class Login extends React.Component<any, any> {
           <div className="login-toast login-toast-forgot-password">
             <Toast
               type="success"
-              icon={<IconNo color="white" />}
+              icon={<Icons.No color="white" />}
               onDismiss={() => this.setState({referredFromForgotPassword: false})}
             >
               Password reset successful, log in using your new credentials.
@@ -192,7 +196,7 @@ export class Login extends React.Component<any, any> {
               className="login-toast login-toast-forgot-password"
               type="danger"
               title="Error fetching user"
-              icon={<IconNo color="white" />}
+              icon={<Icons.No color="white" />}
             >
               {this.props.user.error}
             </Toast>
@@ -205,7 +209,7 @@ export class Login extends React.Component<any, any> {
             <Toast
               type="danger"
               title="Incorrect password"
-              icon={<IconNo color="white" />}
+              icon={<Icons.No color="white" />}
               onDismiss={() => this.setState({error: null})}
             >
               {this.state.error}
@@ -214,7 +218,7 @@ export class Login extends React.Component<any, any> {
         ) : null}
 
         <div className="login-density-logo">
-          <Mark size={100} />
+          <DensityMark size={100} />
         </div>
 
         {/* Login inputs */}

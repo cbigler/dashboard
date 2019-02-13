@@ -2,7 +2,11 @@ import * as React from 'react';
 
 import timings from '@density/ui/variables/timings.json';
 
-import Card, { CardHeader, CardBody } from '@density/ui-card';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+} from '@density/ui';
 
 import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
 import formatCapacityPercentage from '../../helpers/format-capacity-percentage/index';

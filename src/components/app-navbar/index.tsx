@@ -1,18 +1,11 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
-import DensityMark from '@density/ui-density-mark';
 
 import {
-  IconDashboards,
-  IconGlobe,
-  IconStopWatch,
-  IconCopy,
-  IconLightning,
-  IconPerson,
-  IconLogout,
-  IconError
-} from '@density/ui-icons';
+  DensityMark,
+  Icons,
+} from '@density/ui';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 
@@ -85,7 +78,7 @@ class AppNavbarMenu extends Component<any, any> {
             onClick={this.onMenuBlur}
           >
             <span className="app-navbar-menu-item-icon">
-              {accountSelected ? <IconPerson color={colorVariables.brandPrimaryNew} /> : <IconPerson />}
+              {accountSelected ? <Icons.Person color={colorVariables.brandPrimaryNew} /> : <Icons.Person />}
             </span>
             Your Account
           </a>
@@ -98,7 +91,7 @@ class AppNavbarMenu extends Component<any, any> {
             onClick={this.onMenuBlur}
           >
             <span className="app-navbar-menu-item-icon">
-              {sensorsSelected ? <IconError color={colorVariables.brandPrimaryNew} /> : <IconError />}
+              {sensorsSelected ? <Icons.Error color={colorVariables.brandPrimaryNew} /> : <Icons.Error />}
             </span>
             DPU Status
           </a>
@@ -111,7 +104,7 @@ class AppNavbarMenu extends Component<any, any> {
             onClick={this.onMenuBlur}
           >
             <span className="app-navbar-menu-item-icon">
-              <IconLogout />
+              <Icons.Logout />
             </span>
             Logout
           </a>
@@ -130,35 +123,35 @@ export default function AppNavbar({page, settings}) {
             isSelected={() => ['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
             showOnMobile={false}
             path="#/dashboards"
-            icon={IconDashboards}
+            icon={Icons.Dashboards}
             name="Dashboards"
           /> : null}
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
             isSelected={() => ['EXPLORE', 'EXPLORE_SPACE_DETAIL', 'EXPLORE_SPACE_TRENDS', 'EXPLORE_SPACE_DAILY', 'EXPLORE_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={false}
             path="#/spaces/explore"
-            icon={IconGlobe}
+            icon={Icons.Globe}
             name="Explore"
           /> : null}
           <AppNavbarItem
             isSelected={() => ['LIVE_SPACE_LIST', 'LIVE_SPACE_DETAIL'].includes(page)}
             showOnMobile={true}
             path="#/spaces/live"
-            icon={IconStopWatch}
+            icon={Icons.StopWatch}
             name="Live"
           />
           <AppNavbarItem
             isSelected={() => ['DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST'].includes(page)}
             showOnMobile={false}
             path="#/dev/tokens"
-            icon={IconLightning}
+            icon={Icons.Lightning}
             name="Developer"
           />
           {stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
             isSelected={() => ['ACCOUNT_SETUP_OVERVIEW', 'ACCOUNT_SETUP_DOORWAY_LIST', 'ACCOUNT_SETUP_DOORWAY_DETAIL'].includes(page)}
             showOnMobile={true}
             path="#/onboarding"
-            icon={IconCopy}
+            icon={Icons.Copy}
             name="Onboarding"
           /> : null}
         </ul>

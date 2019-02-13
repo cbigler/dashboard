@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import InputBox from '@density/ui-input-box';
-import InfoPopup from '@density/ui-info-popup';
+import {
+  InputBox,
+  InfoPopup,
+} from '@density/ui';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';

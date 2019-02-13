@@ -1,4 +1,4 @@
-import './polyfill';
+import '@babel/polyfill'; // Polyfills for IE
 import 'react-app-polyfill/ie11'; // For IE 11 support
 
 import React from 'react';
@@ -10,7 +10,9 @@ import ReactGA from 'react-ga';
 import moment from 'moment';
 import queryString from 'qs';
 
-import '@density/ui-fonts';
+// Import @density/ui package for font
+// TODO: Does this work?
+import '@density/ui';
 
 import userSet from './actions/user/set';
 

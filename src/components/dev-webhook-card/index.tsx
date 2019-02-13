@@ -1,7 +1,7 @@
 import React from 'react';
 
 import ModalHeaderActionButton from '../modal-header-action-button/index';
-import InputBox from '@density/ui-input-box';
+import { InputBox } from '@density/ui';
 
 export default function WebhookCard({
   webhook,

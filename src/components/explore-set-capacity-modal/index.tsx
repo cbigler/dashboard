@@ -1,9 +1,13 @@
 import * as React from 'react';
 
-import Modal from '@density/ui-modal';
-import InputBox from '@density/ui-input-box';
-import Card, { CardHeader, CardBody } from '@density/ui-card';
-import Button from '@density/ui-button';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  InputBox,
+  Modal,
+} from '@density/ui';
 
 export default class ExploreSetCapacityModal extends React.Component<any, any> {
   constructor(props) {

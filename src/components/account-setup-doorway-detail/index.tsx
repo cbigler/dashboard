@@ -1,10 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '@density/ui-button';
-import InputBox from '@density/ui-input-box';
-import Card, { CardBody } from '@density/ui-card';
-import RadioButton from '@density/ui-radio-button';
+import {
+  Button,
+  InputBox,
+  Card,
+  CardBody,
+  RadioButton,
+} from '@density/ui';
+
 import Subnav, { SubnavItem } from '../subnav/index';
 
 import AccountSetupHeader from '../account-setup-header/index';
