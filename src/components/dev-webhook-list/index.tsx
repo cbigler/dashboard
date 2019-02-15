@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -36,32 +36,36 @@ export function WebhookList({
   onOpenModal,
   onCloseModal,
 }) {
-  const modals = <div>
-    {activeModal.name === 'webhook-create' && activeModal.visible ? <WebhookCreateModal
-      error={webhooks.error}
-      loading={webhooks.loading}
+  const modals = (
+    <Fragment>
+      {activeModal.name === 'webhook-create' && activeModal.visible ? <WebhookCreateModal
+        error={webhooks.error}
+        loading={webhooks.loading}
 
-      onSubmit={onCreateWebhook}
-      onDismiss={onCloseModal}
-    /> : null}
+        onSubmit={onCreateWebhook}
+        onDismiss={onCloseModal}
+      /> : null}
 
-    {activeModal.name === 'webhook-update' && activeModal.visible ? <WebhookUpdateModal
-      initialWebhook={activeModal.data.webhook}
-      error={webhooks.error}
-      loading={webhooks.loading}
+      {activeModal.name === 'webhook-update' && activeModal.visible ? <WebhookUpdateModal
+        initialWebhook={activeModal.data.webhook}
+        error={webhooks.error}
+        loading={webhooks.loading}
 
-      onSubmit={onUpdateWebhook}
-      onDismiss={onCloseModal}
-      onDestroyWebhook={onDestroyWebhook}
-    /> : null}
-  </div>;
+        onSubmit={onUpdateWebhook}
+        onDismiss={onCloseModal}
+        onDestroyWebhook={onDestroyWebhook}
+      /> : null}
+    </Fragment>
+  );
 
   // Sub navigation under the main navbar. USed to navigate within the dev tools section.
-  const subnav = <Subnav>
-    <SubnavItem href="#/dev/tokens">Tokens</SubnavItem>
-    <SubnavItem active href="#/dev/webhooks">Webhooks</SubnavItem>
-    <SubnavItem external href="http://docs.density.io/">API Documentation</SubnavItem>
-  </Subnav>;
+  const subnav = (
+    <Subnav>
+      <SubnavItem href="#/dev/tokens">Tokens</SubnavItem>
+      <SubnavItem active href="#/dev/webhooks">Webhooks</SubnavItem>
+      <SubnavItem external href="http://docs.density.io/">API Documentation</SubnavItem>
+    </Subnav>
+  );
 
   if (webhooks.loading) {
     return (
@@ -86,7 +90,7 @@ export function WebhookList({
           <h1 className="webhook-list-header-text">Webhooks</h1>
           <InfoPopup
             horizontalIconOffset={8}
-            verticalIconOffset={10}
+            verticalIconOffset={15}
           >
             <p>
               Webhooks allow us to push your data whenever your Density sensors count an event. Create a webhook, tell us what endpoint to hit, and we'll send you a HTTP request for each event.

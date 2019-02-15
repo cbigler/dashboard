@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import showModal from '../../actions/modal/show';
@@ -36,24 +36,26 @@ export function TokenList({
   onCloseModal,
   onFilterTokenList,
 }) {
-  const modals = <div>
-    {activeModal.name === 'token-create' && activeModal.visible ? <TokenCreateModal
-      loading={tokens.loading}
-      error={tokens.error}
+  const modals = (
+    <Fragment>
+      {activeModal.name === 'token-create' && activeModal.visible ? <TokenCreateModal
+        loading={tokens.loading}
+        error={tokens.error}
 
-      onSubmit={onCreateToken}
-      onDismiss={onCloseModal}
-    /> : null}
-    {activeModal.name === 'token-update' && activeModal.visible ? <TokenUpdateModal
-      initialToken={activeModal.data.token}
-      loading={tokens.loading}
-      error={tokens.error}
+        onSubmit={onCreateToken}
+        onDismiss={onCloseModal}
+      /> : null}
+      {activeModal.name === 'token-update' && activeModal.visible ? <TokenUpdateModal
+        initialToken={activeModal.data.token}
+        loading={tokens.loading}
+        error={tokens.error}
 
-      onSubmit={onUpdateToken}
-      onDismiss={onCloseModal}
-      onDestroyToken={onDestroyToken}
-    /> : null}
-  </div>;
+        onSubmit={onUpdateToken}
+        onDismiss={onCloseModal}
+        onDestroyToken={onDestroyToken}
+      /> : null}
+    </Fragment>
+  );
 
   // Sub navigation under the main navbar. USed to navigate within the dev tools section.
   const subnav = <Subnav>
@@ -84,7 +86,7 @@ export function TokenList({
           <h1 className="token-list-header-text">Tokens</h1>
           <InfoPopup
             horizontalIconOffset={8}
-            verticalIconOffset={10}
+            verticalIconOffset={15}
           >
             <p>
               Tokens are randomized strings that are used to access your Density data via our API. Keep these secret!

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import { Icons, InputBox, Button } from '@density/ui';
@@ -88,6 +88,74 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
                     },
                     {
                       id: 3,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 4,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 5,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 6,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 7,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 8,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 9,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 10,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 11,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 12,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 13,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 14,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 15,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 16,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 17,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 18,
+                      fullName: 'Robery Grazioli',
+                    },
+                    {
+                      id: 19,
+                      fullName: 'Gus Cost',
+                    },
+                    {
+                      id: 20,
                       fullName: 'Gus Cost',
                     },
                   ]}
@@ -95,8 +163,12 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
               </div>
             </div>
             <div className="dashboard-dispatch-management-modal-footer-app-bar">
-              <span onClick={onCloseModal}>Cancel</span>
-              <Button style={{width: 126}}>Save Dispatch</Button>
+              <span
+                role="button"
+                className="dashboard-dispatch-management-modal-footer-cancel"
+                onClick={onCloseModal}
+              >Cancel</span>
+              <Button type="primary" width={128}>Save Dispatch</Button>
             </div>
           </div>
         </div>
@@ -151,12 +223,21 @@ function DispatchManagementForm({
               {DAYS_OF_WEEK.map(dayName => (
                 <div key={dayName} className="dispatch-management-form-group-day-item">
                   <Button
+                    type={frequencyDays.indexOf(dayName) >= 0 ? 'primary' : 'default'}
                     size="small"
-                    style={{
-                      width: 24,
-                      height: 24,
-                      paddingLeft: 0,
-                      paddingRight: 0,
+                    width={24}
+                    height={24}
+                    onClick={() => {
+                      if (frequencyDays.indexOf(dayName) === -1) {
+                        // Add day
+                        onChangeFrequencyDays([...frequencyDays, dayName]);
+                      } else {
+                        // Ensure the user doesn't deselect the last day
+                        if (frequencyDays.length <= 1) { return; }
+
+                        // Remove day
+                        onChangeFrequencyDays(frequencyDays.filter(day => day !== dayName));
+                      }
                     }}
                   >
                     {dayName[0].toUpperCase()}
@@ -188,7 +269,7 @@ function DispatchManagementForm({
 
 function DispatchManagementRecipientList({ recipients }) {
   return (
-    <div className="dispatch-management-recipient-list-container">
+    <Fragment>
       <div className="dispatch-management-recipient-list-app-bar">
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
         <DispatchManagementRecipientSearchBox
@@ -196,17 +277,19 @@ function DispatchManagementRecipientList({ recipients }) {
           onChange={data => {}}
         />
       </div>
-      <div className="dashboard-management-recipient-list">
-        <ul>
-        {recipients.map(recipient => (
-          <li key={recipient.id}>
-            <DispatchManagementRecipientIcon user={recipient} />
-            {recipient.fullName}
-          </li>
-        ))}
-        </ul>
+      <div className="dispatch-management-recipient-list">
+        {
+          recipients
+            .sort((a, b) => a.fullName.localeCompare(b.fullName))
+            .map(recipient => (
+              <div key={recipient.id} className="dispatch-management-recipient-list-item">
+                <DispatchManagementRecipientIcon user={recipient} />
+                {recipient.fullName}
+              </div>
+            ))
+        }
       </div>
-    </div>
+    </Fragment>
   );
 }
 

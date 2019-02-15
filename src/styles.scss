@@ -25,6 +25,10 @@
 @import "../node_modules/@density/ui/variables/timings.json";
 @import "../node_modules/@density/ui/variables/grid.json";
 
+body {
+  font-family: $font-base;
+}
+
 /**
  * Calculate column size percentage
  */
@@ -134,10 +138,6 @@
 .modal-backdrop { @include make-modal-backdrop; }
 .modal-close { @include make-modal-close; }
 
-
-* {
-  font-family: 'Sailec', 'Helvetica', 'Arial', sans-serif;
-}
 
 // TODO: Should these be ported into Density UI?
 input[type="text"],
