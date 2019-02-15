@@ -3,8 +3,13 @@ import { connect } from 'react-redux';
 
 import moment from 'moment';
 
-import InputBox from '@density/ui-input-box';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
+import gridVariables from '@density/ui/variables/grid.json'
+import {
+  DateRangePicker,
+  InputBox,
+} from '@density/ui';
+
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 
 import {
@@ -25,8 +30,6 @@ import ErrorBar from '../error-bar/index';
 import DailyMetricsCard from '../explore-space-detail-daily-metrics-card/index';
 import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/index';
 
-import DateRangePicker from '@density/ui-date-range-picker';
-import gridVariables from '@density/ui/variables/grid.json'
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
@@ -223,6 +226,19 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
+                  metric="VISITS"
+                  title="Hourly Breakdown - Visits"
+                  aggregation="NONE"
+                />
+              </div>
+              <div className="explore-space-trends-item">
+                <HourlyBreakdownCard 
+                  space={space}
+                  startDate={spaces.filters.startDate}
+                  endDate={spaces.filters.endDate}
+                  metric="PEAKS"
+                  title="Hourly Breakdown - Average Peak Occupancy"
+                  aggregation="AVERAGE"
                 />
               </div>
               <div className="explore-space-trends-item">

@@ -3,14 +3,18 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 import {
-  parseISOTimeAtSpace,
   getDurationBetweenMomentsInDays,
 } from '../../helpers/space-time-utilities/index';
 
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
 
 import Report from '@density/reports';
-import Card, { CardHeader, CardBody, CardLoading, CardWell, CardWellHighlight } from '@density/ui-card';
+
+import {
+  Card,
+  CardHeader,
+  CardLoading,
+} from '@density/ui';
 
 export const LOADING = 'LOADING',
              EMPTY = 'EMPTY',
@@ -18,14 +22,23 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, any> {
+export class HourlyBreakdownCard extends React.Component<any, any> {
   render() {
     const {
       space,
       startDate,
       endDate,
-      hourlyBreakdown,
+      hourlyBreakdownVisits,
+      hourlyBreakdownPeaks,
+      metric,
+      title,
+      aggregation,
     } = this.props;
+
+    let hourlyBreakdown = hourlyBreakdownVisits;
+    if(metric === "PEAKS") {
+      hourlyBreakdown = hourlyBreakdownPeaks;
+    }
 
     let body;
     switch (true) {
@@ -46,7 +59,7 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
           <Card className="explore-space-detail-hourly-breakdown-card">
             <CardLoading indeterminate />
             <CardHeader>
-              Hourly Breakdown
+              {title}
             </CardHeader>
             <div className="explore-space-detail-hourly-breakdown-card-body-info" style={{height: 739}}>
               {body}
@@ -59,7 +72,7 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
           <div className="explore-space-detail-hourly-breakdown-card-body-error">
             <span>
               <span className="explore-space-detail-hourly-breakdown-card-body-error-icon">&#xe91a;</span>
-              {hourlyBreakdown.error}
+                {hourlyBreakdown.error.response.data.detail}
             </span>
           </div>
         );
@@ -69,12 +82,19 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
           </Card>;
 
       case hourlyBreakdown.state === 'COMPLETE':
+
+        // Force this one to be scrollable
+        hourlyBreakdown.data.scrollable = true;
+
         return (
           <Report
             report={generateHourlyBreakdownEphemeralReport(
               space,
               startDate,
               endDate,
+              metric,
+              title,
+              aggregation
             )}
             reportData={{
               state: hourlyBreakdown.state,
@@ -92,7 +112,8 @@ export class ExploreSpaceDetailHourlyBreakdownCard extends React.Component<any, 
 }
 
 export default connect((state: any) => ({
-  hourlyBreakdown: state.exploreData.calculations.hourlyBreakdown,
+  hourlyBreakdownVisits: state.exploreData.calculations.hourlyBreakdownVisits,
+  hourlyBreakdownPeaks: state.exploreData.calculations.hourlyBreakdownPeaks,
   spaces: state.spaces
 }), dispatch => ({
-}))(ExploreSpaceDetailHourlyBreakdownCard);
+}))(HourlyBreakdownCard);

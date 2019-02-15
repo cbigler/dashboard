@@ -1,10 +1,16 @@
 import * as React from 'react';
-import InputBox from '@density/ui-input-box';
-import FormLabel from '../form-label/index';
-import Button from '@density/ui-button';
 
-import Modal from '@density/ui-modal';
-import Card, { CardHeader, CardLoading, CardBody } from '@density/ui-card';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  InputBox,
+  Modal,
+} from '@density/ui';
+
+import FormLabel from '../form-label/index';
 
 export default class WebhookCreateModal extends React.Component<any, any> {
   constructor(props) {

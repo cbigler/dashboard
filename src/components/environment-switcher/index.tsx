@@ -1,11 +1,15 @@
 import React from 'react';
 import FormLabel from '../form-label/index';
 
-import InputBox from '@density/ui-input-box';
-import Switch from '@density/ui-switch';
-import Card, { CardHeader, CardBody } from '@density/ui-card';
-import Button from '@density/ui-button';
-import Modal from '@density/ui-modal';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  InputBox,
+  Modal,
+  Switch,
+} from '@density/ui';
 
 // Called initially to get the 
 export function getActiveEnvironments(fields) {

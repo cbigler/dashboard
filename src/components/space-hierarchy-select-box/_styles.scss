@@ -47,7 +47,7 @@
   & > .input-box-caret { height:12px; }
 
   &.opened {
-    border-color: $brand-primary;
+    border-color: $brand-primary-new;
     outline: none;
 
     // When focused, flip the caret.
@@ -109,7 +109,7 @@
   }
 
   &:focus {
-    color: $brand-primary;
+    color: $brand-primary-new;
     outline: none;
   }
 

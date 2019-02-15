@@ -1,9 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '@density/ui-button';
-import Mark from '@density/ui-density-mark';
-import { InputStackItem, InputStackGroup } from '@density/ui-input-stack';
+import { 
+  Button,
+  DensityMark,
+  InputStackItem,
+  InputStackGroup,
+} from '@density/ui';
+
 import ErrorBar from '../error-bar/index';
 
 import { accounts } from '../../client';
@@ -37,7 +41,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
       <ErrorBar message={this.state.error} showRefresh />
 
       <div className="account-forgot-password-mark">
-        <Mark size={100} />
+        <DensityMark size={100} />
       </div>
 
       <p className="account-forgot-password-lead-in">

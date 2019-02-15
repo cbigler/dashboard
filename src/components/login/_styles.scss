@@ -38,17 +38,12 @@ $login-section-width: 420px;
   text-align: center; // For forgot password link in the login form (goes to forgot password page)
 }
 
-// Steal the card loading indicator here for the navbar for this one page. 
-.login-navbar-loading {
-  @include make-card-loading($indeterminate: true);
-}
-
 .login-forgot-password-link {
   display: inline-block;
   margin-top: 40px;
   cursor: pointer;
   text-decoration: underline;
-  color: $brand-primary;
+  color: $brand-primary-new;
 }
 
 // Show an error when there's an error on the login page.
@@ -85,5 +80,5 @@ $login-section-width: 420px;
   margin-top: 40px;
   cursor: pointer;
   text-decoration: underline;
-  color: $brand-primary;
+  color: $brand-primary-new;
 }

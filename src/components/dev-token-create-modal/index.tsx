@@ -1,8 +1,15 @@
 import * as React from 'react';
-import InputBox from '@density/ui-input-box';
-import Modal from '@density/ui-modal';
-import Card, { CardHeader, CardLoading, CardBody } from '@density/ui-card';
-import Button from '@density/ui-button';
+
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  InputBox,
+  Modal,
+} from '@density/ui';
+
 import FormLabel from '../form-label/index';
 
 const READONLY = 'readonly', READWRITE = 'readwrite';

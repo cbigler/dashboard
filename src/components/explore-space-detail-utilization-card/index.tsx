@@ -13,15 +13,19 @@ import {
 
 import { calculateUtilization } from '../../actions/route-transition/explore-space-trends';
 
-import Card, { CardHeader, CardBody, CardLoading, CardWell, CardWellHighlight } from '@density/ui-card';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
-
-import PercentageBar from '@density/ui-percentage-bar';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  CardWell,
+  CardWellHighlight,
+  Icons,
+  InfoPopup,
+  PercentageBar,
+} from '@density/ui';
 
 import formatPercentage from '../../helpers/format-percentage/index';
-
-import { parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments/index';
 
 import lineChart, { dataWaterline } from '@density/chart-line-chart';
 import { xAxisDailyTick, yAxisMinMax } from '@density/chart-line-chart/dist/axes';
@@ -44,6 +48,8 @@ const DAY_TO_INDEX_IN_UTILIZAITIONS_BY_DAY = {
   'Friday': 5,
   'Saturday': 6,
 };
+
+const CHART_HEIGHT = 350;
 
 export const LOADING = 'LOADING',
              EMPTY = 'EMPTY',
@@ -104,7 +110,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           })}
           onClick={() => onRefresh(space)}
         >
-          <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+          <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
         </span>
       </CardHeader>
     );
@@ -137,7 +143,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
           })}
           onClick={() => onRefresh(space)}
         >
-          <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+          <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
         </span>
       </CardHeader>
     );
@@ -236,6 +242,14 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         </div>;
 
       case calculatedData.state === 'COMPLETE':
+        let numberOfTicks = chartWidth >= 640 ? 12 : 6
+        let dayDuration = 0;
+        if (calculatedData.data.utilizationsByTime.length > 1) {
+          const firstTime = moment(calculatedData.data.utilizationsByTime[0].time, 'HH:mm');
+          const secondTime = moment(calculatedData.data.utilizationsByTime[1].time, 'HH:mm');
+          const interval = Math.abs(firstTime.diff(secondTime, 'seconds'));
+          dayDuration = interval * calculatedData.data.utilizationsByTime.length;
+        }
         return (
           <div>
             <Card className="explore-space-detail-utilization-card-average-week">
@@ -307,9 +321,11 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                 <LineChartComponent
                   timeZone={space.timeZone}
                   svgWidth={chartWidth}
-                  svgHeight={350}
+                  svgHeight={CHART_HEIGHT}
 
                   xAxis={xAxisDailyTick({
+                    // Number of milliseconds on chart divided by number of ticks
+                    tickResolutionInMs: 1000 * dayDuration / numberOfTicks,
                     formatter: (n) => {
                       // "5a" or "8p"
                       const timeFormat = parseISOTimeAtSpace(n, space).format('hA');

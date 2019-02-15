@@ -6,10 +6,6 @@ import SetCapacityModal from '../explore-set-capacity-modal/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 
-import { getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
-
-import { IconChevronRight } from '@density/ui-icons';
-
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 

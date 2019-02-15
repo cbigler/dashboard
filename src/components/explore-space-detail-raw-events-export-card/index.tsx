@@ -3,10 +3,17 @@ import classnames from 'classnames';
 
 import { core } from '../../client';
 
-import Card, { CardHeader, CardBody, CardLoading, CardTable } from '@density/ui-card';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  CardTable,
+  Icons,
+  InfoPopup,
+} from '@density/ui';
 
+import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
 export const LOADING_INITIAL = 'LOADING_INITIAL',
@@ -82,6 +89,12 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
   downloadCSV = async () => {
     const { space } = this.props;
     const { view, startDate, endDate } = this.state;
+
+    mixpanelTrack('Data Download', {
+      space_id: space.id,
+      start_time: startDate,
+      end_time: endDate,
+    });
 
     if (view === LOADING_CSV) { return; }
     this.setState({view: LOADING_CSV});
@@ -168,7 +181,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
               data: null,
             }, () => this.fetchData())}
           >
-            <IconRefresh color={view === LOADING_PREVIEW ? 'gray' : 'primary'} />
+            <Icons.Refresh color={view === LOADING_PREVIEW ? 'gray' : 'primary'} />
           </span>
         </CardHeader>
 

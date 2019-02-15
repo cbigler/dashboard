@@ -1,9 +1,14 @@
 import * as React from 'react';
 
-import Modal from '@density/ui-modal';
-import Card, { CardHeader, CardLoading, CardBody } from '@density/ui-card';
-import Button from '@density/ui-button';
-import InputBox from '@density/ui-input-box';
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  InputBox,
+  Modal,
+} from '@density/ui';
 
 export default class ExploreEditCountModal extends React.Component<any, any> {
   constructor(props) {

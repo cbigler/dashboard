@@ -158,6 +158,19 @@ export default function spaces(state=initialState, action) {
 
   // When the user changes the active space, update it in the store.
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
+    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
+    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
+    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+
+    return {
+      ...state, 
+      error: null, 
+      selected: currentSelectedSpace.id,
+      filters: {
+        ...state.filters,
+        timeSegmentGroupId: newTimeSegmentGroupId
+      }
+    };
   case ROUTE_TRANSITION_EXPLORE:
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
     var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;

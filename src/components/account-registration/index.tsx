@@ -1,11 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import Mark from '@density/ui-density-mark';
-import Button from '@density/ui-button';
-import InputBox from '@density/ui-input-box';
-
-import Card, { CardBody } from '@density/ui-card';
+import {
+  DensityMark,
+  Button,
+  InputBox,
+  Card,
+  CardBody,
+} from '@density/ui';
 
 import ErrorBar from '../error-bar/index';
 import AccountSetupHeader from '../account-setup-header/index';
@@ -65,7 +67,7 @@ export class AccountRegistration extends React.Component<any, any> {
       />
 
       <div className="account-registration-density-logo">
-        <Mark size={100} />
+        <DensityMark size={100} />
       </div>
 
       <div className="account-registration-card-container">

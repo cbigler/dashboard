@@ -8,11 +8,17 @@ import 'moment-timezone';
 import { calculateDailyMetrics } from '../../actions/route-transition/explore-space-trends';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
-import Card, { CardHeader, CardBody, CardLoading } from '@density/ui-card';
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-import InputBox from '@density/ui-input-box';
-import { IconRefresh } from '@density/ui-icons';
-import InfoPopup from '@density/ui-info-popup';
+
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  CardLoading,
+  Icons,
+  InputBox,
+  InfoPopup,
+} from '@density/ui';
 
 import dailyMetrics from '@density/chart-daily-metrics';
 import lineChart, { dataWaterline } from '@density/chart-line-chart';
@@ -41,6 +47,8 @@ const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
 // Below this number of days or equal to this number of days, show the normal daily metrics chart.
 // Above this number of days, show the expanded line chart.
 const GRAPH_TYPE_TRANSITION_POINT_IN_DAYS = 14;
+
+const CHART_HEIGHT = 350;
 
 // Given a day on the calendar and the current day, determine if the square on the calendar should
 // be grayed out or not.
@@ -115,7 +123,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 })}
                 onClick={() => onRefresh(space)}
               >
-                <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+                <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
               </span>
             </div>
             <div className="explore-space-detail-daily-metrics-card-metric-picker">
@@ -138,7 +146,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
               })}
               onClick={() => onRefresh(space)}
             >
-              <IconRefresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
+              <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
             </span>
           </CardHeader>
 
@@ -230,7 +238,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                       };
                     })}
                     width={chartWidth}
-                    height={350}
+                    height={CHART_HEIGHT}
                   />
                 </div>;
               }

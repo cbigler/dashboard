@@ -6,19 +6,22 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 
 import colorVariables from '@density/ui/variables/colors.json';
-import DashboardReportGrid from '@density/ui-dashboard-report-grid';
+
+import {
+  AppBar,
+  AppFrame,
+  AppPane,
+  AppSidebar,
+  AppScrollView,
+  Button,
+  DashboardReportGrid,
+  Icons,
+} from '@density/ui';
+
+import AppBarTransparent from '../app-bar-transparent/index';
 
 import { ReportLoading } from '@density/reports';
-
-import AppBar from '@density/ui-app-bar';
-import AppFrame from '@density/ui-app-frame';
-import AppPane from '@density/ui-app-pane';
-import AppSidebar from '@density/ui-app-sidebar';
-import AppScrollView from '@density/ui-app-scroll-view';
-import AppBarTransparent from '../app-bar-transparent/index';
 import Report from '../report';
-import { IconMenu, IconChevronLeft, IconChevronRight } from '@density/ui-icons';
-import Button from '@density/ui-button';
 import DashboardDispatchPopupList from '../dashboard-dispatch-popup-list/index';
 import DashboardDispatchManagementModal from '../dashboard-dispatch-management-modal/index';
 
@@ -45,7 +48,7 @@ function DashboardSidebarItem({selected, id, name, reportSet}) {
           <span className="dashboard-sidebar-item-num-reports">
             {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
           </span>
-          <IconChevronRight width={8} height={8} />
+          <Icons.ChevronRight width={8} height={8} />
         </div>
         <div className="dashboard-sidebar-item-row">
           <span className="dashboard-sidebar-item-headers">
@@ -63,7 +66,7 @@ function DashboardSidebarHideShowIcon({sidebarVisible, onChangeSidebarVisibility
       className="dashboard-sidebar-hide-show-icon"
       onClick={() => onChangeSidebarVisibility(!sidebarVisible)}
     >
-      <IconMenu />
+      <Icons.Menu />
     </span>
   );
 }
@@ -307,7 +310,7 @@ export function Dashboard({
 									style={{backgroundColor: '#FFF'}}
 									onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
 								>
-									<IconChevronLeft color={colorVariables.brandPrimaryNew} />
+									<Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
 								</Button>
 							</div>
 							<div style={{padding: 13}}>
@@ -320,7 +323,7 @@ export function Dashboard({
 									onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
 									disabled={moment(date).add(1, 'week') > moment()}
 								>
-									<IconChevronRight
+									<Icons.ChevronRight
 										color={moment(date).add(1, 'week') > moment() ? 
 											colorVariables.gray :
 											colorVariables.brandPrimaryNew}

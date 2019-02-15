@@ -1,7 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import InputBox from '@density/ui-input-box';
+import {
+  DatePicker,
+  InputBox,
+} from '@density/ui';
+
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 
 import {
@@ -20,8 +24,6 @@ import FootTrafficCard from '../explore-space-detail-foot-traffic-card/index';
 import RawEventsCard from '../explore-space-detail-raw-events-card/index';
 import ErrorBar from '../error-bar/index';
 
-import DatePicker from '@density/ui-date-picker';
-
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import {
@@ -34,18 +36,11 @@ class ExploreSpaceDaily extends React.Component<any, any> {
   container: any;
   state = { width: 0 }
 
-  componentDidMount() {
-    this.resizeCharts()
-    window.addEventListener('resize', this.resizeCharts);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.resizeCharts);
-  }
-
-  resizeCharts = () => {
+  componentDidUpdate(prevProps, prevState, snapshot) {
     const width = this.container.offsetWidth - 80;
-    this.setState({width});
+    if (width !== prevState.width) {
+      this.setState({width});
+    }
   }
 
   render() {
@@ -54,6 +49,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
       space,
       timeSegmentGroups,
       activeModal,
+      resizeCounter,
       onChangeSpaceFilter,
       onChangeDate,
       onChangeTimeSegmentGroup,
@@ -177,6 +173,7 @@ export default connect((state: any) => {
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     timeSegmentGroups: state.timeSegmentGroups,
     activeModal: state.activeModal,
+    resizeCounter: state.resizeCounter,
   };
 }, dispatch => {
   return {

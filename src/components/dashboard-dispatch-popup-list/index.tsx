@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
-import { IconMail, IconChevronDown } from '@density/ui-icons';
+import { Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 export default class DashboardDispatchPopupList extends Component<any, any> {
@@ -24,9 +24,9 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
           className={classnames('dashboard-dispatch-list-button', {visible})}
           onClick={() => this.setState({visible: !visible})}
         >
-          <IconMail color={colorVariables.brandPrimaryNew} />
+          <Icons.Mail color={colorVariables.brandPrimaryNew} />
           <span className="dashboard-dispatch-list-button-text">Dispatch</span>
-          <IconChevronDown width={10} height={10} color={colorVariables.brandPrimaryNew} />
+          <Icons.ChevronDown width={10} height={10} color={colorVariables.brandPrimaryNew} />
         </button>
 
         <div className={classnames('dashboard-dispatch-list-dropdown', {visible})}>

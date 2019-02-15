@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
-import { IconSearch } from '@density/ui-icons';
-import InputBox from '@density/ui-input-box';
-import Button from '@density/ui-button';
+import { Icons, InputBox, Button } from '@density/ui';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -252,7 +250,7 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
           }
         }}
       >
-        <IconSearch />
+        <Icons.Search />
         <input
           type="text"
           placeholder="Search through 28 accounts"

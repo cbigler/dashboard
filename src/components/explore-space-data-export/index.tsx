@@ -6,14 +6,13 @@ import 'moment-timezone';
 
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 
-import Subnav, { SubnavItem } from '../subnav/index';
+import gridVariables from '@density/ui/variables/grid.json';
+import { DateRangePicker } from '@density/ui';
+
 import ExploreFilterBar, { ExploreFilterBarItem } from '../explore-filter-bar/index';
 import ExploreSpaceHeader from '../explore-space-header/index';
 
 import RawEventsExportCard from '../explore-space-detail-raw-events-export-card/index';
-
-import DateRangePicker from '@density/ui-date-range-picker';
-import gridVariables from '@density/ui/variables/grid.json';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 

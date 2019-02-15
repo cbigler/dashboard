@@ -1,8 +1,12 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import Button from '@density/ui-button';
-import Card, { CardBody } from '@density/ui-card';
+import {
+  Button,
+  Card,
+  CardBody,
+} from '@density/ui';
+
 import Subnav, { SubnavItem } from '../subnav/index';
 
 import AccountSetupHeader from '../account-setup-header/index';
