@@ -74,13 +74,8 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   /* NOTE: there are two app bars, one at the top and one at the bottom */
   height: calc(100% - (2 * (#{$dashboard-dispatch-management-modal-app-bar-height} + 1px /* border*/)));
 }
-.dashboard-dispatch-management-modal-split.left {
-  width: 43%;
-}
-.dashboard-dispatch-management-modal-split.right {
-  width: 57%;
-  background-color: $gray-lightest;
-}
+.dashboard-dispatch-management-modal-split.left { width: 43%; }
+.dashboard-dispatch-management-modal-split.right { width: 57%; }
 
 .dashboard-dispatch-management-modal-footer-app-bar {
   display: flex;
@@ -131,6 +126,7 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   height: 64px;
   padding-left: 24px;
   padding-right: 24px;
+  background-color: $gray-lightest;
 }
 
 .dispatch-management-recipient-list-title {
