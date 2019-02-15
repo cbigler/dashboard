@@ -275,6 +275,14 @@ export function Dashboard({
                 {
                   id: 1,
                   name: 'My dispatch',
+                  frequency: 'WEEKLY',
+                  frequencyDays: [
+                    'Monday',
+                    'Tuesday',
+                    'Wednesday',
+                    'Thursday',
+                    'Friday',
+                  ],
                   owner: {
                     id: 'usr_xxx',
                     fullName: 'John Smith',
@@ -283,6 +291,7 @@ export function Dashboard({
                 {
                   id: 2,
                   name: 'Number two',
+                  frequency: 'DAILY',
                   owner: {
                     id: 'usr_xxx',
                     fullName: 'John Smith',

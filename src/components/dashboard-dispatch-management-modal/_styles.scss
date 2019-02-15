@@ -92,7 +92,11 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 
 
 
-.dispatch-management-form { padding: 24px; }
+.dispatch-management-form {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  padding-left: 24px;
+}
 .dispatch-management-form-group { margin-bottom: 32px; }
 .dispatch-management-form-group label {
   display: block;

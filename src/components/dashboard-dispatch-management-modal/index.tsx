@@ -127,7 +127,6 @@ function DispatchManagementForm({
           placeholder={defaultDispatchName}
           value={name}
           onChange={e => onChangeName(e.target.value)}
-          width="100%"
         />
       </div>
       <div className="dispatch-management-form-group">
@@ -144,7 +143,7 @@ function DispatchManagementForm({
               {id: 'MONTHLY', label: 'Monthly'},
             ]}
             onChange={item => onChangeFrequency(item.id)}
-            width="150px"
+            width="120px"
           />
 
           {frequency === 'WEEKLY' ? (
