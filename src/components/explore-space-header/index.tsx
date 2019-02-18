@@ -10,7 +10,6 @@ import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 export function ExploreSpaceHeader({
-  spaces,
   space,
   activeModal,
 
@@ -72,7 +71,6 @@ export function ExploreSpaceHeader({
 
 export default connect((state: any) => {
   return {
-    spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
   };
