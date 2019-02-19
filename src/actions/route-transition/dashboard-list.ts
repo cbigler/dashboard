@@ -10,8 +10,8 @@ export default function routeTransitionDashboardList() {
     dispatch({ type: ROUTE_TRANSITION_DASHBOARD_LIST });
 
     const dashboards = await core.dashboards.list({page: 1, page_size: 1});
-    if (dashboards.length === 0) {
-      dispatch(dashboardsError('No dashboards were found, please talk to your Density account representative to create one.'))
+    if (dashboards.results.length === 0) {
+      dispatch(dashboardsError('No dashboards were found. Please talk to your Density account representative to create a dashboard.'));
       return;
     }
 
