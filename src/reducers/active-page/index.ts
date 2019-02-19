@@ -21,7 +21,7 @@ import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transitio
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../actions/route-transition/logout';
 
-const initialState: any = null;
+const initialState = "BLANK";
 
 export default function activePage(state=initialState, action) {
   switch (action.type) {

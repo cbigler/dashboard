@@ -32,11 +32,11 @@ function App({activePage, settings}) {
       {(function(activePage) {
         switch (activePage) {
           // On these special pages, don't render a navbar
+          case 'BLANK':
           case 'LOGIN':
           case 'ACCOUNT_REGISTRATION':
           case 'ACCOUNT_FORGOT_PASSWORD':
           case 'LIVE_SPACE_DETAIL':
-          case 'LOGIN_CALLBACK':
             return null;
 
             // Render the logged-in navbar by default
@@ -96,6 +96,7 @@ function ActivePage({activePage, settings}) {
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.
+  case "BLANK":
   case "LOGOUT":
     return null;
 
