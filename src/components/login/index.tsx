@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import {
   Button,
   CardLoading,
-  DensityMark,
   Icons,
   Toast,
 } from '@density/ui';
@@ -17,7 +16,11 @@ import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landin
 
 import { InputStackItem, InputStackGroup } from '../input-stack/index';
 
+import logoDensityBlack from '../../assets/images/logo-black.svg';
+import logoGoogleG from '../../assets/images/logo-google-g.svg';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+
+import webAuth from "../../auth0";
 
 export const LOGIN = 'LOGIN',
              FORGOT_PASSWORD = 'FORGOT_PASSWORD';
@@ -25,12 +28,23 @@ export const LOGIN = 'LOGIN',
 export class Login extends React.Component<any, any> {
   constructor(props) {
     super(props);
+
+    let error: string | null = null;
+    let errorTitle: string | null = null;
+    // check to see if we have an error from logging in with auth0
+    if (window.localStorage && window.localStorage.auth0LoginError) {
+      error = window.localStorage.auth0LoginError;
+      errorTitle = 'Login Failure';
+      delete window.localStorage.auth0LoginError;
+    }
+
     this.state = {
       view: LOGIN,
       email: '',
       password: '',
       loading: false,
-      error: null,
+      error,
+      errorTitle,
 
       // If we were just at the forgot password page, then show a popup to the user telling them
       // that their password reset was successful.
@@ -95,6 +109,19 @@ export class Login extends React.Component<any, any> {
   renderLoginForm() {
     return <div className="login-form-container">
       {/* Input stack used to enter login info */}
+      <div className={classnames('login-submit-button', 'google', {loading: this.state.loading})}>
+        <Button
+          onClick={() => webAuth.authorize({
+            connection: 'google-oauth2',
+          })}
+        >
+        <img className="icon-google-login" src={logoGoogleG} />
+        Log in with Google
+        </Button>
+      </div>
+
+      <p className="login-sso-divider">or</p>
+
       <InputStackGroup className="login-form">
         <InputStackItem
           type="email"
@@ -114,9 +141,8 @@ export class Login extends React.Component<any, any> {
       </InputStackGroup>
 
       {/* Submit the form! */}
-      <div className={classnames('login-submit-button', {loading: this.state.loading})}>
-        <Button 
-          size="large"
+      <div className={classnames('login-submit-button', 'email', {loading: this.state.loading})}>
+        <Button
           onClick={this.onLogin}
           disabled={!this.isLoginFormValid()}
         >Login</Button>
@@ -124,25 +150,15 @@ export class Login extends React.Component<any, any> {
 
       {/* Move to forgot password view */}
       <div
-        className="login-forgot-password-link"
+        className="login-action-secondary login-forgot-password-link"
         onClick={() => this.setState({view: FORGOT_PASSWORD, error: null})}
       >Forgot Password</div>
     </div>;
   }
 
   renderForgotPasswordForm() {
-    return <div className="login-form-container">
-      {this.state.forgotPasswordConfirmation ? <div className="login-toast">
-        <Toast
-          type="success"
-          icon={<Icons.Check color="white" />}
-          onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
-        >
-          {this.state.forgotPasswordConfirmation}
-        </Toast>
-      </div> : null}
-
-      <h2 className="login-password-reset-title">Send password change request</h2>
+    return <div className={classnames('login-form-container', 'login-form-reset')}>
+      <p>We'll send a recovery link to:</p>
       <InputStackGroup>
         <InputStackItem
           type="email"
@@ -155,17 +171,16 @@ export class Login extends React.Component<any, any> {
       </InputStackGroup>
 
       {/* Submit the form! */}
-      <div className={classnames('login-submit-button', {loading: this.state.loading})}>
-        <Button 
+      <div className={classnames('login-submit-button', 'email', {loading: this.state.loading})}>
+        <Button
           onClick={this.onForgotPassword}
-          size="large"
           disabled={!this.isForgotPasswordFormValid.apply(this)}
         >Send Request</Button>
       </div>
 
       {/* Move to back to login page */}
       <div
-        className="login-forgot-password-back-link"
+        className="login-action-secondary login-forgot-password-back-link"
         onClick={() => this.setState({view: LOGIN, error: null})}
       >Back to login</div>
     </div>;
@@ -177,6 +192,17 @@ export class Login extends React.Component<any, any> {
       { this.state.loading ? <CardLoading indeterminate={true} /> : null }
 
       <div className="login-section">
+        {/* Render a toast if the password reset request worked */}
+        {this.state.forgotPasswordConfirmation ? <div className="login-toast">
+          <Toast
+            type="success"
+            icon={<Icons.Check color="white" />}
+            onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
+          >
+            {this.state.forgotPasswordConfirmation}
+          </Toast>
+        </div> : null}
+
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
           <div className="login-toast login-toast-forgot-password">
@@ -208,7 +234,7 @@ export class Login extends React.Component<any, any> {
           <div className="login-toast">
             <Toast
               type="danger"
-              title="Incorrect password"
+              title={this.state.errorTitle || 'Incorrect password'}
               icon={<Icons.No color="white" />}
               onDismiss={() => this.setState({error: null})}
             >
@@ -218,13 +244,21 @@ export class Login extends React.Component<any, any> {
         ) : null}
 
         <div className="login-density-logo">
-          <DensityMark size={100} />
+          <img src={logoDensityBlack} />
         </div>
+
+        <p className="login-lead">
+          Log in to your Density account.
+        </p>
 
         {/* Login inputs */}
         {this.state.view === LOGIN ?
           this.renderLoginForm.apply(this) :
-          this.renderForgotPasswordForm.apply(this)}
+          this.renderForgotPasswordForm.apply(this)
+        }
+        <p className="login-terms-and-privacy">
+          All accounts adhere to our <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a> and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
+        </p>
       </div>
     </div>;
   }

@@ -1,15 +1,11 @@
 import React from 'react';
 
 import stringToBoolean from '../../helpers/string-to-boolean/index';
-import routeTransitionLogout from '../../actions/route-transition/logout';
 
 import { connect } from 'react-redux';
 
 import TokenList from '../dev-token-list/index';
 import Explore from '../explore/index';
-import ExploreSpaceTrends from '../explore-space-trends/index';
-import ExploreSpaceDaily from '../explore-space-daily/index';
-import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import Login from '../login/index';
 import Account from '../account/index';
 import WebhookList from '../dev-webhook-list/index';
@@ -35,19 +31,20 @@ function App({activePage, settings}) {
       {/* Render the navbar */}
       {(function(activePage) {
         switch (activePage) {
-        // On these special pages, don't render a navbar
-        case 'LOGIN':
-        case 'ACCOUNT_REGISTRATION':
-        case 'ACCOUNT_FORGOT_PASSWORD':
-        case 'LIVE_SPACE_DETAIL':
-          return null;
+          // On these special pages, don't render a navbar
+          case 'LOGIN':
+          case 'ACCOUNT_REGISTRATION':
+          case 'ACCOUNT_FORGOT_PASSWORD':
+          case 'LIVE_SPACE_DETAIL':
+          case 'LOGIN_CALLBACK':
+            return null;
 
-          // Render the logged-in navbar by default
-        default:
-          return <AppNavbar
-            page={activePage}
-            settings={settings}
-          />;
+            // Render the logged-in navbar by default
+          default:
+            return <AppNavbar
+              page={activePage}
+              settings={settings}
+            />;
         }
       })(activePage)}
 

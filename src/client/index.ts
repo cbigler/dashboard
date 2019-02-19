@@ -100,6 +100,25 @@ accounts.users.register = (data) => {
   });
 };
 
+accounts.tokens.auth0_exchange = (token) => {
+  return fetch(`${accounts.config().host}/tokens/exchange/auth0/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `JWT ${token}`
+    },
+  }).then(async response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return Promise.reject(await errorHandler(response));
+    }
+  });
+};
+
+
+
 export {
   core,
   accounts,

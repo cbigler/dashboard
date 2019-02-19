@@ -57,6 +57,7 @@ import routeTransitionAccountSetupDoorwayDetail from './actions/route-transition
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
+import sessionTokenSet from './actions/session-token/set';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
 import collectionSpacesSet from './actions/collection/spaces/set';
 import collectionSpacesCountChange from './actions/collection/spaces/count-change';
@@ -64,9 +65,10 @@ import { collectionSpacesBatchSetEvents } from './actions/collection/spaces/set-
 
 import eventPusherStatusChange from './actions/event-pusher/status-change';
 
-// All the reducer and store code is in a seperate file.
+// All the reducer and store code is in a separate file.
 import storeFactory from './store';
 const store = storeFactory();
+
 
 // ----------------------------------------------------------------------------
 // Set the location of all microservices.
@@ -146,6 +148,7 @@ function redirect(url) {
 const router = createRouter(store);
 router.addRoute('login', () => routeTransitionLogin(null));
 router.addRoute('logout', () => routeTransitionLogout());
+router.addRoute('access_token=:oauth', () => ({type: 'NOOP'}));
 
 // v I AM DEPRECATED
 router.addRoute('insights/spaces', redirect('spaces/explore')); // DEPRECATED
@@ -188,18 +191,30 @@ router.addRoute('onboarding/doorways/:id', id => routeTransitionAccountSetupDoor
 // Make sure that the user is logged in prior to going to a page.
 function preRouteAuthentication() {
   const loggedIn = (store.getState() as any).sessionToken !== null;
+  const locationHash = window.location.hash;
+  const accessTokenMatch = locationHash.match(/^#access_token=([^&]+)/);
 
+  // If the hash has an OAuth access token, exchange it for an API token
+  if (accessTokenMatch) {
+    accounts.tokens.auth0_exchange(accessTokenMatch[1]).then(token => {
+      store.dispatch<any>(sessionTokenSet(token)).then(data => {
+        const user: any = objectSnakeToCamel(data);
+        unsafeNavigateToLandingPage(user.organization.settings, null, true);
+      })
+    }).catch(err => {
+      window.localStorage.auth0LoginError = err.toString();
+      router.navigate('login');
+    });
   // If on the account registration page (the only page that doesn't require the user to be logged in)
   // then don't worry about any of this.
-  if (
-    window.location.hash.startsWith("#/account/register") ||
-    window.location.hash.startsWith("#/account/forgot-password")
+  } else if (
+    locationHash.startsWith("#/account/register") ||
+    locationHash.startsWith("#/account/forgot-password")
   ) {
     return;
-
   // If the user isn't logged in, send them to the login page.
   } else if (!loggedIn) {
-    store.dispatch(redirectAfterLogin(window.location.hash));
+    store.dispatch(redirectAfterLogin(locationHash));
     router.navigate('login');
 
   // Otherwise, fetch the logged in user's info since there's a session token available.
@@ -214,7 +229,7 @@ function preRouteAuthentication() {
         unsafeNavigateToLandingPage(objectSnakeToCamel(user).organization.settings, null);
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
-        store.dispatch(redirectAfterLogin(window.location.hash));
+        store.dispatch(redirectAfterLogin(locationHash));
         router.navigate('login');
       }
     });

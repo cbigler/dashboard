@@ -64,6 +64,8 @@ export class Account extends React.Component<any, any> {
       onSubmitUserUpdate,
     } = this.props;
 
+    const canChangePassword = user.data && !user.data.isDemo && !user.data.organization.forceSsoLogin;
+
     return (
       <div className="account-container">
         <div className="account">
@@ -181,7 +183,7 @@ export class Account extends React.Component<any, any> {
               </div>
 
               {/* Trigger changing the password */}
-              {this.state.mode === NORMAL && user.data && !user.data.isDemo ? <FormLabel
+              {this.state.mode === NORMAL && canChangePassword ? <FormLabel
                 className="account-change-password-link-container"
                 label="Password"
                 htmlFor="account-change-password"
