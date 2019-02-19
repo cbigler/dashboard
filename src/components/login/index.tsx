@@ -257,7 +257,7 @@ export class Login extends React.Component<any, any> {
           this.renderForgotPasswordForm.apply(this)
         }
         <p className="login-terms-and-privacy">
-          All accounts adhere to our <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a> and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
+          <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a> and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
         </p>
       </div>
     </div>;

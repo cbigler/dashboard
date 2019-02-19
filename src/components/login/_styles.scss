@@ -95,7 +95,6 @@ $z-index-toast: 2000;
   display: inline-block;
   margin-top: 40px;
   font-size: 14px;
-  font-weight: bold;
   text-decoration: underline;
   color: $brand-primary;
   cursor: pointer;
@@ -108,6 +107,11 @@ $z-index-toast: 2000;
 .login-terms-and-privacy {
   padding-top: 80px;
   padding-bottom: 64px;
+  color: $gray-darker;
+
+  a {
+    color: $gray-darkest;
+  }
 }
 
 // Log in toast
