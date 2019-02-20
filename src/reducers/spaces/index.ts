@@ -205,26 +205,30 @@ export default function spaces(state=initialState, action) {
     return {...state, error: null};
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:
-    return {
-      ...state,
-      filters: {
-        ...state.filters,
+    if(state.filters.date != null && state.filters.startDate != null && state.filters.endDate != null) {
+      return state
+    } else {
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
 
-        // For single date pages like the daily page, default to yesterday
-        date: formatInISOTime(
-          getCurrentLocalTimeAtSpace(action.space).subtract(1, 'days').startOf('day')
-        ),
+          // For single date pages like the daily page, default to yesterday
+          date: formatInISOTime(
+            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'days').startOf('day')
+          ),
 
-        // For date range pages like the trends or raw events page, default to the last full week of
-        // data
-        startDate: formatInISOTime(
-          getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').startOf('week')
-        ),
-        endDate: formatInISOTime(
-          getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').endOf('week')
-        ),
-      },
-    };
+          // For date range pages like the trends or raw events page, default to the last full week of
+          // data
+          startDate: formatInISOTime(
+            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').startOf('week')
+          ),
+          endDate: formatInISOTime(
+            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').endOf('week')
+          ),
+        },
+      };
+    }
 
   // Also, when a modal is shown or hidden, clear the error from the state.
   case SHOW_MODAL:
