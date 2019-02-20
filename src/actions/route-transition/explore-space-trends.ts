@@ -84,7 +84,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
 
     let startDate, endDate;
     let state = getState()
-    if(state.spaces.filters.startDate != null && state.spaces.filters.endDate != null) {
+    if (state.spaces.filters.startDate != null && state.spaces.filters.endDate != null) {
       startDate = state.spaces.filters.startDate
       endDate = state.spaces.filters.endDate
     } else {
