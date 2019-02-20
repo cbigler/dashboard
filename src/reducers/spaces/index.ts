@@ -205,7 +205,7 @@ export default function spaces(state=initialState, action) {
     return {...state, error: null};
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:
-    if(state.filters.date != null && state.filters.startDate != null && state.filters.endDate != null) {
+    if (state.filters.date != null && state.filters.startDate != null && state.filters.endDate != null) {
       return state
     } else {
       return {
