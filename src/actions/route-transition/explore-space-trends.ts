@@ -82,13 +82,23 @@ export default function routeTransitionExploreSpaceTrends(id) {
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
     dispatch(collectionSpacesSet(spaces));
 
+    let startDate, endDate;
+    let state = getState()
+    if (state.spaces.filters.startDate != null && state.spaces.filters.endDate != null) {
+      startDate = state.spaces.filters.startDate
+      endDate = state.spaces.filters.endDate
+    } else {
+      startDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').startOf('week'), selectedSpace);
+      endDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').endOf('week'), selectedSpace);
+    }
+
     dispatch(collectionSpacesFilter(
       'startDate',
-      formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').startOf('week'), selectedSpace),
+      startDate
     ));
     dispatch(collectionSpacesFilter(
       'endDate',
-      formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').endOf('week'), selectedSpace),
+      endDate
     ));
 
     dispatch(calculate(selectedSpace));
