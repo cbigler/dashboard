@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import {
   AppBar,
+  AppBarTitle,
   AppFrame,
   AppPane,
   AppSidebar,
@@ -141,7 +142,7 @@ export function Explore({
       {/* Main application */}
       <AppFrame>
         <AppSidebar visible={true}>
-          <AppBar leftSpan={(
+          <AppBar>
             <InputBox
               type="text"
               width="100%"
@@ -150,7 +151,7 @@ export function Explore({
               value={spaces.filters.search}
               onChange={e => onSpaceSearch(e.target.value)}
             />
-          )} />
+          </AppBar>
           <AppScrollView>
             <nav className="explore-app-frame-sidebar-list">
                 <Fragment>
@@ -163,8 +164,8 @@ export function Explore({
           </AppScrollView>
         </AppSidebar>
         <AppPane>
-          <div className="explore-appbar">
-            <div className="explore-appbar-title">{selectedSpace ? selectedSpace.name : ""}</div>
+          <AppBar>
+            <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
             { selectedSpace ?
             <div className="explore-appbar-subnav">
               <a href={`#/spaces/explore/${spaces.selected}/trends`}
@@ -174,7 +175,7 @@ export function Explore({
               <a href={`#/spaces/explore/${spaces.selected}/data-export`}
                 className={classnames('explore-subnav-link', activePage == "EXPLORE_SPACE_DATA_EXPORT" ? 'selected' : '')}>Data Export</a>
             </div> : null}
-          </div>
+          </AppBar>
           <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
             <ExploreSpacePage activePage={activePage} />
           </AppScrollView>
