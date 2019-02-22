@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { 
+import {
   Button,
-  DensityMark,
   InputStackItem,
   InputStackGroup,
 } from '@density/ui';
 
+import logoDensityBlack from '../../assets/images/logo-black.svg';
 import ErrorBar from '../error-bar/index';
 
 import { accounts } from '../../client';
@@ -37,15 +37,14 @@ export class AccountForgotPassword extends React.Component<any, any> {
   }
 
   render() {
-    return <div className="account-forgot-password">
+    return <div className="login-section">
       <ErrorBar message={this.state.error} showRefresh />
 
-      <div className="account-forgot-password-mark">
-        <DensityMark size={100} />
+      <div className="login-density-logo">
+        <img src={logoDensityBlack} />
       </div>
-
-      <p className="account-forgot-password-lead-in">
-        Password change request:
+      <p className="login-lead">
+        Please set your new password.
       </p>
 
       <div className="account-forgot-password-form">
@@ -70,7 +69,6 @@ export class AccountForgotPassword extends React.Component<any, any> {
         <Button
           onClick={this.onSubmit.bind(this)}
           disabled={this.state.loading || !(this.state.password.length > 0 && this.state.password === this.state.passwordConfirmation)}
-          size="large"
         >Update Password</Button>
       </div>
     </div>;

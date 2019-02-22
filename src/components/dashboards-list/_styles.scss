@@ -1,3 +1,13 @@
 .dashboards-list {
-  color: red;
+  width: 100%;
+  max-width: 800px;
+  margin: 32px auto;
+
+  padding: 32px;
+  background-color: #fff;
+  border: 1px solid #e8e8ed;
+  box-shadow: 6px 6px 0 rgba(0,0,0,.06);
 }
+
+.dashboards-list h1 { font-size: 24px; }
+.dashboards-list p { font-size: 14px; }

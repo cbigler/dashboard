@@ -207,7 +207,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
           modalOpen={activeModal.name !== null}
         />
 
-        <ExploreSpaceHeader />
+        {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
 
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <div className="explore-space-trends-container" >

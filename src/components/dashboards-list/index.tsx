@@ -5,6 +5,7 @@ export function DashboardsList({ dashboards }) {
   if (dashboards.error) {
     return (
       <div className="dashboards-list">
+        <h1>Error loading dashboards</h1>
         <span>{dashboards.error}</span>
       </div>
     );

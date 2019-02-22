@@ -1,58 +1,127 @@
-$login-section-width: 420px;
-.login-section {
-  margin: 0px auto;
+// ------------------------------------------------
+// Log In View
+// ------------------------------------------------
 
-  // Set an explicit width for the login form.
-  padding-left: 5px;
-  padding-right: 5px;
-  @media (min-width: 450px) {
-    width: $login-section-width;
-    padding-left: 30px;
-    padding-right: 30px;
-  }
+// Variables
+// ---------------------------------
+$login-section-width: 468px;
+$z-index-toast: 2000;
 
-  padding-top: 40px;
-}
+
+// Scaffolding
+// ---------------------------------
 
 .login {
+  height: 100%;
   overflow-y: auto;
 }
 
-.login-density-logo {
-  width: 100px;
-  height: 100px;
-  display: block;
-
+.login-section {
+  height: 100%;
   margin: 0px auto;
-  padding-bottom: 40px;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 
-// The submit button to the login form
+
+// Banner
+// ---------------------------------
+
+.login-density-logo {
+  display: block;
+  height: 24px;
+  margin-bottom: 24px;
+}
+.login-density-logo img {
+  height: 100%;
+  width: auto;
+}
+
+.login-lead {
+  margin-bottom: 40px;
+  font-size: 18px;
+  color: $gray-darker;
+}
+
+
+// Log In Form
+// ---------------------------------
+
 .login-submit-button {
   margin-top: 30px;
   width: 100%;
 }
 
-// Wrapper for the login form
-.login-form-container {
-  text-align: center; // For forgot password link in the login form (goes to forgot password page)
+// Hacking the Google SSO button
+.login-submit-button.google {
+  margin-top: 0;
+}
+.login-submit-button.google button {
+  display: flex;
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+  align-items: center;
+  justify-content: center;
+  height: 43px;
+  box-sizing: border-box;
+  padding-top: 2px;
+  padding-bottom: 0;
+  background-color: #fff;
+  border: 1px solid $gray-cinder;
+  text-align: center;
+  line-height: normal;
+  color: $gray-cinder;
+}
+.login-submit-button .icon-google-login {
+  margin-top: -4px;
+  padding-right: 8px;
+  vertical-align: middle;
+}
+.login-submit-button.google button:hover {
+  border-color: $brand-primary;
 }
 
-.login-forgot-password-link {
+// Divider for SSO and standard auth
+.login-sso-divider {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  font-size: 16px;
+  text-align: center;
+}
+
+.login-action-secondary {
   display: inline-block;
   margin-top: 40px;
-  cursor: pointer;
+  font-size: 14px;
   text-decoration: underline;
-  color: $brand-primary-new;
+  color: $brand-primary;
+  cursor: pointer;
 }
 
-// Show an error when there's an error on the login page.
+
+// Footer
+// ---------------------------------
+
+.login-terms-and-privacy {
+  padding-top: 80px;
+  padding-bottom: 64px;
+  color: $gray-darker;
+
+  a {
+    color: $gray-darkest;
+  }
+}
+
+// Log in toast
+// ---------------------------------
 .login-toast {
   position: absolute;
   top: 61px;
-  z-index: 2000;
-  width: calc(100% - 10px);
-  max-width: $login-section-width;
+  z-index: $z-index-toast;
+  box-sizing: border-box;
+  width: $login-section-width - 48px;
 }
 .login-toast-header {
   color: $brand-danger;
@@ -67,18 +136,41 @@ $login-section-width: 420px;
 }
 
 
-
-// Title on the top of the forgot password page
+// ------------------------------------------------
+// Forgot Password View
+// ------------------------------------------------
 .login-password-reset-title {
   font-size: $font-size-3;
   font-weight: normal;
   margin-bottom: 40px;
 }
 
-// Back link to the login page on the forgot password page
-.login-forgot-password-back-link {
-  margin-top: 40px;
-  cursor: pointer;
-  text-decoration: underline;
-  color: $brand-primary-new;
+.login-form-reset .input-stack-item-container,
+.login-form-reset .input-stack-item-container:first-child,
+.login-form-reset .input-stack-item-container:last-child {
+  border-radius: 5px;
+}
+
+
+
+
+// ------------------------------------------------
+// Desktop Styles
+// ------------------------------------------------
+@media (min-width: 450px) {
+  // anything above mobile
+  .login-section {
+    box-sizing: border-box;
+    width: $login-section-width;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  // Wrapper for the login form
+  .login-form-container {
+    padding: 32px;
+    background-color: #fff;
+    border: 1px solid $gray-light;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+  }
 }
