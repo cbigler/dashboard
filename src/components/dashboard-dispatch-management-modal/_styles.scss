@@ -109,12 +109,8 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 
 
 
-.dispatch-management-form {
-  padding: 24px;
-}
-.dispatch-management-form-group {
-  margin-bottom: 32px;
-}
+.dispatch-management-form { padding: 24px; }
+.dispatch-management-form-group { margin-bottom: 32px; }
 .dispatch-management-form-group label {
   display: block;
   margin-bottom: 8px;
@@ -170,11 +166,17 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 .dispatch-management-recipient-list-item {
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
   margin-left: 24px;
   margin-right: 24px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.dispatch-management-recipient-list-item-name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 
@@ -240,3 +242,51 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 
   margin-right: 12px;
 }
+
+
+.dispatch-management-added-not-added-box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+// The below checkbox styles should be read in the context of
+// https://stackoverflow.com/a/32876109/4115328
+.dispatch-management-added-not-added-box input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+.dispatch-management-added-not-added-box label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.dispatch-management-added-not-added-box .text-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: $gray-darker;
+  user-select: none;
+  margin-right: 8px;
+}
+.dispatch-management-added-not-added-box.checked .text-label { color: $brand-primary; }
+
+.dispatch-management-added-not-added-box .checkbox-well {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: 2px;
+  border: 1px solid $gray-darker;
+}
+
+.dispatch-management-added-not-added-box.checked .checkbox-well {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+}
+// end checkbox styles

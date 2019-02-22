@@ -49,7 +49,7 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
       this.state = {
         name: "",
         frequency: "WEEKLY",
-        frequencyDays: [],
+        frequencyDays: [ DAYS_OF_WEEK[0] ],
         recipients: [],
 
         initiallyEnabledRecipientIds: [],
@@ -251,13 +251,14 @@ function DispatchManagementRecipientList({
       <div className="dispatch-management-recipient-list">
         {pinnedUsers.map(user => (
           <div key={user.id} className="dispatch-management-recipient-list-item">
-            <DispatchManagementRecipientIcon user={user} />
-            {user.fullName} pinned
-            <input
-              type="checkbox"
+            <div className="dispatch-management-recipient-list-item-name">
+              <DispatchManagementRecipientIcon user={user} />
+              {user.fullName} pinned
+            </div>
+            <DispatchAddedNotAddedBox
+              id={`${user.id}-checkbox`}
               checked={recipientIds.includes(user.id)}
-              onChange={e => {
-                const checked = e.target.checked;
+              onChange={checked => {
                 if (checked) {
                   onAddRecipient(user);
                 } else {
@@ -373,4 +374,24 @@ class DispatchManagementInput extends Component<InputProps, InputState> {
       </div>
     );
   }
+}
+
+function DispatchAddedNotAddedBox({id, checked, onChange}) {
+  return (
+    <div className={classnames('dispatch-management-added-not-added-box', {checked})}>
+      <input
+        type="checkbox"
+        id={id}
+        checked={checked}
+        onChange={e => onChange(e.target.checked)}
+      />
+
+      <label htmlFor={id}>
+        <span className="text-label">{checked ? 'Added' : 'Not Added'}</span>
+        <div className="checkbox-well">
+          <Icons.Check width={14} height={14} color="#fff" />
+        </div>
+      </label>
+    </div>
+  );
 }
