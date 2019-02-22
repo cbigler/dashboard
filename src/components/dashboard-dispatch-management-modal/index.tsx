@@ -4,6 +4,8 @@ import classnames from 'classnames';
 import { Icons, InputBox } from '@density/ui';
 import Button from '../button/index';
 
+import filterCollection from '../../helpers/filter-collection/index';
+
 const DAYS_OF_WEEK = [
   'Monday',
   'Tuesday',
@@ -27,6 +29,8 @@ type DashboardDispatchManagementModalState = {
   recipients: Array<any>,
 
   initiallyEnabledRecipientIds: Array<string>,
+
+  searchQuery: string,
 };
 
 export default class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
@@ -43,6 +47,8 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
         // Capture all ids of recipients that were enabled when the modal opens. This is required
         // so that we can sort these at the start of all other users in the right hand side list.
         initiallyEnabledRecipientIds: props.initialDispatchSchedule.recipients.map(r => r.id),
+
+        searchQuery: '',
       };
     } else {
       // If creating a new dispatch, these are the default values
@@ -53,6 +59,8 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
         recipients: [],
 
         initiallyEnabledRecipientIds: [],
+
+        searchQuery: '',
       };
     }
   }
@@ -63,7 +71,7 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
 
   render() {
     const { initialDispatchSchedule, visible, onCloseModal } = this.props;
-    const { name, frequency, frequencyDays, recipients, initiallyEnabledRecipientIds } = this.state;
+    const { name, frequency, frequencyDays, recipients, initiallyEnabledRecipientIds, searchQuery } = this.state;
 
     return ReactDOM.createPortal(
       (
@@ -107,6 +115,9 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
 
                   // Used to sort the recipients vertically on the right hand side column
                   initiallyEnabledRecipientIds={initiallyEnabledRecipientIds}
+
+                  searchQuery={searchQuery}
+                  onChangeSearchQuery={searchQuery => this.setState({searchQuery})}
 
                   onAddRecipient={recipient => this.setState(state => ({
                     recipients: [...state.recipients, recipient],
@@ -221,20 +232,27 @@ function DispatchManagementForm({
   );
 }
 
+const userCollectionFilter = filterCollection({fields: ['fullName']});
+
 function DispatchManagementRecipientList({
-  recipients,
   users,
   initiallyEnabledRecipientIds,
 
+  searchQuery,
+  onChangeSearchQuery,
+
+  recipients,
   onAddRecipient,
   onRemoveRecipient,
 }) {
   const recipientIds = recipients.map(r => r.id);
 
-  const pinnedUsers = users
+  const filteredUsers = userCollectionFilter(users, searchQuery);
+
+  const pinnedUsers = filteredUsers
     .filter(user => initiallyEnabledRecipientIds.includes(user.id))
     .sort((a, b) => a.fullName.localeCompare(b.fullName));
-  const unpinnedUsers = users
+  const unpinnedUsers = filteredUsers
     .filter(user => !initiallyEnabledRecipientIds.includes(user.id))
     .sort((a, b) => a.fullName.localeCompare(b.fullName));
 
@@ -244,50 +262,53 @@ function DispatchManagementRecipientList({
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
         <DispatchManagementRecipientSearchBox
           placeholder={`Search through ${users.length} users`}
-          value=""
-          onChange={data => {}}
+          value={searchQuery}
+          onChange={e => onChangeSearchQuery(e.target.value)}
         />
       </div>
       <div className="dispatch-management-recipient-list">
         {pinnedUsers.map(user => (
-          <div key={user.id} className="dispatch-management-recipient-list-item">
-            <div className="dispatch-management-recipient-list-item-name">
-              <DispatchManagementRecipientIcon user={user} />
-              {user.fullName} pinned
-            </div>
-            <DispatchAddedNotAddedBox
-              id={`${user.id}-checkbox`}
-              checked={recipientIds.includes(user.id)}
-              onChange={checked => {
-                if (checked) {
-                  onAddRecipient(user);
-                } else {
-                  onRemoveRecipient(user);
-                }
-              }}
-            />
-          </div>
+          <RecipientListItem
+            key={user.id}
+            user={user}
+            checked={recipientIds.includes(user.id)}
+            onAddRecipient={onAddRecipient}
+            onRemoveRecipient={onRemoveRecipient}
+          />
         ))}
         {unpinnedUsers.map(user => (
-          <div key={user.id} className="dispatch-management-recipient-list-item">
-            <DispatchManagementRecipientIcon user={user} />
-            {user.fullName}
-            <input
-              type="checkbox"
-              checked={recipientIds.includes(user.id)}
-              onChange={e => {
-                const checked = e.target.checked;
-                if (checked) {
-                  onAddRecipient(user);
-                } else {
-                  onRemoveRecipient(user);
-                }
-              }}
-            />
-          </div>
+          <RecipientListItem
+            key={user.id}
+            user={user}
+            checked={recipientIds.includes(user.id)}
+            onAddRecipient={onAddRecipient}
+            onRemoveRecipient={onRemoveRecipient}
+          />
         ))}
       </div>
     </Fragment>
+  );
+}
+
+function RecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
+  return (
+    <div className="dispatch-management-recipient-list-item">
+      <div className="dispatch-management-recipient-list-item-name">
+        <DispatchManagementRecipientIcon user={user} />
+        {user.fullName}
+      </div>
+      <DispatchAddedNotAddedBox
+        id={`dispatch-management-${user.id}-checkbox`}
+        checked={checked}
+        onChange={checked => {
+          if (checked) {
+            onAddRecipient(user);
+          } else {
+            onRemoveRecipient(user);
+          }
+        }}
+      />
+    </div>
   );
 }
 

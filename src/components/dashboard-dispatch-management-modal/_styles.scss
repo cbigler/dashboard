@@ -103,6 +103,7 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   text-decoration: underline;
   cursor: pointer;
   transition: all 150ms ease-in-out;
+  user-select: none;
 }
 .dashboard-dispatch-management-modal-footer-cancel:hover { opacity: 0.9; }
 .dashboard-dispatch-management-modal-footer-cancel:active { opacity: 1; }
@@ -239,8 +240,8 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   width: 40px;
   height: 40px;
   font-size: 11px;
-
   margin-right: 12px;
+  user-select: none;
 }
 
 
@@ -283,7 +284,10 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   height: 24px;
   border-radius: 2px;
   border: 1px solid $gray-darker;
+  transition: all 150ms ease-in-out;
 }
+.dispatch-management-added-not-added-box .checkbox-well:hover { opacity: 0.9; }
+.dispatch-management-added-not-added-box .checkbox-well:active { opacity: 1; }
 
 .dispatch-management-added-not-added-box.checked .checkbox-well {
   background-color: $brand-primary;
