@@ -7,22 +7,14 @@ import {
   AppBarTitle,
   AppFrame,
   AppPane,
-  AppSidebar,
   AppScrollView,
-  Icons,
-  InputBox,
 } from '@density/ui';
 
-import filterCollection from '../../helpers/filter-collection/index';
-import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree/index';
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
-
-const EXPLORE_BACKGROUND = '#F5F5F7';
-const spaceFilter = filterCollection({fields: ['name']});
+import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
+import AdminUserManagement from '../admin-user-management';
 
 export function Admin({
-  activePage,
-  onSpaceSearch
+  activePage
 }) {
   return (
     <Fragment>
@@ -31,17 +23,29 @@ export function Admin({
         <AppPane>
           <AppBar>
             <AppBarTitle>Administration</AppBarTitle>
-            <div className="explore-appbar-subnav">
-              <a href={`#/foo`}
-                className={classnames('explore-subnav-link', activePage == "ADMIN_USER_MANAGEMENT" ? 'selected' : '')}>User Management</a>
-              <a href={`#/bar`}
-                className={classnames('explore-subnav-link', activePage == "ADMIN_DEVELOPER" ? 'selected' : '')}>Developer</a>
-              <a href={`#/baz`}
-                className={classnames('explore-subnav-link', activePage == "ADMIN_DEVICE_STATUS" ? 'selected' : '')}>Device Status</a>
-            </div>
+            <AppBarSubnav>
+              <AppBarSubnavLink
+                href="#/admin/user-management"
+                active={activePage === "ADMIN_USER_MANAGEMENT"}
+              >
+                User Management
+              </AppBarSubnavLink>
+              <AppBarSubnavLink
+                href="#/admin/developer"
+                active={activePage === "ADMIN_DEVELOPER"}
+              >
+                Developer
+              </AppBarSubnavLink>
+              <AppBarSubnavLink
+                href="#/admin/device-status"
+                active={activePage === "ADMIN_DEVICE_STATUS"}
+              >
+                Device Status
+              </AppBarSubnavLink>
+            </AppBarSubnav>
           </AppBar>
           <AppScrollView>
-            <div style={{height:1000}}>ASDFASDF</div>
+            {activePage === 'ADMIN_USER_MANAGEMENT' ? <AdminUserManagement /> : null}
           </AppScrollView>
         </AppPane>
       </AppFrame>
@@ -58,7 +62,7 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     onSpaceSearch(searchQuery) {
-      dispatch(collectionSpacesFilter('search', searchQuery));
+      //dispatch(collectionSpacesFilter('search', searchQuery));
     },
   };
 })(Admin);

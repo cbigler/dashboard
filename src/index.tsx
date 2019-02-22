@@ -57,6 +57,10 @@ import routeTransitionAccountSetupDoorwayDetail from './actions/route-transition
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
+import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
+import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
+import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
+
 import sessionTokenSet from './actions/session-token/set';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
 import collectionSpacesSet from './actions/collection/spaces/set';
@@ -180,6 +184,11 @@ router.addRoute('sensors', () => routeTransitionSensorsList());
 // User registration and password resetting
 router.addRoute('account/register/:slug', slug => routeTransitionAccountRegister(slug));
 router.addRoute('account/forgot-password/:token', token => routeTransitionAccountForgotPassword(token));
+
+// Advanced account management (Administration)
+router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
+router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
+router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 
 // Onboarding flow
 // Redirect #/onboarding => #/onboarding/overview
