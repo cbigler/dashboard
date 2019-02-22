@@ -1,7 +1,8 @@
 import React, { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
-import { Icons, InputBox, Button } from '@density/ui';
+import { Icons, InputBox } from '@density/ui';
+import Button from '../button/index';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -21,8 +22,11 @@ type DashboardDispatchManagementModalProps = {
 
 type DashboardDispatchManagementModalState = {
   name: string,
-  frequency: "DAILY" | "WEEKLY" | "MONTHLY",
+  frequency: "WEEKLY" | "MONTHLY",
   frequencyDays: Array<string>,
+  recipients: Array<any>,
+
+  initiallyEnabledRecipientIds: Array<string>,
 };
 
 export default class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
@@ -33,14 +37,22 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
       this.state = {
         name: props.initialDispatchSchedule.name,
         frequency: props.initialDispatchSchedule.frequency,
-        frequencyDays: props.initialDispatchSchedule.frequencyDays,
+        frequencyDays: props.initialDispatchSchedule.frequencyDays || [ 'Monday' ],
+        recipients: props.initialDispatchSchedule.recipients,
+
+        // Capture all ids of recipients that were enabled when the modal opens. This is required
+        // so that we can sort these at the start of all other users in the right hand side list.
+        initiallyEnabledRecipientIds: props.initialDispatchSchedule.recipients.map(r => r.id),
       };
     } else {
       // If creating a new dispatch, these are the default values
       this.state = {
         name: "",
-        frequency: "DAILY",
+        frequency: "WEEKLY",
         frequencyDays: [],
+        recipients: [],
+
+        initiallyEnabledRecipientIds: [],
       };
     }
   }
@@ -51,14 +63,14 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
 
   render() {
     const { initialDispatchSchedule, visible, onCloseModal } = this.props;
-    const { name, frequency, frequencyDays } = this.state;
+    const { name, frequency, frequencyDays, recipients, initiallyEnabledRecipientIds } = this.state;
 
     return ReactDOM.createPortal(
       (
         <div className={classnames('dashboard-dispatch-management-modal', {visible})}>
           <div className="dashboard-dispatch-management-modal-inner">
             <div className="dashboard-dispatch-management-modal-header-app-bar">
-              {initialDispatchSchedule ? initialDispatchSchedule.name : 'New Dispatch'}
+              {initialDispatchSchedule ? initialDispatchSchedule.name : 'New Email Digest'}
             </div>
             <div className="dashboard-dispatch-management-modal-split-container">
               <div className="dashboard-dispatch-management-modal-split left">
@@ -77,88 +89,31 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
               </div>
               <div className="dashboard-dispatch-management-modal-split right">
                 <DispatchManagementRecipientList
-                  recipients={[
+                  recipients={recipients}
+                  users={[
                     {
-                      id: 1,
+                      id: 'usr_123',
                       fullName: 'Ryan Gaus',
                     },
                     {
-                      id: 2,
+                      id: 'usr_456',
                       fullName: 'Robery Grazioli',
                     },
                     {
-                      id: 3,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 4,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 5,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 6,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 7,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 8,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 9,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 10,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 11,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 12,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 13,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 14,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 15,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 16,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 17,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 18,
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 19,
-                      fullName: 'Gus Cost',
-                    },
-                    {
-                      id: 20,
+                      id: 'usr_789',
                       fullName: 'Gus Cost',
                     },
                   ]}
+
+                  // Used to sort the recipients vertically on the right hand side column
+                  initiallyEnabledRecipientIds={initiallyEnabledRecipientIds}
+
+                  onAddRecipient={recipient => this.setState(state => ({
+                    recipients: [...state.recipients, recipient],
+                  }))}
+                  onRemoveRecipient={recipient => this.setState(state => ({
+                    recipients: state.recipients.filter(r => r.id !== recipient.id),
+                  }))}
                 />
               </div>
             </div>
@@ -168,7 +123,7 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
                 className="dashboard-dispatch-management-modal-footer-cancel"
                 onClick={onCloseModal}
               >Cancel</span>
-              <Button type="primary" width={128}>Save Dispatch</Button>
+              <Button type="primary">Save Email Digest</Button>
             </div>
           </div>
         </div>
@@ -193,7 +148,7 @@ function DispatchManagementForm({
     <div className="dispatch-management-form">
       <div className="dispatch-management-form-group">
         <label htmlFor="dispatch-name">Name</label>
-        <InputBox
+        <DispatchManagementInput
           type="text"
           id="dispatch-name"
           placeholder={defaultDispatchName}
@@ -210,7 +165,6 @@ function DispatchManagementForm({
             placeholder={defaultDispatchName}
             value={frequency}
             choices={[
-              {id: 'DAILY', label: 'Daily'},
               {id: 'WEEKLY', label: 'Weekly'},
               {id: 'MONTHLY', label: 'Monthly'},
             ]}
@@ -267,33 +221,76 @@ function DispatchManagementForm({
   );
 }
 
-function DispatchManagementRecipientList({ recipients }) {
+function DispatchManagementRecipientList({
+  recipients,
+  users,
+  initiallyEnabledRecipientIds,
+
+  onAddRecipient,
+  onRemoveRecipient,
+}) {
+  const recipientIds = recipients.map(r => r.id);
+
+  const pinnedUsers = users
+    .filter(user => initiallyEnabledRecipientIds.includes(user.id))
+    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+  const unpinnedUsers = users
+    .filter(user => !initiallyEnabledRecipientIds.includes(user.id))
+    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+
   return (
     <Fragment>
       <div className="dispatch-management-recipient-list-app-bar">
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
         <DispatchManagementRecipientSearchBox
+          placeholder={`Search through ${users.length} users`}
           value=""
           onChange={data => {}}
         />
       </div>
       <div className="dispatch-management-recipient-list">
-        {
-          recipients
-            .sort((a, b) => a.fullName.localeCompare(b.fullName))
-            .map(recipient => (
-              <div key={recipient.id} className="dispatch-management-recipient-list-item">
-                <DispatchManagementRecipientIcon user={recipient} />
-                {recipient.fullName}
-              </div>
-            ))
-        }
+        {pinnedUsers.map(user => (
+          <div key={user.id} className="dispatch-management-recipient-list-item">
+            <DispatchManagementRecipientIcon user={user} />
+            {user.fullName} pinned
+            <input
+              type="checkbox"
+              checked={recipientIds.includes(user.id)}
+              onChange={e => {
+                const checked = e.target.checked;
+                if (checked) {
+                  onAddRecipient(user);
+                } else {
+                  onRemoveRecipient(user);
+                }
+              }}
+            />
+          </div>
+        ))}
+        {unpinnedUsers.map(user => (
+          <div key={user.id} className="dispatch-management-recipient-list-item">
+            <DispatchManagementRecipientIcon user={user} />
+            {user.fullName}
+            <input
+              type="checkbox"
+              checked={recipientIds.includes(user.id)}
+              onChange={e => {
+                const checked = e.target.checked;
+                if (checked) {
+                  onAddRecipient(user);
+                } else {
+                  onRemoveRecipient(user);
+                }
+              }}
+            />
+          </div>
+        ))}
       </div>
     </Fragment>
   );
 }
 
-function DispatchManagementRecipientIcon({user}) {
+function DispatchManagementRecipientIcon({ user }) {
   return (
     <div className="dispatch-management-recipient-icon">
       {
@@ -310,6 +307,7 @@ function DispatchManagementRecipientIcon({user}) {
 type SearchBoxProps = {
   value: string,
   onChange: (string) => any,
+  [key: string]: any, /* other props */
 };
 type SearchBoxState = {
   focused: boolean,
@@ -321,7 +319,7 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
   input: React.RefObject<HTMLInputElement> = React.createRef();
 
   render() {
-    const { value, onChange } = this.props;
+    const { ...props } = this.props;
     const { focused } = this.state;
     return (
       <div
@@ -334,13 +332,43 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
       >
         <Icons.Search />
         <input
+          {...props}
           type="text"
-          placeholder="Search through 28 accounts"
-          value={value}
           ref={this.input}
           onFocus={() => this.setState({focused: true})}
           onBlur={() => this.setState({focused: false})}
-          onChange={onChange}
+        />
+      </div>
+    );
+
+  }
+}
+
+type InputProps = {
+  value: string,
+  onChange: (string) => any,
+  [key: string]: any, /* other props */
+};
+type InputState = {
+  focused: boolean,
+};
+
+class DispatchManagementInput extends Component<InputProps, InputState> {
+  state = { focused: false }
+
+  input: React.RefObject<HTMLInputElement> = React.createRef();
+
+  render() {
+    const { ...props } = this.props;
+    const { focused } = this.state;
+    return (
+      <div className={classnames('dispatch-management-recipient-input-box', {focused})}>
+        <input
+          {...props}
+          type="text"
+          ref={this.input}
+          onFocus={() => this.setState({focused: true})}
+          onBlur={() => this.setState({focused: false})}
         />
       </div>
     );

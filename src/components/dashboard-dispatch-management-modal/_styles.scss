@@ -110,11 +110,11 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 
 
 .dispatch-management-form {
-  padding-top: 24px;
-  padding-bottom: 24px;
-  padding-left: 24px;
+  padding: 24px;
 }
-.dispatch-management-form-group { margin-bottom: 32px; }
+.dispatch-management-form-group {
+  margin-bottom: 32px;
+}
 .dispatch-management-form-group label {
   display: block;
   margin-bottom: 8px;
@@ -193,6 +193,29 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
 }
 .dispatch-management-recipient-search-box.focused { border-color: $brand-primary-new; }
 .dispatch-management-recipient-search-box input {
+  border: 0px;
+  background-color: transparent;
+  height: 40px;
+  margin-left: 16px;
+  outline: none;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.dispatch-management-recipient-input-box {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 40px;
+  border: 1px solid $gray-dark;
+  border-radius: 2px;
+  background-color: #fff;
+  cursor: text;
+  box-sizing: border-box;
+}
+.dispatch-management-recipient-input-box.focused { border-color: $brand-primary-new; }
+.dispatch-management-recipient-input-box input {
   border: 0px;
   background-color: transparent;
   height: 40px;

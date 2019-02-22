@@ -25,7 +25,7 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
           onClick={() => this.setState({visible: !visible})}
         >
           <Icons.Mail color={colorVariables.brandPrimaryNew} />
-          <span className="dashboard-dispatch-list-button-text">Dispatch</span>
+          <span className="dashboard-dispatch-list-button-text">Email Digest</span>
           <Icons.ChevronDown width={10} height={10} color={colorVariables.brandPrimaryNew} />
         </button>
 

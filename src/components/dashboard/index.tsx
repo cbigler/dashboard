@@ -283,19 +283,27 @@ export function Dashboard({
                     'Thursday',
                     'Friday',
                   ],
-                  owner: {
-                    id: 'usr_xxx',
-                    fullName: 'John Smith',
-                  },
+                  recipients: [
+                    {
+                      id: 'usr_123',
+                      fullName: 'Ryan Gaus',
+                    },
+                    {
+                      id: 'usr_456',
+                      fullName: 'Robery Grazioli',
+                    },
+                  ],
                 },
                 {
                   id: 2,
                   name: 'Number two',
-                  frequency: 'DAILY',
-                  owner: {
-                    id: 'usr_xxx',
-                    fullName: 'John Smith',
-                  },
+                  frequency: 'MONTHLY',
+                  recipients: [
+                    {
+                      id: 'usr_789',
+                      fullName: 'Gus Cost',
+                    },
+                  ],
                 },
               ]}
               onEditDispatch={dispatch => {
