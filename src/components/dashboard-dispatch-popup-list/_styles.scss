@@ -12,6 +12,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
 
   color: $brand-primary-new;
   height: 40px;
@@ -63,6 +64,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 
   opacity: 0;
   transition: all 150ms ease-in-out;
+  pointer-events: none;
 }
 .dashboard-dispatch-list-dropdown.visible {
   pointer-events: auto;

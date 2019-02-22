@@ -9,6 +9,9 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import {
   AppBar,
+  AppBarContext,
+  AppBarSection,
+  AppBarTitle,
   AppFrame,
   AppPane,
   AppSidebar,
@@ -17,8 +20,6 @@ import {
   DashboardReportGrid,
   Icons,
 } from '@density/ui';
-
-import AppBarTransparent from '../app-bar-transparent/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
@@ -76,13 +77,16 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
     (
       <div className={classnames('dashboard-expanded-report-modal', {visible})}>
         <div className="dashboard-expanded-report-modal-inner">
-          <AppBarTransparent
-            rightSpan={(
-              <button onClick={onCloseModal} className="dashboard-expanded-report-modal-button">
-                Close
-              </button>
-            )}
-          />
+          <AppBarContext.Provider value="TRANSPARENT">
+            <AppBar>
+              <AppBarSection></AppBarSection>
+              <AppBarSection>
+                <button onClick={onCloseModal} className="dashboard-expanded-report-modal-button">
+                  Close
+                </button>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
           {report ? (
             <Report
               report={report as any}
@@ -90,7 +94,6 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
               expanded={true}
             />
           ) : null}
-          <AppBarTransparent />
         </div>
       </div>
     ),
@@ -238,7 +241,7 @@ export function Dashboard({
       {/* Main application */}
       <AppFrame>
         <AppSidebar visible={sidebarVisible}>
-          <AppBar title="Dashboards" />
+          <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
           <AppScrollView>
             <nav className="dashboard-app-frame-sidebar-list">
               {dashboards.loading ? null :
@@ -260,95 +263,92 @@ export function Dashboard({
           </AppScrollView>
         </AppSidebar>
         <AppPane>
-          <div className="dashboard-app-bar">
-            <DashboardSidebarHideShowIcon
-              sidebarVisible={sidebarVisible}
-              onChangeSidebarVisibility={onChangeSidebarVisibility}
-            />
+          <AppBar>
+            <AppBarSection>
+              <DashboardSidebarHideShowIcon
+                sidebarVisible={sidebarVisible}
+                onChangeSidebarVisibility={onChangeSidebarVisibility}
+              />
+              <AppBarTitle>
+                {selectedDashboard ? selectedDashboard.name : ""}
+              </AppBarTitle>
+            </AppBarSection>
 
-						<div className="dashboard-app-bar-title">
-              {selectedDashboard ? selectedDashboard.name : ""}
-            </div>
+            {/* TODO: Replace this with better report time navigation (like MixPanel) */}
+            {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
+              <div style={{width: 50}}>
+                <Button
+                  style={{backgroundColor: '#FFF'}}
+                  onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
+                >
+                  <Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
+                </Button>
+              </div>
+              <div style={{padding: 13}}>
+                Reported on{' '}
+                <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+              </div>
+              <div style={{width: 50}}>
+                <Button
+                  style={{backgroundColor: '#FFF'}}
+                  onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                  disabled={moment(date).add(1, 'week') > moment()}
+                >
+                  <Icons.ChevronRight
+                    color={moment(date).add(1, 'week') > moment() ? 
+                      colorVariables.gray :
+                      colorVariables.brandPrimaryNew}
+                  />
+                </Button>
+              </div>
+            </AppBarSection> : null}
 
-						<DashboardDispatchPopupList
-              dispatches={[
-                {
-                  id: 1,
-                  name: 'My dispatch',
-                  frequency: 'WEEKLY',
-                  frequencyDays: [
-                    'Monday',
-                    'Tuesday',
-                    'Wednesday',
-                    'Thursday',
-                    'Friday',
-                  ],
-                  recipients: [
-                    {
-                      id: 'usr_123',
-                      fullName: 'Ryan Gaus',
-                    },
-                    {
-                      id: 'usr_456',
-                      fullName: 'Robery Grazioli',
-                    },
-                  ],
-                },
-                {
-                  id: 2,
-                  name: 'Number two',
-                  frequency: 'MONTHLY',
-                  recipients: [
-                    {
-                      id: 'usr_789',
-                      fullName: 'Gus Cost',
-                    },
-                  ],
-                },
-              ]}
-              onEditDispatch={dispatch => {
-                onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch });
-              }}
-              onCreateDispatch={() => {
-                onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch: null });
-              }}
-            />
-
-						{/* TODO: Replace this with better report time navigation (like MixPanel) */}
-						{settings && stringToBoolean(settings.dashboardWeekScrubber) ? <div style={{
-							flexGrow: 1,
-							display: 'flex',
-							flexDirection: 'row',
-							justifyContent: 'flex-end',
-							marginBottom: -4
-						}}>
-							<div style={{width: 50}}>
-								<Button
-									style={{backgroundColor: '#FFF'}}
-									onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
-								>
-									<Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
-								</Button>
-							</div>
-							<div style={{padding: 13}}>
-								Reported on{' '}
-								<strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-							</div>
-							<div style={{width: 50}}>
-								<Button
-									style={{backgroundColor: '#FFF'}}
-									onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-									disabled={moment(date).add(1, 'week') > moment()}
-								>
-									<Icons.ChevronRight
-										color={moment(date).add(1, 'week') > moment() ? 
-											colorVariables.gray :
-											colorVariables.brandPrimaryNew}
-									/>
-								</Button>
-							</div>
-						</div> : null}
-          </div>
+            <AppBarSection>
+              <DashboardDispatchPopupList
+                dispatches={[
+                  {
+                    id: 1,
+                    name: 'My dispatch',
+                    frequency: 'WEEKLY',
+                    frequencyDays: [
+                      'Monday',
+                      'Tuesday',
+                      'Wednesday',
+                      'Thursday',
+                      'Friday',
+                    ],
+                    recipients: [
+                      {
+                        id: 'usr_123',
+                        fullName: 'Ryan Gaus',
+                      },
+                      {
+                        id: 'usr_456',
+                        fullName: 'Robery Grazioli',
+                      },
+                    ],
+                  },
+                  {
+                    id: 2,
+                    name: 'Number two',
+                    frequency: 'MONTHLY',
+                    recipients: [
+                      {
+                        id: 'usr_789',
+                        fullName: 'Gus Cost',
+                      },
+                    ],
+                  },
+                ]}
+                onEditDispatch={dispatch => {
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch });
+                }}
+                onCreateDispatch={() => {
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch: null });
+                }}
+              />
+            </AppBarSection>
+          </AppBar>
           <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
             <DashboardMainScrollViewContent
               dashboards={dashboards}
