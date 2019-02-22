@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import {
   AppBar,
+  AppBarTitle,
   AppFrame,
   AppPane,
   AppSidebar,
@@ -28,7 +29,17 @@ export function Admin({
       {/* Main application */}
       <AppFrame>
         <AppPane>
-          <AppBar title="Administration" rightSpan={<span>ASDF</span>} />
+          <AppBar>
+            <AppBarTitle>Administration</AppBarTitle>
+            <div className="explore-appbar-subnav">
+              <a href={`#/foo`}
+                className={classnames('explore-subnav-link', activePage == "ADMIN_USER_MANAGEMENT" ? 'selected' : '')}>User Management</a>
+              <a href={`#/bar`}
+                className={classnames('explore-subnav-link', activePage == "ADMIN_DEVELOPER" ? 'selected' : '')}>Developer</a>
+              <a href={`#/baz`}
+                className={classnames('explore-subnav-link', activePage == "ADMIN_DEVICE_STATUS" ? 'selected' : '')}>Device Status</a>
+            </div>
+          </AppBar>
           <AppScrollView>
             <div style={{height:1000}}>ASDFASDF</div>
           </AppScrollView>
