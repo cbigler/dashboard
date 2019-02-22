@@ -20,6 +20,7 @@ import timeSegmentGroups from './reducers/time-segment-groups/index';
 import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
+import users from './reducers/users/index';
 import miscellaneous from './reducers/miscellaneous/index';
 const reducer = combineReducers({
   accountForgotPassword,
@@ -39,6 +40,7 @@ const reducer = combineReducers({
   dashboards,
   exploreData,
   resizeCounter,
+  users,
   miscellaneous,
 });
 

@@ -69,6 +69,10 @@
           "full_name": "{{full_name}}",
           "nickname": "{{nickname}}"
         }
+      },
+      "list": {
+        "method": "GET",
+        "url": "{{{host}}}/users"
       }
     },
     "sensors": {

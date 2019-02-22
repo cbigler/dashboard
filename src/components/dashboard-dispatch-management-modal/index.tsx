@@ -1,8 +1,11 @@
 import React, { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { Icons, InputBox } from '@density/ui';
 import Button from '../button/index';
+
+import collectionUsersLoad from '../../actions/collection/users/load';
 
 import filterCollection from '../../helpers/filter-collection/index';
 
@@ -20,6 +23,9 @@ type DashboardDispatchManagementModalProps = {
   visible: boolean,
   initialDispatchSchedule: any,
   onCloseModal: () => any,
+
+  users: Array<any>,
+  onLoadUsers: () => any,
 };
 
 type DashboardDispatchManagementModalState = {
@@ -33,7 +39,7 @@ type DashboardDispatchManagementModalState = {
   searchQuery: string,
 };
 
-export default class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
+class DashboardDispatchManagementModal extends Component<DashboardDispatchManagementModalProps, DashboardDispatchManagementModalState> {
   constructor(props) {
     super(props);
 
@@ -69,8 +75,12 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
     return 'TBD how the default name is calculated';
   }
 
+  componentDidMount() {
+    this.props.onLoadUsers();
+  }
+
   render() {
-    const { initialDispatchSchedule, visible, onCloseModal } = this.props;
+    const { users, initialDispatchSchedule, visible, onCloseModal } = this.props;
     const { name, frequency, frequencyDays, recipients, initiallyEnabledRecipientIds, searchQuery } = this.state;
 
     return ReactDOM.createPortal(
@@ -143,6 +153,11 @@ export default class DashboardDispatchManagementModal extends Component<Dashboar
     );
   }
 }
+
+export default connect(
+  state => ({ users: (state as any).users }),
+  dispatch => ({ onLoadUsers: () => dispatch<any>(collectionUsersLoad()) })
+)(DashboardDispatchManagementModal);
 
 function DispatchManagementForm({
   name,
