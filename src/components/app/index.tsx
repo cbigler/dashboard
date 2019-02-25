@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import TokenList from '../dev-token-list/index';
 import Explore from '../explore/index';
 import Login from '../login/index';
+import Admin from '../admin/index';
 import Account from '../account/index';
 import WebhookList from '../dev-webhook-list/index';
 import AccountRegistration from '../account-registration/index';
@@ -61,6 +62,10 @@ function ActivePage({activePage, settings}) {
   switch (activePage) {
   case "LOGIN":
     return <Login />;
+  case "ADMIN_USER_MANAGEMENT":
+  case "ADMIN_DEVELOPER":
+  case "ADMIN_DEVICE_STATUS":
+    return <Admin activePage={activePage} />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":

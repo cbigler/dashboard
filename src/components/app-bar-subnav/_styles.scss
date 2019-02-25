@@ -1,0 +1,22 @@
+.app-bar-subnav {
+  display: flex;
+  box-sizing: border-box;
+  height: 80px;
+}
+
+.app-bar-subnav-link {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-bottom: 2px solid transparent;
+  font-weight: 500;
+  font-size: 16px;
+  color: $gray-cinder;
+  text-decoration: none;
+}
+
+.app-bar-subnav-link.selected {
+  color: $brand-primary-new;
+  border-bottom-color: $brand-primary-new;
+}
