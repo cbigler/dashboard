@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -13,6 +13,8 @@ import {
   InputBox,
 } from '@density/ui';
 
+import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
+
 import filterCollection from '../../helpers/filter-collection/index';
 import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
@@ -24,7 +26,7 @@ const EXPLORE_BACKGROUND = '#F5F5F7';
 const spaceFilter = filterCollection({fields: ['name']});
 
 
-function ExploreSidebarItem({selected, id, name, spaceType, depth, activePage}) {
+function ExploreSidebarItem({selected, id, name, spaceType, activePage}) {
   let page;
   switch(activePage) {
     case 'EXPLORE_SPACE_TRENDS':
@@ -94,7 +96,6 @@ function RenderExploreSidebarItem(space, activePage, selectedSpace, depth) {
         id={space.id}
         name={space.name}
         spaceType={space.spaceType}
-        depth={depth}
         activePage={activePage}
         selected={selectedSpace ? selectedSpace.id === space.id : false}
       />
@@ -167,14 +168,26 @@ export function Explore({
           <AppBar>
             <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
             { selectedSpace ?
-            <div className="explore-appbar-subnav">
-              <a href={`#/spaces/explore/${spaces.selected}/trends`}
-                className={classnames('explore-subnav-link', activePage == "EXPLORE_SPACE_TRENDS" ? 'selected' : '')}>Trends</a>
-              <a href={`#/spaces/explore/${spaces.selected}/daily`}
-                className={classnames('explore-subnav-link', activePage == "EXPLORE_SPACE_DAILY" ? 'selected' : '')}>Daily</a>
-              <a href={`#/spaces/explore/${spaces.selected}/data-export`}
-                className={classnames('explore-subnav-link', activePage == "EXPLORE_SPACE_DATA_EXPORT" ? 'selected' : '')}>Data Export</a>
-            </div> : null}
+            <AppBarSubnav>
+              <AppBarSubnavLink
+                href={`#/spaces/explore/${spaces.selected}/trends`}
+                active={activePage === "EXPLORE_SPACE_TRENDS"}
+              >
+                Trends
+              </AppBarSubnavLink>
+              <AppBarSubnavLink
+                href={`#/spaces/explore/${spaces.selected}/daily`}
+                active={activePage === "EXPLORE_SPACE_DAILY"}
+              >
+                Daily
+              </AppBarSubnavLink>
+              <AppBarSubnavLink
+                href={`#/spaces/explore/${spaces.selected}/data-export`}
+                active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
+              >
+                Data Export
+              </AppBarSubnavLink>
+            </AppBarSubnav> : null}
           </AppBar>
           <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
             <ExploreSpacePage activePage={activePage} />
