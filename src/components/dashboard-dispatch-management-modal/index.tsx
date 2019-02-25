@@ -22,6 +22,7 @@ const DAYS_OF_WEEK = [
 type DashboardDispatchManagementModalProps = {
   visible: boolean,
   initialDispatchSchedule: any,
+  selectedDashboard: any;
   onCloseModal: () => any,
 
   users: Array<any>,
@@ -72,7 +73,17 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
   }
 
   calculateDefaultDispatchName() {
-    return null;
+    const { frequency } = this.state;
+    const { selectedDashboard } = this.props;
+
+    switch (frequency) {
+    case 'WEEKLY':
+      return `Weekly ${selectedDashboard.name}`;
+    case 'MONTHLY':
+      return `Monthly ${selectedDashboard.name}`;
+    default:
+      return null;
+    }
   }
 
   componentDidMount() {

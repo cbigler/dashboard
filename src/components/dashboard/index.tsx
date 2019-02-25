@@ -233,6 +233,7 @@ export function Dashboard({
       {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
         <DashboardDispatchManagementModal
           visible={activeModal.visible}
+          selectedDashboard={activeModal.data.selectedDashboard}
           initialDispatchSchedule={activeModal.data.dispatch}
           onCloseModal={onCloseModal}
         />
@@ -341,10 +342,10 @@ export function Dashboard({
                   },
                 ]}
                 onEditDispatch={dispatch => {
-                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch });
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch });
                 }}
                 onCreateDispatch={() => {
-                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { dispatch: null });
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch: null });
                 }}
               />
             </AppBarSection>
