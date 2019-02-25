@@ -2,6 +2,8 @@ import React, { Fragment, Component } from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import moment from 'moment';
+
 import { Icons, InputBox } from '@density/ui';
 import Button from '../button/index';
 
@@ -19,6 +21,26 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
+const TIMEZONE_CHOICES: Array<{id: string, label: string}> = moment.tz.names().sort((a, b) => {
+  // modified from https://stackoverflow.com/a/23921775/4115328
+  const startTimezones = [
+    'America/New_York',
+    'America/Los_Angeles',
+    'America/Denver',
+    'America/Chicago',
+  ];
+  if (startTimezones.includes(a)) {
+    return -1;
+  } else if (startTimezones.includes(b)) {
+    return 1;
+  } else {
+    return 0;
+  }
+}).map(zone => ({
+  id: zone,
+  label: zone.replace(/_/g, ' ').replace(/\//g, ' - '),
+}))
+
 type DashboardDispatchManagementModalProps = {
   visible: boolean,
   initialDispatchSchedule: any,
@@ -34,6 +56,8 @@ type DashboardDispatchManagementModalState = {
   frequency: "WEEKLY" | "MONTHLY",
   frequencyDays: Array<string>,
   recipients: Array<any>,
+  time: string | null,
+  timeZone: string,
 
   initiallyEnabledRecipientIds: Array<string>,
 
@@ -51,6 +75,9 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
         frequencyDays: props.initialDispatchSchedule.frequencyDays || [ 'Monday' ],
         recipients: props.initialDispatchSchedule.recipients,
 
+        time: '12:00',
+        timeZone: 'America/New_York',
+
         // Capture all ids of recipients that were enabled when the modal opens. This is required
         // so that we can sort these at the start of all other users in the right hand side list.
         initiallyEnabledRecipientIds: props.initialDispatchSchedule.recipients.map(r => r.id),
@@ -64,6 +91,9 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
         frequency: "WEEKLY",
         frequencyDays: [ DAYS_OF_WEEK[0] ],
         recipients: [],
+
+        time: null,
+        timeZone: 'America/New_York',
 
         initiallyEnabledRecipientIds: [],
 
@@ -92,7 +122,17 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
 
   render() {
     const { users, initialDispatchSchedule, visible, onCloseModal } = this.props;
-    const { name, frequency, frequencyDays, recipients, initiallyEnabledRecipientIds, searchQuery } = this.state;
+    const {
+      name,
+      frequency,
+      frequencyDays,
+      recipients,
+      time,
+      timeZone,
+
+      initiallyEnabledRecipientIds,
+      searchQuery,
+    } = this.state;
 
     return ReactDOM.createPortal(
       (
@@ -112,6 +152,12 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
 
                   frequencyDays={frequencyDays}
                   onChangeFrequencyDays={frequencyDays => this.setState({frequencyDays})}
+
+                  time={time}
+                  onChangeTime={time => this.setState({time})}
+
+                  timeZone={timeZone}
+                  onChangeTimeZone={timeZone => this.setState({timeZone})}
 
                   defaultDispatchName={this.calculateDefaultDispatchName() || 'Dispatch Name'}
                 />
@@ -170,16 +216,37 @@ export default connect(
   dispatch => ({ onLoadUsers: () => dispatch<any>(collectionUsersLoad()) })
 )(DashboardDispatchManagementModal);
 
+// Generate all possible values for the hour choices in the dispatch management form component
+// below.
+function generateDispatchTimeChoices(timeZone) {
+  const startOfLocalDay = moment.utc().tz(timeZone).startOf('day');
+  const choices: Array<{id: string, label: string}> = [];
+
+  for (let index = 0; index < 24; index++) {
+    const hour = startOfLocalDay.clone().add(index, 'hours');
+    choices.push({
+      id: hour.format('HH:mm'),
+      label: hour.format('h:mm a')
+    });
+  }
+
+  return choices;
+}
+
 function DispatchManagementForm({
   name,
   frequency,
   frequencyDays,
+  time,
+  timeZone,
 
   defaultDispatchName,
 
   onChangeName,
   onChangeFrequency,
   onChangeFrequencyDays,
+  onChangeTime,
+  onChangeTimeZone,
 }) {
   return (
     <div className="dispatch-management-form">
@@ -246,12 +313,25 @@ function DispatchManagementForm({
       </div>
       <div className="dispatch-management-form-group">
         <label htmlFor="dispatch-name">Time</label>
-        <div style={{width: 200}}>
-          Time questions:
-          1. How does the select box work? Are we selecting in intervals of whole or half hours or
-          something like that, or is this a custom control?
-          2. There's been talk of a select box with search functionality for the time zone
-          selection, I'm not sure exactly what that looks like yet either.
+        <InputBox
+          type="select"
+          value={time}
+          choices={generateDispatchTimeChoices(timeZone)}
+          onChange={item => onChangeTime(item.id)}
+          placeholder="Select a time"
+          width={140}
+          menuMaxHeight={300}
+        />
+        <div className="dispatch-management-form-group-time-zone-field">
+          <InputBox
+            type="select"
+            value={timeZone}
+            choices={TIMEZONE_CHOICES}
+            onChange={item => onChangeTimeZone(item.id)}
+            placeholder="Select a time"
+            width={300}
+            menuMaxHeight={300}
+          />
         </div>
       </div>
     </div>
