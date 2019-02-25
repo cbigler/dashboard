@@ -1,4 +1,5 @@
 import React from 'react';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 const MOCK_DATA = [
   {
@@ -67,12 +68,12 @@ export default function AdminUserManagement({}) {
       <th>Invitation</th>
     </thead>
     <tbody>
-      {MOCK_DATA.map(u => (<tr>
-        <td>Email</td>
-        <td>Name</td>
-        <td>Role</td>
-        <td>Activity</td>
-        <td>Invitation</td>
+      {MOCK_DATA.map(objectSnakeToCamel).map(u => (<tr>
+        <td>{u.email}</td>
+        <td>{u.fullName}</td>
+        <td>{u.role}</td>
+        <td>{}</td>
+        <td>{"asdf"}</td>
       </tr>))}
     </tbody>
   </table>;
