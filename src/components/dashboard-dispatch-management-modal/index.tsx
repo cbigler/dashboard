@@ -88,7 +88,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
         <div className={classnames('dashboard-dispatch-management-modal', {visible})}>
           <div className="dashboard-dispatch-management-modal-inner">
             <div className="dashboard-dispatch-management-modal-header-app-bar">
-              {initialDispatchSchedule ? initialDispatchSchedule.name : 'New Email Digest'}
+              {initialDispatchSchedule ? 'Edit Email Digest' : 'New Email Digest'}
             </div>
             <div className="dashboard-dispatch-management-modal-split-container">
               <div className="dashboard-dispatch-management-modal-split left">

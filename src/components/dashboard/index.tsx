@@ -308,7 +308,7 @@ export function Dashboard({
                 dispatches={[
                   {
                     id: 1,
-                    name: 'My dispatch',
+                    name: 'My dispatch with a really long name',
                     frequency: 'WEEKLY',
                     frequencyDays: [
                       'Monday',
