@@ -12,6 +12,8 @@ import {
 
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import AdminUserManagement from '../admin-user-management';
+import AdminDeveloper from '../admin-developer';
+import AdminDeviceStatus from '../admin-device-status';
 
 export function Admin({
   activePage
@@ -46,6 +48,8 @@ export function Admin({
           </AppBar>
           <AppScrollView>
             {activePage === 'ADMIN_USER_MANAGEMENT' ? <AdminUserManagement /> : null}
+            {activePage === 'ADMIN_DEVELOPER' ? <AdminDeveloper /> : null}
+            {activePage === 'ADMIN_DEVICE_STATUS' ? <AdminDeviceStatus /> : null}
           </AppScrollView>
         </AppPane>
       </AppFrame>

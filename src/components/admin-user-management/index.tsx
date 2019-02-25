@@ -1,5 +1,5 @@
 import React from 'react';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 
 const MOCK_DATA = [
   {
