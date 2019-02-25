@@ -1,6 +1,8 @@
 import React from 'react';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { Icons, InputBox, InputBoxContext } from '@density/ui';
+
+import { AppBar, AppBarSection, Button, Icons, InputBox, InputBoxContext } from '@density/ui';
+
 
 const MOCK_DATA = [
   {
@@ -79,55 +81,65 @@ const MOCK_DATA = [
 
 export default function AdminUserManagement({}) {
   const data = MOCK_DATA.map(objectSnakeToCamel);
-  return <div className="admin-user-management-list">
-    <div>
-      <div className="admin-user-management-header">Email</div>
-      {data.map(u => <div className="admin-user-management-cell">{u.email}</div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header">Name</div>
-      {data.map(u => <div className="admin-user-management-cell">{u.fullName}</div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header">Role</div>
-      {data.map(u => <div className="admin-user-management-cell">{
-        <InputBoxContext.Provider value="LIST_VIEW">
-          <InputBox
-            type="select"
-            width="160px"
-            value={u.role}
-            choices={[{
-              id: 'readonly',
-              label: 'Read-only'
-            }, {
-              id: 'admin',
-              label: 'Admin'
-            }, {
-              id: 'owner',
-              label: 'Owner'
-            }]} />
-        </InputBoxContext.Provider>
-      }</div>)}
-    </div>
-    <div style={{flexGrow: 1}}>
-      <div className="admin-user-management-header"></div>
-      {data.map(u => <div className="admin-user-management-cell"></div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header">Activity</div>
-      {data.map(u => <div className="admin-user-management-cell">Active</div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header">Invitation</div>
-      {data.map(u => <div className="admin-user-management-cell">{u.invitationStatus}</div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header"></div>
-      {data.map(u => <div className="admin-user-management-cell">{u.invitationStatus === 'pending' ? 'Resend' : ''}</div>)}
-    </div>
-    <div>
-      <div className="admin-user-management-header"></div>
-      {data.map(u => <div className="admin-user-management-cell"><Icons.Trash /></div>)}
+  return <div className="admin-user-management">
+    <AppBar>
+      <AppBarSection>
+        <InputBox type="text" placeholder="ex. Bobby Graz" />
+      </AppBarSection>
+      <AppBarSection>
+        <Button>Add User</Button>
+      </AppBarSection>
+    </AppBar>
+    <div className="admin-user-management-list">
+      <div>
+        <div className="admin-user-management-header">Email</div>
+        {data.map(u => <div className="admin-user-management-cell">{u.email}</div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header">Name</div>
+        {data.map(u => <div className="admin-user-management-cell">{u.fullName}</div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header" style={{paddingLeft: 39}}>Role</div>
+        {data.map(u => <div className="admin-user-management-cell">{
+          <InputBoxContext.Provider value="LIST_VIEW">
+            <InputBox
+              type="select"
+              width="160px"
+              value={u.role}
+              choices={[{
+                id: 'readonly',
+                label: 'Read-only'
+              }, {
+                id: 'admin',
+                label: 'Admin'
+              }, {
+                id: 'owner',
+                label: 'Owner'
+              }]} />
+          </InputBoxContext.Provider>
+        }</div>)}
+      </div>
+      <div style={{flexGrow: 1}}>
+        <div className="admin-user-management-header"></div>
+        {data.map(u => <div className="admin-user-management-cell"></div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header">Activity</div>
+        {data.map(u => <div className="admin-user-management-cell">Active</div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header">Invitation</div>
+        {data.map(u => <div className="admin-user-management-cell">{u.invitationStatus}</div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header"></div>
+        {data.map(u => <div className="admin-user-management-cell">{u.invitationStatus === 'pending' ? 'Resend' : ''}</div>)}
+      </div>
+      <div>
+        <div className="admin-user-management-header"></div>
+        {data.map(u => <div className="admin-user-management-cell"><Icons.Trash /></div>)}
+      </div>
     </div>
   </div>;
 }
