@@ -66,25 +66,27 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
           <ul className="dashboard-dispatch-list-dropdown-list">
             {dispatches.map(dispatch => (
               <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
-                <span className="dashboard-dispatch-list-dropdown-item-name">
-                  {dispatch.name}
-                </span>
+                <div className="dashboard-dispatch-list-dropdown-item-row">
+                  <span className="dashboard-dispatch-list-dropdown-item-name">
+                    {dispatch.name}
+                  </span>
+                  <span
+                    role="button"
+                    className="dashboard-dispatch-list-dropdown-item-edit"
+                    onClick={() => {
+                      this.setState({visible: false}, () => {
+                        onEditDispatch(dispatch);
+                      });
+                    }}
+                    tabIndex={visible ? 0 : -1}
+                  >Edit</span>
+                </div>
                 <span className="dashboard-dispatch-list-dropdown-item-interval">
                   <Icons.Calendar color={colorVariables.grayDarker} />
                   <span className="dashboard-dispatch-list-dropdown-item-interval-text">
                     {generateHumanReadableFrequency(dispatch.frequency)} on Wednesday at 9:00 AM
                   </span>
                 </span>
-                <span
-                  role="button"
-                  className="dashboard-dispatch-list-dropdown-item-edit"
-                  onClick={() => {
-                    this.setState({visible: false}, () => {
-                      onEditDispatch(dispatch);
-                    });
-                  }}
-                  tabIndex={visible ? 0 : -1}
-                >Edit</span>
               </li>
             ))}
           </ul>

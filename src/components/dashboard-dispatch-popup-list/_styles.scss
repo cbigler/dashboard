@@ -50,7 +50,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 .dashboard-dispatch-list-dropdown {
   position: absolute;
   right: 0px;
-  width: 591px;
+  width: 450px;
   z-index: 999999;
 
   margin-top: 8px;
@@ -84,20 +84,26 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 
 
 .dashboard-dispatch-list-dropdown-list {
+  margin-top: 0px;
+  margin-bottom: 0px;
   padding-left: 24px;
   padding-right: 24px;
 }
 .dashboard-dispatch-list-dropdown-item {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  padding-top: 24px;
+}
+.dashboard-dispatch-list-dropdown-item:last-of-type { padding-bottom: 24px; }
+.dashboard-dispatch-list-dropdown-item-row {
+  display: flex;
   justify-content: space-between;
-  height: 32px;
+  margin-bottom: 8px;
 }
 
 .dashboard-dispatch-list-dropdown-item-name {
   white-space: nowrap;
   text-overflow: ellipsis;
-  width: 196px;
   overflow: hidden;
 }
 
@@ -109,16 +115,25 @@ $dashboard-dispatch-backdrop-z-index: 99999;
   font-size: 14px;
   font-weight: 500;
   user-select: none;
+  margin-left: 24px;
 }
 .dashboard-dispatch-list-dropdown-item-edit:hover { opacity: 0.9; }
 .dashboard-dispatch-list-dropdown-item-edit:active { opacity: 1; }
 
 .dashboard-dispatch-list-dropdown-item-interval {
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+
+  font-weight: 600;
   user-select: none;
   cursor: default;
+  color: $gray-darker;
 }
 .dashboard-dispatch-list-dropdown-item-interval-text {
   margin-left: 8px;
   font-size: 14px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
