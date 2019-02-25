@@ -1,0 +1,36 @@
+.admin-user-management-list {
+  display: flex;
+  width: 100%;
+  padding: 20px;
+  box-sizing: border-box;
+  justify-content: space-between;
+}
+
+.admin-user-management-header {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  padding: 0 20px;
+  border-bottom: 1px solid #DDD;
+  font-size: 14px;
+  font-weight: bold;
+}
+:first-child > .admin-user-management-header {
+  padding-left: 0;
+}
+
+.admin-user-management-cell {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 20px;
+  border-bottom: 1px solid #DDD;
+  font-size: 14px;
+  color: #545454;
+}
+:first-child > .admin-user-management-cell {
+  padding-left: 0;
+}
+:last-child > .admin-user-management-cell {
+  padding-right: 0;
+}
