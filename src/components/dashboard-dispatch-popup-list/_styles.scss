@@ -1,8 +1,19 @@
 $dashboard-dispatch-backdrop-z-index: 99999;
 
-.dashboard-dispatch-list {
-  position: relative;
+.dashboard-dispatch-list { position: relative; }
+
+.dashboard-dispatch-backdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  z-index: $dashboard-dispatch-backdrop-z-index;
+  display: none;
 }
+.dashboard-dispatch-backdrop.visible { display: block; }
+
 
 .dashboard-dispatch-list-button {
   display: flex;
@@ -36,19 +47,6 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 }
 
 
-
-.dashboard-dispatch-backdrop {
-  position: fixed;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-
-  z-index: $dashboard-dispatch-backdrop-z-index;
-  display: none;
-}
-.dashboard-dispatch-backdrop.visible { display: block; }
-
 .dashboard-dispatch-list-dropdown {
   position: absolute;
   right: 0px;
@@ -63,6 +61,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
   opacity: 0;
   transition: all 150ms ease-in-out;
   pointer-events: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
 }
 .dashboard-dispatch-list-dropdown.visible {
   pointer-events: auto;
@@ -85,8 +84,8 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 
 
 .dashboard-dispatch-list-dropdown-list {
-  padding-left: 32px;
-  padding-right: 32px;
+  padding-left: 24px;
+  padding-right: 24px;
 }
 .dashboard-dispatch-list-dropdown-item {
   display: flex;
@@ -108,6 +107,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
   cursor: pointer;
   outline: none;
   font-size: 14px;
+  font-weight: 500;
   user-select: none;
 }
 .dashboard-dispatch-list-dropdown-item-edit:hover { opacity: 0.9; }
