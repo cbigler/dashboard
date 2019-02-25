@@ -21,14 +21,15 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
+// Sort these timezones at the start of the list.
+const startTimezones = [
+  'America/New_York',
+  'America/Los_Angeles',
+  'America/Denver',
+  'America/Chicago',
+];
 const TIMEZONE_CHOICES: Array<{id: string, label: string}> = moment.tz.names().sort((a, b) => {
   // modified from https://stackoverflow.com/a/23921775/4115328
-  const startTimezones = [
-    'America/New_York',
-    'America/Los_Angeles',
-    'America/Denver',
-    'America/Chicago',
-  ];
   if (startTimezones.includes(a)) {
     return -1;
   } else if (startTimezones.includes(b)) {
@@ -364,6 +365,7 @@ function DispatchManagementRecipientList({
         />
       </div>
       <div className="dispatch-management-recipient-list">
+        {/* loading state - show some placeholders */}
         {users.view === 'LOADING' ? (
           <Fragment>
             <div className="dispatch-management-recipient-list-item">
@@ -383,6 +385,7 @@ function DispatchManagementRecipientList({
           </Fragment>
         ) : null}
 
+        {/* regular state - show a list of users */}
         {users.view === 'VISIBLE' && filteredUsers.length > 0 ? (
           <Fragment>
             {pinnedUsers.map(user => (
@@ -406,6 +409,7 @@ function DispatchManagementRecipientList({
           </Fragment>
         ) : null}
 
+        {/* empty state */}
         {users.view === 'VISIBLE' && filteredUsers.length === 0 ? (
           <div className="dispatch-management-recipient-list-empty-state">
             <div className="dispatch-management-recipient-list-empty-state-inner">
@@ -449,6 +453,7 @@ function DispatchManagementRecipientIcon({ user }) {
       {
         user.fullName
         .split(' ')
+        .slice(0, 2)
         .filter(word => word.length > 0)
         .map(word => word[0].toUpperCase())
         .join('')
