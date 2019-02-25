@@ -137,3 +137,24 @@ $dashboard-dispatch-backdrop-z-index: 99999;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.dashboard-dispatch-list-empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px;
+}
+.dashboard-dispatch-list-empty-container-text {
+  margin-left: 24px;
+}
+.dashboard-dispatch-list-empty-container-title {
+  color: $gray-cinder;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+.dashboard-dispatch-list-empty-container-desc {
+  color: $gray-dark;
+  font-size: 14px;
+}
