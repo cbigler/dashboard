@@ -72,7 +72,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
   }
 
   calculateDefaultDispatchName() {
-    return 'TBD how the default name is calculated';
+    return null;
   }
 
   componentDidMount() {
@@ -102,7 +102,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
                   frequencyDays={frequencyDays}
                   onChangeFrequencyDays={frequencyDays => this.setState({frequencyDays})}
 
-                  defaultDispatchName={this.calculateDefaultDispatchName()}
+                  defaultDispatchName={this.calculateDefaultDispatchName() || 'Dispatch Name'}
                 />
               </div>
               <div className="dashboard-dispatch-management-modal-split right">
@@ -308,7 +308,7 @@ function DispatchManagementRecipientList({
 function RecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
   return (
     <div className="dispatch-management-recipient-list-item">
-      <div className="dispatch-management-recipient-list-item-name">
+      <div className={classnames('dispatch-management-recipient-list-item-name', {checked})}>
         <DispatchManagementRecipientIcon user={user} />
         {user.fullName}
       </div>

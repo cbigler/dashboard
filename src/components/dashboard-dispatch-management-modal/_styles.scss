@@ -179,6 +179,7 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   flex-direction: row;
   align-items: center;
 }
+.dispatch-management-recipient-list-item-name.checked { color: $brand-primary; }
 
 
 .dispatch-management-recipient-search-box {
