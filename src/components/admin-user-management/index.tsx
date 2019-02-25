@@ -1,6 +1,6 @@
 import React from 'react';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { Icons } from '@density/ui';
+import { Icons, InputBox, InputBoxContext } from '@density/ui';
 
 const MOCK_DATA = [
   {
@@ -90,7 +90,24 @@ export default function AdminUserManagement({}) {
     </div>
     <div>
       <div className="admin-user-management-header">Role</div>
-      {data.map(u => <div className="admin-user-management-cell">{u.role}</div>)}
+      {data.map(u => <div className="admin-user-management-cell">{
+        <InputBoxContext.Provider value="LIST_VIEW">
+          <InputBox
+            type="select"
+            width="160px"
+            value={u.role}
+            choices={[{
+              id: 'readonly',
+              label: 'Read-only'
+            }, {
+              id: 'admin',
+              label: 'Admin'
+            }, {
+              id: 'owner',
+              label: 'Owner'
+            }]} />
+        </InputBoxContext.Provider>
+      }</div>)}
     </div>
     <div style={{flexGrow: 1}}>
       <div className="admin-user-management-header"></div>
