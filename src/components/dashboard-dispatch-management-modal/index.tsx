@@ -47,7 +47,11 @@ type DashboardDispatchManagementModalProps = {
   selectedDashboard: any;
   onCloseModal: () => any,
 
-  users: Array<any>,
+  users: {
+    loading: boolean,
+    data: Array<any>,
+    error: any,
+  },
   onLoadUsers: () => any,
 };
 
@@ -165,20 +169,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
               <div className="dashboard-dispatch-management-modal-split right">
                 <DispatchManagementRecipientList
                   recipients={recipients}
-                  users={[
-                    {
-                      id: 'usr_123',
-                      fullName: 'Ryan Gaus',
-                    },
-                    {
-                      id: 'usr_456',
-                      fullName: 'Robery Grazioli',
-                    },
-                    {
-                      id: 'usr_789',
-                      fullName: 'Gus Cost',
-                    },
-                  ]}
+                  users={users}
 
                   // Used to sort the recipients vertically on the right hand side column
                   initiallyEnabledRecipientIds={initiallyEnabledRecipientIds}
@@ -353,7 +344,7 @@ function DispatchManagementRecipientList({
 }) {
   const recipientIds = recipients.map(r => r.id);
 
-  const filteredUsers = userCollectionFilter(users, searchQuery);
+  const filteredUsers = userCollectionFilter(users.data, searchQuery);
 
   const pinnedUsers = filteredUsers
     .filter(user => initiallyEnabledRecipientIds.includes(user.id))
@@ -367,30 +358,64 @@ function DispatchManagementRecipientList({
       <div className="dispatch-management-recipient-list-app-bar">
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
         <DispatchManagementRecipientSearchBox
-          placeholder={`Search through ${users.length} users`}
+          placeholder={users.view === 'VISIBLE' ? `Search through ${users.data.length} users` : 'Search users' }
           value={searchQuery}
           onChange={e => onChangeSearchQuery(e.target.value)}
         />
       </div>
       <div className="dispatch-management-recipient-list">
-        {pinnedUsers.map(user => (
-          <RecipientListItem
-            key={user.id}
-            user={user}
-            checked={recipientIds.includes(user.id)}
-            onAddRecipient={onAddRecipient}
-            onRemoveRecipient={onRemoveRecipient}
-          />
-        ))}
-        {unpinnedUsers.map(user => (
-          <RecipientListItem
-            key={user.id}
-            user={user}
-            checked={recipientIds.includes(user.id)}
-            onAddRecipient={onAddRecipient}
-            onRemoveRecipient={onRemoveRecipient}
-          />
-        ))}
+        {users.view === 'LOADING' ? (
+          <Fragment>
+            <div className="dispatch-management-recipient-list-item">
+              <div className="dispatch-management-recipient-list-item-name">
+                <DispatchManagementRecipientIcon user={{fullName: ''}} />
+                <div className="dispatch-management-recipient-list-item-name-placeholder" />
+              </div>
+              <div className="dispatch-management-recipient-list-item-checkbox-placeholder" />
+            </div>
+            <div className="dispatch-management-recipient-list-item">
+              <div className="dispatch-management-recipient-list-item-name">
+                <DispatchManagementRecipientIcon user={{fullName: ''}} />
+                <div className="dispatch-management-recipient-list-item-name-placeholder" />
+              </div>
+              <div className="dispatch-management-recipient-list-item-checkbox-placeholder" />
+            </div>
+          </Fragment>
+        ) : null}
+
+        {users.view === 'VISIBLE' && filteredUsers.length > 0 ? (
+          <Fragment>
+            {pinnedUsers.map(user => (
+              <RecipientListItem
+                key={user.id}
+                user={user}
+                checked={recipientIds.includes(user.id)}
+                onAddRecipient={onAddRecipient}
+                onRemoveRecipient={onRemoveRecipient}
+              />
+            ))}
+            {unpinnedUsers.map(user => (
+              <RecipientListItem
+                key={user.id}
+                user={user}
+                checked={recipientIds.includes(user.id)}
+                onAddRecipient={onAddRecipient}
+                onRemoveRecipient={onRemoveRecipient}
+              />
+            ))}
+          </Fragment>
+        ) : null}
+
+        {users.view === 'VISIBLE' && filteredUsers.length === 0 ? (
+          <div className="dispatch-management-recipient-list-empty-state">
+            <div className="dispatch-management-recipient-list-empty-state-inner">
+              <span className="dispatch-management-recipient-list-empty-state-title">Whoops</span>
+              <span className="dispatch-management-recipient-list-empty-state-desc">
+                We couldn't find any users that matched "{searchQuery}"
+              </span>
+            </div>
+          </div>
+        ) : null}
       </div>
     </Fragment>
   );

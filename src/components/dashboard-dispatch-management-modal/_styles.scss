@@ -182,6 +182,41 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   align-items: center;
 }
 .dispatch-management-recipient-list-item-name.checked { color: $brand-primary; }
+.dispatch-management-recipient-list-item-name-placeholder {
+  background-color: $gray;
+  border-radius: 4px;
+  width: 170px;
+  height: 16px;
+}
+.dispatch-management-recipient-list-item-checkbox-placeholder {
+  background-color: $gray;
+  border-radius: 2px;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+}
+
+
+.dispatch-management-recipient-list-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400px;
+  margin-left: 24px;
+  margin-right: 24px;
+}
+.dispatch-management-recipient-list-empty-state-inner {
+  display: flex;
+  flex-direction: column;
+}
+.dispatch-management-recipient-list-empty-state-title {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+.dispatch-management-recipient-list-empty-state-desc {
+  font-size: 16px;
+}
 
 
 .dispatch-management-recipient-search-box {

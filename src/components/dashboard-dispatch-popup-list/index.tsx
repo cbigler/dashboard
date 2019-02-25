@@ -66,6 +66,8 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
           </AppBar>
 
           <ul className="dashboard-dispatch-list-dropdown-list">
+
+            {/* regular state is a list of dispatches */}
             {view === 'VISIBLE' ? dispatches.map(dispatch => (
               <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
                 <div className="dashboard-dispatch-list-dropdown-item-row">
@@ -91,6 +93,8 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
                 </span>
               </li>
             )) : null}
+
+            {/* empty state */}
             {view === 'VISIBLE' && dispatches.length === 0 ? (
               <div className="dashboard-dispatch-list-empty-container">
                 <Letter />

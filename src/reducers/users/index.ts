@@ -6,6 +6,7 @@ import { COLLECTION_USERS_SET } from '../../actions/collection/users/set';
 import { COLLECTION_USERS_ERROR } from '../../actions/collection/users/error';
 
 const initialState = {
+  view: 'LOADING',
   loading: true,
   selected: null,
   error: null,
@@ -21,13 +22,14 @@ export default function users(state=initialState, action) {
   case COLLECTION_USERS_SET:
     return {
       ...state,
+      view: 'VISIBLE',
       loading: false,
       error: null,
       data: action.data.map(objectSnakeToCamel),
     };
 
   case COLLECTION_USERS_ERROR:
-    return {...state, loading: false, error: action.error};
+    return {...state, view: 'ERROR', loading: false, error: action.error};
 
   default:
     return state;
