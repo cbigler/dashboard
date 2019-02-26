@@ -15,7 +15,7 @@
     "@density/node-sass-json-importer": "^4.1.0",
     "@density/react-dates": "^12.6.0",
     "@density/reports": "^2.1.1",
-    "@density/ui": "^7.1.4",
+    "@density/ui": "^7.2.2",
     "auth0-js": "^9.9.0",
     "classnames": "^2.2.6",
     "debug": "^4.1.1",
