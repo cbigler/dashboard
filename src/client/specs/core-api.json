@@ -71,7 +71,7 @@
           "time_segment_groups": "{{time_segment_groups}}",
           "page": "{{page}}",
           "order": "{{order}}",
-          "fast": "{{fast}}"
+          "slow": "{{slow}}"
         }
       },
       "allCounts": {
@@ -86,7 +86,7 @@
           "time_segment_groups": "{{time_segment_groups}}",
           "page": "{{page}}",
           "order": "{{order}}",
-          "fast": "{{fast}}"
+          "slow": "{{slow}}"
         }
       },
       "events": {

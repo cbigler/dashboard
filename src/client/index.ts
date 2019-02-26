@@ -3,7 +3,7 @@ import clientele from '@density/clientele';
 import redirectAfterLogin from '../actions/miscellaneous/redirect-after-login';
 import sessionTokenUnset from '../actions/session-token/unset';
 import userError from '../actions/user/error';
-import { getGoFast } from '../components/environment-switcher/index';
+import { getGoSlow } from '../components/environment-switcher/index';
 
 let store;
 function setStore(s) { store = s; }
@@ -37,13 +37,13 @@ const metrics = clientele({...require('./specs/metrics-api'), errorFormatter: er
 
 const defaultCounts = core.spaces.counts;
 core.spaces.counts = function(data) {
-  data.fast = getGoFast() ? 'true' : undefined;
+  data.slow = getGoSlow() ? 'true' : undefined;
   return defaultCounts(data);
 };
 
 const defaultAllCounts = core.spaces.allCounts;
 core.spaces.allCounts = function(data) {
-  data.fast = getGoFast() ? 'true' : undefined;
+  data.slow = getGoSlow() ? 'true' : undefined;
   return defaultAllCounts(data);
 };
 
