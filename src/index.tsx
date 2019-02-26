@@ -30,7 +30,7 @@ import IntercomDensity from './components/intercom/index';
 
 // The Environment switcher, used to switch between sets of servers that should be communicated
 // with.
-import EnvironmentSwitcher, { getActiveEnvironments, getGoFast } from './components/environment-switcher/index';
+import EnvironmentSwitcher, { getActiveEnvironments, getGoSlow } from './components/environment-switcher/index';
 
 // Redux is used to manage state.
 import { Provider } from 'react-redux';
@@ -84,11 +84,11 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-function setServiceLocations(environments, goFast) {
-  core.config({core: environments.core, goFast});
+function setServiceLocations(environments, goSlow) {
+  core.config({core: environments.core, goSlow});
   accounts.config({host: environments.accounts});
 }
-setServiceLocations(getActiveEnvironments(fields), getGoFast()); /* step 1 above */
+setServiceLocations(getActiveEnvironments(fields), getGoSlow()); /* step 1 above */
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.

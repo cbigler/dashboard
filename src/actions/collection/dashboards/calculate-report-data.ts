@@ -1,6 +1,6 @@
 import { REPORTS } from '@density/reports';
 import { getActiveEnvironments } from '../../../components/environment-switcher/index';
-import { getGoFast } from '../../../components/environment-switcher/index';
+import { getGoSlow } from '../../../components/environment-switcher/index';
 import fields from '../../../fields';
 
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
@@ -10,7 +10,7 @@ export default function collectionDashboardsCalculateReportData(reports, date) {
   return async (dispatch, getState) => {
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
-    const fast = getGoFast();
+    const slow = getGoSlow();
 
     return Promise.all(reports.map(async report => {
       switch (report.type) {
@@ -59,7 +59,7 @@ export default function collectionDashboardsCalculateReportData(reports, date) {
         }
 
         try {
-          data = await reportDataCalculationFunction(report, { date, baseUrl, token, fast });
+          data = await reportDataCalculationFunction(report, { date, baseUrl, token, slow });
         } catch (err) {
           errorThrown = err;
         }

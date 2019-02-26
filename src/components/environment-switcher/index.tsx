@@ -25,9 +25,9 @@ export function getActiveEnvironments(fields) {
   return data;
 }
 
-// Is the dashboard configured to "go fast" (special query parameter for event queries)?
-export function getGoFast() {
-  return window.localStorage.environmentGoFast ? JSON.parse(window.localStorage.environmentGoFast) : false;
+// Is the dashboard configured to "go slow" (special query parameter for event queries)?
+export function getGoSlow() {
+  return window.localStorage.environmentGoSlow ? JSON.parse(window.localStorage.environmentGoSlow) : false;
 }
 
 export default class EnvironmentSwitcher extends React.Component<any, any> {
@@ -35,7 +35,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
     super(props);
     this.state = {
       values: getActiveEnvironments(props.fields),
-      goFast: getGoFast(),
+      goSlow: getGoSlow(),
       open: false,
     };
 
@@ -110,12 +110,12 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
               })}
               <FormLabel
                 className="environment-switcher-item"
-                label="Use experimental fast queries"
-                htmlFor="environment-switcher-go-fast"
-                key="goFast"
+                label="Use legacy 'slow' query for space counts"
+                htmlFor="environment-switcher-go-slow"
+                key="goSlow"
                 input={<Switch
-                    value={this.state.goFast}
-                    onChange={e => this.setState({goFast: !this.state.goFast})}
+                    value={this.state.goSlow}
+                    onChange={e => this.setState({goSlow: !this.state.goSlow})}
                   />}
               />
             </ul>
@@ -124,8 +124,8 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
               <Button className="environment-switcher-button" onClick={() => {
                 this.setState({open: false});
                 window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
-                window.localStorage.environmentGoFast = JSON.stringify(this.state.goFast);
-                this.props.onChange(this.state.values, this.state.goFast)
+                window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
+                this.props.onChange(this.state.values, this.state.goSlow)
               }}>OK</Button>
             </div>
           </CardBody>

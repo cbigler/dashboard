@@ -17,7 +17,7 @@ import exploreDataCalculateDataComplete from '../../actions/explore-data/calcula
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
 import { getActiveEnvironments } from '../../components/environment-switcher/index';
-import { getGoFast } from '../../components/environment-switcher/index';
+import { getGoSlow } from '../../components/environment-switcher/index';
 import fields from '../../fields';
 
 import { REPORTS } from '@density/reports';
@@ -334,7 +334,7 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
 
     const baseUrl = (getActiveEnvironments(fields) as any).core;
     const token = getState().sessionToken;
-    const fast = getGoFast();
+    const slow = getGoSlow();
 
     let data, errorThrown: any = false;
     try {
@@ -342,7 +342,7 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
         date: null,
         baseUrl,
         token,
-        fast,
+        slow,
       });
     } catch (err) {
       errorThrown = err;
