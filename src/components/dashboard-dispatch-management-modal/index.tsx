@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import { Icons, InputBox } from '@density/ui';
 import Button from '../button/index';
+import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 
 import collectionUsersLoad from '../../actions/collection/users/load';
 
@@ -20,27 +21,6 @@ const DAYS_OF_WEEK = [
   'Saturday',
   'Sunday',
 ];
-
-// Sort these timezones at the start of the list.
-const startTimezones = [
-  'America/New_York',
-  'America/Los_Angeles',
-  'America/Denver',
-  'America/Chicago',
-];
-const TIMEZONE_CHOICES: Array<{id: string, label: string}> = moment.tz.names().sort((a, b) => {
-  // modified from https://stackoverflow.com/a/23921775/4115328
-  if (startTimezones.includes(a)) {
-    return -1;
-  } else if (startTimezones.includes(b)) {
-    return 1;
-  } else {
-    return 0;
-  }
-}).map(zone => ({
-  id: zone,
-  label: zone.replace(/_/g, ' ').replace(/\//g, ' - '),
-}))
 
 type DashboardDispatchManagementModalProps = {
   visible: boolean,
@@ -508,7 +488,6 @@ class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, Sea
         />
       </div>
     );
-
   }
 }
 
