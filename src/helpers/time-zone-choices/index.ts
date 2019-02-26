@@ -4,20 +4,14 @@ import moment from 'moment';
 // likely to use.
 export const startTimezones = [
   'America/New_York',
-  'America/Los_Angeles',
-  'America/Denver',
   'America/Chicago',
+  'America/Denver',
+  'America/Los_Angeles',
 ];
-const TIMEZONE_CHOICES: Array<{id: string, label: string}> = moment.tz.names().sort((a, b) => {
-  // modified from https://stackoverflow.com/a/23921775/4115328
-  if (startTimezones.includes(a)) {
-    return -1;
-  } else if (startTimezones.includes(b)) {
-    return 1;
-  } else {
-    return 0;
-  }
-}).map(zone => ({
+
+const TIMEZONE_CHOICES = startTimezones.concat(
+  moment.tz.names().filter(x => startTimezones.indexOf(x) === -1)
+).map(zone => ({
   id: zone,
   label: zone.replace(/_/g, ' ').replace(/\//g, ' - '),
 }));
