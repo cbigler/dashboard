@@ -2,7 +2,7 @@ import moment from 'moment';
 
 // Sort these timezones at the start of the list as they are the more common ones that people are
 // likely to use.
-const startTimezones = [
+export const startTimezones = [
   'America/New_York',
   'America/Los_Angeles',
   'America/Denver',
