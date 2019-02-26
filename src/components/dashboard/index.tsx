@@ -303,6 +303,52 @@ export function Dashboard({
                 </Button>
               </div>
             </AppBarSection> : null}
+
+            <AppBarSection>
+              <DashboardDispatchPopupList
+                dispatches={[
+                  /* { */
+                  /*   id: 1, */
+                  /*   name: 'My dispatch with a really really really long name', */
+                  /*   frequency: 'WEEKLY', */
+                  /*   frequencyDays: [ */
+                  /*     'Monday', */
+                  /*     'Tuesday', */
+                  /*     'Wednesday', */
+                  /*     'Thursday', */
+                  /*     'Friday', */
+                  /*   ], */
+                  /*   recipients: [ */
+                  /*     { */
+                  /*       id: 'usr_123', */
+                  /*       fullName: 'Ryan Gaus', */
+                  /*     }, */
+                  /*     { */
+                  /*       id: 'usr_456', */
+                  /*       fullName: 'Robery Grazioli', */
+                  /*     }, */
+                  /*   ], */
+                  /* }, */
+                  /* { */
+                  /*   id: 2, */
+                  /*   name: 'Number two', */
+                  /*   frequency: 'MONTHLY', */
+                  /*   recipients: [ */
+                  /*     { */
+                  /*       id: 'usr_789', */
+                  /*       fullName: 'Gus Cost', */
+                  /*     }, */
+                  /*   ], */
+                  /* }, */
+                ]}
+                onEditDispatch={dispatch => {
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch });
+                }}
+                onCreateDispatch={() => {
+                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch: null });
+                }}
+              />
+            </AppBarSection>
           </AppBar>
           <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
             <DashboardMainScrollViewContent
