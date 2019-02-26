@@ -125,6 +125,16 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
     this.props.onLoadUsers();
   }
 
+  isFormValid() {
+    const { frequencyDays, recipients, time } = this.state
+
+    return (
+      frequencyDays.length > 0 && // at least one day is selected
+      recipients.length > 0 && // at least one recipient is selected
+      time !== null // a time is selected
+    );
+  }
+
   render() {
     const { users, initialDispatchSchedule, visible, onCloseModal } = this.props;
     const {
@@ -193,7 +203,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
                 className="dashboard-dispatch-management-modal-footer-cancel"
                 onClick={onCloseModal}
               >Cancel</span>
-              <Button type="primary">Save Email Digest</Button>
+              <Button disabled={!this.isFormValid()} type="primary">Save Email Digest</Button>
             </div>
           </div>
         </div>
@@ -211,7 +221,7 @@ export default connect(
 // Generate all possible values for the hour choices in the dispatch management form component
 // below.
 function generateDispatchTimeChoices(timeZone) {
-  const startOfLocalDay = moment.utc().tz(timeZone).startOf('day');
+  const startOfLocalDay = moment.tz(timeZone).startOf('day');
   const choices: Array<{id: string, label: string}> = [];
 
   for (let index = 0; index < 24; index++) {
