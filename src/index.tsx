@@ -11,7 +11,6 @@ import moment from 'moment';
 import queryString from 'qs';
 
 // Import @density/ui package for font
-// TODO: Does this work?
 import '@density/ui';
 
 import userSet from './actions/user/set';
