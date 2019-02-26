@@ -139,6 +139,10 @@ body {
 .modal-close { @include make-modal-close; }
 
 
+* {
+  font-family: $font-base;
+}
+
 // TODO: Should these be ported into Density UI?
 input[type="text"],
 input[type="textarea"],
