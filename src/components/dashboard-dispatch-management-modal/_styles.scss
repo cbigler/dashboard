@@ -75,11 +75,11 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   height: calc(100% - (2 * (#{$dashboard-dispatch-management-modal-app-bar-height} + 1px /* border*/)));
 }
 .dashboard-dispatch-management-modal-split.left {
-  width: 43%;
+  width: 45%;
   border-right: 1px solid $gray-light;
 }
 .dashboard-dispatch-management-modal-split.right {
-  width: 57%;
+  width: 55%;
   display: flex;
   flex-direction: column;
 }

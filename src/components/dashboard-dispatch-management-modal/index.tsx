@@ -29,6 +29,7 @@ type DashboardDispatchManagementModalProps = {
   onCloseModal: () => any,
 
   users: {
+    view: 'LOADING' | 'ERROR' | 'VISIBLE',
     loading: boolean,
     data: Array<any>,
     error: any,
