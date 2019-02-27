@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import fuzzy from 'fuzzy';
 
 import {
   AppBar,
@@ -126,18 +127,34 @@ export function Explore({
   onSpaceSearch
 }) {
   let filteredSpaces = spaces.data;
+
+  // If a space matches the search, keep all parent spaces as well
+  // so that we can see its place in the hierarchy
   if (spaces.filters.search) {
-    filteredSpaces = spaceFilter(filteredSpaces, spaces.filters.search);
+    filteredSpaces = [];
+    var options = {
+        pre: '<', 
+        post: '>', 
+        extract: function(el) { return el['name']; }
+    };
+    let matchedSpaces = fuzzy.filter(spaces.filters.search, spaces.data, options);
+    matchedSpaces.map(space => {
+      if (!(filteredSpaces.map(space => space['id']).includes(space['id']))) {
+        filteredSpaces.push(space);
+      }
+      // append all parents (if they don't already exist)
+      const ancestors = space['ancestry'];
+      ancestors.map(ancestor => {
+        if (!(filteredSpaces.map(space => space['id']).includes(ancestor['id']))) {
+          let ancestrySpace = spaces.data.filter(space => space['id'] == ancestor['id'])[0];
+          filteredSpaces.push(ancestrySpace)
+        }
+      });
+    });
   }
-  let spacesByName = filteredSpaces.sort(function(a, b) {
-    return a.name.localeCompare(b.name);
-  });
-  // only show "spaces" in search results
-  spacesByName.filter(space => space.spaceType == "space");
 
   const spaceTree = convertSpacesToSpaceTree(filteredSpaces)
-  const spaceList = spaces.filters.search ? spacesByName : spaceTree;
-
+  const spaceList = spaceTree;
   return (
     <Fragment>
       {/* Main application */}
@@ -156,7 +173,7 @@ export function Explore({
           <AppScrollView>
             <nav className="explore-app-frame-sidebar-list">
                 <Fragment>
-                  {spaceList.length == 0 ? <div className="loading-spaces">Loading Spaces...</div> : null}
+                  {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className="loading-spaces">Loading Spaces...</div> : null}
                   {spaceList.map(space => (
                     RenderExploreSidebarItem(space, activePage, selectedSpace, 0)
                   ))}
