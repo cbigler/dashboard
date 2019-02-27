@@ -154,8 +154,7 @@ export function Explore({
     });
   }
 
-  const spaceTree = convertSpacesToSpaceTree(filteredSpaces)
-  const spaceList = spaceTree;
+  const spaceList = convertSpacesToSpaceTree(filteredSpaces)
   return (
     <Fragment>
       {/* Main application */}
