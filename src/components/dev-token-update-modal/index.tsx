@@ -53,6 +53,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                 id="update-token-name"
                 value={this.state.name}
                 onChange={e => this.setState({name: e.target.value})}
+                width="100%"
               />}
             />
             <FormLabel

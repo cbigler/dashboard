@@ -235,9 +235,10 @@ function DispatchManagementForm({
     <div className="dispatch-management-form">
       <div className="dispatch-management-form-group">
         <label htmlFor="dispatch-name">Name</label>
-        <DispatchManagementInput
+        <InputBox
           type="text"
           id="dispatch-name"
+          width="336px"
           placeholder={defaultDispatchName}
           value={name}
           onChange={e => onChangeName(e.target.value)}
@@ -349,10 +350,13 @@ function DispatchManagementRecipientList({
     <Fragment>
       <div className="dispatch-management-recipient-list-app-bar">
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
-        <DispatchManagementRecipientSearchBox
+        <InputBox
+          type="text"
           placeholder={users.view === 'VISIBLE' ? `Search through ${users.data.length} users` : 'Search users' }
+          leftIcon={<Icons.Search width={16} height={16} />}
           value={searchQuery}
           onChange={e => onChangeSearchQuery(e.target.value)}
+          width="100%"
         />
       </div>
       <div className="dispatch-management-recipient-list">
@@ -453,75 +457,6 @@ function DispatchManagementRecipientIcon({ user }) {
   );
 }
 
-type SearchBoxProps = {
-  value: string,
-  onChange: (string) => any,
-  [key: string]: any, /* other props */
-};
-type SearchBoxState = {
-  focused: boolean,
-};
-
-class DispatchManagementRecipientSearchBox extends Component<SearchBoxProps, SearchBoxState> {
-  state = { focused: false }
-
-  input: React.RefObject<HTMLInputElement> = React.createRef();
-
-  render() {
-    const { ...props } = this.props;
-    const { focused } = this.state;
-    return (
-      <div
-        className={classnames('dispatch-management-recipient-search-box', {focused})}
-        onClick={() => {
-          if (this && this.input && this.input.current) {
-            (this.input.current as any).focus();
-          }
-        }}
-      >
-        <Icons.Search />
-        <input
-          {...props}
-          type="text"
-          ref={this.input}
-          onFocus={() => this.setState({focused: true})}
-          onBlur={() => this.setState({focused: false})}
-        />
-      </div>
-    );
-  }
-}
-
-type InputProps = {
-  value: string,
-  onChange: (string) => any,
-  [key: string]: any, /* other props */
-};
-type InputState = {
-  focused: boolean,
-};
-
-class DispatchManagementInput extends Component<InputProps, InputState> {
-  state = { focused: false }
-
-  input: React.RefObject<HTMLInputElement> = React.createRef();
-
-  render() {
-    const { ...props } = this.props;
-    const { focused } = this.state;
-    return (
-      <div className={classnames('dispatch-management-recipient-input-box', {focused})}>
-        <input
-          {...props}
-          type="text"
-          ref={this.input}
-          onFocus={() => this.setState({focused: true})}
-          onBlur={() => this.setState({focused: false})}
-        />
-      </div>
-    );
-  }
-}
 
 function DispatchAddedNotAddedBox({id, checked, onChange}) {
   return (

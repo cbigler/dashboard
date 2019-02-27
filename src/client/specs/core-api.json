@@ -399,6 +399,13 @@
         "url": "{{{core}}}/dashboards/{{id}}",
         "desc": "Fetch a dashboard."
       }
+    },
+    "dispatch_schedules": {
+      "list": {
+        "method": "GET",
+        "url": "{{{core}}}/dispatch_schedules/",
+        "desc": "List all dispatch schedules."
+      }
     }
   }
 }

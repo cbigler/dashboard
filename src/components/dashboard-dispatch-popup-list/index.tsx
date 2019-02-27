@@ -1,7 +1,10 @@
 import React, { Fragment, Component } from 'react';
+import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
+
+import collectionDispatchSchedulesLoad from '../../actions/collection/dispatch-schedules/load';
 
 function generateHumanReadableFrequency(frequency) {
   switch (frequency) {
@@ -14,7 +17,7 @@ function generateHumanReadableFrequency(frequency) {
   }
 }
 
-export default class DashboardDispatchPopupList extends Component<any, any> {
+class DashboardDispatchPopupList extends Component<any, any> {
   state = {
     visible: false,
   }
@@ -114,6 +117,11 @@ export default class DashboardDispatchPopupList extends Component<any, any> {
     );
   }
 }
+
+export default connect(
+  state => ({ dispatchSchedules: (state as any).dispatchSchedules }),
+  dispatch => ({}),
+)(DashboardDispatchPopupList);
 
 function Letter() {
   return (

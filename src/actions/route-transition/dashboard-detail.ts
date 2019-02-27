@@ -5,6 +5,9 @@ import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
 
+import collectionDispatchSchedulesSet from '../collection/dispatch-schedules/set';
+import collectionDispatchSchedulesError from '../collection/dispatch-schedules/error';
+
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
@@ -82,5 +85,20 @@ export default function routeTransitionDashboardDetail(id) {
 
     // Wait for the dashboard selection to complete
     await dashboardSelectionPromise;
+
+
+    // Next, load all dispatch schedules
+    let schedules, errorThrown;
+    try {
+      schedules = await fetchAllPages(page => core.dispatch_schedules.list({page, page_size: 5000}));
+    } catch (err) {
+      errorThrown = err;
+    }
+    if (!errorThrown) {
+      dispatch(collectionDispatchSchedulesSet(schedules));
+    } else {
+      console.error(errorThrown);
+      dispatch(collectionDispatchSchedulesError(errorThrown));
+    }
   };
 }
