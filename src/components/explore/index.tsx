@@ -139,6 +139,7 @@ export function Explore({
     };
     let matchedSpaces = fuzzy.filter(spaces.filters.search, spaces.data, options);
     matchedSpaces.map(space => {
+      space = space.original
       if (!(filteredSpaces.map(space => space['id']).includes(space['id']))) {
         filteredSpaces.push(space);
       }
