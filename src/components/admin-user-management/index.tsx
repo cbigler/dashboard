@@ -87,7 +87,7 @@ export default function AdminUserManagement({}) {
         <InputBox type="text" placeholder="ex. Bobby Graz" />
       </AppBarSection>
       <AppBarSection>
-        <Button>Add User</Button>
+        <Button type="primary">Add User</Button>
       </AppBarSection>
     </AppBar>
     <div className="admin-user-management-list">

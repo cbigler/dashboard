@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -49,9 +49,11 @@ export default class ExploreSetCapacityModal extends React.Component<any, any> {
 
             <div className="explore-set-capacity-modal-submit">
               <Button
+                type="primary"
+                width="100%"
                 disabled={this.state.capacity === null}
                 onClick={() => this.props.onSubmit(this.state.capacity)}
-              >Save changes</Button>
+              >Save Changes</Button>
             </div>
           </CardBody>
         </Card>

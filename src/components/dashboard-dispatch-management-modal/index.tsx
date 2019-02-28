@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
 
-import { Icons, InputBox } from '@density/ui';
-import Button from '../button/index';
+import { Button, Icons, InputBox } from '@density/ui';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 
 import collectionUsersLoad from '../../actions/collection/users/load';
@@ -303,7 +302,7 @@ function DispatchManagementForm({
           choices={generateDispatchTimeChoices(timeZone)}
           onChange={item => onChangeTime(item.id)}
           placeholder="Select a time"
-          width={140}
+          width={150}
           menuMaxHeight={300}
         />
         <div className="dispatch-management-form-group-time-zone-field">

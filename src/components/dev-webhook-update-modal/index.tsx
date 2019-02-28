@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -67,6 +67,8 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
 
             <div className="webhook-update-modal-submit">
               <Button
+                type="primary"
+                width="100%"
                 disabled={this.state.name.length === 0}
                 onClick={() => this.props.onSubmit({
                   id: this.props.initialWebhook.id,

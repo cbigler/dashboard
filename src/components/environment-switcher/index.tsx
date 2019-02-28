@@ -121,12 +121,17 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
             </ul>
 
             <div className="environment-switcher-footer">
-              <Button className="environment-switcher-button" onClick={() => {
-                this.setState({open: false});
-                window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
-                window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
-                this.props.onChange(this.state.values, this.state.goSlow)
-              }}>OK</Button>
+              <Button
+                type="primary"
+                width="100%"
+                className="environment-switcher-button"
+                onClick={() => {
+                  this.setState({open: false});
+                  window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
+                  window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
+                  this.props.onChange(this.state.values, this.state.goSlow)
+                }}
+              >OK</Button>
             </div>
           </CardBody>
         </Card>

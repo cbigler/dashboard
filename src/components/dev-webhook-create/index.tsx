@@ -36,6 +36,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
               label="Webhook name"
               input={<InputBox
                 type="text"
+                width="100%"
                 id="webhook-create-name"
                 value={this.state.name}
                 onChange={e => this.setState({name: e.target.value})}
@@ -58,6 +59,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
               label="Webhook URL"
               input={<InputBox
                 type="text"
+                width="100%"
                 id="webhook-create-endpoint"
                 value={this.state.endpoint}
                 onChange={e => this.setState({endpoint: e.target.value})}
@@ -86,6 +88,8 @@ export default class WebhookCreateModal extends React.Component<any, any> {
 
             <div className="webhook-create-modal-submit">
               <Button
+                type="primary"
+                width="100%"
                 disabled={this.state.endpoint.length === 0}
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,

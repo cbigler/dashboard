@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -39,7 +39,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
               >&mdash;</button>
 
               <div className="explore-edit-count-modal-count-picker-label">
-                <InputBox
+                <input
                   type="number"
                   value={this.state.countText !== null ? this.state.countText : this.state.count}
                   onChange={e => this.setState({countText: e.target.value})}
@@ -65,6 +65,8 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
 
             <div className="explore-edit-count-modal-submit">
               <Button
+                type="primary"
+                width="100%"
                 onClick={() => this.props.onSubmit(this.state.count)}
               >Save Changes</Button>
             </div>

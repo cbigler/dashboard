@@ -38,6 +38,7 @@ export default class TokenCreate extends React.Component<any, any> {
               input={<InputBox
                 type="text"
                 id="update-token-name"
+                width="100%"
                 value={this.state.name}
                 onChange={e => this.setState({name: e.target.value})}
               />}
@@ -83,7 +84,9 @@ export default class TokenCreate extends React.Component<any, any> {
 
             <div className="token-create-modal-submit">
               <Button
+                type="primary"
                 disabled={this.state.name.length === 0}
+                width="100%"
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,
                   description: this.state.description,
