@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
+import Modal from '../../components/modal/index';
 
 import { Button, Icons, InputBox } from '@density/ui';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
+import filterCollection from '../../helpers/filter-collection/index';
 
 import collectionUsersLoad from '../../actions/collection/users/load';
-
-import filterCollection from '../../helpers/filter-collection/index';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -129,67 +129,70 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
       searchQuery,
     } = this.state;
 
-    return ReactDOM.createPortal(
-      (
-        <div className={classnames('dashboard-dispatch-management-modal', {visible})}>
-          <div className="dashboard-dispatch-management-modal-inner">
-            <div className="dashboard-dispatch-management-modal-header-app-bar">
-              {initialDispatchSchedule ? 'Edit Email Digest' : 'New Email Digest'}
+    return (
+      <Modal
+        visible={visible}
+        width={895}
+        height={636}
+        onBlur={onCloseModal}
+        onEscape={onCloseModal}
+      >
+        <div className="dashboard-dispatch-management-modal">
+          <div className="dashboard-dispatch-management-modal-header-app-bar">
+            {initialDispatchSchedule ? 'Edit Email Digest' : 'New Email Digest'}
+          </div>
+          <div className="dashboard-dispatch-management-modal-split-container">
+            <div className="dashboard-dispatch-management-modal-split left">
+              <DispatchManagementForm
+                name={name}
+                onChangeName={name => this.setState({name})}
+
+                frequency={frequency}
+                onChangeFrequency={frequency => this.setState({frequency})}
+
+                frequencyDays={frequencyDays}
+                onChangeFrequencyDays={frequencyDays => this.setState({frequencyDays})}
+
+                time={time}
+                onChangeTime={time => this.setState({time})}
+
+                timeZone={timeZone}
+                onChangeTimeZone={timeZone => this.setState({timeZone})}
+
+                defaultDispatchName={this.calculateDefaultDispatchName() || 'Dispatch Name'}
+              />
             </div>
-            <div className="dashboard-dispatch-management-modal-split-container">
-              <div className="dashboard-dispatch-management-modal-split left">
-                <DispatchManagementForm
-                  name={name}
-                  onChangeName={name => this.setState({name})}
+            <div className="dashboard-dispatch-management-modal-split right">
+              <DispatchManagementRecipientList
+                recipients={recipients}
+                users={users}
 
-                  frequency={frequency}
-                  onChangeFrequency={frequency => this.setState({frequency})}
+                // Used to sort the recipients vertically on the right hand side column
+                initiallyEnabledRecipientIds={initiallyEnabledRecipientIds}
 
-                  frequencyDays={frequencyDays}
-                  onChangeFrequencyDays={frequencyDays => this.setState({frequencyDays})}
+                searchQuery={searchQuery}
+                onChangeSearchQuery={searchQuery => this.setState({searchQuery})}
 
-                  time={time}
-                  onChangeTime={time => this.setState({time})}
-
-                  timeZone={timeZone}
-                  onChangeTimeZone={timeZone => this.setState({timeZone})}
-
-                  defaultDispatchName={this.calculateDefaultDispatchName() || 'Dispatch Name'}
-                />
-              </div>
-              <div className="dashboard-dispatch-management-modal-split right">
-                <DispatchManagementRecipientList
-                  recipients={recipients}
-                  users={users}
-
-                  // Used to sort the recipients vertically on the right hand side column
-                  initiallyEnabledRecipientIds={initiallyEnabledRecipientIds}
-
-                  searchQuery={searchQuery}
-                  onChangeSearchQuery={searchQuery => this.setState({searchQuery})}
-
-                  onAddRecipient={recipient => this.setState(state => ({
-                    recipients: [...state.recipients, recipient],
-                  }))}
-                  onRemoveRecipient={recipient => this.setState(state => ({
-                    recipients: state.recipients.filter(r => r.id !== recipient.id),
-                  }))}
-                />
-              </div>
-            </div>
-            <div className="dashboard-dispatch-management-modal-footer-app-bar">
-              <span
-                role="button"
-                className="dashboard-dispatch-management-modal-footer-cancel"
-                onClick={onCloseModal}
-              >Cancel</span>
-              <Button disabled={!this.isFormValid()} type="primary">Save Email Digest</Button>
+                onAddRecipient={recipient => this.setState(state => ({
+                  recipients: [...state.recipients, recipient],
+                }))}
+                onRemoveRecipient={recipient => this.setState(state => ({
+                  recipients: state.recipients.filter(r => r.id !== recipient.id),
+                }))}
+              />
             </div>
           </div>
+          <div className="dashboard-dispatch-management-modal-footer-app-bar">
+            <span
+              role="button"
+              className="dashboard-dispatch-management-modal-footer-cancel"
+              onClick={onCloseModal}
+            >Cancel</span>
+            <Button disabled={!this.isFormValid()} type="primary">Save Email Digest</Button>
+          </div>
         </div>
-      ),
-      document.body,
-    );
+      </Modal>
+    )
   }
 }
 
