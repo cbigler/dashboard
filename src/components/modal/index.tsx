@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, MutableRefObject } from 'react';
+import React, { useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 
