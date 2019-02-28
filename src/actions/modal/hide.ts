@@ -6,9 +6,12 @@ export default function hideModal(name = null) {
     // Set a flag on the modal so it can amimate out
     dispatch({ type: TRANSITION_TO_HIDE_MODAL });
 
-    // Then after a bit, remove the modal completely (which should hopefulyl cause it to unmount)
+    // Then after a bit, remove the modal completely (which should hopefully cause it to unmount)
     window.setTimeout(() => {
-      dispatch({ type: HIDE_MODAL, name });
+      // Only dispatch if the modal hasn't been re-opened during the interval
+      if (!getState().activeModal.visible) {
+        dispatch({ type: HIDE_MODAL, name });
+      }
     }, 1000);
   };
 }

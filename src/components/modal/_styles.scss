@@ -1,27 +1,21 @@
-@keyframes dashboardModalAnimateIn {
-  from {
-    transform: translate3d(0, 20px, -200px);
-    opacity: 0;
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-    opacity: 1
-  }
+@keyframes dashboardModalBackdropAnimateIn {
+  from { opacity: 0; }
+  to { opacity: 1 }
+}
+@keyframes dashboardModalBackdropAnimateOut {
+  from { opacity: 1; }
+  to { opacity: 0 }
+}
+@keyframes dashboardModalDialogAnimateIn {
+  from { transform: translate(0, 20px) scale(0.98); }
+  to { transform: translate(0, 0) scale(1.0); }
+}
+@keyframes dashboardModalDialogAnimateOut {
+  from { transform: translate(0, 0) scale(1.0); }
+  to { transform: translate(0, 20px) scale(0.98); }
 }
 
-@keyframes dashboardModalAnimateOut {
-  from {
-    transform: translate3d(0, 0, 0);
-    opacity: 1
-  }
-  to {
-    transform: translate3d(0, 20px, 200px);
-    opacity: 0;
-  }
-}
-
-.dashboard-modal {
+.dashboard-modal-backdrop {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -36,17 +30,23 @@
   opacity: 0;
   pointer-events: none;
 
-  animation: dashboardModalAnimateOut 0.4s ease-out;
+  animation: dashboardModalBackdropAnimateOut 0.4s ease-out;
   background-color: rgba(255, 255, 255, 0.95);
   overflow-y: auto;
 }
-.dashboard-modal.visible {
+.dashboard-modal-backdrop.visible {
   pointer-events: auto;
   opacity: 1;
-  animation: dashboardModalAnimateIn 0.25s ease-in;
+  animation: dashboardModalBackdropAnimateIn 0.25s ease-in;
+}
+.dashboard-modal-backdrop > .dashboard-modal-dialog {
+  animation: dashboardModalDialogAnimateOut 0.4s ease-out;
+}
+.dashboard-modal-backdrop.visible > .dashboard-modal-dialog {
+  animation: dashboardModalDialogAnimateIn 0.25s ease-in;
 }
 
-.dashboard-modal-inner {
+.dashboard-modal-dialog {
   background-color: #fff;
   border: 1px solid $gray;
 
@@ -59,4 +59,4 @@
   border-radius: 2px;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
 }
-.dashboard-modal-inner:focus { outline: none; }
+.dashboard-modal-dialog:focus { outline: none; }

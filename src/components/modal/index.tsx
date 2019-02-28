@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect, MutableRefObject } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 
@@ -19,6 +19,8 @@ export default function Modal({
   onBlur,
   onEscape,
 }: ModalProps) {
+  const dialog: any = useRef(null);
+  useEffect(() => dialog.current.focus(), [visible]);
 
   const inlineStyle: any = {};
   if (width) {
@@ -31,15 +33,17 @@ export default function Modal({
 
   return ReactDOM.createPortal(
     <div
-      className={classnames('dashboard-modal', {visible})}
-      onClick={onBlur}
+      tabIndex={0}
+      className={classnames('dashboard-modal-backdrop', {visible})}
+      onKeyDown={e => e.keyCode === 27 && onEscape && onEscape()}
+      onMouseDown={onBlur}
     >
       <div
-        className="dashboard-modal-inner"
-        style={inlineStyle}
+        ref={dialog}
         tabIndex={0}
-        onClick={e => e.stopPropagation()}
-        onKeyDown={e => (e.keyCode === 27 && onEscape && onEscape()) || console.log(e.keyCode)}
+        className="dashboard-modal-dialog"
+        style={inlineStyle}
+        onMouseDown={e => e.stopPropagation()}
       >
         {children}
       </div>
