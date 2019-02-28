@@ -41,7 +41,7 @@ class DashboardDispatchPopupList extends Component<any, any> {
         >
           <Icons.Mail color={colorVariables.brandPrimaryNew} />
           <span className="dashboard-dispatch-list-button-text">Email Digest</span>
-          <Icons.ChevronDown width={10} height={10} color={colorVariables.brandPrimaryNew} />
+          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
         </button>
 
         <div className={classnames('dashboard-dispatch-list-dropdown', {visible})}>
