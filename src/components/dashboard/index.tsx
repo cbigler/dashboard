@@ -24,8 +24,8 @@ import Toast from '../toast/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
-import DashboardDispatchPopupList from '../dashboard-dispatch-popup-list/index';
-import DashboardDispatchManagementModal from '../dashboard-dispatch-management-modal/index';
+import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
+import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
@@ -231,22 +231,22 @@ export function Dashboard({
         />
       ) : null}
 
-      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
-        <DashboardDispatchManagementModal
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
+        <DashboardDigestManagementModal
           visible={activeModal.visible}
           selectedDashboard={activeModal.data.selectedDashboard}
-          initialDispatchSchedule={activeModal.data.dispatch}
+          initialDigestSchedule={activeModal.data.digest}
           onCloseModal={onCloseModal}
         />
       ) : null}
-      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT_SUCCESS' ? (
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_SUCCESS' ? (
         <div className="dashboard-status-toast">
           <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
-            Dispatch saved. Happy reporting!
+            Digest saved. Happy reporting!
           </Toast>
         </div>
       ) : null}
-      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT_ERROR' ? (
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_ERROR' ? (
         <div className="dashboard-status-toast">
           <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
             Error saving digest: {activeModal.data.error.message}
@@ -320,11 +320,11 @@ export function Dashboard({
             </AppBarSection> : null}
 
             <AppBarSection>
-              <DashboardDispatchPopupList
-                dispatches={[
+              <DashboardDigestPopupList
+                digestes={[
                   /* { */
                   /*   id: 1, */
-                  /*   name: 'My dispatch with a really really really long name', */
+                  /*   name: 'My digest with a really really really long name', */
                   /*   frequency: 'WEEKLY', */
                   /*   frequencyDays: [ */
                   /*     'Monday', */
@@ -356,11 +356,11 @@ export function Dashboard({
                   /*   ], */
                   /* }, */
                 ]}
-                onEditDispatch={dispatch => {
-                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch });
+                onEditDigest={digest => {
+                  onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
                 }}
-                onCreateDispatch={() => {
-                  onShowModal('MODAL_DISPATCH_MANAGEMENT', { selectedDashboard, dispatch: null });
+                onCreateDigest={() => {
+                  onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
                 }}
               />
             </AppBarSection>
@@ -390,30 +390,30 @@ export default connect((state: any) => {
     resizeCounter: state.resizeCounter,
     settings: state.user.data && state.user.data.organization.settings,
   };
-}, (dispatch: any) => {
+}, (digest: any) => {
   return {
     onDashboardChangeWeek(dashboard, weeks) {
-      dispatch(changeDashboardDate(weeks));
-      dispatch(routeTransitionDashboardDetail(dashboard.id));
+      digest(changeDashboardDate(weeks));
+      digest(routeTransitionDashboardDetail(dashboard.id));
     },
     onChangeSidebarVisibility(visibleState) {
       if (visibleState) {
-        dispatch(showDashboardSidebar());
+        digest(showDashboardSidebar());
       } else {
-        dispatch(hideDashboardSidebar());
+        digest(hideDashboardSidebar());
       }
 
       // Once the animation has completed, force a relayout
       setTimeout(() => {
-        dispatch(incrementResizeCounter());
+        digest(incrementResizeCounter());
       }, 300);
     },
 
     onCloseModal() {
-      dispatch(hideModal());
+      digest(hideModal());
     },
     onShowModal(name, data) {
-      dispatch(showModal(name, data));
+      digest(showModal(name, data));
     },
   };
 })(Dashboard);

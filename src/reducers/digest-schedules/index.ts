@@ -1,10 +1,10 @@
 import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import { COLLECTION_DISPATCH_SCHEDULES_LOAD } from '../../actions/collection/dispatch-schedules/load';
-import { COLLECTION_DISPATCH_SCHEDULES_SET } from '../../actions/collection/dispatch-schedules/set';
-import { COLLECTION_DISPATCH_SCHEDULES_PUSH } from '../../actions/collection/dispatch-schedules/push';
-import { COLLECTION_DISPATCH_SCHEDULES_ERROR } from '../../actions/collection/dispatch-schedules/error';
+import { COLLECTION_DIGEST_SCHEDULES_LOAD } from '../../actions/collection/digest-schedules/load';
+import { COLLECTION_DIGEST_SCHEDULES_SET } from '../../actions/collection/digest-schedules/set';
+import { COLLECTION_DIGEST_SCHEDULES_PUSH } from '../../actions/collection/digest-schedules/push';
+import { COLLECTION_DIGEST_SCHEDULES_ERROR } from '../../actions/collection/digest-schedules/error';
 
 const initialState = {
   view: 'LOADING',
@@ -14,14 +14,14 @@ const initialState = {
   data: [],
 };
 
-export default function dispatchSchedules(state=initialState, action) {
+export default function digestSchedules(state=initialState, action) {
   switch (action.type) {
 
-  case COLLECTION_DISPATCH_SCHEDULES_LOAD:
+  case COLLECTION_DIGEST_SCHEDULES_LOAD:
     return initialState;
 
   // Update the whole collectino with a given value
-  case COLLECTION_DISPATCH_SCHEDULES_SET:
+  case COLLECTION_DIGEST_SCHEDULES_SET:
     return {
       ...state,
       view: 'VISIBLE',
@@ -31,7 +31,7 @@ export default function dispatchSchedules(state=initialState, action) {
     };
 
   // Add a new value to the collection
-  case COLLECTION_DISPATCH_SCHEDULES_PUSH:
+  case COLLECTION_DIGEST_SCHEDULES_PUSH:
     return {
       ...state,
       view: 'VISIBLE',
@@ -55,7 +55,7 @@ export default function dispatchSchedules(state=initialState, action) {
       ],
     };
 
-  case COLLECTION_DISPATCH_SCHEDULES_ERROR:
+  case COLLECTION_DIGEST_SCHEDULES_ERROR:
     return {...state, view: 'ERROR', loading: false, error: action.error};
 
   default:

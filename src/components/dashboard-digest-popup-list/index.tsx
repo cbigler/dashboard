@@ -5,28 +5,28 @@ import moment from 'moment';
 import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import collectionDispatchSchedulesLoad from '../../actions/collection/dispatch-schedules/load';
+import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
 
-function generateHumanReadableFrequency(dispatch) {
+function generateHumanReadableFrequency(digest) {
   /* FIXME: what time zone should this time be in? */
-  const time = moment.tz(dispatch.time, 'HH:mm:ss', dispatch.timeZone).local().format('h:mm A');
+  const time = moment.tz(digest.time, 'HH:mm:ss', digest.timeZone).local().format('h:mm A');
 
-  switch (dispatch.frequency) {
+  switch (digest.frequency) {
   case 'weekly':
     return `Weekly on ${
-      dispatch.daysOfWeek.map(day => day.slice(0, 3)).join(', ')
+      digest.daysOfWeek.map(day => day.slice(0, 3)).join(', ')
     } @ ${time}`;
 
   case 'monthly':
     let postfixedNumber;
-    if (dispatch.dayNumber === 1) {
+    if (digest.dayNumber === 1) {
       postfixedNumber = '1st';
-    } else if (dispatch.dayNumber === 2) {
+    } else if (digest.dayNumber === 2) {
       postfixedNumber = '2nd';
-    } else if (dispatch.dayNumber === 3) {
+    } else if (digest.dayNumber === 3) {
       postfixedNumber = '3rd';
     } else {
-      postfixedNumber = `${dispatch.dayNumber}th`;
+      postfixedNumber = `${digest.dayNumber}th`;
     }
     return `Monthly on the ${postfixedNumber} @ ${time}`;
 
@@ -35,81 +35,81 @@ function generateHumanReadableFrequency(dispatch) {
   }
 }
 
-class DashboardDispatchPopupList extends Component<any, any> {
+class DashboardDigestPopupList extends Component<any, any> {
   state = {
     visible: false,
   }
 
   render() {
-    const { dispatchSchedules, onEditDispatch, onCreateDispatch } = this.props;
+    const { digestSchedules, onEditDigest, onCreateDigest } = this.props;
     const { visible } = this.state;
 
     return (
-      <div className="dashboard-dispatch-list">
+      <div className="dashboard-digest-list">
 				<div
-          className={classnames('dashboard-dispatch-backdrop', {visible})}
+          className={classnames('dashboard-digest-backdrop', {visible})}
           onClick={() => this.setState({visible: false})}
         />
 
         <button
-          className={classnames('dashboard-dispatch-list-button', {visible})}
+          className={classnames('dashboard-digest-list-button', {visible})}
           onClick={() => this.setState({visible: !visible})}
         >
           <Icons.Mail color={colorVariables.brandPrimaryNew} />
-          <span className="dashboard-dispatch-list-button-text">Email Digest</span>
+          <span className="dashboard-digest-list-button-text">Email Digest</span>
           <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
         </button>
 
-        <div className={classnames('dashboard-dispatch-list-dropdown', {visible})}>
+        <div className={classnames('dashboard-digest-list-dropdown', {visible})}>
           <AppBar>
             <AppBarSection>
               <AppBarTitle>Email Digests</AppBarTitle>
             </AppBarSection>
             <AppBarSection>
               <span
-                className="dashboard-dispatch-list-dropdown-create-button"
+                className="dashboard-digest-list-dropdown-create-button"
                 role="button"
                 onClick={() => {
                   this.setState({visible: false}, () => {
-                    onCreateDispatch();
+                    onCreateDigest();
                   });
                 }}
                 tabIndex={visible ? 0 : -1}
               >
                 <Icons.PlusCircle color={colorVariables.brandPrimary} />
-                <span className="dashboard-dispatch-list-dropdown-create-button-text">
+                <span className="dashboard-digest-list-dropdown-create-button-text">
                   Create New Digest
                 </span>
               </span>
             </AppBarSection>
           </AppBar>
 
-          <ul className="dashboard-dispatch-list-dropdown-list">
-            {/* regular state is a list of dispatches */}
-            {dispatchSchedules.view === 'VISIBLE' ? (
-              dispatchSchedules.data
+          <ul className="dashboard-digest-list-dropdown-list">
+            {/* regular state is a list of digestes */}
+            {digestSchedules.view === 'VISIBLE' ? (
+              digestSchedules.data
               .sort((a, b) => a.name.localeCompare(b.name))
-              .map(dispatch => (
-                <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
-                  <div className="dashboard-dispatch-list-dropdown-item-row">
-                    <span className="dashboard-dispatch-list-dropdown-item-name">
-                      {dispatch.name}
+              .map(digest => (
+                <li key={digest.id} className="dashboard-digest-list-dropdown-item">
+                  <div className="dashboard-digest-list-dropdown-item-row">
+                    <span className="dashboard-digest-list-dropdown-item-name">
+                      {digest.name}
                     </span>
                     <span
                       role="button"
-                      className="dashboard-dispatch-list-dropdown-item-edit"
+                      className="dashboard-digest-list-dropdown-item-edit"
                       onClick={() => {
                         this.setState({visible: false}, () => {
-                          onEditDispatch(dispatch);
+                          onEditDigest(digest);
                         });
                       }}
                       tabIndex={visible ? 0 : -1}
                     >Edit</span>
                   </div>
-                  <span className="dashboard-dispatch-list-dropdown-item-interval">
+                  <span className="dashboard-digest-list-dropdown-item-interval">
                     <Icons.Calendar color={colorVariables.grayDarker} />
-                    <span className="dashboard-dispatch-list-dropdown-item-interval-text">
-                      {generateHumanReadableFrequency(dispatch)}
+                    <span className="dashboard-digest-list-dropdown-item-interval-text">
+                      {generateHumanReadableFrequency(digest)}
                     </span>
                   </span>
                 </li>
@@ -117,14 +117,14 @@ class DashboardDispatchPopupList extends Component<any, any> {
             ) : null}
 
             {/* empty state */}
-            {dispatchSchedules.view === 'VISIBLE' && dispatchSchedules.data.length === 0 ? (
-              <div className="dashboard-dispatch-list-empty-container">
+            {digestSchedules.view === 'VISIBLE' && digestSchedules.data.length === 0 ? (
+              <div className="dashboard-digest-list-empty-container">
                 <Letter />
-                <div className="dashboard-dispatch-list-empty-container-text">
-                  <h3 className="dashboard-dispatch-list-empty-container-title">
+                <div className="dashboard-digest-list-empty-container-text">
+                  <h3 className="dashboard-digest-list-empty-container-title">
                     You haven't created any digests.
                   </h3>
-                  <span className="dashboard-dispatch-list-empty-container-desc">
+                  <span className="dashboard-digest-list-empty-container-desc">
                     View dashboards in your inbox.
                   </span>
                 </div>
@@ -138,9 +138,9 @@ class DashboardDispatchPopupList extends Component<any, any> {
 }
 
 export default connect(
-  state => ({ dispatchSchedules: (state as any).dispatchSchedules }),
-  dispatch => ({}),
-)(DashboardDispatchPopupList);
+  state => ({ digestSchedules: (state as any).digestSchedules }),
+  digest => ({}),
+)(DashboardDigestPopupList);
 
 function Letter() {
   return (

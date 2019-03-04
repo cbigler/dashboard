@@ -5,8 +5,8 @@ import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
 
-import collectionDispatchSchedulesSet from '../collection/dispatch-schedules/set';
-import collectionDispatchSchedulesError from '../collection/dispatch-schedules/error';
+import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
+import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
 
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
