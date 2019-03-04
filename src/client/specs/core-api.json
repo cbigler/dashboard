@@ -405,6 +405,11 @@
         "method": "GET",
         "url": "{{{core}}}/digest_schedules/",
         "desc": "List all digest schedules."
+      },
+      "delete": {
+        "method": "DELETE",
+        "url": "{{{core}}}/digest_schedules/{{id}}",
+        "desc": "Delete the given digest schedule."
       }
     }
   }

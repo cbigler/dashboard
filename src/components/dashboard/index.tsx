@@ -246,6 +246,13 @@ export function Dashboard({
           </Toast>
         </div>
       ) : null}
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_DELETED' ? (
+        <div className="dashboard-status-toast">
+          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
+            Digest deleted.
+          </Toast>
+        </div>
+      ) : null}
       {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_ERROR' ? (
         <div className="dashboard-status-toast">
           <Toast type="error" visible={activeModal.visible} onDismiss={onCloseModal}>

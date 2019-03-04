@@ -12,6 +12,7 @@ import filterCollection from '../../helpers/filter-collection/index';
 import collectionUsersLoad from '../../actions/collection/users/load';
 import collectionDigestSchedulesCreate from '../../actions/collection/digest-schedules/create';
 import collectionDigestSchedulesUpdate from '../../actions/collection/digest-schedules/update';
+import collectionDigestSchedulesDestroy from '../../actions/collection/digest-schedules/destroy';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -36,6 +37,7 @@ type DashboardDigestManagementModalProps = {
   onCloseModal: () => any,
   onCreateDigest: (any) => any,
   onUpdateDigest: (any) => any,
+  onDeleteDigest: (any) => any,
 
   users: {
     view: 'LOADING' | 'ERROR' | 'VISIBLE',
@@ -142,6 +144,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
       onCloseModal,
       onCreateDigest,
       onUpdateDigest,
+      onDeleteDigest,
     } = this.props;
     const {
       name,
@@ -154,6 +157,8 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
       initiallyEnabledRecipientIds,
       searchQuery,
     } = this.state;
+
+    const showDeleteDigest = Boolean(this.props.initialDigestSchedule);
 
     return (
       <Modal
@@ -187,6 +192,22 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
 
                 defaultDigestName={this.calculateDefaultDigestName() || 'Digest Name'}
               />
+
+              {showDeleteDigest ? (
+                <Button onClick={() => {
+                  onDeleteDigest({
+                    id: this.props.initialDigestSchedule.id,
+                    name: name || this.calculateDefaultDigestName() || 'Digest Name',
+                    recipients: recipients,
+                    dashboardId: selectedDashboard.id,
+                    frequency,
+                    daysOfWeek: daysOfWeek,
+                    dayNumber: 1, /* What is this value for? */
+                    time,
+                    timeZone,
+                  })
+                }}>Delete this Digest</Button>
+              ) : null}
             </div>
             <div className="dashboard-dispatch-management-modal-split right">
               <DigestManagementRecipientList
@@ -265,6 +286,14 @@ export default connect(
         dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
       }
     },
+    onDeleteDigest: async digest => {
+      const wasSuccessful = await dispatch<any>(collectionDigestSchedulesDestroy(digest));
+      if (wasSuccessful) {
+        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_DELETED'));
+      } else {
+        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
+      }
+    },
   }),
 )(DashboardDigestManagementModal);
 
@@ -307,7 +336,7 @@ function DigestManagementForm({
         <InputBox
           type="text"
           id="dispatch-name"
-          width="336px"
+          width="100%"
           placeholder={defaultDigestName}
           value={name}
           onChange={e => onChangeName(e.target.value)}
@@ -382,7 +411,7 @@ function DigestManagementForm({
             choices={TIMEZONE_CHOICES}
             onChange={item => onChangeTimeZone(item.id)}
             placeholder="Select a time"
-            width={300}
+            width="100%"
             menuMaxHeight={300}
           />
         </div>

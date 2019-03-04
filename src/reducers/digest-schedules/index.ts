@@ -5,6 +5,7 @@ import { COLLECTION_DIGEST_SCHEDULES_LOAD } from '../../actions/collection/diges
 import { COLLECTION_DIGEST_SCHEDULES_SET } from '../../actions/collection/digest-schedules/set';
 import { COLLECTION_DIGEST_SCHEDULES_PUSH } from '../../actions/collection/digest-schedules/push';
 import { COLLECTION_DIGEST_SCHEDULES_ERROR } from '../../actions/collection/digest-schedules/error';
+import { COLLECTION_DIGEST_SCHEDULES_REMOVE } from '../../actions/collection/digest-schedules/remove';
 
 const initialState = {
   view: 'LOADING',
@@ -53,6 +54,16 @@ export default function digestSchedules(state=initialState, action) {
             []
         ),
       ],
+    };
+
+  case COLLECTION_DIGEST_SCHEDULES_REMOVE:
+    return {
+      ...state,
+      view: 'VISIBLE',
+      loading: false,
+      data: state.data.filter((item: any) => {
+        return action.item.id !== item.id;
+      }),
     };
 
   case COLLECTION_DIGEST_SCHEDULES_ERROR:
