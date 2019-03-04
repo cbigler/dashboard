@@ -248,8 +248,8 @@ export function Dashboard({
       ) : null}
       {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_ERROR' ? (
         <div className="dashboard-status-toast">
-          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
-            Error saving digest: {activeModal.data.error.message}
+          <Toast type="error" visible={activeModal.visible} onDismiss={onCloseModal}>
+            Whoops! That didn't work.
           </Toast>
         </div>
       ) : null}

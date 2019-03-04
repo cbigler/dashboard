@@ -36,10 +36,10 @@ export default function collectionDispatchSchedulesCreate({
     if (errorThrown) {
       console.error(errorThrown);
       dispatch(collectionDispatchSchedulesError(errorThrown));
-      return [false, errorThrown];
+      return false;
     } else {
       dispatch(collectionDispatchSchedulesPush(schedule));
-      return [true, null];
+      return true;
     }
   }
 }

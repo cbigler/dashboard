@@ -250,19 +250,19 @@ export default connect(
   dispatch => ({
     onLoadUsers: () => dispatch<any>(collectionUsersLoad()),
     onCreateDigest: async digest => {
-      const [wasSuccessful, error] = await dispatch<any>(collectionDigestSchedulesCreate(digest));
+      const wasSuccessful = await dispatch<any>(collectionDigestSchedulesCreate(digest));
       if (wasSuccessful) {
         dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_SUCCESS'));
       } else {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR', {error}));
+        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
       }
     },
     onUpdateDigest: async digest => {
-      const [wasSuccessful, error] = await dispatch<any>(collectionDigestSchedulesUpdate(digest));
+      const wasSuccessful = await dispatch<any>(collectionDigestSchedulesUpdate(digest));
       if (wasSuccessful) {
         dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_SUCCESS'));
       } else {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR', {error}));
+        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
       }
     },
   }),
