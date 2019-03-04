@@ -38,10 +38,10 @@ export default function collectionDispatchSchedulesUpdate({
     if (errorThrown) {
       console.error(errorThrown);
       dispatch(collectionDispatchSchedulesError(errorThrown));
-      return false;
+      return [false, errorThrown];
     } else {
       dispatch(collectionDispatchSchedulesPush(schedule));
-      return true;
+      return [true, null];
     }
   }
 }
