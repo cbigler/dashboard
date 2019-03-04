@@ -12,6 +12,8 @@ import filterCollection from '../../helpers/filter-collection/index';
 import collectionUsersLoad from '../../actions/collection/users/load';
 import collectionDispatchSchedulesCreate from '../../actions/collection/dispatch-schedules/create';
 import collectionDispatchSchedulesUpdate from '../../actions/collection/dispatch-schedules/update';
+
+import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 const DAYS_OF_WEEK = [

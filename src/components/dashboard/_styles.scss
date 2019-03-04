@@ -275,3 +275,10 @@
   &:hover { opacity: 0.8; }
   &:active { opacity: 1; }
 }
+
+.dashboard-status-toast {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}

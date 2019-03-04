@@ -1,0 +1,44 @@
+@keyframes dashboardToastAnimateIn {
+  from { transform: translate(0, 20px) scale(0.98); }
+  to { transform: translate(0, 0) scale(1.0); }
+}
+@keyframes dashboardToastAnimateOut {
+  from { transform: translate(0, 0) scale(1.0); }
+  to { transform: translate(0, 20px) scale(0.98); }
+}
+
+.toast {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+
+  background-color: $gray-cinder;
+  border-radius: $border-radius-base;
+
+  opacity: 0;
+  pointer-events: none;
+  animation: dashboardModalBackdropAnimateOut 0.1s ease-out;
+}
+.toast.visible {
+  pointer-events: auto;
+  opacity: 1;
+  animation: dashboardModalBackdropAnimateIn 0.1s ease-in;
+}
+
+.toast-text { color: #B7D7CF; }
+.toast-dismiss {
+  color: #fff;
+  text-decoration: underline;
+  font-weight: 400;
+  cursor: pointer;
+  margin-left: 48px;
+  &:hover { opacity: 0.95; }
+  &:active { opacity: 1; }
+}
+

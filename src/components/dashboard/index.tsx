@@ -20,6 +20,7 @@ import {
   DashboardReportGrid,
   Icons,
 } from '@density/ui';
+import Toast from '../toast/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
@@ -237,6 +238,20 @@ export function Dashboard({
           initialDispatchSchedule={activeModal.data.dispatch}
           onCloseModal={onCloseModal}
         />
+      ) : null}
+      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT_SUCCESS' ? (
+        <div className="dashboard-status-toast">
+          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
+            Dispatch saved. Happy reporting!
+          </Toast>
+        </div>
+      ) : null}
+      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT_ERROR' ? (
+        <div className="dashboard-status-toast">
+          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
+            Error saving digest: {activeModal.data.error.message}
+          </Toast>
+        </div>
       ) : null}
 
       {/* Main application */}

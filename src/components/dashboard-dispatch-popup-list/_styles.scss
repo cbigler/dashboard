@@ -56,6 +56,7 @@ $dashboard-dispatch-backdrop-z-index: 99999;
 
   background-color: #fff;
   border: 1px solid $gray;
+  border-radius: $border-radius-base;
 
   opacity: 0;
   transition: all 150ms ease-in-out;
