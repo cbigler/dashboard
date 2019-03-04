@@ -8,7 +8,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
 
 function generateHumanReadableFrequency(digest) {
-  /* FIXME: what time zone should this time be in? */
+  /* NOTE: the below is in local time. */
   const time = moment.tz(digest.time, 'HH:mm:ss', digest.timeZone).local().format('h:mm A');
 
   switch (digest.frequency) {
@@ -127,6 +127,21 @@ class DashboardDigestPopupList extends Component<any, any> {
                   <span className="dashboard-digest-list-empty-container-desc">
                     View dashboards in your inbox.
                   </span>
+                </div>
+              </div>
+            ) : null}
+
+            {/* error state */}
+            {digestSchedules.view === 'ERROR' ? (
+              <div className="dashboard-digest-list-error-container">
+                <div>
+                  <h3 className="dashboard-digest-list-error-container-title">Whoops</h3>
+                  <p className="dashboard-digest-list-error-container-desc">
+                    Something went wrong.
+                  </p>
+                  <p className="dashboard-digest-list-error-container-desc">
+                    Try refreshing, or contacting <a href="mailto:support@density.io">support</a>.
+                  </p>
                 </div>
               </div>
             ) : null}

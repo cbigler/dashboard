@@ -158,3 +158,15 @@ $dashboard-digest-backdrop-z-index: 99999;
   color: $gray-dark;
   font-size: 14px;
 }
+
+.dashboard-digest-list-error-container {
+  display: flex;
+  align-items: center;
+  height: 240px;
+}
+.dashboard-digest-list-error-container-title {
+  font-size: 24px;
+  color: $brand-danger;
+  margin-top: 0px;
+}
+.dashboard-digest-list-error-container-desc { font-size: 16px; }
