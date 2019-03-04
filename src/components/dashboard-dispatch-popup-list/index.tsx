@@ -85,33 +85,36 @@ class DashboardDispatchPopupList extends Component<any, any> {
           </AppBar>
 
           <ul className="dashboard-dispatch-list-dropdown-list">
-
             {/* regular state is a list of dispatches */}
-            {dispatchSchedules.view === 'VISIBLE' ? dispatchSchedules.data.map(dispatch => (
-              <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
-                <div className="dashboard-dispatch-list-dropdown-item-row">
-                  <span className="dashboard-dispatch-list-dropdown-item-name">
-                    {dispatch.name}
+            {dispatchSchedules.view === 'VISIBLE' ? (
+              dispatchSchedules.data
+              .sort((a, b) => a.name.localeCompare(b.name))
+              .map(dispatch => (
+                <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
+                  <div className="dashboard-dispatch-list-dropdown-item-row">
+                    <span className="dashboard-dispatch-list-dropdown-item-name">
+                      {dispatch.name}
+                    </span>
+                    <span
+                      role="button"
+                      className="dashboard-dispatch-list-dropdown-item-edit"
+                      onClick={() => {
+                        this.setState({visible: false}, () => {
+                          onEditDispatch(dispatch);
+                        });
+                      }}
+                      tabIndex={visible ? 0 : -1}
+                    >Edit</span>
+                  </div>
+                  <span className="dashboard-dispatch-list-dropdown-item-interval">
+                    <Icons.Calendar color={colorVariables.grayDarker} />
+                    <span className="dashboard-dispatch-list-dropdown-item-interval-text">
+                      {generateHumanReadableFrequency(dispatch)}
+                    </span>
                   </span>
-                  <span
-                    role="button"
-                    className="dashboard-dispatch-list-dropdown-item-edit"
-                    onClick={() => {
-                      this.setState({visible: false}, () => {
-                        onEditDispatch(dispatch);
-                      });
-                    }}
-                    tabIndex={visible ? 0 : -1}
-                  >Edit</span>
-                </div>
-                <span className="dashboard-dispatch-list-dropdown-item-interval">
-                  <Icons.Calendar color={colorVariables.grayDarker} />
-                  <span className="dashboard-dispatch-list-dropdown-item-interval-text">
-                    {generateHumanReadableFrequency(dispatch)}
-                  </span>
-                </span>
-              </li>
-            )) : null}
+                </li>
+              ))
+            ) : null}
 
             {/* empty state */}
             {dispatchSchedules.view === 'VISIBLE' && dispatchSchedules.data.length === 0 ? (
