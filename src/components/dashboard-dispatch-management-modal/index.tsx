@@ -96,7 +96,7 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
         recipients: [],
 
         time: null,
-        timeZone: 'America/New_York',
+        timeZone: moment.tz.guess(), // Default to the user's present time zone
 
         initiallyEnabledRecipientIds: [],
 

@@ -12,15 +12,15 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
   height: 40px;
   padding-left: 16px;
   padding-right: 16px;
-
-  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
-
   background-color: $gray-cinder;
   border-radius: $border-radius-base;
 
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
+  user-select: none;
   opacity: 0;
   pointer-events: none;
   animation: dashboardModalBackdropAnimateOut 0.1s ease-out;
