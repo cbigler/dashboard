@@ -87,10 +87,11 @@ export default function routeTransitionDashboardDetail(id) {
     await dashboardSelectionPromise;
 
 
-    // Next, load all dispatch schedules
+
+    // Next, load all digest schedules
     let schedules, errorThrown;
     try {
-      schedules = await fetchAllPages(page => core.dispatch_schedules.list({page, page_size: 5000}));
+      schedules = await fetchAllPages(page => core.digest_schedules.list({page, page_size: 5000}));
     } catch (err) {
       errorThrown = err;
     }
@@ -100,5 +101,6 @@ export default function routeTransitionDashboardDetail(id) {
       console.error(errorThrown);
       dispatch(collectionDispatchSchedulesError(errorThrown));
     }
+
   };
 }

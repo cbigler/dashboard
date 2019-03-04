@@ -117,6 +117,42 @@ accounts.tokens.auth0_exchange = (token) => {
   });
 };
 
+core.digest_schedules.create = (data) => {
+  return fetch(`${core.config().core}/digest_schedules`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${core.config().token}`,
+    },
+    body: JSON.stringify(data),
+  }).then(async response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return Promise.reject(await errorHandler(response));
+    }
+  });
+};
+
+core.digest_schedules.update = ({id, ...data}) => {
+  return fetch(`${core.config().core}/digest_schedules/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'Authorization': `Bearer ${core.config().token}`,
+    },
+    body: JSON.stringify(data),
+  }).then(async response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      return Promise.reject(await errorHandler(response));
+    }
+  });
+};
+
 
 
 export {

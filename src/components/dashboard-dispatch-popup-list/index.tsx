@@ -1,17 +1,35 @@
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import moment from 'moment';
 import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import collectionDispatchSchedulesLoad from '../../actions/collection/dispatch-schedules/load';
 
-function generateHumanReadableFrequency(frequency) {
-  switch (frequency) {
-  case 'WEEKLY':
-    return 'Weekly';
-  case 'MONTHLY':
-    return 'Monthly';
+function generateHumanReadableFrequency(dispatch) {
+  /* FIXME: what time zone should this time be in? */
+  const time = moment.tz(dispatch.time, 'HH:mm:ss', dispatch.timeZone).local().format('h:mm A');
+
+  switch (dispatch.frequency) {
+  case 'weekly':
+    return `Weekly on ${
+      dispatch.daysOfWeek.map(day => day.slice(0, 3)).join(', ')
+    } @ ${time}`;
+
+  case 'monthly':
+    let postfixedNumber;
+    if (dispatch.dayNumber === 1) {
+      postfixedNumber = '1st';
+    } else if (dispatch.dayNumber === 2) {
+      postfixedNumber = '2nd';
+    } else if (dispatch.dayNumber === 3) {
+      postfixedNumber = '3rd';
+    } else {
+      postfixedNumber = `${dispatch.dayNumber}th`;
+    }
+    return `Monthly on the ${postfixedNumber} @ ${time}`;
+
   default:
     return 'Unknown Frequency';
   }
@@ -23,10 +41,8 @@ class DashboardDispatchPopupList extends Component<any, any> {
   }
 
   render() {
-    const { dispatches, onEditDispatch, onCreateDispatch } = this.props;
+    const { dispatchSchedules, onEditDispatch, onCreateDispatch } = this.props;
     const { visible } = this.state;
-
-    const view: 'VISIBLE' | 'LOADING' = 'VISIBLE';
 
     return (
       <div className="dashboard-dispatch-list">
@@ -71,7 +87,7 @@ class DashboardDispatchPopupList extends Component<any, any> {
           <ul className="dashboard-dispatch-list-dropdown-list">
 
             {/* regular state is a list of dispatches */}
-            {view === 'VISIBLE' ? dispatches.map(dispatch => (
+            {dispatchSchedules.view === 'VISIBLE' ? dispatchSchedules.data.map(dispatch => (
               <li key={dispatch.id} className="dashboard-dispatch-list-dropdown-item">
                 <div className="dashboard-dispatch-list-dropdown-item-row">
                   <span className="dashboard-dispatch-list-dropdown-item-name">
@@ -91,14 +107,14 @@ class DashboardDispatchPopupList extends Component<any, any> {
                 <span className="dashboard-dispatch-list-dropdown-item-interval">
                   <Icons.Calendar color={colorVariables.grayDarker} />
                   <span className="dashboard-dispatch-list-dropdown-item-interval-text">
-                    {generateHumanReadableFrequency(dispatch.frequency)} on Wednesday at 9:00 AM
+                    {generateHumanReadableFrequency(dispatch)}
                   </span>
                 </span>
               </li>
             )) : null}
 
             {/* empty state */}
-            {view === 'VISIBLE' && dispatches.length === 0 ? (
+            {dispatchSchedules.view === 'VISIBLE' && dispatchSchedules.data.length === 0 ? (
               <div className="dashboard-dispatch-list-empty-container">
                 <Letter />
                 <div className="dashboard-dispatch-list-empty-container-text">

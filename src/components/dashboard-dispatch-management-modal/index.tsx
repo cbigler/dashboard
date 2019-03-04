@@ -10,6 +10,9 @@ import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';
 
 import collectionUsersLoad from '../../actions/collection/users/load';
+import collectionDispatchSchedulesCreate from '../../actions/collection/dispatch-schedules/create';
+import collectionDispatchSchedulesUpdate from '../../actions/collection/dispatch-schedules/update';
+import hideModal from '../../actions/modal/hide';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -21,11 +24,16 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
+const WEEKLY = 'weekly',
+      MONTHLY = 'monthly';
+
 type DashboardDispatchManagementModalProps = {
   visible: boolean,
   initialDispatchSchedule: any,
-  selectedDashboard: any;
+  selectedDashboard: any,
   onCloseModal: () => any,
+  onCreateDigest: (any) => any,
+  onUpdateDigest: (any) => any,
 
   users: {
     view: 'LOADING' | 'ERROR' | 'VISIBLE',
@@ -38,8 +46,8 @@ type DashboardDispatchManagementModalProps = {
 
 type DashboardDispatchManagementModalState = {
   name: string,
-  frequency: "WEEKLY" | "MONTHLY",
-  frequencyDays: Array<string>,
+  frequency: 'weekly' | 'monthly',
+  daysOfWeek: Array<string>,
   recipients: Array<any>,
   time: string | null,
   timeZone: string,
@@ -54,18 +62,26 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
     super(props);
 
     if (props.initialDispatchSchedule) {
+      const frequency = props.initialDispatchSchedule.frequency;
+      const nameIsDefaultName = (
+        this.calculateDefaultDispatchName(frequency) === props.initialDispatchSchedule.name
+      );
+
       this.state = {
-        name: props.initialDispatchSchedule.name,
-        frequency: props.initialDispatchSchedule.frequency,
-        frequencyDays: props.initialDispatchSchedule.frequencyDays || [ 'Monday' ],
+        // If the name is the default dispatch name, then leave the text bo empty so it can be
+        // overridden easily by the user.
+        name: nameIsDefaultName ? '' : props.initialDispatchSchedule.name,
+        frequency,
+
+        daysOfWeek: props.initialDispatchSchedule.daysOfWeek,
         recipients: props.initialDispatchSchedule.recipients,
 
-        time: '12:00',
-        timeZone: 'America/New_York',
+        time: props.initialDispatchSchedule.time,
+        timeZone: props.initialDispatchSchedule.timeZone,
 
         // Capture all ids of recipients that were enabled when the modal opens. This is required
         // so that we can sort these at the start of all other users in the right hand side list.
-        initiallyEnabledRecipientIds: props.initialDispatchSchedule.recipients.map(r => r.id),
+        initiallyEnabledRecipientIds: props.initialDispatchSchedule.recipients,
 
         searchQuery: '',
       };
@@ -73,8 +89,8 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
       // If creating a new dispatch, these are the default values
       this.state = {
         name: "",
-        frequency: "WEEKLY",
-        frequencyDays: [ DAYS_OF_WEEK[0] ],
+        frequency: WEEKLY,
+        daysOfWeek: [ DAYS_OF_WEEK[0] ],
         recipients: [],
 
         time: null,
@@ -87,14 +103,13 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
     }
   }
 
-  calculateDefaultDispatchName() {
-    const { frequency } = this.state;
+  calculateDefaultDispatchName(frequency=this.state.frequency) {
     const { selectedDashboard } = this.props;
 
     switch (frequency) {
-    case 'WEEKLY':
+    case WEEKLY:
       return `Weekly ${selectedDashboard.name}`;
-    case 'MONTHLY':
+    case MONTHLY:
       return `Monthly ${selectedDashboard.name}`;
     default:
       return null;
@@ -106,21 +121,30 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
   }
 
   isFormValid() {
-    const { frequencyDays, recipients, time } = this.state
+    const { daysOfWeek, recipients, time } = this.state
 
     return (
-      frequencyDays.length > 0 && // at least one day is selected
+      daysOfWeek.length > 0 && // at least one day is selected
       recipients.length > 0 && // at least one recipient is selected
       time !== null // a time is selected
     );
   }
 
   render() {
-    const { users, initialDispatchSchedule, visible, onCloseModal } = this.props;
+    const {
+      users,
+      selectedDashboard,
+      initialDispatchSchedule,
+      visible,
+
+      onCloseModal,
+      onCreateDigest,
+      onUpdateDigest,
+    } = this.props;
     const {
       name,
       frequency,
-      frequencyDays,
+      daysOfWeek,
       recipients,
       time,
       timeZone,
@@ -150,8 +174,8 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
                 frequency={frequency}
                 onChangeFrequency={frequency => this.setState({frequency})}
 
-                frequencyDays={frequencyDays}
-                onChangeFrequencyDays={frequencyDays => this.setState({frequencyDays})}
+                daysOfWeek={daysOfWeek}
+                onChangeDaysOfWeek={daysOfWeek => this.setState({daysOfWeek})}
 
                 time={time}
                 onChangeTime={time => this.setState({time})}
@@ -174,10 +198,10 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
                 onChangeSearchQuery={searchQuery => this.setState({searchQuery})}
 
                 onAddRecipient={recipient => this.setState(state => ({
-                  recipients: [...state.recipients, recipient],
+                  recipients: [...state.recipients, recipient.id],
                 }))}
                 onRemoveRecipient={recipient => this.setState(state => ({
-                  recipients: state.recipients.filter(r => r.id !== recipient.id),
+                  recipients: state.recipients.filter(r => r !== recipient.id),
                 }))}
               />
             </div>
@@ -188,7 +212,30 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
               className="dashboard-dispatch-management-modal-footer-cancel"
               onClick={onCloseModal}
             >Cancel</span>
-            <Button disabled={!this.isFormValid()} type="primary">Save Email Digest</Button>
+            <Button
+              disabled={!this.isFormValid()}
+              type="primary"
+              onClick={() => {
+                let digest = {
+                  id: undefined,
+                  name: name || this.calculateDefaultDispatchName(),
+                  recipients: recipients,
+                  dashboardId: selectedDashboard.id,
+                  frequency,
+                  daysOfWeek: daysOfWeek,
+                  dayNumber: 1, /* What is this value for? */
+                  time,
+                  timeZone,
+                };
+
+                if (this.props.initialDispatchSchedule) {
+                  digest.id = this.props.initialDispatchSchedule.id;
+                  onUpdateDigest(digest);
+                } else {
+                  onCreateDigest(digest);
+                }
+              }}
+            >Save Email Digest</Button>
           </div>
         </div>
       </Modal>
@@ -198,7 +245,23 @@ class DashboardDispatchManagementModal extends Component<DashboardDispatchManage
 
 export default connect(
   state => ({ users: (state as any).users }),
-  dispatch => ({ onLoadUsers: () => dispatch<any>(collectionUsersLoad()) })
+  dispatch => ({
+    onLoadUsers: () => dispatch<any>(collectionUsersLoad()),
+    onCreateDigest: async digest => {
+      const wasSuccessful = await dispatch<any>(collectionDispatchSchedulesCreate(digest));
+      if (wasSuccessful) {
+        dispatch<any>(hideModal());
+        /* FIXME: Show a toast saying it was created successfully. */
+      }
+    },
+    onUpdateDigest: async digest => {
+      const wasSuccessful = await dispatch<any>(collectionDispatchSchedulesUpdate(digest));
+      if (wasSuccessful) {
+        dispatch<any>(hideModal());
+        /* FIXME: Show a toast saying it was updated successfully. */
+      }
+    },
+  }),
 )(DashboardDispatchManagementModal);
 
 // Generate all possible values for the hour choices in the dispatch management form component
@@ -210,7 +273,7 @@ function generateDispatchTimeChoices(timeZone) {
   for (let index = 0; index < 24; index++) {
     const hour = startOfLocalDay.clone().add(index, 'hours');
     choices.push({
-      id: hour.format('HH:mm'),
+      id: hour.format('HH:mm:ss'),
       label: hour.format('h:mm a')
     });
   }
@@ -221,7 +284,7 @@ function generateDispatchTimeChoices(timeZone) {
 function DispatchManagementForm({
   name,
   frequency,
-  frequencyDays,
+  daysOfWeek,
   time,
   timeZone,
 
@@ -229,7 +292,7 @@ function DispatchManagementForm({
 
   onChangeName,
   onChangeFrequency,
-  onChangeFrequencyDays,
+  onChangeDaysOfWeek,
   onChangeTime,
   onChangeTimeZone,
 }) {
@@ -255,32 +318,32 @@ function DispatchManagementForm({
             placeholder={defaultDispatchName}
             value={frequency}
             choices={[
-              {id: 'WEEKLY', label: 'Weekly'},
-              {id: 'MONTHLY', label: 'Monthly'},
+              {id: WEEKLY, label: 'Weekly'},
+              {id: MONTHLY, label: 'Monthly'},
             ]}
             onChange={item => onChangeFrequency(item.id)}
             width="120px"
           />
 
-          {frequency === 'WEEKLY' ? (
+          {frequency === WEEKLY ? (
             <div className="dispatch-management-form-group-day-list">
               {DAYS_OF_WEEK.map(dayName => (
                 <div key={dayName} className="dispatch-management-form-group-day-item">
                   <Button
-                    type={frequencyDays.indexOf(dayName) >= 0 ? 'primary' : 'default'}
+                    type={daysOfWeek.indexOf(dayName) >= 0 ? 'primary' : 'default'}
                     size="small"
                     width={24}
                     height={24}
                     onClick={() => {
-                      if (frequencyDays.indexOf(dayName) === -1) {
+                      if (daysOfWeek.indexOf(dayName) === -1) {
                         // Add day
-                        onChangeFrequencyDays([...frequencyDays, dayName]);
+                        onChangeDaysOfWeek([...daysOfWeek, dayName]);
                       } else {
                         // Ensure the user doesn't deselect the last day
-                        if (frequencyDays.length <= 1) { return; }
+                        if (daysOfWeek.length <= 1) { return; }
 
                         // Remove day
-                        onChangeFrequencyDays(frequencyDays.filter(day => day !== dayName));
+                        onChangeDaysOfWeek(daysOfWeek.filter(day => day !== dayName));
                       }
                     }}
                   >
@@ -290,7 +353,7 @@ function DispatchManagementForm({
               ))}
             </div>
           ) : null}
-          {frequency === 'MONTHLY' ? (
+          {frequency === MONTHLY ? (
             <div className="dispatch-management-form-group-day-status">
               <span>On the first of the month</span>
             </div>
@@ -337,7 +400,7 @@ function DispatchManagementRecipientList({
   onAddRecipient,
   onRemoveRecipient,
 }) {
-  const recipientIds = recipients.map(r => r.id);
+  const recipientIds = recipients;
 
   const filteredUsers = userCollectionFilter(users.data, searchQuery);
 
@@ -354,7 +417,9 @@ function DispatchManagementRecipientList({
         <span className="dispatch-management-recipient-list-title">Add a recipient</span>
         <InputBox
           type="text"
-          placeholder={users.view === 'VISIBLE' ? `Search through ${users.data.length} users` : 'Search users' }
+          placeholder={users.view === 'VISIBLE' ? (
+            `Search through ${users.data.length} ${users.data.length === 1 ? 'user' : 'users'}`
+          ) : 'Search users'}
           leftIcon={<Icons.Search width={16} height={16} />}
           value={searchQuery}
           onChange={e => onChangeSearchQuery(e.target.value)}
@@ -427,7 +492,7 @@ function RecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
     <div className="dispatch-management-recipient-list-item">
       <div className={classnames('dispatch-management-recipient-list-item-name', {checked})}>
         <DispatchManagementRecipientIcon user={user} />
-        {user.fullName}
+        {user.fullName || user.email}
       </div>
       <DispatchAddedNotAddedBox
         id={`dispatch-management-${user.id}-checkbox`}

@@ -400,11 +400,11 @@
         "desc": "Fetch a dashboard."
       }
     },
-    "dispatch_schedules": {
+    "digest_schedules": {
       "list": {
         "method": "GET",
-        "url": "{{{core}}}/dispatch_schedules/",
-        "desc": "List all dispatch schedules."
+        "url": "{{{core}}}/digest_schedules/",
+        "desc": "List all digest schedules."
       }
     }
   }
