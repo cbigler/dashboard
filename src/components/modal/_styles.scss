@@ -30,20 +30,20 @@
   opacity: 0;
   pointer-events: none;
 
-  animation: dashboardModalBackdropAnimateOut 0.2s ease-out;
+  animation: dashboardModalBackdropAnimateOut 0.1s ease-out;
   background-color: rgba(255, 255, 255, 0.95);
   overflow-y: auto;
 }
 .dashboard-modal-backdrop.visible {
   pointer-events: auto;
   opacity: 1;
-  animation: dashboardModalBackdropAnimateIn 0.3s ease-in;
+  animation: dashboardModalBackdropAnimateIn 0.1s ease-in;
 }
 .dashboard-modal-backdrop > .dashboard-modal-dialog {
-  animation: dashboardModalDialogAnimateOut 0.2s ease-out;
+  animation: dashboardModalDialogAnimateOut 0.1s ease-out;
 }
 .dashboard-modal-backdrop.visible > .dashboard-modal-dialog {
-  animation: dashboardModalDialogAnimateIn 0.3s ease-in;
+  animation: dashboardModalDialogAnimateIn 0.1s ease-in;
 }
 
 .dashboard-modal-dialog {
