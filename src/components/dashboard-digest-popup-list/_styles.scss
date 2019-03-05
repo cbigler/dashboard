@@ -21,7 +21,7 @@ $dashboard-digest-backdrop-z-index: 99999;
   align-items: center;
 
   font-size: 14px;
-  font-weight: 600;
+  font-weight: bold;
   cursor: pointer;
   white-space: nowrap;
 
@@ -73,7 +73,7 @@ $dashboard-digest-backdrop-z-index: 99999;
   display: flex;
   align-items: center;
   color: $brand-primary;
-  font-weight: 500;
+  font-weight: bold;
   cursor: pointer;
   outline: none;
   font-size: 14px;
@@ -113,7 +113,7 @@ $dashboard-digest-backdrop-z-index: 99999;
   cursor: pointer;
   outline: none;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: bold;
   user-select: none;
   margin-left: 24px;
 }
@@ -124,7 +124,7 @@ $dashboard-digest-backdrop-z-index: 99999;
   display: flex;
   align-items: center;
 
-  font-weight: 600;
+  font-weight: bold;
   user-select: none;
   cursor: default;
   color: $gray-darker;
