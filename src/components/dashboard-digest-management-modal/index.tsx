@@ -7,6 +7,7 @@ import Modal from '../../components/modal/index';
 
 import {
   Button,
+  ButtonContext,
   Icons,
   InputBox,
   AppBar,
@@ -438,7 +439,9 @@ function DigestManagementForm({
       </div>
       {showDeleteDigest ? (
         <div className="dispatch-management-form-group">
-          <Button onClick={onDeleteDigest}>Delete this Digest</Button>
+          <ButtonContext.Provider value="DIGEST_DELETE_BUTTON">
+            <Button onClick={onDeleteDigest}>Delete this Digest</Button>
+          </ButtonContext.Provider>
         </div>
       ) : null}
     </div>
