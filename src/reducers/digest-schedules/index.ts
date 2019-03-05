@@ -9,7 +9,6 @@ import { COLLECTION_DIGEST_SCHEDULES_REMOVE } from '../../actions/collection/dig
 
 const initialState = {
   view: 'LOADING',
-  loading: true,
   selected: null,
   error: null,
   data: [],
@@ -26,7 +25,6 @@ export default function digestSchedules(state=initialState, action) {
     return {
       ...state,
       view: 'VISIBLE',
-      loading: false,
       error: null,
       data: action.data.map(objectSnakeToCamel),
     };
@@ -36,7 +34,6 @@ export default function digestSchedules(state=initialState, action) {
     return {
       ...state,
       view: 'VISIBLE',
-      loading: false,
       data: [
         // Update existing items
         ...state.data.map((item: any) => {
@@ -60,14 +57,13 @@ export default function digestSchedules(state=initialState, action) {
     return {
       ...state,
       view: 'VISIBLE',
-      loading: false,
       data: state.data.filter((item: any) => {
         return action.item.id !== item.id;
       }),
     };
 
   case COLLECTION_DIGEST_SCHEDULES_ERROR:
-    return {...state, view: 'ERROR', loading: false, error: action.error};
+    return { ...state, view: 'ERROR', error: action.error };
 
   default:
     return state;
