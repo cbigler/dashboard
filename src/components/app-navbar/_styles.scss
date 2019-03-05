@@ -97,29 +97,17 @@ $app-navbar-padding: 20px;
   z-index: 9999;
 }
 
-.app-navbar-menu-value {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background-color: $gray-cinder;
-  width: 30px;
-  height: 30px;
-  border-radius: 4px;
+.app-navbar-menu-target {
   cursor: pointer;
-
   outline: none;
   transition: all 100ms ease-in-out;
   &:hover { opacity: 0.9; }
 }
-.app-navbar-menu-value.selected {
-  background-color: $brand-primary-new;
-}
+.app-navbar-menu-target.opened > .app-navbar-item { opacity: 1; }
 
 .app-navbar-menu-items {
   position: absolute;
   top: $app-navbar-height;
-  right: 16px;
 
   display: flex;
   flex-direction: column;

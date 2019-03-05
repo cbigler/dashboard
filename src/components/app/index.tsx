@@ -26,7 +26,7 @@ import AppNavbar from '../app-navbar/index';
 
 import UnknownPage from '../unknown-page/index';
 
-function App({activePage, settings}) {
+function App({activePage, userRole, settings}) {
   return (
     <div className="app">
       {/* Render the navbar */}
@@ -44,6 +44,7 @@ function App({activePage, settings}) {
           default:
             return <AppNavbar
               page={activePage}
+              userRole={userRole}
               settings={settings}
             />;
         }
@@ -114,6 +115,7 @@ function ActivePage({activePage, settings}) {
 export default connect((state: any) => {
   return {
     activePage: state.activePage,
+    userRole: state.user && state.user.data && state.user.data.role,
     settings: (
       state.user &&
       state.user.data &&
