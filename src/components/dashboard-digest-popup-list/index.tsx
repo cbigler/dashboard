@@ -84,10 +84,10 @@ class DashboardDigestPopupList extends Component<any, any> {
             </AppBarSection>
           </AppBar>
 
-          <ul className="dashboard-digest-list-dropdown-list">
-            {/* regular state is a list of digestes */}
-            {digestSchedules.view === 'VISIBLE' ? (
-              digestSchedules.data
+          {/* regular state is a list of digestes */}
+          {digestSchedules.view === 'VISIBLE' ? (
+            <ul className="dashboard-digest-list-dropdown-list">
+              {digestSchedules.data
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(digest => (
                 <li key={digest.id} className="dashboard-digest-list-dropdown-item">
@@ -113,11 +113,13 @@ class DashboardDigestPopupList extends Component<any, any> {
                     </span>
                   </span>
                 </li>
-              ))
-            ) : null}
+              ))}
+            </ul>
+          ) : null}
 
-            {/* empty state */}
-            {digestSchedules.view === 'VISIBLE' && digestSchedules.data.length === 0 ? (
+          {/* empty state */}
+          {digestSchedules.view === 'VISIBLE' && digestSchedules.data.length === 0 ? (
+            <div className="dashboard-digest-list-dropdown-list">
               <div className="dashboard-digest-list-empty-container">
                 <Letter />
                 <div className="dashboard-digest-list-empty-container-text">
@@ -129,10 +131,37 @@ class DashboardDigestPopupList extends Component<any, any> {
                   </span>
                 </div>
               </div>
-            ) : null}
+            </div>
+          ) : null}
 
-            {/* error state */}
-            {digestSchedules.view === 'ERROR' ? (
+          {/* loading state has a bunch of placeholders */}
+          {digestSchedules.view === 'LOADING' ? (
+            <div className="dashboard-digest-list-dropdown-list">
+              <div className="dashboard-digest-list-loading-placeholder-container">
+                <div className="dashboard-digest-list-loading-placeholder-row one">
+                  <div
+                    className="dashboard-digest-list-loading-placeholder dark"
+                    style={{width: 245}}
+                  />
+                  <div
+                    className="dashboard-digest-list-loading-placeholder dark"
+                    style={{width: 30}}
+                  />
+                </div>
+                <div className="dashboard-digest-list-loading-placeholder-row two">
+                  <div
+                    className="dashboard-digest-list-loading-placeholder"
+                    style={{width: 18, marginRight: 8}}
+                  />
+                  <div className="dashboard-digest-list-loading-placeholder" style={{width: 225}} />
+                </div>
+              </div>
+            </div>
+          ) : null}
+
+          {/* error state */}
+          {digestSchedules.view === 'ERROR' ? (
+            <div className="dashboard-digest-list-dropdown-list">
               <div className="dashboard-digest-list-error-container">
                 <div>
                   <h3 className="dashboard-digest-list-error-container-title">Whoops</h3>
@@ -144,8 +173,8 @@ class DashboardDigestPopupList extends Component<any, any> {
                   </p>
                 </div>
               </div>
-            ) : null}
-          </ul>
+            </div>
+          ) : null}
         </div>
       </div>
     );

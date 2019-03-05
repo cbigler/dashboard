@@ -109,6 +109,9 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
 
   calculateDefaultDigestName(frequency=this.state.frequency) {
     const { selectedDashboard } = this.props;
+    if (!selectedDashboard) {
+      return null;
+    }
 
     switch (frequency) {
     case WEEKLY:
