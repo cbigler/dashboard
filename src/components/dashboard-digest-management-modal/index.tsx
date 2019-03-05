@@ -515,6 +515,19 @@ function DigestManagementRecipientList({
             </div>
           </div>
         ) : null}
+
+        {/* error state */}
+        {users.view === 'ERROR' ? (
+          <div className="dispatch-management-recipient-list-empty-state">
+            <div className="dispatch-management-recipient-list-empty-state-inner">
+              <span className="dispatch-management-recipient-list-empty-state-title">Whoops</span>
+              <span className="dispatch-management-recipient-list-empty-state-desc">
+                Something went wrong. Try refreshing, or contacting{' '}
+                <a href="mailto:support@density.io">support</a>.
+              </span>
+            </div>
+          </div>
+        ) : null}
       </div>
     </Fragment>
   );

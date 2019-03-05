@@ -20,7 +20,7 @@ export default [
     defaults: {
       'production': 'https://api.density.io/v2',
       'staging': 'https://core-staging.density.io/v2',
-      'local': 'http://localhost:8001/v2',
+      'local': 'http://localhost:8000/v2',
       'env (REACT_APP_CORE_API_URL)': process.env.REACT_APP_CORE_API_URL,
     },
     default: process.env.REACT_APP_ENVIRONMENT || 'production',

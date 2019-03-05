@@ -8,7 +8,6 @@ import collectionDispatchSchedulesRemove from './remove';
 export default function collectionDispatchSchedulesDestroy(schedule) {
   return async dispatch => {
     dispatch({ type: COLLECTION_DISPATCH_SCHEDULES_DESTROY });
-    console.log('SCHEDULE', schedule)
 
     let errorThrown;
     try {
