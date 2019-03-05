@@ -191,10 +191,9 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
                 onChangeTimeZone={timeZone => this.setState({timeZone})}
 
                 defaultDigestName={this.calculateDefaultDigestName() || 'Digest Name'}
-              />
 
-              {showDeleteDigest ? (
-                <Button onClick={() => {
+                showDeleteDigest={showDeleteDigest}
+                onDeleteDigest={() => {
                   onDeleteDigest({
                     id: this.props.initialDigestSchedule.id,
                     name: name || this.calculateDefaultDigestName() || 'Digest Name',
@@ -206,8 +205,8 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
                     time,
                     timeZone,
                   })
-                }}>Delete this Digest</Button>
-              ) : null}
+                }}
+              />
             </div>
             <div className="dashboard-dispatch-management-modal-split right">
               <DigestManagementRecipientList
@@ -328,6 +327,9 @@ function DigestManagementForm({
   onChangeDaysOfWeek,
   onChangeTime,
   onChangeTimeZone,
+
+  showDeleteDigest,
+  onDeleteDigest,
 }) {
   return (
     <div className="dispatch-management-form">
@@ -416,6 +418,11 @@ function DigestManagementForm({
           />
         </div>
       </div>
+      {showDeleteDigest ? (
+        <div className="dispatch-management-form-group">
+          <Button onClick={onDeleteDigest}>Delete this Digest</Button>
+        </div>
+      ) : null}
     </div>
   );
 }
