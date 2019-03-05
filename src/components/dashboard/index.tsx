@@ -41,22 +41,18 @@ const DASHBOARD_BACKGROUND = '#F5F5F7';
 
 function DashboardSidebarItem({selected, id, name, reportSet}) {
   const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
-  const headerNames = reportSet.filter(i => i.type === 'HEADER').map(i => i.name);
   return (
     <a className="dashboard-app-frame-sidebar-list-item" href={`#/dashboards/${id}`}>
       <div className={classnames('dashboard-sidebar-item', {selected})}>
-        <div className="dashboard-sidebar-item-row">
-          <span className="dashboard-sidebar-item-name">{name}</span>
-          <span className="dashboard-sidebar-item-num-reports">
-            {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
-          </span>
-          <Icons.ChevronRight width={8} height={8} />
-        </div>
-        <div className="dashboard-sidebar-item-row">
-          <span className="dashboard-sidebar-item-headers">
-            {headerNames.length > 0 ? headerNames.join(', ') : "No headers"}
-          </span>
-        </div>
+        <span className="dashboard-sidebar-item-name">{name}</span>
+        <span className="dashboard-sidebar-item-num-reports">
+          {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
+        </span>
+        <Icons.ChevronRight
+          color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
+          width={8}
+          height={8}
+        />
       </div>
     </a>
   );
