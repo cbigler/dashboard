@@ -5,7 +5,15 @@ import classnames from 'classnames';
 import moment from 'moment';
 import Modal from '../../components/modal/index';
 
-import { Button, Icons, InputBox } from '@density/ui';
+import {
+  Button,
+  Icons,
+  InputBox,
+  AppBar,
+  AppBarContext,
+  AppBarSection,
+  AppBarTitle,
+} from '@density/ui';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';
 
@@ -172,9 +180,11 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
         onEscape={onCloseModal}
       >
         <div className="dashboard-dispatch-management-modal">
-          <div className="dashboard-dispatch-management-modal-header-app-bar">
-            {initialDigestSchedule ? 'Edit Email Digest' : 'New Email Digest'}
-          </div>
+          <AppBar>
+            <AppBarTitle>
+              {initialDigestSchedule ? 'Edit Email Digest' : 'New Email Digest'}
+            </AppBarTitle>
+          </AppBar>
           <div className="dashboard-dispatch-management-modal-split-container">
             <div className="dashboard-dispatch-management-modal-split left">
               <DigestManagementForm
@@ -231,37 +241,42 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
               />
             </div>
           </div>
-          <div className="dashboard-dispatch-management-modal-footer-app-bar">
-            <span
-              role="button"
-              className="dashboard-dispatch-management-modal-footer-cancel"
-              onClick={onCloseModal}
-            >Cancel</span>
-            <Button
-              disabled={!this.isFormValid()}
-              type="primary"
-              onClick={() => {
-                let digest = {
-                  id: undefined,
-                  name: name || this.calculateDefaultDigestName() || 'Digest Name',
-                  recipients: recipients,
-                  dashboardId: selectedDashboard.id,
-                  frequency,
-                  daysOfWeek: daysOfWeek,
-                  dayNumber: 1, /* What is this value for? */
-                  time,
-                  timeZone,
-                };
+          <AppBarContext.Provider value="BOTTOM_ACTIONS">
+            <AppBar>
+              <AppBarSection />
+              <AppBarSection>
+                <span
+                  role="button"
+                  className="dashboard-dispatch-management-modal-footer-cancel"
+                  onClick={onCloseModal}
+                >Cancel</span>
+                <Button
+                  disabled={!this.isFormValid()}
+                  type="primary"
+                  onClick={() => {
+                    let digest = {
+                      id: undefined,
+                      name: name || this.calculateDefaultDigestName() || 'Digest Name',
+                      recipients: recipients,
+                      dashboardId: selectedDashboard.id,
+                      frequency,
+                      daysOfWeek: daysOfWeek,
+                      dayNumber: 1, /* What is this value for? */
+                      time,
+                      timeZone,
+                    };
 
-                if (this.props.initialDigestSchedule) {
-                  digest.id = this.props.initialDigestSchedule.id;
-                  onUpdateDigest(digest);
-                } else {
-                  onCreateDigest(digest);
-                }
-              }}
-            >Save Email Digest</Button>
-          </div>
+                    if (this.props.initialDigestSchedule) {
+                      digest.id = this.props.initialDigestSchedule.id;
+                      onUpdateDigest(digest);
+                    } else {
+                      onCreateDigest(digest);
+                    }
+                  }}
+                >Save Email Digest</Button>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
         </div>
       </Modal>
     )
