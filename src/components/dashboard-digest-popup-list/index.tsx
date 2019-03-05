@@ -35,14 +35,34 @@ function generateHumanReadableFrequency(digest) {
   }
 }
 
-class DashboardDigestPopupList extends Component<any, any> {
+type DashboardDigestPopupListProps = {
+  digestSchedules: {
+    view: 'VISIBLE' | 'LOADING' | 'ERROR',
+    data: Array<any>,
+    error: string | null,
+  },
+  selectedDashboard: {
+    id: string,
+  },
+  onEditDigest: (any) => any,
+  onCreateDigest: () => any,
+};
+type DashboardDigestPopupListState = {
+  visible: boolean,
+};
+
+class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, DashboardDigestPopupListState> {
   state = {
     visible: false,
   }
 
   render() {
-    const { digestSchedules, onEditDigest, onCreateDigest } = this.props;
+    const { digestSchedules, selectedDashboard, onEditDigest, onCreateDigest } = this.props;
     const { visible } = this.state;
+
+    const digestSchedulesForSelectedDashboard = selectedDashboard ? (
+      digestSchedules.data.filter(digest => digest.dashboardId === selectedDashboard.id)
+    ) : [];
 
     return (
       <div className="dashboard-digest-list">
@@ -87,7 +107,7 @@ class DashboardDigestPopupList extends Component<any, any> {
           {/* regular state is a list of digestes */}
           {digestSchedules.view === 'VISIBLE' ? (
             <ul className="dashboard-digest-list-dropdown-list">
-              {digestSchedules.data
+              {digestSchedulesForSelectedDashboard
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(digest => (
                 <li key={digest.id} className="dashboard-digest-list-dropdown-item">
@@ -118,7 +138,7 @@ class DashboardDigestPopupList extends Component<any, any> {
           ) : null}
 
           {/* empty state */}
-          {digestSchedules.view === 'VISIBLE' && digestSchedules.data.length === 0 ? (
+          {digestSchedules.view === 'VISIBLE' && digestSchedulesForSelectedDashboard.length === 0 ? (
             <div className="dashboard-digest-list-dropdown-list">
               <div className="dashboard-digest-list-empty-container">
                 <Letter />
