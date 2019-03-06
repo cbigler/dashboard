@@ -38,7 +38,8 @@ export function WebhookList({
 }) {
   const modals = (
     <Fragment>
-      {activeModal.name === 'webhook-create' && activeModal.visible ? <WebhookCreateModal
+      {activeModal.name === 'webhook-create' ? <WebhookCreateModal
+        visible={activeModal.visible}
         error={webhooks.error}
         loading={webhooks.loading}
 
@@ -46,7 +47,8 @@ export function WebhookList({
         onDismiss={onCloseModal}
       /> : null}
 
-      {activeModal.name === 'webhook-update' && activeModal.visible ? <WebhookUpdateModal
+      {activeModal.name === 'webhook-update' ? <WebhookUpdateModal
+        visible={activeModal.visible}
         initialWebhook={activeModal.data.webhook}
         error={webhooks.error}
         loading={webhooks.loading}
