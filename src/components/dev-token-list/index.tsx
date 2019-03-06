@@ -38,14 +38,16 @@ export function TokenList({
 }) {
   const modals = (
     <Fragment>
-      {activeModal.name === 'token-create' && activeModal.visible ? <TokenCreateModal
+      {activeModal.name === 'token-create' ? <TokenCreateModal
+        visible={activeModal.visible}
         loading={tokens.loading}
         error={tokens.error}
 
         onSubmit={onCreateToken}
         onDismiss={onCloseModal}
       /> : null}
-      {activeModal.name === 'token-update' && activeModal.visible ? <TokenUpdateModal
+      {activeModal.name === 'token-update' ? <TokenUpdateModal
+        visible={activeModal.visible}
         initialToken={activeModal.data.token}
         loading={tokens.loading}
         error={tokens.error}
@@ -58,11 +60,13 @@ export function TokenList({
   );
 
   // Sub navigation under the main navbar. USed to navigate within the dev tools section.
-  const subnav = <Subnav>
-    <SubnavItem active href="#/dev/tokens">Tokens</SubnavItem>
-    <SubnavItem href="#/dev/webhooks">Webhooks</SubnavItem>
-    <SubnavItem external href="http://docs.density.io/">API Documentation</SubnavItem>
-  </Subnav>;
+  const subnav = (
+    <Subnav>
+      <SubnavItem active href="#/dev/tokens">Tokens</SubnavItem>
+      <SubnavItem href="#/dev/webhooks">Webhooks</SubnavItem>
+      <SubnavItem external href="http://docs.density.io/">API Documentation</SubnavItem>
+    </Subnav>
+  );
 
 
   if (tokens.loading) {
@@ -73,63 +77,65 @@ export function TokenList({
     </div>;
   }
 
-  return <div className="token-list">
-    {modals}
-    {subnav}
+  return (
+    <div className="token-list">
+      {modals}
+      {subnav}
 
-    {/* Show errors in the tokens collection */}
-    <ErrorBar message={tokens.error} showRefresh modalOpen={activeModal.visible} />
+      {/* Show errors in the tokens collection */}
+      <ErrorBar message={tokens.error} showRefresh modalOpen={activeModal.visible} />
 
-    <div className="token-list-container">
-      <div className="token-list-header">
-        <div className="token-list-header-title">
-          <h1 className="token-list-header-text">Tokens</h1>
-          <InfoPopup
-            horizontalIconOffset={8}
-            verticalIconOffset={15}
-          >
-            <p>
-              Tokens are randomized strings that are used to access your Density data via our API. Keep these secret!
-            </p>
+      <div className="token-list-container">
+        <div className="token-list-header">
+          <div className="token-list-header-title">
+            <h1 className="token-list-header-text">Tokens</h1>
+            <InfoPopup
+              horizontalIconOffset={8}
+              verticalIconOffset={15}
+            >
+              <p>
+                Tokens are randomized strings that are used to access your Density data via our API. Keep these secret!
+              </p>
 
-            <a
-              className="token-list-description-link"
-              href="http://docs.density.io"
-              target="_blank"
-              rel="noopener noreferrer"
-            >View our documentation</a>
-          </InfoPopup>
+              <a
+                className="token-list-description-link"
+                href="http://docs.density.io"
+                target="_blank"
+                rel="noopener noreferrer"
+              >View our documentation</a>
+            </InfoPopup>
+          </div>
+
+          {/* Search box to filter the list of tokens */}
+          <div className="token-list-search">
+            <InputBox
+              type="text"
+              placeholder="Filter tokens ..."
+              value={tokens.filters.search}
+              onChange={e => onFilterTokenList(e.target.value)}
+            />
+          </div>
         </div>
 
-        {/* Search box to filter the list of tokens */}
-        <div className="token-list-search">
-          <InputBox
-            type="text"
-            placeholder="Filter tokens ..."
-            value={tokens.filters.search}
-            onChange={e => onFilterTokenList(e.target.value)}
-          />
+        {/* Link to create new token */}
+        <div
+          className="token-list-create-token-link"
+          role="button"
+          onClick={() => onOpenModal('token-create')}
+        >
+          Add a Token
         </div>
-      </div>
 
-      {/* Link to create new token */}
-      <div
-        className="token-list-create-token-link"
-        role="button"
-        onClick={() => onOpenModal('token-create')}
-      >
-        Add a Token
-      </div>
-
-      <div className="token-list-row">
-        {tokenFilter(tokens.data, tokens.filters.search).map(token => {
-          return <div className="token-list-item" key={token.key}>
-            <TokenCard token={token} onClickEdit={() => onOpenModal('token-update', {token})} />
-          </div>;
-        })}
+        <div className="token-list-row">
+          {tokenFilter(tokens.data, tokens.filters.search).map(token => {
+            return <div className="token-list-item" key={token.key}>
+              <TokenCard token={token} onClickEdit={() => onOpenModal('token-update', {token})} />
+            </div>;
+          })}
+        </div>
       </div>
     </div>
-  </div>;
+  );
 }
 
 export default connect((state: any) => {

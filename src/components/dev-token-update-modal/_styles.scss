@@ -2,9 +2,6 @@
   color: $brand-danger;
 }
 
-// NOTE: HACK. card-body is acting up.
-.token-update-modal .card-body { margin-top: -8px; }
-
 // Allow the user to type in the name of a token before removing.
 .token-update-destroy-confirmation {
   display: flex;
@@ -24,3 +21,5 @@
   resize: none;
   height: 5em;
 }
+
+.token-update-modal-body { padding: 24px; }
