@@ -369,7 +369,6 @@ function DigestManagementForm({
           <InputBox
             type="select"
             id="dispatch-frequency"
-            placeholder={defaultDigestName}
             value={frequency}
             choices={[
               {id: WEEKLY, label: 'Weekly'},
