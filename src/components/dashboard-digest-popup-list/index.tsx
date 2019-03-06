@@ -12,12 +12,12 @@ function generateHumanReadableFrequency(digest) {
   const time = moment.tz(digest.time, 'HH:mm:ss', digest.timeZone).local().format('h:mm A');
 
   switch (digest.frequency) {
-  case 'weekly':
+  case 'WEEKLY':
     return `Weekly on ${
       digest.daysOfWeek.map(day => day.slice(0, 3)).join(', ')
     } @ ${time}`;
 
-  case 'monthly':
+  case 'MONTHLY':
     let postfixedNumber;
     if (digest.dayNumber === 1) {
       postfixedNumber = '1st';

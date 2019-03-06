@@ -36,8 +36,8 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
-const WEEKLY = 'weekly',
-      MONTHLY = 'monthly';
+const WEEKLY = 'WEEKLY',
+      MONTHLY = 'MONTHLY';
 
 type DashboardDigestManagementModalProps = {
   visible: boolean,
@@ -59,7 +59,7 @@ type DashboardDigestManagementModalProps = {
 
 type DashboardDigestManagementModalState = {
   name: string,
-  frequency: 'weekly' | 'monthly',
+  frequency: 'WEEKLY' | 'MONTHLY',
   daysOfWeek: Array<string>,
   recipients: Array<any>,
   time: string | null,
