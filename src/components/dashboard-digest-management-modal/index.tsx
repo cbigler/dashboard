@@ -565,7 +565,7 @@ function RecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
     <div className="dispatch-management-recipient-list-item">
       <div className={classnames('dispatch-management-recipient-list-item-name', {checked})}>
         <DigestManagementRecipientIcon user={user} />
-        {user.fullName || user.email}
+        <span>{user.fullName || user.email}</span>
       </div>
       <DigestAddedNotAddedBox
         id={`dispatch-management-${user.id}-checkbox`}

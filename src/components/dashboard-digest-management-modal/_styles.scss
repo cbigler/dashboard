@@ -127,6 +127,11 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  & > span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 250px;
+  }
 }
 .dispatch-management-recipient-list-item-name.checked { color: $brand-primary; }
 .dispatch-management-recipient-list-item-name-placeholder {
@@ -216,6 +221,8 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
 
   background-color: $gray-darker;
   color: #fff;
@@ -254,6 +261,7 @@ $dashboard-dispatch-management-modal-app-bar-height: 64px;
   color: $gray-darker;
   user-select: none;
   margin-right: 8px;
+  white-space: nowrap;
 }
 .dispatch-management-added-not-added-box.checked .text-label { color: $brand-primary; }
 
