@@ -209,6 +209,7 @@ export function Dashboard({
   sidebarVisible,
   resizeCounter,
   settings,
+  isDemoUser,
 
   onDashboardChangeWeek,
   onChangeSidebarVisibility,
@@ -323,15 +324,17 @@ export function Dashboard({
             </AppBarSection> : null}
 
             <AppBarSection>
-              <DashboardDigestPopupList
-                selectedDashboard={selectedDashboard}
-                onEditDigest={digest => {
-                  onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
-                }}
-                onCreateDigest={() => {
-                  onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
-                }}
-              />
+              {!isDemoUser ? (
+                <DashboardDigestPopupList
+                  selectedDashboard={selectedDashboard}
+                  onEditDigest={digest => {
+                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                  }}
+                  onCreateDigest={() => {
+                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                  }}
+                />
+              ) : null}
             </AppBarSection>
           </AppBar>
           <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
@@ -353,6 +356,8 @@ export default connect((state: any) => {
     dashboards: state.dashboards,
     selectedDashboard,
     activeModal: state.activeModal,
+
+    isDemoUser: state.user && state.user.data && state.user.data.isDemo,
 
     date: state.miscellaneous.dashboardDate,
     sidebarVisible: state.miscellaneous.dashboardSidebarVisible,
