@@ -34,6 +34,10 @@ $dashboard-digest-backdrop-z-index: 99999;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
   outline: none;
 }
+@media (max-width: 375px) {
+  // Hide digests on mobile
+  .dashboard-digest-list-button { display: none; }
+}
 .dashboard-digest-list-button.visible {
   position: relative;
   z-index: $dashboard-digest-backdrop-z-index + 1;
