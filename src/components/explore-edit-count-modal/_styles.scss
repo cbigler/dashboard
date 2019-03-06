@@ -16,6 +16,9 @@
   flex-direction: row;
   margin-bottom: 40px;
 }
+.explore-edit-count-modal-count-picker .subtract > div {
+  transform: translate(0px, -6px);
+}
 .explore-edit-count-modal-count-picker-label input {
   color: $brand-primary-new;
   font-size: $font-size-base;
@@ -30,7 +33,6 @@
 
   margin-left: 40px;
   margin-right: 40px;
-  padding-right: 14px;
 
   position: relative;
   bottom: -6px;
@@ -51,7 +53,7 @@
 
   color: $gray;
   background-color: #fff;
-  border: 1px solid $gray;
+  border: 1px solid $gray-darker;
   cursor: pointer;
 }
 .explore-edit-count-modal-count-button.subtract { margin-left: auto; }

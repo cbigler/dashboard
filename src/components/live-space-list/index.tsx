@@ -50,7 +50,8 @@ export function LiveSpaceList({
     <ErrorBar message={spaces.error} showRefresh />
 
     {/* Show space count update modal when the flag is set */}
-    {activeModal.name === 'update-space-count' && activeModal.visible ? <SpaceUpdateModal
+    {activeModal.name === 'update-space-count' ? <SpaceUpdateModal
+      visible={activeModal.visible}
       space={activeModal.data.space}
       onDismiss={onCloseModal}
       onSubmit={newCount => onResetSpace(activeModal.data.space, newCount)}
