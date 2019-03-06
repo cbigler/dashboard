@@ -22,7 +22,8 @@ export function ExploreSpaceHeader({
       {/* Modal that is used to let the user set the capacity of a space. Shown when the user clicks
       on a 'set capacity' link within a space row if the space capacity isn't set. If the capacity
       is already set, the capacity can be adjusted from within the detail page. */}
-      {activeModal.name === 'set-capacity' && activeModal.visible ? <SetCapacityModal
+      {activeModal.name === 'set-capacity' ? <SetCapacityModal
+        visible={activeModal.visible}
         space={activeModal.data.space}
         onSubmit={capacity => onSetCapacity(activeModal.data.space, capacity)}
         onDismiss={onCloseModal}

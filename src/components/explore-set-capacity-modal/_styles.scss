@@ -1,18 +1,7 @@
 // Center the input field within the modal
 .explore-set-capacity-modal-capacity-input {
+  padding-left: 24px;
+  margin-top: 40px;
   margin-bottom: 40px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
+  height: 42px;
 }
-
-.explore-set-capacity-modal-header {
-  white-space: nowrap;
-  overflow-x: hidden;
-  text-overflow: ellipsis;
-}
-
-// On mobile, don't make this modal full-height.
-.explore-set-capacity-modal > .modal { height: 50vh; }
-.explore-set-capacity-modal-card { height: auto !important; }
