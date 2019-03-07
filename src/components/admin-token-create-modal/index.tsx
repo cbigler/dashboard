@@ -9,9 +9,10 @@ import {
   AppBarContext,
 } from '@density/ui';
 
-import Modal from '../modal/index';
+import Modal from '../modal';
+import { CancelLink } from '../dialogger';
 
-import FormLabel from '../form-label/index';
+import FormLabel from '../form-label';
 
 const READONLY = 'readonly', READWRITE = 'readwrite';
 
@@ -76,7 +77,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   onChange={() => this.setState({tokenType: READONLY})}
                   checked={this.state.tokenType === READONLY}
                 />
-                <label htmlFor="token-create-token-type-read-only">Read Only</label>
+                <label htmlFor="token-create-token-type-read-only">Read-Only</label>
               </div>
               <div className="token-create-token-type-radio-item">
                 <input
@@ -85,7 +86,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   onChange={() => this.setState({tokenType: READWRITE})}
                   checked={this.state.tokenType === READWRITE}
                 />
-                <label htmlFor="token-create-token-type-read-write">Read Write</label>
+                <label htmlFor="token-create-token-type-read-write">Read-Write</label>
               </div>
             </div>}
           />
@@ -94,10 +95,11 @@ export default class TokenCreate extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={onDismiss} />
               <Button
                 type="primary"
                 disabled={this.state.name.length === 0}
-                id="dev-token-create-modal-submit"
+                id="admin-token-create-modal-submit"
                 width="100%"
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,

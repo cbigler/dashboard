@@ -1,4 +1,4 @@
-# WebhookCreate
+# WebhookCreateModal
 
 A form used to create webhooks. It's stateful and contains the intermediate values of the webhook.
 

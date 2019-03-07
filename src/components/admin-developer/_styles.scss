@@ -1,3 +1,26 @@
-.admin-developer {
-  color: red;
+.admin-developer-token-list {
+  padding: 24px;
+}
+
+.admin-developer-webhook-list {
+  padding: 24px;
+  padding-bottom: 64px;
+}
+
+.admin-developer-section-header {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray;
+  font-size: 24px;
+  font-weight: 400;
+  color: $gray-cinder;
+  margin-bottom: 32px;
+}
+
+.admin-developer-listview-value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
