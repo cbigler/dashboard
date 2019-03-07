@@ -7,6 +7,7 @@ import accountForgotPassword from './reducers/account-forgot-password/index';
 import accountRegistration from './reducers/account-registration/index';
 import activeModal from './reducers/active-modal/index';
 import activePage from './reducers/active-page/index';
+import toasts from'./reducers/toasts/index';
 import doorways from './reducers/doorways/index';
 import links from './reducers/links/index';
 import sessionToken from './reducers/session-token/index';
@@ -20,12 +21,14 @@ import timeSegmentGroups from './reducers/time-segment-groups/index';
 import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
+import users from './reducers/users/index';
 import miscellaneous from './reducers/miscellaneous/index';
 const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
   activeModal,
   activePage,
+  toasts,
   doorways,
   links,
   sessionToken,
@@ -39,6 +42,7 @@ const reducer = combineReducers({
   dashboards,
   exploreData,
   resizeCounter,
+  users,
   miscellaneous,
 });
 

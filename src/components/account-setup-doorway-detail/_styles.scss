@@ -1,3 +1,7 @@
+.account-setup-doorway-detail {
+  overflow-y: auto;
+}
+
 // This element is the smaller title that's visible above the card. It's roughly centered within the
 // card's width.
 .account-setup-doorway-detail-title {
@@ -141,7 +145,7 @@
 
   color: $gray-cinder;
   font-size: $font-size-5;
-  font-weight: 500;
+  font-weight: bold;
 }
 .account-setup-doorway-detail-body-input-label-highlight { color: $brand-primary-new; margin-left: 10px; }
 .account-setup-doorway-detail-body-input-label.mounting-space { margin-top: 20px; }

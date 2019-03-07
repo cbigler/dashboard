@@ -147,6 +147,8 @@ export class AccountRegistration extends React.Component<any, any> {
             </div>
 
             <Button
+              type="primary"
+              width="100%"
               className="account-registration-submit-button"
               size="large"
               onClick={this.onSubmit.bind(this)}

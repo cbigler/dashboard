@@ -18,7 +18,7 @@ export default function WebhookCard({
     </div>
     <div className="webhook-card-body">
       <span className="webhook-card-endpoint-label">Payload URL</span>
-      <InputBox
+      <input
         type="text"
         className="webhook-card-endpoint"
         value={webhook.endpoint}
@@ -27,7 +27,7 @@ export default function WebhookCard({
         autoComplete="off"
         autoCorrect="off"
         autoCapitalize="off"
-        spellCheck="false"
+        spellCheck={false}
       />
 
       <div className="webhook-card-active-checkbox">

@@ -1,41 +1,47 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
   Button,
-  Card,
-  CardBody,
-  CardHeader,
-  CardLoading,
   InputBox,
-  Modal,
+  AppBar,
+  AppBarTitle,
+  AppBarContext,
+  AppBarSection,
 } from '@density/ui';
+
+import Modal from '../modal/index';
 
 import FormLabel from '../form-label/index';
 
 export default class WebhookCreateModal extends React.Component<any, any> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      name: '',
-      description: '',
-      endpoint: '',
-    };
+  state = {
+    name: '',
+    description: '',
+    endpoint: '',
   }
+
   render() {
-    return <Modal onClose={this.props.onDismiss} onClickBackdrop={this.props.onDismiss}>
-      <div className="webhook-create">
-        <Card type="modal">
-          {this.props.loading ? <CardLoading indeterminate /> : null}
-
-          <CardHeader>Create webhook</CardHeader>
-
-          <CardBody>
+    const { visible, onDismiss } = this.props;
+    return (
+      <Modal
+        visible={visible}
+        width={895}
+        height={500}
+        onBlur={onDismiss}
+        onEscape={onDismiss}
+      >
+        <AppBar>
+          <AppBarTitle>Create Webhook</AppBarTitle>
+        </AppBar>
+        <div className="webhook-create-columns">
+          <div className="webhook-create-column left">
             <FormLabel
               className="webhook-create-name-container"
               htmlFor="webhook-create-name"
               label="Webhook name"
               input={<InputBox
                 type="text"
+                width="100%"
                 id="webhook-create-name"
                 value={this.state.name}
                 onChange={e => this.setState({name: e.target.value})}
@@ -49,6 +55,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
                 type="textarea"
                 id="webhook-create-desc"
                 value={this.state.description}
+                height="5em"
                 onChange={e => this.setState({description: e.target.value})}
               />}
             />
@@ -58,20 +65,25 @@ export default class WebhookCreateModal extends React.Component<any, any> {
               label="Webhook URL"
               input={<InputBox
                 type="text"
+                width="100%"
+                leftIcon={<strong>POST</strong>}
                 id="webhook-create-endpoint"
+                placeholder="(ie, http://example.com)"
                 value={this.state.endpoint}
                 onChange={e => this.setState({endpoint: e.target.value})}
               />}
             />
+          </div>
 
+          <div className="webhook-create-column right">
             <div className="webhook-create-example">
-              <p>Webhooks will be sent as POST requests to the url specified above as JSON.</p>
+              <p>Webhooks will be sent as POST requests to the URL specified in JSON.</p>
               <p>
                 Here's an example webhook payload:
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
-                  href="http://docs.density.io/#webhooks-receiving"
+                  href="https://docs.density.io/v2/#webhooks-receiving"
                 >More information</a>
               </p>
               <pre className="webhook-create-example-payload">{
@@ -83,20 +95,26 @@ export default class WebhookCreateModal extends React.Component<any, any> {
                 }, null, 2)
               }</pre>
             </div>
-
-            <div className="webhook-create-modal-submit">
+          </div>
+        </div>
+        
+        <AppBarContext.Provider value="BOTTOM_ACTIONS">
+          <AppBar>
+            <AppBarSection />
+            <AppBarSection>
               <Button
+                type="primary"
                 disabled={this.state.endpoint.length === 0}
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,
-                  desc: this.state.desc,
+                  description: this.state.description,
                   endpoint: this.state.endpoint,
                 })}
-              >Submit</Button>
-            </div>
-          </CardBody>
-        </Card>
-      </div>
-    </Modal>;
+              >Save Webhook</Button>
+            </AppBarSection>
+          </AppBar>
+        </AppBarContext.Provider>
+      </Modal>
+    );
   }
 }

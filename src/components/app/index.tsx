@@ -4,17 +4,15 @@ import stringToBoolean from '../../helpers/string-to-boolean/index';
 
 import { connect } from 'react-redux';
 
-import TokenList from '../dev-token-list/index';
 import Explore from '../explore/index';
 import Login from '../login/index';
+import Admin from '../admin/index';
 import Account from '../account/index';
-import WebhookList from '../dev-webhook-list/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
 import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
-import SensorsList from '../sensors-list/index';
 
 import AccountSetupOverview from '../account-setup-overview/index';
 import AccountSetupDoorwayList from '../account-setup-doorway-list/index';
@@ -25,7 +23,7 @@ import AppNavbar from '../app-navbar/index';
 
 import UnknownPage from '../unknown-page/index';
 
-function App({activePage, settings}) {
+function App({activePage, user, settings}) {
   return (
     <div className="app">
       {/* Render the navbar */}
@@ -43,6 +41,7 @@ function App({activePage, settings}) {
           default:
             return <AppNavbar
               page={activePage}
+              user={user}
               settings={settings}
             />;
         }
@@ -51,16 +50,24 @@ function App({activePage, settings}) {
       {/* Insert the currently displayed page into the view */}
       <ActivePage
         activePage={activePage}
+        user={user}
         settings={settings}
       />
     </div>
   );
 }
 
-function ActivePage({activePage, settings}) {
+function ActivePage({activePage, user, settings}) {
   switch (activePage) {
   case "LOGIN":
     return <Login />;
+  case "ADMIN_USER_MANAGEMENT":
+  case "ADMIN_DEVELOPER":
+  case "ADMIN_DEVICE_STATUS":
+  case "DEV_WEBHOOK_LIST":
+  case "DEV_TOKEN_LIST":
+  case "SENSORS_LIST":
+    return <Admin user={user} activePage={activePage} />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
@@ -71,14 +78,8 @@ function ActivePage({activePage, settings}) {
   case "EXPLORE_SPACE_DAILY":
   case "EXPLORE_SPACE_DATA_EXPORT":
     return stringToBoolean(settings.insightsPageLocked) ? null : <Explore activePage={activePage} />;
-  case "SENSORS_LIST":
-    return <SensorsList />;
   case "ACCOUNT":
     return <Account />;
-  case "DEV_WEBHOOK_LIST":
-    return <WebhookList />;
-  case "DEV_TOKEN_LIST":
-    return <TokenList />;
   case "ACCOUNT_REGISTRATION":
     return <AccountRegistration />;
   case "ACCOUNT_FORGOT_PASSWORD":
@@ -109,6 +110,7 @@ function ActivePage({activePage, settings}) {
 export default connect((state: any) => {
   return {
     activePage: state.activePage,
+    user: state.user,
     settings: (
       state.user &&
       state.user.data &&

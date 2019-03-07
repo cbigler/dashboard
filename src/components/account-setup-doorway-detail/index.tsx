@@ -257,7 +257,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 <RadioButton
                   text="Metric"
                   checked={this.state.measurementUnit === METRIC}
-                  onChange={() => {
+                  onClick={() => {
                     const numericalInputWidth = parseFloat(this.state.inputWidth);
                     const numericalInputHeight = parseFloat(this.state.inputHeight);
                     this.setState({
@@ -271,7 +271,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
               <RadioButton
                 text="Imperial"
                 checked={this.state.measurementUnit === IMPERIAL}
-                onChange={() => {
+                onClick={() => {
                   const numericalInputWidth = parseFloat(this.state.inputWidth);
                   const numericalInputHeight = parseFloat(this.state.inputHeight);
                   this.setState({
@@ -330,7 +330,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 <RadioButton
                   text="Yes"
                   checked={this.state.doorway.environment ? this.state.doorway.environment.clearance === true : false}
-                  onChange={() => this.setState({
+                  onClick={() => this.setState({
                     doorway: {
                       ...this.state.doorway,
                       environment: {...this.state.doorway.environment, clearance: true},
@@ -341,7 +341,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
               <RadioButton
                 text="No"
                 checked={this.state.doorway.environment ? this.state.doorway.environment.clearance === false : false}
-                onChange={() => this.setState({
+                onClick={() => this.setState({
                   doorway: {
                     ...this.state.doorway,
                     environment: {...this.state.doorway.environment, clearance: false},
@@ -363,7 +363,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             <RadioButton
               text="Power over Ethernet (803.2at PoE+)"
               checked={this.state.doorway.environment ? this.state.doorway.environment.powerType === POWER_OVER_ETHERNET : false}
-              onChange={() => this.setState({
+              onClick={() => this.setState({
                 doorway: {
                   ...this.state.doorway,
                   environment: {...this.state.doorway.environment, powerType: POWER_OVER_ETHERNET},
@@ -374,7 +374,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             <RadioButton
               text="Standard 100-240V AC outlet"
               checked={this.state.doorway.environment ? this.state.doorway.environment.powerType === AC_OUTLET : false}
-              onChange={() => this.setState({
+              onClick={() => this.setState({
                 doorway: {
                   ...this.state.doorway,
                   environment: {...this.state.doorway.environment, powerType: AC_OUTLET},
@@ -387,6 +387,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             <br/>
 
             <Button
+              type="primary"
               onClick={() => {
                 // Set a flag to disable the submit buttons while the form is sending data to the
                 // server.
@@ -406,6 +407,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
               disabled={!this.isValid.apply(this) || this.state.formSubmittted}
             >Save &amp; Close</Button>
+            &nbsp;&nbsp;
             { isCreatingNewDoorway ?
               <Button
                 className="account-setup-doorway-detail-save-add-another-button"
@@ -541,7 +543,7 @@ export default connect((state: any) => {
     },
 
     openDoorwaySavedModal() {
-      dispatch(showModal('unit-setup-added-doorway'));
+      dispatch<any>(showModal('unit-setup-added-doorway'));
     },
   };
 })(function AccountSetupDoorwayDetailWrapper(props: any) {

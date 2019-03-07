@@ -23,6 +23,7 @@ export function ExploreSpaceHeader({
       on a 'set capacity' link within a space row if the space capacity isn't set. If the capacity
       is already set, the capacity can be adjusted from within the detail page. */}
       {activeModal.name === 'set-capacity' ? <SetCapacityModal
+        visible={activeModal.visible}
         space={activeModal.data.space}
         onSubmit={capacity => onSetCapacity(activeModal.data.space, capacity)}
         onDismiss={onCloseModal}
@@ -77,15 +78,15 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     onOpenModal(name, data) {
-      dispatch(showModal(name, data));
+      dispatch<any>(showModal(name, data));
     },
     onCloseModal() {
-      dispatch(hideModal());
+      dispatch<any>(hideModal());
     },
     async onSetCapacity(space, capacity) {
       const ok = await dispatch<any>(collectionSpacesUpdate({...space, capacity}));
       if (ok) {
-        dispatch(hideModal());
+        dispatch<any>(hideModal());
         dispatch<any>(calculateTrendsModules(space));
       }
     },

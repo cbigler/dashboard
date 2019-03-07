@@ -10,9 +10,6 @@ import { COLLECTION_TOKENS_DESTROY } from '../../actions/collection/tokens/destr
 import { COLLECTION_TOKENS_UPDATE } from '../../actions/collection/tokens/update';
 import { COLLECTION_TOKENS_CREATE } from '../../actions/collection/tokens/create';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
-
 // Don't worry - these tokens are bogus.
 const TOKEN_ONE = 'tok_3wxsa6e8dh5zdnf73ubpnaq37wz2nawcjw8hh5sfawb';
 const TOKEN_TWO = 'tok_aus86m8834xef4cqjeye2hzz3u8j5aafucxjgkn695h';
@@ -106,30 +103,6 @@ describe('token reducer actions', function() {
 
     // Initial state should then match final state.
     assert.deepEqual(errorState, {...initialState, error: 'boom!', loading: false});
-  });
-
-
-  describe('clearing errors on different actions', function() {
-    it(`should clear an error when modals open`, function() {
-      const initialState = tokens(undefined, {});
-      const errorState = tokens(initialState, collectionTokensError('My error'));
-
-      // Show the modal
-      const showModalAttemptState = tokens(errorState, showModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(showModalAttemptState, {...initialState, error: null, loading: false});
-    });
-    it(`should clear an error when modals close`, function() {
-      const initialState = tokens(undefined, {});
-      const errorState = tokens(initialState, collectionTokensError('My error'));
-
-      // Hide the modal
-      const hideModalAttemptState = tokens(errorState, hideModal('my-modal'));
-
-      // Initial state should then have error: null
-      assert.deepEqual(hideModalAttemptState, {...initialState, error: null, loading: false});
-    });
   });
 });
 

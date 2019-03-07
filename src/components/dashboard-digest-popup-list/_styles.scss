@@ -1,0 +1,198 @@
+$dashboard-digest-backdrop-z-index: 99999;
+
+.dashboard-digest-list { position: relative; }
+
+.dashboard-digest-backdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  z-index: $dashboard-digest-backdrop-z-index;
+  display: none;
+}
+.dashboard-digest-backdrop.visible { display: block; }
+
+
+.dashboard-digest-list-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+
+  color: $brand-primary-new;
+  height: 40px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: 1px solid $gray-cinder;
+  border-radius: $border-radius-base;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
+  outline: none;
+}
+.dashboard-digest-list-button.visible {
+  position: relative;
+  z-index: $dashboard-digest-backdrop-z-index + 1;
+}
+.dashboard-digest-list-button:focus { border-color: $brand-primary-new; }
+
+.dashboard-digest-list-button-text {
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+
+.dashboard-digest-list-dropdown {
+  position: absolute;
+  right: 0px;
+  width: 450px;
+  z-index: 999999;
+
+  margin-top: 8px;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $border-radius-base;
+
+  opacity: 0;
+  transition: all 150ms ease-in-out;
+  pointer-events: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.dashboard-digest-list-dropdown.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+
+.dashboard-digest-list-dropdown-create-button {
+  display: flex;
+  align-items: center;
+  color: $brand-primary;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+}
+.dashboard-digest-list-dropdown-create-button:hover { opacity: 0.9; }
+.dashboard-digest-list-dropdown-create-button:active { opacity: 1; }
+.dashboard-digest-list-dropdown-create-button-text { margin-left: 8px; }
+
+
+.dashboard-digest-list-dropdown-list {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.dashboard-digest-list-dropdown-item {
+  display: flex;
+  flex-direction: column;
+  padding-top: 24px;
+}
+.dashboard-digest-list-dropdown-item:last-of-type { padding-bottom: 24px; }
+.dashboard-digest-list-dropdown-item-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.dashboard-digest-list-dropdown-item-name {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.dashboard-digest-list-dropdown-item-edit {
+  color: $brand-primary;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+  font-weight: bold;
+  user-select: none;
+  margin-left: 24px;
+}
+.dashboard-digest-list-dropdown-item-edit:hover { opacity: 0.9; }
+.dashboard-digest-list-dropdown-item-edit:active { opacity: 1; }
+
+.dashboard-digest-list-dropdown-item-interval {
+  display: flex;
+  align-items: center;
+
+  font-weight: bold;
+  user-select: none;
+  cursor: default;
+  color: $gray-darker;
+}
+.dashboard-digest-list-dropdown-item-interval-text {
+  margin-left: 8px;
+  font-size: 14px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+
+.dashboard-digest-list-empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px;
+}
+.dashboard-digest-list-empty-container-text {
+  margin-left: 24px;
+}
+.dashboard-digest-list-empty-container-title {
+  color: $gray-cinder;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+.dashboard-digest-list-empty-container-desc {
+  color: $gray-dark;
+  font-size: 14px;
+}
+
+
+
+.dashboard-digest-list-error-container {
+  display: flex;
+  align-items: center;
+  height: 240px;
+}
+.dashboard-digest-list-error-container-title {
+  font-size: 24px;
+  color: $brand-danger;
+  margin-top: 0px;
+}
+.dashboard-digest-list-error-container-desc { font-size: 16px; }
+
+
+
+.dashboard-digest-list-loading-placeholder-container {
+  height: 210px;
+  padding-top: 30px;
+}
+.dashboard-digest-list-loading-placeholder-row.one {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.dashboard-digest-list-loading-placeholder-row.two {
+  display: flex;
+  margin-bottom: 21px;
+}
+.dashboard-digest-list-loading-placeholder {
+  background-color: $gray-light;
+  border-radius: $border-radius-small;
+  height: 8px;
+}
+.dashboard-digest-list-loading-placeholder.dark { background-color: $gray-dark; }

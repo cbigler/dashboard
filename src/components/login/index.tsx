@@ -111,6 +111,7 @@ export class Login extends React.Component<any, any> {
       {/* Input stack used to enter login info */}
       <div className={classnames('login-submit-button', 'google', {loading: this.state.loading})}>
         <Button
+          width="100%"
           onClick={() => webAuth.authorize({
             connection: 'google-oauth2',
           })}
@@ -143,6 +144,8 @@ export class Login extends React.Component<any, any> {
       {/* Submit the form! */}
       <div className={classnames('login-submit-button', 'email', {loading: this.state.loading})}>
         <Button
+          width="100%"
+          type="primary"
           onClick={this.onLogin}
           disabled={!this.isLoginFormValid()}
         >Login</Button>

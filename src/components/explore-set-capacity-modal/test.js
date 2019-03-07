@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { mount } from 'enzyme';
 import assert from 'assert';
 import sinon from 'sinon';
@@ -29,10 +29,10 @@ describe('explore set capacity modal', function() {
     input.simulate('change', {target: {value: '123'}});
 
     // Verify that the submit button is not disabled
-    assert.equal(component.find('.explore-set-capacity-modal-submit Button').props().disabled, false)
+    assert.equal(component.find('Button').props().disabled, false)
 
     // Click submit
-    component.find('.explore-set-capacity-modal-submit Button').simulate('click');
+    component.find('Button').simulate('click');
 
     // Verify that the `onSubmit` callback was called with the new capacity.
     assert.equal(onSubmit.callCount, 1);
@@ -61,7 +61,7 @@ describe('explore set capacity modal', function() {
     input.simulate('change', {target: {value: 'abc'}});
 
     // Verify that the submit button is disabled
-    assert.equal(component.find('.explore-set-capacity-modal-submit Button').props().disabled, true);
+    assert.equal(component.find('Button').props().disabled, true);
   });
   it('should let a user enter a capacity, but if it is < 0, do not accept it', async function() {
     const onSubmit = sinon.spy();
@@ -86,7 +86,7 @@ describe('explore set capacity modal', function() {
     input.simulate('change', {target: {value: '-5'}});
 
     // Verify that the submit button is disabled
-    assert.equal(component.find('.explore-set-capacity-modal-submit Button').props().disabled, true);
+    assert.equal(component.find('Button').props().disabled, true);
   });
   it('should let a user enter a capacity, but not accept it if the box is empty', async function() {
     const onSubmit = sinon.spy();
@@ -111,6 +111,6 @@ describe('explore set capacity modal', function() {
     input.simulate('change', {target: {value: ''}});
 
     // Verify that the submit button is disabled
-    assert.equal(component.find('.explore-set-capacity-modal-submit Button').props().disabled, true);
+    assert.equal(component.find('Button').props().disabled, true);
   });
 });

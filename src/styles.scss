@@ -25,6 +25,10 @@
 @import "../node_modules/@density/ui/variables/timings.json";
 @import "../node_modules/@density/ui/variables/grid.json";
 
+body {
+  font-family: $font-base;
+}
+
 /**
  * Calculate column size percentage
  */
@@ -203,6 +207,10 @@ $cdn-path: "https://densityco.github.io/assets";
 @import "./components/app/styles";
 @import "./components/app-navbar/styles";
 @import "./components/app-bar-subnav/styles";
+@import "./components/admin/styles";
+@import "./components/admin-user-management/styles";
+@import "./components/admin-developer/styles";
+@import "./components/admin-device-status/styles";
 @import "./components/space-count/styles";
 @import "./components/dev-token-list/styles";
 @import "./components/unknown-page/styles";
@@ -256,3 +264,8 @@ $cdn-path: "https://densityco.github.io/assets";
 @import "./components/report/styles";
 @import "./components/dashboards-list/styles";
 @import "./components/sensors-list/styles";
+@import "./components/dashboard-dispatch-popup-list/styles";
+@import "./components/dashboard-dispatch-management-modal/styles";
+@import "./components/modal/styles";
+@import "./components/list-view/styles";
+@import "./components/toaster/styles";

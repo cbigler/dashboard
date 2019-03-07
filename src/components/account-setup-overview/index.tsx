@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 
 import {
@@ -47,7 +47,7 @@ export function AccountSetupOverview({user, onGetStarted}) {
               />
             </div>
             <div className="account-setup-overview-submit">
-              <Button onClick={onGetStarted}>Lets Get Started!</Button>
+              <Button width="100%" type="primary" onClick={onGetStarted}>Lets Get Started!</Button>
             </div>
           </CardBody>
         </Card>

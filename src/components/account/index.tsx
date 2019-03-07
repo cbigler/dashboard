@@ -72,7 +72,7 @@ export class Account extends React.Component<any, any> {
           {/* Render any errors from the server */}
           <ErrorBar message={this.state.error} />
 
-          {this.props.activeModal.name === 'account-password-reset' ? <div className="account-password-reset-toast">
+          {this.props.activeModal.name === 'account-password-reset' && this.props.activeModal.visible ? <div className="account-password-reset-toast">
             <Toast
               type="success"
               icon={<span className="account-password-reset-icon">&#xe908;</span>}
@@ -119,6 +119,7 @@ export class Account extends React.Component<any, any> {
                   input={<InputBox
                     type="text"
                     placeholder="Full Name"
+                    width="100%"
                     value={this.state.fullName}
                     onChange={e => this.setState({fullName: e.target.value})}
                     disabled={this.state.mode !== EDIT}
@@ -133,6 +134,7 @@ export class Account extends React.Component<any, any> {
                   input={<InputBox
                     type="text"
                     placeholder={this.generateNickname() || 'Nickname'}
+                    width="100%"
                     value={this.state.nickname}
                     onChange={e => this.setState({nickname: e.target.value})}
                     disabled={this.state.mode !== EDIT}
@@ -148,6 +150,7 @@ export class Account extends React.Component<any, any> {
                 input={<InputBox
                   type="email"
                   placeholder="Email"
+                  width="100%"
                   value={this.state.email}
                   onChange={e => this.setState({email: e.target.value})}
                   disabled={true}
@@ -162,6 +165,7 @@ export class Account extends React.Component<any, any> {
                 input={<InputBox
                   type="text"
                   value={user.data && user.data.organization ? user.data.organization.name : '(unknown organization)'}
+                  width="100%"
                   onChange={e => this.setState({email: e.target.value})}
                   disabled={true}
                   id="account-organization"
@@ -214,6 +218,8 @@ export class Account extends React.Component<any, any> {
                   onChange={e => this.setState({passwordConfirmation: e.target.value})}
                 />
                 <Button
+                  type="primary"
+                  width="100%"
                   onClick={() => {
                     if (this.state.password === this.state.passwordConfirmation) {
                       this.setState({error: null});
@@ -266,7 +272,7 @@ export default connect((state: any) => {
   return {
     onSubmitPassword(currentPassword, password) {
       return dispatch<any>(userResetPassword(currentPassword, password)).then(() => {
-        dispatch(showModal('account-password-reset'));
+        dispatch<any>(showModal('account-password-reset'));
       });
     },
     onSubmitUserUpdate(fullName, nickname, marketingConsent) {

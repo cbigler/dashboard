@@ -63,6 +63,17 @@
 }
 
 .webhook-card-endpoint {
+  width: 100%;
+
+  box-sizing: border-box;
+  height: 41px;
+  border: 1px solid #B4B8BF;
+  border-radius: $border-radius-base;
+  padding-left: 16px;
+  padding-right: 16px;
+  font-size: 14px;
+  outline: none;
+
   font-family: $font-monospace;
   color: $gray-darkest;
 
@@ -79,6 +90,10 @@
   /* Instead use this non-standard one: */
   word-break: break-word;
 }
+.webhook-card-endpoint:focus {
+  border-color: $brand-primary;
+}
+
 
 // The "active" checkbox that indicates if a webhook is enabled or disabled.
 .webhook-card-active-checkbox { display: none; }

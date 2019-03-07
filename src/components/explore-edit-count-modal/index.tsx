@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -7,8 +7,11 @@ import {
   CardHeader,
   CardLoading,
   InputBox,
-  Modal,
+  Icons,
 } from '@density/ui';
+
+import Modal from '../modal/index';
+import colorVariables from '@density/ui/variables/colors.json';
 
 export default class ExploreEditCountModal extends React.Component<any, any> {
   constructor(props) {
@@ -19,58 +22,75 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
     };
   }
   render() {
-    return <div className="explore-edit-count-modal">
-      <Modal onClose={this.props.onDismiss} onClickBackdrop={this.props.onDismiss}>
-        <Card type="modal">
-          {this.props.loading ? <CardLoading indeterminate /> : null}
-          <CardHeader>
-            Update Count
-            <span
-              className="explore-edit-count-modal-reset-count"
-              onClick={() => this.setState({count: 0})}
-            >Reset to zero</span>
-          </CardHeader>
-          <CardBody>
-            <div className="explore-edit-count-modal-count-picker">
-              <button
-                onClick={() => this.setState({count: Math.max(this.state.count - 1, 0)})}
-                disabled={this.state.count <= 0}
-                className="explore-edit-count-modal-count-button subtract"
-              >&mdash;</button>
+    const { visible, onDismiss } = this.props;
+    return (
+      <div className="explore-edit-count-modal">
+        <Modal
+          visible={visible}
+          width={460}
+          height={300}
+          onBlur={onDismiss}
+          onEscape={onDismiss}
+        >
+          <Card type="modal">
+            {this.props.loading ? <CardLoading indeterminate /> : null}
+            <CardHeader>
+              Update Count
+              <span
+                className="explore-edit-count-modal-reset-count"
+                onClick={() => this.setState({count: 0})}
+              >Reset to zero</span>
+            </CardHeader>
+            <CardBody>
+              <div className="explore-edit-count-modal-count-picker">
+                <button
+                  onClick={() => this.setState({count: Math.max(this.state.count - 1, 0)})}
+                  disabled={this.state.count <= 0}
+                  className="explore-edit-count-modal-count-button subtract"
+                >
+                  <div>
+                    <Icons.Minus color={colorVariables.grayDarker} />
+                  </div>
+                </button>
 
-              <div className="explore-edit-count-modal-count-picker-label">
-                <InputBox
-                  type="number"
-                  value={this.state.countText !== null ? this.state.countText : this.state.count}
-                  onChange={e => this.setState({countText: e.target.value})}
-                  onBlur={() => {
-                    let parsed = parseInt(this.state.countText, 10);
-                    if (parsed < 0) {
-                      parsed = 0;
-                    }
+                <div className="explore-edit-count-modal-count-picker-label">
+                  <input
+                    type="number"
+                    value={this.state.countText !== null ? this.state.countText : this.state.count}
+                    onChange={e => this.setState({countText: e.target.value})}
+                    onBlur={() => {
+                      let parsed = parseInt(this.state.countText, 10);
+                      if (parsed < 0) {
+                        parsed = 0;
+                      }
 
-                    this.setState({
-                      count: isNaN(parsed) ? this.state.count : parsed,
-                      countText: null,
-                    });
-                  }}
-                />
+                      this.setState({
+                        count: isNaN(parsed) ? this.state.count : parsed,
+                        countText: null,
+                      });
+                    }}
+                  />
+                </div>
+
+                <button
+                  onClick={() => this.setState({count: this.state.count + 1})}
+                  className="explore-edit-count-modal-count-button add"
+                >
+                  <Icons.Plus color={colorVariables.grayDarker} />
+                </button>
               </div>
 
-              <button
-                onClick={() => this.setState({count: this.state.count + 1})}
-                className="explore-edit-count-modal-count-button add"
-              >+</button>
-            </div>
-
-            <div className="explore-edit-count-modal-submit">
-              <Button
-                onClick={() => this.props.onSubmit(this.state.count)}
-              >Save Changes</Button>
-            </div>
-          </CardBody>
-        </Card>
-      </Modal>
-    </div>
+              <div className="explore-edit-count-modal-submit">
+                <Button
+                  type="primary"
+                  width="100%"
+                  onClick={() => this.props.onSubmit(this.state.count)}
+                >Save Changes</Button>
+              </div>
+            </CardBody>
+          </Card>
+        </Modal>
+      </div>
+    );
   }
 }

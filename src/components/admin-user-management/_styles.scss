@@ -1,0 +1,24 @@
+.admin-user-management-cell-delete {
+  opacity: 0.8;
+}
+.admin-user-management-cell-delete:hover {
+  opacity: 1.0;
+}
+
+.admin-user-management-new-user-role-description {
+  padding: 8px 8px 16px 34px;
+  font-size: 14px;
+  color: $gray-dark;
+}
+
+.admin-user-management-new-user-section-header {
+  margin: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray-light;
+  font-size: 24px;
+  font-weight: 400;
+  color: $gray-darkest;
+}

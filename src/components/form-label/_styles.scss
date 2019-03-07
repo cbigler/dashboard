@@ -1,5 +1,4 @@
 .form-label {
-  color: $gray;
   display: flex;
   flex-direction: column;
   color: $gray-darkest;
@@ -13,7 +12,7 @@
   font-size: $font-size-base;
   font-weight: $font-weight-base;
   user-select: none;
-  color: $gray;
+  color: $gray-darker;
   position: relative;
 }
 // The first .form-label-label should not have a top margin.

@@ -25,6 +25,24 @@
   color: $gray-darker;
 }
 
+.dashboard-app-bar {
+  display: flex;
+  align-items: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 80px;
+  padding-left: 32px;
+  padding-right: 16px;
+  border-bottom: 1px solid $gray-light;
+}
+
+.dashboard-app-bar-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: auto;
+}
+
 
 .dashboard-sidebar-item {
   display: flex;

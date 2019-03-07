@@ -51,6 +51,7 @@ export function LiveSpaceList({
 
     {/* Show space count update modal when the flag is set */}
     {activeModal.name === 'update-space-count' ? <SpaceUpdateModal
+      visible={activeModal.visible}
       space={activeModal.data.space}
       onDismiss={onCloseModal}
       onSubmit={newCount => onResetSpace(activeModal.data.space, newCount)}
@@ -130,15 +131,17 @@ export default connect((state: any) => {
     },
     onResetSpace(space, newCount) {
       dispatch<any>(spaceResetCount(space, newCount)).then(ok => {
-        ok && dispatch(hideModal());
+        if (ok) {
+          dispatch<any>(hideModal());
+        }
       });
     },
 
     onOpenModal(name, data) {
-      dispatch(showModal(name, data));
+      dispatch<any>(showModal(name, data));
     },
     onCloseModal() {
-      dispatch(hideModal());
+      dispatch<any>(hideModal());
     },
   };
 })(LiveSpaceList);

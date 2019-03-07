@@ -23,6 +23,8 @@ import {
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
+import DashboardDispatchPopupList from '../dashboard-dispatch-popup-list/index';
+import DashboardDispatchManagementModal from '../dashboard-dispatch-management-modal/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
@@ -31,6 +33,7 @@ import hideDashboardSidebar from '../../actions/miscellaneous/hide-dashboards-si
 import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
 import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
 
+import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 const DASHBOARD_BACKGROUND = '#F5F5F7';
@@ -97,7 +100,6 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
     document.body, /* appends to the end of document.body */
   );
 }
-
 
 
 function DashboardMainScrollViewContent({
@@ -214,18 +216,28 @@ export function Dashboard({
   onDashboardChangeWeek,
   onChangeSidebarVisibility,
   onCloseModal,
+  onShowModal,
 }) {
-  const reportExpandedModalVisible = (activeModal.name === 'MODAL_REPORT_EXPANDED');
   return (
     <Fragment>
       {/* If an expanded report modal is visible, then render it above the view */}
-      <DashboardExpandedReportModal
-        visible={reportExpandedModalVisible}
-        report={activeModal.data.report}
-        reportData={reportExpandedModalVisible ?
-          dashboards.calculatedReportData[activeModal.data.report.id] : null}
-        onCloseModal={onCloseModal}
-      />
+      {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
+        <DashboardExpandedReportModal
+          visible={activeModal.visible}
+          report={activeModal.data.report}
+          reportData={dashboards.calculatedReportData[activeModal.data.report.id]}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
+
+      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
+        <DashboardDispatchManagementModal
+          visible={activeModal.visible}
+          selectedDashboard={activeModal.data.selectedDashboard}
+          initialDispatchSchedule={activeModal.data.dispatch}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
       {/* Main application */}
       <AppFrame>
@@ -262,6 +274,7 @@ export function Dashboard({
                 {selectedDashboard ? selectedDashboard.name : ""}
               </AppBarTitle>
             </AppBarSection>
+
             {/* TODO: Replace this with better report time navigation (like MixPanel) */}
             {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
               <div style={{width: 50}}>
@@ -337,6 +350,9 @@ export default connect((state: any) => {
 
     onCloseModal() {
       dispatch(hideModal());
+    },
+    onShowModal(name, data) {
+      dispatch(showModal(name, data));
     },
   };
 })(Dashboard);

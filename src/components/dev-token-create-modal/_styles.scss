@@ -45,12 +45,9 @@ $radio-pressed-data-uri: "data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD
   opacity: 0.8;
 }
 
-// NOTE: HACK. card-body is acting up.
-.token-create .card-body { margin-top: -8px; }
-
 .token-create-description-field {
   resize: none;
   height: 5em;
 }
 
-
+.token-create { padding: 24px; }
