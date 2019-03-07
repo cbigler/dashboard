@@ -511,7 +511,7 @@ function DigestManagementRecipientList({
         {users.view === 'VISIBLE' && filteredUsers.length > 0 ? (
           <Fragment>
             {pinnedUsers.map(user => (
-              <RecipientListItem
+              <DigestManagementRecipientListItem
                 key={user.id}
                 user={user}
                 checked={recipientIds.includes(user.id)}
@@ -520,7 +520,7 @@ function DigestManagementRecipientList({
               />
             ))}
             {unpinnedUsers.map(user => (
-              <RecipientListItem
+              <DigestManagementRecipientListItem
                 key={user.id}
                 user={user}
                 checked={recipientIds.includes(user.id)}
@@ -560,7 +560,7 @@ function DigestManagementRecipientList({
   );
 }
 
-function RecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
+function DigestManagementRecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
   return (
     <div className="dispatch-management-recipient-list-item">
       <div className={classnames('dispatch-management-recipient-list-item-name', {checked})}>
