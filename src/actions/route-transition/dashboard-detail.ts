@@ -12,14 +12,8 @@ import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
 
-export default function routeTransitionDashboardDetail(id) {
-  return async (dispatch, getState) => {
-    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
-
-
-    // First, load all digest schedules
-    // TODO: we should find a way to make this and the reports below load in parallel, as it is
-    // this makes loading this page take a little bit longer and it doesn't have to.
+function loadDigestSchedules() {
+  return async dispatch => {
     let schedules, errorThrown;
     try {
       schedules = await fetchAllPages(page => core.digest_schedules.list({page, page_size: 5000}));
@@ -32,8 +26,11 @@ export default function routeTransitionDashboardDetail(id) {
       console.error(errorThrown);
       dispatch(collectionDispatchSchedulesError(errorThrown));
     }
+  }
+}
 
-
+function loadDashboardAndReports(id) {
+  return async (dispatch, getState) => {
     const dashboardDate = getState().miscellaneous.dashboardDate;
     let dashboardSelectionPromise;
 
@@ -103,5 +100,16 @@ export default function routeTransitionDashboardDetail(id) {
 
     // Wait for the dashboard selection to complete
     await dashboardSelectionPromise;
+  }
+}
+
+export default function routeTransitionDashboardDetail(id) {
+  return async dispatch => {
+    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+
+    await Promise.all([
+      dispatch(loadDigestSchedules()),
+      dispatch(loadDashboardAndReports(id)),
+    ]);
   };
 }
