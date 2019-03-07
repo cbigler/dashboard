@@ -1,5 +1,4 @@
 import moment from 'moment';
-import uuid from 'uuid';
 
 import { REDIRECT_AFTER_LOGIN } from '../../actions/miscellaneous/redirect-after-login';
 import { CHANGE_DASHBOARD_DATE } from '../../actions/miscellaneous/change-dashboard-date';

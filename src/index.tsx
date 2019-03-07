@@ -38,15 +38,12 @@ import createRouter from '@density/conduit';
 // Import all actions required to navigate from one page to another.
 import routeTransitionLogin from './actions/route-transition/login';
 import routeTransitionLogout from './actions/route-transition/logout';
-import routeTransitionSensorsList from './actions/route-transition/sensors-list';
 import routeTransitionExplore from './actions/route-transition/explore';
 import routeTransitionExploreSpaceTrends from './actions/route-transition/explore-space-trends';
 import routeTransitionExploreSpaceDaily from './actions/route-transition/explore-space-daily';
 import routeTransitionExploreSpaceDataExport from './actions/route-transition/explore-space-data-export';
 import routeTransitionLiveSpaceList from './actions/route-transition/live-space-list';
 import routeTransitionLiveSpaceDetail from './actions/route-transition/live-space-detail';
-import routeTransitionDevTokenList from './actions/route-transition/dev-token-list';
-import routeTransitionDevWebhookList from './actions/route-transition/dev-webhook-list';
 import routeTransitionAccount from './actions/route-transition/account';
 import routeTransitionAccountRegister from './actions/route-transition/account-register';
 import routeTransitionAccountForgotPassword from './actions/route-transition/account-forgot-password';
@@ -173,12 +170,7 @@ router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSp
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList());
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(id));
 
-router.addRoute('dev/tokens', () => routeTransitionDevTokenList());
-router.addRoute('dev/webhooks', () => routeTransitionDevWebhookList());
-
 router.addRoute('account', () => routeTransitionAccount());
-
-router.addRoute('sensors', () => routeTransitionSensorsList());
 
 // User registration and password resetting
 router.addRoute('account/register/:slug', slug => routeTransitionAccountRegister(slug));

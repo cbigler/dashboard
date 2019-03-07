@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 export const TOAST_SHOW = 'TOAST_SHOW';
 export const TOAST_HIDE = 'TOAST_HIDE';
 
@@ -9,7 +11,7 @@ export default function showToast({
   timeout = 2000
 }) {
   return dispatch => {
-    const id = Math.random().toString();
+    const id = uuid();
     dispatch({ type: TOAST_SHOW, toast: { id, text, title, icon, type } });
     if (timeout) {
       setTimeout(() => dispatch({ type: TOAST_HIDE, id }), timeout);

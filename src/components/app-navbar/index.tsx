@@ -43,7 +43,10 @@ class AppNavbarMenu extends Component<any, any> {
         {header}
       </div>
       <nav className={classnames('app-navbar-menu-items', {opened})}>
-        <AppNavbarMenuContext.Provider value={this}>
+        <AppNavbarMenuContext.Provider value={{
+          onMenuFocus: this.onMenuFocus,
+          onMenuBlur: this.onMenuBlur
+        }}>
           {children}
         </AppNavbarMenuContext.Provider>
       </nav>
@@ -162,7 +165,7 @@ export default function AppNavbar({page, user, settings}) {
           {showAdminMenu ?
             <AppNavbarMenu
               header={<AppNavbarItem
-                selected={['ADMIN_USER_MANAGEMENT', 'DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST', 'SENSORS_LIST'].includes(page)}
+                selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_DEVICE_STATUS'].includes(page)}
                 showOnMobile={false}
                 icon={<Icons.Cog />}
                 text="Admin"
@@ -176,17 +179,17 @@ export default function AppNavbar({page, user, settings}) {
               />
               {can(user, 'developer_tools_manage') ?
                 <AppNavbarMenuItem
-                  path="#/dev/tokens"
+                  path="#/admin/developer"
                   text="Developer"
                   icon={<Icons.Code />}
-                  selected={['DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST'].includes(page)}
+                  selected={['ADMIN_DEVELOPER'].includes(page)}
                 /> : null}
               {can(user, 'sensors_list') ?
                 <AppNavbarMenuItem
-                  path="#/sensors"
+                  path="#/admin/device-status"
                   text="DPU Status"
                   icon={<Icons.Heartbeat />}
-                  selected={['SENSORS_LIST'].includes(page)}
+                  selected={['ADMIN_DEVICE_STATUS'].includes(page)}
                 /> : null}
             </AppNavbarMenu> : null
           }

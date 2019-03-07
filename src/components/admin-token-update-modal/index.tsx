@@ -9,9 +9,9 @@ import {
   AppBarTitle,
 } from '@density/ui';
 
-import ModalHeaderActionButton from '../modal-header-action-button/index';
-import FormLabel from '../form-label/index';
-import Modal from '../modal/index';
+import FormLabel from '../form-label';
+import Modal from '../modal';
+import { CancelLink } from '../dialogger';
 
 export default class TokenUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -21,7 +21,6 @@ export default class TokenUpdateModal extends React.Component<any, any> {
       description: this.props.initialToken.description || '',
       key: this.props.initialToken.key || '',
 
-      isDestroying: false,
       destroyNameConfirmation: '',
     };
   }
@@ -29,17 +28,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
   renderEdit = () => {
     return (
       <div className="token-update-modal">
-        <AppBar>
-          <AppBarTitle>Edit Token</AppBarTitle>
-          <AppBarSection>
-            <ModalHeaderActionButton
-              className="token-update-destroy-link"
-              onClick={() => this.setState({isDestroying: true})}
-            >
-              Destroy
-            </ModalHeaderActionButton>
-          </AppBarSection>
-        </AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Edit Token</AppBarTitle></AppBarSection></AppBar>
 
         <div className="token-update-modal-body">
           <FormLabel
@@ -78,6 +67,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={this.props.onDismiss} />
               <Button
                 type="primary"
                 disabled={this.state.name.length === 0}
@@ -97,23 +87,15 @@ export default class TokenUpdateModal extends React.Component<any, any> {
   renderDestroy = () => {
     return (
       <div className="token-update-modal">
-        <AppBar>
-          <AppBarTitle>
-            Destroy Token
-          </AppBarTitle>
-          <AppBarSection>
-            <ModalHeaderActionButton onClick={() => this.setState({isDestroying: false})} className={null}>
-              Go back to safety
-            </ModalHeaderActionButton>
-          </AppBarSection>
-        </AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Destroy Token</AppBarTitle></AppBarSection></AppBar>
+
         <div className="token-update-modal-body">
           <h2 className="token-update-destroy-warning">Are you ABSOLUTELY sure?</h2>
 
           <p>
             The act of removing a token is irreversible and generating a duplicate token (with the
             same value) is impossible. Type in the name of this token below
-            (<code>{this.state.name}</code>) to remove.
+            ("{this.state.name}") to remove.
           </p>
 
           <div className="token-update-destroy-confirmation">
@@ -130,6 +112,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={this.props.onDismiss} />
               <Button
                 type="primary"
                 width="100%"
@@ -144,10 +127,10 @@ export default class TokenUpdateModal extends React.Component<any, any> {
   }
 
   render() {
-    const { visible, onDismiss } = this.props;
+    const { visible, isDestroying, onDismiss } = this.props;
 
     let contents;
-    if (this.state.isDestroying) {
+    if (isDestroying) {
       contents = this.renderDestroy();
     } else {
       contents = this.renderEdit();
@@ -156,8 +139,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
     return (
       <Modal
         visible={visible}
-        width={460}
-        height={this.state.isDestroying ? 393 : 485}
+        width={480}
         onBlur={onDismiss}
         onEscape={onDismiss}
       >
