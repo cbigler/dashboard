@@ -1,36 +1,24 @@
-.admin-user-management-list {
+.admin-user-management-cell-delete {
+  opacity: 0.8;
+}
+.admin-user-management-cell-delete:hover {
+  opacity: 1.0;
+}
+
+.admin-user-management-new-user-role-description {
+  padding: 8px 8px 16px 34px;
+  font-size: 14px;
+  color: $gray-dark;
+}
+
+.admin-user-management-new-user-section-header {
+  margin: 0 24px;
+  height: 64px;
   display: flex;
-  width: 100%;
-  padding: 24px;
+  align-items: center;
   box-sizing: border-box;
-  justify-content: space-between;
-}
-
-.admin-user-management-header {
-  display: flex;
-  align-items: center;
-  height: 32px;
-  padding: 0 24px;
-  border-bottom: 1px solid #DDD;
-  font-size: 14px;
-  font-weight: bold;
-}
-:first-child > .admin-user-management-header {
-  padding-left: 0;
-}
-
-.admin-user-management-cell {
-  display: flex;
-  align-items: center;
-  height: 42px;
-  padding: 0 24px;
-  border-bottom: 1px solid #DDD;
-  font-size: 14px;
-  color: #545454;
-}
-:first-child > .admin-user-management-cell {
-  padding-left: 0;
-}
-:last-child > .admin-user-management-cell {
-  padding-right: 0;
+  border-bottom: 1px solid $gray-light;
+  font-size: 24px;
+  font-weight: 400;
+  color: $gray-darkest;
 }

@@ -7,6 +7,7 @@ import {
   Icons,
 } from '@density/ui';
 
+import can from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 
@@ -24,29 +25,29 @@ class AppNavbarMenu extends Component<any, any> {
     const { opened } = this.state;
     const { header, children } = this.props;
     
-    return (<AppNavbarMenuContext.Provider value={this}>
-      <div className="app-navbar-menu">
-        <div
-          ref={r => { this.selectBoxValueRef = r; }}
-          className={classnames('app-navbar-menu-target', {opened})}
-          tabIndex={0}
-          onFocus={this.onMenuFocus}
-          onBlur={this.onMenuBlur}
-          onMouseDown={e => {
-            if (opened) {
-              e.preventDefault();
-              this.selectBoxValueRef.blur();
-              this.onMenuBlur();
-            }
-          }}
-        >
-          {header}
-        </div>
-        <nav className={classnames('app-navbar-menu-items', {opened})}>
-          {children}
-        </nav>
+    return <div className="app-navbar-menu">
+      <div
+        ref={r => { this.selectBoxValueRef = r; }}
+        className={classnames('app-navbar-menu-target', {opened})}
+        tabIndex={0}
+        onFocus={this.onMenuFocus}
+        onBlur={this.onMenuBlur}
+        onMouseDown={e => {
+          if (opened) {
+            e.preventDefault();
+            this.selectBoxValueRef.blur();
+            this.onMenuBlur();
+          }
+        }}
+      >
+        {header}
       </div>
-    </AppNavbarMenuContext.Provider>);
+      <nav className={classnames('app-navbar-menu-items', {opened})}>
+        <AppNavbarMenuContext.Provider value={this}>
+          {children}
+        </AppNavbarMenuContext.Provider>
+      </nav>
+    </div>;
   }
 }
 
@@ -68,9 +69,20 @@ function AppNavbarMenuItem({path, text, icon, selected}) {
 }
 
 // Component for top-level app navbar item
-function AppNavbarItem({selected, showOnMobile, icon, text, path = undefined as string | undefined}) {
+function AppNavbarItem({
+  selected,
+  showOnMobile,
+  icon,
+  text,
+  style = {},
+  path = undefined as string | undefined,
+  hideOnDesktop = false
+}) {
   return (
-    <li className={classnames('app-navbar-item', { selected, showOnMobile })}>
+    <li
+      className={classnames('app-navbar-item', { selected, showOnMobile, hideOnDesktop })}
+      style={style}
+    >
       <a href={path}>
         {icon ? <span className="app-navbar-icon">
           {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
@@ -83,7 +95,13 @@ function AppNavbarItem({selected, showOnMobile, icon, text, path = undefined as 
 
 
 // Define the real app navbar here
-export default function AppNavbar({page, userRole, settings}) {
+export default function AppNavbar({page, user, settings}) {
+
+  const showAdminMenu = can(user, 'developer_tools_manage') ||
+    can(user, 'owner_user_manage') ||
+    can(user, 'admin_user_manage') ||
+    can(user, 'readonly_user_manage');
+
   return (
     <div className="app-navbar-container">
       <div className="app-navbar">
@@ -128,12 +146,25 @@ export default function AppNavbar({page, userRole, settings}) {
           /> : null}
         </ul>
         <ul className="app-navbar-right">
-          {['owner', 'admin'].includes(userRole) ?
+
+          {/* Mobile logout button */}
+          <AppNavbarItem
+            selected={false}
+            showOnMobile={true}
+            hideOnDesktop={true}
+            path="#/logout"
+            style={{ marginRight: -32, marginTop: 4 }}
+            icon={<Icons.Logout />}
+            text=""
+          />
+
+          {/* Desktop menus */}
+          {showAdminMenu ?
             <AppNavbarMenu
               header={<AppNavbarItem
                 selected={['ADMIN_USER_MANAGEMENT', 'DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST', 'SENSORS_LIST'].includes(page)}
-                showOnMobile={true}
-                icon={<Icons.Team />}
+                showOnMobile={false}
+                icon={<Icons.Cog />}
                 text="Admin"
               />}
             >
@@ -143,28 +174,26 @@ export default function AppNavbar({page, userRole, settings}) {
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {['owner'].includes(userRole) ?
-                <Fragment>
-                  <AppNavbarMenuItem
-                    path="#/dev/tokens"
-                    text="Developer"
-                    icon={<Icons.Lightning />}
-                    selected={['DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST'].includes(page)}
-                  />
-                  <AppNavbarMenuItem
-                    path="#/sensors"
-                    text="DPU Status"
-                    icon={<Icons.Error />}
-                    selected={['SENSORS_LIST'].includes(page)}
-                  />
-                </Fragment> : null
-              }
+              {can(user, 'developer_tools_manage') ?
+                <AppNavbarMenuItem
+                  path="#/dev/tokens"
+                  text="Developer"
+                  icon={<Icons.Code />}
+                  selected={['DEV_TOKEN_LIST', 'DEV_WEBHOOK_LIST'].includes(page)}
+                /> : null}
+              {can(user, 'sensors_list') ?
+                <AppNavbarMenuItem
+                  path="#/sensors"
+                  text="DPU Status"
+                  icon={<Icons.Heartbeat />}
+                  selected={['SENSORS_LIST'].includes(page)}
+                /> : null}
             </AppNavbarMenu> : null
           }
           <AppNavbarMenu
             header={<AppNavbarItem
               selected={['ACCOUNT'].includes(page)}
-              showOnMobile={true}
+              showOnMobile={false}
               icon={<Icons.Person />}
               text="Account"
             />}

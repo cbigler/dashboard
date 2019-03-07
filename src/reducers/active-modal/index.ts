@@ -1,5 +1,6 @@
 import { TRANSITION_TO_SHOW_MODAL, SHOW_MODAL } from '../../actions/modal/show';
 import { TRANSITION_TO_HIDE_MODAL, HIDE_MODAL } from '../../actions/modal/hide';
+import { UPDATE_MODAL } from '../../actions/modal/update';
 
 const initialState = {name: null, data: {}};
 export default function activeModal(state=initialState, action) {
@@ -16,6 +17,8 @@ export default function activeModal(state=initialState, action) {
     return { ...state, visible: false };
   case HIDE_MODAL:
     return {name: null, data: {}, visible: false};
+  case UPDATE_MODAL:
+    return {...state, data: {...state.data, ...action.data}};
   default:
     return state;
   }

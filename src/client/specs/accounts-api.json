@@ -57,6 +57,22 @@
           "email": "{{email}}"
         }
       },
+      "invite": {
+        "method": "POST",
+        "url": "{{{host}}}/users/invite/",
+        "headers": {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        "body": {
+          "email": "{{email}}",
+          "role": "{{role}}"
+        }
+      },
+      "invite_resend": {
+        "method": "PUT",
+        "url": "{{{host}}}/users/invite/resend/{{id}}/"
+      },
       "update": {
         "method": "PUT",
         "url": "{{{host}}}/users/{{id}}{{^id}}me{{/id}}/",
@@ -67,8 +83,13 @@
         "body": {
           "marketing_consent": "{{marketing_consent}}",
           "full_name": "{{full_name}}",
-          "nickname": "{{nickname}}"
+          "nickname": "{{nickname}}",
+          "role": "{{role}}"
         }
+      },
+      "delete": {
+        "method": "DELETE",
+        "url": "{{{host}}}/users/{{id}}/"
       },
       "list": {
         "method": "GET",

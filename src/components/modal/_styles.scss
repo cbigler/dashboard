@@ -23,7 +23,6 @@
   right: 0px;
 
   display: flex;
-  justify-content: center;
   align-items: center;
   padding: 64px 0;
 
@@ -33,6 +32,9 @@
   animation: dashboardModalBackdropAnimateOut 0.1s ease-out;
   background-color: rgba(255, 255, 255, 0.95);
   overflow-y: auto;
+
+  // Should never be below anything on the page
+  z-index: 999;
 }
 .dashboard-modal-backdrop.visible {
   pointer-events: auto;

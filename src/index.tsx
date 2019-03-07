@@ -70,7 +70,7 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
-const store = storeFactory();
+export const store = storeFactory();
 
 
 // ----------------------------------------------------------------------------

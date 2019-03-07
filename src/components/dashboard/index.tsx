@@ -364,30 +364,30 @@ export default connect((state: any) => {
     resizeCounter: state.resizeCounter,
     settings: state.user.data && state.user.data.organization.settings,
   };
-}, (digest: any) => {
+}, (dispatch: any) => {
   return {
     onDashboardChangeWeek(dashboard, weeks) {
-      digest(changeDashboardDate(weeks));
-      digest(routeTransitionDashboardDetail(dashboard.id));
+      dispatch(changeDashboardDate(weeks));
+      dispatch(routeTransitionDashboardDetail(dashboard.id));
     },
     onChangeSidebarVisibility(visibleState) {
       if (visibleState) {
-        digest(showDashboardSidebar());
+        dispatch(showDashboardSidebar());
       } else {
-        digest(hideDashboardSidebar());
+        dispatch(hideDashboardSidebar());
       }
 
       // Once the animation has completed, force a relayout
       setTimeout(() => {
-        digest(incrementResizeCounter());
+        dispatch(incrementResizeCounter());
       }, 300);
     },
 
     onCloseModal() {
-      digest(hideModal());
+      dispatch(hideModal());
     },
     onShowModal(name, data) {
-      digest(showModal(name, data));
+      dispatch(showModal(name, data));
     },
   };
 })(Dashboard);

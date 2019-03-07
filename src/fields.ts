@@ -29,9 +29,9 @@ export default [
     name: 'Accounts API',
     slug: 'accounts',
     defaults: {
-      'production': 'https://accounts.density.io/v1',
-      'staging': 'https://accounts-staging.density.io/v1',
-      'local': 'http://localhost:8001/v1',
+      'production': 'https://accounts.density.io/v2',
+      'staging': 'https://accounts-staging.density.io/v2',
+      'local': 'http://localhost:8000/v2',
       'env (REACT_APP_ACCOUNTS_API_URL)': process.env.REACT_APP_ACCOUNTS_API_URL,
     },
     default: process.env.REACT_APP_ENVIRONMENT || 'production',

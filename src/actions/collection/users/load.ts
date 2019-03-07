@@ -3,6 +3,7 @@ export const COLLECTION_USERS_LOAD = 'COLLECTION_USERS_LOAD';
 import { accounts } from '../../../client';
 import collectionUsersError from './error';
 import collectionUsersSet from './set';
+import showToast from '../../toasts';
 
 export default function collectionUsersLoad() {
   return async dispatch => {
@@ -18,6 +19,10 @@ export default function collectionUsersLoad() {
     if (errorThrown) {
       console.error(errorThrown);
       dispatch(collectionUsersError(errorThrown));
+      dispatch(showToast({
+        text: 'Error loading users',
+        type: 'danger',
+      }));
     } else {
       dispatch(collectionUsersSet(users));
     }
