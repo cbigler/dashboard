@@ -84,6 +84,7 @@ export class AccountRegistration extends React.Component<any, any> {
               id="account-registration-full-name"
               onChange={e => this.setState({fullName: e.target.value})}
               value={this.state.fullName}
+              width="100%"
             />
 
             <label className="account-registration-header" htmlFor="account-registration-nickname">Nickname</label>
@@ -96,6 +97,7 @@ export class AccountRegistration extends React.Component<any, any> {
               id="account-registration-nickname"
               onChange={e => this.setState({nickname: e.target.value})}
               value={this.state.nickname}
+              width="100%"
             />
 
             <label className="account-registration-header" htmlFor="account-registration-password">
@@ -109,6 +111,7 @@ export class AccountRegistration extends React.Component<any, any> {
               id="account-registration-password"
               onChange={e => this.setState({password: e.target.value})}
               value={this.state.password}
+              width="100%"
             />
 
             <label className="account-registration-header" htmlFor="account-registration-confirm-password">
@@ -122,6 +125,7 @@ export class AccountRegistration extends React.Component<any, any> {
               id="account-registration-confirm-password"
               onChange={e => this.setState({passwordConfirmation: e.target.value})}
               value={this.state.passwordConfirmation}
+              width="100%"
             />
 
             <div className="account-registration-consent-container">

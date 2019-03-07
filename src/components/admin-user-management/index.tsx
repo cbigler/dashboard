@@ -186,7 +186,7 @@ export function AdminUserManagement({
         <InputBox
           type="text"
           leftIcon={<Icons.Search color={colorVariables.gray} />}
-          placeholder={`Search through ${manageableUsers.length} users`}
+          placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
           value={users.filters.search}
           width={320}
           onChange={onUpdateUsersFilter} />
