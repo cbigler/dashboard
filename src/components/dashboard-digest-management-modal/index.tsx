@@ -447,7 +447,7 @@ function DigestManagementForm({
   );
 }
 
-const userCollectionFilter = filterCollection({fields: ['fullName']});
+const userCollectionFilter = filterCollection({fields: ['fullName', 'email']});
 
 function DigestManagementRecipientList({
   users,
