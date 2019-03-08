@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 
 import {
   AppBar,
@@ -71,6 +72,7 @@ function canResendInvitation(user, item) {
 }
 
 export function AdminUserManagement({
+  spaces,
   users,
   user,
   activeModal,
@@ -85,7 +87,6 @@ export function AdminUserManagement({
   onStartDeleteUser,
   onUpdateUsersFilter,
 }) {
-
   // Stop here if user is still loading
   if (user.loading || !user.data) { return null; }
 
@@ -100,7 +101,6 @@ export function AdminUserManagement({
   }
 
   return <Fragment>
-
     {/* Display user delete confirmation dialog */}
     <Dialogger />
 
@@ -243,6 +243,8 @@ export function AdminUserManagement({
         </ListView>
       </div>
     </AppScrollView>
+
+    <AdminSpacePermissionsPicker spaces={spaces} selectedSpaceIds={[]} />
   </Fragment>;
 }
 
@@ -252,6 +254,7 @@ export default connect((state: any) => {
     user: state.user,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
+    spaces: state.spaces,
   };
 }, dispatch => {
   return {
