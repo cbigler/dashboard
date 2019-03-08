@@ -64,9 +64,6 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_USER_MANAGEMENT":
   case "ADMIN_DEVELOPER":
   case "ADMIN_DEVICE_STATUS":
-  case "DEV_WEBHOOK_LIST":
-  case "DEV_TOKEN_LIST":
-  case "SENSORS_LIST":
     return <Admin user={user} activePage={activePage} />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;

@@ -9,9 +9,9 @@ import {
   AppBarTitle,
 } from '@density/ui';
 
-import ModalHeaderActionButton from '../modal-header-action-button/index';
-import FormLabel from '../form-label/index';
-import Modal from '../modal/index';
+import FormLabel from '../form-label';
+import Modal from '../modal';
+import { CancelLink } from '../dialogger';
 
 export default class WebhookUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -20,8 +20,6 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
       name: this.props.initialWebhook.name || '',
       description: this.props.initialWebhook.description || '',
       key: this.props.initialWebhook.key || '',
-
-      isDestroying: false,
     };
   }
 
@@ -29,14 +27,8 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
     return (
       <div className="webhook-update-modal">
         <AppBar>
-          <AppBarTitle>Edit Webhook</AppBarTitle>
           <AppBarSection>
-            <ModalHeaderActionButton
-              className="webhook-update-destroy-link"
-              onClick={() => this.setState({isDestroying: true})}
-            >
-              Destroy
-            </ModalHeaderActionButton>
+            <AppBarTitle>Edit Webhook</AppBarTitle>
           </AppBarSection>
         </AppBar>
         <div className="webhook-update-modal-body">
@@ -67,6 +59,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={this.props.onDismiss} />
               <Button
                 type="primary"
                 width="100%"
@@ -87,20 +80,11 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
   renderDestroy = () => {
     return (
       <div className="webhook-update-modal">
-        <AppBar>
-          <AppBarTitle>
-            Destroy Webhook
-          </AppBarTitle>
-          <AppBarSection>
-            <ModalHeaderActionButton onClick={() => this.setState({isDestroying: false})} className={null}>
-              Go back to safety
-            </ModalHeaderActionButton>
-          </AppBarSection>
-        </AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Destroy Webhook</AppBarTitle></AppBarSection></AppBar>
 
         <div className="webhook-update-modal-body">
           <p>
-            Please confirm you'd like to destroy the webhook {this.props.initialWebhook.name}.
+            Please confirm you'd like to destroy the webhook "{this.props.initialWebhook.name}".
           </p>
         </div>
 
@@ -108,6 +92,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={this.props.onDismiss} />
               <Button
                 type="primary"
                 onClick={() => this.props.onDestroyWebhook(this.props.initialWebhook)}
@@ -120,10 +105,10 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
   }
 
   render() {
-    const { visible, onDismiss } = this.props;
+    const { visible, isDestroying, onDismiss } = this.props;
 
     let contents;
-    if (this.state.isDestroying) {
+    if (isDestroying) {
       contents = this.renderDestroy();
     } else {
       contents = this.renderEdit();
@@ -132,8 +117,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
     return (
       <Modal
         visible={visible}
-        width={460}
-        height={386}
+        width={480}
         onBlur={onDismiss}
         onEscape={onDismiss}
       >

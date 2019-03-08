@@ -5,9 +5,10 @@ const ListViewContext = React.createContext([] as any);
 
 export default function ListView({
   data = [] as any[],
+  keyTemplate = item => item.id,
   children = null as any,
 }) {
-  return <ListViewContext.Provider value={data}>
+  return <ListViewContext.Provider value={{data, keyTemplate}}>
     <div className="list-view">
       {children}
     </div>
@@ -18,16 +19,16 @@ export function ListViewColumn({
   title = null as any,
   template = null as any,
   onClick = null as any,
-  disabled = (any) => false,
+  disabled = item => false,
   style = {} as Object,
 }) {
-  return <ListViewContext.Consumer>{data => (
+  return <ListViewContext.Consumer>{context => (
     <div className="list-view-column" style={style}>
       <div className="list-view-header">{title}</div>
-      {data.map(item => {
+      {context.data.map(item => {
         const clickable = !disabled(item) && !!onClick;
         return <div
-          key={item.id}
+          key={context.keyTemplate(item)}
           className={classnames('list-view-cell', { clickable })}
           onClick={() => clickable && onClick(item)}
         >

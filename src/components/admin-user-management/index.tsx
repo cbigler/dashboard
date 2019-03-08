@@ -28,9 +28,11 @@ import collectionUsersUpdate from '../../actions/collection/users/update';
 import collectionUsersDestroy from '../../actions/collection/users/destroy';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
+import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import Modal from '../modal';
 import ListView, { ListViewColumn } from '../list-view';
+import { CancelLink } from '../dialogger';
 
 const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
@@ -81,8 +83,6 @@ export function AdminUserManagement({
   onChangeUserRole,
   onResendInvitation,
   onStartDeleteUser,
-  onCancelDeleteUser,
-  onFinishDeleteUser,
   onUpdateUsersFilter,
 }) {
 
@@ -100,40 +100,9 @@ export function AdminUserManagement({
   }
 
   return <Fragment>
-    
-    {/* If the "delete user" modal is visible, render it above the view */}
-    {activeModal.name === 'MODAL_ADMIN_USER_DELETE' ? (
-      <Modal
-        visible={activeModal.visible}
-        width={360}
-        onBlur={onCancelDeleteUser}
-        onEscape={onCancelDeleteUser}
-      >
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          <AppBar>
-            <AppBarTitle>Confirm</AppBarTitle>
-          </AppBar>
-          <div style={{padding: 32}}>
-            Are you sure you want to delete this user?
-          </div>
-          <AppBarContext.Provider value="BOTTOM_ACTIONS">
-            <AppBar>
-              <AppBarSection></AppBarSection>
-              <AppBarSection>
-                <Button onClick={onCancelDeleteUser}>Cancel</Button>
-                <div style={{width: 16, height: 16}}></div>
-                <Button
-                  type="primary"
-                  onClick={() => onFinishDeleteUser(activeModal.data)}
-                >
-                  Delete
-                </Button>
-              </AppBarSection>
-            </AppBar>
-          </AppBarContext.Provider>
-        </div>
-      </Modal>
-    ) : null}
+
+    {/* Display user delete confirmation dialog */}
+    <Dialogger />
 
     {/* If the "add user" modal is visible, render it above the view */}
     {activeModal.name === 'MODAL_ADMIN_USER_ADD' ? (
@@ -197,8 +166,7 @@ export function AdminUserManagement({
             <AppBar>
               <AppBarSection></AppBarSection>
               <AppBarSection>
-                <Button onClick={onCancelAddUser}>Cancel</Button>
-                <div style={{width: 16, height: 16}}></div>
+                <CancelLink onClick={onCancelAddUser} />
                 <Button
                   type="primary"
                   disabled={!(activeModal.data.email && activeModal.data.role)}
@@ -218,7 +186,7 @@ export function AdminUserManagement({
         <InputBox
           type="text"
           leftIcon={<Icons.Search color={colorVariables.gray} />}
-          placeholder={`Search through ${manageableUsers.length} users`}
+          placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
           value={users.filters.search}
           width={320}
           onChange={onUpdateUsersFilter} />
@@ -229,45 +197,51 @@ export function AdminUserManagement({
     </AppBar>
 
     <AppScrollView>
-      <ListView data={filteredUsers}>
-        <ListViewColumn title="Email" template={item => <strong>{item.email}</strong>} />
-        <ListViewColumn title="Name" template={item => item.fullName} />
-        <ListViewColumn 
-          title={<span style={{paddingLeft: 16}}>Role</span>}
-          template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
-            <InputBoxContext.Provider value="LIST_VIEW">
-              <InputBox
-                type="select"
-                width="160px"
-                value={item.role}
-                disabled={item.id === user.data.id}
-                onChange={value => onChangeUserRole(item, value.id)}
-                choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
-            </InputBoxContext.Provider>
-          </div>}
-        />
-        <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
-        <ListViewColumn title="Activity" template={item => {
-          const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
-          return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
-        }} />
-        <ListViewColumn
-          title="Invitation"
-          template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
-        />
-        <ListViewColumn 
-          template={item => canResendInvitation(user, item) ? 'Resend' : ''}
-          disabled={item => !canResendInvitation(user, item)}
-          onClick={item => onResendInvitation(item)}
-        />
-        <ListViewColumn
-          template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
-            <Icons.Trash color={colorVariables.grayDarker} />
-          </div>}
-          disabled={item => item.id === user.data.id}
-          onClick={item => onStartDeleteUser(item)}
-        />
-      </ListView>
+      <div className="admin-user-management-list">
+        <ListView data={filteredUsers}>
+          <ListViewColumn title="Email" template={item => (
+            <strong className="admin-user-management-cell-value">{item.email}</strong>
+          )} />
+          <ListViewColumn title="Name" template={item => (
+            <span className="admin-user-management-cell-value">{item.fullName}</span>
+          )} />
+          <ListViewColumn 
+            title={<span style={{paddingLeft: 16}}>Role</span>}
+            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
+              <InputBoxContext.Provider value="LIST_VIEW">
+                <InputBox
+                  type="select"
+                  width="160px"
+                  value={item.role}
+                  disabled={item.id === user.data.id}
+                  onChange={value => onChangeUserRole(item, value.id)}
+                  choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
+              </InputBoxContext.Provider>
+            </div>}
+          />
+          <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
+          <ListViewColumn title="Activity" template={item => {
+            const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
+            return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
+          }} />
+          <ListViewColumn
+            title="Invitation"
+            template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
+          />
+          <ListViewColumn 
+            template={item => canResendInvitation(user, item) ? 'Resend' : ''}
+            disabled={item => !canResendInvitation(user, item)}
+            onClick={item => onResendInvitation(item)}
+          />
+          <ListViewColumn
+            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
+              <Icons.Trash color={colorVariables.grayDarker} />
+            </div>}
+            disabled={item => item.id === user.data.id}
+            onClick={item => onStartDeleteUser(item)}
+          />
+        </ListView>
+      </div>
     </AppScrollView>
   </Fragment>;
 }
@@ -298,14 +272,14 @@ export default connect((state: any) => {
       (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
     },
     onStartDeleteUser(user) {
-      (dispatch as any)(showModal('MODAL_ADMIN_USER_DELETE', user));
+      (dispatch as any)(showModal('MODAL_CONFIRM', {
+        prompt: 'Are you sure you want to delete this user?',
+        confirmText: 'Delete',
+        callback: () => (dispatch as any)(collectionUsersDestroy(user))
+      }));
     },
     onCancelDeleteUser() {
       (dispatch as any)(hideModal());
-    },
-    onFinishDeleteUser(user) {
-      (dispatch as any)(hideModal());
-      (dispatch as any)(collectionUsersDestroy(user));
     },
     onResendInvitation(user) {
       (dispatch as any)(collectionUsersInviteResend(user));

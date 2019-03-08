@@ -9,9 +9,9 @@ import {
   AppBarSection,
 } from '@density/ui';
 
-import Modal from '../modal/index';
-
-import FormLabel from '../form-label/index';
+import FormLabel from '../form-label';
+import Modal from '../modal';
+import { CancelLink } from '../dialogger';
 
 export default class WebhookCreateModal extends React.Component<any, any> {
   state = {
@@ -102,6 +102,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
+              <CancelLink onClick={onDismiss} />
               <Button
                 type="primary"
                 disabled={this.state.endpoint.length === 0}
