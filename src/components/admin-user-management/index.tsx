@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
@@ -108,76 +109,76 @@ export function AdminUserManagement({
     {activeModal.name === 'MODAL_ADMIN_USER_ADD' ? (
       <Modal
         visible={activeModal.visible}
-        width={480}
+        width={783}
         onBlur={onCancelAddUser}
         onEscape={onCancelAddUser}
       >
-        <div style={{display: 'flex', flexDirection: 'column'}}>
-          {/* <div style={{marginTop: -64}}>
-            <AppBarContext.Provider value="TRANSPARENT">
-              <AppBar>
-                <AppBarSection></AppBarSection>
-                <AppBarSection>Hi Rob</AppBarSection>
-              </AppBar>
-            </AppBarContext.Provider>
-          </div> */}
-          <AppBar>
-            <AppBarTitle>New User</AppBarTitle>
-          </AppBar>
-          <div className="admin-user-management-new-user-section-header">
-            Info
+        <AppBar>
+          <AppBarTitle>New User</AppBarTitle>
+        </AppBar>
+        <div className="admin-user-management-modal-columns">
+          <div className="admin-user-management-modal-column left">
+            <AppBar>
+              <AppBarTitle>Info</AppBarTitle>
+            </AppBar>
+            <div style={{padding: '16px 24px'}}>
+              <FormLabel
+                className="admin-user-management-new-user-email-container"
+                label="Email"
+                htmlFor="admin-user-management-new-user-email"
+                input={<InputBox
+                  type="text"
+                  width="100%"
+                  className="admin-user-management-new-user-email-field"
+                  id="admin-user-management-new-user-email"
+                  value={activeModal.data.email}
+                  onChange={e => onUpdateNewUser('email', e.target.value)}
+                />}
+              />
+            </div>
+            <div className="admin-user-management-new-user-section-header">
+              Roles
+            </div>
+            <div style={{padding: 24}}>
+              {manageableRoles.map(role => (
+                <div key={role}>
+                  <RadioButtonContext.Provider value='USER_FORM'>
+                    <RadioButton
+                      name="admin-user-management-new-user-role"
+                      checked={activeModal.data.role === role}
+                      onChange={e => onUpdateNewUser('role', role)}
+                      value={role}
+                      text={ROLE_INFO[role].label} />
+                  </RadioButtonContext.Provider>
+                  <div className="admin-user-management-new-user-role-description">
+                    {ROLE_INFO[role].description}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div style={{padding: '16px 24px'}}>
-            <FormLabel
-              className="admin-user-management-new-user-email-container"
-              label="Email"
-              htmlFor="admin-user-management-new-user-email"
-              input={<InputBox
-                type="text"
-                width="100%"
-                className="admin-user-management-new-user-email-field"
-                id="admin-user-management-new-user-email"
-                value={activeModal.data.email}
-                onChange={e => onUpdateNewUser('email', e.target.value)}
-              />}
+          <div className="admin-user-management-modal-column right">
+            <AdminSpacePermissionsPicker
+              spaces={spaces}
+              initialSelectedSpaceIds={[]}
             />
           </div>
-          <div className="admin-user-management-new-user-section-header">
-            Roles
-          </div>
-          <div style={{padding: 24}}>
-            {manageableRoles.map(role => (
-              <div>
-                <RadioButtonContext.Provider value='USER_FORM'>
-                  <RadioButton
-                    name="admin-user-management-new-user-role"
-                    checked={activeModal.data.role === role}
-                    onChange={e => onUpdateNewUser('role', role)}
-                    value={role}
-                    text={ROLE_INFO[role].label} />
-                </RadioButtonContext.Provider>
-                <div className="admin-user-management-new-user-role-description">
-                  {ROLE_INFO[role].description}
-                </div>
-              </div>
-            ))}
-          </div>
-          <AppBarContext.Provider value="BOTTOM_ACTIONS">
-            <AppBar>
-              <AppBarSection></AppBarSection>
-              <AppBarSection>
-                <CancelLink onClick={onCancelAddUser} />
-                <Button
-                  type="primary"
-                  disabled={!(activeModal.data.email && activeModal.data.role)}
-                  onClick={() => onSaveNewUser(activeModal.data)}
-                >
-                  Save
-                </Button>
-              </AppBarSection>
-            </AppBar>
-          </AppBarContext.Provider>
         </div>
+        <AppBarContext.Provider value="BOTTOM_ACTIONS">
+          <AppBar>
+            <AppBarSection></AppBarSection>
+            <AppBarSection>
+              <CancelLink onClick={onCancelAddUser} />
+              <Button
+                type="primary"
+                disabled={!(activeModal.data.email && activeModal.data.role)}
+                onClick={() => onSaveNewUser(activeModal.data)}
+              >
+                Save
+              </Button>
+            </AppBarSection>
+          </AppBar>
+        </AppBarContext.Provider>
       </Modal>
     ) : null}
 
@@ -243,18 +244,16 @@ export function AdminUserManagement({
         </ListView>
       </div>
     </AppScrollView>
-
-    <AdminSpacePermissionsPicker spaces={spaces} initialSelectedSpaceIds={[]} />
   </Fragment>;
 }
 
 export default connect((state: any) => {
   return {
+    spaces: state.spaces,
     users: state.users,
     user: state.user,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
-    spaces: state.spaces,
   };
 }, dispatch => {
   return {

@@ -33,3 +33,12 @@
   color: $gray-cinder;
 }
 
+
+.admin-user-management-modal-columns {
+  display: flex;
+  flex-direction: row;
+}
+.admin-user-management-modal-column {
+  display: flex;
+  flex-direction: column;
+}

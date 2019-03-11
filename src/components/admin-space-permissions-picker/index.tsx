@@ -1,4 +1,5 @@
 import React, { Fragment, Component } from 'react';
+import classnames from 'classnames';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 
 import {
@@ -82,7 +83,7 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                 <InputBox
                   leftIcon={<Icons.Search width={16} height={16} />}
                   placeholder={`ex. "Flex Office", "New York"`}
-                  width={selectAllInDeselectState ? 248 : 260}
+                  width={248}
                   value={searchQuery}
                   onChange={e => this.setState({searchQuery: e.target.value})}
                 />
@@ -120,14 +121,16 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
         <div className="admin-space-permissions-picker-body">
           <ul>
             {hierarchy.map(item => (
-              <li
+              <div
                 key={item.space.id}
+                className={`admin-space-permissions-picker-list-item depth-${item.depth}`}
                 style={{marginLeft: item.depth * 24}}
               >
                 <input
                   type="checkbox"
-                  disabled={enabled ? false : true}
+                  disabled={!enabled}
                   checked={enabled ? selectedSpaceIds.includes(item.space.id) : true}
+                  id={`admin-space-permissions-picker-space-${item.space.id}`}
                   onChange={e => {
                     if (e.target.checked) {
                       this.setState(s => ({
@@ -140,8 +143,24 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                     }
                   }}
                 />
-                {item.space.name}
-              </li>
+                <label htmlFor={`admin-space-permissions-picker-space-${item.space.id}`}>
+                  {item.space.spaceType === 'building' ? (
+                    <span className="admin-space-permissions-picker-list-item-icon">
+                      <Icons.Building />
+                    </span>
+                  ) : null}
+                  {item.space.spaceType === 'floor' ? (
+                    <span className="admin-space-permissions-picker-list-item-icon">
+                      <Icons.Folder />
+                    </span>
+                  ) : null}
+                  <span className={classnames('admin-space-permissions-picker-list-item-name', {
+                    'bold': ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                  })}>
+                    {item.space.name}
+                  </span>
+                </label>
+              </div>
             ))}
           </ul>
         </div>

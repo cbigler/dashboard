@@ -1,10 +1,4 @@
 .admin-space-permissions-picker {
-  position: absolute;
-  z-index: 9999999999999999999;
-  top: 100px;
-  left: 100px;
-  border: 1px solid red;
-
   display: flex;
   flex-direction: column;
   width: 391px;
@@ -14,9 +8,6 @@
 .admin-space-permissions-picker-body {
   background-color: $gray-lightest;
   overflow: auto;
-}
-
-.admin-space-permissions-space-item {
 }
 
 .admin-space-permissions-select-all-link {
@@ -29,3 +20,46 @@
   &:hover { opacity: 0.9; }
   &:active { opacity: 1; }
 }
+
+.admin-space-permissions-picker-body > ul {
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.admin-space-permissions-picker-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 16px;
+
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 24px;
+  cursor: pointer;
+}
+.admin-space-permissions-picker-list-item label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  width: 320px;
+
+  cursor: pointer;
+  user-select: none;
+}
+
+.admin-space-permissions-picker-list-item.depth-0 { border-top: 1px solid $gray; }
+.admin-space-permissions-picker-list-item.depth-0:first-of-type { border-top: 0px; }
+
+.admin-space-permissions-picker-list-item-icon {
+  margin-left: 8px;
+  transform: translate(0px, 2px);
+}
+.admin-space-permissions-picker-list-item-name {
+  margin-left: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-space-permissions-picker-list-item-name.bold { font-weight: bold; }
