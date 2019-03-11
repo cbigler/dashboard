@@ -257,7 +257,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 <RadioButton
                   text="Metric"
                   checked={this.state.measurementUnit === METRIC}
-                  onClick={() => {
+                  onChange={() => {
                     const numericalInputWidth = parseFloat(this.state.inputWidth);
                     const numericalInputHeight = parseFloat(this.state.inputHeight);
                     this.setState({
@@ -271,7 +271,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
               <RadioButton
                 text="Imperial"
                 checked={this.state.measurementUnit === IMPERIAL}
-                onClick={() => {
+                onChange={() => {
                   const numericalInputWidth = parseFloat(this.state.inputWidth);
                   const numericalInputHeight = parseFloat(this.state.inputHeight);
                   this.setState({
@@ -330,7 +330,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 <RadioButton
                   text="Yes"
                   checked={this.state.doorway.environment ? this.state.doorway.environment.clearance === true : false}
-                  onClick={() => this.setState({
+                  onChange={() => this.setState({
                     doorway: {
                       ...this.state.doorway,
                       environment: {...this.state.doorway.environment, clearance: true},
@@ -341,7 +341,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
               <RadioButton
                 text="No"
                 checked={this.state.doorway.environment ? this.state.doorway.environment.clearance === false : false}
-                onClick={() => this.setState({
+                onChange={() => this.setState({
                   doorway: {
                     ...this.state.doorway,
                     environment: {...this.state.doorway.environment, clearance: false},
@@ -363,7 +363,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             <RadioButton
               text="Power over Ethernet (803.2at PoE+)"
               checked={this.state.doorway.environment ? this.state.doorway.environment.powerType === POWER_OVER_ETHERNET : false}
-              onClick={() => this.setState({
+              onChange={() => this.setState({
                 doorway: {
                   ...this.state.doorway,
                   environment: {...this.state.doorway.environment, powerType: POWER_OVER_ETHERNET},
@@ -374,7 +374,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             <RadioButton
               text="Standard 100-240V AC outlet"
               checked={this.state.doorway.environment ? this.state.doorway.environment.powerType === AC_OUTLET : false}
-              onClick={() => this.setState({
+              onChange={() => this.setState({
                 doorway: {
                   ...this.state.doorway,
                   environment: {...this.state.doorway.environment, powerType: AC_OUTLET},

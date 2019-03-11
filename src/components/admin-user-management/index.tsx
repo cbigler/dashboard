@@ -152,7 +152,7 @@ export function AdminUserManagement({
                   <RadioButton
                     name="admin-user-management-new-user-role"
                     checked={activeModal.data.role === role}
-                    onClick={e => onUpdateNewUser('role', role)}
+                    onChange={e => onUpdateNewUser('role', role)}
                     value={role}
                     text={ROLE_INFO[role].label} />
                 </RadioButtonContext.Provider>
