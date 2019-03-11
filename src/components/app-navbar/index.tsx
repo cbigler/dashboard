@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -7,8 +7,14 @@ import { Icons } from '@density/ui';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
+import { ROLE_INFO } from '../admin-user-management';
+
 function getUserLabel(user) {
-  return `${user.organization.name}: ${user.fullName} (${user.role})`;
+  return <span style={{fontWeight: 'normal'}}>
+    <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
+    <span>{user.fullName}</span>{' '}
+    <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
+  </span>;
 }
 
 
@@ -150,25 +156,45 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
             text="Onboarding"
           /> : null}
         </ul>
-        {can(user, PERMISSION_CODES.impersonate) ? <ul className="app-navbar-center">
-          <li
-            className={classnames('app-navbar-item', { selected: user.data.impersonating})}
-            onClick={onClickImpersonate}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              paddingRight: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            <Icons.Security color={user.data.impersonating ? colorVariables.brandPrimaryNew : undefined} />
-          </li>
-          <li style={{listStyle: 'none'}}>{user.data.impersonating ? 
-            getUserLabel(user.data.impersonating) :
-            <span style={{color: colorVariables.gray}}>Impersonation off</span>
-          }</li>
-        </ul> : null}
         <ul className="app-navbar-right">
+
+          {/* Impersonation interface */}
+          {can(user, PERMISSION_CODES.impersonate) ? (
+            user.data.impersonating ?
+              <li
+                className={classnames('app-navbar-item', { showOnMobile: true })}
+                style={{cursor: 'pointer', opacity: 1}}
+              >
+                <a onClick={onClickImpersonate}>
+                  <span className="app-navbar-icon">{
+                    <svg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
+                      <g id='Symbols' fill='none' fillRule='evenodd'>
+                        <g id='navbar-/-icon-/-impersonation-(fill)'>
+                          <g id='IconSecurityFill'>
+                            <rect id='bounds' fillOpacity='0' fill='#E3E3E6' width='20' height='20'
+                            />
+                            <polygon id='Path' fill='#9B9B9B' fillRule='nonzero' points='10 0.209430585 19.910252 3.51284792 16.6496836 15.4682654 10 19.9013878 3.35031642 15.4682654 0.0897480056 3.51284792'
+                            />
+                            <circle id='Oval' fill='#FFF' cx='10' cy='7' r='3' />
+                            <path d='M5,14.5 C5,14.3338815 5.01620211,13.1715473 5.04711229,13.0144913 C5.27311546,11.866159 6.28540659,11 7.5,11 L12.5,11 C13.7163773,11 14.7298576,11.8687051 14.9538784,13.0195528 C14.984144,13.1750342 15,14.3356654 15,14.5 L10,18 L5,14.5 Z'
+                            id='Path' fill='#FFF' />
+                          </g>
+                        </g>
+                      </g>
+                    </svg>
+                  }</span>
+                  {getUserLabel(user.data.impersonating)}
+                </a>
+              </li>
+              : <AppNavbarItem
+                selected={false}
+                showOnMobile={true}
+                onClick={onClickImpersonate}
+                icon={<Icons.Security />}
+                text="Impersonate"
+                style={{cursor: 'pointer'}}
+              />
+          ) : null}
 
           {/* Mobile logout button */}
           <AppNavbarItem
@@ -176,7 +202,7 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
             showOnMobile={true}
             hideOnDesktop={true}
             path="#/logout"
-            style={{ marginRight: -32, marginTop: 4 }}
+            style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Logout />}
             text=""
           />

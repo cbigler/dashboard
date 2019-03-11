@@ -34,14 +34,14 @@ import Modal from '../modal';
 import ListView, { ListViewColumn } from '../list-view';
 import { CancelLink } from '../dialogger';
 
-const INVITATION_STATUS_LABELS = {
+export const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
   'pending': 'Pending',
   'expired': 'Expired',
   'accepted': 'Accepted',
 };
 
-const ROLE_INFO = {
+export const ROLE_INFO = {
   'owner': {
     label: 'Owner',
     description: 'Full access and all permissions, including developer tools.'
