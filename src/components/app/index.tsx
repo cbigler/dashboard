@@ -18,6 +18,7 @@ import Modal from '../modal';
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
+import userImpersonate from '../../actions/user/impersonate';
 
 import FormLabel from '../form-label';
 import Explore from '../explore/index';
@@ -49,6 +50,8 @@ function App({
   onStartImpersonate,
   onCancelImpersonate,
   onSelectImpersonateOrganization,
+  onSelectImpersonateUser,
+  onFinishImpersonate,
 }) {
   return (
     <div className="app">
@@ -70,12 +73,14 @@ function App({
               width="100%"
               className="modal-impersonate-organization-field"
               id="modal-impersonate-organization"
-              value={activeModal.data.selectedOrganization}
+              value={activeModal.data.selectedOrganization && activeModal.data.selectedOrganization.id}
+              onChange={selected => onSelectImpersonateOrganization(
+                activeModal.data.organizations.find(x => x.id === selected.id)
+              )}
               choices={activeModal.data.organizations.map(x => ({
                 id: x.id,
                 label: x.name
               }))}
-              onChange={onSelectImpersonateOrganization}
             />}
           />
           <FormLabel
@@ -87,19 +92,27 @@ function App({
               width="100%"
               className="modal-impersonate-user-field"
               id="modal-impersonate-user"
-              value={activeModal.data.selectedUser}
+              value={activeModal.data.selectedUser && activeModal.data.selectedUser.id}
+              onChange={selected => onSelectImpersonateUser(
+                activeModal.data.users.find(x => x.id === selected.id)
+              )}
               choices={activeModal.data.users.map(x => ({
                 id: x.id,
                 label: x.fullName
               }))}
-              onChange={value => alert(value)}
             />}
           />
         </div>
         <AppBarContext.Provider value="BOTTOM_ACTIONS">
           <AppBar>
             <AppBarSection></AppBarSection>
-            <AppBarSection><Button type="primary">Start Impersonating</Button></AppBarSection>
+            <AppBarSection>
+              <Button
+                type="primary"
+                disabled={!activeModal.data.selectedUser}
+                onClick={() => onFinishImpersonate(activeModal.data.selectedUser)}
+              >Start Impersonating</Button>
+            </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
       </Modal> : null}
@@ -212,9 +225,16 @@ export default connect((state: any) => {
     },
     onSelectImpersonateOrganization(org) {
       accounts.users.list().then(results => {
-        dispatch(updateModal('selectedOrganization', org.id));
+        dispatch(updateModal('selectedOrganization', org));
         dispatch(updateModal('users', results.map(objectSnakeToCamel)));
       });
+    },
+    onSelectImpersonateUser(user) {
+      dispatch(updateModal('selectedUser', user));
+    },
+    onFinishImpersonate(user) {
+      dispatch(userImpersonate(user));
+      dispatch(hideModal());
     }
   };
 })(App);

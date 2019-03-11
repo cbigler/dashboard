@@ -152,7 +152,7 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
         </ul>
         {can(user, PERMISSION_CODES.impersonate) ? <ul className="app-navbar-center">
           <li
-            className={classnames('app-navbar-item', { selected: user.impersonating})}
+            className={classnames('app-navbar-item', { selected: user.data.impersonating})}
             onClick={onClickImpersonate}
             style={{
               display: 'flex',
@@ -161,10 +161,10 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
               cursor: 'pointer'
             }}
           >
-            <Icons.Security />
+            <Icons.Security color={user.data.impersonating ? colorVariables.brandPrimaryNew : undefined} />
           </li>
-          <li style={{listStyle: 'none'}}>{user.impersonating ? 
-            getUserLabel(user.impersonating) :
+          <li style={{listStyle: 'none'}}>{user.data.impersonating ? 
+            getUserLabel(user.data.impersonating) :
             <span style={{color: colorVariables.gray}}>Impersonation off</span>
           }</li>
         </ul> : null}
