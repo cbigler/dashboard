@@ -42,3 +42,6 @@
   display: flex;
   flex-direction: column;
 }
+.admin-user-management-modal-column.left {
+  border-right: 1px solid $gray-lighter;
+}

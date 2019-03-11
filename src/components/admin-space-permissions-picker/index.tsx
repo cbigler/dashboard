@@ -11,8 +11,12 @@ import {
   Icons,
 } from '@density/ui';
 
-import { getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
+import { getChildrenOfSpace, getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
 import fuzzy from 'fuzzy';
+
+function deduplicate(array) {
+  return [ ...(new Set(array) as any) ];
+}
 
 function searchHierarchy(hierarchy, spaces: Array<{id: string, name: string}>, searchQuery: string) {
   let ids: Array<string> = [];
@@ -76,93 +80,112 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
             />
           </AppBarSection>
         </AppBar>
-        <AppBar>
-          {enabled ? (
-            <Fragment>
-              <AppBarSection>
-                <InputBox
-                  leftIcon={<Icons.Search width={16} height={16} />}
-                  placeholder={`ex. "Flex Office", "New York"`}
-                  width={248}
-                  value={searchQuery}
-                  onChange={e => this.setState({searchQuery: e.target.value})}
-                />
-              </AppBarSection>
-              {hierarchy.length > 0 ? (
+        <div className="admin-space-permissions-picker-body">
+          <AppBar>
+            {enabled ? (
+              <Fragment>
                 <AppBarSection>
-                  <span
-                    role="button"
-                    className="admin-space-permissions-select-all-link"
-                    onClick={() => {
-                      if (selectAllInDeselectState) {
-                        this.setState({
-                          selectedSpaceIds: selectedSpaceIds.filter(s => !hierarchySpaceIds.includes(s))
-                        });
+                  <InputBox
+                    leftIcon={<Icons.Search width={16} height={16} />}
+                    placeholder={`ex. "Flex Office", "New York"`}
+                    width={248}
+                    value={searchQuery}
+                    onChange={e => this.setState({searchQuery: e.target.value})}
+                  />
+                </AppBarSection>
+                {hierarchy.length > 0 ? (
+                  <AppBarSection>
+                    <span
+                      role="button"
+                      className="admin-space-permissions-select-all-link"
+                      onClick={() => {
+                        if (selectAllInDeselectState) {
+                          this.setState({
+                            selectedSpaceIds: selectedSpaceIds.filter(s => !hierarchySpaceIds.includes(s))
+                          });
+                        } else {
+                          this.setState({
+                            selectedSpaceIds: deduplicate([...selectedSpaceIds, ...hierarchySpaceIds]),
+                          });
+                        }
+                      }}
+                    >
+                      {selectAllInDeselectState ? 'Deselect All' : 'Select All'}
+                    </span>
+                  </AppBarSection>
+                ) : null}
+              </Fragment>
+            ) : (
+              <AppBarSection>
+                Has access to&nbsp;<strong>All Spaces</strong>
+              </AppBarSection>
+            )}
+          </AppBar>
+          {enabled ? (
+            <ul className="admin-space-permissions-picker-scroll">
+              {hierarchy.map(item => (
+                <div
+                  key={item.space.id}
+                  className={`admin-space-permissions-picker-list-item depth-${item.depth}`}
+                  style={{marginLeft: item.depth * 24}}
+                >
+                  <input
+                    type="checkbox"
+                    checked={enabled ? selectedSpaceIds.includes(item.space.id) : true}
+                    id={`admin-space-permissions-picker-space-${item.space.id}`}
+                    onChange={e => {
+                      if (e.target.checked) {
+                        // When selecting a space:
+                        // 1. Select the space itself
+                        // 2. Select all parents of the space
+                        // 3. Select all children of the space
+                        this.setState(s => ({
+                          selectedSpaceIds: deduplicate([
+                            ...s.selectedSpaceIds,
+
+                            item.space.id,
+                            ...getParentsOfSpace(spaces.data, item.space),
+                            ...getChildrenOfSpace(spaces.data, item.space),
+                          ]),
+                        }));
                       } else {
-                        this.setState({
-                          selectedSpaceIds: [
-                            ...(new Set([...selectedSpaceIds, ...hierarchySpaceIds]) as any)
-                          ],
-                        });
+                        // When deselecting a space:
+                        // 1. Deselect the space itself
+                        // 2. Select all children of the space
+                        // (leave parents alone)
+                        this.setState(s => ({
+                          selectedSpaceIds: s.selectedSpaceIds.filter(n => {
+                            const includesSpaceId = [
+                              item.space.id,
+                              ...getChildrenOfSpace(spaces.data, item.space),
+                            ].includes(n);
+                            return !includesSpaceId;
+                          }),
+                        }));
                       }
                     }}
-                  >
-                    {selectAllInDeselectState ? 'Deselect All' : 'Select All'}
-                  </span>
-                </AppBarSection>
-              ) : null}
-            </Fragment>
-          ) : (
-            <AppBarSection>
-              Has access to&nbsp;<strong>All Spaces</strong>
-            </AppBarSection>
-          )}
-        </AppBar>
-        <div className="admin-space-permissions-picker-body">
-          <ul>
-            {hierarchy.map(item => (
-              <div
-                key={item.space.id}
-                className={`admin-space-permissions-picker-list-item depth-${item.depth}`}
-                style={{marginLeft: item.depth * 24}}
-              >
-                <input
-                  type="checkbox"
-                  disabled={!enabled}
-                  checked={enabled ? selectedSpaceIds.includes(item.space.id) : true}
-                  id={`admin-space-permissions-picker-space-${item.space.id}`}
-                  onChange={e => {
-                    if (e.target.checked) {
-                      this.setState(s => ({
-                        selectedSpaceIds: [...s.selectedSpaceIds, item.space.id],
-                      }));
-                    } else {
-                      this.setState(s => ({
-                        selectedSpaceIds: s.selectedSpaceIds.filter(n => n !== item.space.id),
-                      }));
-                    }
-                  }}
-                />
-                <label htmlFor={`admin-space-permissions-picker-space-${item.space.id}`}>
-                  {item.space.spaceType === 'building' ? (
-                    <span className="admin-space-permissions-picker-list-item-icon">
-                      <Icons.Building />
+                  />
+                  <label htmlFor={`admin-space-permissions-picker-space-${item.space.id}`}>
+                    {item.space.spaceType === 'building' ? (
+                      <span className="admin-space-permissions-picker-list-item-icon">
+                        <Icons.Building />
+                      </span>
+                    ) : null}
+                    {item.space.spaceType === 'floor' ? (
+                      <span className="admin-space-permissions-picker-list-item-icon">
+                        <Icons.Folder />
+                      </span>
+                    ) : null}
+                    <span className={classnames('admin-space-permissions-picker-list-item-name', {
+                      'bold': ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                    })}>
+                      {item.space.name}
                     </span>
-                  ) : null}
-                  {item.space.spaceType === 'floor' ? (
-                    <span className="admin-space-permissions-picker-list-item-icon">
-                      <Icons.Folder />
-                    </span>
-                  ) : null}
-                  <span className={classnames('admin-space-permissions-picker-list-item-name', {
-                    'bold': ['campus', 'building', 'floor'].includes(item.space.spaceType),
-                  })}>
-                    {item.space.name}
-                  </span>
-                </label>
-              </div>
-            ))}
-          </ul>
+                  </label>
+                </div>
+              ))}
+            </ul>
+          ) : null}
         </div>
       </div>
     );
