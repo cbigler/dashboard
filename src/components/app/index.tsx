@@ -6,9 +6,11 @@ import {
   AppBarContext,
   AppBarSection,
   AppBarTitle,
+  AppScrollView,
   Button,
   InputBox,
 } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 import { accounts } from '../../client';
 
@@ -21,6 +23,8 @@ import updateModal from '../../actions/modal/update';
 import userImpersonate from '../../actions/user/impersonate';
 
 import FormLabel from '../form-label';
+import ListView, { ListViewColumn } from '../list-view';
+
 import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
@@ -57,12 +61,35 @@ function App({
     <div className="app">
       {/* Impersonation modal */}
       {activeModal.name === 'MODAL_IMPERSONATE' ? <Modal
-        width={480}
+        width={800}
         visible={activeModal.visible}
         onBlur={onCancelImpersonate}
         onEscape={onCancelImpersonate}
       >
-        <AppBar><AppBarSection><AppBarTitle>Impersonate</AppBarTitle></AppBarSection></AppBar>
+        <AppBar><AppBarTitle>Impersonate</AppBarTitle></AppBar>
+        <div style={{display: 'flex', maxHeight: 600}}>
+          <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
+            <AppBar><span style={{fontSize: 20}}>Organization</span></AppBar>
+            <AppBar><InputBox width="100%" /></AppBar>
+            <div style={{flexGrow: 1, overflowY: 'scroll', padding: '0 24px'}}>
+              <ListView data={activeModal.data.organizations}>
+                <ListViewColumn
+                  style={{flexGrow: 1}}
+                  template={item => <span>
+                    {item.name}
+                  </span>}
+                />
+              </ListView>
+            </div>
+          </div>
+          <div style={{flexGrow: 1, background: colorVariables.grayLightest}}>
+            <div style={{background: '#FFF'}}>
+              <AppBar><span style={{fontSize: 20}}>User</span></AppBar>
+            </div>
+            <AppBar><InputBox width="100%" /></AppBar>
+
+          </div>
+        </div>
         <div style={{padding: '24px'}}>
           <FormLabel
             className="modal-impersonate-organization-container"
