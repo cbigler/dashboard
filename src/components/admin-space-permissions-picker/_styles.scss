@@ -1,3 +1,31 @@
 .admin-space-permissions-picker {
+  position: absolute;
+  z-index: 9999999999999999999;
+  top: 100px;
+  left: 100px;
+  border: 1px solid red;
+
+  display: flex;
+  flex-direction: column;
+  width: 391px;
+  background-color: #fff;
+  height: 556px;
+}
+.admin-space-permissions-picker-body {
+  background-color: $gray-lightest;
   overflow: auto;
+}
+
+.admin-space-permissions-space-item {
+}
+
+.admin-space-permissions-select-all-link {
+  color: $brand-primary;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  font-size: 14px;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
 }

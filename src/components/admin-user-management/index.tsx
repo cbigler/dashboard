@@ -244,7 +244,7 @@ export function AdminUserManagement({
       </div>
     </AppScrollView>
 
-    <AdminSpacePermissionsPicker spaces={spaces} selectedSpaceIds={[]} />
+    <AdminSpacePermissionsPicker spaces={spaces} initialSelectedSpaceIds={[]} />
   </Fragment>;
 }
 
