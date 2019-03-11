@@ -16,7 +16,9 @@ export const PERMISSION_CODES = {
   // Permission to allow a user to manage readonly-level users
   readonly_user_manage: 'readonly_user_manage',
   // Permission to allow a user to access developer tools
-  developer_tool_manage: 'developer_tools_manage'
+  developer_tools_manage: 'developer_tools_manage',
+  // Permission to allow a user to list or view sensors
+  sensors_list: 'sensors_list'
 };
 
 export default function can(user, permission) {

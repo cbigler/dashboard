@@ -1,14 +1,15 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import {
-  DensityMark,
-  Icons,
-} from '@density/ui';
+import { Icons } from '@density/ui';
 
-import can from '../../helpers/permissions';
+import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
+
+function getUserLabel(user) {
+  return `${user.organization.name}: ${user.fullName} (${user.role})`;
+}
 
 
 // Context and components for app navbar menu
@@ -79,6 +80,7 @@ function AppNavbarItem({
   text,
   style = {},
   path = undefined as string | undefined,
+  onClick = undefined as ((event: any) => void) | undefined,
   hideOnDesktop = false
 }) {
   return (
@@ -86,7 +88,7 @@ function AppNavbarItem({
       className={classnames('app-navbar-item', { selected, showOnMobile, hideOnDesktop })}
       style={style}
     >
-      <a href={path}>
+      <a href={path} onClick={onClick}>
         {icon ? <span className="app-navbar-icon">
           {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
         </span> : null}
@@ -98,12 +100,12 @@ function AppNavbarItem({
 
 
 // Define the real app navbar here
-export default function AppNavbar({page, user, settings}) {
+export default function AppNavbar({page, user, settings, onClickImpersonate}) {
 
-  const showAdminMenu = can(user, 'developer_tools_manage') ||
-    can(user, 'owner_user_manage') ||
-    can(user, 'admin_user_manage') ||
-    can(user, 'readonly_user_manage');
+  const showAdminMenu = can(user, PERMISSION_CODES.developer_tools_manage) ||
+    can(user, PERMISSION_CODES.owner_user_manage) ||
+    can(user, PERMISSION_CODES.admin_user_manage) ||
+    can(user, PERMISSION_CODES.readonly_user_manage);
 
   return (
     <div className="app-navbar-container">
@@ -148,6 +150,24 @@ export default function AppNavbar({page, user, settings}) {
             text="Onboarding"
           /> : null}
         </ul>
+        {can(user, PERMISSION_CODES.impersonate) ? <ul className="app-navbar-center">
+          <li
+            className={classnames('app-navbar-item', { selected: user.impersonating})}
+            onClick={onClickImpersonate}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              paddingRight: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            <Icons.Security />
+          </li>
+          <li style={{listStyle: 'none'}}>{user.impersonating ? 
+            getUserLabel(user.impersonating) :
+            <span style={{color: colorVariables.gray}}>Impersonation off</span>
+          }</li>
+        </ul> : null}
         <ul className="app-navbar-right">
 
           {/* Mobile logout button */}
@@ -177,14 +197,14 @@ export default function AppNavbar({page, user, settings}) {
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {can(user, 'developer_tools_manage') ?
+              {can(user, PERMISSION_CODES.developer_tools_manage) ?
                 <AppNavbarMenuItem
                   path="#/admin/developer"
                   text="Developer"
                   icon={<Icons.Code />}
                   selected={['ADMIN_DEVELOPER'].includes(page)}
                 /> : null}
-              {can(user, 'sensors_list') ?
+              {can(user, PERMISSION_CODES.sensors_list) ?
                 <AppNavbarMenuItem
                   path="#/admin/device-status"
                   text="DPU Status"

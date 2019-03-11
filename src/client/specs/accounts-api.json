@@ -102,6 +102,12 @@
         "url": "{{{host}}}/sensors/me/"
       }
     },
+    "organizations": {
+      "list": {
+        "method": "GET",
+        "url": "{{{host}}}/organizations/"
+      }
+    },
     "tokens": {
       "list": {
         "method": "GET",
