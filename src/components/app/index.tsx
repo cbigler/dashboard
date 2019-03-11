@@ -6,9 +6,11 @@ import {
   AppBarContext,
   AppBarSection,
   AppBarTitle,
-  AppScrollView,
   Button,
+  Icons,
   InputBox,
+  RadioButton,
+  Switch,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -24,6 +26,7 @@ import userImpersonate from '../../actions/user/impersonate';
 
 import FormLabel from '../form-label';
 import ListView, { ListViewColumn } from '../list-view';
+import { CancelLink } from '../dialogger';
 
 import Explore from '../explore/index';
 import Login from '../login/index';
@@ -52,10 +55,11 @@ function App({
   settings,
   
   onStartImpersonate,
+  onFinishImpersonate,
   onCancelImpersonate,
+  onSetImpersonateEnabled,
   onSelectImpersonateOrganization,
   onSelectImpersonateUser,
-  onFinishImpersonate,
 }) {
   return (
     <div className="app">
@@ -66,79 +70,103 @@ function App({
         onBlur={onCancelImpersonate}
         onEscape={onCancelImpersonate}
       >
-        <AppBar><AppBarTitle>Impersonate</AppBarTitle></AppBar>
-        <div style={{display: 'flex', maxHeight: 600}}>
-          <div style={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
-            <AppBar><span style={{fontSize: 20}}>Organization</span></AppBar>
-            <AppBar><InputBox width="100%" /></AppBar>
-            <div style={{flexGrow: 1, overflowY: 'scroll', padding: '0 24px'}}>
-              <ListView data={activeModal.data.organizations}>
+        <AppBar>
+          <AppBarSection>
+            <AppBarTitle>User Impersonation</AppBarTitle>
+          </AppBarSection>
+          <AppBarSection>
+            <Switch
+              value={!!activeModal.data.enabled}
+              onChange={event => onSetImpersonateEnabled(event.target.checked)}
+            />
+          </AppBarSection>
+        </AppBar>
+        <div style={{display: 'flex', maxHeight: 480}}>
+          <div style={{
+            width: '50%',
+            display: 'flex',
+            flexDirection: 'column',
+            borderRight: `1px solid ${colorVariables.grayLight}`
+          }}>
+            <AppBar>
+              <span style={{fontSize: 20}}>Organization</span>
+            </AppBar>
+            <AppBar>
+              <InputBox
+                width="100%"
+                placeholder='ex: "Density Dev", "Acme Co"'
+                leftIcon={<Icons.Search color={colorVariables.gray} />}
+                disabled={!activeModal.data.enabled} />
+            </AppBar>
+            <div style={{
+              flexGrow: 1,
+              padding: '0 24px',
+              overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
+            }}>
+              <ListView data={activeModal.data.organizations} showHeaders={false}>
                 <ListViewColumn
                   style={{flexGrow: 1}}
-                  template={item => <span>
-                    {item.name}
-                  </span>}
+                  template={item => <RadioButton
+                    name="modal-impersonate-organization"
+                    checked={(activeModal.data.selectedOrganization || {}).id === item.id}
+                    disabled={!activeModal.data.enabled}
+                    value={item.id}
+                    text={item.name}
+                    onChange={event => onSelectImpersonateOrganization(
+                      activeModal.data.organizations.find(x => x.id === event.target.value)
+                    )} />}
                 />
               </ListView>
             </div>
           </div>
-          <div style={{flexGrow: 1, background: colorVariables.grayLightest}}>
-            <div style={{background: '#FFF'}}>
-              <AppBar><span style={{fontSize: 20}}>User</span></AppBar>
+          <div style={{
+            width: '50%',
+            display: 'flex',
+            flexDirection: 'column',
+            background: colorVariables.grayLightest
+          }}>
+            <div style={{background: '#FFF'}}><AppBar>
+              <span style={{fontSize: 20}}>User</span>
+            </AppBar></div>
+            <AppBar>
+              <InputBox
+                width="100%"
+                placeholder='ex: "John Denver"'
+                leftIcon={<Icons.Search color={colorVariables.gray} />}
+                disabled={!activeModal.data.enabled} />
+            </AppBar>
+            <div style={{
+              flexGrow: 1,
+              padding: '0 24px',
+              overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
+            }}>
+              <ListView data={activeModal.data.users} showHeaders={false}>
+                <ListViewColumn
+                  style={{flexGrow: 1}}
+                  template={item => <RadioButton
+                    name="modal-impersonate-user"
+                    checked={(activeModal.data.selectedUser || {}).id === item.id}
+                    disabled={!activeModal.data.enabled}
+                    value={item.id}
+                    text={item.fullName}
+                    onChange={event => onSelectImpersonateUser(
+                      activeModal.data.users.find(x => x.id === event.target.value)
+                    )} />}
+                />
+              </ListView>
             </div>
-            <AppBar><InputBox width="100%" /></AppBar>
-
           </div>
-        </div>
-        <div style={{padding: '24px'}}>
-          <FormLabel
-            className="modal-impersonate-organization-container"
-            label="Organization"
-            htmlFor="modal-impersonate-organization"
-            input={<InputBox
-              type="select"
-              width="100%"
-              className="modal-impersonate-organization-field"
-              id="modal-impersonate-organization"
-              value={activeModal.data.selectedOrganization && activeModal.data.selectedOrganization.id}
-              onChange={selected => onSelectImpersonateOrganization(
-                activeModal.data.organizations.find(x => x.id === selected.id)
-              )}
-              choices={activeModal.data.organizations.map(x => ({
-                id: x.id,
-                label: x.name
-              }))}
-            />}
-          />
-          <FormLabel
-            className="modal-impersonate-user-container"
-            label="User"
-            htmlFor="modal-impersonate-user"
-            input={<InputBox
-              type="select"
-              width="100%"
-              className="modal-impersonate-user-field"
-              id="modal-impersonate-user"
-              value={activeModal.data.selectedUser && activeModal.data.selectedUser.id}
-              onChange={selected => onSelectImpersonateUser(
-                activeModal.data.users.find(x => x.id === selected.id)
-              )}
-              choices={activeModal.data.users.map(x => ({
-                id: x.id,
-                label: x.fullName
-              }))}
-            />}
-          />
         </div>
         <AppBarContext.Provider value="BOTTOM_ACTIONS">
           <AppBar>
             <AppBarSection></AppBarSection>
             <AppBarSection>
+              <CancelLink text="Cancel" onClick={onCancelImpersonate} />
               <Button
                 type="primary"
                 disabled={!activeModal.data.selectedUser}
                 onClick={() => onFinishImpersonate(activeModal.data.selectedUser)}
-              >Start Impersonating</Button>
+              >Save Settings</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -247,8 +275,15 @@ export default connect((state: any) => {
         }));
       });
     },
+    onFinishImpersonate(user) {
+      dispatch(userImpersonate(user));
+      dispatch(hideModal());
+    },
     onCancelImpersonate() {
       dispatch(hideModal());
+    },
+    onSetImpersonateEnabled(value) {
+      dispatch(updateModal('enabled', value));
     },
     onSelectImpersonateOrganization(org) {
       accounts.users.list().then(results => {
@@ -258,10 +293,6 @@ export default connect((state: any) => {
     },
     onSelectImpersonateUser(user) {
       dispatch(updateModal('selectedUser', user));
-    },
-    onFinishImpersonate(user) {
-      dispatch(userImpersonate(user));
-      dispatch(hideModal());
     }
   };
 })(App);
