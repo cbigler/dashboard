@@ -173,7 +173,7 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
                           <g id='IconSecurityFill'>
                             <rect id='bounds' fillOpacity='0' fill='#E3E3E6' width='20' height='20'
                             />
-                            <polygon id='Path' fill='#9B9B9B' fillRule='nonzero' points='10 0.209430585 19.910252 3.51284792 16.6496836 15.4682654 10 19.9013878 3.35031642 15.4682654 0.0897480056 3.51284792'
+                            <polygon id='Path' fill={colorVariables.brandPrimary} fillRule='nonzero' points='10 0.209430585 19.910252 3.51284792 16.6496836 15.4682654 10 19.9013878 3.35031642 15.4682654 0.0897480056 3.51284792'
                             />
                             <circle id='Oval' fill='#FFF' cx='10' cy='7' r='3' />
                             <path d='M5,14.5 C5,14.3338815 5.01620211,13.1715473 5.04711229,13.0144913 C5.27311546,11.866159 6.28540659,11 7.5,11 L12.5,11 C13.7163773,11 14.7298576,11.8687051 14.9538784,13.0195528 C14.984144,13.1750342 15,14.3356654 15,14.5 L10,18 L5,14.5 Z'
