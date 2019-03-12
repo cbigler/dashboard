@@ -108,6 +108,17 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         space,
       );
 
+      let multiWeekSelection = false;
+      if (spaces.filters.startDate) {
+        let startDate = moment(spaces.filters.startDate);
+        let endDate = moment(spaces.filters.endDate);
+        if (endDate.diff(startDate, 'days') > 7) {
+          multiWeekSelection = true;
+        }
+      }
+
+      console.log(multiWeekSelection)
+
       return <div className="explore-space-trends-page" ref={r => { this.container = r; }}>
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <ExploreFilterBar>
@@ -144,7 +155,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   }
                 })}
                 width={300}
-                onChange={value => onChangeTimeSegmentGroup(space, value.id)}
+                onChange={value => onChangeTimeSegmentGroup(space, value.id, spaces.filters)}
               />
             </ExploreFilterBarItem>
             <ExploreFilterBarItem label="Date Range">
@@ -172,7 +183,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                     formatInISOTime(startDate) !== spaces.filters.startDate || 
                     formatInISOTime(endDate) !== spaces.filters.endDate
                   ) {
-                    onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                    onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate), spaces.filters);
                   }
                 }}
                 // Within the component, store if the user has selected the start of end date picker
@@ -237,7 +248,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
                   metric="PEAKS"
-                  title="Hourly Breakdown - Average Peak Occupancy"
+                  title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
                   aggregation="AVERAGE"
                 />
               </div>
@@ -274,14 +285,14 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value) {
+    onChangeTimeSegmentGroup(space, value, spaceFilters) {
       dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
-      dispatch<any>(calculateTrendsModules(space));
+      dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
-    onChangeDateRange(space, startDate, endDate) {
+    onChangeDateRange(space, startDate, endDate, spaceFilters) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      dispatch<any>(calculateTrendsModules(space));
+      dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
   };
 })(ExploreSpaceTrends);
