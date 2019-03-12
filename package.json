@@ -63,7 +63,7 @@
     "start:react": "react-scripts start",
     "start:scss": "node-sass --importer node_modules/@density/node-sass-json-importer/dist/node-sass-json-importer.js --recursive --output src/built-css/ src/styles.scss && node-sass --importer node_modules/@density/node-sass-json-importer/dist/node-sass-json-importer.js --watch --recursive --output src/built-css/ --source-map true --source-map-contents src/styles.scss",
     "build": "node-sass --importer node_modules/@density/node-sass-json-importer/dist/node-sass-json-importer.js --recursive --output src/built-css/ src/styles.scss && react-scripts build",
-    "test": "react-scripts test --env=jsdom",
+    "test": "react-scripts test --env=jsdom --verbose=true",
     "eject": "react-scripts eject",
     "make-component": "./utilities/make-component",
     "make-helper": "./utilities/make-helper",
