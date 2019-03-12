@@ -290,7 +290,7 @@ eventSource.on('connected', async () => {
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces.results[index].id] = next.results.map(i => ({ 
+    acc[spaces.results[index].id] = next.data.results.map(i => ({ 
       countChange: i.direction,
       timestamp: i.timestamp
     }));

@@ -59,7 +59,7 @@ export default class WebsocketEventPusher extends EventEmitter {
       return false;
     }
 
-    if (!core().defaults.headers['Authorization']) {
+    if (!core().defaults.headers.common['Authorization']) {
       this.log(' ... NO TOKEN SET, NOT CONNECTING TO SOCKET.');
       return false;
     }
