@@ -34,6 +34,7 @@ import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/i
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
+import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
   findTimeSegmentsInTimeSegmentGroupForSpace,
@@ -108,16 +109,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         space,
       );
 
-      let multiWeekSelection = false;
-      if (spaces.filters.startDate) {
-        let startDate = moment(spaces.filters.startDate);
-        let endDate = moment(spaces.filters.endDate);
-        if (endDate.diff(startDate, 'days') > 7) {
-          multiWeekSelection = true;
-        }
-      }
-
-      console.log(multiWeekSelection)
+      const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
       return <div className="explore-space-trends-page" ref={r => { this.container = r; }}>
         {spaces.filters.startDate && spaces.filters.endDate ? (
