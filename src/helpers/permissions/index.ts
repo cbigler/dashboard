@@ -41,7 +41,6 @@ export default function can(user, permission) {
 }
 
 export function getManageableRoles(user) {
-  console.log('USER', user)
   const roles: string[] = [];
   if (can(user, PERMISSION_CODES.owner_user_manage)) { roles.push('owner'); }
   if (can(user, PERMISSION_CODES.admin_user_manage)) { roles.push('admin'); }

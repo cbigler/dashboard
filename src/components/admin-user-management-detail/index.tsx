@@ -1,9 +1,12 @@
-import React, { Fragment } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
+
+import showModal from '../../actions/modal/show';
+import collectionUsersDestroy from '../../actions/collection/users/destroy';
 
 import {
   AppBar,
@@ -16,134 +19,196 @@ import {
 } from '@density/ui';
 
 import FormLabel from '../form-label';
+import Dialogger from '../dialogger';
 
-export function AdminUserManagementDetail({spaces, user, users, selectedUser}) {
-  switch (users.view) {
-  case 'LOADING':
-    return (
-      <span>Loading state needs to be mocked out</span>
-    );
-  case 'ERROR':
-    return (
-      <span>Error state needs to be mocked out</span>
-    );
-  case 'VISIBLE':
-    return (
-      <div className="admin-user-management-detail">
-        <AppBar>
-          <AppBarTitle>
-            <a
-              role="button"
-              className="admin-user-management-detail-main-arrow"
-              href="#/admin/user-management"
-            >
-              <Icons.ArrowLeft />
-            </a>
-            <span className="admin-user-management-detail-main-title">Edit User</span>
-          </AppBarTitle>
-        </AppBar>
+type AdminUserManagementDetailProps = {
+  spaces: {
+    data: Array<any>,
+  },
+  users: {
+    view: 'LOADING' | 'ERROR' | 'VISIBLE',
+    data: Array<any>,
+    error: string,
+  },
+  user: any,
+  selectedUser: any,
+  onStartDeleteUser: (any) => any,
+};
 
-        <div className="admin-user-management-detail-columns">
-          <div className="admin-user-management-detail-column left">
-            <div className="admin-user-management-user-info">
-              <h1 className="admin-user-management-user-info-name">
-                {selectedUser.fullName || selectedUser.email}
-              </h1>
-              <span className="admin-user-management-user-info-email">{selectedUser.email}</span>
-              <div>
-                <span className="admin-user-management-user-info-role-tag">Owner</span>
+type AdminUserManagementDetailState = {
+  waitingForData: boolean,
+  fullName?: string,
+  email?: string,
+  role?: string,
+};
+
+export class AdminUserManagementDetail extends Component<AdminUserManagementDetailProps, AdminUserManagementDetailState> {
+  state = {
+    waitingForData: true,
+    fullName: '',
+    email: '',
+    role: '',
+  };
+
+  setInitialState = (selectedUser) => {
+    if (this.state.waitingForData && selectedUser) {
+      this.setState({
+        waitingForData: false,
+        fullName: selectedUser.fullName,
+        email: selectedUser.email,
+        role: selectedUser.role,
+      });
+    }
+  }
+
+  componentDidMount() {
+    this.setInitialState(this.props.selectedUser);
+  }
+  componentWillReceiveProps({selectedUser}) {
+    this.setInitialState(selectedUser);
+  }
+
+  render() {
+    const {
+      spaces,
+      user,
+      users,
+      selectedUser,
+      onStartDeleteUser,
+    } = this.props;
+
+    switch (users.view) {
+    case 'LOADING':
+      return (
+        <span>Loading state needs to be mocked out</span>
+      );
+    case 'ERROR':
+      return (
+        <span>Error state needs to be mocked out</span>
+      );
+    case 'VISIBLE':
+      return (
+        <div className="admin-user-management-detail">
+          {/* Display user delete confirmation dialog */}
+          <Dialogger />
+
+          <AppBar>
+            <AppBarTitle>
+              <a
+                role="button"
+                className="admin-user-management-detail-main-arrow"
+                href="#/admin/user-management"
+              >
+                <Icons.ArrowLeft />
+              </a>
+              <span className="admin-user-management-detail-main-title">Edit User</span>
+            </AppBarTitle>
+          </AppBar>
+
+          <div className="admin-user-management-detail-columns">
+            <div className="admin-user-management-detail-column left">
+              <div className="admin-user-management-user-info">
+                <h1 className="admin-user-management-user-info-name">
+                  {selectedUser.fullName || selectedUser.email}
+                </h1>
+                <span className="admin-user-management-user-info-email">{selectedUser.email}</span>
+                <div>
+                  <span className="admin-user-management-user-info-role-tag">Owner</span>
+                </div>
+                <ul className="admin-user-management-user-info-details">
+                  {selectedUser.lastLogin ? (
+                    <li>Last sign in: {moment.utc(selectedUser.lastLogin).fromNow()}</li>
+                  ) : (
+                    <li>User has never signed in</li>
+                  )}
+                  <li>Created: NEED DATE HERE</li>
+                </ul>
               </div>
-              <ul className="admin-user-management-user-info-details">
-                {selectedUser.lastLogin ? (
-                  <li>Last sign in: {moment.utc(selectedUser.lastLogin).fromNow()}</li>
-                ) : (
-                  <li>User has never signed in</li>
-                )}
-                <li>Created: NEED DATE HERE</li>
-              </ul>
             </div>
-          </div>
-          <div className="admin-user-management-detail-column right">
-            <div className="admin-user-management-detail-column-right-subcolumns">
-              <div className="admin-user-management-detail-column-right-subcolumn left">
-                <div className="admin-user-management-detail-card">
-                  <AppBar>
-                    <AppBarTitle>Info</AppBarTitle>
-                  </AppBar>
+            <div className="admin-user-management-detail-column right">
+              <div className="admin-user-management-detail-column-right-subcolumns">
+                <div className="admin-user-management-detail-column-right-subcolumn left">
+                  <div className="admin-user-management-detail-card">
+                    <AppBar>
+                      <AppBarTitle>Info</AppBarTitle>
+                    </AppBar>
 
-                  <div className="admin-user-management-detail-card-body">
-                    <FormLabel
-                      label="Name"
-                      htmlFor="admin-user-management-user-name"
-                      input={<InputBox
-                        type="text"
-                        width="100%"
-                        id="admin-user-management-user-name"
-                        value={selectedUser.fullName}
-                        onChange={console.log}
-                      />}
-                    />
-                    <FormLabel
-                      label="Email"
-                      htmlFor="admin-user-management-user-email"
-                      input={<InputBox
-                        type="text"
-                        width="100%"
-                        id="admin-user-management-user-email"
-                        value={selectedUser.email}
-                        onChange={console.log}
-                      />}
+                    <div className="admin-user-management-detail-card-body">
+                      <FormLabel
+                        label="Name"
+                        htmlFor="admin-user-management-user-name"
+                        input={<InputBox
+                          type="text"
+                          width="100%"
+                          id="admin-user-management-user-name"
+                          value={this.state.fullName}
+                          onChange={e => this.setState({fullName: e.target.value})}
+                        />}
+                      />
+                      <FormLabel
+                        label="Email"
+                        htmlFor="admin-user-management-user-email"
+                        input={<InputBox
+                          type="text"
+                          width="100%"
+                          id="admin-user-management-user-email"
+                          value={this.state.email}
+                          onChange={e => this.setState({email: e.target.value})}
+                        />}
+                      />
+                    </div>
+                  </div>
+                  <div className="admin-user-management-detail-card half-height">
+                    <AppBar>
+                      <AppBarTitle>Roles</AppBarTitle>
+                    </AppBar>
+                    <div className="admin-user-management-detail-card-body">
+                      <AdminUserManagementRoleRadioList
+                        user={user}
+                        value={this.state.role}
+                        onChange={role => this.setState({role})}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="admin-user-management-detail-column-right-subcolumn right">
+                  <div className="admin-user-management-detail-card">
+                    <AdminSpacePermissionsPicker
+                      spaces={spaces}
+                      initialSelectedSpaceIds={[]}
                     />
                   </div>
                 </div>
-                <div className="admin-user-management-detail-card half-height">
-                  <AppBar>
-                    <AppBarTitle>Roles</AppBarTitle>
-                  </AppBar>
-                  <div className="admin-user-management-detail-card-body">
-                    <AdminUserManagementRoleRadioList
-                      user={user}
-                      value={selectedUser.role}
-                      onChange={console.log}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="admin-user-management-detail-column-right-subcolumn right">
-                <div className="admin-user-management-detail-card">
-                  <AdminSpacePermissionsPicker
-                    spaces={spaces}
-                    initialSelectedSpaceIds={[]}
-                  />
-                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="admin-user-management-detail-bottom-app-bar">
-          <AppBarContext.Provider value="BOTTOM_ACTIONS">
-            <AppBar>
-              <AppBarSection>
-                delete button goes here?
-              </AppBarSection>
-              <AppBarSection>
-                <a
-                  className="admin-user-management-detail-cancel-link"
-                  role="button"
-                  href="#/admin/user-management"
-                >
-                  Cancel
-                </a>
-                <Button type="primary">Save User</Button>
-              </AppBarSection>
-            </AppBar>
-          </AppBarContext.Provider>
+          <div className="admin-user-management-detail-bottom-app-bar">
+            <AppBarContext.Provider value="BOTTOM_ACTIONS">
+              <AppBar>
+                <AppBarSection>
+                  <Button onClick={() => onStartDeleteUser(selectedUser)}>
+                    delete button goes here?
+                  </Button>
+                </AppBarSection>
+                <AppBarSection>
+                  <a
+                    className="admin-user-management-detail-cancel-link"
+                    role="button"
+                    href="#/admin/user-management"
+                  >
+                    Cancel
+                  </a>
+                  <Button type="primary">Save User</Button>
+                </AppBarSection>
+              </AppBar>
+            </AppBarContext.Provider>
+          </div>
         </div>
-      </div>
-    );
-  default:
-    return null;
+      );
+    default:
+      return null;
+    }
   }
 }
 
@@ -154,4 +219,12 @@ export default connect((state: any) => {
     user: state.user,
     selectedUser: state.users.data.find(user => user.id === state.users.selected),
   };
-}, dispatch => ({}))(AdminUserManagementDetail);
+}, dispatch => ({
+	onStartDeleteUser(user) {
+		dispatch<any>(showModal('MODAL_CONFIRM', {
+			prompt: 'Are you sure you want to delete this user?',
+			confirmText: 'Delete',
+			callback: () => dispatch<any>(collectionUsersDestroy(user)),
+		}));
+	},
+}))(AdminUserManagementDetail);

@@ -26,7 +26,6 @@ import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
 import collectionUsersCreate from '../../actions/collection/users/create';
 import collectionUsersUpdate from '../../actions/collection/users/update';
-import collectionUsersDestroy from '../../actions/collection/users/destroy';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
 import Dialogger from '../dialogger';
