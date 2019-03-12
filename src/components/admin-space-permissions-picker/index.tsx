@@ -56,27 +56,9 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
     };
   }
 
-  calculateDisabledSpaceIds = () => {
-    const { selectedSpaceIds } = this.state;
-    const { spaces } = this.props;
-
-    const parents = selectedSpaceIds.map(n => {
-      return spaces.data.find(s => s.id === n)
-        .ancestry
-        .map(s => s.id);
-    })
-
-    return deduplicate([
-      // All parents of selected spaces
-      ...parents.flat(),
-    ]);
-  }
-
   render() {
     const { spaces } = this.props;
     const { enabled, searchQuery, selectedSpaceIds } = this.state;
-
-    const disabledSpaceIds: any = []//this.calculateDisabledSpaceIds();
 
     let hierarchy = spaceHierarchyFormatter(spaces.data, {renderZeroItems: false});
     if (searchQuery.length > 0) {
@@ -149,7 +131,6 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                 >
                   <input
                     type="checkbox"
-                    disabled={disabledSpaceIds.includes(item.space.id)}
                     checked={selectedSpaceIds.includes(item.space.id)}
                     id={`admin-space-permissions-picker-space-${item.space.id}`}
                     onChange={e => {
