@@ -17,6 +17,7 @@
     "@density/reports": "^3.0.1",
     "@density/ui": "^12.0.0",
     "auth0-js": "^9.9.0",
+    "axios": "^0.18.0",
     "classnames": "^2.2.6",
     "debug": "^4.1.1",
     "ent": "^2.2.0",

@@ -21,7 +21,7 @@ export default function routeTransitionLiveSpaceList() {
       // Fetch a list of all spaces.
       core().get('/spaces'),
       // Fetch a list of all doorways.
-      core().get('/doorways?environment=true', {params: {environment: true}}),
+      core().get('/doorways', {params: {environment: true}}),
       // Fetch a list of all links.
       core().get('/links'),
     ]).then(([spaces, doorways, links]) => {

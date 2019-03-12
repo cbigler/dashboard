@@ -8,16 +8,15 @@ import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 import collectionSpacesFilter from '../collection/spaces/filter';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
-import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import fetchAllPages from '../../helpers/fetch-all-pages';
+import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
-import { getActiveEnvironments } from '../../components/environment-switcher/index';
-import { getGoSlow } from '../../components/environment-switcher/index';
+import { getActiveEnvironments, getGoSlow } from '../../components/environment-switcher';
 import fields from '../../fields';
 
 import { REPORTS } from '@density/reports';
@@ -251,6 +250,9 @@ export function calculateUtilization(space) {
         // required.
         page,
         page_size: 5000,
+
+        // Legacy "slow" queries
+        slow: getGoSlow(),
       }})
     ));
 

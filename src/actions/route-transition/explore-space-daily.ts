@@ -10,6 +10,7 @@ import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-defaul
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import core from '../../client/core';
+import { getGoSlow } from '../../components/environment-switcher/index';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -102,6 +103,7 @@ export function calculateFootTraffic(space) {
 
           page,
           page_size: 5000,
+          slow: getGoSlow(),
         }})
       ))).reverse();
     } catch (err) {

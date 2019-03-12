@@ -3,6 +3,7 @@ import 'moment-timezone';
 
 import fetchAllPages from '../fetch-all-pages/index';
 import core from '../../client/core';
+import { getGoSlow } from '../../components/environment-switcher';
 
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
@@ -194,6 +195,7 @@ export async function requestCountsForLocalRange(space, start, end, params={}) {
         end_time: formatInISOTime(subrange.end),
         page,
         page_size: 5000,
+        slow: getGoSlow(),
         ...params,
       }})
     ));

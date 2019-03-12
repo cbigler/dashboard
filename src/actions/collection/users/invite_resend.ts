@@ -10,7 +10,7 @@ export default function collectionUsersInviteResend(item) {
     dispatch({ type: COLLECTION_USERS_INVITE_RESEND, item });
 
     try {
-      await accounts().post(`/users/invite/resend/${item.id}`);
+      await accounts().put(`/users/invite/resend/${item.id}`);
       item.invitationStatus = 'pending';
       dispatch(collectionUsersPush(item));
       dispatch(showToast({

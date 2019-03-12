@@ -9,7 +9,7 @@ export default function collectionDoorwaysFetch() {
     dispatch({ type: COLLECTION_DOORWAYS_FETCH });
 
     try {
-      const response = await core().get('/doorways?environment=true', { params: {environment: true} });
+      const response = await core().get('/doorways', { params: {environment: true} });
       dispatch(collectionDoorwaysSet(response.data.results));
       return response.data;
     } catch (err) {

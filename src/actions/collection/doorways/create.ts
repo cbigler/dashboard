@@ -9,7 +9,7 @@ export default function collectionDoorwaysCreate(item) {
     dispatch({ type: COLLECTION_DOORWAYS_CREATE, item });
 
     try {
-      const response = await core().post('/doorways?environment=true', {
+      const response = await core().post('/doorways', {
         name: item.name,
         description: item.description,
         environment: item.environment ? {
@@ -18,6 +18,8 @@ export default function collectionDoorwaysCreate(item) {
           clearance: item.environment.clearance,
           power_type: item.environment.powerType,
         } : {},
+      }, { 
+        params: { environment: true }
       });
       dispatch(collectionDoorwaysPush(response.data));
       return response.data;

@@ -1,7 +1,11 @@
 import axios from 'axios';
+import { errorHandler } from './index';
 
 let _client = axios.create();
 let _slow = false;
+
+// Response interceptor for handling errors
+_client.interceptors.response.use(response => response, errorHandler);
 
 export function config({
   host = undefined as string | undefined,
