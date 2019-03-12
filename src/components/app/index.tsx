@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
+import AdminUserManagementDetail from '../admin-user-management-detail/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
@@ -65,6 +66,8 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_DEVELOPER":
   case "ADMIN_DEVICE_STATUS":
     return <Admin user={user} activePage={activePage} />;
+  case "ADMIN_USER_MANAGEMENT_DETAIL":
+    return <AdminUserManagementDetail />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":

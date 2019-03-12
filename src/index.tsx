@@ -55,6 +55,7 @@ import routeTransitionDashboardList from './actions/route-transition/dashboard-l
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
 import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
+import routeTransitionAdminUserManagementDetail from './actions/route-transition/admin-user-management-detail';
 import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
 import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
 
@@ -179,6 +180,7 @@ router.addRoute('account/forgot-password/:token', token => routeTransitionAccoun
 
 // Advanced account management (Administration)
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
+router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 

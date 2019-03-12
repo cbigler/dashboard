@@ -10,6 +10,8 @@ import { COLLECTION_USERS_PUSH } from '../../actions/collection/users/push';
 import { COLLECTION_USERS_DELETE } from '../../actions/collection/users/delete';
 import { COLLECTION_USERS_ERROR } from '../../actions/collection/users/error';
 
+import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
+
 
 const initialState = {
   view: 'VISIBLE',
@@ -22,6 +24,13 @@ const initialState = {
 
 export default function users(state=initialState, action) {
   switch (action.type) {
+
+  case ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL:
+    if (action.setLoading) {
+      return { ...state, selected: action.id, view: 'LOADING', loading: true };
+    } else {
+      return { ...state, selected: action.id };
+    }
 
   case COLLECTION_USERS_LOAD:
     return initialState;
@@ -39,6 +48,7 @@ export default function users(state=initialState, action) {
   case COLLECTION_USERS_PUSH:
     return {
       ...state,
+      view: 'VISIBLE',
       loading: false,
       data: [
         // Update existing items

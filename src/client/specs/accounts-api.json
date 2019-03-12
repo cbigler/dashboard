@@ -20,6 +20,10 @@
         "method": "GET",
         "url": "{{{host}}}/users/me/"
       },
+      "get": {
+        "method": "GET",
+        "url": "{{{host}}}/users/{{id}}/"
+      },
       "password": {
         "method": "POST",
         "url": "{{{host}}}/users/{{id}}{{^id}}me{{/id}}/password/",
