@@ -132,6 +132,7 @@ export function AdminUserManagement({
                   className="admin-user-management-new-user-email-field"
                   id="admin-user-management-new-user-email"
                   value={activeModal.data.email}
+                  placeholder="ex: stuart.little@density.io"
                   onChange={e => onUpdateNewUser('email', e.target.value)}
                 />}
               />
@@ -206,7 +207,7 @@ export function AdminUserManagement({
           <ListViewColumn title="Name" template={item => (
             <span className="admin-user-management-cell-value">{item.fullName}</span>
           )} />
-          <ListViewColumn 
+          <ListViewColumn
             title={<span style={{paddingLeft: 16}}>Role</span>}
             template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
               <InputBoxContext.Provider value="LIST_VIEW">
@@ -229,7 +230,7 @@ export function AdminUserManagement({
             title="Invitation"
             template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
           />
-          <ListViewColumn 
+          <ListViewColumn
             template={item => canResendInvitation(user, item) ? 'Resend' : ''}
             disabled={item => !canResendInvitation(user, item)}
             onClick={item => onResendInvitation(item)}
