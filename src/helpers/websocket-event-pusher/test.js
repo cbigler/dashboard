@@ -11,7 +11,7 @@ function timeout(delay) {
   return new Promise(r => realSetTimeout(r, delay));
 }
 
-describe('websocket-event-pusher', function() {
+describe.skip('websocket-event-pusher', function() {
   describe('with a connected socket', () => {
     // Before each test, connect to a mock socket.
     let clock, eventSource, wsResponse, wsMock;

@@ -71,7 +71,7 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
-export const store = storeFactory();
+const store = storeFactory();
 
 
 // ----------------------------------------------------------------------------
@@ -89,8 +89,8 @@ export const store = storeFactory();
 // `setServiceLocations`. The locations of all the services update.
 //
 function setServiceLocations(environments, goSlow) {
-  configCore({host: environments.core, goSlow});
-  configAccounts({host: environments.accounts});
+  configCore({host: environments.core, goSlow, store});
+  configAccounts({host: environments.accounts, store});
 }
 setServiceLocations(getActiveEnvironments(fields), getGoSlow()); /* step 1 above */
 

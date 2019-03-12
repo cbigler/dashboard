@@ -1,9 +1,8 @@
 import redirectAfterLogin from '../actions/miscellaneous/redirect-after-login';
 import sessionTokenUnset from '../actions/session-token/unset';
 import userError from '../actions/user/error';
-import { store } from '../index';
 
-export function errorHandler(error) {
+export function errorHandler(error, store) {
   if (error.response) {
     // If the user received a 403 with a body of 'invalid authentication credentials' in response to
     // any request, send them to the login page.  Redirect the user to the login page and remove the

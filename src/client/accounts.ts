@@ -2,14 +2,19 @@ import axios from 'axios';
 import { errorHandler } from './index';
 
 let _client = axios.create();
+let _store = null;
 
 // Response interceptor for handling errors
-_client.interceptors.response.use(response => response, errorHandler);
+_client.interceptors.response.use(
+  response => response,
+  error => errorHandler(error, _store)
+);
 
 export function config({
   host = undefined as string | undefined,
   token = undefined as string | undefined,
   impersonateUser = undefined as {id: string} | undefined,
+  store = undefined as any,
 }) {
   if (host !== undefined) {
     _client = axios.create({ baseURL: host });
@@ -19,6 +24,9 @@ export function config({
   }
   if (impersonateUser !== undefined) {
     _client.defaults.headers.common['X-Impersonate-User'] = impersonateUser;
+  }
+  if (store !== undefined) {
+    _store = store;
   }
 }
 
