@@ -56,9 +56,27 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
     };
   }
 
+  calculateDisabledSpaceIds = () => {
+    const { selectedSpaceIds } = this.state;
+    const { spaces } = this.props;
+
+    const parents = selectedSpaceIds.map(n => {
+      return spaces.data.find(s => s.id === n)
+        .ancestry
+        .map(s => s.id);
+    })
+
+    return deduplicate([
+      // All parents of selected spaces
+      ...parents.flat(),
+    ]);
+  }
+
   render() {
     const { spaces } = this.props;
     const { enabled, searchQuery, selectedSpaceIds } = this.state;
+
+    const disabledSpaceIds: any = []//this.calculateDisabledSpaceIds();
 
     let hierarchy = spaceHierarchyFormatter(spaces.data, {renderZeroItems: false});
     if (searchQuery.length > 0) {
@@ -131,14 +149,15 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                 >
                   <input
                     type="checkbox"
-                    checked={enabled ? selectedSpaceIds.includes(item.space.id) : true}
+                    disabled={disabledSpaceIds.includes(item.space.id)}
+                    checked={selectedSpaceIds.includes(item.space.id)}
                     id={`admin-space-permissions-picker-space-${item.space.id}`}
                     onChange={e => {
                       if (e.target.checked) {
                         // When selecting a space:
                         // 1. Select the space itself
                         // 2. Select all parents of the space
-                        // 3. Select all children of the space
+                        // 2. Select all children of the space
                         this.setState(s => ({
                           selectedSpaceIds: deduplicate([
                             ...s.selectedSpaceIds,
@@ -151,15 +170,13 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                       } else {
                         // When deselecting a space:
                         // 1. Deselect the space itself
-                        // 2. Select all children of the space
-                        // (leave parents alone)
+                        // 2. Deselect all of its children
                         this.setState(s => ({
                           selectedSpaceIds: s.selectedSpaceIds.filter(n => {
-                            const includesSpaceId = [
+                            return [
                               item.space.id,
                               ...getChildrenOfSpace(spaces.data, item.space),
-                            ].includes(n);
-                            return !includesSpaceId;
+                            ].indexOf(n) === -1;
                           }),
                         }));
                       }
