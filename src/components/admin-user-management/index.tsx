@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
+import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 
 import {
   AppBar,
@@ -14,12 +15,10 @@ import {
   Icons,
   InputBox,
   InputBoxContext,
-  RadioButton,
-  RadioButtonContext,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import can, { PERMISSION_CODES } from '../../helpers/permissions';
+import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
 import filterCollection from '../../helpers/filter-collection';
 
 import showModal from '../../actions/modal/show';
@@ -43,30 +42,7 @@ const INVITATION_STATUS_LABELS = {
   'accepted': 'Accepted',
 };
 
-const ROLE_INFO = {
-  'owner': {
-    label: 'Owner',
-    description: 'Full access and all permissions, including developer tools.'
-  },
-  'admin': {
-    label: 'Admin',
-    description: 'Edit spaces and users. Cannot access developer tools.'
-  },
-  'readonly': {
-    label: 'Read-Only',
-    description: 'Cannot make changes to spaces or users.'
-  },
-}
-
 const userFilter = filterCollection({fields: ['email', 'fullName']});
-
-function getManageableRoles(user) {
-  const roles: string[] = [];
-  if (can(user, PERMISSION_CODES.owner_user_manage)) { roles.push('owner'); }
-  if (can(user, PERMISSION_CODES.admin_user_manage)) { roles.push('admin'); }
-  if (can(user, PERMISSION_CODES.readonly_user_manage)) { roles.push('readonly'); }
-  return roles;
-}
 
 function canResendInvitation(user, item) {
   return ['unsent', 'pending'].includes(item.invitationStatus) && item.id !== user.data.id;
@@ -85,7 +61,6 @@ export function AdminUserManagement({
   onSaveNewUser,
   onChangeUserRole,
   onResendInvitation,
-  onStartDeleteUser,
   onUpdateUsersFilter,
 }) {
   // Stop here if user is still loading
@@ -140,21 +115,11 @@ export function AdminUserManagement({
               Roles
             </div>
             <div style={{padding: 24}}>
-              {manageableRoles.map(role => (
-                <div key={role}>
-                  <RadioButtonContext.Provider value='USER_FORM'>
-                    <RadioButton
-                      name="admin-user-management-new-user-role"
-                      checked={activeModal.data.role === role}
-                      onChange={e => onUpdateNewUser('role', role)}
-                      value={role}
-                      text={ROLE_INFO[role].label} />
-                  </RadioButtonContext.Provider>
-                  <div className="admin-user-management-new-user-role-description">
-                    {ROLE_INFO[role].description}
-                  </div>
-                </div>
-              ))}
+              <AdminUserManagementRoleRadioList
+                user={user}
+                value={activeModal.data.role}
+                onChange={role => onUpdateNewUser('role', role)}
+              />
             </div>
           </div>
           <div className="admin-user-management-modal-column right">
@@ -200,11 +165,10 @@ export function AdminUserManagement({
     <AppScrollView>
       <div className="admin-user-management-list">
         <ListView data={filteredUsers}>
-          <ListViewColumn title="Email" template={item => (
-            <strong className="admin-user-management-cell-value">{item.email}</strong>
-          )} />
-          <ListViewColumn title="Name" template={item => (
-            <span className="admin-user-management-cell-value">{item.fullName}</span>
+          <ListViewColumn title="User" template={item => (
+            <strong className="admin-user-management-cell-value">
+              {item.fullName} - {item.email}
+            </strong>
           )} />
           <ListViewColumn 
             title={<span style={{paddingLeft: 16}}>Role</span>}
@@ -227,7 +191,9 @@ export function AdminUserManagement({
           }} />
           <ListViewColumn
             title="Invitation"
-            template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
+            template={item => (
+              <span>{INVITATION_STATUS_LABELS[item.invitationStatus]}</span>
+            )}
           />
           <ListViewColumn 
             template={item => canResendInvitation(user, item) ? 'Resend' : ''}
@@ -235,11 +201,19 @@ export function AdminUserManagement({
             onClick={item => onResendInvitation(item)}
           />
           <ListViewColumn
-            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
-              <Icons.Trash color={colorVariables.grayDarker} />
-            </div>}
+            title="Space Access"
+            template={item =><span>All Spaces</span>}
+          />
+          <ListViewColumn
+            title="Actions"
+            template={item => (
+              <span
+                role="button"
+                className="admin-user-management-edit-user"
+              >Edit User</span>
+            )}
             disabled={item => item.id === user.data.id}
-            onClick={item => onStartDeleteUser(item)}
+            onClick={item => { window.location.href = `#/admin/user-management/${item.id}` }}
           />
         </ListView>
       </div>
@@ -272,13 +246,6 @@ export default connect((state: any) => {
     },
     onChangeUserRole(user, role) {
       (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
-    },
-    onStartDeleteUser(user) {
-      (dispatch as any)(showModal('MODAL_CONFIRM', {
-        prompt: 'Are you sure you want to delete this user?',
-        confirmText: 'Delete',
-        callback: () => (dispatch as any)(collectionUsersDestroy(user))
-      }));
     },
     onCancelDeleteUser() {
       (dispatch as any)(hideModal());

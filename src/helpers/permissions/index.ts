@@ -19,7 +19,33 @@ export const PERMISSION_CODES = {
   developer_tool_manage: 'developer_tools_manage'
 };
 
+export const ROLE_INFO = {
+  'owner': {
+    label: 'Owner',
+    description: 'Full access and all permissions, including developer tools.'
+  },
+  'admin': {
+    label: 'Admin',
+    description: 'Edit spaces and users. Cannot access developer tools.'
+  },
+  'readonly': {
+    label: 'Read-Only',
+    description: 'Cannot make changes to spaces or users.'
+  },
+};
+
+
 export default function can(user, permission) {
   if (user.loading || user.error || !user.data) { return false; }
   return user.data.permissions.indexOf(permission) > -1;
 }
+
+export function getManageableRoles(user) {
+  console.log('USER', user)
+  const roles: string[] = [];
+  if (can(user, PERMISSION_CODES.owner_user_manage)) { roles.push('owner'); }
+  if (can(user, PERMISSION_CODES.admin_user_manage)) { roles.push('admin'); }
+  if (can(user, PERMISSION_CODES.readonly_user_manage)) { roles.push('readonly'); }
+  return roles;
+}
+

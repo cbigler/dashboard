@@ -33,6 +33,13 @@
   color: $gray-cinder;
 }
 
+.admin-user-management-edit-user {
+  color: $brand-primary;
+  user-select: none;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
+}
+
 
 .admin-user-management-modal-columns {
   display: flex;
