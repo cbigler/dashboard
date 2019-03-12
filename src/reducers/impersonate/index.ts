@@ -1,4 +1,5 @@
 
+import impersonateHeaderReducerEnhancer from '../../helpers/impersonate-header-reducer-enhancer';
 import { IMPERSONATE_SET } from '../../actions/impersonate';
 
 const initialState = {
@@ -9,7 +10,7 @@ const initialState = {
   selectedUser: null
 };
 
-export default function impersonate(state=initialState, action) {
+export function impersonate(state=initialState, action) {
   switch (action.type) {
   case IMPERSONATE_SET:
     return action.data ? action.data : initialState;
@@ -17,3 +18,5 @@ export default function impersonate(state=initialState, action) {
     return state;
   }
 }
+
+export default impersonateHeaderReducerEnhancer(impersonate);
