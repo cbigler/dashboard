@@ -1,6 +1,6 @@
 import collectionDoorwaysPush from './push';
 import collectionDoorwaysError from './error';
-import { core } from '../../../client';
+import core from '../../../client/core';
 
 export const COLLECTION_DOORWAYS_CREATE = 'COLLECTION_DOORWAYS_CREATE';
 
@@ -9,8 +9,7 @@ export default function collectionDoorwaysCreate(item) {
     dispatch({ type: COLLECTION_DOORWAYS_CREATE, item });
 
     try {
-      const response = await core.doorways.create({
-        id: item.id,
+      const response = await core().post('/doorways?environment=true', {
         name: item.name,
         description: item.description,
         environment: item.environment ? {
@@ -20,8 +19,8 @@ export default function collectionDoorwaysCreate(item) {
           power_type: item.environment.powerType,
         } : {},
       });
-      dispatch(collectionDoorwaysPush(response));
-      return response;
+      dispatch(collectionDoorwaysPush(response.data));
+      return response.data;
     } catch (err) {
       dispatch(collectionDoorwaysError(err));
       return false;

@@ -2,7 +2,7 @@ import moment from 'moment';
 import 'moment-timezone';
 
 import fetchAllPages from '../fetch-all-pages/index';
-import { core } from '../../client';
+import core from '../../client/core';
 
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
@@ -189,14 +189,13 @@ export async function requestCountsForLocalRange(space, start, end, params={}) {
   const subranges = splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, params);
   return await subranges.map(async subrange => {
     return await fetchAllPages(page => (
-      core.spaces.counts({
-        id: space.id,
+      core().get(`/spaces/${space.id}/counts`, { params: {
         start_time: formatInISOTime(subrange.start),
         end_time: formatInISOTime(subrange.end),
         page,
         page_size: 5000,
         ...params,
-      })
+      }})
     ));
   }).reduce((promise, request, index) => {
     return promise.then(async results => {

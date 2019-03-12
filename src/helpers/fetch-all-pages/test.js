@@ -29,7 +29,7 @@ describe('fetch-all-pages', function() {
 
     assert.deepEqual(await fetchAllPages(asyncMock), []);
   });
-  it('should fetch a core.spaces.allCounts response, which is an object with arrays', async function() {
+  it('should fetch a "batch counts" response, which is an object with arrays', async function() {
     const asyncMock = sinon.stub();
     asyncMock.onCall(0).resolves({
       next: 'https://api.density.io/v2/spaces?page=2',

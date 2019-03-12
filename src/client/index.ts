@@ -32,8 +32,6 @@ async function errorHandler(response) {
 }
 
 const core = clientele({...require('./specs/core-api'), errorFormatter: errorHandler});
-const accounts = clientele({...require('./specs/accounts-api'), errorFormatter: errorHandler});
-const metrics = clientele({...require('./specs/metrics-api'), errorFormatter: errorHandler});
 
 const defaultCounts = core.spaces.counts;
 core.spaces.counts = function(data) {
@@ -46,85 +44,3 @@ core.spaces.allCounts = function(data) {
   data.slow = getGoSlow() ? 'true' : undefined;
   return defaultAllCounts(data);
 };
-
-core.doorways.create = function(data) {
-  return fetch(`${core.config().core}/doorways?environment=True`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${core.config().token}`,
-    },
-    body: JSON.stringify(data),
-  }).then(async response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return Promise.reject(await errorHandler(response));
-    }
-  });
-};
-
-core.doorways.update = function(data) {
-  return fetch(`${core.config().core}/doorways/${data.id}?environment=True`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `Bearer ${core.config().token}`,
-    },
-    body: JSON.stringify(data),
-  }).then(async response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return Promise.reject(await errorHandler(response));
-    }
-  });
-};
-
-accounts.users.register = (data) => {
-  return fetch(`${accounts.config().host}/users/register/`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    },
-    body: JSON.stringify(data),
-  }).then(async response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return Promise.reject(await errorHandler(response));
-    }
-  });
-};
-
-accounts.tokens.auth0_exchange = (token) => {
-  return fetch(`${accounts.config().host}/tokens/exchange/auth0/`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-      'Authorization': `JWT ${token}`
-    },
-  }).then(async response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      return Promise.reject(await errorHandler(response));
-    }
-  });
-};
-
-
-
-export {
-  core,
-  accounts,
-  metrics,
-
-  setStore,
-};
-
-export default core;

@@ -5,7 +5,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 import './built-css/styles.css';
-import { core, accounts, setStore as setStoreInApiClientModule } from './client';
+
+import core, { config as configCore } from './client/core';
+import accounts, { config as configAccounts } from './client/accounts';
+
 import ReactGA from 'react-ga';
 import moment from 'moment';
 import queryString from 'qs';
@@ -86,8 +89,8 @@ export const store = storeFactory();
 // `setServiceLocations`. The locations of all the services update.
 //
 function setServiceLocations(environments, goSlow) {
-  core.config({core: environments.core, goSlow});
-  accounts.config({host: environments.accounts});
+  configCore({host: environments.core, goSlow});
+  configAccounts({host: environments.accounts});
 }
 setServiceLocations(getActiveEnvironments(fields), getGoSlow()); /* step 1 above */
 
@@ -197,8 +200,10 @@ function preRouteAuthentication() {
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
-    accounts.tokens.auth0_exchange(accessTokenMatch[1]).then(token => {
-      store.dispatch<any>(sessionTokenSet(token)).then(data => {
+    accounts().post('/tokens/exchange/auth0', null, {
+      headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
+    }).then(response => {
+      store.dispatch<any>(sessionTokenSet(response.data)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
       })
@@ -221,13 +226,13 @@ function preRouteAuthentication() {
   // Otherwise, fetch the logged in user's info since there's a session token available.
   } else {
     // Look up the user info before we can redirect to the landing page.
-    return accounts.users.me().then(user => {
-      if (user) {
+    return accounts().get('/users/me').then(response => {
+      if (response.data) {
         // A valid user object was returned, so add it to the store.
-        store.dispatch(userSet(user));
+        store.dispatch(userSet(response.data));
 
         // Then, navigate the user to the landing page.
-        unsafeNavigateToLandingPage(objectSnakeToCamel(user).organization.settings, null);
+        unsafeNavigateToLandingPage(objectSnakeToCamel(response.data).organization.settings, null);
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
         store.dispatch(redirectAfterLogin(locationHash));
@@ -236,7 +241,7 @@ function preRouteAuthentication() {
     });
   }
 }
-setStoreInApiClientModule(store);
+//setStoreInApiClientModule(store);
 preRouteAuthentication();
 
 // Add a helper into the global namespace to allow changing of settings flags on the fly.
@@ -274,15 +279,14 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = await core.spaces.list();
+  const spaces = (await core().get('/spaces')).data;
   store.dispatch(collectionSpacesSet(spaces.results));
 
   const spaceEventSets: any = await Promise.all(spaces.results.map(space => {
-    return core.spaces.events({
-      id: space.id,
+    return core().get(`/spaces/${space.id}/events`, { params: {
       start_time: moment.utc().subtract(1, 'minute').format(),
       end_time: moment.utc().format(),
-    });
+    }});
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
@@ -313,7 +317,7 @@ setInterval(async () => {
   const loggedIn = (store.getState() as any).sessionToken !== null;
 
   if (loggedIn) {
-    const spaces = await core.spaces.list();
+    const spaces = (await core().get('/spaces')).data;
     store.dispatch(collectionSpacesSet(spaces.results));
   }
 },  5 * 60 * 1000);

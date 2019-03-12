@@ -1,5 +1,5 @@
 import moment from 'moment';
-import { core } from '../../client';
+import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
@@ -52,9 +52,9 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // segment list.
 
     let errorThrown: any = false
-    let timeSegmentGroups;
+    let response;
     try {
-      timeSegmentGroups = await core.time_segment_groups.list();
+      response = await core().get('/time_segment_groups');
     } catch (err) {
       errorThrown = err;
     }
@@ -62,7 +62,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     if (errorThrown) {
       dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${errorThrown.message}`));
     } else {
-      dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups.results));
+      dispatch(collectionTimeSegmentGroupsSet(response.data.results));
     }
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
@@ -71,7 +71,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     let spaces, selectedSpace;
     try {
       spaces = (await fetchAllPages(
-        page => core.spaces.list({page, page_size: 5000})
+        page => core().get('/spaces', {params: {page, page_size: 5000}})
       )).map(objectSnakeToCamel);
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
@@ -167,7 +167,7 @@ export function calculateDailyMetrics(space) {
           interval: '1d',
           order: 'asc',
           page_size: 5000,
-          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? '' : selectedTimeSegmentGroup.id
+          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id
         },
       );
     } catch (error) {
@@ -237,13 +237,13 @@ export function calculateUtilization(space) {
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
     // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
     // logic required to fetch all pages of data from the server.
-    const counts = await fetchAllPages(page => {
-      return core.spaces.counts({
+    const counts = await fetchAllPages(page => (
+      core().get(`/spaces/${space.id}/counts`, { params: {
         id: space.id,
 
         start_time: startDate,
         end_time: endDate,
-        time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? '' : selectedTimeSegmentGroup.id,
+        time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id,
 
         interval: '10m',
 
@@ -251,8 +251,8 @@ export function calculateUtilization(space) {
         // required.
         page,
         page_size: 5000,
-      });
-    });
+      }})
+    ));
 
     // Variables for rendering the trends page
     let utilizationsByDay: any[] = [],

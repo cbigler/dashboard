@@ -1,9 +1,9 @@
-import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
+import core from '../../client/core';
 
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
@@ -33,7 +33,7 @@ export default function routeTransitionDashboardDetail(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(page => core.dashboards.list({page, page_size: 5000}));
+      dashboards = await fetchAllPages(page => core().get('/dashboards', {params: {page, page_size: 5000}}));
     } catch (err) {
       dispatch(collectionDashboardsError(err));
       return;
@@ -65,7 +65,7 @@ export default function routeTransitionDashboardDetail(id) {
         dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
       } else {
         try {
-          selectedDashboard = objectSnakeToCamel(await core.dashboards.detail({id}));
+          selectedDashboard = objectSnakeToCamel((await core().get(`/dashboards/${id}`)).data);
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;

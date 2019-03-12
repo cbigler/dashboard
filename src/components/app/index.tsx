@@ -14,7 +14,7 @@ import {
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
 
 import stringToBoolean from '../../helpers/string-to-boolean/index';
 
@@ -269,7 +269,7 @@ export default connect((state: any) => {
   return {
     async onShowImpersonate(impersonate) {
       if (!impersonate.enabled) {
-        impersonate.organizations = await accounts.organizations.list();
+        impersonate.organizations = (await accounts().get('/organizations')).data;
         dispatch(impersonateSet(impersonate));
       }
       dispatch(showModal('MODAL_IMPERSONATE', {
@@ -289,9 +289,9 @@ export default connect((state: any) => {
       dispatch(updateModal({enabled: value}));
     },
     onSelectImpersonateOrganization(org) {
-      accounts.users.list().then(results => {
+      accounts().get('/users').then(response => {
         dispatch(updateModal({selectedOrganization: org}));
-        dispatch(updateModal({users: results.map(objectSnakeToCamel)}));
+        dispatch(updateModal({users: response.data.map(objectSnakeToCamel)}));
       });
     },
     onSelectImpersonateUser(user) {
