@@ -8,6 +8,7 @@ import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 import { ROLE_INFO } from '../admin-user-management';
+import impersonate from '../../reducers/impersonate';
 
 function getUserLabel(user) {
   return <span style={{fontWeight: 'normal'}}>
@@ -106,7 +107,13 @@ function AppNavbarItem({
 
 
 // Define the real app navbar here
-export default function AppNavbar({page, user, settings, onClickImpersonate}) {
+export default function AppNavbar({
+  page,
+  user,
+  settings,
+  impersonate,
+  onClickImpersonate
+}) {
 
   const showAdminMenu = can(user, PERMISSION_CODES.developer_tools_manage) ||
     can(user, PERMISSION_CODES.owner_user_manage) ||
@@ -160,7 +167,7 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
 
           {/* Impersonation interface */}
           {can(user, PERMISSION_CODES.impersonate) ? (
-            user.data.impersonating ?
+            impersonate.enabled && impersonate.selectedUser ?
               <li
                 className={classnames('app-navbar-item', { showOnMobile: true })}
                 style={{cursor: 'pointer', opacity: 1}}
@@ -183,7 +190,7 @@ export default function AppNavbar({page, user, settings, onClickImpersonate}) {
                       </g>
                     </svg>
                   }</span>
-                  {getUserLabel(user.data.impersonating)}
+                  {getUserLabel(impersonate.selectedUser)}
                 </a>
               </li>
               : <AppNavbarItem

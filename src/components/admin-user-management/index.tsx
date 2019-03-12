@@ -262,7 +262,7 @@ export default connect((state: any) => {
       (dispatch as any)(hideModal());
     },
     onUpdateNewUser(field, value) {
-      dispatch(updateModal(field, value));
+      dispatch(updateModal({[field]: value}));
     },
     onSaveNewUser(data) {
       (dispatch as any)(hideModal());

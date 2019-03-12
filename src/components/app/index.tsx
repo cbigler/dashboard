@@ -22,9 +22,8 @@ import Modal from '../modal';
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
-import userImpersonate from '../../actions/user/impersonate';
+import impersonateSet from '../../actions/impersonate';
 
-import FormLabel from '../form-label';
 import ListView, { ListViewColumn } from '../list-view';
 import { CancelLink } from '../dialogger';
 
@@ -52,10 +51,11 @@ function App({
   activePage,
   activeModal,
   user,
+  impersonate,
   settings,
   
-  onStartImpersonate,
-  onFinishImpersonate,
+  onShowImpersonate,
+  onSaveImpersonate,
   onCancelImpersonate,
   onSetImpersonateEnabled,
   onSelectImpersonateOrganization,
@@ -165,7 +165,7 @@ function App({
               <Button
                 type="primary"
                 disabled={!activeModal.data.selectedUser}
-                onClick={() => onFinishImpersonate(activeModal.data.selectedUser)}
+                onClick={() => onSaveImpersonate(activeModal.data)}
               >Save Settings</Button>
             </AppBarSection>
           </AppBar>
@@ -189,7 +189,8 @@ function App({
               page={activePage}
               user={user}
               settings={settings}
-              onClickImpersonate={onStartImpersonate}
+              impersonate={impersonate}
+              onClickImpersonate={() => onShowImpersonate(impersonate)}
             />;
         }
       })(activePage)}
@@ -256,6 +257,7 @@ export default connect((state: any) => {
     activePage: state.activePage,
     activeModal: state.activeModal,
     user: state.user,
+    impersonate: state.impersonate,
     settings: (
       state.user &&
       state.user.data &&
@@ -265,34 +267,35 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
-    onStartImpersonate() {
-      accounts.organizations.list().then(results => {
-        dispatch(showModal('MODAL_IMPERSONATE', {
-          organizations: results.map(objectSnakeToCamel),
-          selectedOrganization: null,
-          users: [],
-          selectedUser: null,
-        }));
-      });
+    async onShowImpersonate(impersonate) {
+      if (!impersonate.enabled) {
+        impersonate.organizations = await accounts.organizations.list();
+        dispatch(impersonateSet(impersonate));
+      }
+      dispatch(showModal('MODAL_IMPERSONATE', {
+        ...impersonate,
+        enabled: true
+      }));
     },
-    onFinishImpersonate(user) {
-      dispatch(userImpersonate(user));
+    onSaveImpersonate(impersonate) {
+      dispatch(impersonateSet(impersonate.enabled ? impersonate : null));
       dispatch(hideModal());
     },
     onCancelImpersonate() {
       dispatch(hideModal());
     },
+
     onSetImpersonateEnabled(value) {
-      dispatch(updateModal('enabled', value));
+      dispatch(updateModal({enabled: value}));
     },
     onSelectImpersonateOrganization(org) {
       accounts.users.list().then(results => {
-        dispatch(updateModal('selectedOrganization', org));
-        dispatch(updateModal('users', results.map(objectSnakeToCamel)));
+        dispatch(updateModal({selectedOrganization: org}));
+        dispatch(updateModal({users: results.map(objectSnakeToCamel)}));
       });
     },
     onSelectImpersonateUser(user) {
-      dispatch(updateModal('selectedUser', user));
+      dispatch(updateModal({selectedUser: user}));
     }
   };
 })(App);

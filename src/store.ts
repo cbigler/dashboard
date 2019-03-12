@@ -14,6 +14,7 @@ import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
 import tokens from './reducers/tokens/index';
 import user from './reducers/user/index';
+import impersonate from './reducers/impersonate/index';
 import sensors from './reducers/sensors/index';
 import webhooks from './reducers/webhooks/index';
 import eventPusherStatus from './reducers/event-pusher-status/index';
@@ -36,6 +37,7 @@ const reducer = combineReducers({
   tokens,
   sensors,
   user,
+  impersonate,
   webhooks,
   eventPusherStatus,
   timeSegmentGroups,
