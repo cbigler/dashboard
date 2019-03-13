@@ -22,6 +22,7 @@ import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
 import users from './reducers/users/index';
+import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
 const reducer = combineReducers({
   accountForgotPassword,
@@ -43,6 +44,7 @@ const reducer = combineReducers({
   exploreData,
   resizeCounter,
   users,
+  digestSchedules,
   miscellaneous,
 });
 

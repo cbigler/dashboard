@@ -20,11 +20,12 @@ import {
   DashboardReportGrid,
   Icons,
 } from '@density/ui';
+import Toast from '../toast/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
-import DashboardDispatchPopupList from '../dashboard-dispatch-popup-list/index';
-import DashboardDispatchManagementModal from '../dashboard-dispatch-management-modal/index';
+import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
+import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
@@ -40,22 +41,18 @@ const DASHBOARD_BACKGROUND = '#F5F5F7';
 
 function DashboardSidebarItem({selected, id, name, reportSet}) {
   const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
-  const headerNames = reportSet.filter(i => i.type === 'HEADER').map(i => i.name);
   return (
     <a className="dashboard-app-frame-sidebar-list-item" href={`#/dashboards/${id}`}>
       <div className={classnames('dashboard-sidebar-item', {selected})}>
-        <div className="dashboard-sidebar-item-row">
-          <span className="dashboard-sidebar-item-name">{name}</span>
-          <span className="dashboard-sidebar-item-num-reports">
-            {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
-          </span>
-          <Icons.ChevronRight width={8} height={8} />
-        </div>
-        <div className="dashboard-sidebar-item-row">
-          <span className="dashboard-sidebar-item-headers">
-            {headerNames.length > 0 ? headerNames.join(', ') : "No headers"}
-          </span>
-        </div>
+        <span className="dashboard-sidebar-item-name">{name}</span>
+        <span className="dashboard-sidebar-item-num-reports">
+          {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
+        </span>
+        <Icons.ChevronRight
+          color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
+          width={8}
+          height={8}
+        />
       </div>
     </a>
   );
@@ -212,6 +209,7 @@ export function Dashboard({
   sidebarVisible,
   resizeCounter,
   settings,
+  isDemoUser,
 
   onDashboardChangeWeek,
   onChangeSidebarVisibility,
@@ -230,13 +228,34 @@ export function Dashboard({
         />
       ) : null}
 
-      {activeModal.name === 'MODAL_DISPATCH_MANAGEMENT' ? (
-        <DashboardDispatchManagementModal
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
+        <DashboardDigestManagementModal
           visible={activeModal.visible}
           selectedDashboard={activeModal.data.selectedDashboard}
-          initialDispatchSchedule={activeModal.data.dispatch}
+          initialDigestSchedule={activeModal.data.digest}
           onCloseModal={onCloseModal}
         />
+      ) : null}
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_SUCCESS' ? (
+        <div className="dashboard-status-toast">
+          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
+            Digest saved. Happy reporting!
+          </Toast>
+        </div>
+      ) : null}
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_DELETED' ? (
+        <div className="dashboard-status-toast">
+          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
+            Digest deleted.
+          </Toast>
+        </div>
+      ) : null}
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_ERROR' ? (
+        <div className="dashboard-status-toast">
+          <Toast type="error" visible={activeModal.visible} onDismiss={onCloseModal}>
+            Whoops! That didn't work.
+          </Toast>
+        </div>
       ) : null}
 
       {/* Main application */}
@@ -303,6 +322,20 @@ export function Dashboard({
                 </Button>
               </div>
             </AppBarSection> : null}
+
+            <AppBarSection>
+              {!isDemoUser ? (
+                <DashboardDigestPopupList
+                  selectedDashboard={selectedDashboard}
+                  onEditDigest={digest => {
+                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                  }}
+                  onCreateDigest={() => {
+                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                  }}
+                />
+              ) : null}
+            </AppBarSection>
           </AppBar>
           <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
             <DashboardMainScrollViewContent
@@ -323,6 +356,8 @@ export default connect((state: any) => {
     dashboards: state.dashboards,
     selectedDashboard,
     activeModal: state.activeModal,
+
+    isDemoUser: state.user && state.user.data && state.user.data.isDemo,
 
     date: state.miscellaneous.dashboardDate,
     sidebarVisible: state.miscellaneous.dashboardSidebarVisible,

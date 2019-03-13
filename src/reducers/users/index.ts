@@ -14,8 +14,8 @@ import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/rou
 
 
 const initialState = {
-  view: 'VISIBLE',
-  loading: false,
+  view: 'LOADING',
+  loading: true,
   selected: null,
   error: null,
   filters: { search: '' },
@@ -43,6 +43,9 @@ export default function users(state=initialState, action) {
       error: null,
       data: action.data.map(objectSnakeToCamel),
     };
+
+  case COLLECTION_USERS_ERROR:
+    return {...state, view: 'ERROR', loading: false, error: action.error};
 
   // Push an update to a space.
   case COLLECTION_USERS_PUSH:

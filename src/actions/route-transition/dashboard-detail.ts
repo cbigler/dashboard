@@ -5,14 +5,32 @@ import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
 
+import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
+import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
+
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
 
-export default function routeTransitionDashboardDetail(id) {
-  return async (dispatch, getState) => {
-    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+function loadDigestSchedules() {
+  return async dispatch => {
+    let schedules, errorThrown;
+    try {
+      schedules = await fetchAllPages(page => core.digest_schedules.list({page, page_size: 5000}));
+    } catch (err) {
+      errorThrown = err;
+    }
+    if (!errorThrown) {
+      dispatch(collectionDispatchSchedulesSet(schedules));
+    } else {
+      console.error(errorThrown);
+      dispatch(collectionDispatchSchedulesError(errorThrown));
+    }
+  }
+}
 
+function loadDashboardAndReports(id) {
+  return async (dispatch, getState) => {
     const dashboardDate = getState().miscellaneous.dashboardDate;
     let dashboardSelectionPromise;
 
@@ -82,5 +100,16 @@ export default function routeTransitionDashboardDetail(id) {
 
     // Wait for the dashboard selection to complete
     await dashboardSelectionPromise;
+  }
+}
+
+export default function routeTransitionDashboardDetail(id) {
+  return async dispatch => {
+    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+
+    await Promise.all([
+      dispatch(loadDigestSchedules()),
+      dispatch(loadDashboardAndReports(id)),
+    ]);
   };
 }
