@@ -23,6 +23,7 @@ import filterCollection from '../../helpers/filter-collection';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
+import showToast from '../../actions/toasts';
 import updateModal from '../../actions/modal/update';
 import collectionUsersCreate from '../../actions/collection/users/create';
 import collectionUsersUpdate from '../../actions/collection/users/update';
@@ -244,8 +245,13 @@ export default connect((state: any) => {
       (dispatch as any)(hideModal());
       (dispatch as any)(collectionUsersCreate(data));
     },
-    onChangeUserRole(user, role) {
-      (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+    async onChangeUserRole(user, role) {
+      const ok = await (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+      if (ok) {
+        dispatch<any>(showToast({ text: 'User role updated successfully' }));
+      } else {
+        dispatch<any>(showToast({ type: 'danger', text: 'Error updating user role' }));
+      }
     },
     onCancelDeleteUser() {
       (dispatch as any)(hideModal());

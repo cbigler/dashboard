@@ -6,7 +6,10 @@ import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 
 import showModal from '../../actions/modal/show';
+import showToast from '../../actions/toasts';
 import collectionUsersDestroy from '../../actions/collection/users/destroy';
+import collectionUsersPush from '../../actions/collection/users/push';
+import collectionUsersUpdate from '../../actions/collection/users/update';
 
 import {
   AppBar,
@@ -32,7 +35,9 @@ type AdminUserManagementDetailProps = {
   },
   user: any,
   selectedUser: any,
+
   onStartDeleteUser: (any) => any,
+  onSaveUser: (any) => any,
 };
 
 type AdminUserManagementDetailState = {
@@ -74,7 +79,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
       user,
       users,
       selectedUser,
+
       onStartDeleteUser,
+      onSaveUser,
     } = this.props;
 
     switch (users.view) {
@@ -199,7 +206,17 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                   >
                     Cancel
                   </a>
-                  <Button type="primary">Save User</Button>
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      onSaveUser({
+                        id: selectedUser.id,
+                        fullName: this.state.fullName,
+                        email: this.state.email !== selectedUser.email ? this.state.email : undefined,
+                        role: this.state.role,
+                      });
+                    }}
+                  >Save User</Button>
                 </AppBarSection>
               </AppBar>
             </AppBarContext.Provider>
@@ -227,4 +244,13 @@ export default connect((state: any) => {
 			callback: () => dispatch<any>(collectionUsersDestroy(user)),
 		}));
 	},
+  async onSaveUser({id, fullName, email, role}) {
+    const ok = await dispatch<any>(collectionUsersUpdate({ id, fullName, email, role }));
+    if (ok) {
+      dispatch<any>(showToast({ text: 'User role updated successfully' }));
+      window.location.href = '#/admin/user-management';
+    } else {
+      dispatch<any>(showToast({ type: 'danger', text: 'Error updating user role' }));
+    }
+  },
 }))(AdminUserManagementDetail);

@@ -9,23 +9,24 @@ export default function collectionUsersUpdate(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_USERS_UPDATE, item });
 
+    let response, errorThrown;
     try {
-      const response = await accounts.users.update({
+      response = await accounts.users.update({
         id: item.id,
         role: item.role,
+        full_name: item.fullName,
+        email: item.email,
       });
-      dispatch(collectionUsersPush(response));
-      dispatch(showToast({
-        text: 'User role updated successfully',
-      }));
-      return response;
     } catch (err) {
-      dispatch(collectionUsersError(err));
-      dispatch(showToast({
-        text: 'Error updating user role',
-        type: 'danger',
-      }));
+      errorThrown = err;
+    }
+
+    if (errorThrown) {
+      dispatch(collectionUsersError(errorThrown));
       return false;
+    } else {
+      dispatch(collectionUsersPush(response));
+      return true;
     }
   };
 }
