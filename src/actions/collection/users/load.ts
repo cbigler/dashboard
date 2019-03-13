@@ -21,7 +21,7 @@ export default function collectionUsersLoad() {
       dispatch(collectionUsersError(errorThrown));
       dispatch(showToast({
         text: 'Error loading users',
-        type: 'danger',
+        type: 'error',
       }));
     } else {
       dispatch(collectionUsersSet(users));

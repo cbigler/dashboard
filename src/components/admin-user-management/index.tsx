@@ -36,10 +36,10 @@ import ListView, { ListViewColumn } from '../list-view';
 import { CancelLink } from '../dialogger';
 
 const INVITATION_STATUS_LABELS = {
-  'unsent': 'Unsent',
-  'pending': 'Pending',
-  'expired': 'Expired',
-  'accepted': 'Accepted',
+  'unsent': 'unsent',
+  'pending': 'pending',
+  'expired': 'expired',
+  'accepted': 'accepted',
 };
 
 const userFilter = filterCollection({fields: ['email', 'fullName']});
@@ -140,7 +140,7 @@ export function AdminUserManagement({
                 disabled={!(activeModal.data.email && activeModal.data.role)}
                 onClick={() => onSaveNewUser(activeModal.data)}
               >
-                Save
+                Save User
               </Button>
             </AppBarSection>
           </AppBar>
@@ -167,9 +167,10 @@ export function AdminUserManagement({
       <div className="admin-user-management-list">
         <ListView data={filteredUsers}>
           <ListViewColumn title="User" template={item => (
-            <strong className="admin-user-management-cell-value">
-              {item.fullName} - {item.email}
-            </strong>
+            <span className="admin-user-management-cell-name-email-cell">
+              <h5>{item.fullName}</h5>
+              <span>{item.email}</span>
+            </span>
           )} />
           <ListViewColumn
             title={<span style={{paddingLeft: 16}}>Role</span>}
@@ -193,13 +194,23 @@ export function AdminUserManagement({
           <ListViewColumn
             title="Invitation"
             template={item => (
-              <span>{INVITATION_STATUS_LABELS[item.invitationStatus]}</span>
+              <Fragment>
+                <span className="admin-user-management-cell-invitation-status">
+                  {INVITATION_STATUS_LABELS[item.invitationStatus]}
+                </span>
+                {canResendInvitation(user, item) ? (
+                  <span
+                    role="button"
+                    className="admin-user-management-cell-invitation-resend"
+                    onClick={() => onResendInvitation(item)}
+                  >
+                    <Icons.Refresh color={colorVariables.brandPrimary} />
+                  </span>
+                ) : null}
+              </Fragment>
             )}
           />
           <ListViewColumn
-            template={item => canResendInvitation(user, item) ? 'Resend' : ''}
-            disabled={item => !canResendInvitation(user, item)}
-            onClick={item => onResendInvitation(item)}
           />
           <ListViewColumn
             title="Space Access"
@@ -250,7 +261,7 @@ export default connect((state: any) => {
       if (ok) {
         dispatch<any>(showToast({ text: 'User role updated successfully' }));
       } else {
-        dispatch<any>(showToast({ type: 'danger', text: 'Error updating user role' }));
+        dispatch<any>(showToast({ type: 'error', text: 'Error updating user role' }));
       }
     },
     onCancelDeleteUser() {

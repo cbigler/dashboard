@@ -6,7 +6,7 @@ import { accounts } from '../../client';
 
 export default function routeTransitionAdminUserManagementDetail(id) {
   return async (dispatch, getState) => {
-    const userAlreadyExists = getState().users.data.find(user => user.id !== id);
+    const userAlreadyExists = getState().users.data.find(user => user.id === id);
     dispatch({
       type: ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL,
       id,

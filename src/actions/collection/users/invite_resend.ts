@@ -21,7 +21,7 @@ export default function collectionUsersInviteResend(item) {
       dispatch(collectionUsersError(err));
       dispatch(showToast({
         text: 'Error sending invite',
-        type: 'danger',
+        type: 'error',
       }));
       return false;
     }

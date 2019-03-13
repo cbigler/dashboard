@@ -31,7 +31,7 @@ export default function collectionUsersCreate(item) {
       dispatch(collectionUsersError(err));
       dispatch(showToast({
         text: 'Error creating user',
-        type: 'danger',
+        type: 'error',
       }));
       return false;
     }

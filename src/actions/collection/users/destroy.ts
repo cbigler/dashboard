@@ -20,7 +20,7 @@ export default function collectionUsersDestroy(item) {
       dispatch(collectionUsersError(err));
       dispatch(showToast({
         text: 'Error deleting user',
-        type: 'danger',
+        type: 'error',
       }));
       console.error(err);
       return false;

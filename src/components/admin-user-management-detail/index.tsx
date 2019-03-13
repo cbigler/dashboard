@@ -212,6 +212,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                       onSaveUser({
                         id: selectedUser.id,
                         fullName: this.state.fullName,
+                        // If the email has stayed the same, then including it will cause
                         email: this.state.email !== selectedUser.email ? this.state.email : undefined,
                         role: this.state.role,
                       });
@@ -247,10 +248,10 @@ export default connect((state: any) => {
   async onSaveUser({id, fullName, email, role}) {
     const ok = await dispatch<any>(collectionUsersUpdate({ id, fullName, email, role }));
     if (ok) {
-      dispatch<any>(showToast({ text: 'User role updated successfully' }));
+      dispatch<any>(showToast({ text: 'User updated successfully!', timeout: undefined }));
       window.location.href = '#/admin/user-management';
     } else {
-      dispatch<any>(showToast({ type: 'danger', text: 'Error updating user role' }));
+      dispatch<any>(showToast({ type: 'danger', text: 'Error updating user' }));
     }
   },
 }))(AdminUserManagementDetail);
