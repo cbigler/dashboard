@@ -29,7 +29,6 @@
 
   display: flex;
 }
-
 .admin-user-management-detail-column.left {
   display: flex;
   justify-content: center;
@@ -56,17 +55,18 @@
   flex-direction: column;
   min-width: 320px;
   margin-left: 24px;
+  margin-right: 24px;
 }
 
 .admin-user-management-user-info-name {
-  font-size: 40px;
+  font-size: 28px;
   font-weight: normal;
   margin-top: 16px;
   margin-bottom: 12px;
 }
 .admin-user-management-user-info-email {
   color: $gray-darker;
-  font-size: 20px;
+  font-size: 16px;
   margin-bottom: 24px;
 }
 .admin-user-management-user-info-role-tag {
@@ -77,6 +77,10 @@
   padding: 4px;
   user-select: none;
   cursor: default;
+}
+@media (min-width: $screen-md-max) {
+  .admin-user-management-user-info-name { font-size: 40px; }
+  .admin-user-management-user-info-email { font-size: 20px; }
 }
 
 .admin-user-management-user-info-details {
@@ -92,6 +96,7 @@
 
 .admin-user-management-detail-column-right-subcolumns {
   display: flex;
+  flex-direction: row;
   justify-content: center;
   padding-left: 24px;
   padding-right: 24px;
