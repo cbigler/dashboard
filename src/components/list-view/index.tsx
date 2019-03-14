@@ -1,5 +1,6 @@
 import React from 'react';
 import classnames from 'classnames';
+import colorVariables from '@density/ui/variables/colors.json';
 
 const ListViewContext = React.createContext([] as any);
 
@@ -39,3 +40,10 @@ export function ListViewColumn({
     </div>
   )}</ListViewContext.Consumer>;
 }
+
+// Convenience export for rendering "standard" list clickable text
+export const LIST_CLICKABLE_STYLE = {
+  textDecoration: 'underline',
+  fontWeight: 500,
+  color: colorVariables.brandPrimary
+};
