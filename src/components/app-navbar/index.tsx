@@ -13,7 +13,7 @@ import impersonate from '../../reducers/impersonate';
 function getUserLabel(user) {
   return <span style={{fontWeight: 'normal'}}>
     <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
-    <span>{user.fullName}</span>{' '}
+    <span>{user.fullName || user.email}</span>{' '}
     <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
   </span>;
 }

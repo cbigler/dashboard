@@ -334,17 +334,12 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
     const { startDate, endDate } = getState().spaces.filters;
     const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title, aggregation);
 
-    const baseUrl = (getActiveEnvironments(fields) as any).core;
-    const token = getState().sessionToken;
-    const slow = getGoSlow();
-
     let data, errorThrown: any = false;
     try {
       data = await REPORTS['HOURLY_BREAKDOWN'].calculations(report, {
         date: null,
-        baseUrl,
-        token,
-        slow,
+        client: core(),
+        slow: getGoSlow(),
       });
     } catch (err) {
       errorThrown = err;

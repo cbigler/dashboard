@@ -17,6 +17,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import filterCollection from '../../helpers/filter-collection';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -27,16 +28,31 @@ import { CancelLink } from '../dialogger';
 import ListView, { ListViewColumn } from '../list-view';
 import Modal from '../modal';
 
+const orgFilterHelper = filterCollection({fields: ['name']});
+const userFilterHelper = filterCollection({fields: ['email', 'fullName']});
+
 export function ImpersonateModal({
   activeModal,
   onSaveImpersonate,
   onCancelImpersonate,
   onSetImpersonateEnabled,
+  onSetImpersonateFilters,
   onSelectImpersonateOrganization,
   onSelectImpersonateUser,
 }) {
+
+  const filteredOrgs = orgFilterHelper(
+    activeModal.data.organizations,
+    activeModal.data.organizationFilter
+  );
+  const filteredUsers = userFilterHelper(
+    activeModal.data.users,
+    activeModal.data.userFilter
+  );
+
   return <Modal
     width={800}
+    height={600}
     visible={activeModal.visible}
     onBlur={onCancelImpersonate}
     onEscape={onCancelImpersonate}
@@ -52,7 +68,7 @@ export function ImpersonateModal({
         />
       </AppBarSection>
     </AppBar>
-    <div style={{display: 'flex', maxHeight: 480}}>
+    <div style={{display: 'flex', height: 472}}>
       <div style={{
         width: '50%',
         display: 'flex',
@@ -67,27 +83,31 @@ export function ImpersonateModal({
             width="100%"
             placeholder='ex: "Density Dev", "Acme Co"'
             leftIcon={<Icons.Search color={colorVariables.gray} />}
-            disabled={!activeModal.data.enabled} />
+            disabled={!activeModal.data.enabled}
+            value={activeModal.data.organizationFilter}
+            onChange={e => onSetImpersonateFilters(e.target.value, activeModal.data.userFilter)} />
         </AppBar>
         <div style={{
           flexGrow: 1,
           padding: '0 24px',
           overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
         }}>
-          <ListView data={activeModal.data.organizations} showHeaders={false}>
+          <ListView data={filteredOrgs} showHeaders={false}>
             <ListViewColumn
               style={{flexGrow: 1}}
               disabled={item => !activeModal.data.enabled}
               onClick={item => onSelectImpersonateOrganization(
                 activeModal.data.organizations.find(x => x.id === item.id)
               )}
-              template={item => <RadioButton
-                name="modal-impersonate-organization"
-                checked={(activeModal.data.selectedOrganization || {}).id === item.id}
-                disabled={!activeModal.data.enabled}
-                value={item.id}
-                text={item.name}
-                readOnly={true} />}
+              template={item => <div style={{opacity: activeModal.data.enabled ? 1.0 : 0.5}}>
+                <RadioButton
+                  name="modal-impersonate-organization"
+                  checked={(activeModal.data.selectedOrganization || {}).id === item.id}
+                  disabled={!activeModal.data.enabled}
+                  value={item.id}
+                  text={item.name}
+                  readOnly={true} />
+              </div>}
             />
           </ListView>
         </div>
@@ -106,27 +126,31 @@ export function ImpersonateModal({
             width="100%"
             placeholder='ex: "John Denver"'
             leftIcon={<Icons.Search color={colorVariables.gray} />}
-            disabled={!activeModal.data.enabled} />
+            disabled={!activeModal.data.enabled}
+            value={activeModal.data.userFilter}
+            onChange={e => onSetImpersonateFilters(activeModal.data.organizationFilter, e.target.value)} />
         </AppBar>
         <div style={{
           flexGrow: 1,
           padding: '0 24px',
           overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
         }}>
-          <ListView data={activeModal.data.users} showHeaders={false}>
+          <ListView data={filteredUsers} showHeaders={false}>
             <ListViewColumn
               style={{flexGrow: 1}}
               disabled={item => !activeModal.data.enabled}
               onClick={item => onSelectImpersonateUser(
                 activeModal.data.users.find(x => x.id === item.id)
               )}
-              template={item => <RadioButton
-                name="modal-impersonate-user"
-                checked={(activeModal.data.selectedUser || {}).id === item.id}
-                disabled={!activeModal.data.enabled}
-                value={item.id}
-                text={item.fullName || item.email}
-                readOnly={true} />}
+              template={item => <div style={{opacity: activeModal.data.enabled ? 1.0 : 0.5}}>
+                <RadioButton
+                  name="modal-impersonate-user"
+                  checked={(activeModal.data.selectedUser || {}).id === item.id}
+                  disabled={!activeModal.data.enabled}
+                  value={item.id}
+                  text={item.fullName || item.email}
+                  readOnly={true} />
+              </div>}
             />
           </ListView>
         </div>
@@ -178,6 +202,12 @@ export default connect((state: any) => {
         selectedOrganization: null,
         users: [],
         selectedUser: null,
+      }));
+    },
+    onSetImpersonateFilters(organizationFilter, userFilter) {
+      dispatch(updateModal({
+        organizationFilter: organizationFilter,
+        userFilter: userFilter
       }));
     },
     onSelectImpersonateOrganization(org) {

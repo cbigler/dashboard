@@ -7,6 +7,7 @@ export default function impersonateHeaderReducerEnhancer(reducer) {
       } else {
         delete localStorage['impersonate'];
       }
+      window.location.hash = '/';
       window.location.reload();
     }
     return result;
