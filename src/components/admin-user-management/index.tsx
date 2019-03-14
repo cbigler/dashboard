@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
+import GenericErrorState from '../generic-error-state/index';
 
 import {
   AppBar,
@@ -75,6 +76,8 @@ export function AdminUserManagement({
   if (users.filters.search) {
     filteredUsers = userFilter(filteredUsers, users.filters.search);
   }
+
+  const showEmptySearchState = users.filters.search && filteredUsers.length === 0;
 
   return <Fragment>
     {/* Display user delete confirmation dialog */}
@@ -156,7 +159,9 @@ export function AdminUserManagement({
           placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
           value={users.filters.search}
           width={320}
-          onChange={onUpdateUsersFilter} />
+          onChange={onUpdateUsersFilter}
+          disabled={users.view !== 'VISIBLE'}
+        />
       </AppBarSection>
       <AppBarSection>
         <Button type="primary" onClick={onClickAddUser}>Add User</Button>
@@ -164,75 +169,85 @@ export function AdminUserManagement({
     </AppBar>
 
     <AppScrollView>
-      <div className="admin-user-management-list">
-        <ListView data={filteredUsers}>
-          <ListViewColumn title="User" template={item => (
-            <span className="admin-user-management-cell-name-email-cell">
-              <h5>{item.fullName}</h5>
-              <span>{item.email}</span>
-            </span>
-          )} />
-          <ListViewColumn
-            title={<span style={{paddingLeft: 16}}>Role</span>}
-            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
-              <InputBoxContext.Provider value="LIST_VIEW">
-                <InputBox
-                  type="select"
-                  width="160px"
-                  value={item.role}
-                  disabled={item.id === user.data.id}
-                  onChange={value => onChangeUserRole(item, value.id)}
-                  choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
-              </InputBoxContext.Provider>
-            </div>}
-          />
-          <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
-          <ListViewColumn title="Activity" template={item => {
-            const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
-            return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
-          }} />
-          <ListViewColumn
-            title="Invitation"
-            template={item => (
-              <Fragment>
-                <span className="admin-user-management-cell-invitation-status">
-                  {INVITATION_STATUS_LABELS[item.invitationStatus]}
+      {users.view === 'ERROR' ? (
+        <div className={classnames('admin-user-management-list', 'centered')}>
+          <GenericErrorState />
+        </div>
+      ) : null}
+      {users.view === 'VISIBLE' ? (
+        <div className={classnames('admin-user-management-list', {centered: showEmptySearchState})}>
+          {showEmptySearchState ? (
+            <div className="admin-user-management-empty-search-state">
+              <h2>Whoops</h2>
+              <p>We couldn't find a person that matched "{users.filters.search}"</p>
+            </div>
+          ) : (
+            <ListView data={filteredUsers}>
+              <ListViewColumn title="User" template={item => (
+                <span className="admin-user-management-cell-name-email-cell">
+                  <h5>{item.fullName}</h5>
+                  <span>{item.email}</span>
                 </span>
-                {canResendInvitation(user, item) ? (
+              )} />
+              <ListViewColumn
+                title={<span style={{paddingLeft: 16}}>Role</span>}
+                template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
+                  <InputBoxContext.Provider value="LIST_VIEW">
+                    <InputBox
+                      type="select"
+                      width="160px"
+                      value={item.role}
+                      disabled={item.id === user.data.id}
+                      onChange={value => onChangeUserRole(item, value.id)}
+                      choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
+                  </InputBoxContext.Provider>
+                </div>}
+              />
+              <ListViewColumn style={{flexGrow: 1, flexShrink: 1}}/>
+              <ListViewColumn title="Activity" template={item => {
+                const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
+                return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
+              }} />
+              <ListViewColumn
+                title="Invitation"
+                template={item => (
+                  <Fragment>
+                    <span className="admin-user-management-cell-invitation-status">
+                      {INVITATION_STATUS_LABELS[item.invitationStatus]}
+                    </span>
+                    {canResendInvitation(user, item) ? (
+                      <span
+                        role="button"
+                        className="admin-user-management-cell-invitation-resend"
+                        onClick={() => onResendInvitation(item)}
+                      >
+                        <Icons.Refresh color={colorVariables.brandPrimary} />
+                      </span>
+                    ) : null}
+                  </Fragment>
+                )}
+              />
+              <ListViewColumn
+              />
+              <ListViewColumn
+                title="Space Access"
+                template={item =><span>All Spaces</span>}
+              />
+              <ListViewColumn
+                title="Actions"
+                template={item => (
                   <span
                     role="button"
-                    className="admin-user-management-cell-invitation-resend"
-                    onClick={() => onResendInvitation(item)}
-                  >
-                    <Icons.Refresh color={colorVariables.brandPrimary} />
-                  </span>
-                ) : null}
-              </Fragment>
-            )}
-          />
-          <ListViewColumn
-            template={item => canResendInvitation(user, item) ? 
-              <span style={LIST_CLICKABLE_STYLE}>Resend</span> : ''}
-            disabled={item => !canResendInvitation(user, item)}
-            onClick={item => onResendInvitation(item)}
-          />
-          <ListViewColumn
-            title="Space Access"
-            template={item =><span>All Spaces</span>}
-          />
-          <ListViewColumn
-            title="Actions"
-            template={item => (
-              <span
-                role="button"
-                className="admin-user-management-edit-user"
-              >Edit User</span>
-            )}
-            disabled={item => item.id === user.data.id}
-            onClick={item => { window.location.href = `#/admin/user-management/${item.id}` }}
-          />
-        </ListView>
-      </div>
+                    className="admin-user-management-edit-user"
+                  >Edit User</span>
+                )}
+                disabled={item => item.id === user.data.id}
+                onClick={item => { window.location.href = `#/admin/user-management/${item.id}` }}
+              />
+            </ListView>
+          )}
+        </div>
+      ) : null}
     </AppScrollView>
   </Fragment>;
 }
