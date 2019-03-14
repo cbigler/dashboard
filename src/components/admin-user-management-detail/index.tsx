@@ -18,6 +18,7 @@ import {
   AppBarContext,
   Icons,
   Button,
+  ButtonContext,
   InputBox,
 } from '@density/ui';
 
@@ -204,9 +205,11 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
             <AppBarContext.Provider value="BOTTOM_ACTIONS">
               <AppBar>
                 <AppBarSection>
-                  <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                    delete button goes here?
-                  </Button>
+                  <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
+                    <Button onClick={() => onStartDeleteUser(selectedUser)}>
+                      Delete this User
+                    </Button>
+                  </ButtonContext.Provider>
                 </AppBarSection>
                 <AppBarSection>
                   <a
