@@ -106,15 +106,15 @@ function App({
               <ListView data={activeModal.data.organizations} showHeaders={false}>
                 <ListViewColumn
                   style={{flexGrow: 1}}
+                  onClick={item => onSelectImpersonateOrganization(
+                    activeModal.data.organizations.find(x => x.id === item.id)
+                  )}
                   template={item => <RadioButton
                     name="modal-impersonate-organization"
                     checked={(activeModal.data.selectedOrganization || {}).id === item.id}
                     disabled={!activeModal.data.enabled}
                     value={item.id}
-                    text={item.name}
-                    onChange={event => onSelectImpersonateOrganization(
-                      activeModal.data.organizations.find(x => x.id === event.target.value)
-                    )} />}
+                    text={item.name} />}
                 />
               </ListView>
             </div>
@@ -143,15 +143,16 @@ function App({
               <ListView data={activeModal.data.users} showHeaders={false}>
                 <ListViewColumn
                   style={{flexGrow: 1}}
+                  onClick={item => onSelectImpersonateUser(
+                    activeModal.data.users.find(x => x.id === item.id)
+                  )}
                   template={item => <RadioButton
                     name="modal-impersonate-user"
                     checked={(activeModal.data.selectedUser || {}).id === item.id}
                     disabled={!activeModal.data.enabled}
                     value={item.id}
-                    text={item.fullName}
-                    onChange={event => onSelectImpersonateUser(
-                      activeModal.data.users.find(x => x.id === event.target.value)
-                    )} />}
+                    text={item.fullName || item.email}
+                  />}
                 />
               </ListView>
             </div>
@@ -289,7 +290,7 @@ export default connect((state: any) => {
       dispatch(updateModal({enabled: value}));
     },
     onSelectImpersonateOrganization(org) {
-      accounts().get('/users').then(response => {
+      accounts().get(`/users?organization_id=${org.id}`).then(response => {
         dispatch(updateModal({selectedOrganization: org}));
         dispatch(updateModal({users: response.data.map(objectSnakeToCamel)}));
       });
