@@ -46,7 +46,7 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
 }
 
 .admin-space-permissions-picker-list-item-checkbox { display: none; }
-.admin-space-permissions-picker-list-item label {
+.admin-space-permissions-picker-list-item-label {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -98,3 +98,23 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
   white-space: nowrap;
 }
 .admin-space-permissions-picker-list-item-name.bold { font-weight: bold; }
+
+
+.admin-space-permissions-picker-list-item-label-skeleton {
+  height: 6px;
+  border-radius: $border-radius-small;
+  width: 150px;
+  background-color: $gray-dark;
+  margin-left: 24px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+}
+.admin-space-permissions-picker-list-item-label-skeleton:before {
+  content: ' ';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: $border-radius-base;
+  background-color: $gray;
+  transform: translate(-24px, -5px);
+}

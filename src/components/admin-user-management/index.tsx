@@ -185,7 +185,7 @@ export function AdminUserManagement({
             <ListView data={filteredUsers}>
               <ListViewColumn title="User" template={item => (
                 <span className="admin-user-management-cell-name-email-cell">
-                  <h5>{item.fullName}</h5>
+                  <h5>{item.fullName || '---'}</h5>
                   <span>{item.email}</span>
                 </span>
               )} />
