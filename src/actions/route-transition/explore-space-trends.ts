@@ -11,6 +11,7 @@ import collectionSpacesFilter from '../collection/spaces/filter';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import fetchAllPages from '../../helpers/fetch-all-pages';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
+import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -84,8 +85,8 @@ export default function routeTransitionExploreSpaceTrends(id) {
     let startDate, endDate;
     let state = getState()
     if (state.spaces.filters.startDate != null && state.spaces.filters.endDate != null) {
-      startDate = state.spaces.filters.startDate
-      endDate = state.spaces.filters.endDate
+      startDate = state.spaces.filters.startDate;
+      endDate = state.spaces.filters.endDate;
     } else {
       startDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').startOf('week'), selectedSpace);
       endDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').endOf('week'), selectedSpace);
@@ -100,15 +101,19 @@ export default function routeTransitionExploreSpaceTrends(id) {
       endDate
     ));
 
-    dispatch(calculate(selectedSpace));
+    dispatch(calculate(selectedSpace, state.spaces.filters));
   }
 }
 
-export function calculate(space) {
+export function calculate(space, spaceFilters) {
   return dispatch => {
+    const multiWeekSelection = isMultiWeekSelection(spaceFilters.startDate, spaceFilters.endDate);
+
+    const peakTitle = multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"
+
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', 'Hourly Breakdown - Average Peak Occupancy', "AVERAGE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', peakTitle, "AVERAGE"));
     dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits', "NONE"));
   };
 }
