@@ -5,9 +5,9 @@ import { config as configAccounts } from '../../client/accounts';
 export default function impersonateHeaderReducerEnhancer(reducer) {
   return (state, props) => {
     const result = reducer(state, props);
-    if (result.data && result.data.selectedUser) {
-      configCore({impersonateUser: result.data.selectedUser.id});
-      configAccounts({impersonateUser: result.data.selectedUser.id});
+    if (result && result.selectedUser) {
+      configCore({impersonateUser: result.selectedUser});
+      configAccounts({impersonateUser: result.selectedUser});
     } else {
       configCore({impersonateUser: undefined});
       configAccounts({impersonateUser: undefined});

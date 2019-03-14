@@ -23,9 +23,9 @@ export function config({
     _client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
   if (impersonateUser) {
-    _client.defaults.headers.common['X-Impersonate-User'] = impersonateUser;
+    _client.defaults.headers['X-Impersonate-User'] = impersonateUser.id;
   } else {
-    delete _client.defaults.headers.common['X-Impersonate-User'];
+    delete _client.defaults.headers['X-Impersonate-User'];
   }
   if (store !== undefined) {
     _store = store;
