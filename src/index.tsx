@@ -88,11 +88,12 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-function setServiceLocations(environments, goSlow) {
-  configCore({host: environments.core, goSlow, store});
-  configAccounts({host: environments.accounts, store});
+function configureClients(environments, goSlow) {
+  const impersonateUser = (localStorage.impersonate || {}).selectedUser;
+  configCore({host: environments.core, impersonateUser, goSlow, store});
+  configAccounts({host: environments.accounts, impersonateUser, store});
 }
-setServiceLocations(getActiveEnvironments(fields), getGoSlow()); /* step 1 above */
+configureClients(getActiveEnvironments(fields), getGoSlow());
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -330,7 +331,7 @@ ReactDOM.render(
       <EnvironmentSwitcher
         keys={['!', '!', '`', ' ']} // Press '!!` ' to open environment switcher.
         fields={fields}
-        onChange={setServiceLocations}
+        onChange={configureClients}
       />
     </div>
   </Provider>,

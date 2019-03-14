@@ -2,7 +2,7 @@
 import impersonateHeaderReducerEnhancer from '../../helpers/impersonate-header-reducer-enhancer';
 import { IMPERSONATE_SET } from '../../actions/impersonate';
 
-const initialState = {
+const initialState = localStorage.impersonate ? JSON.parse(localStorage.impersonate) : {
   enabled: false,
   organizations: [],
   selectedOrganization: null,
