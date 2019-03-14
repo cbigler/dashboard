@@ -76,6 +76,7 @@ export function ImpersonateModal({
           <ListView data={activeModal.data.organizations} showHeaders={false}>
             <ListViewColumn
               style={{flexGrow: 1}}
+              disabled={item => !activeModal.data.enabled}
               onClick={item => onSelectImpersonateOrganization(
                 activeModal.data.organizations.find(x => x.id === item.id)
               )}
@@ -113,6 +114,7 @@ export function ImpersonateModal({
           <ListView data={activeModal.data.users} showHeaders={false}>
             <ListViewColumn
               style={{flexGrow: 1}}
+              disabled={item => !activeModal.data.enabled}
               onClick={item => onSelectImpersonateUser(
                 activeModal.data.users.find(x => x.id === item.id)
               )}
@@ -135,7 +137,7 @@ export function ImpersonateModal({
           <CancelLink text="Cancel" onClick={onCancelImpersonate} />
           <Button
             type="primary"
-            disabled={!activeModal.data.selectedUser}
+            disabled={activeModal.data.enabled && !activeModal.data.selectedUser}
             onClick={() => onSaveImpersonate(activeModal.data)}
           >Save Settings</Button>
         </AppBarSection>
