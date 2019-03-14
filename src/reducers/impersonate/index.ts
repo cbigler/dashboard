@@ -4,9 +4,12 @@ import { IMPERSONATE_SET } from '../../actions/impersonate';
 
 const defaultState = {
   enabled: false,
+  loading: false,
   organizations: [],
+  organizationFilter: null,
   selectedOrganization: null,
   users: [],
+  userFilter: null,
   selectedUser: null
 };
 
@@ -16,7 +19,14 @@ const initialState = localStorage.impersonate ?
 export function impersonate(state=initialState, action) {
   switch (action.type) {
   case IMPERSONATE_SET:
-    return action.data || defaultState;
+    return action.data && action.data.enabled ? {
+      ...defaultState,
+      enabled: true,
+      organizations: action.data.organizations,
+      selectedOrganization: action.data.selectedOrganization,
+      users: action.data.users,
+      selectedUser: action.data.selectedUser
+    } : defaultState;
   default:
     return state;
   }

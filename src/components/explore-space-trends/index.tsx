@@ -21,7 +21,6 @@ import {
   prettyPrintHoursMinutes,
 } from '../../helpers/space-time-utilities/index';
 
-import Subnav, { SubnavItem } from '../subnav/index';
 import ExploreFilterBar, { ExploreFilterBarItem } from '../explore-filter-bar/index';
 import ExploreSpaceHeader from '../explore-space-header/index';
 import UtilizationCard from '../explore-space-detail-utilization-card/index';

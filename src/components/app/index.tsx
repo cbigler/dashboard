@@ -6,6 +6,7 @@ import accounts from '../../client/accounts';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 import showModal from '../../actions/modal/show';
+import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 
 import Explore from '../explore';
@@ -137,14 +138,22 @@ export default connect((state: any) => {
 }, (dispatch: any) => {
   return {
     async onShowImpersonate(impersonate) {
-      if (!impersonate.enabled) {
-        impersonate.organizations = (await accounts().get('/organizations')).data;
-        dispatch(impersonateSet(impersonate));
-      }
       dispatch(showModal('MODAL_IMPERSONATE', {
         ...impersonate,
+        organizationFilter: '',
+        userFilter: '',
         enabled: true
       }));
-    }
+
+      let organizations;
+      if (impersonate.enabled) {
+        organizations = impersonate.organizations;
+      } else {
+        organizations = (await accounts().get('/organizations')).data;
+        dispatch(impersonateSet({...impersonate, organizations}));
+      }
+
+      dispatch(updateModal({organizations, loading: false}));
+    },
   };
 })(App);
