@@ -1,51 +1,31 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import {
-  AppBar,
-  AppBarContext,
-  AppBarSection,
-  AppBarTitle,
-  Button,
-  Icons,
-  InputBox,
-  RadioButton,
-  Switch,
-} from '@density/ui';
-import colorVariables from '@density/ui/variables/colors.json';
-
 import accounts from '../../client/accounts';
 
-import stringToBoolean from '../../helpers/string-to-boolean/index';
+import stringToBoolean from '../../helpers/string-to-boolean';
 
-import Modal from '../modal';
 import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
-import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 
-import ListView, { ListViewColumn } from '../list-view';
-import { CancelLink } from '../dialogger';
+import Explore from '../explore';
+import Login from '../login';
+import Admin from '../admin';
+import Account from '../account';
+import AccountRegistration from '../account-registration';
+import AccountForgotPassword from '../account-forgot-password';
+import LiveSpaceList from '../live-space-list';
+import LiveSpaceDetail from '../live-space-detail';
+import DashboardsList from '../dashboards-list';
 
-import Explore from '../explore/index';
-import Login from '../login/index';
-import Admin from '../admin/index';
-import Account from '../account/index';
-import AccountRegistration from '../account-registration/index';
-import AccountForgotPassword from '../account-forgot-password/index';
-import LiveSpaceList from '../live-space-list/index';
-import LiveSpaceDetail from '../live-space-detail/index';
-import DashboardsList from '../dashboards-list/index';
+import AccountSetupOverview from '../account-setup-overview';
+import AccountSetupDoorwayList from '../account-setup-doorway-list';
+import AccountSetupDoorwayDetail from '../account-setup-doorway-detail';
 
-import AccountSetupOverview from '../account-setup-overview/index';
-import AccountSetupDoorwayList from '../account-setup-doorway-list/index';
-import AccountSetupDoorwayDetail from '../account-setup-doorway-detail/index';
-
-import Dashboard from '../dashboard/index';
-import AppNavbar from '../app-navbar/index';
-
-import UnknownPage from '../unknown-page/index';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import Dashboard from '../dashboard';
+import AppNavbar from '../app-navbar';
+import UnknownPage from '../unknown-page';
+import ImpersonateModal from '../impersonate-modal';
 
 function App({
   activePage,
@@ -55,123 +35,11 @@ function App({
   settings,
   
   onShowImpersonate,
-  onSaveImpersonate,
-  onCancelImpersonate,
-  onSetImpersonateEnabled,
-  onSelectImpersonateOrganization,
-  onSelectImpersonateUser,
 }) {
   return (
     <div className="app">
       {/* Impersonation modal */}
-      {activeModal.name === 'MODAL_IMPERSONATE' ? <Modal
-        width={800}
-        visible={activeModal.visible}
-        onBlur={onCancelImpersonate}
-        onEscape={onCancelImpersonate}
-      >
-        <AppBar>
-          <AppBarSection>
-            <AppBarTitle>User Impersonation</AppBarTitle>
-          </AppBarSection>
-          <AppBarSection>
-            <Switch
-              value={!!activeModal.data.enabled}
-              onChange={event => onSetImpersonateEnabled(event.target.checked)}
-            />
-          </AppBarSection>
-        </AppBar>
-        <div style={{display: 'flex', maxHeight: 480}}>
-          <div style={{
-            width: '50%',
-            display: 'flex',
-            flexDirection: 'column',
-            borderRight: `1px solid ${colorVariables.grayLight}`
-          }}>
-            <AppBar>
-              <span style={{fontSize: 20}}>Organization</span>
-            </AppBar>
-            <AppBar>
-              <InputBox
-                width="100%"
-                placeholder='ex: "Density Dev", "Acme Co"'
-                leftIcon={<Icons.Search color={colorVariables.gray} />}
-                disabled={!activeModal.data.enabled} />
-            </AppBar>
-            <div style={{
-              flexGrow: 1,
-              padding: '0 24px',
-              overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
-            }}>
-              <ListView data={activeModal.data.organizations} showHeaders={false}>
-                <ListViewColumn
-                  style={{flexGrow: 1}}
-                  onClick={item => onSelectImpersonateOrganization(
-                    activeModal.data.organizations.find(x => x.id === item.id)
-                  )}
-                  template={item => <RadioButton
-                    name="modal-impersonate-organization"
-                    checked={(activeModal.data.selectedOrganization || {}).id === item.id}
-                    disabled={!activeModal.data.enabled}
-                    value={item.id}
-                    text={item.name} />}
-                />
-              </ListView>
-            </div>
-          </div>
-          <div style={{
-            width: '50%',
-            display: 'flex',
-            flexDirection: 'column',
-            background: colorVariables.grayLightest
-          }}>
-            <div style={{background: '#FFF'}}><AppBar>
-              <span style={{fontSize: 20}}>User</span>
-            </AppBar></div>
-            <AppBar>
-              <InputBox
-                width="100%"
-                placeholder='ex: "John Denver"'
-                leftIcon={<Icons.Search color={colorVariables.gray} />}
-                disabled={!activeModal.data.enabled} />
-            </AppBar>
-            <div style={{
-              flexGrow: 1,
-              padding: '0 24px',
-              overflowY: activeModal.data.enabled ? 'scroll' : 'hidden',
-            }}>
-              <ListView data={activeModal.data.users} showHeaders={false}>
-                <ListViewColumn
-                  style={{flexGrow: 1}}
-                  onClick={item => onSelectImpersonateUser(
-                    activeModal.data.users.find(x => x.id === item.id)
-                  )}
-                  template={item => <RadioButton
-                    name="modal-impersonate-user"
-                    checked={(activeModal.data.selectedUser || {}).id === item.id}
-                    disabled={!activeModal.data.enabled}
-                    value={item.id}
-                    text={item.fullName || item.email}
-                  />}
-                />
-              </ListView>
-            </div>
-          </div>
-        </div>
-        <AppBarContext.Provider value="BOTTOM_ACTIONS">
-          <AppBar>
-            <AppBarSection></AppBarSection>
-            <AppBarSection>
-              <CancelLink text="Cancel" onClick={onCancelImpersonate} />
-              <Button
-                type="primary"
-                disabled={!activeModal.data.selectedUser}
-                onClick={() => onSaveImpersonate(activeModal.data)}
-              >Save Settings</Button>
-            </AppBarSection>
-          </AppBar>
-        </AppBarContext.Provider>
-      </Modal> : null}
+      {activeModal.name === 'MODAL_IMPERSONATE' ? <ImpersonateModal /> : null}
 
       {/* Render the navbar */}
       {(function(activePage) {
@@ -277,26 +145,6 @@ export default connect((state: any) => {
         ...impersonate,
         enabled: true
       }));
-    },
-    onSaveImpersonate(impersonate) {
-      dispatch(impersonateSet(impersonate.enabled ? impersonate : null));
-      dispatch(hideModal());
-    },
-    onCancelImpersonate() {
-      dispatch(hideModal());
-    },
-
-    onSetImpersonateEnabled(value) {
-      dispatch(updateModal({enabled: value}));
-    },
-    onSelectImpersonateOrganization(org) {
-      accounts().get(`/users?organization_id=${org.id}`).then(response => {
-        dispatch(updateModal({selectedOrganization: org}));
-        dispatch(updateModal({users: response.data.map(objectSnakeToCamel)}));
-      });
-    },
-    onSelectImpersonateUser(user) {
-      dispatch(updateModal({selectedUser: user}));
     }
   };
 })(App);
