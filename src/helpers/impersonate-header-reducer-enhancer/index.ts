@@ -1,12 +1,16 @@
 import axios from 'axios';
+import { config as configCore } from '../../client/core';
+import { config as configAccounts } from '../../client/accounts';
 
 export default function impersonateHeaderReducerEnhancer(reducer) {
   return (state, props) => {
     const result = reducer(state, props);
     if (result.data && result.data.selectedUser) {
-      axios.defaults.headers.common['X-Impersonate-User'] = result.data.selectedUser.id;
+      configCore({impersonateUser: result.data.selectedUser.id});
+      configAccounts({impersonateUser: result.data.selectedUser.id});
     } else {
-      delete axios.defaults.headers.common['X-Impersonate-User'];
+      configCore({impersonateUser: undefined});
+      configAccounts({impersonateUser: undefined});
     }
     return result;
   };
