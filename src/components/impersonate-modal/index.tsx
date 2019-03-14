@@ -169,7 +169,12 @@ export default connect((state: any) => {
     },
 
     onSetImpersonateEnabled(value) {
-      dispatch(updateModal({enabled: value}));
+      dispatch(updateModal({
+        enabled: value,
+        selectedOrganization: null,
+        users: [],
+        selectedUser: null,
+      }));
     },
     onSelectImpersonateOrganization(org) {
       accounts().get(`/users?organization_id=${org.id}`).then(response => {
