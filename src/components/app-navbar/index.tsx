@@ -166,7 +166,7 @@ export default function AppNavbar({
         <ul className="app-navbar-right">
 
           {/* Impersonation interface */}
-          {can(user, PERMISSION_CODES.impersonate) ? (
+          {(impersonate || can(user, PERMISSION_CODES.impersonate)) ? (
             impersonate.enabled && impersonate.selectedUser ?
               <li
                 className={classnames('app-navbar-item', { showOnMobile: true })}

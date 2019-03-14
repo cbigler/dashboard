@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 import {
   AppBar,
@@ -85,7 +86,8 @@ export function ImpersonateModal({
                 checked={(activeModal.data.selectedOrganization || {}).id === item.id}
                 disabled={!activeModal.data.enabled}
                 value={item.id}
-                text={item.name} />}
+                text={item.name}
+                readOnly={true} />}
             />
           </ListView>
         </div>
@@ -124,7 +126,7 @@ export function ImpersonateModal({
                 disabled={!activeModal.data.enabled}
                 value={item.id}
                 text={item.fullName || item.email}
-              />}
+                readOnly={true} />}
             />
           </ListView>
         </div>
@@ -179,9 +181,12 @@ export default connect((state: any) => {
       }));
     },
     onSelectImpersonateOrganization(org) {
-      accounts().get(`/users?organization_id=${org.id}`).then(response => {
+      // Don't use a configured axios client here as it will pass the impersonate header
+      fetch(`${accounts().defaults.baseURL}/users?organization_id=${org.id}`, {
+        headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
+      }).then(response => response.json()).then(data => {
         dispatch(updateModal({selectedOrganization: org}));
-        dispatch(updateModal({users: response.data.map(objectSnakeToCamel)}));
+        dispatch(updateModal({users: data.map(objectSnakeToCamel)}));
       });
     },
     onSelectImpersonateUser(user) {

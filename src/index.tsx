@@ -89,7 +89,8 @@ const store = storeFactory();
 // `setServiceLocations`. The locations of all the services update.
 //
 function configureClients(environments, goSlow) {
-  const impersonateUser = (localStorage.impersonate || {}).selectedUser;
+  const impersonateUser = localStorage.impersonate ?
+    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : undefined;
   configCore({host: environments.core, impersonateUser, goSlow, store});
   configAccounts({host: environments.accounts, impersonateUser, store});
 }

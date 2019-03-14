@@ -14,7 +14,7 @@ _client.interceptors.response.use(
 export function config({
   host = undefined as string | undefined,
   token = undefined as string | undefined,
-  impersonateUser = undefined as {id: string} | undefined,
+  impersonateUser = undefined as string | undefined,
   goSlow = undefined as boolean | undefined,
   store = undefined as any,
 }) {
@@ -24,10 +24,9 @@ export function config({
   if (token !== undefined) {
     _client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
-  if (impersonateUser) {
-    _client.defaults.headers['X-Impersonate-User'] = impersonateUser.id;
-  } else {
-    delete _client.defaults.headers['X-Impersonate-User'];
+  if (impersonateUser !== undefined) {
+    if (impersonateUser) { _client.defaults.headers['X-Impersonate-User'] = impersonateUser; }
+    else { delete _client.defaults.headers['X-Impersonate-User']; }
   }
   if (goSlow !== undefined) {
     _slow = goSlow;
