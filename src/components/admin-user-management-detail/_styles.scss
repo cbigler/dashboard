@@ -58,6 +58,22 @@
   margin-right: 24px;
 }
 
+.admin-user-management-user-info-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  background-color: $gray-darker;
+  color: #fff;
+  border-radius: 50%;
+  width: 72px;
+  height: 72px;
+  font-size: 22px;
+  margin-right: 12px;
+  user-select: none;
+}
 .admin-user-management-user-info-name {
   font-size: 28px;
   font-weight: normal;

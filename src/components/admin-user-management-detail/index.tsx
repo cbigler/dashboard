@@ -115,6 +115,16 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
           <div className="admin-user-management-detail-columns">
             <div className="admin-user-management-detail-column left">
               <div className="admin-user-management-user-info">
+                <div className="admin-user-management-user-info-icon">
+                  {
+                    selectedUser.fullName
+                    .split(' ')
+                    .slice(0, 2)
+                    .filter(word => word.length > 0)
+                    .map(word => word[0].toUpperCase())
+                    .join('')
+                  }
+                </div>
                 <h1 className="admin-user-management-user-info-name">
                   {selectedUser.fullName || selectedUser.email}
                 </h1>
