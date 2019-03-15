@@ -20,6 +20,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import filterCollection from '../../helpers/filter-collection';
 
+import showToast from '../../actions/toasts';
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
@@ -31,7 +32,7 @@ import collectionUsersInviteResend from '../../actions/collection/users/invite_r
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import ListView, { ListViewColumn } from '../list-view';
+import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
 import { CancelLink } from '../dialogger';
 
 const INVITATION_STATUS_LABELS = {
@@ -138,7 +139,7 @@ export function AdminUserManagement({
                 className="admin-user-management-new-user-email-field"
                 id="admin-user-management-new-user-email"
                 value={activeModal.data.email}
-                onChange={e => onUpdateNewUser('email', e.target.value)}
+                onChange={e => onUpdateNewUser(activeModal.data, 'email', e.target.value)}
               />}
             />
           </div>
@@ -152,7 +153,7 @@ export function AdminUserManagement({
                   <RadioButton
                     name="admin-user-management-new-user-role"
                     checked={activeModal.data.role === role}
-                    onChange={e => onUpdateNewUser('role', role)}
+                    onChange={e => onUpdateNewUser(activeModal.data, 'role', e.target.value)}
                     value={role}
                     text={ROLE_INFO[role].label} />
                 </RadioButtonContext.Provider>
@@ -229,7 +230,9 @@ export function AdminUserManagement({
             template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
           />
           <ListViewColumn 
-            template={item => canResendInvitation(user, item) ? 'Resend' : ''}
+            template={item => canResendInvitation(user, item) ? (
+              <span style={LIST_CLICKABLE_STYLE}>Resend</span>
+            ) : ''}
             disabled={item => !canResendInvitation(user, item)}
             onClick={item => onResendInvitation(item)}
           />
@@ -261,15 +264,20 @@ export default connect((state: any) => {
     onCancelAddUser() {
       (dispatch as any)(hideModal());
     },
-    onUpdateNewUser(field, value) {
-      dispatch(updateModal(field, value));
+    onUpdateNewUser(data, field, value) {
+      dispatch(updateModal({ ...data, [field]: value }));
     },
     onSaveNewUser(data) {
       (dispatch as any)(hideModal());
       (dispatch as any)(collectionUsersCreate(data));
     },
-    onChangeUserRole(user, role) {
-      (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+    async onChangeUserRole(user, role) {
+      const ok = await (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+      if (ok) {
+        dispatch<any>(showToast({ text: 'User role updated.' }));
+      } else {
+        dispatch<any>(showToast({ type: 'error', text: 'Error updating user role' }));
+      }
     },
     onStartDeleteUser(user) {
       (dispatch as any)(showModal('MODAL_CONFIRM', {

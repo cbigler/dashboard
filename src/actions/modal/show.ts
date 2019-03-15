@@ -2,7 +2,7 @@ export const TRANSITION_TO_SHOW_MODAL = 'TRANSITION_TO_SHOW_MODAL';
 export const SHOW_MODAL = 'SHOW_MODAL';
 
 export default function showModal(name, data={}) {
-  return (dispatch, getState) => {
+  return dispatch => {
     // First, ensure the modal is rendered.
     dispatch({ type: TRANSITION_TO_SHOW_MODAL, name, data });
 

@@ -1,8 +1,7 @@
-import moment from 'moment';
-import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
+import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
@@ -39,7 +38,7 @@ export default function routeTransitionExplore() {
     let spaces;
     try {
       spaces = (await fetchAllPages(
-        page => core.spaces.list({page, page_size: 5000})
+        page => core().get('/spaces', {params: {page, page_size: 5000}})
       )).map(objectSnakeToCamel);
     } catch (err) {
       errorThrown = true;

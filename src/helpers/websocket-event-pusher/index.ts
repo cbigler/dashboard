@@ -3,7 +3,7 @@ import objectSnakeToCamel from '../object-snake-to-camel/index';
 
 import debug from 'debug';
 
-import { core } from '../../client';
+import core from '../../client/core';
 
 // If disconnected, try to connect at minimum this often.
 const MINIMUM_CONNECTION_INTERVAL = 500;
@@ -59,7 +59,7 @@ export default class WebsocketEventPusher extends EventEmitter {
       return false;
     }
 
-    if (!core.config().token) {
+    if (!core().defaults.headers.common['Authorization']) {
       this.log(' ... NO TOKEN SET, NOT CONNECTING TO SOCKET.');
       return false;
     }
@@ -70,13 +70,13 @@ export default class WebsocketEventPusher extends EventEmitter {
     this.emit('connectionStateChange', this.connectionState);
 
     try {
-      const response = await core.sockets.create();
+      const response = await core().post('/sockets');
 
       this.connectionState = CONNECTION_STATES.CONNECTING;
       this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
       this.emit('connectionStateChange', this.connectionState);
 
-      this.socket = new this.WebSocket(response.url);
+      this.socket = new this.WebSocket(response.data.url);
       this.socket.onopen = () => {
         this.connectionState = CONNECTION_STATES.CONNECTED;
         this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
