@@ -1,14 +1,12 @@
 import React from 'react';
+
+import stringToBoolean from '../../helpers/string-to-boolean/index';
+
 import { connect } from 'react-redux';
-
-import accounts from '../../client/accounts';
-
-import stringToBoolean from '../../helpers/string-to-boolean';
 
 import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
-import AdminUserManagementDetail from '../admin-user-management-detail/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
@@ -16,34 +14,18 @@ import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
 
-import showModal from '../../actions/modal/show';
-import updateModal from '../../actions/modal/update';
-import impersonateSet from '../../actions/impersonate';
-import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
+import AccountSetupOverview from '../account-setup-overview/index';
+import AccountSetupDoorwayList from '../account-setup-doorway-list/index';
+import AccountSetupDoorwayDetail from '../account-setup-doorway-detail/index';
 
-import AccountSetupOverview from '../account-setup-overview';
-import AccountSetupDoorwayList from '../account-setup-doorway-list';
-import AccountSetupDoorwayDetail from '../account-setup-doorway-detail';
+import Dashboard from '../dashboard/index';
+import AppNavbar from '../app-navbar/index';
 
-import Dashboard from '../dashboard';
-import AppNavbar from '../app-navbar';
-import UnknownPage from '../unknown-page';
-import ImpersonateModal from '../impersonate-modal';
+import UnknownPage from '../unknown-page/index';
 
-function App({
-  activePage,
-  activeModal,
-  user,
-  impersonate,
-  settings,
-  
-  onShowImpersonate,
-}) {
+function App({activePage, user, settings}) {
   return (
     <div className="app">
-      {/* Impersonation modal */}
-      {activeModal.name === 'MODAL_IMPERSONATE' ? <ImpersonateModal /> : null}
-
       {/* Render the navbar */}
       {(function(activePage) {
         switch (activePage) {
@@ -55,14 +37,12 @@ function App({
           case 'LIVE_SPACE_DETAIL':
             return null;
 
-          // Render the logged-in navbar by default
+            // Render the logged-in navbar by default
           default:
             return <AppNavbar
               page={activePage}
               user={user}
               settings={settings}
-              impersonate={impersonate}
-              onClickImpersonate={() => onShowImpersonate(impersonate)}
             />;
         }
       })(activePage)}
@@ -85,8 +65,6 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_DEVELOPER":
   case "ADMIN_DEVICE_STATUS":
     return <Admin user={user} activePage={activePage} />;
-  case "ADMIN_USER_MANAGEMENT_DETAIL":
-    return <AdminUserManagementDetail />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
@@ -129,36 +107,12 @@ function ActivePage({activePage, user, settings}) {
 export default connect((state: any) => {
   return {
     activePage: state.activePage,
-    activeModal: state.activeModal,
     user: state.user,
-    impersonate: state.impersonate,
     settings: (
       state.user &&
       state.user.data &&
       state.user.data.organization &&
       state.user.data.organization.settings
     ) || {}
-  };
-}, (dispatch: any) => {
-  return {
-    async onShowImpersonate(impersonate) {
-      impersonate = impersonate || impersonateDefaultState;
-      dispatch(showModal('MODAL_IMPERSONATE', {
-        ...impersonate,
-        organizationFilter: '',
-        userFilter: '',
-        enabled: true
-      }));
-
-      let organizations;
-      if (impersonate.enabled) {
-        organizations = impersonate.organizations;
-      } else {
-        organizations = (await accounts().get('/organizations')).data;
-        dispatch(impersonateSet({...impersonate, organizations}));
-      }
-
-      dispatch(updateModal({organizations, loading: false}));
-    },
   };
 })(App);

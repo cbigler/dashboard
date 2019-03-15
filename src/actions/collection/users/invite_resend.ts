@@ -1,7 +1,7 @@
+import { accounts } from '../../../client';
 import collectionUsersPush from './push';
 import collectionUsersError from './error';
 import showToast from '../../toasts';
-import accounts from '../../../client/accounts';
 
 export const COLLECTION_USERS_INVITE_RESEND = 'COLLECTION_USERS_INVITE_RESEND';
 
@@ -10,7 +10,7 @@ export default function collectionUsersInviteResend(item) {
     dispatch({ type: COLLECTION_USERS_INVITE_RESEND, item });
 
     try {
-      await accounts().put(`/users/invite/resend/${item.id}`);
+      await accounts.users.invite_resend({id: item.id});
       item.invitationStatus = 'pending';
       dispatch(collectionUsersPush(item));
       dispatch(showToast({
@@ -21,7 +21,7 @@ export default function collectionUsersInviteResend(item) {
       dispatch(collectionUsersError(err));
       dispatch(showToast({
         text: 'Error sending invite',
-        type: 'error',
+        type: 'danger',
       }));
       return false;
     }

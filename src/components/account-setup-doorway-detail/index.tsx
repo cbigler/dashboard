@@ -388,7 +388,6 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
             <Button
               type="primary"
-              width="100%"
               onClick={() => {
                 // Set a flag to disable the submit buttons while the form is sending data to the
                 // server.

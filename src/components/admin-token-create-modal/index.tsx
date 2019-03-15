@@ -1,4 +1,4 @@
-import React from 'react';
+import * as React from 'react';
 
 import {
   Button,
@@ -7,7 +7,6 @@ import {
   AppBarSection,
   AppBarTitle,
   AppBarContext,
-  RadioButton,
 } from '@density/ui';
 
 import Modal from '../modal';
@@ -33,7 +32,7 @@ export default class TokenCreate extends React.Component<any, any> {
       <Modal
         visible={visible}
         width={460}
-        height={450}
+        height={492}
         onBlur={onDismiss}
         onEscape={onDismiss}
       >
@@ -43,7 +42,7 @@ export default class TokenCreate extends React.Component<any, any> {
         <div className="token-create">
           <FormLabel
             className="token-create-name-container"
-            label="Token name"
+            label="Token Name"
             htmlFor="update-token-name"
             input={<InputBox
               type="text"
@@ -72,20 +71,22 @@ export default class TokenCreate extends React.Component<any, any> {
             editable={false}
             input={<div className="token-create-token-type-radio-group">
               <div className="token-create-token-type-radio-item">
-                <RadioButton 
-                  name="token-create-token-type"
+                <input
+                  type="radio"
+                  id="token-create-token-type-read-only"
                   onChange={() => this.setState({tokenType: READONLY})}
                   checked={this.state.tokenType === READONLY}
-                  text="Read-Only"
                 />
+                <label htmlFor="token-create-token-type-read-only">Read-Only</label>
               </div>
               <div className="token-create-token-type-radio-item">
-                <RadioButton 
-                  name="token-create-token-type"
+                <input
+                  type="radio"
+                  id="token-create-token-type-read-write"
                   onChange={() => this.setState({tokenType: READWRITE})}
                   checked={this.state.tokenType === READWRITE}
-                  text="Read-Write"
                 />
+                <label htmlFor="token-create-token-type-read-write">Read-Write</label>
               </div>
             </div>}
           />
@@ -102,8 +103,8 @@ export default class TokenCreate extends React.Component<any, any> {
                 width="100%"
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,
+                  description: this.state.description,
                   tokenType: this.state.tokenType,
-                  description: this.state.description || undefined,
                 })}
               >Save Token</Button>
             </AppBarSection>

@@ -1,21 +1,27 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
+import { Icons, Toast } from '@density/ui';
 
-import { hideToast } from '../../actions/toasts';
-
-import Toast from '../toast/index';
+const DEFAULT_ICONS = {
+  primary: <Icons.Check />,
+  danger: <Icons.Error />,
+};
 
 export function Toaster({
   toasts,
-  onDismiss,
 }) {
   return ReactDOM.createPortal(
     <div className="toaster">
       {toasts.map((toast, index) => {
-        const type = toast.type || 'default';
+        const type = toast.type || 'primary';
+        const icon = toast.icon || DEFAULT_ICONS[type];
         return <div key={index} style={{marginBottom: 10}}>
-          <Toast type={type} visible={toast.visible} onDismiss={() => onDismiss(toast.id)}>
+          <Toast
+            type={type}
+            title={toast.title}
+            icon={React.cloneElement(icon, {color: 'white'})}
+          >
             {toast.text}
           </Toast>
         </div>;
@@ -28,9 +34,5 @@ export function Toaster({
 export default connect((state: any) => ({
   toasts: state.toasts,
 }), dispatch => {
-  return {
-    onDismiss(id) {
-      dispatch<any>(hideToast(id));
-    },
-  };
+  return {};
 })(Toaster);

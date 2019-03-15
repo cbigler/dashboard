@@ -5,15 +5,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 import './built-css/styles.css';
-
-import core, { config as configCore } from './client/core';
-import accounts, { config as configAccounts } from './client/accounts';
-
+import { core, accounts, setStore as setStoreInApiClientModule } from './client';
 import ReactGA from 'react-ga';
 import moment from 'moment';
 import queryString from 'qs';
 
 // Import @density/ui package for font
+// TODO: Does this work?
 import '@density/ui';
 
 import userSet from './actions/user/set';
@@ -39,7 +37,6 @@ import { Provider } from 'react-redux';
 import createRouter from '@density/conduit';
 
 // Import all actions required to navigate from one page to another.
-import { impersonateUnset } from './actions/impersonate';
 import routeTransitionLogin from './actions/route-transition/login';
 import routeTransitionLogout from './actions/route-transition/logout';
 import routeTransitionExplore from './actions/route-transition/explore';
@@ -58,7 +55,6 @@ import routeTransitionDashboardList from './actions/route-transition/dashboard-l
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
 import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
-import routeTransitionAdminUserManagementDetail from './actions/route-transition/admin-user-management-detail';
 import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
 import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
 
@@ -72,7 +68,7 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
-const store = storeFactory();
+export const store = storeFactory();
 
 
 // ----------------------------------------------------------------------------
@@ -89,13 +85,11 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-function configureClients(environments, goSlow) {
-  const impersonateUser = localStorage.impersonate ?
-    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : undefined;
-  configCore({host: environments.core, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, impersonateUser, store});
+function setServiceLocations(environments, goSlow) {
+  core.config({core: environments.core, goSlow});
+  accounts.config({host: environments.accounts});
 }
-configureClients(getActiveEnvironments(fields), getGoSlow());
+setServiceLocations(getActiveEnvironments(fields), getGoSlow()); /* step 1 above */
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -185,7 +179,6 @@ router.addRoute('account/forgot-password/:token', token => routeTransitionAccoun
 
 // Advanced account management (Administration)
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
-router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 
@@ -204,11 +197,8 @@ function preRouteAuthentication() {
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
-    accounts().post('/tokens/exchange/auth0', null, {
-      headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
-    }).then(response => {
-      store.dispatch(impersonateUnset());
-      store.dispatch<any>(sessionTokenSet(response.data)).then(data => {
+    accounts.tokens.auth0_exchange(accessTokenMatch[1]).then(token => {
+      store.dispatch<any>(sessionTokenSet(token)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
       })
@@ -231,13 +221,13 @@ function preRouteAuthentication() {
   // Otherwise, fetch the logged in user's info since there's a session token available.
   } else {
     // Look up the user info before we can redirect to the landing page.
-    return accounts().get('/users/me').then(response => {
-      if (response.data) {
+    return accounts.users.me().then(user => {
+      if (user) {
         // A valid user object was returned, so add it to the store.
-        store.dispatch(userSet(response.data));
+        store.dispatch(userSet(user));
 
         // Then, navigate the user to the landing page.
-        unsafeNavigateToLandingPage(objectSnakeToCamel(response.data).organization.settings, null);
+        unsafeNavigateToLandingPage(objectSnakeToCamel(user).organization.settings, null);
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
         store.dispatch(redirectAfterLogin(locationHash));
@@ -246,7 +236,7 @@ function preRouteAuthentication() {
     });
   }
 }
-//setStoreInApiClientModule(store);
+setStoreInApiClientModule(store);
 preRouteAuthentication();
 
 // Add a helper into the global namespace to allow changing of settings flags on the fly.
@@ -284,18 +274,19 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = (await core().get('/spaces')).data;
+  const spaces = await core.spaces.list();
   store.dispatch(collectionSpacesSet(spaces.results));
 
   const spaceEventSets: any = await Promise.all(spaces.results.map(space => {
-    return core().get(`/spaces/${space.id}/events`, { params: {
+    return core.spaces.events({
+      id: space.id,
       start_time: moment.utc().subtract(1, 'minute').format(),
       end_time: moment.utc().format(),
-    }});
+    });
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces.results[index].id] = next.data.results.map(i => ({ 
+    acc[spaces.results[index].id] = next.results.map(i => ({ 
       countChange: i.direction,
       timestamp: i.timestamp
     }));
@@ -322,7 +313,7 @@ setInterval(async () => {
   const loggedIn = (store.getState() as any).sessionToken !== null;
 
   if (loggedIn) {
-    const spaces = (await core().get('/spaces')).data;
+    const spaces = await core.spaces.list();
     store.dispatch(collectionSpacesSet(spaces.results));
   }
 },  5 * 60 * 1000);
@@ -335,7 +326,7 @@ ReactDOM.render(
       <EnvironmentSwitcher
         keys={['!', '!', '`', ' ']} // Press '!!` ' to open environment switcher.
         fields={fields}
-        onChange={configureClients}
+        onChange={setServiceLocations}
       />
     </div>
   </Provider>,

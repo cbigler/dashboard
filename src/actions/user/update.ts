@@ -1,5 +1,5 @@
+import { accounts } from '../../client';
 import { USER_PUSH } from './push';
-import accounts from '../../client/accounts';
 
 export const USER_UPDATE = 'USER_UPDATE';
 
@@ -8,7 +8,7 @@ export default function userUpdate(fullName, nickname, marketingConsent) {
     dispatch({ type: USER_UPDATE, fullName, nickname, marketingConsent });
 
     // Set new user details.
-    return accounts().put('/users/me', {
+    return accounts.users.update({
       full_name: fullName,
       nickname: nickname,
       marketing_consent: marketingConsent,

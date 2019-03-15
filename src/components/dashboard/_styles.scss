@@ -46,18 +46,23 @@
 
 .dashboard-sidebar-item {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: space-between;
-  align-items: center;
-  height: 48px;
 
-  transition: background-color 250ms ease-in-out, color 250ms ease-in-out;
+  transition: all 250ms ease-in-out;
 
-  padding-left: 24px;
-  padding-right: 24px;
+  height: 45px;
+  padding-top: 17px;
+  padding-bottom: 17px;
+  margin-left: 24px;
+  margin-right: 24px;
   border-bottom: 1px solid $gray-light;
 }
-.dashboard-sidebar-item:hover { background-color: $gray-lightest; }
+.dashboard-sidebar-item-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 
 .dashboard-sidebar-item-name {
   color: $gray-darkest;
@@ -70,25 +75,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 150ms ease-in-out;
 }
-.dashboard-sidebar-item.selected .dashboard-sidebar-item-name { color: $brand-primary-new; }
 .dashboard-sidebar-item:hover .dashboard-sidebar-item-name { color: $gray-cinder; }
+.dashboard-sidebar-item.selected .dashboard-sidebar-item-name { color: $brand-primary-new; }
 
 .dashboard-sidebar-item-num-reports {
-  flex-grow: 0;
-  flex-shrink: 0;
-
-  color: $gray-darker;
+  color: $gray-darkest;
   font-size: 12px;
   font-weight: bold;
   margin-right: 4px;
   white-space: nowrap;
 
-  transition: color 150ms ease-in-out;
+  flex-grow: 0;
+  flex-shrink: 0;
 }
-.dashboard-sidebar-item.selected .dashboard-sidebar-item-num-reports { color: $brand-primary-new; }
 .dashboard-sidebar-item:hover .dashboard-sidebar-item-num-reports { color: $gray-cinder; }
+.dashboard-sidebar-item.selected .dashboard-sidebar-item-num-reports { color: $brand-primary-new; }
+
+.dashboard-sidebar-item-headers {
+  color: $gray-darkest;
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 
 
 

@@ -1,6 +1,6 @@
 import collectionDoorwaysPush from './push';
 import collectionDoorwaysError from './error';
-import core from '../../../client/core';
+import { core } from '../../../client';
 
 export const COLLECTION_DOORWAYS_UPDATE = 'COLLECTION_DOORWAYS_UPDATE';
 
@@ -9,7 +9,8 @@ export default function collectionDoorwaysUpdate(item) {
     dispatch({ type: COLLECTION_DOORWAYS_UPDATE, item });
 
     try {
-      const response = await core().put(`/doorways/${item.id}`, {
+      const response = await core.doorways.update({
+        id: item.id,
         name: item.name,
         description: item.description,
         environment: item.environment ? {
@@ -19,8 +20,8 @@ export default function collectionDoorwaysUpdate(item) {
           power_type: item.environment.powerType,
         } : {},
       });
-      dispatch(collectionDoorwaysPush(response.data));
-      return response.data;
+      dispatch(collectionDoorwaysPush(response));
+      return response;
     } catch (err) {
       dispatch(collectionDoorwaysError(err));
       return false;

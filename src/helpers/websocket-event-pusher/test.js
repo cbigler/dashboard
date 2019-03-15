@@ -4,14 +4,14 @@ import lolex from 'lolex';
 
 import WebsocketEventPusher, { CONNECTION_STATES } from './index';
 
-import core, { config as configCore } from '../../client/core';
+import { core } from '../../client';
 
 const realSetTimeout = window.setTimeout;
 function timeout(delay) {
   return new Promise(r => realSetTimeout(r, delay));
 }
 
-describe.skip('websocket-event-pusher', function() {
+describe('websocket-event-pusher', function() {
   describe('with a connected socket', () => {
     // Before each test, connect to a mock socket.
     let clock, eventSource, wsResponse, wsMock;
@@ -20,7 +20,7 @@ describe.skip('websocket-event-pusher', function() {
       clock = lolex.install();
 
       // Define a token
-      configCore({token: 'ses_XXX'});
+      core.config({token: 'ses_XXX'});
 
       // Mock the impending request that is going to be made to the core api to get a sockets url
       global.fetch = sinon.stub().resolves({
@@ -141,7 +141,7 @@ describe.skip('websocket-event-pusher', function() {
 
     it(`should not connect if there's no core api token`, async () => {
       // No token is defined for the core api
-      configCore({token: undefined});
+      core.config({token: undefined});
 
       // Create a new websocket event pusher with the mock websockets object
       eventSource = new WebsocketEventPusher(wsMock);

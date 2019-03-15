@@ -17,9 +17,9 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
-      id: this.props.initialWebhook.id || '',
       name: this.props.initialWebhook.name || '',
       description: this.props.initialWebhook.description || '',
+      key: this.props.initialWebhook.key || '',
     };
   }
 
@@ -65,9 +65,10 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
                 width="100%"
                 disabled={this.state.name.length === 0}
                 onClick={() => this.props.onSubmit({
-                  id: this.state.id,
+                  id: this.props.initialWebhook.id,
                   name: this.state.name,
                   description: this.state.description,
+                  key: this.state.key,
                 })}
               >Save Webhook</Button>
             </AppBarSection>

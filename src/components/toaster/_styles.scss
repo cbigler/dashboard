@@ -1,8 +1,6 @@
 .toaster {
-  position: fixed;
-  top: 40px;
-  left: 50%;
-
-  margin-left: -160px;
-  width: 340px;
+  margin: 0 auto;
+  width: 320px;
+  height: 0;
+  padding-top: 40px;
 }

@@ -1,6 +1,6 @@
+import { accounts } from '../../client';
 import sessionTokenSet from '../session-token/set';
 import userError from './error';
-import accounts from '../../client/accounts';
 
 export const USER_RESET_PASSWORD = 'USER_RESET_PASSWORD';
 export const USER_RESET_PASSWORD_SUCCESS = 'USER_RESET_PASSWORD_SUCCESS';
@@ -11,18 +11,18 @@ export default function userResetPassword(current, password) {
 
     try {
       // Set the new password.
-      await accounts().post('/users/me/password', {
+      await accounts.users.password({
         old_password: current,
         new_password: password,
         confirm_password: password,
       });
 
       // Fetch a new access token with new password.
-      const response = await accounts().post('/login', {
+      const token = await accounts.users.login({
         email: getState().user.data.email,
         password,
       });
-      dispatch(sessionTokenSet(response.data));
+      dispatch(sessionTokenSet(token));
 
       // Report success.
       dispatch({ type: USER_RESET_PASSWORD_SUCCESS });

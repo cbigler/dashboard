@@ -1,38 +1,18 @@
+import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
-import core from '../../client/core';
-
-import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
-import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
 
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
 
-function loadDigestSchedules() {
-  return async dispatch => {
-    let schedules, errorThrown;
-    try {
-      schedules = await fetchAllPages(page => {
-        return core().get(`/digest_schedules?page=${page}&page_size=5000`);
-      });
-    } catch (err) {
-      errorThrown = err;
-    }
-    if (!errorThrown) {
-      dispatch(collectionDispatchSchedulesSet(schedules));
-    } else {
-      console.error(errorThrown);
-      dispatch(collectionDispatchSchedulesError(errorThrown));
-    }
-  }
-}
-
-function loadDashboardAndReports(id) {
+export default function routeTransitionDashboardDetail(id) {
   return async (dispatch, getState) => {
+    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+
     const dashboardDate = getState().miscellaneous.dashboardDate;
     let dashboardSelectionPromise;
 
@@ -53,7 +33,7 @@ function loadDashboardAndReports(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(page => core().get('/dashboards', {params: {page, page_size: 5000}}));
+      dashboards = await fetchAllPages(page => core.dashboards.list({page, page_size: 5000}));
     } catch (err) {
       dispatch(collectionDashboardsError(err));
       return;
@@ -85,7 +65,7 @@ function loadDashboardAndReports(id) {
         dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
       } else {
         try {
-          selectedDashboard = objectSnakeToCamel((await core().get(`/dashboards/${id}`)).data);
+          selectedDashboard = objectSnakeToCamel(await core.dashboards.detail({id}));
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;
@@ -102,16 +82,5 @@ function loadDashboardAndReports(id) {
 
     // Wait for the dashboard selection to complete
     await dashboardSelectionPromise;
-  }
-}
-
-export default function routeTransitionDashboardDetail(id) {
-  return async dispatch => {
-    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
-
-    await Promise.all([
-      dispatch(loadDigestSchedules()),
-      dispatch(loadDashboardAndReports(id)),
-    ]);
   };
 }

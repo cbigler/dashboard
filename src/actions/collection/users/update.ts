@@ -1,7 +1,7 @@
+import { accounts } from '../../../client';
 import collectionUsersPush from './push';
 import collectionUsersError from './error';
 import showToast from '../../toasts';
-import accounts from '../../../client/accounts';
 
 export const COLLECTION_USERS_UPDATE = 'COLLECTION_USERS_UPDATE';
 
@@ -9,23 +9,23 @@ export default function collectionUsersUpdate(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_USERS_UPDATE, item });
 
-    let response, errorThrown;
     try {
-      response = await accounts().put(`/users/${item.id}`, {
+      const response = await accounts.users.update({
+        id: item.id,
         role: item.role,
-        full_name: item.fullName,
-        email: item.email,
       });
+      dispatch(collectionUsersPush(response));
+      dispatch(showToast({
+        text: 'User role updated successfully',
+      }));
+      return response;
     } catch (err) {
-      errorThrown = err;
-    }
-
-    if (errorThrown) {
-      dispatch(collectionUsersError(errorThrown));
+      dispatch(collectionUsersError(err));
+      dispatch(showToast({
+        text: 'Error updating user role',
+        type: 'danger',
+      }));
       return false;
-    } else {
-      dispatch(collectionUsersPush(response.data));
-      return true;
     }
   };
 }
