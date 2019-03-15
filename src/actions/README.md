@@ -37,7 +37,7 @@ A great example of this is the
 route transition, which is called on the `dev/tokens` route, which can be [found near the bottom of
 the index.js file in this project](https://github.com/DensityCo/dashboard/blob/trunk/src/index.js).
 When the `dev-token-list` route transition is called, an ajax call is made to the accounts api to
-get all tokens associated with a user account (this is the `accounts().get('/tokens')` function call).
+get all tokens associated with a user account (this is the `accounts.tokens.list` function call).
 On completion, the set action is dispatched that effects the tokens
 [collection](https://github.com/DensityCo/dashboard/tree/trunk/src/reducers#collection-reducers),
 which effectively updates the collection to contain the new tokens returned in the ajax call.

@@ -1,16 +1,14 @@
 import React from 'react';
 import classnames from 'classnames';
-import colorVariables from '@density/ui/variables/colors.json';
 
 const ListViewContext = React.createContext([] as any);
 
 export default function ListView({
   data = [] as any[],
   keyTemplate = item => item.id,
-  showHeaders = true,
   children = null as any,
 }) {
-  return <ListViewContext.Provider value={{data, keyTemplate, showHeaders}}>
+  return <ListViewContext.Provider value={{data, keyTemplate}}>
     <div className="list-view">
       {children}
     </div>
@@ -26,7 +24,7 @@ export function ListViewColumn({
 }) {
   return <ListViewContext.Consumer>{context => (
     <div className="list-view-column" style={style}>
-      {context.showHeaders ? <div className="list-view-header">{title}</div> : null}
+      <div className="list-view-header">{title}</div>
       {context.data.map(item => {
         const clickable = !disabled(item) && !!onClick;
         return <div
@@ -40,10 +38,3 @@ export function ListViewColumn({
     </div>
   )}</ListViewContext.Consumer>;
 }
-
-// Convenience export for rendering "standard" list clickable text
-export const LIST_CLICKABLE_STYLE = {
-  textDecoration: 'underline',
-  fontWeight: 500,
-  color: colorVariables.brandPrimary
-};

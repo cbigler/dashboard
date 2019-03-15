@@ -11,7 +11,7 @@ import {
 import Toaster from '../toaster';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import AdminUserManagement from '../admin-user-management';
-import can, { PERMISSION_CODES } from '../../helpers/permissions';
+import can from '../../helpers/permissions';
 import AdminDeveloper from '../admin-developer';
 import AdminDeviceStatus from '../admin-device-status';
 
@@ -36,14 +36,14 @@ export default function Admin({
                 >
                   User Management
                 </AppBarSubnavLink>
-                {can(user, PERMISSION_CODES.developer_tools_manage) ? 
+                {can(user, 'developer_tools_manage') ? 
                   <AppBarSubnavLink
                     href="#/admin/developer"
                     active={activePage === 'ADMIN_DEVELOPER'}
                   >
                     Developer
                   </AppBarSubnavLink> : null}
-                {can(user, PERMISSION_CODES.sensors_list) ? 
+                {can(user, 'sensors_list') ? 
                   <AppBarSubnavLink
                     href="#/admin/device-status"
                     active={activePage === 'ADMIN_DEVICE_STATUS'}

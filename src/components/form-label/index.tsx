@@ -1,14 +1,7 @@
-import React from 'react';
+import * as React from 'react';
 import classnames from 'classnames';
 
-export default function FormLabel({
-  label,
-  infoLabel='',
-  input,
-  htmlFor,
-  className='',
-  editable=false
-}) {
+export default function FormLabel({label, infoLabel = '', input, htmlFor, className, editable = false}) {
   // `editable` should default to true if unset.
   editable = typeof editable === 'undefined' ? true : editable;
 

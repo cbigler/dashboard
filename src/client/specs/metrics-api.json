@@ -1,0 +1,49 @@
+{
+  "variables": {
+    "metrics": "https://sensor-metrics.density.io/v1"
+  },
+  "resources": {
+    "heartbeats": {
+      "list": {
+        "method": "GET",
+        "url": "{{{metrics}}}/heartbeats/",
+        "desc": "List all heartbeats.",
+        "qs": {
+          "start_time": "{{start_time}}",
+          "end_time": "{{end_time}}",
+          "sensor_id": "{{sensor_id}}"
+        }
+      },
+      "get": {
+        "method": "GET",
+        "url": "{{{metrics}}}/heartbeats/{{id}}",
+        "desc": "Get a single heartbeat."
+      },
+      "create": {
+        "method": "POST",
+        "url": "{{{metrics}}}/heartbeats/",
+        "desc": "Create new heartbeats.",
+        "body": {
+          "sensor_id": "{{sensor_id}}",
+          "timestamp": "{{timestamp}}",
+          "status": "{{status}}",
+          "sensor_height": "{{sensor_height}}",
+          "frame_rate": "{{frame_rate}}",
+          "os_version": "{{os_version}}",
+          "eth_ip": "{{eth_ip}}",
+          "eth_mac": "{{eth_mac}}",
+          "eth_link": "{{eth_link}}",
+          "eth_netmask": "{{eth_netmask}}",
+          "eth_gateway": "{{eth_gateway}}",
+          "wifi_ip": "{{wifi_ip}}",
+          "wifi_mac": "{{wifi_mac}}",
+          "wifi_ssid": "{{wifi_ssid}}",
+          "wifi_rssi": "{{wifi_rssi}}",
+          "wifi_link": "{{wifi_link}}",
+          "wifi_netmask": "{{wifi_netmask}}",
+          "wifi_gateway": "{{wifi_gateway}}"
+        }
+      }
+    }
+  }
+}

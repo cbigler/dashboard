@@ -1,3 +1,4 @@
+import { core } from '../../client';
 import moment from 'moment';
 
 import collectionSpacesSet from '../collection/spaces/set';
@@ -9,8 +10,6 @@ import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-defaul
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
-import core from '../../client/core';
-import { getGoSlow } from '../../components/environment-switcher/index';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -36,14 +35,14 @@ export default function routeTransitionExploreSpaceDaily(id) {
 
     // Load a list of all time segment groups, which is required in order to render in the time
     // segment list.
-    let response;
+    let timeSegmentGroups;
     try {
-      response = await core().get('/time_segment_groups', {params: {page_size: 5000}});
+      timeSegmentGroups = await core.time_segment_groups.list();
     } catch (err) {
       dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${err.message}`));
       return;
     }
-    dispatch(collectionTimeSegmentGroupsSet(response.data.results));
+    dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups.results));
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
@@ -51,7 +50,7 @@ export default function routeTransitionExploreSpaceDaily(id) {
     let spaces, selectedSpace;
     try {
       spaces = (await fetchAllPages(
-        page => core().get('/spaces', {params: {page, page_size: 5000}})
+        page => core.spaces.list({page, page_size: 5000})
       )).map(objectSnakeToCamel);
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
@@ -93,9 +92,11 @@ export function calculateFootTraffic(space) {
     let data;
     try {
       data = (await fetchAllPages(page => (
-        core().get(`/spaces/${space.id}/counts`, { params: {
+        core.spaces.counts({
+          id: space.id,
+
           interval: '5m',
-          time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+          time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? '' : timeSegmentGroupId,
           order: 'asc',
 
           start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
@@ -103,8 +104,7 @@ export function calculateFootTraffic(space) {
 
           page,
           page_size: 5000,
-          slow: getGoSlow(),
-        }})
+        })
       ))).reverse();
     } catch (err) {
       dispatch(exploreDataCalculateDataError('footTraffic', `Error fetching count data: ${err}`));
@@ -134,29 +134,30 @@ export function calculateDailyRawEvents(space) {
     // Add timezone offset to both start and end times prior to querying for the count.
     const day = parseISOTimeAtSpace(date, space);
 
-    let preResponse;
+    let preData;
     try {
-      preResponse = await core().get(`/spaces/${space.id}/events`, {params: {
+      preData = await core.spaces.events({
+        id: space.id,
         start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
         end_time: formatInISOTimeAtSpace(day.clone().startOf('day').add(1, 'day'), space),
-        time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+        time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? '' : timeSegmentGroupId,
         page: dailyRawEventsPage,
         page_size: DAILY_RAW_EVENTS_PAGE_SIZE,
         order: 'desc',
-      }});
+      });
     } catch (error) {
       dispatch(exploreDataCalculateDataError('dailyRawEvents', `Error fetching event data: ${error}`));
       return;
     }
 
     // No results returned? Show a special state.
-    if (preResponse.data.results.length === 0) {
+    if (preData.results.length === 0) {
       dispatch(exploreDataCalculateDataComplete('dailyRawEvents', { data: null }));
       return;
     }
 
     // Convert all keys in the response to camelcase. Also, reverse data so it is ordered from
-    const data = preResponse.data.results
+    const data = preData.results
       .map(i => objectSnakeToCamel(i))
       .sort((a, b) => moment.utc(b.timestamp).valueOf() - moment.utc(a.timestamp).valueOf());
 
@@ -174,7 +175,7 @@ export function calculateDailyRawEvents(space) {
     // already known.
     const doorwayRequests = uniqueArrayOfDoorways.map(async doorwayId => {
       try {
-        return (await core().get(`/doorways/${doorwayId}`)).data;
+        return core.doorways.get({id: doorwayId});
       } catch (error) {
         dispatch(exploreDataCalculateDataError('dailyRawEvents', error));
         return;
@@ -194,9 +195,9 @@ export function calculateDailyRawEvents(space) {
       data,
       doorwayLookup,
 
-      total: preResponse.data.total,
-      nextPageAvailable: Boolean(preResponse.data.next),
-      previousPageAvailable: Boolean(preResponse.data.previous),
+      total: preData.total,
+      nextPageAvailable: Boolean(preData.next),
+      previousPageAvailable: Boolean(preData.previous),
     }));
   };
 }

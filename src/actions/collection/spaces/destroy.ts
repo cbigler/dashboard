@@ -1,6 +1,6 @@
 import collectionSpacesDelete from './delete';
 import collectionSpacesError from './error';
-import core from '../../../client/core';
+import { core } from '../../../client';
 
 export const COLLECTION_SPACES_DESTROY = 'COLLECTION_SPACES_DESTROY';
 
@@ -9,7 +9,7 @@ export default function collectionSpacesDestroy(space) {
     dispatch({ type: COLLECTION_SPACES_DESTROY, space });
 
     try {
-      await core().delete(`/spaces/${space.id}`, { data: { name: space.name } });
+      await core.spaces.delete({id: space.id, name: space.name});
       dispatch(collectionSpacesDelete(space));
       return true;
     } catch (err) {

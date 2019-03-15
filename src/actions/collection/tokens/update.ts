@@ -1,6 +1,6 @@
 import collectionTokensPush from './push';
+import { accounts } from '../../../client';
 import collectionTokensError from './error';
-import accounts from '../../../client/accounts';
 
 export const COLLECTION_TOKENS_UPDATE = 'COLLECTION_TOKENS_UPDATE';
 
@@ -9,14 +9,14 @@ export default function collectionTokensUpdate(token) {
     dispatch({ type: COLLECTION_TOKENS_UPDATE, token });
 
     try {
-      const response = await accounts().put('/tokens', {
+      const response = await accounts.tokens.update({
         name: token.name,
         description: token.description,
         token_type: token.tokenType,
         key: token.key,
       });
-      dispatch(collectionTokensPush(response.data));
-      return response.data;
+      dispatch(collectionTokensPush(response));
+      return response;
     } catch (err) {
       dispatch(collectionTokensError(err));
       return false;

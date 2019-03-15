@@ -17,7 +17,6 @@ import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../actions/route-transition/admin-user-management';
-import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
 import { ROUTE_TRANSITION_ADMIN_DEVELOPER } from '../../actions/route-transition/admin-developer';
 import { ROUTE_TRANSITION_ADMIN_DEVICE_STATUS } from '../../actions/route-transition/admin-device-status';
 
@@ -65,8 +64,6 @@ export default function activePage(state=initialState, action) {
 
   case ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT:
     return "ADMIN_USER_MANAGEMENT";
-  case ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL:
-    return "ADMIN_USER_MANAGEMENT_DETAIL";
   case ROUTE_TRANSITION_ADMIN_DEVELOPER:
     return "ADMIN_DEVELOPER";
   case ROUTE_TRANSITION_ADMIN_DEVICE_STATUS:

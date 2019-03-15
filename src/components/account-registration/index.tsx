@@ -12,9 +12,8 @@ import {
 import ErrorBar from '../error-bar/index';
 import AccountSetupHeader from '../account-setup-header/index';
 
-import { impersonateUnset } from '../../actions/impersonate';
 import sessionTokenSet from '../../actions/session-token/set';
-import accounts from '../../client/accounts';
+import { accounts } from '../../client';
 
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -37,7 +36,7 @@ export class AccountRegistration extends React.Component<any, any> {
     };
   }
   onSubmit() {
-    return accounts().put('/users/register', {
+    return accounts.users.register({
       email: this.state.email,
       invitation_token: this.state.invitationToken,
       password: this.state.password,
@@ -47,7 +46,7 @@ export class AccountRegistration extends React.Component<any, any> {
       core_consent: this.state.coreConsent,
       marketing_consent: this.state.marketingConsent,
     }).then(response => {
-      return this.props.onUserLoggedIn(response.data.session_token);
+      return this.props.onUserLoggedIn(response.session_token);
     }).catch(err => {
       this.setState({error: err.toString()});
     });
@@ -180,7 +179,6 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     onUserLoggedIn(token) {
-      dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);

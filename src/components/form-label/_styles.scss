@@ -2,14 +2,14 @@
   display: flex;
   flex-direction: column;
   color: $gray-darkest;
-  margin-bottom: 16px;
+  margin-bottom: 40px;
 }
 
 // The actual label element within the `form-label`
 .form-label-label {
   display: block;
   margin-bottom: 10px;
-  font-size: 16px;
+  font-size: $font-size-base;
   font-weight: $font-weight-base;
   user-select: none;
   color: $gray-darker;
