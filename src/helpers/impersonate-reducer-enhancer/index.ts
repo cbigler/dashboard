@@ -1,9 +1,12 @@
-export default function impersonateHeaderReducerEnhancer(reducer) {
+import { IMPERSONATE_UNSET } from '../../actions/impersonate';
+
+export default function impersonateReducerEnhancer(reducer) {
   return (state, props) => {
     const result = reducer(state, props);
-    if (!result) {
+    if (props.type === IMPERSONATE_UNSET) {
       delete localStorage['impersonate'];
-    } else if (state && result.selectedUser !== state.selectedUser) {
+    }
+    if (result && state && result.selectedUser !== state.selectedUser) {
       if (result.selectedUser) {
         localStorage['impersonate'] = JSON.stringify(result);
       } else {

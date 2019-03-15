@@ -134,48 +134,46 @@ export function ImpersonateModal({
         </AppBar>
         <div style={{
           flexGrow: 1,
-          padding: '0 24px',
+          padding: '12px 24px',
           overflowY: enabled ? 'scroll' : 'hidden',
         }}>
-          <ListView data={filteredUsers} showHeaders={false}>
-            <ListViewColumn
-              style={{flexGrow: 1}}
-              disabled={item => loading || !enabled}
-              onClick={item => onSelectImpersonateUser(
+          {filteredUsers.map(item => {
+            const label = item.fullName || item.email;
+            const selected = (activeModal.data.selectedUser || {}).id === item.id;
+            const disabled = loading || !enabled;
+            return <div
+              key={item.id}
+              className="impersonate-user-list-item"
+              style={{
+                opacity: enabled ? 1.0 : 0.25,
+                cursor: enabled ? 'pointer' : undefined,
+                color: selected ? colorVariables.brandPrimary: undefined,
+              }}
+              onClick={event => onSelectImpersonateUser(
                 activeModal.data.users.find(x => x.id === item.id)
               )}
-              template={item => {
-                const selected = (activeModal.data.selectedUser || {}).id === item.id;
-                return <div
-                  className="impersonate-user-list-item"
-                  style={{
-                    opacity: enabled ? 1.0 : 0.25,
-                    color: selected ? colorVariables.brandPrimary: undefined
-                  }}
-                >
-                  <div className="impersonate-user-icon">
-                    {
-                      (item.fullName || '')
-                        .split(' ')
-                        .slice(0, 2)
-                        .filter(word => word.length > 0)
-                        .map(word => word[0].toUpperCase())
-                        .join('')
-                    }
-                  </div>
-                  <div style={{flexGrow: 1}}>
-                    {(item.fullName || item.email).slice(0, 64)}
-                    {' '}({ROLE_INFO[item.role].label})
-                  </div>
-                  <RadioButton
-                    name="modal-impersonate-user"
-                    checked={selected}
-                    disabled={loading || !enabled}
-                    value={item.id}
-                    onChange={e => null} />
-                </div>;
-              }} />
-          </ListView>
+            >
+              <div className="impersonate-user-icon">{
+                (item.fullName || '')
+                  .split(' ')
+                  .slice(0, 2)
+                  .filter(word => word.length > 0)
+                  .map(word => word[0].toUpperCase())
+                  .join('')
+              }</div>
+              <div style={{flexGrow: 1}}>
+                {label.slice(0, 24)}
+                {label.length > 24 ? '...' : ''}
+                {' '}({ROLE_INFO[item.role].label})
+              </div>
+              <RadioButton
+                name="modal-impersonate-user"
+                checked={selected}
+                disabled={disabled}
+                value={item.id}
+                onChange={e => null} />
+            </div>;
+          })}
         </div>
       </div>
     </div>

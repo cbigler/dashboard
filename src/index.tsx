@@ -39,6 +39,7 @@ import { Provider } from 'react-redux';
 import createRouter from '@density/conduit';
 
 // Import all actions required to navigate from one page to another.
+import { impersonateUnset } from './actions/impersonate';
 import routeTransitionLogin from './actions/route-transition/login';
 import routeTransitionLogout from './actions/route-transition/logout';
 import routeTransitionExplore from './actions/route-transition/explore';
@@ -206,6 +207,7 @@ function preRouteAuthentication() {
     accounts().post('/tokens/exchange/auth0', null, {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
     }).then(response => {
+      store.dispatch(impersonateUnset());
       store.dispatch<any>(sessionTokenSet(response.data)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);

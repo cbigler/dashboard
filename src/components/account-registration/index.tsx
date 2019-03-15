@@ -12,6 +12,7 @@ import {
 import ErrorBar from '../error-bar/index';
 import AccountSetupHeader from '../account-setup-header/index';
 
+import { impersonateUnset } from '../../actions/impersonate';
 import sessionTokenSet from '../../actions/session-token/set';
 import accounts from '../../client/accounts';
 
@@ -179,6 +180,7 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     onUserLoggedIn(token) {
+      dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
