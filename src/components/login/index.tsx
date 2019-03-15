@@ -83,6 +83,7 @@ export class Login extends React.Component<any, any> {
   }
 
   onLogin = () => {
+    delete localStorage['impersonate'];
     this.setState({loading: true, error: null});
     return accounts().post('/login', {
       email: this.state.email,

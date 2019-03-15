@@ -26,7 +26,6 @@ export function sessionToken(state=initialState, action) {
 function updateTokenReducerEnhancer(reducer) {
   return (state, action) => {
     const token = reducer(state, action);
-    delete localStorage['impersonate'];
     updateTokensOnApiClients(token);
     return token;
   };
