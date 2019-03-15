@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import axios from 'axios';
+import { ROLE_INFO } from '../admin-user-management';
 
 import {
   AppBar,
@@ -144,16 +144,37 @@ export function ImpersonateModal({
               onClick={item => onSelectImpersonateUser(
                 activeModal.data.users.find(x => x.id === item.id)
               )}
-              template={item => <div style={{opacity: enabled ? 1.0 : 0.25}}>
-                <RadioButton
-                  name="modal-impersonate-user"
-                  checked={(activeModal.data.selectedUser || {}).id === item.id}
-                  disabled={loading || !enabled}
-                  value={item.id}
-                  text={item.fullName || item.email}
-                  onChange={e => null} />
-              </div>}
-            />
+              template={item => {
+                const selected = (activeModal.data.selectedUser || {}).id === item.id;
+                return <div
+                  className="impersonate-user-list-item"
+                  style={{
+                    opacity: enabled ? 1.0 : 0.25,
+                    color: selected ? colorVariables.brandPrimary: undefined
+                  }}
+                >
+                  <div className="impersonate-user-icon">
+                    {
+                      (item.fullName || '')
+                        .split(' ')
+                        .slice(0, 2)
+                        .filter(word => word.length > 0)
+                        .map(word => word[0].toUpperCase())
+                        .join('')
+                    }
+                  </div>
+                  <div style={{flexGrow: 1}}>
+                    {(item.fullName || item.email).slice(0, 64)}
+                    {' '}({ROLE_INFO[item.role].label})
+                  </div>
+                  <RadioButton
+                    name="modal-impersonate-user"
+                    checked={selected}
+                    disabled={loading || !enabled}
+                    value={item.id}
+                    onChange={e => null} />
+                </div>;
+              }} />
           </ListView>
         </div>
       </div>

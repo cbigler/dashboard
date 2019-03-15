@@ -1,3 +1,23 @@
-.impersonate-modal {
-  color: red;
+.impersonate-user-list-item {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  user-select: none;
+}
+.impersonate-user-icon {
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: $gray-darker;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 11px;
+  margin-right: 12px;
 }
