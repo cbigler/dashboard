@@ -7,6 +7,7 @@ import {
   AppBarSection,
   AppBarTitle,
   AppBarContext,
+  RadioButton,
 } from '@density/ui';
 
 import Modal from '../modal';
@@ -71,22 +72,20 @@ export default class TokenCreate extends React.Component<any, any> {
             editable={false}
             input={<div className="token-create-token-type-radio-group">
               <div className="token-create-token-type-radio-item">
-                <input
-                  type="radio"
-                  id="token-create-token-type-read-only"
+                <RadioButton 
+                  name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READONLY})}
                   checked={this.state.tokenType === READONLY}
+                  text="Read-Only"
                 />
-                <label htmlFor="token-create-token-type-read-only">Read-Only</label>
               </div>
               <div className="token-create-token-type-radio-item">
-                <input
-                  type="radio"
-                  id="token-create-token-type-read-write"
+                <RadioButton 
+                  name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READWRITE})}
                   checked={this.state.tokenType === READWRITE}
+                  text="Read-Write"
                 />
-                <label htmlFor="token-create-token-type-read-write">Read-Write</label>
               </div>
             </div>}
           />
