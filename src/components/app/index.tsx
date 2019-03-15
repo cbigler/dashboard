@@ -8,6 +8,7 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
+import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
 
 import Explore from '../explore';
 import Login from '../login';
@@ -138,6 +139,7 @@ export default connect((state: any) => {
 }, (dispatch: any) => {
   return {
     async onShowImpersonate(impersonate) {
+      impersonate = impersonate || impersonateDefaultState;
       dispatch(showModal('MODAL_IMPERSONATE', {
         ...impersonate,
         organizationFilter: '',

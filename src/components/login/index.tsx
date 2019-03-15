@@ -10,6 +10,7 @@ import {
 } from '@density/ui';
 
 import accounts from '../../client/accounts';
+import { impersonateUnset } from '../../actions/impersonate';
 import redirectAfterLogin from '../../actions/miscellaneous/redirect-after-login';
 import sessionTokenSet from '../../actions/session-token/set';
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
@@ -83,7 +84,6 @@ export class Login extends React.Component<any, any> {
   }
 
   onLogin = () => {
-    delete localStorage['impersonate'];
     this.setState({loading: true, error: null});
     return accounts().post('/login', {
       email: this.state.email,
@@ -275,6 +275,7 @@ export default connect((state: any) => ({
 }), dispatch => {
   return {
     onUserSuccessfullyLoggedIn(token, redirect) {
+      dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, redirect);

@@ -1,8 +1,8 @@
 
 import impersonateHeaderReducerEnhancer from '../../helpers/impersonate-header-reducer-enhancer';
-import { IMPERSONATE_SET } from '../../actions/impersonate';
+import { IMPERSONATE_SET, IMPERSONATE_UNSET } from '../../actions/impersonate';
 
-const defaultState = {
+export const defaultState = {
   enabled: false,
   loading: false,
   organizations: [],
@@ -13,8 +13,7 @@ const defaultState = {
   selectedUser: null
 };
 
-const initialState = localStorage.impersonate ?
-  JSON.parse(localStorage.impersonate) : defaultState;
+const initialState = localStorage.impersonate ? JSON.parse(localStorage.impersonate) : null;
 
 export function impersonate(state=initialState, action) {
   switch (action.type) {
@@ -27,6 +26,8 @@ export function impersonate(state=initialState, action) {
       users: action.data.users,
       selectedUser: action.data.selectedUser
     } : defaultState;
+  case IMPERSONATE_UNSET:
+    return null;
   default:
     return state;
   }
