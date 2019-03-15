@@ -1,10 +1,6 @@
 import React, { Fragment } from 'react';
-import classnames from 'classnames';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
-import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
-import GenericErrorState from '../generic-error-state/index';
 
 import {
   AppBar,
@@ -16,41 +12,65 @@ import {
   Icons,
   InputBox,
   InputBoxContext,
+  RadioButton,
+  RadioButtonContext,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
+import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import filterCollection from '../../helpers/filter-collection';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
-import showToast from '../../actions/toasts';
 import updateModal from '../../actions/modal/update';
 import collectionUsersCreate from '../../actions/collection/users/create';
 import collectionUsersUpdate from '../../actions/collection/users/update';
+import collectionUsersDestroy from '../../actions/collection/users/destroy';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
+import ListView, { ListViewColumn } from '../list-view';
 import { CancelLink } from '../dialogger';
 
-export const INVITATION_STATUS_LABELS = {
-  'unsent': 'unsent',
-  'pending': 'pending',
-  'expired': 'expired',
-  'accepted': 'accepted',
+const INVITATION_STATUS_LABELS = {
+  'unsent': 'Unsent',
+  'pending': 'Pending',
+  'expired': 'Expired',
+  'accepted': 'Accepted',
 };
 
+const ROLE_INFO = {
+  'owner': {
+    label: 'Owner',
+    description: 'Full access and all permissions, including developer tools.'
+  },
+  'admin': {
+    label: 'Admin',
+    description: 'Edit spaces and users. Cannot access developer tools.'
+  },
+  'readonly': {
+    label: 'Read-Only',
+    description: 'Cannot make changes to spaces or users.'
+  },
+}
+
 const userFilter = filterCollection({fields: ['email', 'fullName']});
+
+function getManageableRoles(user) {
+  const roles: string[] = [];
+  if (can(user, PERMISSION_CODES.owner_user_manage)) { roles.push('owner'); }
+  if (can(user, PERMISSION_CODES.admin_user_manage)) { roles.push('admin'); }
+  if (can(user, PERMISSION_CODES.readonly_user_manage)) { roles.push('readonly'); }
+  return roles;
+}
 
 function canResendInvitation(user, item) {
   return ['unsent', 'pending'].includes(item.invitationStatus) && item.id !== user.data.id;
 }
 
 export function AdminUserManagement({
-  spaces,
   users,
   user,
   activeModal,
@@ -62,8 +82,10 @@ export function AdminUserManagement({
   onSaveNewUser,
   onChangeUserRole,
   onResendInvitation,
+  onStartDeleteUser,
   onUpdateUsersFilter,
 }) {
+
   // Stop here if user is still loading
   if (user.loading || !user.data) { return null; }
 
@@ -77,9 +99,8 @@ export function AdminUserManagement({
     filteredUsers = userFilter(filteredUsers, users.filters.search);
   }
 
-  const showEmptySearchState = users.filters.search && filteredUsers.length === 0;
-
   return <Fragment>
+
     {/* Display user delete confirmation dialog */}
     <Dialogger />
 
@@ -87,67 +108,76 @@ export function AdminUserManagement({
     {activeModal.name === 'MODAL_ADMIN_USER_ADD' ? (
       <Modal
         visible={activeModal.visible}
-        width={783}
+        width={480}
         onBlur={onCancelAddUser}
         onEscape={onCancelAddUser}
       >
-        <AppBar>
-          <AppBarTitle>New User</AppBarTitle>
-        </AppBar>
-        <div className="admin-user-management-modal-columns">
-          <div className="admin-user-management-modal-column left">
-            <AppBar>
-              <AppBarTitle>Info</AppBarTitle>
-            </AppBar>
-            <div style={{padding: '16px 24px'}}>
-              <FormLabel
-                className="admin-user-management-new-user-email-container"
-                label="Email"
-                htmlFor="admin-user-management-new-user-email"
-                input={<InputBox
-                  type="text"
-                  width="100%"
-                  className="admin-user-management-new-user-email-field"
-                  id="admin-user-management-new-user-email"
-                  value={activeModal.data.email}
-                  placeholder="ex: stuart.little@density.io"
-                  onChange={e => onUpdateNewUser('email', e.target.value)}
-                />}
-              />
-            </div>
-            <div className="admin-user-management-new-user-section-header">
-              Roles
-            </div>
-            <div style={{padding: 24}}>
-              <AdminUserManagementRoleRadioList
-                user={user}
-                value={activeModal.data.role}
-                onChange={role => onUpdateNewUser('role', role)}
-              />
-            </div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          {/* <div style={{marginTop: -64}}>
+            <AppBarContext.Provider value="TRANSPARENT">
+              <AppBar>
+                <AppBarSection></AppBarSection>
+                <AppBarSection>Hi Rob</AppBarSection>
+              </AppBar>
+            </AppBarContext.Provider>
+          </div> */}
+          <AppBar>
+            <AppBarTitle>New User</AppBarTitle>
+          </AppBar>
+          <div className="admin-user-management-new-user-section-header">
+            Info
           </div>
-          <div className="admin-user-management-modal-column right">
-            <AdminSpacePermissionsPicker
-              spaces={spaces}
-              initialSelectedSpaceIds={[]}
+          <div style={{padding: '16px 24px'}}>
+            <FormLabel
+              className="admin-user-management-new-user-email-container"
+              label="Email"
+              htmlFor="admin-user-management-new-user-email"
+              input={<InputBox
+                type="text"
+                width="100%"
+                className="admin-user-management-new-user-email-field"
+                id="admin-user-management-new-user-email"
+                value={activeModal.data.email}
+                onChange={e => onUpdateNewUser(activeModal.data, 'email', e.target.value)}
+              />}
             />
           </div>
+          <div className="admin-user-management-new-user-section-header">
+            Roles
+          </div>
+          <div style={{padding: 24}}>
+            {manageableRoles.map(role => (
+              <div>
+                <RadioButtonContext.Provider value='USER_FORM'>
+                  <RadioButton
+                    name="admin-user-management-new-user-role"
+                    checked={activeModal.data.role === role}
+                    onChange={e => onUpdateNewUser(activeModal.data, 'role', e.target.value)}
+                    value={role}
+                    text={ROLE_INFO[role].label} />
+                </RadioButtonContext.Provider>
+                <div className="admin-user-management-new-user-role-description">
+                  {ROLE_INFO[role].description}
+                </div>
+              </div>
+            ))}
+          </div>
+          <AppBarContext.Provider value="BOTTOM_ACTIONS">
+            <AppBar>
+              <AppBarSection></AppBarSection>
+              <AppBarSection>
+                <CancelLink onClick={onCancelAddUser} />
+                <Button
+                  type="primary"
+                  disabled={!(activeModal.data.email && activeModal.data.role)}
+                  onClick={() => onSaveNewUser(activeModal.data)}
+                >
+                  Save
+                </Button>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
         </div>
-        <AppBarContext.Provider value="BOTTOM_ACTIONS">
-          <AppBar>
-            <AppBarSection></AppBarSection>
-            <AppBarSection>
-              <CancelLink onClick={onCancelAddUser} />
-              <Button
-                type="primary"
-                disabled={!(activeModal.data.email && activeModal.data.role)}
-                onClick={() => onSaveNewUser(activeModal.data)}
-              >
-                Save User
-              </Button>
-            </AppBarSection>
-          </AppBar>
-        </AppBarContext.Provider>
       </Modal>
     ) : null}
 
@@ -159,9 +189,7 @@ export function AdminUserManagement({
           placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
           value={users.filters.search}
           width={320}
-          onChange={onUpdateUsersFilter}
-          disabled={users.view !== 'VISIBLE'}
-        />
+          onChange={onUpdateUsersFilter} />
       </AppBarSection>
       <AppBarSection>
         <Button type="primary" onClick={onClickAddUser}>Add User</Button>
@@ -169,92 +197,57 @@ export function AdminUserManagement({
     </AppBar>
 
     <AppScrollView>
-      {users.view === 'ERROR' ? (
-        <div className={classnames('admin-user-management-list', 'centered')}>
-          <GenericErrorState />
-        </div>
-      ) : null}
-      {users.view === 'VISIBLE' ? (
-        <div className={classnames('admin-user-management-list', {centered: showEmptySearchState})}>
-          {showEmptySearchState ? (
-            <div className="admin-user-management-empty-search-state">
-              <h2>Whoops</h2>
-              <p>We couldn't find a person that matched "{users.filters.search}"</p>
-            </div>
-          ) : (
-            <ListView data={filteredUsers}>
-              <ListViewColumn title="User" template={item => (
-                <span className="admin-user-management-cell-name-email-cell">
-                  <h5>{item.fullName || '---'}</h5>
-                  <span>{item.email}</span>
-                </span>
-              )} />
-              <ListViewColumn
-                title={<span style={{paddingLeft: 16}}>Role</span>}
-                template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
-                  <InputBoxContext.Provider value="LIST_VIEW">
-                    <InputBox
-                      type="select"
-                      width="160px"
-                      value={item.role}
-                      disabled={item.id === user.data.id}
-                      onChange={value => onChangeUserRole(item, value.id)}
-                      choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
-                  </InputBoxContext.Provider>
-                </div>}
-              />
-              <ListViewColumn style={{flexGrow: 1, flexShrink: 1}}/>
-              <ListViewColumn title="Activity" template={item => {
-                const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
-                return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
-              }} />
-              <ListViewColumn
-                title="Invitation"
-                template={item => (
-                  <Fragment>
-                    <span className="admin-user-management-cell-invitation-status">
-                      {INVITATION_STATUS_LABELS[item.invitationStatus]}
-                    </span>
-                    {canResendInvitation(user, item) ? (
-                      <span
-                        role="button"
-                        className="admin-user-management-cell-invitation-resend"
-                        onClick={() => onResendInvitation(item)}
-                      >
-                        <Icons.Refresh color={colorVariables.brandPrimary} />
-                      </span>
-                    ) : null}
-                  </Fragment>
-                )}
-              />
-              <ListViewColumn
-              />
-              <ListViewColumn
-                title="Space Access"
-                template={item =><span>All Spaces</span>}
-              />
-              <ListViewColumn
-                title="Actions"
-                template={item => (
-                  <span
-                    role="button"
-                    className="admin-user-management-edit-user"
-                  >Edit User</span>
-                )}
-                disabled={item => item.id === user.data.id}
-                onClick={item => { window.location.href = `#/admin/user-management/${item.id}` }}
-              />
-            </ListView>
-          )}
-        </div>
-      ) : null}
+      <div className="admin-user-management-list">
+        <ListView data={filteredUsers}>
+          <ListViewColumn title="Email" template={item => (
+            <strong className="admin-user-management-cell-value">{item.email}</strong>
+          )} />
+          <ListViewColumn title="Name" template={item => (
+            <span className="admin-user-management-cell-value">{item.fullName}</span>
+          )} />
+          <ListViewColumn 
+            title={<span style={{paddingLeft: 16}}>Role</span>}
+            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
+              <InputBoxContext.Provider value="LIST_VIEW">
+                <InputBox
+                  type="select"
+                  width="160px"
+                  value={item.role}
+                  disabled={item.id === user.data.id}
+                  onChange={value => onChangeUserRole(item, value.id)}
+                  choices={manageableRoles.map(x => ({id: x, label: ROLE_INFO[x].label}))} />
+              </InputBoxContext.Provider>
+            </div>}
+          />
+          <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
+          <ListViewColumn title="Activity" template={item => {
+            const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
+            return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
+          }} />
+          <ListViewColumn
+            title="Invitation"
+            template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
+          />
+          <ListViewColumn 
+            template={item => canResendInvitation(user, item) ? 'Resend' : ''}
+            disabled={item => !canResendInvitation(user, item)}
+            onClick={item => onResendInvitation(item)}
+          />
+          <ListViewColumn
+            template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
+              <Icons.Trash color={colorVariables.grayDarker} />
+            </div>}
+            disabled={item => item.id === user.data.id}
+            onClick={item => onStartDeleteUser(item)}
+          />
+        </ListView>
+      </div>
     </AppScrollView>
   </Fragment>;
 }
 
 export default connect((state: any) => {
   return {
-    spaces: state.spaces,
     users: state.users,
     user: state.user,
     activeModal: state.activeModal,
@@ -268,20 +261,22 @@ export default connect((state: any) => {
     onCancelAddUser() {
       (dispatch as any)(hideModal());
     },
-    onUpdateNewUser(field, value) {
-      dispatch(updateModal({[field]: value}));
+    onUpdateNewUser(data, field, value) {
+      dispatch(updateModal({ ...data, [field]: value }));
     },
     onSaveNewUser(data) {
       (dispatch as any)(hideModal());
       (dispatch as any)(collectionUsersCreate(data));
     },
-    async onChangeUserRole(user, role) {
-      const ok = await (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
-      if (ok) {
-        dispatch<any>(showToast({ text: 'User role updated successfully' }));
-      } else {
-        dispatch<any>(showToast({ type: 'error', text: 'Error updating user role' }));
-      }
+    onChangeUserRole(user, role) {
+      (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+    },
+    onStartDeleteUser(user) {
+      (dispatch as any)(showModal('MODAL_CONFIRM', {
+        prompt: 'Are you sure you want to delete this user?',
+        confirmText: 'Delete',
+        callback: () => (dispatch as any)(collectionUsersDestroy(user))
+      }));
     },
     onCancelDeleteUser() {
       (dispatch as any)(hideModal());
