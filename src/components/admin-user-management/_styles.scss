@@ -93,3 +93,10 @@
   font-weight: 500;
 }
 .admin-user-management-empty-search-state p { font-size: 16px; }
+
+.admin-user-management-resend {
+  color: $brand-primary;
+  text-decoration: underline;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
+}

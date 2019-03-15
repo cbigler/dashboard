@@ -24,7 +24,7 @@ export default function collectionUsersUpdate(item) {
       dispatch(collectionUsersError(errorThrown));
       return false;
     } else {
-      dispatch(collectionUsersPush(response));
+      dispatch(collectionUsersPush(response.data));
       return true;
     }
   };

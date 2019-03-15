@@ -20,6 +20,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import filterCollection from '../../helpers/filter-collection';
 
+import showToast from '../../actions/toasts';
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
@@ -229,7 +230,9 @@ export function AdminUserManagement({
             template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
           />
           <ListViewColumn 
-            template={item => canResendInvitation(user, item) ? 'Resend' : ''}
+            template={item => canResendInvitation(user, item) ? (
+              <span className="admin-user-management-resend">Resend</span>
+            ) : ''}
             disabled={item => !canResendInvitation(user, item)}
             onClick={item => onResendInvitation(item)}
           />
@@ -268,8 +271,13 @@ export default connect((state: any) => {
       (dispatch as any)(hideModal());
       (dispatch as any)(collectionUsersCreate(data));
     },
-    onChangeUserRole(user, role) {
-      (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+    async onChangeUserRole(user, role) {
+      const ok = await (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
+      if (ok) {
+        dispatch<any>(showToast({ text: 'User role updated.' }));
+      } else {
+        dispatch<any>(showToast({ type: 'error', text: 'Error updating user role' }));
+      }
     },
     onStartDeleteUser(user) {
       (dispatch as any)(showModal('MODAL_CONFIRM', {
