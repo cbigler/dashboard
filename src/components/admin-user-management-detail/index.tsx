@@ -139,7 +139,10 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                   ) : (
                     <li>User has never signed in</li>
                   )}
-                  <li>Created: NEED DATE HERE</li>
+                  <li>
+                    Created:{' '}
+                    {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
+                  </li>
                 </ul>
               </div>
             </div>

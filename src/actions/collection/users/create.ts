@@ -28,7 +28,8 @@ export default function collectionUsersCreate(item) {
 
       return response;
     } catch (err) {
-      dispatch(collectionUsersError(err));
+      // Don't store this error in the error collection for the space, since we are showing a toast
+      // for it instead.
       dispatch(showToast({
         text: 'Error creating user',
         type: 'error',
