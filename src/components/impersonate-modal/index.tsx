@@ -142,6 +142,7 @@ export function ImpersonateModal({
             const selected = (activeModal.data.selectedUser || {}).id === item.id;
             const disabled = loading || !enabled;
             return <div
+              key={item.id}
               className="impersonate-user-list-item"
               style={{
                 opacity: enabled ? 1.0 : 0.25,
@@ -152,16 +153,14 @@ export function ImpersonateModal({
                 activeModal.data.users.find(x => x.id === item.id)
               )}
             >
-              <div className="impersonate-user-icon">
-                {
-                  (item.fullName || '')
-                    .split(' ')
-                    .slice(0, 2)
-                    .filter(word => word.length > 0)
-                    .map(word => word[0].toUpperCase())
-                    .join('')
-                }
-              </div>
+              <div className="impersonate-user-icon">{
+                (item.fullName || '')
+                  .split(' ')
+                  .slice(0, 2)
+                  .filter(word => word.length > 0)
+                  .map(word => word[0].toUpperCase())
+                  .join('')
+              }</div>
               <div style={{flexGrow: 1}}>
                 {label.slice(0, 24)}
                 {label.length > 24 ? '...' : ''}

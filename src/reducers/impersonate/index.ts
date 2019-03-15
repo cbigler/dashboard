@@ -1,5 +1,5 @@
 
-import impersonateHeaderReducerEnhancer from '../../helpers/impersonate-header-reducer-enhancer';
+import impersonateReducerEnhancer from '../../helpers/impersonate-reducer-enhancer';
 import { IMPERSONATE_SET, IMPERSONATE_UNSET } from '../../actions/impersonate';
 
 export const defaultState = {
@@ -33,4 +33,4 @@ export function impersonate(state=initialState, action) {
   }
 }
 
-export default impersonateHeaderReducerEnhancer(impersonate);
+export default impersonateReducerEnhancer(impersonate);
