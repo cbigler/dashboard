@@ -42,7 +42,7 @@ export default class TokenCreate extends React.Component<any, any> {
         <div className="token-create">
           <FormLabel
             className="token-create-name-container"
-            label="Token Name"
+            label="Token name"
             htmlFor="update-token-name"
             input={<InputBox
               type="text"
