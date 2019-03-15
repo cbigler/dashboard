@@ -197,7 +197,12 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 // common ranges functionality
                 commonRanges={getCommonRangesForSpace(space)}
                 onSelectCommonRange={({startDate, endDate}) => {
-                  onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                  onChangeDateRange(
+                    space,
+                    formatInISOTime(startDate),
+                    formatInISOTime(endDate),
+                    {...spaces.filters, startDate, endDate}
+                  );
                 }}
               />
             </ExploreFilterBarItem>
