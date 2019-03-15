@@ -4,6 +4,7 @@ import moment from 'moment';
 
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
+import GenericErrorState from '../generic-error-state/index';
 
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
@@ -92,7 +93,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
       );
     case 'ERROR':
       return (
-        <span>Error state needs to be mocked out</span>
+        <div className="admin-user-management-detail-error">
+          <GenericErrorState />
+        </div>
       );
     case 'VISIBLE':
       return (
