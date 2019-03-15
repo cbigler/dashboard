@@ -12,6 +12,7 @@ import hideModal from '../../actions/modal/hide';
 export function ExploreSpaceHeader({
   space,
   activeModal,
+  spaceFilters,
 
   onOpenModal,
   onCloseModal,
@@ -25,7 +26,7 @@ export function ExploreSpaceHeader({
       {activeModal.name === 'set-capacity' ? <SetCapacityModal
         visible={activeModal.visible}
         space={activeModal.data.space}
-        onSubmit={capacity => onSetCapacity(activeModal.data.space, capacity)}
+        onSubmit={capacity => onSetCapacity(activeModal.data.space, capacity, spaceFilters)}
         onDismiss={onCloseModal}
       /> : null}
 
@@ -74,6 +75,7 @@ export default connect((state: any) => {
   return {
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
+    spaceFilters: state.spaces.filters
   };
 }, dispatch => {
   return {
@@ -83,11 +85,11 @@ export default connect((state: any) => {
     onCloseModal() {
       dispatch<any>(hideModal());
     },
-    async onSetCapacity(space, capacity) {
+    async onSetCapacity(space, capacity, spaceFilters) {
       const ok = await dispatch<any>(collectionSpacesUpdate({...space, capacity}));
       if (ok) {
         dispatch<any>(hideModal());
-        dispatch<any>(calculateTrendsModules(space));
+        dispatch<any>(calculateTrendsModules(space, spaceFilters));
       }
     },
   };
