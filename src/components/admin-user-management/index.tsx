@@ -32,7 +32,7 @@ import collectionUsersInviteResend from '../../actions/collection/users/invite_r
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import ListView, { ListViewColumn } from '../list-view';
+import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
 import { CancelLink } from '../dialogger';
 
 const INVITATION_STATUS_LABELS = {
@@ -231,7 +231,7 @@ export function AdminUserManagement({
           />
           <ListViewColumn 
             template={item => canResendInvitation(user, item) ? (
-              <span className="admin-user-management-resend">Resend</span>
+              <span style={LIST_CLICKABLE_STYLE}>Resend</span>
             ) : ''}
             disabled={item => !canResendInvitation(user, item)}
             onClick={item => onResendInvitation(item)}
