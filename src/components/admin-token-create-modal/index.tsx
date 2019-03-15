@@ -32,7 +32,7 @@ export default class TokenCreate extends React.Component<any, any> {
       <Modal
         visible={visible}
         width={460}
-        height={492}
+        height={450}
         onBlur={onDismiss}
         onEscape={onDismiss}
       >
@@ -42,7 +42,7 @@ export default class TokenCreate extends React.Component<any, any> {
         <div className="token-create">
           <FormLabel
             className="token-create-name-container"
-            label="Token Name"
+            label="Token name"
             htmlFor="update-token-name"
             input={<InputBox
               type="text"
