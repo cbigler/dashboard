@@ -103,8 +103,8 @@ export default class TokenCreate extends React.Component<any, any> {
                 width="100%"
                 onClick={() => this.props.onSubmit({
                   name: this.state.name,
-                  description: this.state.description,
                   tokenType: this.state.tokenType,
+                  description: this.state.description || undefined,
                 })}
               >Save Token</Button>
             </AppBarSection>
