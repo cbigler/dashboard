@@ -21,8 +21,10 @@ import {
   Icons,
 } from '@density/ui';
 import Toast from '../toast/index';
+import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
+import Modal from '../modal';
 import Report from '../report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
@@ -70,32 +72,28 @@ function DashboardSidebarHideShowIcon({sidebarVisible, onChangeSidebarVisibility
 }
 
 function DashboardExpandedReportModal({visible, report, reportData, onCloseModal}) {
-  return ReactDOM.createPortal(
-    (
-      <div className={classnames('dashboard-expanded-report-modal', {visible})}>
-        <div className="dashboard-expanded-report-modal-inner">
-          <AppBarContext.Provider value="TRANSPARENT">
-            <AppBar>
-              <AppBarSection></AppBarSection>
-              <AppBarSection>
-                <button onClick={onCloseModal} className="dashboard-expanded-report-modal-button">
-                  Close
-                </button>
-              </AppBarSection>
-            </AppBar>
-          </AppBarContext.Provider>
-          {report ? (
-            <Report
-              report={report as any}
-              reportData={reportData as any}
-              expanded={true}
-            />
-          ) : null}
-        </div>
-      </div>
-    ),
-    document.body, /* appends to the end of document.body */
-  );
+  return <Modal
+    visible={visible}
+    onBlur={onCloseModal}
+    onEscape={onCloseModal}
+    width={1000}
+  >
+    <div style={{marginTop: -64}}>
+      <AppBarContext.Provider value="TRANSPARENT">
+        <AppBar>
+          <AppBarSection></AppBarSection>
+          <AppBarSection>
+            <Button onClick={onCloseModal}>Close</Button>
+          </AppBarSection>
+        </AppBar>
+      </AppBarContext.Provider>
+    </div>
+    {report ? <Report
+      report={report as any}
+      reportData={reportData as any}
+      expanded={true}
+    /> : null}
+  </Modal>
 }
 
 
@@ -228,6 +226,8 @@ export function Dashboard({
         />
       ) : null}
 
+      <Toaster />
+
       {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
         <DashboardDigestManagementModal
           visible={activeModal.visible}
@@ -235,27 +235,6 @@ export function Dashboard({
           initialDigestSchedule={activeModal.data.digest}
           onCloseModal={onCloseModal}
         />
-      ) : null}
-      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_SUCCESS' ? (
-        <div className="dashboard-status-toast">
-          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
-            Digest saved. Happy reporting!
-          </Toast>
-        </div>
-      ) : null}
-      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_DELETED' ? (
-        <div className="dashboard-status-toast">
-          <Toast visible={activeModal.visible} onDismiss={onCloseModal}>
-            Digest deleted.
-          </Toast>
-        </div>
-      ) : null}
-      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT_ERROR' ? (
-        <div className="dashboard-status-toast">
-          <Toast type="error" visible={activeModal.visible} onDismiss={onCloseModal}>
-            Whoops! That didn't work.
-          </Toast>
-        </div>
       ) : null}
 
       {/* Main application */}

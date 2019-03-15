@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { core } from '../../client';
+import core from '../../client/core';
 
 import {
   Card,
@@ -15,6 +15,9 @@ import {
 
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
+
+const CSV_BASE = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
+const CSV_URL = `${CSV_BASE}/csv`;
 
 export const LOADING_INITIAL = 'LOADING_INITIAL',
       LOADING_PREVIEW = 'LOADING_PREVIEW',
@@ -45,22 +48,19 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_PREVIEW});
 
     try {
-      const previewData = await core.spaces.csvPreview({
-        base: core.config().core.replace('v2', 'v1'),
+      const previewData = (await core().get(CSV_URL, { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
-        page: 1,
-        page_size: 5, /* only fetching a preview of what data could look like */
         order: 'desc',
-      });
+        preview: true,
+      }})).data;
 
       // No results returned? Transition to EMPTY state.
       if (previewData.length === 0) {
         this.setState({
           view: EMPTY,
           dataSpaceId: space.id,
-
           data: null,
         });
         return;
@@ -100,29 +100,26 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_CSV});
 
     try {
-      const csv = await core.spaces.csv({
-        base: core.config().core.replace('v2', 'v1'),
+      const csvData = (await core().get(CSV_URL, { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
-        page: 1,
-        page_size: 5, /* only fetching a preview of what data could look like */
         order: 'desc',
-      });
+      }})).data;
 
       // This is a workaround to allow a user to download this csv data, or if that doesn't work,
       // then at least open it in a new tab for them to view and copy to the clipboard.
       // 1. Create a new blob url.
       // 2. Redirect the user to it in a new tab.
-      const data = new Blob([csv], {type: 'text/csv'});
-      const csvURL = URL.createObjectURL(data);
+      const dataBlob = new Blob([csvData], {type: 'text/csv'});
+      const dataURL = URL.createObjectURL(dataBlob);
 
       // Hide the download spinner once csv has been downloaded and blob url has been created.
       this.setState({view: VISIBLE});
 
       const tempLink = document.createElement('a');
       document.body.appendChild(tempLink);
-      tempLink.href = csvURL;
+      tempLink.href = dataURL;
       tempLink.setAttribute('download', `${space.id}: ${startDate} - ${endDate}.csv`);
       tempLink.click();
       document.body.removeChild(tempLink);

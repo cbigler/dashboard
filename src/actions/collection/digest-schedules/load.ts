@@ -1,6 +1,6 @@
 export const COLLECTION_DIGEST_SCHEDULES_LOAD = 'COLLECTION_DIGEST_SCHEDULES_LOAD';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDigestSchedulesError from './error';
 import collectionDigestSchedulesSet from './set';
 
@@ -10,7 +10,7 @@ export default function collectionDigestSchedulesLoad() {
 
     let schedules, errorThrown;
     try {
-      schedules = await core.digest_schedules.list();
+    schedules = await core().get('/digest_schedules');
     } catch (err) {
       errorThrown = err;
     }

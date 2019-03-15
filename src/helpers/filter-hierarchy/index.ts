@@ -30,6 +30,13 @@ export function getParentsOfSpace(spaces, initialSpace) {
   }
 }
 
+export function getChildrenOfSpace(spaces, initialSpace) {
+  return spaces.filter(space => {
+    const parents = getParentsOfSpace(spaces, space);
+    return parents.includes(initialSpace.id);
+  }).map(s => s.id);
+}
+
 export default function filterHierarchy(spaces, parentId) {
   return spaces.filter(space => {
     return (

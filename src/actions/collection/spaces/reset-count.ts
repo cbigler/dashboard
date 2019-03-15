@@ -1,6 +1,6 @@
 import collectionSpacesPush from './push';
 import collectionSpacesError from './error';
-import { core } from '../../../client';
+import core from '../../../client/core';
 
 import {
   getCurrentLocalTimeAtSpace,
@@ -14,13 +14,12 @@ export default function collectionSpacesResetCount(space, newCount) {
     dispatch({ type: COLLECTION_SPACES_RESET_COUNT, item: space, newCount });
 
     try {
-      const response = await core.spaces.reset({
-        id: space.id,
+      const response = await core().post(`/spaces/${space.id}/resets`, {
         count: newCount,
         timestamp: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
       });
       dispatch(collectionSpacesPush({...space, currentCount: newCount}));
-      return response;
+      return response.data;
     } catch (err) {
       dispatch(collectionSpacesError(err));
       return false;

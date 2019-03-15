@@ -27,6 +27,8 @@
 
 body {
   font-family: $font-base;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /**
@@ -265,3 +267,8 @@ $cdn-path: "https://densityco.github.io/assets";
 @import "./components/toaster/styles";
 @import "./components/list-view/styles";
 @import "./components/dialogger/styles";
+@import "./components/admin-space-permissions-picker/styles";
+@import "./components/admin-user-management-detail/styles";
+@import "./components/admin-user-management-role-radio-list/styles";
+@import "./components/generic-error-state/styles";
+@import "./components/impersonate-modal/styles";

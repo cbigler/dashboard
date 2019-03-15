@@ -1,6 +1,6 @@
 export const COLLECTION_DISPATCH_SCHEDULES_DESTROY = 'COLLECTION_DISPATCH_SCHEDULES_DESTROY';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
 import collectionDispatchSchedulesRemove from './remove';
@@ -11,7 +11,7 @@ export default function collectionDispatchSchedulesDestroy(schedule) {
 
     let errorThrown;
     try {
-      await core.digest_schedules.delete({ id: schedule.id });
+      await core().delete(`/digest_schedules/${schedule.id}`);
     } catch (err) {
       errorThrown = err;
     }

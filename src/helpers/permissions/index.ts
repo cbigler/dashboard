@@ -16,10 +16,37 @@ export const PERMISSION_CODES = {
   // Permission to allow a user to manage readonly-level users
   readonly_user_manage: 'readonly_user_manage',
   // Permission to allow a user to access developer tools
-  developer_tool_manage: 'developer_tools_manage'
+  developer_tools_manage: 'developer_tools_manage',
+  // Permission to allow a user to list or view sensors
+  sensors_list: 'sensors_list'
 };
+
+export const ROLE_INFO = {
+  'owner': {
+    label: 'Owner',
+    description: 'Full access and all permissions, including developer tools.'
+  },
+  'admin': {
+    label: 'Admin',
+    description: 'Edit spaces and users. Cannot access developer tools.'
+  },
+  'readonly': {
+    label: 'Read-Only',
+    description: 'Cannot make changes to spaces or users.'
+  },
+};
+
 
 export default function can(user, permission) {
   if (user.loading || user.error || !user.data) { return false; }
   return user.data.permissions.indexOf(permission) > -1;
 }
+
+export function getManageableRoles(user) {
+  const roles: string[] = [];
+  if (can(user, PERMISSION_CODES.owner_user_manage)) { roles.push('owner'); }
+  if (can(user, PERMISSION_CODES.admin_user_manage)) { roles.push('admin'); }
+  if (can(user, PERMISSION_CODES.readonly_user_manage)) { roles.push('readonly'); }
+  return roles;
+}
+

@@ -21,7 +21,6 @@ import {
   prettyPrintHoursMinutes,
 } from '../../helpers/space-time-utilities/index';
 
-import Subnav, { SubnavItem } from '../subnav/index';
 import ExploreFilterBar, { ExploreFilterBarItem } from '../explore-filter-bar/index';
 import ExploreSpaceHeader from '../explore-space-header/index';
 import UtilizationCard from '../explore-space-detail-utilization-card/index';
@@ -34,6 +33,7 @@ import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/i
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
+import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
   DEFAULT_TIME_SEGMENT_GROUP,
   findTimeSegmentsInTimeSegmentGroupForSpace,
@@ -108,6 +108,8 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         space,
       );
 
+      const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
+
       return <div className="explore-space-trends-page" ref={r => { this.container = r; }}>
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <ExploreFilterBar>
@@ -144,7 +146,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   }
                 })}
                 width={300}
-                onChange={value => onChangeTimeSegmentGroup(space, value.id)}
+                onChange={value => onChangeTimeSegmentGroup(space, value.id, spaces.filters)}
               />
             </ExploreFilterBarItem>
             <ExploreFilterBarItem label="Date Range">
@@ -172,7 +174,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                     formatInISOTime(startDate) !== spaces.filters.startDate || 
                     formatInISOTime(endDate) !== spaces.filters.endDate
                   ) {
-                    onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                    onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate), spaces.filters);
                   }
                 }}
                 // Within the component, store if the user has selected the start of end date picker
@@ -195,7 +197,12 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 // common ranges functionality
                 commonRanges={getCommonRangesForSpace(space)}
                 onSelectCommonRange={({startDate, endDate}) => {
-                  onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                  onChangeDateRange(
+                    space,
+                    formatInISOTime(startDate),
+                    formatInISOTime(endDate),
+                    {...spaces.filters, startDate, endDate}
+                  );
                 }}
               />
             </ExploreFilterBarItem>
@@ -237,7 +244,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
                   metric="PEAKS"
-                  title="Hourly Breakdown - Average Peak Occupancy"
+                  title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
                   aggregation="AVERAGE"
                 />
               </div>
@@ -274,14 +281,14 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value) {
+    onChangeTimeSegmentGroup(space, value, spaceFilters) {
       dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
-      dispatch<any>(calculateTrendsModules(space));
+      dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
-    onChangeDateRange(space, startDate, endDate) {
+    onChangeDateRange(space, startDate, endDate, spaceFilters) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      dispatch<any>(calculateTrendsModules(space));
+      dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
   };
 })(ExploreSpaceTrends);
