@@ -66,17 +66,17 @@
 // The password reset form.
 .account-change-password-form-header {
   margin-bottom: 10px;
+  font-size: 16px;
 }
 
 .account-change-password-form-container {
   display: flex;
   flex-direction: column;
 }
-.account-change-password-form-container input {
-  flex: 1;
-  margin-bottom: 40px;
-}
 
+.account-change-password-form-field-wrapper {
+  margin-bottom: 24px;
+}
 
 .account-password-reset-icon {
   font-family: Densicons;
