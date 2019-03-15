@@ -2,7 +2,8 @@ import localStorageReducerEnhancer from '../../helpers/localstorage-reducer-enha
 import { SESSION_TOKEN_SET } from '../../actions/session-token/set';
 import { SESSION_TOKEN_UNSET } from '../../actions/session-token/unset';
 
-import { core, accounts, metrics } from '../../client';
+import { config as configCore } from '../../client/core';
+import { config as configAccounts } from '../../client/accounts';
 
 const localStorage = window.localStorage || (global as any).localStorage || {};
 
@@ -33,9 +34,8 @@ function updateTokenReducerEnhancer(reducer) {
 // This function serves as a way of updating every service or concept in the application that
 // requires access to a token. This includes all the api clients and the websockets event source.
 function updateTokensOnApiClients(token) {
-  core.config({token}); // Core api service
-  accounts.config({token}); // Accounts api service
-  metrics.config({token});
+  configCore({token});
+  configAccounts({token});
 }
 updateTokensOnApiClients(initialState);
 

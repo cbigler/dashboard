@@ -26,6 +26,7 @@ $dashboard-digest-backdrop-z-index: 99999;
   white-space: nowrap;
 
   color: $brand-primary-new;
+  background-color: #fff;
   height: 40px;
   padding-left: 16px;
   padding-right: 16px;
@@ -33,6 +34,10 @@ $dashboard-digest-backdrop-z-index: 99999;
   border-radius: $border-radius-base;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
   outline: none;
+}
+@media (max-width: 375px) {
+  // Hide digests on mobile
+  .dashboard-digest-list-button { display: none; }
 }
 .dashboard-digest-list-button.visible {
   position: relative;

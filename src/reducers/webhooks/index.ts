@@ -19,7 +19,7 @@ const initialState = {
 export default function webhooks(state=initialState, action) {
   switch (action.type) {
 
-  // Update the whole space collection.
+  // Update the whole webhooks collection.
   case COLLECTION_WEBHOOKS_SET:
     return {
       ...state,
@@ -27,7 +27,7 @@ export default function webhooks(state=initialState, action) {
       data: action.data.map(objectSnakeToCamel),
     }
 
-  // Push an update to a space.
+  // Push an update to a webhook.
   case COLLECTION_WEBHOOKS_PUSH:
     return {
       ...state,
@@ -61,7 +61,7 @@ export default function webhooks(state=initialState, action) {
   case COLLECTION_WEBHOOKS_ERROR:
     return {...state, error: action.error, loading: false};
 
-  // Delete a space from the collection.
+  // Delete a webhook from the collection.
   case COLLECTION_WEBHOOKS_DELETE:
     return {
       ...state,

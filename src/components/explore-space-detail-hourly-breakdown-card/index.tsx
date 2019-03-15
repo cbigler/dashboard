@@ -86,7 +86,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
         // Force this one to be scrollable
         hourlyBreakdown.data.scrollable = true;
 
-        return (
+        return (<div className="explore-space-detail-hourly-breakdown-container">
           <Report
             report={generateHourlyBreakdownEphemeralReport(
               space,
@@ -103,7 +103,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
             }}
             expanded={true}
           />
-        );
+        </div>);
 
       default:
         return null;

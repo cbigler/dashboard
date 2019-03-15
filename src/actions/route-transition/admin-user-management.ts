@@ -1,12 +1,12 @@
 export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT';
 
 import collectionUsersSet from '../collection/users/set';
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
 
 export default function routeTransitionAdminUserManagement() {
   return async dispatch => {
     dispatch({ type: ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT });
-    const users = await accounts.users.list();
-    dispatch(collectionUsersSet(users));
+    const response = await accounts().get('/users');
+    dispatch(collectionUsersSet(response.data));
   };
 }
