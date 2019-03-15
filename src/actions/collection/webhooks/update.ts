@@ -14,8 +14,8 @@ export default function collectionWebhooksUpdate(item) {
         description: item.description,
         endpoint: item.endpoint,
       });
-      dispatch(collectionWebhooksPush(response));
-      return response;
+      dispatch(collectionWebhooksPush(response.data));
+      return response.data;
     } catch (err) {
       dispatch(collectionWebhooksError(err));
       return false;

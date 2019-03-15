@@ -8,7 +8,9 @@ export default function collectionTokensDestroy(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_TOKENS_DESTROY, item });
     try {
-      await accounts().delete(`/tokens/${item.key}`);
+      await accounts().delete('/tokens', {
+        data: { key: item.key }
+      });
     } catch (err) {
       dispatch(collectionTokensError(err));
       return false;
