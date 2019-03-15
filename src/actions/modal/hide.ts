@@ -14,7 +14,7 @@ export default function hideModal(name = null) {
           dispatch({ type: HIDE_MODAL, name });
         }
         resolve();
-      }, 1000);
+      }, 300);
     })
   };
 }
