@@ -19,15 +19,17 @@ export default function collectionDispatchSchedulesCreate({
 
     let schedule, errorThrown;
     try {
-      schedule = await core.digest_schedules.create({
-        name: name,
-        recipients: recipients,
-        dashboard_id: dashboardId,
-        frequency: frequency,
-        days_of_week: daysOfWeek,
-        day_number: dayNumber,
-        time: time,
-        time_zone: timeZone,
+      schedule = await core().post(`/digest_schedules`, {
+        body: {
+          name: name,
+          recipients: recipients,
+          dashboard_id: dashboardId,
+          frequency: frequency,
+          days_of_week: daysOfWeek,
+          day_number: dayNumber,
+          time: time,
+          time_zone: timeZone,
+        },
       });
     } catch (err) {
       errorThrown = err;

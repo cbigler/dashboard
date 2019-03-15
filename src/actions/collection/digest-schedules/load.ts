@@ -10,7 +10,7 @@ export default function collectionDigestSchedulesLoad() {
 
     let schedules, errorThrown;
     try {
-      schedules = await core.digest_schedules.list();
+    schedules = await core().get('/digest_schedules');
     } catch (err) {
       errorThrown = err;
     }

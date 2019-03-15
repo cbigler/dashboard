@@ -7,9 +7,10 @@ const ListViewContext = React.createContext([] as any);
 export default function ListView({
   data = [] as any[],
   keyTemplate = item => item.id,
+  showHeaders = true,
   children = null as any,
 }) {
-  return <ListViewContext.Provider value={{data, keyTemplate}}>
+  return <ListViewContext.Provider value={{data, keyTemplate, showHeaders}}>
     <div className="list-view">
       {children}
     </div>
@@ -25,7 +26,7 @@ export function ListViewColumn({
 }) {
   return <ListViewContext.Consumer>{context => (
     <div className="list-view-column" style={style}>
-      <div className="list-view-header">{title}</div>
+      {context.showHeaders ? <div className="list-view-header">{title}</div> : null}
       {context.data.map(item => {
         const clickable = !disabled(item) && !!onClick;
         return <div

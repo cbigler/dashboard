@@ -9,7 +9,8 @@ import {
   Toast,
 } from '@density/ui';
 
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
+import { impersonateUnset } from '../../actions/impersonate';
 import redirectAfterLogin from '../../actions/miscellaneous/redirect-after-login';
 import sessionTokenSet from '../../actions/session-token/set';
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
@@ -84,12 +85,12 @@ export class Login extends React.Component<any, any> {
 
   onLogin = () => {
     this.setState({loading: true, error: null});
-    return accounts.users.login({
+    return accounts().post('/login', {
       email: this.state.email,
       password: this.state.password,
-    }).then(token => {
+    }).then(response => {
       this.setState({loading: false, error: null});
-      this.props.onUserSuccessfullyLoggedIn(token, this.props.redirectAfterLogin);
+      this.props.onUserSuccessfullyLoggedIn(response.data, this.props.redirectAfterLogin);
     }).catch(error => {
       this.setState({loading: false, error: error.toString()});
     });
@@ -97,10 +98,10 @@ export class Login extends React.Component<any, any> {
 
   onForgotPassword = () => {
     this.setState({loading: true, error: null});
-    return accounts.users.password_forgot({
+    return accounts().put('/users/password/forgot', {
       email: this.state.email,
     }).then(resp => {
-      this.setState({loading: false, error: null, forgotPasswordConfirmation: resp.message});
+      this.setState({loading: false, error: null, forgotPasswordConfirmation: resp.data.message});
     }).catch(error => {
       this.setState({loading: false, error});
     });
@@ -274,6 +275,7 @@ export default connect((state: any) => ({
 }), dispatch => {
   return {
     onUserSuccessfullyLoggedIn(token, redirect) {
+      dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, redirect);

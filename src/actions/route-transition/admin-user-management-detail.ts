@@ -16,7 +16,7 @@ export default function routeTransitionAdminUserManagementDetail(id) {
     if (!userAlreadyExists) {
       let user, errorThrown = null;
       try {
-        user = await accounts.users.get({id});
+        user = await accounts().get(`/users/${id}`);
       } catch (e) {
         errorThrown = e;
       }

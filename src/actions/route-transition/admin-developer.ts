@@ -1,6 +1,7 @@
-import { accounts, core } from '../../client';
 import collectionTokensSet from '../collection/tokens/set';
 import collectionWebhooksSet from '../collection/webhooks/set';
+import accounts from '../../client/accounts';
+import core from '../../client/core';
 
 export const ROUTE_TRANSITION_ADMIN_DEVELOPER = 'ROUTE_TRANSITION_ADMIN_DEVELOPER';
 
@@ -10,11 +11,11 @@ export default function routeTransitionAdminDeveloper() {
 
     // Fetch all tokens and webhooks.
     return Promise.all([
-      accounts.tokens.list().then(tokens => {
-        dispatch(collectionTokensSet(tokens));
+      accounts().get('/tokens').then(response => {
+        dispatch(collectionTokensSet(response.data));
       }),
-      core.webhooks.list().then(webhooks => {
-        dispatch(collectionWebhooksSet(webhooks.results));
+      core().get('/webhooks').then(response => {
+        dispatch(collectionWebhooksSet(response.data.results));
       })
     ]);
   };

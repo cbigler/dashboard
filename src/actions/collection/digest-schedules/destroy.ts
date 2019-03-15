@@ -11,7 +11,7 @@ export default function collectionDispatchSchedulesDestroy(schedule) {
 
     let errorThrown;
     try {
-      await core.digest_schedules.delete({ id: schedule.id });
+      await core().delete(`/digest_schedules/${schedule.id}`);
     } catch (err) {
       errorThrown = err;
     }

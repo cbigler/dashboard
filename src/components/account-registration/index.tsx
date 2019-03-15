@@ -13,7 +13,7 @@ import ErrorBar from '../error-bar/index';
 import AccountSetupHeader from '../account-setup-header/index';
 
 import sessionTokenSet from '../../actions/session-token/set';
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
 
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -36,7 +36,7 @@ export class AccountRegistration extends React.Component<any, any> {
     };
   }
   onSubmit() {
-    return accounts.users.register({
+    return accounts().put('/users/register', {
       email: this.state.email,
       invitation_token: this.state.invitationToken,
       password: this.state.password,
@@ -46,7 +46,7 @@ export class AccountRegistration extends React.Component<any, any> {
       core_consent: this.state.coreConsent,
       marketing_consent: this.state.marketingConsent,
     }).then(response => {
-      return this.props.onUserLoggedIn(response.session_token);
+      return this.props.onUserLoggedIn(response.data.session_token);
     }).catch(err => {
       this.setState({error: err.toString()});
     });

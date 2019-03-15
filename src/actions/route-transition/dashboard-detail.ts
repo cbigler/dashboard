@@ -1,9 +1,9 @@
-import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
+import core from '../../client/core';
 
 import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
 import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
@@ -16,7 +16,9 @@ function loadDigestSchedules() {
   return async dispatch => {
     let schedules, errorThrown;
     try {
-      schedules = await fetchAllPages(page => core.digest_schedules.list({page, page_size: 5000}));
+      schedules = await fetchAllPages(page => {
+        return core().get(`/digest_schedules?page=${page}&page_side=${page_size}`);
+      });
     } catch (err) {
       errorThrown = err;
     }
@@ -51,7 +53,7 @@ function loadDashboardAndReports(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(page => core.dashboards.list({page, page_size: 5000}));
+      dashboards = await fetchAllPages(page => core().get('/dashboards', {params: {page, page_size: 5000}}));
     } catch (err) {
       dispatch(collectionDashboardsError(err));
       return;
@@ -83,7 +85,7 @@ function loadDashboardAndReports(id) {
         dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
       } else {
         try {
-          selectedDashboard = objectSnakeToCamel(await core.dashboards.detail({id}));
+          selectedDashboard = objectSnakeToCamel((await core().get(`/dashboards/${id}`)).data);
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;

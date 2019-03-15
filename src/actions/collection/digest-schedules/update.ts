@@ -20,7 +20,7 @@ export default function collectionDispatchSchedulesUpdate({
 
     let schedule, errorThrown;
     try {
-      schedule = await core.digest_schedules.update({
+      schedule = await core().update(`/digest_schedules/${schedule.id}`, {
         id: id,
         name: name,
         recipients: recipients,

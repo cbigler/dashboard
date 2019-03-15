@@ -43,6 +43,13 @@ const INVITATION_STATUS_LABELS = {
   'accepted': 'accepted',
 };
 
+export const INVITATION_STATUS_LABELS = {
+  'unsent': 'Unsent',
+  'pending': 'Pending',
+  'expired': 'Expired',
+  'accepted': 'Accepted',
+};
+
 const userFilter = filterCollection({fields: ['email', 'fullName']});
 
 function canResendInvitation(user, item) {
@@ -269,7 +276,7 @@ export default connect((state: any) => {
       (dispatch as any)(hideModal());
     },
     onUpdateNewUser(field, value) {
-      dispatch(updateModal(field, value));
+      dispatch(updateModal({[field]: value}));
     },
     onSaveNewUser(data) {
       (dispatch as any)(hideModal());

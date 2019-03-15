@@ -1,7 +1,7 @@
-import { accounts } from '../../../client';
 import collectionUsersDelete from './delete';
 import collectionUsersError from './error';
 import showToast from '../../toasts';
+import accounts from '../../../client/accounts';
 
 export const COLLECTION_USERS_DESTROY = 'COLLECTION_USERS_DESTROY';
 
@@ -10,7 +10,7 @@ export default function collectionUsersDestroy(item) {
     dispatch({ type: COLLECTION_USERS_DESTROY, item });
 
     try {
-      await accounts.users.delete({id: item.id});
+      await accounts().delete(`/users/${item.id}`);
       dispatch(collectionUsersDelete(item));
       dispatch(showToast({
         text: 'User deleted successfully',

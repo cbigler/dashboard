@@ -1,17 +1,12 @@
 import { REPORTS } from '@density/reports';
-import { getActiveEnvironments } from '../../../components/environment-switcher/index';
 import { getGoSlow } from '../../../components/environment-switcher/index';
-import fields from '../../../fields';
+import core from '../../../client/core';
 
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 
 export default function collectionDashboardsCalculateReportData(reports, date) {
   return async (dispatch, getState) => {
-    const baseUrl = (getActiveEnvironments(fields) as any).core;
-    const token = getState().sessionToken;
-    const slow = getGoSlow();
-
     return Promise.all(reports.map(async report => {
       switch (report.type) {
       case 'HEADER':
@@ -59,7 +54,7 @@ export default function collectionDashboardsCalculateReportData(reports, date) {
         }
 
         try {
-          data = await reportDataCalculationFunction(report, { date, baseUrl, token, slow });
+          data = await reportDataCalculationFunction(report, { date, client: core(), slow: getGoSlow() });
         } catch (err) {
           errorThrown = err;
         }

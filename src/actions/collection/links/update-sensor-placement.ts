@@ -1,7 +1,7 @@
 import collectionLinksDelete from './delete';
 import collectionLinksError from './error';
 import collectionLinksCreate from './create';
-import { core } from '../../../client';
+import core from '../../../client/core';
 
 export const COLLECTION_LINKS_UPDATE_SENSOR_PLACEMENT = 'COLLECTION_LINKS_UPDATE_SENSOR_PLACEMENT';
 
@@ -11,7 +11,7 @@ export default function collectionLinksUpdateSensorPlacement(item) {
 
     try {
       // Remove the old link.
-      await core.links.delete({id: item.id});
+      await core().delete(`/links/${item.id}`);
       dispatch(collectionLinksDelete(item));
 
       // Then, create a new link.
