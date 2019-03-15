@@ -1,6 +1,6 @@
 import collectionWebhooksDelete from './delete';
-import { core } from '../../../client';
 import collectionWebhooksError from './error';
+import core from '../../../client/core';
 
 export const COLLECTION_WEBHOOKS_DESTROY = 'COLLECTION_WEBHOOKS_DESTROY';
 
@@ -9,7 +9,7 @@ export default function collectionWebhooksDestroy(item) {
     dispatch({ type: COLLECTION_WEBHOOKS_DESTROY, item });
 
     try {
-      await core.webhooks.delete({id: item.id});
+      await core().delete(`/webhooks/${item.id}`);
       dispatch(collectionWebhooksDelete(item));
       return true;
     } catch (err) {

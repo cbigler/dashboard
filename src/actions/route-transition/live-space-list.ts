@@ -1,5 +1,5 @@
-import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionDoorwaysSet from '../collection/doorways/set';
@@ -19,29 +19,29 @@ export default function routeTransitionLiveSpaceList() {
 
     return Promise.all([
       // Fetch a list of all spaces.
-      core.spaces.list(),
+      core().get('/spaces'),
       // Fetch a list of all doorways.
-      core.doorways.list({environment: true}),
+      core().get('/doorways', {params: {environment: true}}),
       // Fetch a list of all links.
-      core.links.list(),
+      core().get('/links'),
     ]).then(([spaces, doorways, links]) => {
-      dispatch(collectionSpacesSet(spaces.results));
-      dispatch(collectionDoorwaysSet(doorways.results));
-      dispatch(collectionLinksSet(links.results));
+      dispatch(collectionSpacesSet(spaces.data.results));
+      dispatch(collectionDoorwaysSet(doorways.data.results));
+      dispatch(collectionLinksSet(links.data.results));
 
       // Then, fetch all initial events for each space.
       // This is used to populate each space's events collection with all the events from the last
       // minute so that the real time event charts all display as "full" when the page reloads.
-      return Promise.all(spaces.results.map(s => {
+      return Promise.all(spaces.data.results.map(s => {
         const space: any = objectSnakeToCamel(s);
-        return core.spaces.events({
+        return core().get(`/spaces/${space.id}/events`, { params: {
           id: space.id,
           start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
           end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
-        });
+        }});
       })).then((spaceEventSets: any) => {
         const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-          acc[spaces.results[index].id] = next.results.map(i => ({ 
+          acc[spaces.data.results[index].id] = next.data.results.map(i => ({ 
             countChange: i.direction,
             timestamp: i.timestamp
           }));

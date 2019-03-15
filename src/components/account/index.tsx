@@ -199,24 +199,33 @@ export class Account extends React.Component<any, any> {
               {/* The form to change the password that is triggered. */}
               {this.state.mode === PASSWORD_RESET ? <div className="account-change-password-form-container">
                 <label className="account-change-password-form-header">Password</label>
-                <InputBox
-                  type="password"
-                  placeholder="Type old password"
-                  value={this.state.currentPassword}
-                  onChange={e => this.setState({currentPassword: e.target.value})}
-                />
-                <InputBox
-                  type="password"
-                  placeholder="Type new password (minimum of 8 characters)"
-                  value={this.state.password}
-                  onChange={e => this.setState({password: e.target.value})}
-                />
-                <InputBox
-                  type="password"
-                  placeholder="Confirm new password"
-                  value={this.state.passwordConfirmation}
-                  onChange={e => this.setState({passwordConfirmation: e.target.value})}
-                />
+                <div className="account-change-password-form-field-wrapper">
+                  <InputBox
+                    type="password"
+                    placeholder="Type old password"
+                    width="100%"
+                    value={this.state.currentPassword}
+                    onChange={e => this.setState({currentPassword: e.target.value})}
+                  />
+                </div>
+                <div className="account-change-password-form-field-wrapper">
+                  <InputBox
+                    type="password"
+                    placeholder="Type new password (minimum of 8 characters)"
+                    width="100%"
+                    value={this.state.password}
+                    onChange={e => this.setState({password: e.target.value})}
+                  />
+                </div>
+                <div className="account-change-password-form-field-wrapper">
+                  <InputBox
+                    type="password"
+                    placeholder="Confirm new password"
+                    width="100%"
+                    value={this.state.passwordConfirmation}
+                    onChange={e => this.setState({passwordConfirmation: e.target.value})}
+                  />
+                </div>
                 <Button
                   type="primary"
                   width="100%"

@@ -73,9 +73,9 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                 disabled={this.state.name.length === 0}
                 width="100%"
                 onClick={() => this.props.onSubmit({
-                  name: this.state.name,
-                  description: this.state.description,
                   key: this.state.key,
+                  name: this.state.name,
+                  description: this.state.description || undefined,
                 })}
               >Save Changes</Button>
             </AppBarSection>

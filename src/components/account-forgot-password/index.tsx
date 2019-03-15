@@ -10,7 +10,7 @@ import {
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import ErrorBar from '../error-bar/index';
 
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
 
 export class AccountForgotPassword extends React.Component<any, any> {
   constructor(props) {
@@ -25,12 +25,12 @@ export class AccountForgotPassword extends React.Component<any, any> {
   }
   onSubmit() {
     this.setState({loading: true});
-    return accounts.users.password_reset({
+    return accounts().put('/users/password/reset', {
       password_reset_token: this.props.forgotPasswordToken,
       new_password: this.state.password,
       confirm_password: this.state.password,
     }).then(response => {
-      return this.props.onUserLoggedIn(response.session_token);
+      return this.props.onUserLoggedIn(response.data.session_token);
     }).catch(err => {
       this.setState({error: err.toString(), loading: false});
     });

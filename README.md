@@ -12,7 +12,6 @@ Density's core product is our API. While it is [thoroughly documented](http://do
 The Dashboard depends on a couple of other in-house built dependencies:
 - [`@density/charts`](https://github.com/densityco/charts) - an open-source library of visualizations and diagrams used by the Dashboard as well as other internal Density systems. [Here's a preview.](https://charts-preview.density.rodeo/d07e08dd8eb188c33d058dd96ceab9c0a7ac3abd/)
 - [`@density/ui`](https://github.com/densityco/ui) - an open-source library of react-based ui components with html fallbacks. This is the ui toolkit we use throughout most of our Density tools. [Here's a preview.](https://ui-preview.density.rodeo/master/)
-- [`@density/client`](https://github.com/densityco/client-js) - A javascript-based api client built using [clientele](https://github.com/DensityCo/clientele), an api client generator. This allows us to more clearly express the intent of an api call by using a syntax such as `api.spaces.get({id: 'spc_XXX'})` instead of a long ajax call.
 - [`@density/conduit`](https://github.com/densityco/conduit) - A redux-based micro router for react applications.
 
 We also have forked a couple open source npm packages and added density-specific changes - a few are `node-sass-json-importer` and `react-dates`.

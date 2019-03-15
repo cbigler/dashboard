@@ -1,5 +1,5 @@
-import { core } from '../../client';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import core from '../../client/core';
 
 import collectionSpacesPush from '../collection/spaces/push';
 import collectionSpacesError from '../collection/spaces/error';
@@ -18,19 +18,19 @@ export default function routeTransitionLiveSpaceDetail(id) {
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
 
     try {
-      const space: any = objectSnakeToCamel(await core.spaces.get({id}));
+      const space: any = objectSnakeToCamel((await core().get(`/spaces/${id}`)).data);
       dispatch(collectionSpacesPush(space));
       dispatch(collectionSpacesSetDefaultTimeRange(space));
 
       // Fetch all initial events for the space that was loaded.
       // This is used to populate this space's events collection with all the events from the last
       // minute so that the real time event charts all display as "full" when the page reloads.
-      const spaceEventSet = await core.spaces.events({
+      const spaceEventSet = await core().get(`/spaces/${space.id}/events`, { params: {
         id: space.id,
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
         end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
-      });
-      dispatch(collectionSpacesSetEvents(space, spaceEventSet.results.map(i => ({
+      }});
+      dispatch(collectionSpacesSetEvents(space, spaceEventSet.data.results.map(i => ({
         countChange: i.direction,
         timestamp: i.timestamp,
       }))));

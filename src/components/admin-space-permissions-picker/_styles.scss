@@ -1,0 +1,120 @@
+$admin-space-permissions-picker-checkbox-checked-image: "data:image/svg+xml,%3Csvg width='16px' height='16px' viewBox='0 0 16 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='-System-Admin-(release)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='org.team.new.spaces' transform='translate(-792.000000, -378.000000)'%3E%3Cg id='dispact-modal' transform='translate(329.000000, 56.000000)'%3E%3Cg id='space-permissions' transform='translate(391.000000, 64.000000)'%3E%3Cg id='space-hierarchy' transform='translate(0.000000, 129.000000)'%3E%3Cg id='building' transform='translate(24.000000, 81.000000)'%3E%3Cg id='nested-list-/-item-(level-1)' transform='translate(48.000000, 40.000000)'%3E%3Cg id='checkbox' transform='translate(0.000000, 8.000000)'%3E%3Crect id='form-control-/-checkbox' fill='%232E51B6' x='0' y='0' width='16' height='16' rx='4'%3E%3C/rect%3E%3Cpolyline id='Stroke-3' stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='4 8 7 11 12 5'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-unchecked-image: "data:image/svg+xml,%0A%3Csvg width='16px' height='16px' viewBox='0 0 16 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='-System-Admin-(release)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='org.team.new.spaces' transform='translate(-792.000000, -410.000000)'%3E%3Cg id='dispact-modal' transform='translate(329.000000, 56.000000)'%3E%3Cg id='space-permissions' transform='translate(391.000000, 64.000000)'%3E%3Cg id='space-hierarchy' transform='translate(0.000000, 129.000000)'%3E%3Cg id='building' transform='translate(24.000000, 81.000000)'%3E%3Cg id='nested-list-/-item-(level-1)' transform='translate(48.000000, 72.000000)'%3E%3Cg id='checkbox' transform='translate(0.000000, 8.000000)'%3E%3Cg%3E%3Crect id='form-control-/-checkbox' stroke='%23979797' fill='%23FFFFFF' x='0.5' y='0.5' width='15' height='15' rx='4'%3E%3C/rect%3E%3Cpolyline id='Stroke-3' stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='4 8 7 11 12 5'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-disabled-checked-image: "data:image/svg+xml,%0A%3Csvg width='16px' height='16px' viewBox='0 0 16 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='-System-Admin-(release)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='org.team.new' transform='translate(-792.000000, -378.000000)'%3E%3Cg id='dispact-modal' transform='translate(329.000000, 56.000000)'%3E%3Cg id='space-permissions' transform='translate(391.000000, 64.000000)'%3E%3Cg id='space-hierarchy' transform='translate(0.000000, 129.000000)'%3E%3Cg id='building' transform='translate(24.000000, 81.000000)'%3E%3Cg id='nested-list-/-item-(level-1)' transform='translate(48.000000, 40.000000)'%3E%3Cg id='checkbox' transform='translate(0.000000, 8.000000)'%3E%3Crect id='form-control-/-checkbox' stroke='%23B1B1B1' fill='%23D7D7D7' x='0.5' y='0.5' width='15' height='15' rx='4'%3E%3C/rect%3E%3Cpolyline id='Stroke-3' stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='4 8 7 11 12 5'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/svg+xml,%0A%3Csvg width='16px' height='16px' viewBox='0 0 16 16' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3Cg id='⌞-System-Admin-(release)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='org.team.user.edit' transform='translate(-1006.000000, -284.000000)' fill='%23F9F9F9' stroke='%23B1B1B1'%3E%3Cg id='space-permissions' transform='translate(982.000000, 144.000000)'%3E%3Cg id='space-hierarchy' transform='translate(0.000000, 128.000000)'%3E%3Cg id='building'%3E%3Cg id='checkbox' transform='translate(24.000000, 12.000000)'%3E%3Crect id='form-control-/-checkbox' x='0.5' y='0.5' width='15' height='15' rx='4'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+
+.admin-space-permissions-picker {
+  display: flex;
+  flex-direction: column;
+  width: 391px;
+  background-color: #fff;
+  height: 556px;
+}
+.admin-space-permissions-picker-body {
+  background-color: $gray-lightest;
+  flex-grow: 1;
+  flex-shrink: 0;
+  height: calc(100% - 64px);
+}
+.admin-space-permissions-picker-scroll {
+  height: calc(100% - 64px);
+  overflow: auto;
+  padding-left: 0px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.admin-space-permissions-select-all-link {
+  color: $brand-primary;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+  font-weight: bold;
+  font-size: 14px;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
+}
+
+.admin-space-permissions-picker-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-size: 16px;
+
+  padding-left: 24px;
+  cursor: pointer;
+}
+
+.admin-space-permissions-picker-list-item-checkbox { display: none; }
+.admin-space-permissions-picker-list-item-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  width: 320px;
+
+  cursor: pointer;
+  user-select: none;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.admin-space-permissions-picker-list-item-checkbox:disabled + label {
+	cursor: default;
+	color: $gray-darker;
+}
+.admin-space-permissions-picker-list-item-checkbox + label:before {
+  content: ' ';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background-image: url($admin-space-permissions-picker-checkbox-unchecked-image);
+  background-repeat: no-repeat;
+  border-radius: $border-radius-base;
+  cursor: pointer
+}
+.admin-space-permissions-picker-list-item-checkbox:checked + label:before {
+  background-image: url($admin-space-permissions-picker-checkbox-checked-image);
+}
+.admin-space-permissions-picker-list-item-checkbox:disabled + label:before {
+  background-image: url($admin-space-permissions-picker-checkbox-disabled-unchecked-image);
+  cursor: default;
+}
+.admin-space-permissions-picker-list-item-checkbox:disabled:checked + label:before {
+  background-image: url($admin-space-permissions-picker-checkbox-disabled-checked-image);
+  cursor: default;
+}
+
+.admin-space-permissions-picker-list-item.depth-0 { border-top: 1px solid $gray; }
+.admin-space-permissions-picker-list-item.depth-0:first-of-type { border-top: 0px; }
+
+.admin-space-permissions-picker-list-item-icon {
+  margin-left: 8px;
+  transform: translate(0px, 2px);
+}
+.admin-space-permissions-picker-list-item-name {
+  margin-left: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.admin-space-permissions-picker-list-item-name.bold { font-weight: bold; }
+
+
+.admin-space-permissions-picker-list-item-label-skeleton {
+  height: 6px;
+  border-radius: $border-radius-small;
+  width: 150px;
+  background-color: $gray-dark;
+  margin-left: 24px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+}
+.admin-space-permissions-picker-list-item-label-skeleton:before {
+  content: ' ';
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: $border-radius-base;
+  background-color: $gray;
+  transform: translate(-24px, -5px);
+}

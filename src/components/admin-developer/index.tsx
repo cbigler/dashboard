@@ -12,7 +12,7 @@ import {
 import colorVariables from '@density/ui/variables/colors.json';
 
 import Dialogger from '../dialogger';
-import ListView, { ListViewColumn } from '../list-view';
+import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
 import TokenCreateModal from '../admin-token-create-modal';
 import TokenUpdateModal from '../admin-token-update-modal';
 import WebhookCreateModal from '../admin-webhook-create-modal';
@@ -139,7 +139,7 @@ export function AdminDeveloper({
           <ListViewColumn title="Token" template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />} />
           <ListViewColumn style={{flexGrow: 1}} />
           <ListViewColumn
-            template={item => 'Edit'}
+            template={item => <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: false})} />
           <ListViewColumn
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
@@ -157,7 +157,7 @@ export function AdminDeveloper({
           )} />
           <ListViewColumn style={{flexGrow: 1}} />
           <ListViewColumn
-            template={item => 'Edit'}
+            template={item => <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: false})} />
           <ListViewColumn
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
