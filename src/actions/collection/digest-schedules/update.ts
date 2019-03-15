@@ -1,6 +1,6 @@
 export const COLLECTION_DISPATCH_SCHEDULES_UPDATE = 'COLLECTION_DISPATCH_SCHEDULES_UPDATE';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
 
@@ -20,7 +20,7 @@ export default function collectionDispatchSchedulesUpdate({
 
     let schedule, errorThrown;
     try {
-      schedule = await core().update(`/digest_schedules/${schedule.id}`, {
+      schedule = await core().put(`/digest_schedules/${id}`, {
         id: id,
         name: name,
         recipients: recipients,
@@ -40,7 +40,7 @@ export default function collectionDispatchSchedulesUpdate({
       dispatch(collectionDispatchSchedulesError(errorThrown));
       return false;
     } else {
-      dispatch(collectionDispatchSchedulesPush(schedule));
+      dispatch(collectionDispatchSchedulesPush(schedule.data));
       return true;
     }
   }

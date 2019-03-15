@@ -36,18 +36,11 @@ import Modal from '../modal';
 import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
 import { CancelLink } from '../dialogger';
 
-const INVITATION_STATUS_LABELS = {
+export const INVITATION_STATUS_LABELS = {
   'unsent': 'unsent',
   'pending': 'pending',
   'expired': 'expired',
   'accepted': 'accepted',
-};
-
-export const INVITATION_STATUS_LABELS = {
-  'unsent': 'Unsent',
-  'pending': 'Pending',
-  'expired': 'Expired',
-  'accepted': 'Accepted',
 };
 
 const userFilter = filterCollection({fields: ['email', 'fullName']});

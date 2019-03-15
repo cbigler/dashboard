@@ -1,6 +1,6 @@
 export const COLLECTION_DISPATCH_SCHEDULES_CREATE = 'COLLECTION_DISPATCH_SCHEDULES_CREATE';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
 
@@ -20,16 +20,14 @@ export default function collectionDispatchSchedulesCreate({
     let schedule, errorThrown;
     try {
       schedule = await core().post(`/digest_schedules`, {
-        body: {
-          name: name,
-          recipients: recipients,
-          dashboard_id: dashboardId,
-          frequency: frequency,
-          days_of_week: daysOfWeek,
-          day_number: dayNumber,
-          time: time,
-          time_zone: timeZone,
-        },
+        name: name,
+        recipients: recipients,
+        dashboard_id: dashboardId,
+        frequency: frequency,
+        days_of_week: daysOfWeek,
+        day_number: dayNumber,
+        time: time,
+        time_zone: timeZone,
       });
     } catch (err) {
       errorThrown = err;
@@ -40,7 +38,7 @@ export default function collectionDispatchSchedulesCreate({
       dispatch(collectionDispatchSchedulesError(errorThrown));
       return false;
     } else {
-      dispatch(collectionDispatchSchedulesPush(schedule));
+      dispatch(collectionDispatchSchedulesPush(schedule.data));
       return true;
     }
   }

@@ -1,6 +1,6 @@
 export const COLLECTION_DIGEST_SCHEDULES_LOAD = 'COLLECTION_DIGEST_SCHEDULES_LOAD';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDigestSchedulesError from './error';
 import collectionDigestSchedulesSet from './set';
 

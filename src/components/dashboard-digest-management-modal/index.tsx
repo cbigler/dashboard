@@ -25,6 +25,7 @@ import collectionDigestSchedulesDestroy from '../../actions/collection/digest-sc
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
+import showToast from '../../actions/toasts';
 
 const DAYS_OF_WEEK = [
   'Monday',
@@ -290,26 +291,29 @@ export default connect(
     onLoadUsers: () => dispatch<any>(collectionUsersLoad()),
     onCreateDigest: async digest => {
       const wasSuccessful = await dispatch<any>(collectionDigestSchedulesCreate(digest));
+      dispatch<any>(hideModal());
       if (wasSuccessful) {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_SUCCESS'));
+        dispatch<any>(showToast({ text: 'Digest saved.' }));
       } else {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
+        dispatch<any>(showToast({ type: 'error', text: `Whoops! That didn't work.` }));
       }
     },
     onUpdateDigest: async digest => {
       const wasSuccessful = await dispatch<any>(collectionDigestSchedulesUpdate(digest));
+      dispatch<any>(hideModal());
       if (wasSuccessful) {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_SUCCESS'));
+        dispatch<any>(showToast({ text: 'Digest saved.' }));
       } else {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
+        dispatch<any>(showToast({ type: 'error', text: `Whoops! That didn't work.` }));
       }
     },
     onDeleteDigest: async digest => {
       const wasSuccessful = await dispatch<any>(collectionDigestSchedulesDestroy(digest));
+      dispatch<any>(hideModal());
       if (wasSuccessful) {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_DELETED'));
+        dispatch<any>(showToast({ text: 'Digest deleted.' }));
       } else {
-        dispatch<any>(showModal('MODAL_DIGEST_MANAGEMENT_ERROR'));
+        dispatch<any>(showToast({ type: 'error', text: `Whoops! That didn't work.` }));
       }
     },
   }),

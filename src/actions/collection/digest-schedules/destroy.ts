@@ -1,6 +1,6 @@
 export const COLLECTION_DISPATCH_SCHEDULES_DESTROY = 'COLLECTION_DISPATCH_SCHEDULES_DESTROY';
 
-import { core } from '../../../client';
+import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
 import collectionDispatchSchedulesRemove from './remove';

@@ -21,16 +21,6 @@ import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
 
-import Explore from '../explore';
-import Login from '../login';
-import Admin from '../admin';
-import Account from '../account';
-import AccountRegistration from '../account-registration';
-import AccountForgotPassword from '../account-forgot-password';
-import LiveSpaceList from '../live-space-list';
-import LiveSpaceDetail from '../live-space-detail';
-import DashboardsList from '../dashboards-list';
-
 import AccountSetupOverview from '../account-setup-overview';
 import AccountSetupDoorwayList from '../account-setup-doorway-list';
 import AccountSetupDoorwayDetail from '../account-setup-doorway-detail';

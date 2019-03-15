@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { ROLE_INFO } from '../admin-user-management';
+import { ROLE_INFO } from '../../helpers/permissions/index';
 
 import {
   AppBar,

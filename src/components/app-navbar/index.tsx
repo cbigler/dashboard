@@ -7,7 +7,7 @@ import { Icons } from '@density/ui';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
-import { ROLE_INFO } from '../admin-user-management';
+import { ROLE_INFO } from '../../helpers/permissions/index';
 
 function getUserLabel(user) {
   return <span style={{fontWeight: 'normal'}}>

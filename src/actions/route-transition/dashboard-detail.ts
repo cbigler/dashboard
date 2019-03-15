@@ -17,7 +17,7 @@ function loadDigestSchedules() {
     let schedules, errorThrown;
     try {
       schedules = await fetchAllPages(page => {
-        return core().get(`/digest_schedules?page=${page}&page_side=${page_size}`);
+        return core().get(`/digest_schedules?page=${page}&page_side=5000`);
       });
     } catch (err) {
       errorThrown = err;

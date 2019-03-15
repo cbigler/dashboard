@@ -2,7 +2,7 @@ export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_A
 
 import collectionUsersError from '../collection/users/error';
 import collectionUsersPush from '../collection/users/push';
-import { accounts } from '../../client';
+import accounts from '../../client/accounts';
 
 export default function routeTransitionAdminUserManagementDetail(id) {
   return async (dispatch, getState) => {
