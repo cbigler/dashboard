@@ -213,9 +213,9 @@ export default function spaces(state=initialState, action) {
         filters: {
           ...state.filters,
 
-          // For single date pages like the daily page, default to yesterday
+          // For single date pages like the daily page, default to today
           date: formatInISOTime(
-            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'days').startOf('day')
+            getCurrentLocalTimeAtSpace(action.space).startOf('day')
           ),
 
           // For date range pages like the trends or raw events page, default to the last full week of
