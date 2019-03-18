@@ -105,7 +105,7 @@ export function calculateFootTraffic(space) {
           page_size: 5000,
           slow: getGoSlow(),
         }})).data
-      ))).reverse();
+      ))).map(objectSnakeToCamel).reverse();
     } catch (err) {
       dispatch(exploreDataCalculateDataError('footTraffic', `Error fetching count data: ${err}`));
     }
