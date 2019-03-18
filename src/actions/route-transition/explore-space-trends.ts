@@ -78,27 +78,12 @@ export default function routeTransitionExploreSpaceTrends(id) {
       return;
     }
 
-    dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
     dispatch(collectionSpacesSet(spaces));
+    dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
-    let startDate, endDate;
-    let state = getState()
-    if (state.spaces.filters.startDate != null && state.spaces.filters.endDate != null) {
-      startDate = state.spaces.filters.startDate;
-      endDate = state.spaces.filters.endDate;
-    } else {
-      startDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').startOf('week'), selectedSpace);
-      endDate = formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).subtract(1, 'week').endOf('week'), selectedSpace);
-    }
-
-    dispatch(collectionSpacesFilter(
-      'startDate',
-      startDate
-    ));
-    dispatch(collectionSpacesFilter(
-      'endDate',
-      endDate
-    ));
+    let state = getState();
+    dispatch(collectionSpacesFilter('startDate', state.spaces.filters.startDate));
+    dispatch(collectionSpacesFilter('endDate', state.spaces.filters.endDate));
 
     dispatch(calculate(selectedSpace, state.spaces.filters));
   }

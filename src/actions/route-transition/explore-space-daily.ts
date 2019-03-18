@@ -27,7 +27,7 @@ import { DEFAULT_TIME_SEGMENT_GROUP } from '../../helpers/time-segments/index';
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
 
 export default function routeTransitionExploreSpaceDaily(id) {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('footTraffic', null));
 
@@ -59,13 +59,11 @@ export default function routeTransitionExploreSpaceDaily(id) {
       return;
     }
 
-    dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
     dispatch(collectionSpacesSet(spaces));
+    dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
-    dispatch(collectionSpacesFilter(
-      'date',
-      formatInISOTimeAtSpace(getCurrentLocalTimeAtSpace(selectedSpace).startOf('day'), selectedSpace),
-    ));
+    let state = getState();
+    dispatch(collectionSpacesFilter('date', state.spaces.filters.date));
 
     dispatch(calculate(selectedSpace));
   }

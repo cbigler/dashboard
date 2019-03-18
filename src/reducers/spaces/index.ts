@@ -31,6 +31,7 @@ import { DEFAULT_TIME_SEGMENT_GROUP } from '../../helpers/time-segments/index';
 
 import {
   getCurrentLocalTimeAtSpace,
+  convertDateToLocalTimeAtSpace,
   formatInISOTime,
 } from '../../helpers/space-time-utilities/index';
 
@@ -65,7 +66,7 @@ const initialState = {
     endDate: null,
 
     // Used for a single date
-    date: moment.utc().format(),
+    date: null,
   },
 
   // An object that maps space id to an array of events
@@ -191,7 +192,7 @@ export default function spaces(state=initialState, action) {
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
     var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
     var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
-    
+
     return {
       ...state, 
       error: null, 
@@ -205,8 +206,22 @@ export default function spaces(state=initialState, action) {
     return {...state, error: null};
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:
-    if (state.filters.date != null && state.filters.startDate != null && state.filters.endDate != null) {
-      return state
+    if (state.selected && state.filters.date && state.filters.startDate && state.filters.endDate) {
+      return {
+        ...state,
+        filters: {
+          ...state.filters,
+          date: formatInISOTime(
+            convertDateToLocalTimeAtSpace(state.filters.date, action.space)
+          ),
+          startDate: formatInISOTime(
+            convertDateToLocalTimeAtSpace(state.filters.startDate, action.space)
+          ),
+          endDate: formatInISOTime(
+            convertDateToLocalTimeAtSpace(state.filters.endDate, action.space)
+          ),
+        }
+      };
     } else {
       return {
         ...state,

@@ -10,6 +10,10 @@ export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
 }
 
+export function convertDateToLocalTimeAtSpace(date, space) {
+  return moment.tz(moment(date).format('YYYY-MM-DD'), space.timeZone);
+}
+
 export function getDurationBetweenMomentsInDays(a, b) {
   return moment.duration(moment.utc(b).diff(moment.utc(a))).asDays();
 }
