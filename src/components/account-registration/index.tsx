@@ -64,7 +64,7 @@ export class AccountRegistration extends React.Component<any, any> {
 
       <AccountSetupHeader
         greeter="Create your account"
-        detail={`Lets get your Density account set up, ${this.state.email}!`}
+        detail={`Let's get your Density account set up!`}
       />
 
       <div className="account-registration-density-logo">
