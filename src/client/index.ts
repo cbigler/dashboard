@@ -1,6 +1,6 @@
-import redirectAfterLogin from '../actions/miscellaneous/redirect-after-login';
 import sessionTokenUnset from '../actions/session-token/unset';
 import userError from '../actions/user/error';
+import login from '../actions/route-transition/login';
 
 export function errorHandler(error, store) {
   if (error.response) {
@@ -10,7 +10,7 @@ export function errorHandler(error, store) {
     if (error.response.status === 403 && error.response.data.detail === 'Incorrect authentication credentials.') {
       store.dispatch(userError(`Login session has expired or is invalid. Please login again.`));
       store.dispatch(sessionTokenUnset());
-      store.dispatch(redirectAfterLogin(window.location.hash));
+      store.dispatch(login(window.location.hash));
       window.location.hash = '#/login';
     }
     return Promise.reject(error.response.data);

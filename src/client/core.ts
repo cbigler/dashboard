@@ -5,12 +5,6 @@ let _client = axios.create();
 let _slow = false;
 let _store = null;
 
-// Response interceptor for handling errors
-_client.interceptors.response.use(
-  response => response,
-  error => errorHandler(error, _store)
-);
-
 export function config({
   host = undefined as string | undefined,
   token = undefined as string | undefined,
@@ -20,6 +14,10 @@ export function config({
 }) {
   if (host !== undefined) {
     _client = axios.create({ baseURL: host });
+    _client.interceptors.response.use(
+      response => response,
+      error => errorHandler(error, _store)
+    );
   }
   if (token !== undefined) {
     _client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
