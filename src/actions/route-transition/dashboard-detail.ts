@@ -1,14 +1,20 @@
+import moment from 'moment';
+
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
 import core from '../../client/core';
+import accounts from '../../client/accounts';
 
 import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
 import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
+import setDashboardDate from '../miscellaneous/set-dashboard-date';
 
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
+import { getStartOfWeek } from '../../helpers/space-time-utilities';
+
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
 
@@ -33,16 +39,26 @@ function loadDigestSchedules() {
 
 function loadDashboardAndReports(id) {
   return async (dispatch, getState) => {
-    const dashboardDate = getState().miscellaneous.dashboardDate;
     let dashboardSelectionPromise;
+    const state = getState();
+    
+    // Determine "start of week" for this organization and the dashboard date
+    const dashboardWeekStart = state.user.data.organization.settings.dashboardWeekStart;
+    const dashboardDate = getStartOfWeek(
+      moment(state.miscellaneous.dashboardDate || undefined),
+      dashboardWeekStart
+    ).format('YYYY-MM-DD');
+    dispatch(setDashboardDate(dashboardDate));
 
     // First, if the dashboard already is in the collection, then immediately select it.
-    let selectedDashboard = getState().dashboards.data.find(d => d.id === id);
+    let selectedDashboard = state.dashboards.data.find(d => d.id === id);
     if (selectedDashboard) {
       // The data for the dashboard being selected already exists, so don't "reset the state" as
       // this will show a loading state / remove all dashboards that are already in the collection
       // and that's not desired.
-      dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
+      dashboardSelectionPromise = dispatch(
+        collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+      );
     }
 
     // Though this route is only to load a single dashboard, we need to load all dashboards in order
@@ -84,7 +100,9 @@ function loadDashboardAndReports(id) {
       selectedDashboard = dashboards.find(d => d.id === id);
       if (selectedDashboard) {
         dispatch(collectionDashboardsSet(dashboards));
-        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
+        dashboardSelectionPromise = dispatch(
+          collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+        );
       } else {
         try {
           selectedDashboard = objectSnakeToCamel((await core().get(`/dashboards/${id}`)).data);
@@ -98,7 +116,9 @@ function loadDashboardAndReports(id) {
         }
         dashboards.push(selectedDashboard);
         dispatch(collectionDashboardsSet(dashboards));
-        dashboardSelectionPromise = dispatch(collectionDashboardsSelect(selectedDashboard, dashboardDate));
+        dashboardSelectionPromise = dispatch(
+          collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+        );
       }
     }
 

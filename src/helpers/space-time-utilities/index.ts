@@ -45,6 +45,14 @@ export function prettyPrintHoursMinutes(momentInstance) {
   return momentInstance.format('h:mma').slice(0, -1); /* am -> a */
 }
 
+// Given a "week start day", find the start of the most recent week before a timestamp
+export function getStartOfWeek(timestamp, weekStart) {
+  const weekStartDate = timestamp.clone().isoWeekday(weekStart || 'Sunday');
+  if (weekStartDate > timestamp) { weekStartDate.subtract(7, 'days'); }
+  weekStartDate.startOf('day');
+  return weekStartDate;
+}
+
 // Given a formatted interval string, return it as a moment duration
 export function parseIntervalAsDuration(interval) {
   const durationUnits = { w: 'week', d: 'day', h: 'hour', m: 'minute', s: 'second' };

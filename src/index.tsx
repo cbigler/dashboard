@@ -196,6 +196,12 @@ router.addRoute('onboarding/overview', () => routeTransitionAccountSetupOverview
 router.addRoute('onboarding/doorways', () => routeTransitionAccountSetupDoorwayList());
 router.addRoute('onboarding/doorways/:id', id => routeTransitionAccountSetupDoorwayDetail(id));
 
+// Add a helper into the global namespace to allow changing of settings flags on the fly.
+(window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);
+
+// Add a handler to debounce & handle window resize events
+(window as any).resizeHandler = unsafeHandleWindowResize(store);
+
 // Make sure that the user is logged in prior to going to a page.
 function preRouteAuthentication() {
   const loggedIn = (store.getState() as any).sessionToken !== null;
@@ -204,7 +210,7 @@ function preRouteAuthentication() {
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
-    accounts().post('/tokens/exchange/auth0', null, {
+    return accounts().post('/tokens/exchange/auth0', null, {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
     }).then(response => {
       store.dispatch(impersonateUnset());
@@ -222,12 +228,12 @@ function preRouteAuthentication() {
     locationHash.startsWith("#/account/register") ||
     locationHash.startsWith("#/account/forgot-password")
   ) {
-    return;
+    return Promise.resolve();
   // If the user isn't logged in, send them to the login page.
   } else if (!loggedIn) {
     store.dispatch(redirectAfterLogin(locationHash));
     router.navigate('login');
-
+    return Promise.resolve();
   // Otherwise, fetch the logged in user's info since there's a session token available.
   } else {
     // Look up the user info before we can redirect to the landing page.
@@ -246,17 +252,9 @@ function preRouteAuthentication() {
     });
   }
 }
-//setStoreInApiClientModule(store);
-preRouteAuthentication();
-
-// Add a helper into the global namespace to allow changing of settings flags on the fly.
-(window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);
-
-// Add a handler to debounce & handle window resize events
-(window as any).resizeHandler = unsafeHandleWindowResize(store);
 
 // Handle the route that the user is currently at.
-router.handle();
+preRouteAuthentication().then(() => router.handle());
 
 
 // ----------------------------------------------------------------------------

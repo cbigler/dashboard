@@ -51,7 +51,7 @@
   align-items: center;
   height: 48px;
 
-  transition: background-color 250ms ease-in-out, color 250ms ease-in-out;
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
   padding-left: 24px;
   padding-right: 24px;
@@ -70,10 +70,9 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  transition: color 150ms ease-in-out;
 }
-.dashboard-sidebar-item.selected .dashboard-sidebar-item-name { color: $brand-primary-new; }
 .dashboard-sidebar-item:hover .dashboard-sidebar-item-name { color: $gray-cinder; }
+.dashboard-sidebar-item.selected .dashboard-sidebar-item-name { color: $brand-primary-new; }
 
 .dashboard-sidebar-item-num-reports {
   flex-grow: 0;
@@ -84,11 +83,9 @@
   font-weight: bold;
   margin-right: 4px;
   white-space: nowrap;
-
-  transition: color 150ms ease-in-out;
 }
-.dashboard-sidebar-item.selected .dashboard-sidebar-item-num-reports { color: $brand-primary-new; }
 .dashboard-sidebar-item:hover .dashboard-sidebar-item-num-reports { color: $gray-cinder; }
+.dashboard-sidebar-item.selected .dashboard-sidebar-item-num-reports { color: $brand-primary-new; }
 
 
 
