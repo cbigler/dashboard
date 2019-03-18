@@ -13,7 +13,7 @@
     "@density/conduit": "^0.3.0",
     "@density/node-sass-json-importer": "^4.1.0",
     "@density/react-dates": "^12.6.0",
-    "@density/reports": "^4.0.0",
+    "@density/reports": "^4.2.0",
     "@density/ui": "^12.1.3",
     "auth0-js": "^9.9.0",
     "axios": "^0.18.0",

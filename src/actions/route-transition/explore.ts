@@ -38,7 +38,7 @@ export default function routeTransitionExplore() {
     let spaces;
     try {
       spaces = (await fetchAllPages(
-        page => core().get('/spaces', {params: {page, page_size: 5000}})
+        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
       )).map(objectSnakeToCamel);
     } catch (err) {
       errorThrown = true;

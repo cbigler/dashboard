@@ -10,17 +10,17 @@
 // Example response: {next: 'https://api.density.io/v2/spaces?page=2', total: 18, results: [1, 2, 3, 4, 5]}
 export default function fetchAllPages(fetchSinglePage) {
   const getPage = async function(page) {
-    const data = (await fetchSinglePage(page)).data;
+    const data = await fetchSinglePage(page);
 
     if (!data) {
-      throw new Error(`Function did not return a page of data! (data=${JSON.stringify(data)})`);
+      throw new Error(`Function did not return a page of data! (data=${data})`);
     }
 
     if (typeof data.next === 'undefined') {
       throw new Error(`Page of data did not contain .next key! (data=${JSON.stringify(data)})`);
     }
     if (typeof data.results === 'undefined') {
-      throw new Error(`Page of data did not contain .results key! (data=${JSON.stringify(data)})`);
+      throw new Error(`Page of data did not contain .results key! (data=${data})`);
     }
 
     if (data.next) {

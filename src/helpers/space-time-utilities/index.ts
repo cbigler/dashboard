@@ -4,6 +4,7 @@ import 'moment-timezone';
 import fetchAllPages from '../fetch-all-pages/index';
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
@@ -188,22 +189,26 @@ export function splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, par
 
 export async function requestCountsForLocalRange(space, start, end, params={}) {
   const subranges = splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, params);
-  return await subranges.map(async subrange => {
-    return await fetchAllPages(page => (
-      core().get(`/spaces/${space.id}/counts`, { params: {
-        start_time: formatInISOTime(subrange.start),
-        end_time: formatInISOTime(subrange.end),
-        page,
-        page_size: 5000,
-        slow: getGoSlow(),
-        ...params,
-      }})
-    ));
+  return await subranges.map(subrange => {
+    return fetchAllPages(async page => {
+      const response = await core().get(`/spaces/${space.id}/counts`, {
+        params: {
+          start_time: formatInISOTime(subrange.start),
+          end_time: formatInISOTime(subrange.end),
+          page,
+          page_size: 5000,
+          slow: getGoSlow(),
+          ...params,
+        },
+      });
+      return objectSnakeToCamel(response.data);
+    });
   }).reduce((promise, request, index) => {
     return promise.then(async results => {
       const subrangeData = await request;
-      if (subranges[index].gap && results.length > 0) {
-        const lastBucket: any = results.pop();
+      if (subranges[index].gap && results.length > 0 && subrangeData.length > 0) {
+        // The gap bucket's metrics are combined with the last bucket in the array.
+        const lastBucket = results.pop();
         const gapBucket = subrangeData[0];
         lastBucket.interval.analytics.entrances += gapBucket.interval.analytics.entrances;
         lastBucket.interval.analytics.exits += gapBucket.interval.analytics.exits;
@@ -213,6 +218,7 @@ export async function requestCountsForLocalRange(space, start, end, params={}) {
         lastBucket.interval.end = gapBucket.interval.end;
         results.push(lastBucket);
       } else {
+        // Normal buckets are appended to the end of the array.
         results = results.concat(subrangeData);
       }
       return results;

@@ -17,8 +17,7 @@ import exploreDataCalculateDataLoading from '../../actions/explore-data/calculat
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
-import { getActiveEnvironments, getGoSlow } from '../../components/environment-switcher';
-import fields from '../../fields';
+import { getGoSlow } from '../../components/environment-switcher';
 
 import { REPORTS } from '@density/reports';
 
@@ -71,7 +70,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     let spaces, selectedSpace;
     try {
       spaces = (await fetchAllPages(
-        page => core().get('/spaces', {params: {page, page_size: 5000}})
+        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
       )).map(objectSnakeToCamel);
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
@@ -241,8 +240,8 @@ export function calculateUtilization(space) {
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
     // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
     // logic required to fetch all pages of data from the server.
-    const counts = await fetchAllPages(page => (
-      core().get(`/spaces/${space.id}/counts`, { params: {
+    const counts = (await fetchAllPages(async page => (
+      (await core().get(`/spaces/${space.id}/counts`, { params: {
         id: space.id,
 
         start_time: startDate,
@@ -258,8 +257,8 @@ export function calculateUtilization(space) {
 
         // Legacy "slow" queries
         slow: getGoSlow(),
-      }})
-    ));
+      }})).data
+    ))).map(objectSnakeToCamel);
 
     // Variables for rendering the trends page
     let utilizationsByDay: any[] = [],

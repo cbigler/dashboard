@@ -16,9 +16,9 @@ function loadDigestSchedules() {
   return async dispatch => {
     let schedules, errorThrown;
     try {
-      schedules = await fetchAllPages(page => {
-        return core().get(`/digest_schedules?page=${page}&page_size=5000`);
-      });
+      schedules = (await fetchAllPages(async page => {
+        return (await core().get(`/digest_schedules?page=${page}&page_size=5000`)).data;
+      })).map(objectSnakeToCamel);
     } catch (err) {
       errorThrown = err;
     }
@@ -53,7 +53,9 @@ function loadDashboardAndReports(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(page => core().get('/dashboards', {params: {page, page_size: 5000}}));
+      dashboards = await fetchAllPages(async page => (
+        (await core().get('/dashboards', {params: {page, page_size: 5000}})).data
+      ));
     } catch (err) {
       dispatch(collectionDashboardsError(err));
       return;
