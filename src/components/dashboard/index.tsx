@@ -30,7 +30,7 @@ import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
-import changeDashboardDate from '../../actions/miscellaneous/change-dashboard-date';
+import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
 import showDashboardSidebar from '../../actions/miscellaneous/show-dashboards-sidebar';
 import hideDashboardSidebar from '../../actions/miscellaneous/hide-dashboards-sidebar';
 import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
@@ -276,11 +276,10 @@ export function Dashboard({
             {/* TODO: Replace this with better report time navigation (like MixPanel) */}
             {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
               <div style={{width: 50}}>
-                <Button
-                  style={{backgroundColor: '#FFF'}}
-                  onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}
-                >
+                <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                <div style={{paddingTop: 4}}>
                   <Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
+                </div>
                 </Button>
               </div>
               <div style={{padding: 13}}>
@@ -289,15 +288,16 @@ export function Dashboard({
               </div>
               <div style={{width: 50}}>
                 <Button
-                  style={{backgroundColor: '#FFF'}}
                   onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
                   disabled={moment(date).add(1, 'week') > moment()}
                 >
-                  <Icons.ChevronRight
-                    color={moment(date).add(1, 'week') > moment() ? 
-                      colorVariables.gray :
-                      colorVariables.brandPrimaryNew}
-                  />
+                  <div style={{paddingTop: 4}}>
+                    <Icons.ChevronRight
+                      color={moment(date).add(1, 'week') > moment() ?
+                        colorVariables.gray :
+                        colorVariables.brandPrimaryNew}
+                    />
+                  </div>
                 </Button>
               </div>
             </AppBarSection> : null}
@@ -346,7 +346,7 @@ export default connect((state: any) => {
 }, (dispatch: any) => {
   return {
     onDashboardChangeWeek(dashboard, weeks) {
-      dispatch(changeDashboardDate(weeks));
+      dispatch(scrubDashboardDate(weeks));
       dispatch(routeTransitionDashboardDetail(dashboard.id));
     },
     onChangeSidebarVisibility(visibleState) {

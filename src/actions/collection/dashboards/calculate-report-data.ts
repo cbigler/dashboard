@@ -5,7 +5,7 @@ import core from '../../../client/core';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 
-export default function collectionDashboardsCalculateReportData(reports, date) {
+export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
   return async (dispatch, getState) => {
     return Promise.all(reports.map(async report => {
       switch (report.type) {
@@ -54,7 +54,10 @@ export default function collectionDashboardsCalculateReportData(reports, date) {
         }
 
         try {
-          data = await reportDataCalculationFunction(report, { date, client: core(), slow: getGoSlow() });
+          data = await reportDataCalculationFunction(
+            report,
+            { date, weekStart, client: core(), slow: getGoSlow() }
+          );
         } catch (err) {
           errorThrown = err;
         }
