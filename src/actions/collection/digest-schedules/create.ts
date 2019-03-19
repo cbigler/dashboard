@@ -3,6 +3,8 @@ export const COLLECTION_DISPATCH_SCHEDULES_CREATE = 'COLLECTION_DISPATCH_SCHEDUL
 import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
+import mixpanelTrack from '../../../helpers/mixpanel-track/index';
+
 
 export default function collectionDispatchSchedulesCreate({
   name,
@@ -29,6 +31,12 @@ export default function collectionDispatchSchedulesCreate({
         time: time,
         time_zone: timeZone,
       });
+
+      mixpanelTrack('Email Digest Created', {
+        name: name,
+        dashboard_id: dashboardId,
+      });
+
     } catch (err) {
       errorThrown = err;
     }
