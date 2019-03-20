@@ -25,6 +25,7 @@ export class AccountRegistration extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
+      email: this.props.invitationData.email,
       invitationToken: this.props.invitationData.invitation_token,
 
       error: null,
