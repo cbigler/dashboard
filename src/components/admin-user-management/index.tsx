@@ -72,7 +72,7 @@ function getManageableRoles(user) {
 }
 
 function canResendInvitation(user, item) {
-  return ['unsent', 'pending'].includes(item.invitationStatus) && item.id !== user.data.id;
+  return ['unsent', 'pending', 'expired'].includes(item.invitationStatus) && item.id !== user.data.id;
 }
 
 export function AdminUserManagement({
@@ -210,7 +210,7 @@ export function AdminUserManagement({
           <ListViewColumn title="Name" template={item => (
             <span className="admin-user-management-cell-value">{item.fullName}</span>
           )} />
-          <ListViewColumn 
+          <ListViewColumn
             title={<span style={{paddingLeft: 16}}>Role</span>}
             template={item => <div style={{opacity: item.id === user.data.id ? 0.5 : 1.0}}>
               <InputBoxContext.Provider value="LIST_VIEW">
@@ -233,7 +233,7 @@ export function AdminUserManagement({
             title="Invitation"
             template={item => INVITATION_STATUS_LABELS[item.invitationStatus]}
           />
-          <ListViewColumn 
+          <ListViewColumn
             template={item => canResendInvitation(user, item) ? (
               <span style={LIST_CLICKABLE_STYLE}>Resend</span>
             ) : ''}
