@@ -55,6 +55,10 @@ const ROLE_INFO = {
     label: 'Read-Only',
     description: 'Cannot make changes to spaces or users.'
   },
+  'service': {
+    label: 'Service',
+    description: 'Service user.'
+  },
 }
 
 const userFilter = filterCollection({fields: ['email', 'fullName']});
