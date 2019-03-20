@@ -13,6 +13,8 @@ import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
 
+import { DensityDoorway } from '../../types';
+
 const initialState = {
   filters: {
     spaceId: null,
@@ -34,7 +36,7 @@ export default function doorways(state=initialState, action) {
       ...state,
       loading: false,
       error: null,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(d => objectSnakeToCamel<DensityDoorway>(d)),
     };
 
   // Push an update to a doorway.
@@ -47,7 +49,7 @@ export default function doorways(state=initialState, action) {
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel(action.item)};
+            return {...item, ...objectSnakeToCamel<DensityDoorway>(action.item)};
           } else {
             return item;
           }
@@ -56,7 +58,7 @@ export default function doorways(state=initialState, action) {
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+          [objectSnakeToCamel<DensityDoorway>(action.item)] :
             []
         ),
       ],

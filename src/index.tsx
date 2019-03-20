@@ -13,6 +13,8 @@ import ReactGA from 'react-ga';
 import moment from 'moment';
 import queryString from 'qs';
 
+import { DensityUser } from './types';
+
 // Import @density/ui package for font
 import '@density/ui';
 
@@ -243,7 +245,7 @@ function preRouteAuthentication() {
         store.dispatch(userSet(response.data));
 
         // Then, navigate the user to the landing page.
-        unsafeNavigateToLandingPage(objectSnakeToCamel(response.data).organization.settings, null);
+        unsafeNavigateToLandingPage(objectSnakeToCamel<DensityUser>(response.data).organization.settings, null);
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
         store.dispatch(redirectAfterLogin(locationHash));

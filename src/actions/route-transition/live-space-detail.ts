@@ -1,6 +1,8 @@
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import core from '../../client/core';
 
+import { DensitySpace } from '../../types';
+
 import collectionSpacesPush from '../collection/spaces/push';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetEvents from '../collection/spaces/set-events';
@@ -18,7 +20,7 @@ export default function routeTransitionLiveSpaceDetail(id) {
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
 
     try {
-      const space: any = objectSnakeToCamel((await core().get(`/spaces/${id}`)).data);
+    const space = objectSnakeToCamel<DensitySpace>((await core().get(`/spaces/${id}`)).data);
       dispatch(collectionSpacesPush(space));
       dispatch(collectionSpacesSetDefaultTimeRange(space));
 

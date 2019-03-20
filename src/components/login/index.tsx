@@ -2,6 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
+import { DensityUser } from '../../types';
+
 import {
   Button,
   CardLoading,
@@ -277,7 +279,7 @@ export default connect((state: any) => ({
     onUserSuccessfullyLoggedIn(token, redirect) {
       dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
-        const user: any = objectSnakeToCamel(data);
+        const user: any = objectSnakeToCamel<DensityUser>(data);
         unsafeNavigateToLandingPage(user.organization.settings, redirect);
         dispatch(redirectAfterLogin(null));
       });

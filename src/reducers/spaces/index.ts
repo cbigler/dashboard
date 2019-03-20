@@ -37,6 +37,8 @@ import {
 
 import moment from 'moment';
 
+import { DensitySpace } from '../../types';
+
 // Store at maximum 500 events per space
 const EVENT_QUEUE_LENGTH = 500;
 
@@ -97,7 +99,7 @@ export default function spaces(state=initialState, action) {
     return {
       ...state,
       loading: false,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(s => objectSnakeToCamel<DensitySpace>(s)),
       filters: {
         ...state.filters,
         // If the parent space no longer exists with the space updates, then reset it to null
@@ -114,7 +116,7 @@ export default function spaces(state=initialState, action) {
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel(action.item)};
+          return {...item, ...objectSnakeToCamel<DensitySpace>(action.item)};
           } else {
             return item;
           }
@@ -123,7 +125,7 @@ export default function spaces(state=initialState, action) {
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+            [objectSnakeToCamel<DensitySpace>(action.item)] :
             []
         ),
       ],

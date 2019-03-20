@@ -7,6 +7,8 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
 
+import { DensityDashboard, DensityDigestSchedule } from '../../types';
+
 function generateHumanReadableFrequency(digest) {
   /* NOTE: the below is in local time. */
   const time = moment.tz(digest.time, 'HH:mm:ss', digest.timeZone).local().format('h:mm A');
@@ -38,13 +40,11 @@ function generateHumanReadableFrequency(digest) {
 type DashboardDigestPopupListProps = {
   digestSchedules: {
     view: 'VISIBLE' | 'LOADING' | 'ERROR',
-    data: Array<any>,
+    data: Array<DensityDigestSchedule>,
     error: string | null,
   },
-  selectedDashboard: {
-    id: string,
-  },
-  onEditDigest: (any) => any,
+  selectedDashboard: DensityDashboard,
+  onEditDigest: (DensityDigestSchedule) => any,
   onCreateDigest: () => any,
 };
 type DashboardDigestPopupListState = {

@@ -2,6 +2,8 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import dashboardsError from '../collection/dashboards/error';
 import core from '../../client/core';
 
+import { DensityDashboard } from '../../types';
+
 export const ROUTE_TRANSITION_DASHBOARD_LIST = 'ROUTE_TRANSITION_DASHBOARD_LIST';
 
 export default function routeTransitionDashboardList() {
@@ -14,7 +16,7 @@ export default function routeTransitionDashboardList() {
       return;
     }
 
-    const results: any = objectSnakeToCamel(dashboards.data.results[0]);
-    window.location.href = `#/dashboards/${results.id}`;
+		const result = objectSnakeToCamel<DensityDashboard>(dashboards.data.results[0]);
+    window.location.href = `#/dashboards/${result.id}`;
   };
 }

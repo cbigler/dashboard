@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { DensityUser } from '../../types';
+
 import {
   DensityMark,
   Button,
@@ -181,7 +183,7 @@ export default connect((state: any) => {
     onUserLoggedIn(token) {
       dispatch(impersonateUnset());
       dispatch<any>(sessionTokenSet(token)).then(data => {
-        const user: any = objectSnakeToCamel(data);
+        const user: any = objectSnakeToCamel<DensityUser>(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
       });
     },

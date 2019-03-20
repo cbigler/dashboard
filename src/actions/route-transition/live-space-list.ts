@@ -11,6 +11,8 @@ import {
   formatInISOTime,
 } from '../../helpers/space-time-utilities/index';
 
+import { DensitySpace } from '../../types';
+
 export const ROUTE_TRANSITION_LIVE_SPACE_LIST = 'ROUTE_TRANSITION_LIVE_SPACE_LIST';
 
 export default function routeTransitionLiveSpaceList() {
@@ -33,7 +35,7 @@ export default function routeTransitionLiveSpaceList() {
       // This is used to populate each space's events collection with all the events from the last
       // minute so that the real time event charts all display as "full" when the page reloads.
       return Promise.all(spaces.data.results.map(s => {
-        const space: any = objectSnakeToCamel(s);
+      const space = objectSnakeToCamel<DensitySpace>(s);
         return core().get(`/spaces/${space.id}/events`, { params: {
           id: space.id,
           start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),

@@ -7,6 +7,8 @@ import { COLLECTION_DIGEST_SCHEDULES_PUSH } from '../../actions/collection/diges
 import { COLLECTION_DIGEST_SCHEDULES_ERROR } from '../../actions/collection/digest-schedules/error';
 import { COLLECTION_DIGEST_SCHEDULES_REMOVE } from '../../actions/collection/digest-schedules/remove';
 
+import { DensityDigestSchedule } from '../../types';
+
 const initialState = {
   view: 'LOADING',
   selected: null,
@@ -26,7 +28,7 @@ export default function digestSchedules(state=initialState, action) {
       ...state,
       view: 'VISIBLE',
       error: null,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(d => objectSnakeToCamel<DensityDigestSchedule>(d)),
     };
 
   // Add a new value to the collection

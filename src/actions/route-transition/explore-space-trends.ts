@@ -13,6 +13,8 @@ import fetchAllPages from '../../helpers/fetch-all-pages';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
+import { DensitySpace } from '../../types';
+
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
@@ -71,7 +73,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     try {
       spaces = (await fetchAllPages(
         async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(objectSnakeToCamel);
+      )).map(s => objectSnakeToCamel<DensitySpace>(s));
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));

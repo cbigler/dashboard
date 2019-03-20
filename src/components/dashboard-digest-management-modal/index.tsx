@@ -27,6 +27,8 @@ import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import showToast from '../../actions/toasts';
 
+import { DensityUser, DensityDigestSchedule, DensityDashboard } from '../../types';
+
 const DAYS_OF_WEEK = [
   'Monday',
   'Tuesday',
@@ -42,8 +44,8 @@ const WEEKLY = 'WEEKLY',
 
 type DashboardDigestManagementModalProps = {
   visible: boolean,
-  initialDigestSchedule: any,
-  selectedDashboard: any,
+  initialDigestSchedule: DensityDigestSchedule,
+  selectedDashboard: DensityDashboard,
   onCloseModal: () => any,
   onCreateDigest: (any) => any,
   onUpdateDigest: (any) => any,
@@ -52,7 +54,7 @@ type DashboardDigestManagementModalProps = {
   users: {
     view: 'LOADING' | 'ERROR' | 'VISIBLE',
     loading: boolean,
-    data: Array<any>,
+    data: Array<DensityUser>,
     error: any,
   },
   onLoadUsers: () => any,
@@ -256,8 +258,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
                   disabled={!this.isFormValid()}
                   type="primary"
                   onClick={() => {
-                    let digest = {
-                      id: undefined,
+                    let digest: any = {
                       name: name || this.calculateDefaultDigestName() || 'Digest Name',
                       recipients: recipients,
                       dashboardId: selectedDashboard.id,
@@ -270,9 +271,9 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
 
                     if (this.props.initialDigestSchedule) {
                       digest.id = this.props.initialDigestSchedule.id;
-                      onUpdateDigest(digest);
+                      onUpdateDigest(digest as DensityDigestSchedule);
                     } else {
-                      onCreateDigest(digest);
+                      onCreateDigest(digest as DensityDigestSchedule);
                     }
                   }}
                 >Save Email Digest</Button>

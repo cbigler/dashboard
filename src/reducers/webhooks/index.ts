@@ -8,6 +8,8 @@ import { COLLECTION_WEBHOOKS_DESTROY } from '../../actions/collection/webhooks/d
 import { COLLECTION_WEBHOOKS_UPDATE } from '../../actions/collection/webhooks/update';
 import { COLLECTION_WEBHOOKS_ERROR } from '../../actions/collection/webhooks/error';
 
+import { DensityWebhook } from '../../types';
+
 const initialState = {
   data: [],
   loading: true,
@@ -45,7 +47,7 @@ export default function webhooks(state=initialState, action) {
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+          [objectSnakeToCamel<DensityWebhook>(action.item)] :
             []
         ),
       ],

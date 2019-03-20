@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
+import { DensityUser } from '../../types';
+
 import {
   AppBar,
   AppBarContext,
@@ -232,7 +234,7 @@ export default connect((state: any) => {
       fetch(`${accounts().defaults.baseURL}/users?organization_id=${org.id}`, {
         headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
       }).then(response => response.json()).then(data => {
-        dispatch(updateModal({loading: false, users: data.map(objectSnakeToCamel)}));
+        dispatch(updateModal({loading: false, users: data.map(u => objectSnakeToCamel<DensityUser>(u))}));
       });
     },
     onSelectImpersonateUser(user) {

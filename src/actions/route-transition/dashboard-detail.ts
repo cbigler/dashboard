@@ -15,6 +15,8 @@ import setDashboardDate from '../miscellaneous/set-dashboard-date';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
+import { DensityDashboard, DensityDigestSchedule } from '../../types';
+
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
 
@@ -24,7 +26,7 @@ function loadDigestSchedules() {
     try {
       schedules = (await fetchAllPages(async page => {
         return (await core().get(`/digest_schedules?page=${page}&page_size=5000`)).data;
-      })).map(objectSnakeToCamel);
+      })).map(d => objectSnakeToCamel<DensityDigestSchedule>(d));
     } catch (err) {
       errorThrown = err;
     }
@@ -77,7 +79,7 @@ function loadDashboardAndReports(id) {
       return;
     }
 
-    const results = dashboards.map(objectSnakeToCamel);
+    const results = dashboards.map(d => objectSnakeToCamel<DensityDashboard>(d));
     dispatch(collectionDashboardsSet(results));
 
     if (results.length === 0) {
@@ -93,7 +95,7 @@ function loadDashboardAndReports(id) {
         dispatch(dashboardsError('No dashboard with this id was found.'))
         return;
       } else {
-        dashboards = dashboards.map(objectSnakeToCamel);
+        dashboards = dashboards.map(d => objectSnakeToCamel<DensityDashboard>(d));
       }
 
       // Load the selected dashboard directly, in case it is hidden
@@ -105,7 +107,7 @@ function loadDashboardAndReports(id) {
         );
       } else {
         try {
-          selectedDashboard = objectSnakeToCamel((await core().get(`/dashboards/${id}`)).data);
+        selectedDashboard = objectSnakeToCamel<DensityDashboard>((await core().get(`/dashboards/${id}`)).data);
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;

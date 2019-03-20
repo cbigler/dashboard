@@ -12,6 +12,8 @@ import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher/index';
 
+import { DensitySpace } from '../../types';
+
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
@@ -47,12 +49,12 @@ export default function routeTransitionExploreSpaceDaily(id) {
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
-    // this view unrfortunately.
+    // this view unfortunately.
     let spaces, selectedSpace;
     try {
       spaces = (await fetchAllPages(
         async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(objectSnakeToCamel);
+      )).map(s => objectSnakeToCamel<DensitySpace>(s));
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));

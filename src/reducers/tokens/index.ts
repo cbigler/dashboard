@@ -11,6 +11,8 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
 
+import { DensityToken } from '../../types';
+
 const initialState = {
   data: [],
   loading: true,
@@ -26,7 +28,7 @@ export default function tokens(state=initialState, action) {
     return {
       ...state,
       loading: false,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(t => objectSnakeToCamel<DensityToken>(t)),
     };
 
   // Push an update to a token.
@@ -47,7 +49,7 @@ export default function tokens(state=initialState, action) {
         // Add new items
         ...(
           state.data.find((i: any) => i.key === action.item.key) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+          [objectSnakeToCamel<DensityToken>(action.item)] :
             []
         ),
       ],

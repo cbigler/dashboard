@@ -26,20 +26,26 @@ import {
 import FormLabel from '../form-label';
 import Dialogger from '../dialogger';
 
+import { DensitySpace, DensityUser } from '../../types';
+
 type AdminUserManagementDetailProps = {
   spaces: {
-    data: Array<any>,
+    data: Array<DensitySpace>,
   },
   users: {
     view: 'LOADING' | 'ERROR' | 'VISIBLE',
-    data: Array<any>,
+    data: Array<DensityUser>,
     error: string,
   },
-  user: any,
-  selectedUser: any,
+  user: {
+    data: DensityUser,
+    loading: boolean,
+    error: boolean,
+  },
+  selectedUser: DensityUser,
 
-  onStartDeleteUser: (any) => any,
-  onSaveUser: (any) => any,
+  onStartDeleteUser: (DensityUser) => any,
+  onSaveUser: (DensityUser) => any,
 };
 
 type AdminUserManagementDetailState = {
@@ -121,7 +127,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
               <div className="admin-user-management-user-info">
                 <div className="admin-user-management-user-info-icon">
                   {
-                    selectedUser.fullName
+                    (selectedUser.fullName || '')
                     .split(' ')
                     .slice(0, 2)
                     .filter(word => word.length > 0)

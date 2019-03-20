@@ -12,6 +12,8 @@ import { COLLECTION_USERS_ERROR } from '../../actions/collection/users/error';
 
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
 
+import { DensityUser } from '../../types';
+
 
 const initialState = {
   view: 'LOADING',
@@ -41,7 +43,7 @@ export default function users(state=initialState, action) {
       view: 'VISIBLE',
       loading: false,
       error: null,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(u => objectSnakeToCamel<DensityUser>(u)),
     };
 
   case COLLECTION_USERS_ERROR:

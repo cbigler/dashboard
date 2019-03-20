@@ -1,6 +1,8 @@
 import { EventEmitter } from 'events';
 import objectSnakeToCamel from '../object-snake-to-camel/index';
 
+import { DensitySocketPush } from '../../types';
+
 import debug from 'debug';
 
 import core from '../../client/core';
@@ -98,7 +100,7 @@ export default class WebsocketEventPusher extends EventEmitter {
       // Currently, the only events are space updates.
       this.socket.onmessage = e => {
         this.log('SOCKET MESSAGE RECEIVED: %o', e.data);
-        this.emit('space', objectSnakeToCamel(JSON.parse(e.data)).payload);
+        this.emit('space', objectSnakeToCamel<DensitySocketPush>(JSON.parse(e.data)).payload);
       }
 
       // When the connection disconnects, reconnect after a delay.

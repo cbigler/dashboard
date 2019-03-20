@@ -11,6 +11,8 @@ import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
 } from '../../actions/collection/dashboards/calculate-report-data';
 
+import { DensityDashboard } from '../../types';
+
 const initialState = {
   loading: true,
   selected: null,
@@ -55,7 +57,7 @@ export default function dashboards(state=initialState, action) {
       ...state,
       loading: false,
       error: null,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(d => objectSnakeToCamel<DensityDashboard>(d)),
       calculatedReportData: {
         // Any reports that don't have data loaded yet will be put into a loading state.
         ...(allReports.reduce((acc, report) => ({

@@ -8,6 +8,8 @@ import { COLLECTION_LINKS_UPDATE_SENSOR_PLACEMENT } from '../../actions/collecti
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
 
+import { DensityLink } from '../../types';
+
 const initialState = {
   filters: {
     spaceId: null,
@@ -26,7 +28,7 @@ export default function links(state=initialState, action) {
     return {
       ...state,
       loading: false,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data.map(l => objectSnakeToCamel<DensityLink>(l)),
     };
 
   // Push an update to a link.
@@ -47,7 +49,7 @@ export default function links(state=initialState, action) {
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+          [objectSnakeToCamel<DensityLink>(action.item)] :
             []
         ),
       ],
