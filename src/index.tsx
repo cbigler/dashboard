@@ -59,6 +59,7 @@ import routeTransitionAccountSetupDoorwayDetail from './actions/route-transition
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
+import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
 import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
 import routeTransitionAdminUserManagementDetail from './actions/route-transition/admin-user-management-detail';
 import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
@@ -186,6 +187,7 @@ router.addRoute('account/register/:slug', slug => routeTransitionAccountRegister
 router.addRoute('account/forgot-password/:token', token => routeTransitionAccountForgotPassword(token));
 
 // Advanced account management (Administration)
+router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
 router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());

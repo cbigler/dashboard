@@ -83,6 +83,7 @@ function ActivePage({activePage, user, settings}) {
     return <Login />;
   case "ADMIN_USER_MANAGEMENT":
   case "ADMIN_DEVELOPER":
+  case "ADMIN_INTEGRATIONS":
   case "ADMIN_DEVICE_STATUS":
     return <Admin user={user} activePage={activePage} />;
   case "ADMIN_USER_MANAGEMENT_DETAIL":

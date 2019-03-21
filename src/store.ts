@@ -25,6 +25,7 @@ import resizeCounter from './reducers/resize-counter/index';
 import users from './reducers/users/index';
 import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
+import integrations from './reducers/integrations/index';
 const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
@@ -48,11 +49,12 @@ const reducer = combineReducers({
   users,
   digestSchedules,
   miscellaneous,
+  integrations,
 });
 
 // Create our redux store for storing the application state.
 export default () => createStore(reducer, {}, compose(
   applyMiddleware(thunk),
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ ? 
+  (window as any).__REDUX_DEVTOOLS_EXTENSION__ ?
     (window as any).__REDUX_DEVTOOLS_EXTENSION__() : f => f
 ));

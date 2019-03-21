@@ -45,6 +45,7 @@ export default class WebsocketEventPusher extends EventEmitter {
   }
 
   async connect(iteration=0) {
+
     this.log('CONNECT TO SOCKET');
     if (!this.WebSocket) {
       return false;

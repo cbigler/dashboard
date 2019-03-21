@@ -133,8 +133,8 @@ export function Explore({
   if (spaces.filters.search) {
     filteredSpaces = [];
     var options = {
-        pre: '<', 
-        post: '>', 
+        pre: '<',
+        post: '>',
         extract: function(el) { return el['name']; }
     };
     let matchedSpaces = fuzzy.filter(spaces.filters.search, spaces.data, options);

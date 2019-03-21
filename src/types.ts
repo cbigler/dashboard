@@ -182,3 +182,21 @@ export type DensityUser = {
 };
 
 // Counts
+
+// Service
+export type DensityService = {
+  name: string,
+  displayName: string,
+  category: string,
+};
+
+// ServiceAuthorization
+export type DensityServiceAuthorization = {
+  id: string,
+  credentials: { [key: string]: string },
+  default: boolean,
+  lastSync: string,
+  user: DensityUser,
+};
+
+// Counts
