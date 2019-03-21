@@ -13,7 +13,7 @@ export function errorHandler(error, store) {
       store.dispatch(login(window.location.hash));
       window.location.hash = '#/login';
     }
-    return Promise.reject(error.response.data);
+    return Promise.reject(error.response.data.detail);
   } else {
     return Promise.reject(error);
   }
