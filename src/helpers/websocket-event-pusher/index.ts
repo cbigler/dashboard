@@ -5,6 +5,7 @@ import { DensitySocketPush } from '../../types';
 
 import debug from 'debug';
 
+import axios from 'axios';
 import core from '../../client/core';
 
 // If disconnected, try to connect at minimum this often.
@@ -72,7 +73,8 @@ export default class WebsocketEventPusher extends EventEmitter {
     this.emit('connectionStateChange', this.connectionState);
 
     try {
-      const response = await core().post('/sockets');
+      const client = axios.create(core().defaults);
+      const response = await client.post('/sockets');
 
       this.connectionState = CONNECTION_STATES.CONNECTING;
       this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
