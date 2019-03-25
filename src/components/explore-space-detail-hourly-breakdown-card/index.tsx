@@ -72,7 +72,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
           <div className="explore-space-detail-hourly-breakdown-card-body-error">
             <span>
               <span className="explore-space-detail-hourly-breakdown-card-body-error-icon">&#xe91a;</span>
-                {hourlyBreakdown.error.response.data.detail}
+                {hourlyBreakdown.error}
             </span>
           </div>
         );
