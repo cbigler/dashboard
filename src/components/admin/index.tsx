@@ -40,6 +40,13 @@ export default function Admin({
                 </AppBarSubnavLink>
                 {can(user, PERMISSION_CODES.developer_tools_manage) ? 
                   <AppBarSubnavLink
+                    href="#/admin/integrations"
+                    active={activePage === 'ADMIN_INTEGRATIONS'}
+                  >
+                    Integrations
+                  </AppBarSubnavLink> : null}
+                {can(user, PERMISSION_CODES.developer_tools_manage) ? 
+                  <AppBarSubnavLink
                     href="#/admin/developer"
                     active={activePage === 'ADMIN_DEVELOPER'}
                   >
