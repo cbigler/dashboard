@@ -8,6 +8,7 @@ import { ROUTE_TRANSITION_ACCOUNT_FORGOT_PASSWORD } from '../../actions/route-tr
 import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../actions/route-transition/explore-space-trends';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transition/explore-space-daily';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
+import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
 
 import { ROUTE_TRANSITION_ACCOUNT_SETUP_OVERVIEW } from '../../actions/route-transition/account-setup-overview';
 import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_LIST } from '../../actions/route-transition/account-setup-doorway-list';
@@ -43,6 +44,8 @@ export default function activePage(state=initialState, action) {
     return "EXPLORE_SPACE_DAILY";
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
     return "EXPLORE_SPACE_DATA_EXPORT";
+  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
+    return "EXPLORE_SPACE_MEETINGS";
 
   case ROUTE_TRANSITION_ACCOUNT:
     return "ACCOUNT";

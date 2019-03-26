@@ -22,6 +22,7 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
+import ExploreSpaceMeetings from '../explore-space-meetings/index';
 
 const EXPLORE_BACKGROUND = '#F5F5F7';
 const spaceFilter = filterCollection({fields: ['name']});
@@ -38,6 +39,9 @@ function ExploreSidebarItem({selected, id, name, spaceType, activePage}) {
       break;
     case 'EXPLORE_SPACE_DATA_EXPORT':
       page = "data-export";
+      break;
+    case 'EXPLORE_SPACE_MEETINGS':
+      page = "meetings";
       break;
     default:
       page = "trends";
@@ -115,6 +119,8 @@ function ExploreSpacePage({ activePage }) {
       return <ExploreSpaceDaily />;
     case 'EXPLORE_SPACE_DATA_EXPORT':
       return <ExploreSpaceDataExport />;
+    case 'EXPLORE_SPACE_MEETINGS':
+      return <ExploreSpaceMeetings />;
     default:
       return null;
   }
@@ -124,7 +130,7 @@ export function Explore({
   spaces,
   selectedSpace,
   activePage,
-  onSpaceSearch
+  onSpaceSearch,
 }) {
   let filteredSpaces = spaces.data;
 
@@ -197,6 +203,12 @@ export function Explore({
                 active={activePage === "EXPLORE_SPACE_DAILY"}
               >
                 Daily
+              </AppBarSubnavLink>
+              <AppBarSubnavLink
+                href={`#/spaces/explore/${spaces.selected}/meetings`}
+                active={activePage === "EXPLORE_SPACE_MEETINGS"}
+              >
+                Meetings
               </AppBarSubnavLink>
               <AppBarSubnavLink
                 href={`#/spaces/explore/${spaces.selected}/data-export`}

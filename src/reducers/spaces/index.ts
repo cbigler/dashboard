@@ -19,10 +19,10 @@ import {
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../actions/route-transition/live-space-detail';
 import { ROUTE_TRANSITION_EXPLORE } from '../../actions/route-transition/explore';
-// import { ROUTE_TRANSITION_EXPLORE_CHANGE_SPACE } from '../../actions/route-transition/explore-change-space';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../actions/route-transition/explore-space-trends';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transition/explore-space-daily';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
+import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
 import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
@@ -191,6 +191,7 @@ export default function spaces(state=initialState, action) {
   case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
   case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
+  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
     var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
     var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
