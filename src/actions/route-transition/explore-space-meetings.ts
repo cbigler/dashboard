@@ -18,6 +18,10 @@ import { DensitySpace } from '../../types';
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
+import {
+  exploreDataRobinSpacesSet,
+  exploreDataRobinSpacesError,
+} from '../../actions/explore-data/robin';
 
 import { getGoSlow } from '../../components/environment-switcher';
 
@@ -63,8 +67,14 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
-    const state = getState();
-    dispatch(calculate(selectedSpace, state.spaces.filters));
+    let robinSpaces;
+    try {
+      robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces', {})).data
+    } catch (err) {
+      dispatch(exploreDataRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+      return;
+    }
+    dispatch(exploreDataRobinSpacesSet(robinSpaces));
   }
 }
 

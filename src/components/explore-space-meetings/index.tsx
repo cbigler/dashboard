@@ -69,11 +69,23 @@ export function isOutsideRange(startISOTime, datePickerInput, day) {
   return false;
 }
 
+function flattenRobinSpaces(robinSpaces) {
+  if (!robinSpaces) {
+    return [];
+  } else {
+    return [
+      ...robinSpaces,
+      ...robinSpaces.map(robinSpace => flattenRobinSpaces(robinSpace.children)).flat(),
+    ];
+  }
+}
+
 function ExploreSpaceMeetings({
   spaces,
   space,
   onChangeSpaceFilter,
   onChangeDateRange,
+  exploreData,
 }) {
   if (space) {
     return <div>
@@ -137,16 +149,28 @@ function ExploreSpaceMeetings({
             />
           </AppBarSection>
           <AppBarSection>
-            <img className="explore-space-meetings-robin-image" src={RobinImage} />
-            <InputBox
-              type="select"
-              placeholder="Select a space from Robin"
-              width={275}
-              choices={[
-                {id: 'foo', label: 'foo'},
-                {id: 'bar', label: 'bar'},
-              ]}
+            <img
+              className="explore-space-meetings-robin-image"
+              src={RobinImage}
             />
+            {exploreData.robinSpaces.view === 'COMPLETE' ? (
+              <InputBox
+                type="select"
+                placeholder="Select a space from Robin"
+                width={275}
+                menuMaxHeight={500}
+                choices={flattenRobinSpaces(exploreData.robinSpaces.data).map(robinSpace => ({
+                  id: robinSpace.id,
+                  label: robinSpace.name,
+                }))}
+              />
+            ) : null}
+            {exploreData.robinSpaces.view === 'LOADING' ? (
+              <span>Loading</span>
+            ) : null}
+            {exploreData.robinSpaces.view === 'ERROR' ? (
+              <span>Error loading robin spaces</span>
+            ) : null}
           </AppBarSection>
         </AppBar>
       ) : null}
@@ -162,6 +186,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
+    exploreData: state.exploreData,
   };
 }, dispatch => {
   return {
