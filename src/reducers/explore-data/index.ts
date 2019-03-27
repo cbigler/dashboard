@@ -3,10 +3,10 @@ import { EXPLORE_DATA_CALCULATE_DATA_LOADING } from '../../actions/explore-data/
 import { EXPLORE_DATA_CALCULATE_DATA_COMPLETE } from '../../actions/explore-data/calculate-data-complete';
 import { EXPLORE_DATA_CALCULATE_DATA_ERROR } from '../../actions/explore-data/calculate-data-error';
 import {
-  EXPLORE_DATA_ROBIN_SPACES_SET,
-  EXPLORE_DATA_ROBIN_SPACES_ERROR,
-  EXPLORE_DATA_ROBIN_SPACES_SELECT,
-} from '../../actions/explore-data/robin';
+  INTEGRATIONS_ROBIN_SPACES_SET,
+  INTEGRATIONS_ROBIN_SPACES_ERROR,
+  INTEGRATIONS_ROBIN_SPACES_SELECT,
+} from '../../actions/integrations/robin';
 
 const initialModuleState = {
   state: 'EMPTY',
@@ -103,18 +103,18 @@ export default function exploreData(state=initialState, action) {
     };
 
 
-  case EXPLORE_DATA_ROBIN_SPACES_SET:
+  case INTEGRATIONS_ROBIN_SPACES_SET:
     return {
       ...state,
       robinSpaces: {
         ...state.robinSpaces,
-        view: 'COMPLETE',
+        view: 'VISIBLE',
         data: action.data,
         error: null,
       },
     };
 
-  case EXPLORE_DATA_ROBIN_SPACES_ERROR:
+  case INTEGRATIONS_ROBIN_SPACES_ERROR:
     return {
       ...state,
       robinSpaces: {
@@ -124,7 +124,7 @@ export default function exploreData(state=initialState, action) {
       },
     };
 
-  case EXPLORE_DATA_ROBIN_SPACES_SELECT:
+  case INTEGRATIONS_ROBIN_SPACES_SELECT:
     return {
       ...state,
       robinSpaces: {
@@ -132,7 +132,6 @@ export default function exploreData(state=initialState, action) {
         selected: action.id,
       },
     };
-
 
   default:
     return state;

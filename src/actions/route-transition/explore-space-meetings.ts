@@ -15,15 +15,19 @@ import {
   DensityReportCalculatationFunction,
   DensitySpaceMapping,
   DensitySpace,
+  DensityService,
 } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import {
-  exploreDataRobinSpacesSet,
-  exploreDataRobinSpacesError,
-  exploreDataRobinSpacesSelect,
-} from '../../actions/explore-data/robin';
+  integrationsRobinSpacesSet,
+  integrationsRobinSpacesError,
+  integrationsRobinSpacesSelect,
+} from '../../actions/integrations/robin';
+import {
+  integrationsRoomBookingSetDefaultService,
+} from '../../actions/integrations/room-booking';
 import { calculateDashboardDate } from './dashboard-detail';
 
 import { getGoSlow } from '../../components/environment-switcher';
@@ -74,10 +78,30 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     try {
       robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces', {})).data
     } catch (err) {
-      dispatch(exploreDataRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+      dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
       return;
     }
-    dispatch(exploreDataRobinSpacesSet(robinSpaces));
+    dispatch(integrationsRobinSpacesSet(robinSpaces));
+
+
+    // Determine if a room booking integration is active
+    const roomBookingDefaultService: DensityService | null = await (async function() {
+      let servicesResponse;
+      try {
+        servicesResponse = await core().get('/integrations/services', {});
+      } catch (err) {
+        dispatch(integrationsRobinSpacesError(`Error loading integrations list: ${err.message}`));
+        return;
+      }
+
+      const services = servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
+      const defaultAuthorizedRoomBookingService = services
+        .filter(service => service.category === 'Room Booking')
+        .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
+        .find(service => service.serviceAuthorization.default);
+      return defaultAuthorizedRoomBookingService;
+    })();
+    dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
 
     // Attempt to find a space mapping for this space
     const spaceMappingExists = await (async function() {
@@ -87,17 +111,17 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       } catch (err) {
         if (err.indexOf('404') >= 0) {
           // Space mapping was not found
-          dispatch(exploreDataRobinSpacesSelect(null));
+          dispatch(integrationsRobinSpacesSelect(null));
           return false;
         } else {
-          dispatch(exploreDataRobinSpacesError(`Error loading space mapping: ${err.message}`));
+          dispatch(integrationsRobinSpacesError(`Error loading space mapping: ${err.message}`));
           return false;
         }
       }
 
       // Space mapping exists
       const spaceMapping = objectSnakeToCamel<DensitySpaceMapping>(spaceMappingResponse.data);
-      dispatch(exploreDataRobinSpacesSelect(spaceMapping));
+      dispatch(integrationsRobinSpacesSelect(spaceMapping));
       return true;
     })();
 
@@ -151,10 +175,10 @@ export function calculate(id) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('meetings'));
 
-		// Use the same mechanism for calculating the `date` parameter that dashboards use.
-		const weekStart = getState().user.data.organization.settings.dashboardWeekStart;
-		dispatch(calculateDashboardDate(weekStart));
-		const date = getState().miscellaneous.dashboardDate;
+    // Use the same mechanism for calculating the `date` parameter that dashboards use.
+    const weekStart = getState().user.data.organization.settings.dashboardWeekStart;
+    dispatch(calculateDashboardDate(weekStart));
+    const date = getState().miscellaneous.dashboardDate;
 
     const meetingEphemeralReportGenerators = MEETING_EPHEMERAL_REPORT_GENERATORS(id);
     const meetingReportResults = await Promise.all(
@@ -164,11 +188,11 @@ export function calculate(id) {
         let errorThrown;
         try {
           const data = await reportDataCalculationFunction(report, {
-						date,
-						weekStart,
-						client: core(),
-						slow: getGoSlow(),
-					});
+            date,
+            weekStart,
+            client: core(),
+            slow: getGoSlow(),
+          });
           return { state: 'COMPLETE', data };
         } catch (error) {
           console.log(error);

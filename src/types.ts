@@ -188,6 +188,7 @@ export type DensityService = {
   name: string,
   displayName: string,
   category: string,
+	serviceAuthorization: DensityServiceAuthorization,
 };
 
 // ServiceAuthorization

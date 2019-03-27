@@ -3,3 +3,47 @@
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.explore-space-meetings-centered-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 64px);
+}
+
+.explore-space-meetings-integration-cta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $border-radius-base;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
+  height: 72px;
+
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.explore-space-meetings-integration-cta-label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-right: 24px;
+  user-select: none;
+}
+
+.explore-space-meetings-integration-density-wrapper {
+  margin-right: 8px;
+  background-color: $gray-cinder;
+  width: 30px;
+  height: 30px;
+  border-radius: $border-radius-small;
+}
+.explore-space-meetings-integration-integration-wrapper {
+  width: 28px;
+  height: 28px;
+  margin-left: 8px;
+  margin-right: 24px;
+}
