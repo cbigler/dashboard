@@ -186,7 +186,7 @@ function ExploreSpaceMeetings({
         {exploreData.robinSpaces.view === 'VISIBLE' && integrations.roomBooking.view === 'VISIBLE' ? (
           <Fragment>
             {/* Room booking integration has not been configured */}
-            {true || !roomBookingDefaultService ? (
+            {!roomBookingDefaultService ? (
               <div className="explore-space-meetings-centered-message">
                 <div className="explore-space-meetings-integration-cta">
                   <div className="explore-space-meetings-integration-cta-label">
@@ -212,10 +212,10 @@ function ExploreSpaceMeetings({
               </div>
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
-            {false && roomBookingDefaultService && !exploreData.robinSpaces.selected ? (
+            {roomBookingDefaultService && !exploreData.robinSpaces.selected ? (
               <div className="explore-space-meetings-centered-message">
                 <div className="explore-space-meetings-integration-cta">
-                  Link a Robin space to this Density space to display your reports.
+                  Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
                 </div>
               </div>
             ) : null}
