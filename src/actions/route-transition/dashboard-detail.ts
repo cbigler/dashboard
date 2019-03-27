@@ -39,6 +39,18 @@ function loadDigestSchedules() {
   }
 }
 
+// Determine "start of week" for this organization and the dashboard date
+export function calculateDashboardDate(dashboardWeekStart) {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const dashboardDate = getStartOfWeek(
+      moment(state.miscellaneous.dashboardDate || undefined),
+      dashboardWeekStart
+    ).format('YYYY-MM-DD');
+    dispatch(setDashboardDate(dashboardDate));
+  }
+}
+
 function loadDashboardAndReports(id) {
   return async (dispatch, getState) => {
     let dashboardSelectionPromise;
@@ -46,11 +58,8 @@ function loadDashboardAndReports(id) {
     
     // Determine "start of week" for this organization and the dashboard date
     const dashboardWeekStart = state.user.data.organization.settings.dashboardWeekStart;
-    const dashboardDate = getStartOfWeek(
-      moment(state.miscellaneous.dashboardDate || undefined),
-      dashboardWeekStart
-    ).format('YYYY-MM-DD');
-    dispatch(setDashboardDate(dashboardDate));
+    dispatch(calculateDashboardDate(dashboardWeekStart));
+    const dashboardDate = getState().miscellaneous.dashboardDate;
 
     // First, if the dashboard already is in the collection, then immediately select it.
     let selectedDashboard = state.dashboards.data.find(d => d.id === id);

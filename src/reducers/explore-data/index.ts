@@ -4,7 +4,8 @@ import { EXPLORE_DATA_CALCULATE_DATA_COMPLETE } from '../../actions/explore-data
 import { EXPLORE_DATA_CALCULATE_DATA_ERROR } from '../../actions/explore-data/calculate-data-error';
 import {
   EXPLORE_DATA_ROBIN_SPACES_SET,
-  EXPLORE_DATA_ROBIN_SPACES_ERROR
+  EXPLORE_DATA_ROBIN_SPACES_ERROR,
+  EXPLORE_DATA_ROBIN_SPACES_SELECT,
 } from '../../actions/explore-data/robin';
 
 const initialModuleState = {
@@ -39,6 +40,9 @@ const initialState = {
     dailyRawEvents: {
       ...initialModuleState,
       data: {},
+    },
+    meetings: {
+      ...initialModuleState,
     },
   },
   robinSpaces: {
@@ -103,6 +107,7 @@ export default function exploreData(state=initialState, action) {
     return {
       ...state,
       robinSpaces: {
+        ...state.robinSpaces,
         view: 'COMPLETE',
         data: action.data,
         error: null,
@@ -113,9 +118,18 @@ export default function exploreData(state=initialState, action) {
     return {
       ...state,
       robinSpaces: {
+        ...state.robinSpaces,
         view: 'ERROR',
-        data: [],
         error: action.error,
+      },
+    };
+
+  case EXPLORE_DATA_ROBIN_SPACES_SELECT:
+    return {
+      ...state,
+      robinSpaces: {
+        ...state.robinSpaces,
+        selected: action.id,
       },
     };
 
