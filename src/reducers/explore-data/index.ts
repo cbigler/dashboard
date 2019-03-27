@@ -37,11 +37,6 @@ const initialState = {
       data: {},
     },
   },
-  robinSpaces: {
-    view: ('LOADING' as any),
-    data: ([] as Array<any>),
-    error: (null as any),
-  },
 };
 
 export default function exploreData(state=initialState, action) {
