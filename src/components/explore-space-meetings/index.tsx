@@ -72,7 +72,6 @@ function flattenRobinSpaces(robinSpaces) {
 function ExploreSpaceMeetings({
   spaces,
   space,
-  exploreData,
   integrations,
 
   onChangeSpaceMapping,
@@ -83,7 +82,7 @@ function ExploreSpaceMeetings({
     const roomBookingDefaultService = integrations.roomBooking.defaultService;
     const isIntegrationSpaceSelected = (
       roomBookingDefaultService && // A room booking service was defined
-      exploreData.robinSpaces.selected // Space mapping selected
+      integrations.roomBooking.spaceMappingForActiveSpace
     );
 
     return (
@@ -156,15 +155,15 @@ function ExploreSpaceMeetings({
                 className="explore-space-meetings-robin-image"
                 src={RobinImage}
               />
-              {exploreData.robinSpaces.view === 'VISIBLE' ? (
+              {integrations.robinSpaces.view === 'VISIBLE' ? (
                 <InputBox
                   type="select"
                   placeholder="Select a space from Robin"
                   width={275}
                   menuMaxHeight={500}
-                  value={exploreData.robinSpaces.selected}
+                  value={integrations.robinSpaces.selected}
                   choices={
-                    flattenRobinSpaces(exploreData.robinSpaces.data as Array<DensityRobinSpace>)
+                    flattenRobinSpaces(integrations.robinSpaces.data as Array<DensityRobinSpace>)
                       .map(robinSpace => ({
                         id: robinSpace.id,
                         label: robinSpace.name,
@@ -173,17 +172,17 @@ function ExploreSpaceMeetings({
                   onChange={robinSpaceChoice => onChangeSpaceMapping(space.id, robinSpaceChoice.id)}
                 />
               ) : null}
-              {exploreData.robinSpaces.view === 'LOADING' ? (
+              {integrations.robinSpaces.view === 'LOADING' ? (
                 <span>Loading</span>
               ) : null}
-              {exploreData.robinSpaces.view === 'ERROR' ? (
+              {integrations.robinSpaces.view === 'ERROR' ? (
                 <span>Error loading robin spaces</span>
               ) : null}
             </AppBarSection>
           </AppBar>
         ) : null}
 
-        {exploreData.robinSpaces.view === 'VISIBLE' && integrations.roomBooking.view === 'VISIBLE' ? (
+        {integrations.robinSpaces.view === 'VISIBLE' && integrations.roomBooking.view === 'VISIBLE' ? (
           <Fragment>
             {/* Room booking integration has not been configured */}
             {!roomBookingDefaultService ? (
@@ -212,7 +211,7 @@ function ExploreSpaceMeetings({
               </div>
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
-            {roomBookingDefaultService && !exploreData.robinSpaces.selected ? (
+            {roomBookingDefaultService && !integrations.robinSpaces.spaceMappingForActiveSpace ? (
               <div className="explore-space-meetings-centered-message">
                 <div className="explore-space-meetings-integration-cta">
                   Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
@@ -232,7 +231,6 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    exploreData: state.exploreData,
     integrations: state.integrations,
   };
 }, dispatch => {

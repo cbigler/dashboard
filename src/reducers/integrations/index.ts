@@ -5,7 +5,15 @@ import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../actions/collecti
 import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../actions/collection/service-authorizations/update';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../actions/collection/service-authorizations/destroy';
 
-import { INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE } from '../../actions/integrations/room-booking';
+import {
+  INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE,
+  INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING,
+} from '../../actions/integrations/room-booking';
+
+import {
+  INTEGRATIONS_ROBIN_SPACES_SET,
+  INTEGRATIONS_ROBIN_SPACES_ERROR,
+} from '../../actions/integrations/robin';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
@@ -18,6 +26,13 @@ const initialState = {
   roomBooking: {
     view: 'LOADING',
     defaultService: null,
+    spaceMappingForActiveSpace: null,
+  },
+
+  robinSpaces: {
+    view: ('LOADING' as any),
+    data: ([] as Array<any>),
+    error: (null as any),
   },
 };
 
@@ -45,6 +60,36 @@ export default function integrations(state=initialState, action) {
         ...state.roomBooking,
         view: 'VISIBLE',
         defaultService: action.service,
+      },
+    };
+
+  case INTEGRATIONS_ROBIN_SPACES_SET:
+    return {
+      ...state,
+      robinSpaces: {
+        ...state.robinSpaces,
+        view: 'VISIBLE',
+        data: action.data,
+        error: null,
+      },
+    };
+
+  case INTEGRATIONS_ROBIN_SPACES_ERROR:
+    return {
+      ...state,
+      robinSpaces: {
+        ...state.robinSpaces,
+        view: 'ERROR',
+        error: action.error,
+      },
+    };
+
+  case INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING:
+    return {
+      ...state,
+      roomBooking: {
+        ...state.roomBooking,
+        spaceMappingForActiveSpace: action.data,
       },
     };
 

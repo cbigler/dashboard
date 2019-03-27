@@ -27,6 +27,7 @@ import {
 } from '../../actions/integrations/robin';
 import {
   integrationsRoomBookingSetDefaultService,
+  integrationsRoomBookingSelectSpaceMapping,
 } from '../../actions/integrations/room-booking';
 import { calculateDashboardDate } from './dashboard-detail';
 
@@ -38,12 +39,6 @@ import {
   formatInISOTimeAtSpace,
   requestCountsForLocalRange
 } from '../../helpers/space-time-utilities/index';
-
-import {
-  DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
-} from '../../helpers/time-segments/index';
-
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS = 'ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS';
@@ -107,7 +102,9 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     const spaceMappingExists = await (async function() {
       let spaceMappingResponse;
       try {
-        spaceMappingResponse = await core().get(`/integrations/space_mappings/space/${id}`, {});
+        spaceMappingResponse = await fetchAllPages(async page => (
+          (await core().get(`/integrations/space_mappings`, {params: {page, page_size: 5000}})).data
+        ));
       } catch (err) {
         if (err.indexOf('404') >= 0) {
           // Space mapping was not found
@@ -120,14 +117,19 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       }
 
       // Space mapping exists
-      const spaceMapping = objectSnakeToCamel<DensitySpaceMapping>(spaceMappingResponse.data);
-      dispatch(integrationsRobinSpacesSelect(spaceMapping));
+      const spaceMappings = spaceMappingResponse.map(sm => objectSnakeToCamel<DensitySpaceMapping>(sm));
+      const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
+      if (activeSpaceMapping) {
+        dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
+      } else {
+        dispatch(integrationsRoomBookingSelectSpaceMapping(null));
+      }
       return true;
     })();
 
-    if (spaceMappingExists) {
-      dispatch(calculate(id));
-    }
+    // if (spaceMappingExists) {
+    //   dispatch(calculate(id));
+    // }
   }
 }
 

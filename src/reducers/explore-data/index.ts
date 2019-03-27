@@ -2,11 +2,6 @@ import { EXPLORE_DATA_ADD_CALCULATION } from '../../actions/explore-data/add-cal
 import { EXPLORE_DATA_CALCULATE_DATA_LOADING } from '../../actions/explore-data/calculate-data-loading';
 import { EXPLORE_DATA_CALCULATE_DATA_COMPLETE } from '../../actions/explore-data/calculate-data-complete';
 import { EXPLORE_DATA_CALCULATE_DATA_ERROR } from '../../actions/explore-data/calculate-data-error';
-import {
-  INTEGRATIONS_ROBIN_SPACES_SET,
-  INTEGRATIONS_ROBIN_SPACES_ERROR,
-  INTEGRATIONS_ROBIN_SPACES_SELECT,
-} from '../../actions/integrations/robin';
 
 const initialModuleState = {
   state: 'EMPTY',
@@ -40,9 +35,6 @@ const initialState = {
     dailyRawEvents: {
       ...initialModuleState,
       data: {},
-    },
-    meetings: {
-      ...initialModuleState,
     },
   },
   robinSpaces: {
@@ -99,37 +91,6 @@ export default function exploreData(state=initialState, action) {
           state: 'ERROR',
           error: action.error,
         },
-      },
-    };
-
-
-  case INTEGRATIONS_ROBIN_SPACES_SET:
-    return {
-      ...state,
-      robinSpaces: {
-        ...state.robinSpaces,
-        view: 'VISIBLE',
-        data: action.data,
-        error: null,
-      },
-    };
-
-  case INTEGRATIONS_ROBIN_SPACES_ERROR:
-    return {
-      ...state,
-      robinSpaces: {
-        ...state.robinSpaces,
-        view: 'ERROR',
-        error: action.error,
-      },
-    };
-
-  case INTEGRATIONS_ROBIN_SPACES_SELECT:
-    return {
-      ...state,
-      robinSpaces: {
-        ...state.robinSpaces,
-        selected: action.id,
       },
     };
 

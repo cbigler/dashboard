@@ -18,13 +18,25 @@ export function integrationsRobinSpacesSelect(id) {
 }
 
 export function integrationsSpaceMappingUpdate(spaceId, serviceSpaceId) {
-  return async dispatch => {
-    let spaceMappingResponse;
-    try {
-      spaceMappingResponse = await core().post(`/integrations/space_mappings/space/${spaceId}`, {
+  return async (dispatch, getState) => {
+    // Decide if a spacemapping needs to be created
+    const activeSpaceMapping = getState().integrations.roomBooking.spaceMappingForActiveSpace;
+    let request;
+    if (activeSpaceMapping) {
+      request = core().put(`/integrations/space_mappings/${activeSpaceMapping.id}/`, {
         space_id: spaceId,
         service_space_id: serviceSpaceId,
       });
+    } else {
+      request = core().post(`/integrations/space_mappings/`, {
+        space_id: spaceId,
+        service_space_id: serviceSpaceId,
+      });
+    }
+
+    let spaceMappingResponse;
+    try {
+      spaceMappingResponse = await request;
     } catch (err) {
       console.error(err);
       dispatch(showToast({type: 'error', text: 'Error mapping spaces'}));
