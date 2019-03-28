@@ -169,7 +169,7 @@ function ExploreSpaceMeetings({
                         label: robinSpace.name,
                       }))
                   }
-                  onChange={robinSpaceChoice => onChangeSpaceMapping(space.id, robinSpaceChoice.id)}
+                  onChange={robinSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, robinSpaceChoice.id)}
                 />
               ) : null}
               {integrations.robinSpaces.view === 'LOADING' ? (
@@ -243,8 +243,11 @@ export default connect((state: any) => {
       dispatch(collectionSpacesFilter('endDate', endDate));
       // dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
-    onChangeSpaceMapping(spaceId, robinSpaceId) {
-      dispatch<any>(integrationsSpaceMappingUpdate(spaceId, robinSpaceId));
+    onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
+      if (!defaultService) {
+        throw new Error('Cannot create a space mapping without a default room booking service!');
+      }
+      dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
     },
   };
 })(ExploreSpaceMeetings);

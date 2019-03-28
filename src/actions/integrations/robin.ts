@@ -17,20 +17,22 @@ export function integrationsRobinSpacesSelect(id) {
   return { type: INTEGRATIONS_ROBIN_SPACES_SELECT, id };
 }
 
-export function integrationsSpaceMappingUpdate(spaceId, serviceSpaceId) {
+export function integrationsSpaceMappingUpdate(service, spaceId, serviceSpaceId) {
   return async (dispatch, getState) => {
-    // Decide if a spacemapping needs to be created
+    // Decide if a spacemapping needs to be created or can be updated
     const activeSpaceMapping = getState().integrations.roomBooking.spaceMappingForActiveSpace;
     let request;
     if (activeSpaceMapping) {
       request = core().put(`/integrations/space_mappings/${activeSpaceMapping.id}/`, {
         space_id: spaceId,
         service_space_id: serviceSpaceId,
+        service_id: 'sve_'+service.id,
       });
     } else {
       request = core().post(`/integrations/space_mappings/`, {
         space_id: spaceId,
         service_space_id: serviceSpaceId,
+        service_id: 'sve_'+service.id,
       });
     }
 
