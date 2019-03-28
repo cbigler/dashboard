@@ -5,6 +5,8 @@ import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../actions/collecti
 import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../actions/collection/service-authorizations/update';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../actions/collection/service-authorizations/destroy';
 
+import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
+
 import {
   INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE,
   INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING,
@@ -52,6 +54,16 @@ export default function integrations(state=initialState, action) {
   case COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE:
   case COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY:
     return {...state, error: null, loading: true};
+
+  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
+    return {
+      ...state,
+      roomBooking: {
+        ...state.roomBooking,
+        view: 'LOADING',
+        defaultService: null,
+      },
+    };
 
   case INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE:
     return {
