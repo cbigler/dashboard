@@ -26,13 +26,13 @@ export function integrationsSpaceMappingUpdate(service, spaceId, serviceSpaceId)
       request = core().put(`/integrations/space_mappings/${activeSpaceMapping.id}/`, {
         space_id: spaceId,
         service_space_id: serviceSpaceId,
-        service_id: 'sve_'+service.id,
+        service_id: service.id,
       });
     } else {
       request = core().post(`/integrations/space_mappings/`, {
         space_id: spaceId,
         service_space_id: serviceSpaceId,
-        service_id: 'sve_'+service.id,
+        service_id: service.id,
       });
     }
 
