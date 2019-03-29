@@ -6,9 +6,12 @@ import integrationServicesList from '../integrations/services';
 
 export const ROUTE_TRANSITION_ADMIN_INTEGRATIONS = 'ROUTE_TRANSITION_ADMIN_INTEGRATIONS';
 
-export default function routeTransitionAdminIntegrations() {
+export default function routeTransitionAdminIntegrationsSlack(code) {
   return async dispatch => {
-    dispatch({ type: ROUTE_TRANSITION_ADMIN_INTEGRATIONS })
+    dispatch({ type: ROUTE_TRANSITION_ADMIN_INTEGRATIONS });
+
+    const response = await core().get('integrations/slack/auth', { params: { code: code } });
+
 
     // fetch list of all integrations
     dispatch(integrationServicesList());
