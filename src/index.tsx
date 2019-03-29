@@ -187,7 +187,8 @@ router.addRoute('account/register/:slug', slug => routeTransitionAccountRegister
 router.addRoute('account/forgot-password/:token', token => routeTransitionAccountForgotPassword(token));
 
 // Advanced account management (Administration)
-router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
+router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations(null, null));
+router.addRoute('admin/integrations/slack/:code/:state', (code, state) => routeTransitionAdminIntegrations(code, state));
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
 router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
