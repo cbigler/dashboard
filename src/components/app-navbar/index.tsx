@@ -233,7 +233,7 @@ export default function AppNavbar({
                 <AppNavbarMenuItem
                   path="#/admin/integrations"
                   text="Integrations"
-                  icon={<Icons.Code />}
+                  icon={<Icons.Filters />}
                   selected={['ADMIN_INTEGRATIONS'].includes(page)}
                 /> : null}
               {can(user, PERMISSION_CODES.developer_tools_manage) ?

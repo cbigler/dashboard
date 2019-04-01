@@ -204,12 +204,12 @@ export function Explore({
               >
                 Daily
               </AppBarSubnavLink>
-              <AppBarSubnavLink
+              { ["conference_room", "meeting_room"].includes(selectedSpace['function']) ? <AppBarSubnavLink
                 href={`#/spaces/explore/${spaces.selected}/meetings`}
                 active={activePage === "EXPLORE_SPACE_MEETINGS"}
               >
                 Meetings
-              </AppBarSubnavLink>
+              </AppBarSubnavLink> : null }
               <AppBarSubnavLink
                 href={`#/spaces/explore/${spaces.selected}/data-export`}
                 active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
