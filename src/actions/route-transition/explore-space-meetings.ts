@@ -126,9 +126,9 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     })();
     dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
 
-    // if (spaceMappingExists) {
-    //   dispatch(calculate(id));
-    // }
+    if (spaceMappingExists) {
+      dispatch(calculate(id));
+    }
   }
 }
 
@@ -138,35 +138,40 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     name: 'Meeting Attendance',
     type: 'MEETING_ATTENDANCE',
     settings: {
-      foo: 'bar',
+      spaceId,
+      timeRange: 'LAST_WEEK',
     },
     creatorEmail: 'engineering@density.io',
   },
   {
     id: 'rpt_ephemeral_meeting_size',
-    name: 'Meeting SIZE',
+    name: 'Meeting Size',
     type: 'MEETING_SIZE',
     settings: {
-      foo: 'bar',
-    },
-    creatorEmail: 'engineering@density.io',
-  },
-  {
-    id: 'rpt_ephemeral_top_room_booker',
-    name: 'Top Room Booker',
-    type: 'MEETING_SIZE',
-    settings: {
-      timeRange: 'LAST_WEEK',
       spaceId,
+      timeRange: 'LAST_WEEK',
     },
     creatorEmail: 'engineering@density.io',
   },
+  /*
+  {
+    id: 'rpt_ephemeral_booking_behavior',
+    name: 'Booker Behavior',
+    type: 'BOOKING_BEHAVIOR',
+    settings: {
+      spaceId,
+      timeRange: 'LAST_WEEK',
+    },
+    creatorEmail: 'engineering@density.io',
+  },
+  */
   {
     id: 'rpt_ephemeral_busiest_meeting',
-    name: 'Busiest Meeting',
-    type: 'BUSIEST_MEETING',
+    name: 'Meetings: Day-to-Day',
+    type: 'DAY_TO_DAY_MEETINGS',
     settings: {
-      foo: 'bar',
+      spaceId,
+      timeRange: 'LAST_WEEK',
     },
     creatorEmail: 'engineering@density.io',
   },
@@ -194,10 +199,10 @@ export function calculate(id) {
             client: core(),
             slow: getGoSlow(),
           });
-          return { state: 'COMPLETE', data };
+          return { report, state: 'COMPLETE', data };
         } catch (error) {
           console.log(error);
-          return { state: 'ERROR', error };
+          return { report, state: 'ERROR', error };
         }
       })
     );
