@@ -1,8 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import Report from '@density/reports';
 
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
+import colorVariables from '@density/ui/variables/colors.json'
 import gridVariables from '@density/ui/variables/grid.json'
 import {
   Button,
@@ -29,6 +31,7 @@ import {
   integrationsRobinSpacesSelect,
   integrationsSpaceMappingUpdate,
 } from '../../actions/integrations/robin';
+import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
@@ -74,10 +77,12 @@ function ExploreSpaceMeetings({
   spaces,
   space,
   integrations,
+  exploreDataMeetings,
 
   onChangeSpaceMapping,
   onChangeSpaceFilter,
   onChangeDateRange,
+  onReload,
 }) {
   if (space) {
     const roomBookingDefaultService = integrations.roomBooking.defaultService;
@@ -151,6 +156,14 @@ function ExploreSpaceMeetings({
                   }}
                 />
               ) : null}
+
+              <span
+                role="button"
+                className="explore-space-meetings-refresh-button"
+                onClick={() => onReload(space.id)}
+              >
+                <Icons.Refresh color={colorVariables.brandPrimary} />
+              </span>
             </AppBarSection>
             <AppBarSection>
               <img
@@ -230,7 +243,62 @@ function ExploreSpaceMeetings({
             ) : null}
 
             {roomBookingDefaultService && roomBookingSpaceMapping ? (
-              <span>Reports will go here</span>
+              <div>
+                {exploreDataMeetings.state === 'COMPLETE' ? (() => {
+                  const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
+                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
+                  const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
+                  const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
+                  return (
+                    <div className="explore-space-meetings-report-grid">
+                      <div className="explore-space-meetings-report-column left">
+                        <div className="explore-space-meetings-report-container">
+                          <Report
+                            key={meetingAttendanceReport.report.id}
+                            report={meetingAttendanceReport.report}
+                            reportData={{
+                              state: meetingAttendanceReport.state,
+                              data: meetingAttendanceReport.data,
+                            }}
+                          />
+                        </div>
+                        <div className="explore-space-meetings-report-container">
+                          <Report
+                            key={bookingBehaviorReport.report.id}
+                            report={bookingBehaviorReport.report}
+                            reportData={{
+                              state: bookingBehaviorReport.state,
+                              data: bookingBehaviorReport.data,
+                            }}
+                          />
+                        </div>
+                      </div>
+                      <div className="explore-space-meetings-report-column right">
+                        <div className="explore-space-meetings-report-container">
+                          <Report
+                            key={meetingSizeReport.report.id}
+                            report={meetingSizeReport.report}
+                            reportData={{
+                              state: meetingSizeReport.state,
+                              data: meetingSizeReport.data,
+                            }}
+                          />
+                        </div>
+                        <div className="explore-space-meetings-report-container">
+                          <Report
+                            key={dayToDayMeetingsReport.report.id}
+                            report={dayToDayMeetingsReport.report}
+                            reportData={{
+                              state: dayToDayMeetingsReport.state,
+                              data: dayToDayMeetingsReport.data,
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })() : null}
+              </div>
             ) : null}
           </Fragment>
         ) : null}
@@ -245,6 +313,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
+    exploreDataMeetings: state.exploreData.calculations.meetings,
     integrations: state.integrations,
   };
 }, dispatch => {
@@ -262,6 +331,9 @@ export default connect((state: any) => {
         throw new Error('Cannot create a space mapping without a default room booking service!');
       }
       dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
+    },
+    onReload(id) {
+      dispatch<any>(calculate(id));
     },
   };
 })(ExploreSpaceMeetings);
