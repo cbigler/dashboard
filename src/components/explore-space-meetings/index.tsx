@@ -194,7 +194,7 @@ function ExploreSpaceMeetings({
         {integrations.roomBooking.view === 'LOADING' ? (
           <div className="explore-space-meetings-centered-message">
             <div className="explore-space-meetings-integration-cta">
-              Loading ...
+              Loading integration data...
             </div>
           </div>
         ) : null}
@@ -234,7 +234,7 @@ function ExploreSpaceMeetings({
               </div>
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
-            {roomBookingDefaultService && !roomBookingSpaceMapping ? (
+            {integrations.robinSpaces.view === 'VISIBLE' && roomBookingDefaultService && !roomBookingSpaceMapping ? (
               <div className="explore-space-meetings-centered-message">
                 <div className="explore-space-meetings-integration-cta">
                   Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
@@ -243,7 +243,15 @@ function ExploreSpaceMeetings({
             ) : null}
 
             {roomBookingDefaultService && roomBookingSpaceMapping ? (
-              <div>
+              <Fragment>
+                {exploreDataMeetings.state === 'LOADING' ? (
+                  <div className="explore-space-meetings-centered-message">
+                    <div className="explore-space-meetings-integration-cta">
+                      Loading {roomBookingDefaultService.displayName} data and rendering reports...
+                    </div>
+                  </div>
+                ) : null}
+                {/* There is nothing that sets this data into an error state, so that case is omitted */}
                 {exploreDataMeetings.state === 'COMPLETE' ? (() => {
                   const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
                   const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
@@ -298,7 +306,7 @@ function ExploreSpaceMeetings({
                     </div>
                   );
                 })() : null}
-              </div>
+              </Fragment>
             ) : null}
           </Fragment>
         ) : null}

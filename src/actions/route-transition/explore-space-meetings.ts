@@ -89,18 +89,6 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     })();
     dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
 
-    // Load robin spaces if robin is active
-    if (roomBookingDefaultService && roomBookingDefaultService.name === 'robin') {
-      let robinSpaces;
-      try {
-        robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
-      } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
-        return;
-      }
-      dispatch(integrationsRobinSpacesSet(robinSpaces));
-    }
-
     // Attempt to find a space mapping for this space
     const spaceMappingExists = await (async function() {
       let spaceMappingResponse;
@@ -130,6 +118,18 @@ export default function routeTransitionExploreSpaceMeeting(id) {
         return false;
       }
     })();
+
+    // Load robin spaces if robin is active
+    if (roomBookingDefaultService && roomBookingDefaultService.name === 'robin') {
+      let robinSpaces;
+      try {
+        robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
+      } catch (err) {
+        dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+        return;
+      }
+      dispatch(integrationsRobinSpacesSet(robinSpaces));
+    }
 
     if (spaceMappingExists) {
       dispatch(calculate(id));
