@@ -70,22 +70,43 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
+    // Determine if a room booking integration is active
+    const roomBookingDefaultService: DensityService | null = await (async function() {
+      let servicesResponse;
+      try {
+        servicesResponse = await core().get('/integrations/services/', {});
+      } catch (err) {
+        dispatch(integrationsRobinSpacesError(`Error loading integrations list: ${err.message}`));
+        return null;
+      }
 
-    let robinSpaces;
-    try {
-      robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces', {})).data
-    } catch (err) {
-      dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
-      return;
+      const services = servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
+      const defaultAuthorizedRoomBookingService = services
+        .filter(service => service.category === 'Room Booking')
+        .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
+        .find(service => service.serviceAuthorization.default);
+      return defaultAuthorizedRoomBookingService;
+    })();
+    dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
+
+    // Load robin spaces if robin is active
+    if (roomBookingDefaultService && roomBookingDefaultService.name === 'robin') {
+      let robinSpaces;
+      try {
+        robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
+      } catch (err) {
+        dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+        return;
+      }
+      dispatch(integrationsRobinSpacesSet(robinSpaces));
     }
-    dispatch(integrationsRobinSpacesSet(robinSpaces));
 
     // Attempt to find a space mapping for this space
     const spaceMappingExists = await (async function() {
       let spaceMappingResponse;
       try {
         spaceMappingResponse = await fetchAllPages(async page => (
-          (await core().get(`/integrations/space_mappings`, {params: {page, page_size: 5000}})).data
+          (await core().get(`/integrations/space_mappings/`, {params: {page, page_size: 5000}})).data
         ));
       } catch (err) {
         if (err.indexOf('404') >= 0) {
@@ -103,31 +124,12 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
       if (activeSpaceMapping) {
         dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
+        return true;
       } else {
         dispatch(integrationsRoomBookingSelectSpaceMapping(null));
+        return false;
       }
-      return true;
     })();
-
-
-    // Determine if a room booking integration is active
-    const roomBookingDefaultService: DensityService | null = await (async function() {
-      let servicesResponse;
-      try {
-        servicesResponse = await core().get('/integrations/services', {});
-      } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading integrations list: ${err.message}`));
-        return;
-      }
-
-      const services = servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
-      const defaultAuthorizedRoomBookingService = services
-        .filter(service => service.category === 'Room Booking')
-        .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
-        .find(service => service.serviceAuthorization.default);
-      return defaultAuthorizedRoomBookingService;
-    })();
-    dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
 
     if (spaceMappingExists) {
       dispatch(calculate(id));
@@ -135,14 +137,14 @@ export default function routeTransitionExploreSpaceMeeting(id) {
   }
 }
 
-const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (spaceId) => [
+const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   {
     id: 'rpt_ephemeral_meeting_attendance',
     name: 'Meeting Attendance',
     type: 'MEETING_ATTENDANCE',
     settings: {
       spaceId,
-      timeRange: 'LAST_WEEK',
+      timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
   },
@@ -152,7 +154,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     type: 'MEETING_SIZE',
     settings: {
       spaceId,
-      timeRange: 'LAST_WEEK',
+      timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
   },
@@ -162,7 +164,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     type: 'BOOKING_BEHAVIOR',
     settings: {
       spaceId,
-      timeRange: 'LAST_WEEK',
+      timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
   },
@@ -172,7 +174,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     type: 'DAY_TO_DAY_MEETINGS',
     settings: {
       spaceId,
-      timeRange: 'LAST_WEEK',
+      timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
   },
@@ -187,7 +189,13 @@ export function calculate(id) {
     dispatch(calculateDashboardDate(weekStart));
     const date = getState().miscellaneous.dashboardDate;
 
-    const meetingEphemeralReportGenerators = MEETING_EPHEMERAL_REPORT_GENERATORS(id);
+    const { startDate, endDate } = getState().spaces.filters;
+
+    const meetingEphemeralReportGenerators: Array<DensityReport> = MEETING_EPHEMERAL_REPORT_GENERATORS(
+      id,
+      startDate,
+      endDate,
+    );
     const meetingReportResults = await Promise.all(
       meetingEphemeralReportGenerators.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;

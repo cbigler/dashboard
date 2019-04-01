@@ -50,12 +50,17 @@
 
 .explore-space-meetings-report-grid {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   width: 1064px;
   margin-top: 78px;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+@media (min-width: 1524px) {
+  .explore-space-meetings-report-grid { flex-direction: row; }
 }
 .explore-space-meetings-report-column {
   width: 520px;

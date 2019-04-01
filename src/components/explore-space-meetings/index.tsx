@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import Report from '@density/reports';
+import Report, { ReportLoading } from '@density/reports';
 
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import colorVariables from '@density/ui/variables/colors.json'
@@ -100,70 +100,70 @@ function ExploreSpaceMeetings({
           <AppBar>
             <AppBarSection>
               {isIntegrationSpaceSelected ? (
-                <DateRangePicker
-                  startDate={formatForReactDates(
-                    parseISOTimeAtSpace(spaces.filters.startDate, space),
-                    space,
-                  )}
-                  endDate={formatForReactDates(
-                    parseISOTimeAtSpace(spaces.filters.endDate, space),
-                    space,
-                  )}
-                  onChange={({startDate, endDate}) => {
-                    startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
-                    endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
-
-                    // If the user selected over 14 days, then clamp them back to 14 days.
-                    if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-                      endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
-                    }
-
-                    // Only update the start and end data if one of them has changed from its previous
-                    // value
-                    if (
-                      formatInISOTime(startDate) !== spaces.filters.startDate || 
-                      formatInISOTime(endDate) !== spaces.filters.endDate
-                    ) {
-                      onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate), spaces.filters);
-                    }
-                  }}
-                  // Within the component, store if the user has selected the start of end date picker
-                  // input
-                  focusedInput={spaces.filters.datePickerInput}
-                  onFocusChange={(focused, a) => {
-                    onChangeSpaceFilter(space, 'datePickerInput', focused);
-                  }}
-
-                  // On mobile, make the calendar one month wide and left aligned.
-                  // On desktop, the calendar is two months wide and right aligned.
-                  numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
-
-                  isOutsideRange={day => isOutsideRange(
-                    spaces.filters.startDate,
-                    spaces.filters.datePickerInput,
-                    day
-                  )}
-
-                  // common ranges functionality
-                  commonRanges={getCommonRangesForSpace(space)}
-                  onSelectCommonRange={({startDate, endDate}) => {
-                    onChangeDateRange(
+                <Fragment>
+                  <DateRangePicker
+                    startDate={formatForReactDates(
+                      parseISOTimeAtSpace(spaces.filters.startDate, space),
                       space,
-                      formatInISOTime(startDate),
-                      formatInISOTime(endDate),
-                      {...spaces.filters, startDate, endDate}
-                    );
-                  }}
-                />
-              ) : null}
+                    )}
+                    endDate={formatForReactDates(
+                      parseISOTimeAtSpace(spaces.filters.endDate, space),
+                      space,
+                    )}
+                    onChange={({startDate, endDate}) => {
+                      startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
+                      endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
 
-              <span
-                role="button"
-                className="explore-space-meetings-refresh-button"
-                onClick={() => onReload(space.id)}
-              >
-                <Icons.Refresh color={colorVariables.brandPrimary} />
-              </span>
+                      // If the user selected over 14 days, then clamp them back to 14 days.
+                      if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
+                        endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+                      }
+
+                      // Only update the start and end data if one of them has changed from its previous
+                      // value
+                      if (
+                        formatInISOTime(startDate) !== spaces.filters.startDate || 
+                        formatInISOTime(endDate) !== spaces.filters.endDate
+                      ) {
+                        onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                      }
+                    }}
+                    // Within the component, store if the user has selected the start of end date picker
+                    // input
+                    focusedInput={spaces.filters.datePickerInput}
+                    onFocusChange={(focused, a) => {
+                      onChangeSpaceFilter(space, 'datePickerInput', focused);
+                    }}
+
+                    // On mobile, make the calendar one month wide and left aligned.
+                    // On desktop, the calendar is two months wide and right aligned.
+                    numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
+
+                    isOutsideRange={day => isOutsideRange(
+                      spaces.filters.startDate,
+                      spaces.filters.datePickerInput,
+                      day
+                    )}
+
+                    // common ranges functionality
+                    commonRanges={getCommonRangesForSpace(space)}
+                    onSelectCommonRange={({startDate, endDate}) => {
+                      onChangeDateRange(
+                        space,
+                        formatInISOTime(startDate),
+                        formatInISOTime(endDate),
+                      );
+                    }}
+                  />
+                  <span
+                    role="button"
+                    className="explore-space-meetings-refresh-button"
+                    onClick={() => onReload(space.id)}
+                  >
+                    <Icons.Refresh color={colorVariables.brandPrimary} />
+                  </span>
+                </Fragment>
+              ) : null}
             </AppBarSection>
             <AppBarSection>
               <img
@@ -205,7 +205,7 @@ function ExploreSpaceMeetings({
           </div>
         ) : null}
 
-        {integrations.robinSpaces.view === 'VISIBLE' && integrations.roomBooking.view === 'VISIBLE' ? (
+        {integrations.roomBooking.view === 'VISIBLE' ? (
           <Fragment>
             {/* Room booking integration has not been configured */}
             {!roomBookingDefaultService ? (
@@ -321,16 +321,17 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeDateRange(space, startDate, endDate, spaceFilters) {
+    onChangeDateRange(space, startDate, endDate) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      // dispatch<any>(calculateTrendsModules(space, spaceFilters));
+      dispatch<any>(calculate(space.id));
     },
-    onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
+    async onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
       if (!defaultService) {
         throw new Error('Cannot create a space mapping without a default room booking service!');
       }
-      dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
+      await dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
+      dispatch<any>(calculate(spaceId));
     },
     onReload(id) {
       dispatch<any>(calculate(id));
