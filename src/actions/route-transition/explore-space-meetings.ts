@@ -23,7 +23,6 @@ import exploreDataCalculateDataComplete from '../../actions/explore-data/calcula
 import {
   integrationsRobinSpacesSet,
   integrationsRobinSpacesError,
-  integrationsRobinSpacesSelect,
 } from '../../actions/integrations/robin';
 import {
   integrationsRoomBookingSetDefaultService,
@@ -78,6 +77,35 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     }
     dispatch(integrationsRobinSpacesSet(robinSpaces));
 
+    // Attempt to find a space mapping for this space
+    const spaceMappingExists = await (async function() {
+      let spaceMappingResponse;
+      try {
+        spaceMappingResponse = await fetchAllPages(async page => (
+          (await core().get(`/integrations/space_mappings`, {params: {page, page_size: 5000}})).data
+        ));
+      } catch (err) {
+        if (err.indexOf('404') >= 0) {
+          // Space mapping was not found
+          dispatch(integrationsRoomBookingSelectSpaceMapping(null));
+          return false;
+        } else {
+          dispatch(integrationsRobinSpacesError(`Error loading space mapping: ${err.message}`));
+          return false;
+        }
+      }
+
+      // Space mapping exists
+      const spaceMappings = spaceMappingResponse.map(sm => objectSnakeToCamel<DensitySpaceMapping>(sm));
+      const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
+      if (activeSpaceMapping) {
+        dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
+      } else {
+        dispatch(integrationsRoomBookingSelectSpaceMapping(null));
+      }
+      return true;
+    })();
+
 
     // Determine if a room booking integration is active
     const roomBookingDefaultService: DensityService | null = await (async function() {
@@ -97,35 +125,6 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       return defaultAuthorizedRoomBookingService;
     })();
     dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
-
-    // Attempt to find a space mapping for this space
-    const spaceMappingExists = await (async function() {
-      let spaceMappingResponse;
-      try {
-        spaceMappingResponse = await fetchAllPages(async page => (
-          (await core().get(`/integrations/space_mappings`, {params: {page, page_size: 5000}})).data
-        ));
-      } catch (err) {
-        if (err.indexOf('404') >= 0) {
-          // Space mapping was not found
-          dispatch(integrationsRobinSpacesSelect(null));
-          return false;
-        } else {
-          dispatch(integrationsRobinSpacesError(`Error loading space mapping: ${err.message}`));
-          return false;
-        }
-      }
-
-      // Space mapping exists
-      const spaceMappings = spaceMappingResponse.map(sm => objectSnakeToCamel<DensitySpaceMapping>(sm));
-      const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
-      if (activeSpaceMapping) {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
-      } else {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(null));
-      }
-      return true;
-    })();
 
     // if (spaceMappingExists) {
     //   dispatch(calculate(id));

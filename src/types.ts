@@ -202,6 +202,7 @@ export type DensityServiceAuthorization = {
 
 export type DensitySpaceMapping = {
   id: string,
+  serviceId: string,
   spaceId: string,
   serviceSpaceId: string,
 };

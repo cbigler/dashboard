@@ -1,6 +1,11 @@
 import core from '../../client/core';
 import showToast from '../toasts/index';
 
+import { integrationsRoomBookingSelectSpaceMapping } from './room-booking';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+
+import { DensitySpaceMapping } from '../../types';
+
 export const INTEGRATIONS_ROBIN_SPACES_SET = 'INTEGRATIONS_ROBIN_SPACES_SET',
              INTEGRATIONS_ROBIN_SPACES_ERROR = 'INTEGRATIONS_ROBIN_SPACES_ERROR',
              INTEGRATIONS_ROBIN_SPACES_SELECT = 'INTEGRATIONS_ROBIN_SPACES_SELECT';
@@ -45,7 +50,8 @@ export function integrationsSpaceMappingUpdate(service, spaceId, serviceSpaceId)
       return;
     }
 
-    dispatch(integrationsRobinSpacesSelect(serviceSpaceId));
+    const spaceMapping = objectSnakeToCamel<DensitySpaceMapping>(spaceMappingResponse.data);
+    dispatch(integrationsRoomBookingSelectSpaceMapping(spaceMapping));
     dispatch(showToast({text: 'Space mapping complete'}));
   };
 }
