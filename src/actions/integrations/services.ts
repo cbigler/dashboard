@@ -8,8 +8,7 @@ export default function integrationServicesList() {
     let response;
     try {
       response = await core().get('/integrations/services/')
-    }
-    catch (err) {
+    } catch (err) {
       dispatch(collectionServicesError('Oh shoot, there was an error pulling your integrations!'));
       return false;
     }

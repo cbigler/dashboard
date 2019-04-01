@@ -97,6 +97,7 @@ function ActivePage({activePage, user, settings}) {
   case "EXPLORE_SPACE_TRENDS":
   case "EXPLORE_SPACE_DAILY":
   case "EXPLORE_SPACE_DATA_EXPORT":
+  case "EXPLORE_SPACE_MEETINGS":
     return stringToBoolean(settings.insightsPageLocked) ? null : <Explore activePage={activePage} />;
   case "ACCOUNT":
     return <Account />;
