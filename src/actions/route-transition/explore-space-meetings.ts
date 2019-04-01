@@ -153,7 +153,6 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     },
     creatorEmail: 'engineering@density.io',
   },
-  /*
   {
     id: 'rpt_ephemeral_booking_behavior',
     name: 'Booker Behavior',
@@ -164,7 +163,6 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS: (string) => Array<DensityReport> = (s
     },
     creatorEmail: 'engineering@density.io',
   },
-  */
   {
     id: 'rpt_ephemeral_busiest_meeting',
     name: 'Meetings: Day-to-Day',

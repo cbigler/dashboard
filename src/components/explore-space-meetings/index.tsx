@@ -157,7 +157,11 @@ function ExploreSpaceMeetings({
                 />
               ) : null}
 
-              <span role="button" className="explore-space-meetings-refresh-button" onClick={() => onReload(space.id)}>
+              <span
+                role="button"
+                className="explore-space-meetings-refresh-button"
+                onClick={() => onReload(space.id)}
+              >
                 <Icons.Refresh color={colorVariables.brandPrimary} />
               </span>
             </AppBarSection>
@@ -242,6 +246,7 @@ function ExploreSpaceMeetings({
               <div>
                 {exploreDataMeetings.state === 'COMPLETE' ? (() => {
                   const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
+                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
                   const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
                   const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
                   return (
@@ -259,11 +264,11 @@ function ExploreSpaceMeetings({
                         </div>
                         <div className="explore-space-meetings-report-container">
                           <Report
-                            key={meetingAttendanceReport.report.id}
-                            report={meetingAttendanceReport.report}
+                            key={bookingBehaviorReport.report.id}
+                            report={bookingBehaviorReport.report}
                             reportData={{
-                              state: meetingAttendanceReport.state,
-                              data: meetingAttendanceReport.data,
+                              state: bookingBehaviorReport.state,
+                              data: bookingBehaviorReport.data,
                             }}
                           />
                         </div>
