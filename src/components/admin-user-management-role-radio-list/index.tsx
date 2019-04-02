@@ -1,5 +1,7 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment } from 'react';
-import can, { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
+import { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
 
 import { RadioButton, RadioButtonContext } from '@density/ui';
 
@@ -17,7 +19,7 @@ export default function AdminUserManagementRoleRadioList({ user, value, onChange
               value={role}
               text={ROLE_INFO[role].label} />
           </RadioButtonContext.Provider>
-          <div className="admin-user-management-new-user-role-description">
+          <div className={styles.adminUserManagementNewUserRoleDescription}>
             {ROLE_INFO[role].description}
           </div>
         </div>

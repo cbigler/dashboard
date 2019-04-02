@@ -4,7 +4,6 @@ import 'react-app-polyfill/ie11'; // For IE 11 support
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
-import './built-css/styles.css';
 
 import core, { config as configCore } from './client/core';
 import accounts, { config as configAccounts } from './client/accounts';
@@ -17,6 +16,7 @@ import { DensityUser } from './types';
 
 // Import @density/ui package for font
 import '@density/ui';
+import './styles.scss';
 
 import userSet from './actions/user/set';
 

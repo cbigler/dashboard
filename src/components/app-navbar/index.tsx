@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
@@ -32,10 +34,10 @@ class AppNavbarMenu extends Component<any, any> {
     const { opened } = this.state;
     const { header, children } = this.props;
     
-    return <div className="app-navbar-menu">
+    return <div className={styles.appNavbarMenu}>
       <div
         ref={r => { this.selectBoxValueRef = r; }}
-        className={classnames('app-navbar-menu-target', {opened})}
+        className={classnames(styles.appNavbarMenuTarget, {[styles.opened]: opened})}
         tabIndex={0}
         onFocus={this.onMenuFocus}
         onBlur={this.onMenuBlur}
@@ -49,7 +51,7 @@ class AppNavbarMenu extends Component<any, any> {
       >
         {header}
       </div>
-      <nav className={classnames('app-navbar-menu-items', {opened})}>
+      <nav className={classnames(styles.appNavbarMenuItems, {[styles.opened]: opened})}>
         <AppNavbarMenuContext.Provider value={{
           onMenuFocus: this.onMenuFocus,
           onMenuBlur: this.onMenuBlur
@@ -63,7 +65,7 @@ class AppNavbarMenu extends Component<any, any> {
 
 function AppNavbarMenuItem({path, text, icon, selected}) {
   return <AppNavbarMenuContext.Consumer>{context => <a
-    className={classnames('app-navbar-menu-item', {selected})}
+    className={classnames(styles.appNavbarMenuItem, {[styles.selected]: selected})}
     style={{paddingLeft: 2}}
     href={path}
     tabIndex={0}
@@ -71,7 +73,7 @@ function AppNavbarMenuItem({path, text, icon, selected}) {
     onBlur={context.onMenuBlur}
     onClick={context.onMenuBlur}
   >
-    <span className="app-navbar-menu-item-icon">
+    <span className={styles.appNavbarMenuItemIcon}>
       {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
     </span>
     {text}
@@ -91,11 +93,15 @@ function AppNavbarItem({
 }) {
   return (
     <li
-      className={classnames('app-navbar-item', { selected, showOnMobile, hideOnDesktop })}
+      className={classnames(styles.appNavbarItem, {
+        [styles.selected]: selected,
+        [styles.showOnMobile]: showOnMobile,
+        [styles.hideOnDesktop]: hideOnDesktop
+      })}
       style={style}
     >
       <a href={path} onClick={onClick}>
-        {icon ? <span className="app-navbar-icon">
+        {icon ? <span className={styles.appNavbarIcon}>
           {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
         </span> : null}
         {text}
@@ -113,16 +119,17 @@ export default function AppNavbar({
   impersonate,
   onClickImpersonate
 }) {
-
-  const showAdminMenu = can(user, PERMISSION_CODES.developer_tools_manage) ||
-    can(user, PERMISSION_CODES.owner_user_manage) ||
-    can(user, PERMISSION_CODES.admin_user_manage) ||
-    can(user, PERMISSION_CODES.readonly_user_manage);
+  const showAdminMenu = (
+    can(user, PERMISSION_CODES.developerToolsManage) ||
+    can(user, PERMISSION_CODES.ownerUserManage) ||
+    can(user, PERMISSION_CODES.adminUserManage) ||
+    can(user, PERMISSION_CODES.readonlyUserManage)
+  );
 
   return (
-    <div className="app-navbar-container">
-      <div className="app-navbar">
-        <ul className="app-navbar-left">
+    <div className={styles.appNavbarContainer}>
+      <div className={styles.appNavbar}>
+        <ul className={styles.appNavbarLeft}>
           <div style={{
             margin: '0 16px 0 8px',
             padding: '8px 7px',
@@ -162,17 +169,17 @@ export default function AppNavbar({
             text="Onboarding"
           /> : null}
         </ul>
-        <ul className="app-navbar-right">
+        <ul className={styles.appNavbarRight}>
 
           {/* Impersonation interface */}
           {(impersonate || can(user, PERMISSION_CODES.impersonate)) ? (
             impersonate && impersonate.enabled && impersonate.selectedUser ?
               <li
-                className={classnames('app-navbar-item', { showOnMobile: true })}
+                className={classnames(styles.appNavbarItem, { [styles.showOnMobile]: true })}
                 style={{cursor: 'pointer', opacity: 1}}
               >
                 <a onClick={onClickImpersonate}>
-                  <span className="app-navbar-icon">{
+                  <span className={styles.appNavbarIcon}>{
                     <svg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
                       <g id='Symbols' fill='none' fillRule='evenodd'>
                         <g id='navbar-/-icon-/-impersonation-(fill)'>
@@ -229,21 +236,21 @@ export default function AppNavbar({
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {can(user, PERMISSION_CODES.developer_tools_manage) ?
+              {can(user, PERMISSION_CODES.developerToolsManage) ?
                 <AppNavbarMenuItem
                   path="#/admin/integrations"
                   text="Integrations"
                   icon={<Icons.Filters />}
                   selected={['ADMIN_INTEGRATIONS'].includes(page)}
                 /> : null}
-              {can(user, PERMISSION_CODES.developer_tools_manage) ?
+              {can(user, PERMISSION_CODES.developerToolsManage) ?
                 <AppNavbarMenuItem
                   path="#/admin/developer"
                   text="Developer"
                   icon={<Icons.Code />}
                   selected={['ADMIN_DEVELOPER'].includes(page)}
                 /> : null}
-              {can(user, PERMISSION_CODES.sensors_list) ?
+              {can(user, PERMISSION_CODES.sensorsList) ?
                 <AppNavbarMenuItem
                   path="#/admin/device-status"
                   text="DPU Status"

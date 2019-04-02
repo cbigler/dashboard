@@ -1,0 +1,104 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.accountContainer {
+  padding-left: 20px;
+  padding-right: 20px;
+  overflow-y: auto;
+  height: 100%;
+}
+.account {
+  max-width: 600px;
+  margin-top: 0px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 50px;
+}
+// Position the account card below the navbar. I would have used margin here, but the error bar
+// somehow is spaced with margin there too?
+.accountCard {
+  position: relative;
+  top: 40px;
+  margin-bottom: 40px;
+  background-color: #fff;
+  border: 1px solid $grayLight;
+  box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+  border-radius: $borderRadiusBase;
+}
+
+.accountEditButton {
+  float: right;
+  font-weight: normal;
+}
+
+// Change color of all text in text fields
+.accountNameContainer input,
+.accountEmailContainer input,
+.accountOrganizationContainer input {
+  color: $grayDarkest;
+}
+
+.accountChangePasswordValue {
+  cursor: pointer;
+  text-decoration: underline;
+  float: right;
+
+  color: $brandPrimary;
+}
+
+// The password reset form.
+.accountChangePasswordFormHeader {
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.accountChangePasswordFormContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.accountChangePasswordFormFieldWrapper {
+  margin-bottom: 24px;
+}
+
+.accountPasswordResetIcon {
+  font-family: Densicons;
+  font-size: 18px;
+}
+
+.accountPasswordResetToast {
+  margin-top: 70px;
+}
+@media (min-width: $screenXsMax) {
+  .accountPasswordResetToast {
+    margin-top: 0px;
+
+    position: absolute;
+    z-index: 1000;
+    top: 120px;
+
+    max-width: 420px;
+    left: calc(50% - 210px);
+  }
+}
+
+.accountConsentContainer {
+  margin-bottom: 40px;
+}
+
+.accountConsent {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.accountCheckbox {
+  margin-right: 8px;
+}
+
+.accountDeactivateContainer {
+  display: flex;
+  justify-content: center;
+  font-size: smaller;
+}

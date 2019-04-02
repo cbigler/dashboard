@@ -1,0 +1,72 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.exploreEditCountModal .cardHeader { font-weight: normal; }
+
+.exploreEditCountModalResetCount {
+  font-size: $fontSizeBase;
+  font-weight: $fontWeightBase;
+
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+
+  margin-left: 10px;
+}
+
+.exploreEditCountModalCountPicker {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 40px;
+}
+.exploreEditCountModalCountPicker .subtract > div {
+  transform: translate(0px, -6px);
+}
+.exploreEditCountModalCountPickerLabel input {
+  color: $brandPrimary;
+  font-size: $fontSizeBase;
+  font-family: $fontBase;
+
+  text-align: center;
+  width: 100px;
+  height: 40px;
+  border-radius: $borderRadiusBase;
+  outline: none;
+  border: 1px solid $grayDarker;
+
+  margin-left: 40px;
+  margin-right: 40px;
+
+  position: relative;
+  bottom: -6px;
+
+  &::-webkit-outer-spin-button, &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  &:focus { border-color: $brandPrimary; }
+}
+.exploreEditCountModalCountButton {
+  width: 54px;
+  height: 54px;
+  font-size: $fontSize2;
+  border-radius: 50%;
+
+  outline: none;
+
+  color: $gray;
+  background-color: #fff;
+  border: 1px solid $grayDarker;
+  cursor: pointer;
+}
+.exploreEditCountModalCountButton.subtract { margin-left: auto; }
+.exploreEditCountModalCountButton.add { margin-right: auto; }
+.exploreEditCountModalCountButton:hover { opacity: 0.8; }
+.exploreEditCountModalCountButton:active { opacity: 1; }
+.exploreEditCountModalCountButton:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.exploreEditCountModalSubmit { font-weight: normal; }

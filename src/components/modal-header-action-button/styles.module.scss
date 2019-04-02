@@ -1,0 +1,18 @@
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/colors.scss";
+
+.modalHeaderActionButton {
+  color: $gray;
+  text-decoration: underline;
+  display: inline-block;
+  font-size: $fontSizeBase;
+  cursor: pointer;
+  user-select: none;
+}
+.modalHeaderActionButton:first-child {
+  margin-left: auto;
+}
+
+.modalHeaderActionButton:active {
+  color: $grayDarker;
+}

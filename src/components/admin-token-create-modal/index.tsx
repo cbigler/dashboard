@@ -1,7 +1,10 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarSection,
@@ -11,7 +14,6 @@ import {
 } from '@density/ui';
 
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 import FormLabel from '../form-label';
 
@@ -40,9 +42,8 @@ export default class TokenCreate extends React.Component<any, any> {
         <AppBar>
           <AppBarTitle>Create Token</AppBarTitle>
         </AppBar>
-        <div className="token-create">
+        <div className={styles.tokenCreate}>
           <FormLabel
-            className="token-create-name-container"
             label="Token name"
             htmlFor="update-token-name"
             input={<InputBox
@@ -54,24 +55,22 @@ export default class TokenCreate extends React.Component<any, any> {
             />}
           />
           <FormLabel
-            className="token-create-description-container"
             label="Token description"
             htmlFor="token-create-desc"
             input={<InputBox
               type="textarea"
-              className="token-create-description-field"
+              className={styles.tokenCreateDescriptionField}
               id="token-create-desc"
               value={this.state.description}
               onChange={e => this.setState({description: e.target.value})}
             />}
           />
           <FormLabel
-            className="token-create-token-type-container"
             label="Token Type"
             htmlFor=""
             editable={false}
-            input={<div className="token-create-token-type-radio-group">
-              <div className="token-create-token-type-radio-item">
+            input={<div className={styles.tokenCreateTokenTypeRadioGroup}>
+              <div className={styles.tokenCreateTokenTypeRadioItem}>
                 <RadioButton 
                   name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READONLY})}
@@ -79,7 +78,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   text="Read-Only"
                 />
               </div>
-              <div className="token-create-token-type-radio-item">
+              <div className={styles.tokenCreateTokenTypeRadioItem}>
                 <RadioButton 
                   name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READWRITE})}
@@ -94,7 +93,9 @@ export default class TokenCreate extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 disabled={this.state.name.length === 0}

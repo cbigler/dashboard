@@ -1,0 +1,94 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+// The header above the image uploader. This contains the label for the image uploader as well as an
+// edit button to change its contents when full.
+.accountSetupDoorwayDetailImageUploadHeader {
+  display: flex;
+  flex-direction: row;
+  margin-top: 30px;
+  color: $grayCinder;
+}
+.accountSetupDoorwayDetailImageUploadHeaderLabel {
+  font-weight: bold;
+}
+.accountSetupDoorwayDetailImageUploadHeaderEdit {
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+
+  margin-left: auto;
+  font-size: $fontSizeBase;
+}
+.accountSetupDoorwayDetailImageUploadHeaderEdit:hover { opacity: 0.8; }
+.accountSetupDoorwayDetailImageUploadHeaderEdit:active { opacity: 1; }
+
+// The main container for the image uploader.
+.accountSetupDoorwayDetailImageUpload {
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  height: 192px;
+
+  background-color: $grayLightest;
+  border: 2px dotted $grayLighter;
+  border-radius: 4px;
+  overflow: hidden;
+
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition: all ease-in-out 500ms;
+}
+
+// The image uploader is powered by an input[type=form], but we don't want that to be visible.
+.accountSetupDoorwayDetailFormElement { display: none; }
+
+// The first visible flex child (in the empty state) in the main container is a status icon.
+.accountSetupDoorwayDetailImageUploadIcon {
+  font-family: 'Densicons';
+  font-size: 18px;
+  margin-bottom: 20px;
+  color: $gray;
+
+  // Add spacing above the first item in the container.
+  padding-top: 70px;
+}
+// When the user has uploaded an image, render the icon in a different color.
+.accountSetupDoorwayDetailImageUploadIcon.uploaded { color: $grayCinder; }
+
+// The second visible flex child (in the empty state) is a upload link.
+.accountSetupDoorwayDetailImageUploadLink {
+  color: $brandPrimary;
+  font-size: $fontSize5;
+  text-decoration: underline;
+}
+
+// Once the user has uploaded an image, show it in the preview box.
+.accountSetupDoorwayDetailImageUploadPreview {
+  max-height: 100%;  
+  max-width: 100%; 
+  width: auto;
+  height: auto;
+  position: absolute;  
+  top: 0;  
+  bottom: 0;  
+  left: 0;  
+  right: 0;  
+  margin: auto;
+}
+
+// Change the opacity of the upload link and upload icon on hover and on active. This is hte same
+// effect we do all over the application.
+.accountSetupDoorwayDetailImageUpload:hover .accountSetupDoorwayDetailImageUploadIcon,
+.accountSetupDoorwayDetailImageUpload:hover .accountSetupDoorwayDetailImageUploadLink {
+  opacity: 0.8;
+}
+.accountSetupDoorwayDetailImageUpload:active .accountSetupDoorwayDetailImageUploadIcon,
+.accountSetupDoorwayDetailImageUpload:active .accountSetupDoorwayDetailImageUploadLink {
+  opacity: 1;
+}

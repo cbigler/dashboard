@@ -31,9 +31,6 @@ for f in $(ls src/components/$COMPONENTDASH); do
   rm -f src/components/$COMPONENTDASH/$f.bkp
 done
 
-echo "* Adding styles to central stylesheet..."
-echo "@import \"./components/$COMPONENTDASH/styles\";" >> src/styles.scss
-
 echo "You have a new component in src/components/$COMPONENTDASH:"
 echo "* src/components/$COMPONENTDASH/index.js contains your component code."
 echo "* src/components/$COMPONENTDASH/_styles.scss contains your component styles."

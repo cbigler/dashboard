@@ -1,0 +1,132 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.spaceHierarchySelectBox {
+  position: relative;
+  width: 100%;
+
+  min-width: 0px;
+  @media (min-width: $screenXsMax) {
+    min-width: 300px;
+  }
+}
+
+// Extract common styles into a placeholder selector for selectbox menu list and value
+%spaceHierarchyCommon {
+  width: calc(100% - 15px - 15px);
+
+  background-color: #fff;
+  border: 1px solid $grayLight;
+  border-radius: 4px;
+
+  padding-left: 15px;
+  padding-right: 15px;
+
+  user-select: none;
+}
+
+// Select box value - this is the always visible region that shows the currently selected item.
+.spaceHierarchySelectBoxValue {
+  @extend %spaceHierarchyCommon;
+  height: (43px - 1px - 1px); /* (for borders) */
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  cursor: pointer;
+
+  & > span {
+    margin-right: auto;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+
+  & > .inputBoxCaret { height:12px; }
+
+  &.opened {
+    border-color: $brandPrimary;
+    outline: none;
+
+    // When focused, flip the caret.
+    .input-box-caret { transform: rotate(180deg); }
+  }
+
+  // When disabled, a selectbox is grayed out and can't be clicked.
+  &.disabled {
+    background-color: $grayLighter;
+    pointer-events: none;
+  }
+}
+
+// Select box menu - this is the menu that is hidden and shown when the user clicks on the select
+// box value.
+.spaceHierarchySelectBoxMenu {
+  @extend %spaceHierarchyCommon;
+
+  width: 100%;
+
+  position: absolute;
+  top: 50px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 0px;
+  padding-right: 0px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  z-index: 100;
+  color: $grayCinder;
+  transition: all 100ms ease-in-out;
+  user-select: none;
+
+  opacity: 0;
+  pointer-events: none;
+  &.opened {
+    opacity: 1;
+    pointer-events: all;
+  }
+}
+
+.spaceHierarchySelectBoxMenu ul {
+  list-style-type: none;
+  padding-left: 0px;
+  margin: 0px;
+}
+
+.spaceHierarchySelectBoxMenu li {
+  line-height: 36px;
+  cursor: pointer;
+
+  padding-left: 15px;
+  padding-right: 15px;
+
+  display: flex;
+
+  &:hover { background-color: $grayLightest; }
+
+  &:focus {
+    color: $brandPrimary;
+    outline: none;
+  }
+
+  &.disabled { color: $grayDark; }
+}
+
+// When select box items are too wide, cause an ellipsis to form on the right side of each.
+.spaceHierarchySelectBoxItemName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.spaceHierarchySelectBoxItemHighlight {
+  margin-left: 10px;
+  color: $grayDark;
+  font-style: italic;
+}

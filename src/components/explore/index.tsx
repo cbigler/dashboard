@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -17,7 +19,7 @@ import {
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 
 import filterCollection from '../../helpers/filter-collection/index';
-import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree/index';
+import sortSpaceTree from '../../helpers/sort-space-tree/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
@@ -28,7 +30,7 @@ const EXPLORE_BACKGROUND = '#F5F5F7';
 const spaceFilter = filterCollection({fields: ['name']});
 
 
-function ExploreSidebarItem({selected, id, name, spaceType, activePage}) {
+function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}) {
   let page;
   switch(activePage) {
     case 'EXPLORE_SPACE_TRENDS':
@@ -69,24 +71,28 @@ function ExploreSidebarItem({selected, id, name, spaceType, activePage}) {
       break;
   }
 
-  if (isSpace) {
+  if (isSpace && enabled) {
     return (
-      <a className={classnames("explore-app-frame-sidebar-list-item", spaceType)} href={`#/spaces/explore/${id}/${page}`}>
-        <div className={classnames('explore-sidebar-item', {selected})}>
-          <div className='explore-sidebar-item-row'>
+      <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
+        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+          <div className={styles.exploreSidebarItemRow}>
             {icon}
-            <span className="explore-sidebar-item-name">{name}</span>
+            <span className={styles.exploreSidebarItemName}>{name}</span>
           </div>
         </div>
       </a>
     );
   } else {
     return (
-      <div className={classnames("explore-app-frame-sidebar-list-item", spaceType)}>
-        <div className={classnames('explore-sidebar-item', {selected})}>
-          <div className='explore-sidebar-item-row'>
+      <div className={classnames(
+        styles.exploreAppFrameSidebarListItem,
+        styles.disabled,
+        styles[spaceType]
+      )}>
+        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+          <div className={styles.exploreSidebarItemRow}>
             {icon}
-            <span className="explore-sidebar-item-name">{name}</span>
+            <span className={styles.exploreSidebarItemName}>{name}</span>
           </div>
         </div>
       </div>
@@ -94,18 +100,19 @@ function ExploreSidebarItem({selected, id, name, spaceType, activePage}) {
   }
 }
 
-function RenderExploreSidebarItem(space, activePage, selectedSpace, depth) {
+function RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth) {
   return (
-    <div key={space.id} className={`${space.spaceType}-container`}>
+    <div key={space.id} className={styles[`${space.spaceType}Container`]}>
       <ExploreSidebarItem
         id={space.id}
         name={space.name}
         spaceType={space.spaceType}
         activePage={activePage}
         selected={selectedSpace ? selectedSpace.id === space.id : false}
+        enabled={!!spaces.data.find(x => x.id === space.id)}
       />
       {space.children && space.children.map(space => (
-        RenderExploreSidebarItem(space, activePage, selectedSpace, depth+1)
+        RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth+1)
       ))}
     </div>
   )
@@ -126,41 +133,41 @@ function ExploreSpacePage({ activePage }) {
   }
 }
 
+function pruneHierarchy(spaceTree, matchedSpaceIds) {
+  if (spaceTree.children) {
+    spaceTree.children = spaceTree.children.map(x => {
+      return pruneHierarchy(x, matchedSpaceIds);
+    }).filter(x => x);
+  }
+  if (
+    (spaceTree.children && spaceTree.children.length > 0) ||
+    matchedSpaceIds.indexOf(spaceTree.id) > -1
+  ) {
+    return spaceTree;
+  } else {
+    return null;
+  }
+}
+
 export function Explore({
   spaces,
+  spaceHierarchy,
   selectedSpace,
   activePage,
   onSpaceSearch,
 }) {
-  let filteredSpaces = spaces.data;
-
-  // If a space matches the search, keep all parent spaces as well
-  // so that we can see its place in the hierarchy
+  let filteredSpaces = spaceHierarchy.data;
   if (spaces.filters.search) {
-    filteredSpaces = [];
-    var options = {
-        pre: '<',
-        post: '>',
-        extract: function(el) { return el['name']; }
-    };
-    let matchedSpaces = fuzzy.filter(spaces.filters.search, spaces.data, options);
-    matchedSpaces.map(space => {
-      space = space.original
-      if (!(filteredSpaces.map(space => space['id']).includes(space['id']))) {
-        filteredSpaces.push(space);
-      }
-      // append all parents (if they don't already exist)
-      const ancestors = space['ancestry'];
-      ancestors.map(ancestor => {
-        if (!(filteredSpaces.map(space => space['id']).includes(ancestor['id']))) {
-          let ancestrySpace = spaces.data.filter(space => space['id'] == ancestor['id'])[0];
-          filteredSpaces.push(ancestrySpace)
-        }
-      });
-    });
+    const matchedSpaceIds = fuzzy.filter(
+      spaces.filters.search,
+      spaces.data,
+      { pre: '<', post: '>', extract: x => x['name'] }
+    ).map(x => x.original['id']);
+    const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
+    filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
   }
 
-  const spaceList = convertSpacesToSpaceTree(filteredSpaces)
+  const spaceList = sortSpaceTree(filteredSpaces);
   return (
     <Fragment>
       {/* Main application */}
@@ -177,11 +184,11 @@ export function Explore({
             />
           </AppBar>
           <AppScrollView>
-            <nav className="explore-app-frame-sidebar-list">
+            <nav className={styles.exploreAppFrameSidebarList}>
                 <Fragment>
-                  {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className="loading-spaces">Loading Spaces...</div> : null}
+                  {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading Spaces...</div> : null}
                   {spaceList.map(space => (
-                    RenderExploreSidebarItem(space, activePage, selectedSpace, 0)
+                    RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
                   ))}
                 </Fragment>
             </nav>
@@ -231,6 +238,7 @@ export default connect((state: any) => {
   const selectedSpace = state.spaces.data.find(d => d.id === state.spaces.selected);
   return {
     spaces: state.spaces,
+    spaceHierarchy: state.spaceHierarchy,
     selectedSpace
   };
 }, dispatch => {

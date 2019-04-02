@@ -1,10 +1,12 @@
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
+
+import styles from './styles.module.scss';
 
 export function InputStackGroup(props) {
   return <div
     {...props}
-    className={classnames("input-stack-group-container", props.className)}
+    className={classnames(styles.inputStackGroupContainer, props.className)}
   >
     {props.children}
   </div>;
@@ -21,14 +23,13 @@ export class InputStackItem extends React.Component<any, any> {
   }
 
   render() {
-
     // Append correct container classes
     const containerClassName = classnames({
-      'input-stack-item-container': true,
-      'input-stack-item-pending-error': this.state.focused && this.props.invalid,
-      'input-stack-item-pending-valid': this.state.focused && !this.props.invalid,
-      'input-stack-item-error': !this.state.focused && this.props.invalid,
-      'input-stack-item-valid': !this.state.focused && !this.props.invalid && this.props.value
+      [styles.inputStackItemContainer]: true,
+      [styles.inputStackItemPendingError]: this.state.focused && this.props.invalid,
+      [styles.inputStackItemPendingValid]: this.state.focused && !this.props.invalid,
+      [styles.inputStackItemError]: !this.state.focused && this.props.invalid,
+      [styles.inputStackItemValid]: !this.state.focused && !this.props.invalid && this.props.value
     }, this.props.className);
 
     // Sanitize props to pass through to input
@@ -49,7 +50,7 @@ export class InputStackItem extends React.Component<any, any> {
 
     // Render container and input
     return <div className={containerClassName}>
-      <input className="input-stack-item-input" {...inputProps} />
+      <input className={styles.inputStackItemInput} {...inputProps} />
     </div>;
   }
 }

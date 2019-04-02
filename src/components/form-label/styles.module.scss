@@ -1,0 +1,48 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.formLabel {
+  display: flex;
+  flex-direction: column;
+  color: $grayDarkest;
+  margin-bottom: 16px;
+}
+
+// The actual label element within the `form-label`
+.formLabelLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: $fontWeightBase;
+  user-select: none;
+  color: $grayDarker;
+  position: relative;
+}
+// The first .form-label-label should not have a top margin.
+.formLabel:first-child .formLabelLabel {
+  margin-top: 0px;
+}
+
+// The last .form-label should have some bottom margin.
+.formLabel:last-child, .formLabel:last-of-type {
+  margin-bottom: 10px;
+}
+
+// Editable fields always have bottom margin.
+.formLabelEditable, .formLabelEditable:last-of-type {
+  margin-bottom: 40px;
+}
+
+.formLabel > span {
+  flex: 1;
+  height: 34px;
+}
+
+.formLabelInfoIcon {
+  font-family: "Densicons";
+  font-size: $fontSize3;
+
+  position: absolute;
+  top: -4px;
+  right: 0px;
+}

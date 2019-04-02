@@ -1,0 +1,184 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+
+.dashboardAppFrameScrollBodySpacer {
+  height: 150px;
+}
+
+.dashboardSidebarHideShowIcon {
+  cursor: pointer;
+  display: none;
+  margin-right: 24px;
+}
+@media (min-width: $screenSmMax) {
+  .dashboardSidebarHideShowIcon { display: block; }
+}
+.dashboardSidebarHideShowIcon:hover { opacity: 0.8; }
+.dashboardSidebarHideShowIcon:active { opacity: 1; }
+
+.dashboardAppFrameSidebarList {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow-y: auto;
+}
+
+.dashboardAppFrameSidebarListItem {
+  display: block;
+  text-decoration: none;
+  color: $grayDarker;
+}
+
+.dashboardAppBar {
+  display: flex;
+  align-items: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  height: 80px;
+  padding-left: 32px;
+  padding-right: 16px;
+  border-bottom: 1px solid $grayLight;
+}
+
+.dashboardAppBarTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-right: auto;
+}
+
+
+.dashboardSidebarItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 48px;
+
+  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
+
+  padding-left: 24px;
+  padding-right: 24px;
+  border-bottom: 1px solid $grayLight;
+}
+.dashboardSidebarItem:hover { background-color: $grayLightest; }
+
+.dashboardSidebarItemName {
+  color: $grayDarkest;
+
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: auto;
+  padding-right: 10px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dashboardSidebarItem:hover .dashboardSidebarItemName { color: $grayCinder; }
+.dashboardSidebarItem.selected .dashboardSidebarItemName { color: $brandPrimary; }
+
+.dashboardSidebarItemNumReports {
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  color: $grayDarker;
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 4px;
+  white-space: nowrap;
+}
+.dashboardSidebarItem:hover .dashboardSidebarItemNumReports { color: $grayCinder; }
+.dashboardSidebarItem.selected .dashboardSidebarItemNumReports { color: $brandPrimary; }
+
+
+.dashboardWrapper {
+  width: 100%;
+  max-width: 1440px;
+
+  animation: fadeInUp 0.4s ease-out;
+}
+.dashboardWrapperInner {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+@media (min-width: 375px) {
+  .dashboardWrapperInner {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+}
+.dashboardHeader {
+  color: $grayDarkest;
+  font-size: 22px;
+  border-bottom: 2px solid $gray;
+  margin-top: 40px;
+  padding-bottom: 10px;
+}
+
+.dashboardNonIdealState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 48px;
+  padding-left: 24px;
+
+  height: 400px;
+  color: $grayCinder;
+}
+
+.dashboardLoadingWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  height: 90vh;
+  color: $grayCinder;
+}
+
+.dashboardLoading {
+  width: 100%;
+  max-width: 500px;
+
+  animation: fadeInUp 0.4s ease-out;
+}
+
+// animation used for loading states
+@keyframes fadeInUp {
+    from {
+        transform: translate3d(0, 20px, 0);
+        opacity: 0;
+    }
+
+    to {
+        transform: translate3d(0, 0, 0);
+        opacity: 1
+    }
+}
+
+.dashboardPageHeaderWrapper {
+  background-color: #fff;
+  height: 64px;
+
+  /* This all has to be here to left align the text with the navbar. Have I mentioned how much I
+   * want to write a new one? */
+  padding-left: 20px;
+  @media (min-width: 768px) { padding-left: 40px; }
+  @media (min-width: 1500px) { padding-left: 60px; }
+}
+.dashboardPageHeader {
+  margin: 0px auto;
+  max-width: 1440px;
+  height: 64px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.dashboardPageHeader h1 {
+  margin: 0px;
+  font-size: 24px;
+  color: $grayCinder;
+}

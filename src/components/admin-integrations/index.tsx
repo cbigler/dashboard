@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -15,7 +17,7 @@ import teemIcon from '../../assets/images/icon-teem.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import Dialogger from '../dialogger';
-import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
+import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -82,32 +84,37 @@ export function AdminIntegrations({
     </AppBar>
 
     <AppScrollView>
-      <div className="admin-integrations-room-booking-list">
-        <div className="admin-integrations-section-header">Room Booking</div>
+      <div className={styles.adminIntegrationsRoomBookingList}>
+        <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
           <ListView keyTemplate={item => item.displayName} data={integrations.services as Array<DensityService>}>
             <ListViewColumn title="Name" template={item => (
-              <img src={iconForIntegration(item.name)} className="admin-integrations-listview-image" />
+              <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
             )} />
             <ListViewColumn title="" template={item => (
-              <span className="admin-integrations-listview-value"><strong>{item.displayName}</strong></span>
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
             )} />
             <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
-              <span className="admin-integrations-listview-value">{item.serviceAuthorization.user.fullName}</span>) : null
+              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
             } />
             <ListViewColumn title="Default Service" template={item => (
-              <span className="admin-integrations-listview-value">{item.serviceAuthorization && item.serviceAuthorization.default == true ? "Default" : ""}</span>
+              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization && item.serviceAuthorization.default == true ? "Default" : ""}</span>
             )} />
-            <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
+            <ListViewColumn flexGrow={1} flexShrink={1} />
             <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? <span style={LIST_CLICKABLE_STYLE}>Activate</span> : <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
-            onClick={item => onOpenModal(item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})} />
+              template={item => item.serviceAuthorization.id == null ? 
+                <ListViewClickableLink>Activate</ListViewClickableLink> :
+                <ListViewClickableLink>Edit</ListViewClickableLink>}
+              onClick={item => onOpenModal(
+                item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', 
+                {serviceAuthorization: item.serviceAuthorization, isDestroying: false}
+              )} />
             <ListViewColumn
               template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
               onClick={item => onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} />
           </ListView>
       </div>
-      <div className="admin-integrations-chat-list">
-        <div className="admin-integrations-section-header">Chat</div>
+      <div className={styles.adminIntegrationsChatList}>
+        <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
       </div>
     </AppScrollView>
   </Fragment>;

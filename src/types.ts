@@ -179,6 +179,7 @@ export type DensityUser = {
   invitationStatus: string,
   createdAt: string,
   permissions: Array<string>,
+  spaces: Array<string>,
 };
 
 // Counts

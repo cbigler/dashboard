@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
-import colorVariables from '@density/ui/variables/colors.json';
+
+import styles from './styles.module.scss';
 
 const ListViewContext = React.createContext([] as any);
 
@@ -11,10 +12,20 @@ export default function ListView({
   children = null as any,
 }) {
   return <ListViewContext.Provider value={{data, keyTemplate, showHeaders}}>
-    <div className="list-view">
+    <div className={styles.listView}>
       {children}
     </div>
   </ListViewContext.Provider>;
+}
+
+type ListViewColumnProps = {
+  title?: any,
+  template?: any,
+  onClick?: (any) => any,
+  disabled?: (any) => boolean,
+  flexGrow?: number,
+  flexShrink?: number,
+  width?: string | number,
 }
 
 export function ListViewColumn({
@@ -22,16 +33,19 @@ export function ListViewColumn({
   template = null as any,
   onClick = null as any,
   disabled = item => false,
-  style = {} as Object,
-}) {
+
+  flexGrow = undefined,
+  flexShrink = undefined,
+  width = 'auto',
+}: ListViewColumnProps) {
   return <ListViewContext.Consumer>{context => (
-    <div className="list-view-column" style={style}>
-      {context.showHeaders ? <div className="list-view-header">{title}</div> : null}
+    <div className={styles.listViewColumn} style={{flexGrow, flexShrink, width}}>
+      {context.showHeaders ? <div className={styles.listViewHeader}>{title}</div> : null}
       {context.data.map(item => {
-        const clickable = !disabled(item) && !!onClick;
+        const clickable = !disabled(item) && Boolean(onClick);
         return <div
           key={context.keyTemplate(item)}
-          className={classnames('list-view-cell', { clickable })}
+          className={classnames(styles.listViewCell, { [styles.clickable]: clickable })}
           onClick={() => clickable && onClick(item)}
         >
           {template && template(item)}
@@ -41,9 +55,16 @@ export function ListViewColumn({
   )}</ListViewContext.Consumer>;
 }
 
-// Convenience export for rendering "standard" list clickable text
-export const LIST_CLICKABLE_STYLE = {
-  textDecoration: 'underline',
-  fontWeight: 500,
-  color: colorVariables.brandPrimary
-};
+
+type ListViewClickableLinkProps = {
+  onClick?: () => any,
+  children: ReactNode
+}
+
+export function ListViewClickableLink({ onClick, children }: ListViewClickableLinkProps) {
+  return (
+    <span role="button" className={styles.listViewClickableLink} onClick={onClick}>
+      {children}
+    </span>
+  );
+}

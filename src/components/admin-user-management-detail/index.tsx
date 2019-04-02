@@ -1,15 +1,19 @@
-import React, { Component, Fragment } from 'react';
+import styles from './styles.module.scss';
+
+import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 import GenericErrorState from '../generic-error-state/index';
+import GenericLoadingState from '../generic-loading-state/index';
+
+import { ROLE_INFO } from '../../helpers/permissions';
 
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
 import collectionUsersDestroy from '../../actions/collection/users/destroy';
-import collectionUsersPush from '../../actions/collection/users/push';
 import collectionUsersUpdate from '../../actions/collection/users/update';
 
 import {
@@ -20,17 +24,20 @@ import {
   Icons,
   Button,
   ButtonContext,
-  InputBox,
 } from '@density/ui';
 
-import FormLabel from '../form-label';
 import Dialogger from '../dialogger';
 
 import { DensitySpace, DensityUser } from '../../types';
 
 type AdminUserManagementDetailProps = {
   spaces: {
+    loading: boolean,
     data: Array<DensitySpace>,
+  },
+  spaceHierarchy: {
+    loading: boolean,
+    data: Array<any>,
   },
   users: {
     view: 'LOADING' | 'ERROR' | 'VISIBLE',
@@ -50,26 +57,29 @@ type AdminUserManagementDetailProps = {
 
 type AdminUserManagementDetailState = {
   waitingForData: boolean,
-  fullName?: string,
-  email?: string,
   role?: string,
+
+  spaceFilteringActive?: boolean,
+  spaceIds?: string[],
 };
 
 export class AdminUserManagementDetail extends Component<AdminUserManagementDetailProps, AdminUserManagementDetailState> {
   state = {
     waitingForData: true,
-    fullName: '',
-    email: '',
     role: '',
+
+    spaceFilteringActive: false,
+    spaceIds: [] as string[],
   };
 
   setInitialState = (selectedUser) => {
     if (this.state.waitingForData && selectedUser) {
       this.setState({
         waitingForData: false,
-        fullName: selectedUser.fullName,
-        email: selectedUser.email,
         role: selectedUser.role,
+
+        spaceFilteringActive: (selectedUser.spaces || []).length > 0,
+        spaceIds: selectedUser.spaces || [],
       });
     }
   }
@@ -84,6 +94,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
   render() {
     const {
       spaces,
+      spaceHierarchy,
       user,
       users,
       selectedUser,
@@ -95,159 +106,149 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
     switch (users.view) {
     case 'LOADING':
       return (
-        <span>Loading state needs to be mocked out</span>
+        <div className={styles.adminUserManagementDetailLoading}>
+          <GenericLoadingState />
+        </div>
       );
     case 'ERROR':
       return (
-        <div className="admin-user-management-detail-error">
+        <div className={styles.adminUserManagementDetailError}>
           <GenericErrorState />
         </div>
       );
     case 'VISIBLE':
+      if (!selectedUser) { return null; }
+
+      const formValid = !this.state.spaceFilteringActive || this.state.spaceIds.length > 0;
+
       return (
-        <div className="admin-user-management-detail">
+        <Fragment>
           {/* Display user delete confirmation dialog */}
           <Dialogger />
 
-          <AppBar>
-            <AppBarTitle>
-              <a
-                role="button"
-                className="admin-user-management-detail-main-arrow"
-                href="#/admin/user-management"
-              >
-                <Icons.ArrowLeft />
-              </a>
-              <span className="admin-user-management-detail-main-title">Edit User</span>
-            </AppBarTitle>
-          </AppBar>
+          <div className={styles.adminUserManagementDetailAppBar}>
+            <AppBar>
+              <AppBarTitle>
+                <a
+                  role="button"
+                  className={styles.adminUserManagementDetailMainArrow}
+                  href="#/admin/user-management"
+                >
+                  <Icons.ArrowLeft />
+                </a>
+                <span className={styles.adminUserManagementDetailMainTitle}>Edit User</span>
+              </AppBarTitle>
+              <AppBarSection>
+                <ButtonContext.Provider value="CANCEL_BUTTON">
+                  <Button onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
+                </ButtonContext.Provider>
+                <Button
+                  type="primary"
+                  disabled={!formValid}
+                  onClick={() => {
+                    onSaveUser({
+                      id: selectedUser.id,
+                      role: this.state.role,
 
-          <div className="admin-user-management-detail-columns">
-            <div className="admin-user-management-detail-column left">
-              <div className="admin-user-management-user-info">
-                <div className="admin-user-management-user-info-icon">
-                  {
-                    (selectedUser.fullName || '')
-                    .split(' ')
-                    .slice(0, 2)
-                    .filter(word => word.length > 0)
-                    .map(word => word[0].toUpperCase())
-                    .join('')
-                  }
-                </div>
-                <h1 className="admin-user-management-user-info-name">
-                  {selectedUser.fullName || selectedUser.email}
-                </h1>
-                <span className="admin-user-management-user-info-email">{selectedUser.email}</span>
-                <div>
-                  <span className="admin-user-management-user-info-role-tag">Owner</span>
-                </div>
-                <ul className="admin-user-management-user-info-details">
-                  {selectedUser.lastLogin ? (
-                    <li>Last sign in: {moment.utc(selectedUser.lastLogin).fromNow()}</li>
-                  ) : (
-                    <li>User has never signed in</li>
-                  )}
-                  <li>
-                    Created:{' '}
-                    {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="admin-user-management-detail-column right">
-              <div className="admin-user-management-detail-column-right-subcolumns">
-                <div className="admin-user-management-detail-column-right-subcolumn left">
-                  <div className="admin-user-management-detail-card">
-                    <AppBar>
-                      <AppBarTitle>Info</AppBarTitle>
-                    </AppBar>
-
-                    <div className="admin-user-management-detail-card-body">
-                      <FormLabel
-                        label="Name"
-                        htmlFor="admin-user-management-user-name"
-                        input={<InputBox
-                          type="text"
-                          width="100%"
-                          id="admin-user-management-user-name"
-                          value={this.state.fullName}
-                          onChange={e => this.setState({fullName: e.target.value})}
-                        />}
-                      />
-                      <FormLabel
-                        label="Email"
-                        htmlFor="admin-user-management-user-email"
-                        input={<InputBox
-                          type="text"
-                          width="100%"
-                          id="admin-user-management-user-email"
-                          value={this.state.email}
-                          onChange={e => this.setState({email: e.target.value})}
-                        />}
-                      />
-                    </div>
-                  </div>
-                  <div className="admin-user-management-detail-card half-height">
-                    <AppBar>
-                      <AppBarTitle>Roles</AppBarTitle>
-                    </AppBar>
-                    <div className="admin-user-management-detail-card-body">
-                      <AdminUserManagementRoleRadioList
-                        user={user}
-                        value={this.state.role}
-                        onChange={role => this.setState({role})}
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="admin-user-management-detail-column-right-subcolumn right">
-                  <div className="admin-user-management-detail-card">
-                    <AdminSpacePermissionsPicker
-                      spaces={spaces}
-                      initialSelectedSpaceIds={[]}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+                      spaceFilteringActive: this.state.spaceFilteringActive,
+                      spaceIds: this.state.spaceIds,
+                    });
+                  }}
+                >Save User</Button>
+              </AppBarSection>
+            </AppBar>
           </div>
 
-          <div className="admin-user-management-detail-bottom-app-bar">
-            <AppBarContext.Provider value="BOTTOM_ACTIONS">
-              <AppBar>
-                <AppBarSection>
-                  <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
-                    <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                      Delete this User
-                    </Button>
-                  </ButtonContext.Provider>
-                </AppBarSection>
-                <AppBarSection>
-                  <a
-                    className="admin-user-management-detail-cancel-link"
-                    role="button"
-                    href="#/admin/user-management"
-                  >
-                    Cancel
-                  </a>
-                  <Button
-                    type="primary"
-                    onClick={() => {
-                      onSaveUser({
-                        id: selectedUser.id,
-                        fullName: this.state.fullName,
-                        // If the email has stayed the same, then including it will cause
-                        email: this.state.email !== selectedUser.email ? this.state.email : undefined,
-                        role: this.state.role,
-                      });
-                    }}
-                  >Save User</Button>
-                </AppBarSection>
-              </AppBar>
-            </AppBarContext.Provider>
+          <div className={styles.adminUserManagementDetail}>
+            <div className={styles.adminUserManagementDetailWrapper}>
+              <div className={styles.adminUserManagementDetailColumns}>
+                <div className={`${styles.adminUserManagementDetailColumn} ${styles.left}`}>
+                  <div className={styles.adminUserManagementUserInfo}>
+                    {selectedUser.fullName ? (
+                      <div className={styles.adminUserManagementUserInfoIcon}>
+                        {
+                          (selectedUser.fullName || '')
+                          .split(' ')
+                          .slice(0, 2)
+                          .filter(word => word.length > 0)
+                          .map(word => word[0].toUpperCase())
+                          .join('')
+                        }
+                      </div>
+                    ) : null}
+                    <h1 className={styles.adminUserManagementUserInfoName}>
+                      {selectedUser.fullName || '---'}
+                    </h1>
+                    <span className={styles.adminUserManagementUserInfoEmail}>{selectedUser.email}</span>
+                    <div>
+                      <span className={styles.adminUserManagementUserInfoRoleTag}>
+                        {ROLE_INFO[selectedUser.role].label}
+                      </span>
+                    </div>
+                    <ul className={styles.adminUserManagementUserInfoDetails}>
+                      {selectedUser.lastLogin ? (
+                        <li>Last sign in: {moment.utc(selectedUser.lastLogin).fromNow()}</li>
+                      ) : (
+                        <li>User has never signed in</li>
+                      )}
+                      <li>
+                        Created:{' '}
+                        {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+                <div className={`${styles.adminUserManagementDetailColumn} ${styles.right}`}>
+                  <div className={styles.adminUserManagementDetailColumnRightSubcolumns}>
+                    <div className={`${styles.adminUserManagementDetailColumnRightSubcolumn} ${styles.left}`}>
+                      <div className={styles.adminUserManagementDetailCard}>
+                        <AppBar>
+                          <AppBarTitle>Roles</AppBarTitle>
+                        </AppBar>
+                        <div className={styles.adminUserManagementDetailCardBody}>
+                          <AdminUserManagementRoleRadioList
+                            user={user}
+                            value={this.state.role}
+                            onChange={role => this.setState({
+                              role,
+                              spaceFilteringActive: role === 'owner' ? false : this.state.spaceFilteringActive,
+                              spaceIds: role === 'owner' ? [] : this.state.spaceIds,
+                            })}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div className={`${styles.adminUserManagementDetailColumnRightSubcolumn} ${styles.right}`}>
+                      <div className={styles.adminUserManagementDetailCard}>
+                        <AdminSpacePermissionsPicker
+                          spaces={spaces}
+                          spaceHierarchy={spaceHierarchy}
+                          disabled={this.state.role === 'owner'}
+                          active={this.state.spaceFilteringActive}
+                          onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
+                          selectedSpaceIds={this.state.spaceIds}
+                          onChange={spaceIds => this.setState({spaceIds})}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <AppBarContext.Provider value="BOTTOM_ACTIONS">
+                <AppBar>
+                  <AppBarSection>
+                    <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
+                      <Button onClick={() => onStartDeleteUser(selectedUser)}>
+                        Delete this User
+                      </Button>
+                    </ButtonContext.Provider>
+                  </AppBarSection>
+                </AppBar>
+              </AppBarContext.Provider>
+            </div>
           </div>
-        </div>
+        </Fragment>
       );
     default:
       return null;
@@ -258,25 +259,36 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
 export default connect((state: any) => {
   return {
     spaces: state.spaces,
+    spaceHierarchy: state.spaceHierarchy,
     users: state.users,
     user: state.user,
     selectedUser: state.users.data.find(user => user.id === state.users.selected),
   };
 }, dispatch => ({
-	onStartDeleteUser(user) {
-		dispatch<any>(showModal('MODAL_CONFIRM', {
-			prompt: 'Are you sure you want to delete this user?',
-			confirmText: 'Delete',
-			callback: () => dispatch<any>(collectionUsersDestroy(user)),
-		}));
-	},
-  async onSaveUser({id, fullName, email, role}) {
-    const ok = await dispatch<any>(collectionUsersUpdate({ id, fullName, email, role }));
+  onStartDeleteUser(user) {
+    dispatch<any>(showModal('MODAL_CONFIRM', {
+      prompt: 'Are you sure you want to delete this user?',
+      confirmText: 'Delete',
+      callback: () => {
+        dispatch<any>(collectionUsersDestroy(user)).then(ok => {
+          if (ok) {
+            window.location.href = '#/admin/user-management';
+          }
+        });
+      },
+    }));
+  },
+  async onSaveUser({id, role, spaceIds, spaceFilteringActive}) {
+    const ok = await dispatch<any>(collectionUsersUpdate({
+      id,
+      role,
+      spaces: spaceFilteringActive ? spaceIds : [],
+    }));
     if (ok) {
-      dispatch<any>(showToast({ text: 'User updated successfully!', timeout: undefined }));
+      dispatch<any>(showToast({ text: 'User updated successfully!' }));
       window.location.href = '#/admin/user-management';
     } else {
-      dispatch<any>(showToast({ type: 'danger', text: 'Error updating user' }));
+      dispatch<any>(showToast({ type: 'error', text: 'Error updating user' }));
     }
   },
 }))(AdminUserManagementDetail);

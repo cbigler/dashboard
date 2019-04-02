@@ -1,6 +1,8 @@
 import React from 'react';
 import classnames from 'classnames';
 
+import styles from './styles.module.scss';
+
 import { PagerButtonGroup } from '@density/ui';
 
 export default class VisualizationSpaceDetailRawEventsPager extends React.Component<any, any> {
@@ -19,15 +21,15 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
       totalEvents,
       onChange,
     } = this.props;
-    return <div className={classnames('visualization-space-detail-raw-events-pager', {disabled})}>
-      <div className="visualization-space-detail-raw-events-pager-total">
+    return <div className={classnames(styles.visualizationSpaceDetailRawEventsPager, {[styles.disabled]: disabled})}>
+      <div className={styles.visualizationSpaceDetailRawEventsPagerTotal}>
         {totalEvents || 0} Events...
       </div>
-      <div className="visualization-space-detail-raw-events-pager-picker">
+      <div className={styles.visualizationSpaceDetailRawEventsPagerPicker}>
         <span>Page</span>
         <input
           type="text"
-          className="visualization-space-detail-raw-events-pager-picker-box"
+          className={styles.visualizationSpaceDetailRawEventsPagerPickerBox}
           value={!totalPages ? '' : (this.state.textPage === false ? page : this.state.textPage)}
 
           // Disable the box when there are no pages to change to.
@@ -48,7 +50,7 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
         />
         {isNaN(totalPages) ? null : <span>of {totalPages}</span>}
       </div>
-      <div className="visualization-space-detail-raw-events-pager-button-group">
+      <div className={styles.visualizationSpaceDetailRawEventsPagerButtonGroup}>
         <PagerButtonGroup
           showFirstLastButtons
 

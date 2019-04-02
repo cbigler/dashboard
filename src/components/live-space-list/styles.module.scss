@@ -1,0 +1,173 @@
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+@function get-col-percent($column-num) {
+  @return $column-num / $fgColumns * 100%;
+}
+
+@mixin grid-container {
+  margin-left: -1 * $fgGutter;
+  margin-right: -1 * $fgGutter;
+  box-sizing: border-box;
+
+  max-width: 1000px;
+  margin: 20px auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+@mixin grid-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.row {
+  @include grid-row;
+}
+
+@mixin grid-column {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-height: 1px;
+  padding-left: $fgGutter;
+  padding-right: $fgGutter;
+}
+
+@mixin grid-width($xs, $sm, $md, $lg) {
+  @include grid-column;
+  flex-basis: get-col-percent($xs);
+  max-width: get-col-percent($xs);
+  @media (min-width: $screenSmMin) {
+    flex-basis: get-col-percent($sm);
+    max-width: get-col-percent($sm);
+  }
+  @media (min-width: $screenMdMin) {
+    flex-basis: get-col-percent($md);
+    max-width: get-col-percent($md);
+  }
+  @media (min-width: $screenLgMin) {
+    flex-basis: get-col-percent($lg);
+    max-width: get-col-percent($lg);
+  }
+}
+
+.liveSpaceList {
+  overflow-y: auto;
+}
+
+// Header for the space list view. Contians a label and a search box.
+.liveSpaceListHeader {
+  color: $grayDarkest;
+  font-size: $fontSizeBase;
+  font-weight: normal;
+
+  margin-left: 10px;
+  margin-right: 10px;
+
+  padding-top: 40px;
+  padding-bottom: 20px;
+
+  width: calc(100% - 20px);
+
+  @media (min-width: $screenXsMax) {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+// Left side of header that contains space hierarchy filter box
+.liveSpaceListHeaderHierarchy {
+  display: flex;
+  flex-direction: row;
+
+  margin-right: 20px;
+}
+
+// Right side of header that contains fizzy searching box
+.liveSpaceListHeaderFilter {
+  display: flex;
+  flex-direction: row;
+
+  // When the space list is on mobile, the search box is on a new line.
+  margin-top: 20px;
+  @media (min-width: $screenXsMax) {
+    margin-top: 0px;
+    margin-left: auto;
+  }
+}
+
+.liveSpaceListSearchBox {
+  color: $grayDarker;
+  &::placeholder,
+  &::-webkit-input-placeholder,
+  &::-moz-placeholder,
+  &:-ms-input-placeholder,
+  &:-moz-placeholder {
+    color: $gray;
+    opacity: 1; // Placeholders in firefox have opacity be default. Undo that.
+  }
+
+  width: 100%;
+  @media (min-width: $screenXsMax) {
+    width: 200px;
+  }
+}
+
+// "Live" indicator tag after the page title. This shows the fact that new data will flow in and
+// the status of the socket via the colored bubble.
+.liveSpaceListLiveIndicatorTag {
+  height: 11px;
+  white-space: nowrap;
+
+  padding-top: 8px;
+  padding-bottom: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  transform: translate(20px, 8px);
+
+  font-size: $fontSizeXSmall;
+  font-weight: bold;
+  color: #fff;
+  background-color: $grayCinder;
+  user-select: none;
+
+  border: 1px solid $grayCinder;
+  border-radius: $borderRadiusBase;
+}
+
+.liveSpaceListLiveIndicatorTag i {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: $gray;
+  border-radius: 50%;
+  margin-left: 6px;
+}
+
+.liveSpaceListLiveIndicatorTag i.status.connected { background-color: $brandSuccess; }
+.liveSpaceListLiveIndicatorTag i.status.connecting { background-color: $brandWarning; }
+.liveSpaceListLiveIndicatorTag i.status.error { background-color: $brandDanger; }
+
+.liveSpaceListContainer {
+  @include grid-container;
+  margin-top: 2px;
+}
+.liveSpaceListRow { @include grid-row; }
+.liveSpaceListItem { @include grid-width(24, 12, 12, 12); }
+
+// Shown when the space live list is empty
+.liveSpaceListEmpty {
+  color: $grayDark;
+  font-size: $fontSize3;
+  margin-top: 100px;
+
+  width: 100%;
+  text-align: center;
+}

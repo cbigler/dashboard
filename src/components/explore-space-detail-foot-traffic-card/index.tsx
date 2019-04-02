@@ -3,7 +3,8 @@ import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 import moment from 'moment';
-import 'moment-timezone';
+
+import styles from './styles.module.scss';
 
 import {
   Card,
@@ -129,23 +130,23 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
       }
 
       return (
-        <Card className="explore-space-detail-card">
+        <Card className={styles.exploreSpaceDetailCard}>
           { calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
-          <CardHeader className="explore-space-detail-foot-traffic-card-header">
+          <CardHeader className={styles.exploreSpaceDetailFootTrafficCardHeader}>
             Foot Traffic
             <InfoPopup horizontalIconOffset={8}>
-              <p className="explore-space-detail-foot-traffic-card-popup-p">
+              <p className={styles.exploreSpaceDetailFootTrafficCardPopupP}>
                 Count over time on <strong>{moment.utc(date).tz(space.timeZone).format('MMMM D, YYYY')}</strong>{' '}
                 during the time segment <strong>{timeSegmentGroup.name}</strong>,{' '}
                 queried in 5 minute intervals.
               </p>
 
-              <p className="explore-space-detail-foot-traffic-card-popup-p">
+              <p className={styles.exploreSpaceDetailFootTrafficCardPopupP}>
                 Use this chart to understand visitation over the course of a day.
               </p>
             </InfoPopup>
             <span
-              className={classnames('explore-space-detail-foot-traffic-card-header-refresh', {
+              className={classnames(styles.exploreSpaceDetailFootTrafficCardHeaderRefresh, {
                 disabled: calculatedData.state !== 'COMPLETE',
               })}
               onClick={() => onRefresh(space)}
@@ -154,22 +155,22 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
             </span>
           </CardHeader>
 
-          <div className="explore-space-detail-foot-traffic-card-well">
-            <div className="explore-space-detail-foot-traffic-card-well-section capacity">
-              <span className="explore-space-detail-foot-traffic-card-well-section-quantity">{space.capacity || '-'}</span>
-              <span className="explore-space-detail-foot-traffic-card-well-section-label">Capacity</span>
+          <div className={styles.exploreSpaceDetailFootTrafficCardWell}>
+            <div className={classnames(styles.exploreSpaceDetailFootTrafficCardWellSection, styles.capacity)}>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionQuantity}>{space.capacity || '-'}</span>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionLabel}>Capacity</span>
             </div>
-            <div className="explore-space-detail-foot-traffic-card-well-section minimum">
-              <span className="explore-space-detail-foot-traffic-card-well-section-quantity">{min}</span>
-              <span className="explore-space-detail-foot-traffic-card-well-section-label">Minimum</span>
+            <div className={classnames(styles.exploreSpaceDetailFootTrafficCardWellSection, styles.minimum)}>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionQuantity}>{min}</span>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionLabel}>Minimum</span>
             </div>
-            <div className="explore-space-detail-foot-traffic-card-well-section maximum">
-              <span className="explore-space-detail-foot-traffic-card-well-section-quantity">{max}</span>
-              <span className="explore-space-detail-foot-traffic-card-well-section-label">Maximum</span>
+            <div className={classnames(styles.exploreSpaceDetailFootTrafficCardWellSection, styles.maximum)}>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionQuantity}>{max}</span>
+              <span className={styles.exploreSpaceDetailFootTrafficCardWellSectionLabel}>Maximum</span>
             </div>
           </div>
 
-          <CardBody className="explore-space-detail-foot-traffic-card-body">
+          <CardBody className={styles.exploreSpaceDetailFootTrafficCardBody}>
             {calculatedData.state === 'COMPLETE' && chartData.length > 0 ? <LineChartComponent
               timeZone={space.timeZone}
               svgWidth={chartWidth}
@@ -228,19 +229,19 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
               ]}
             /> : null}
 
-          {calculatedData.state === 'COMPLETE' && chartData.length === 0 ? <div className="explore-space-detail-foot-traffic-card-body-info">
+          {calculatedData.state === 'COMPLETE' && chartData.length === 0 ? <div className={styles.exploreSpaceDetailFootTrafficCardBodyInfo}>
             <span>No data found for this query.</span>
           </div> : null}
-          {calculatedData.state === 'COMPLETE' && !chartData ? <div className="explore-space-detail-foot-traffic-card-body-info">
+          {calculatedData.state === 'COMPLETE' && !chartData ? <div className={styles.exploreSpaceDetailFootTrafficCardBodyInfo}>
             <span>No data found in date range.</span>
           </div> : null}
 
-          {calculatedData.state === 'LOADING' ? <div className="explore-space-detail-foot-traffic-card-body-info">
+          {calculatedData.state === 'LOADING' ? <div className={styles.exploreSpaceDetailFootTrafficCardBodyInfo}>
             <span>Generating Data&nbsp;.&nbsp;.&nbsp;.</span>
           </div> : null}
-          {calculatedData.state === 'ERROR' ? <div className="explore-space-detail-foot-traffic-card-body-info">
+          {calculatedData.state === 'ERROR' ? <div className={styles.exploreSpaceDetailFootTrafficCardBodyInfo}>
             <span>
-              <span className="explore-space-detail-foot-traffic-card-body-error-icon">&#xe91a;</span>
+              <span className={styles.exploreSpaceDetailFootTrafficCardBodyErrorIcon}>&#xe91a;</span>
               {calculatedData.error.toString()}
             </span>
           </div> : null}

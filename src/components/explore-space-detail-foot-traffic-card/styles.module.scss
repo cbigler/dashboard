@@ -1,0 +1,145 @@
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+
+.exploreSpaceDetailFootTrafficCardHeader {
+  display: flex;
+  overflow: visible !important; /* ensure that date picker can escape header bounds */
+}
+.exploreSpaceDetailFootTrafficCardHeaderLabel {
+  line-height: 33px;
+  margin-top: 10px;
+}
+.exploreSpaceDetailFootTrafficCardDatePicker { marginLeft: auto; }
+
+.exploreSpaceDetailFootTrafficCardPopupP {
+  line-height: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+// The 24 hour chart is a fixed width and is scrolalble within the card.
+:global(.card) :global(.card-body).exploreSpaceDetailFootTrafficCardBody {
+  padding: 0px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+
+
+// The well is the darker section in the card that is darker than the surroundings. It has a number
+// of sections that are line seperated that each contain a numberic value and a label below.
+.exploreSpaceDetailFootTrafficCardWell {
+  display: flex;
+
+  // On mobile, stack items vertically.
+  flex-direction: column;
+
+  // On a computer, stack horizontally.
+  @media (min-width: $screenXsMax) {
+    flex-direction: row;
+    height: 150px;
+  }
+
+  background-color: $grayCinder;
+}
+.exploreSpaceDetailFootTrafficCardWellSection {
+  flex: 1;
+  // On mobile, make each item a flex parent so that the order of items can be changed with `order`.
+  display: flex;
+
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  text-align: center;
+  color: $grayDark;
+
+  // On a computer, add more spacing above and below each cell. Also, change the display property
+  // back to block because the items don't need reordering.
+  @media (min-width: $screenXsMax) {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    display: block;
+
+    border-left: 2px solid #4E5457;
+  }
+}
+.exploreSpaceDetailFootTrafficCardWellSection:first-child { border-left-width: 0px; }
+
+.exploreSpaceDetailFootTrafficCardWellSectionQuantity {
+  color: #fff;
+  font-size: $fontSize3;
+  font-weight: $fontWeight3;
+
+  // On mobile, place the quantity contents before the label.
+  order: 2;
+
+  // Space the quantity a bit apart from the section label.
+  margin-left: 10px;
+
+  // On a computer, make the quantity big and above the the section label.
+  @media (min-width: $screenXsMax) {
+    display: block;
+    font-size: $fontSize1;
+    font-weight: $fontWeight1;
+    margin-left: 0px; // Undo spacing above.
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+}
+.exploreSpaceDetailFootTrafficCardWellSectionLabel {
+  margin-left: 20px;
+
+  // On mobile, place the quantity label after the contents.
+  order: 1;
+
+  // Add a colon after the label of the cell.
+  &:after { content: ': '; }
+
+  // Remove the colon on desktop
+  @media (min-width: $screenXsMax) {
+    margin-left: 0px;
+    &:after { content: ''; }
+  }
+}
+
+
+// Refresh icon to refetch data
+.exploreSpaceDetailFootTrafficCardHeaderRefresh {
+  display: inline-block;
+  transform: translate(0px, 3px);
+  margin-left: auto;
+  cursor: pointer;
+}
+.exploreSpaceDetailFootTrafficCardHeaderRefresh:hover { opacity: 0.8; }
+.exploreSpaceDetailFootTrafficCardHeaderRefresh:active { opacity: 1; }
+.exploreSpaceDetailFootTrafficCardHeaderRefresh.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+
+// Horizontally and vertically center errors and info messages in the 24 hour card.
+.exploreSpaceDetailFootTrafficCardBodyInfo,
+.exploreSpaceDetailFootTrafficCardBodyError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 353px;
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.exploreSpaceDetailFootTrafficCardBodyErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+}
+
+.exploreSpaceDetailFootTrafficCardHeaderLabel .infoPopupContainer {
+  transform: translate(4px, -1px);
+  display: inline-block;
+}

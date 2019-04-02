@@ -17,11 +17,10 @@ export const ROUTE_TRANSITION_LIVE_SPACE_DETAIL = 'ROUTE_TRANSITION_LIVE_SPACE_D
 
 export default function routeTransitionLiveSpaceDetail(id) {
   return async dispatch => {
-    dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
-
     try {
-    const space = objectSnakeToCamel<DensitySpace>((await core().get(`/spaces/${id}`)).data);
+      const space = objectSnakeToCamel<DensitySpace>((await core().get(`/spaces/${id}`)).data);
       dispatch(collectionSpacesPush(space));
+      dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
       dispatch(collectionSpacesSetDefaultTimeRange(space));
 
       // Fetch all initial events for the space that was loaded.

@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -40,7 +42,7 @@ function App({
   onShowImpersonate,
 }) {
   return (
-    <div className="app">
+    <div className={styles.app}>
       {/* Impersonation modal */}
       {activeModal.name === 'MODAL_IMPERSONATE' ? <ImpersonateModal /> : null}
 

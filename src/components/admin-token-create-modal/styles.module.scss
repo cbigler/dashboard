@@ -1,0 +1,16 @@
+// Radio button group for selecting token type
+.tokenCreateTokenTypeRadioGroup {
+  display: flex;
+  margin-bottom: 20px;
+}
+.tokenCreateTokenTypeRadioItem {
+  margin-right: 32px;
+  user-select: none;
+}
+
+.tokenCreateDescriptionField {
+  resize: none;
+  height: 5em;
+}
+
+.tokenCreate { padding: 24px; }

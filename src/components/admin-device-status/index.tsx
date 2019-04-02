@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
@@ -31,8 +33,8 @@ export function AdminDeviceStatus({
     return 0;
   });
   return <AppScrollView>
-    <div className="admin-device-list">
-      <ListView data={sortedSensors}>
+    <div className={styles.adminDeviceList}>
+      <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
           title="Serial Number"
           template={item => <strong>{item.serialNumber}</strong>} />
@@ -44,7 +46,7 @@ export function AdminDeviceStatus({
         <ListViewColumn
           title="Last Heartbeat"
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
-        <ListViewColumn style={{flexGrow: 1}} />
+        <ListViewColumn flexGrow={1} />
         <ListViewColumn
           title="Doorway"
           template={item => item.doorwayName} />

@@ -1,0 +1,65 @@
+@import "@density/ui/variables/colors.scss";
+
+.inputStackItemInput {
+  width: calc(100% - 42px);
+  height: 28px;
+  padding: 20px;
+  border-radius: 5px;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+.inputStackItemContainer {
+  z-index: 1;
+  width: calc(100% - 2px);
+  position: relative;
+  margin-top: -1px;
+  margin-bottom: 0px;
+  border: 1px solid #CBCFD6;
+  background-color: #FFFFFF;
+}
+
+.inputStackItemContainer::before {
+  z-index: 2;
+  position: absolute;
+  display: block;
+  content: ' ';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #CBCFD6;
+  right: 30px;
+  top: 29px;
+  box-shadow: 0px 0px 5px 13px rgba(255,255,255,1);
+}
+
+// TODO: remove this once integrated with Density UI
+.inputStackItemContainer::after {
+  display: none !important;
+}
+
+.inputStackItemContainer.inputstackItemValid::before {
+  background-color: $brandPrimary;
+}
+
+.inputStackItemContainer.inputStackItemError::before {
+  background-color: $brandDanger;
+}
+
+.inputStackItemContainer.inputStackItemOendingValid {
+  z-index: 2;
+  border-color: $brandPrimary;
+}
+
+.inputStackItemContainer.inputStackItemPendingError {
+  z-index: 2;
+  border-color: $brandDanger;
+}
+
+.inputStackItemContainer:first-child {
+  border-radius: 5px 5px 0px 0px;
+  margin-top: 0px;
+}
+
+.inputStackItemContainer:last-child { border-radius: 0px 0px 5px 5px; }

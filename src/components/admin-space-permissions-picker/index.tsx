@@ -1,7 +1,10 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
+import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
 import colorVariables from '@density/ui/variables/colors.json';
+import Skeleton from '../skeleton/index';
+
+import styles from './styles.module.scss';
 
 import {
   InputBox,
@@ -12,12 +15,9 @@ import {
   Icons,
 } from '@density/ui';
 
-import { getChildrenOfSpace, getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
+import { getChildrenOfSpace, getParentsOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
+import deduplicate from '../../helpers/deduplicate';
 import fuzzy from 'fuzzy';
-
-function deduplicate(array) {
-  return [ ...(new Set(array) as any) ];
-}
 
 function searchHierarchy(hierarchy, spaces: Array<{id: string, name: string}>, searchQuery: string) {
   let ids: Array<string> = [];
@@ -45,45 +45,71 @@ function searchHierarchy(hierarchy, spaces: Array<{id: string, name: string}>, s
   return hierarchy.filter(h => ids.includes(h.space.id));
 }
 
-export default class AdminSpacePermissionsPicker extends Component<any, any> {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      enabled: false,
-      searchQuery: '',
-
-      selectedSpaceIds: props.initialSelectedSpaceIds,
-    };
+type AdminSpacePermissionsPickerProps = {
+  height?: number,
+  disabled?: boolean,
+  spaces: {
+    loading: boolean,
+    data: Array<any>,
+  },
+  spaceHierarchy: {
+    loading: boolean,
+    data: Array<any>,
   }
 
-  render() {
-    const { spaces } = this.props;
-    const { enabled, searchQuery, selectedSpaceIds } = this.state;
+  active: boolean,
+  onChangeActive: (boolean) => any,
 
-    let hierarchy = spaceHierarchyFormatter(spaces.data, {renderZeroItems: false});
+  selectedSpaceIds: Array<string>,
+  onChange: (any) => any,
+};
+
+export default class AdminSpacePermissionsPicker extends Component<AdminSpacePermissionsPickerProps, any> {
+  state = { searchQuery: '', };
+
+  render() {
+    const {
+      spaces,
+      spaceHierarchy,
+      selectedSpaceIds,
+      onChange,
+      active,
+      onChangeActive,
+      disabled = false,
+      height = undefined,
+    } = this.props;
+    const { searchQuery } = this.state;
+
+    let hierarchy = spaceHierarchyFormatterNew(spaceHierarchy.data);
     if (searchQuery.length > 0) {
       hierarchy = searchHierarchy(hierarchy, spaces.data, searchQuery);
     }
 
-    const hierarchySpaceIds = hierarchy.map(h => h.space.id);
-
-    const selectAllInDeselectState = hierarchySpaceIds.length > 0 && hierarchySpaceIds.every(h => selectedSpaceIds.includes(h));
+    const selectedIdsWithChildren = deduplicate(
+      selectedSpaceIds.reduce((acc, next) => {
+        const selectedSpace = spaces.data.find(x => x.id === next);
+        return [...acc, ...getChildrenOfSpace(spaces.data, selectedSpace)];
+      }, [] as string[])
+    );
+    const selectAllInDeselectState = spaces.data.length > 0 && spaces.data.every(s => {
+      return selectedIdsWithChildren.indexOf(s.id) > -1;
+    });
 
     return (
-      <div className="admin-space-permissions-picker">
+      <div className={styles.adminSpacePermissionsPicker} style={{height}}>
         <AppBar>
           <AppBarTitle>Space Permissions</AppBarTitle>
           <AppBarSection>
             <Switch
-              onChange={e => this.setState({enabled: e.target.checked})}
-              value={enabled}
+              value={active}
+              disabled={disabled}
+              onChange={e => onChangeActive(e.target.checked)}
             />
           </AppBarSection>
         </AppBar>
-        <div className="admin-space-permissions-picker-body">
+        <div className={styles.adminSpacePermissionsPickerBody}>
           <AppBar>
-            {enabled ? (
+            {active ? (
               <Fragment>
                 <AppBarSection>
                   <InputBox
@@ -98,16 +124,12 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
                   <AppBarSection>
                     <span
                       role="button"
-                      className="admin-space-permissions-select-all-link"
+                      className={styles.adminSpacePermissionsSelectAllLink}
                       onClick={() => {
                         if (selectAllInDeselectState) {
-                          this.setState({
-                            selectedSpaceIds: selectedSpaceIds.filter(s => !hierarchySpaceIds.includes(s))
-                          });
+                          onChange([]);
                         } else {
-                          this.setState({
-                            selectedSpaceIds: deduplicate([...selectedSpaceIds, ...hierarchySpaceIds]),
-                          });
+                          onChange(deduplicate([...selectedSpaceIds, ...spaces.data.map(x => x.id)]));
                         }
                       }}
                     >
@@ -122,75 +144,82 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
               </AppBarSection>
             )}
           </AppBar>
-          <ul className="admin-space-permissions-picker-scroll">
-            {spaces.loading ? (
+          <ul 
+            className={classnames(styles.adminSpacePermissionsPickerScroll, {
+              [styles.noOverflow]: typeof height === 'undefined',
+            })}
+          >
+            {(spaces.loading || spaceHierarchy.loading) ? (
               <AdminSpacePermissionsPickerListItemLabelSkeleton />
             ) : (
               <Fragment>
-                {hierarchy.map(item => (
-                  <div
+                {hierarchy.map(item => {
+                  const outsidePurview = !spaces.data.find(x => x.id === item.space.id);
+                  const parentSelected = isParentSelected(
+                    spaces.data,
+                    item.space.id,
+                    selectedSpaceIds
+                  );
+                  return <div
                     key={item.space.id}
-                    className={`admin-space-permissions-picker-list-item depth-${item.depth}`}
+                    className={classnames(
+                      styles.adminSpacePermissionsPickerListItem,
+                      styles[`depth${item.depth}`]
+                    )}
                     style={{marginLeft: item.depth * 24}}
                   >
                     <input
                       type="checkbox"
-                      disabled={!enabled}
-                      className="admin-space-permissions-picker-list-item-checkbox"
-                      checked={enabled ? selectedSpaceIds.includes(item.space.id) : true}
+                      disabled={!active || parentSelected || outsidePurview}
+                      checked={(!active && !outsidePurview) || parentSelected || selectedSpaceIds.includes(item.space.id)}
+                      className={classnames(styles.adminSpacePermissionsPickerListItemCheckbox, {
+                        [styles.active]: active
+                      })}
                       id={`admin-space-permissions-picker-space-${item.space.id}`}
                       onChange={e => {
                         if (e.target.checked) {
                           // When selecting a space:
                           // 1. Select the space itself
-                          // 2. Select all parents of the space
-                          // 2. Select all children of the space
-                          this.setState(s => ({
-                            selectedSpaceIds: deduplicate([
-                              ...s.selectedSpaceIds,
-
-                              item.space.id,
-                              ...getParentsOfSpace(spaces.data, item.space),
-                              ...getChildrenOfSpace(spaces.data, item.space),
-                            ]),
-                          }));
+                          // 2. Deselect all of its children
+                          onChange(selectedSpaceIds.filter(n => {
+                            return getChildrenOfSpace(spaces.data, item.space).indexOf(n) === -1;
+                          }).concat([item.space.id]));
                         } else {
                           // When deselecting a space:
                           // 1. Deselect the space itself
                           // 2. Deselect all of its children
-                          this.setState(s => ({
-                            selectedSpaceIds: s.selectedSpaceIds.filter(n => {
-                              return [
-                                item.space.id,
-                                ...getChildrenOfSpace(spaces.data, item.space),
-                              ].indexOf(n) === -1;
-                            }),
-                          }));
+                          onChange(
+                            selectedSpaceIds.filter(n => {
+                              return n !== item.space.id && 
+                                getChildrenOfSpace(spaces.data, item.space).indexOf(n) === -1;
+                            })
+                          );
                         }
                       }}
                     />
                     <label
-                      className="admin-space-permissions-picker-list-item-label"
+                      className={styles.adminSpacePermissionsPickerListItemLabel}
                       htmlFor={`admin-space-permissions-picker-space-${item.space.id}`}
                     >
                       {item.space.spaceType === 'building' ? (
-                        <span className="admin-space-permissions-picker-list-item-icon">
-                          <Icons.Building color={enabled ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                        <span className={styles.adminSpacePermissionsPickerListItemIcon}>
+                          <Icons.Building color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
                         </span>
                       ) : null}
                       {item.space.spaceType === 'floor' ? (
-                        <span className="admin-space-permissions-picker-list-item-icon">
-                          <Icons.Folder color={enabled ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                        <span className={styles.adminSpacePermissionsPickerListItemIcon}>
+                          <Icons.Folder color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
                         </span>
                       ) : null}
-                      <span className={classnames('admin-space-permissions-picker-list-item-name', {
-                        'bold': ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                      <span className={classnames(
+                        styles.adminSpacePermissionsPickerListItemName, {
+                        [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
                       })}>
                         {item.space.name}
                       </span>
                     </label>
-                  </div>
-                ))}
+                  </div>;
+                })}
               </Fragment>
             )}
           </ul>
@@ -203,38 +232,63 @@ export default class AdminSpacePermissionsPicker extends Component<any, any> {
 function AdminSpacePermissionsPickerListItemLabelSkeleton() {
   return (
     <Fragment>
-      <div className="admin-space-permissions-picker-list-item depth-0">
-        <span className="admin-space-permissions-picker-list-item-label">
-          <div className="admin-space-permissions-picker-list-item-label-skeleton" />
+      <div className={classnames(styles.adminSpacePermissionsPickerListItem, styles.depth0)}>
+        <span className={styles.adminSpacePermissionsPickerListItemLabel}>
+          <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
+            <div style={{marginRight: 12, marginTop: 1}}>
+              <Skeleton width={16} height={16} color={colorVariables.gray} />
+            </div>
+            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+          </div>
         </span>
       </div>
-      <div className="admin-space-permissions-picker-list-item depth-0">
-        <span className="admin-space-permissions-picker-list-item-label">
-          <div className="admin-space-permissions-picker-list-item-label-skeleton" />
+      <div className={classnames(styles.adminSpacePermissionsPickerListItem, styles.depth0)}>
+        <span className={styles.adminSpacePermissionsPickerListItemLabel}>
+          <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
+            <div style={{marginRight: 12, marginTop: 1}}>
+              <Skeleton width={16} height={16} color={colorVariables.gray} />
+            </div>
+            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+          </div>
         </span>
       </div>
       <div
-        className="admin-space-permissions-picker-list-item depth-1"
+        className={classnames(styles.adminSpacePermissionsPickerListItem, styles.depth1)}
         style={{marginLeft: 24}}
       >
-        <span className="admin-space-permissions-picker-list-item-label">
-          <div className="admin-space-permissions-picker-list-item-label-skeleton" />
+        <span className={styles.adminSpacePermissionsPickerListItemLabel}>
+          <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
+            <div style={{marginRight: 12, marginTop: 1}}>
+              <Skeleton width={16} height={16} color={colorVariables.gray} />
+            </div>
+            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+          </div>
         </span>
       </div>
       <div
-        className="admin-space-permissions-picker-list-item depth-2"
+        className={classnames(styles.adminSpacePermissionsPickerListItem, styles.depth2)}
         style={{marginLeft: 48}}
       >
-        <span className="admin-space-permissions-picker-list-item-label">
-          <div className="admin-space-permissions-picker-list-item-label-skeleton" />
+        <span className={styles.adminSpacePermissionsPickerListItemLabel}>
+          <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
+            <div style={{marginRight: 12, marginTop: 1}}>
+              <Skeleton width={16} height={16} color={colorVariables.gray} />
+            </div>
+            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+          </div>
         </span>
       </div>
       <div
-        className="admin-space-permissions-picker-list-item depth-2"
+        className={classnames(styles.adminSpacePermissionsPickerListItem, styles.depth2)}
         style={{marginLeft: 48}}
       >
-        <span className="admin-space-permissions-picker-list-item-label">
-          <div className="admin-space-permissions-picker-list-item-label-skeleton" />
+        <span className={styles.adminSpacePermissionsPickerListItemLabel}>
+          <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
+            <div style={{marginRight: 12, marginTop: 1}}>
+              <Skeleton width={16} height={16} color={colorVariables.gray} />
+            </div>
+            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+          </div>
         </span>
       </div>
     </Fragment>

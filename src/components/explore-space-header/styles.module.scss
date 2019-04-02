@@ -1,0 +1,63 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+.exploreSpaceHeaderContainer {
+  // padding-top: 20px;
+}
+
+.exploreSpaceHeader {
+  margin: 0px auto;
+  padding-top: 0;
+  padding-bottom: 32px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.exploreSpaceHeaderRow {
+  margin-top: 10px;
+  display: flex;
+
+  // On mobile, render header in a vertical list.
+  // On desktop, render header items in a line horizontally.
+  flex-direction: column;
+  @media (min-width: $screenSmMin) {
+    flex-direction: row;
+  }
+}
+
+.exploreSpaceHeaderCapacity {
+  font-size: 16px;
+  font-weight: normal;
+  color: $grayCinder;
+}
+
+.exploreSpaceHeaderCapacitySetLink,
+.exploreSpaceHeaderCapacityUpdateLink {
+  text-decoration: underline;
+  cursor: pointer;
+  color: $brandPrimary;
+}
+
+.exploreSpaceHeaderTimeZone {
+  margin-top: 15px;
+
+  // On mobile, render header like other items in a left-aligned position.
+  // On desktop, render right aligned.
+  @media (min-width: $screenSmMin) {
+    margin-top: 0px;
+    margin-left: auto;
+  }
+}
+
+.exploreSpaceHeaderHierarchy {
+  margin-top: 30px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: normal;
+}
+
+.exploreSpaceHeaderHierarchyLevel {
+  margin-left: 4px;
+  margin-right: 4px;
+}
+.exploreSpaceHeaderHierarchyLevel:first-of-type { margin-left: 0px; }
+.exploreSpaceHeaderHierarchyLevel:last-of-type { margin-right: 0px; }

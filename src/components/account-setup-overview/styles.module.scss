@@ -1,0 +1,59 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.accountSetupOverviewContainer {
+  overflow-y: auto;
+}
+
+// This element is the smaller title that's visible above the card. It's roughly centered within the
+// card's width.
+.accountSetupOverviewTitle {
+  color: $grayCinder;
+
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+
+  font-size: $fontSize2;
+  font-weight: $fontWeight2;
+}
+
+// The main card, which shows a bunch of static content informing the user about the process they
+// are about to go through.
+.accountSetupOverviewBodyContainer {
+  max-width: 620px;
+  line-height: 2;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 100px;
+}
+.accountSetupOverviewBody {
+  margin-left: 20px;
+  margin-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+.accountSetupOverviewBodyList { padding-left: 20px; }
+
+// The submit button, which moves to the next page of the process.
+.accountSetupOverviewSubmit {
+  margin-top: 20px;
+}
+
+.accountSetupOverviewGlyph {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+// When loading, report status messages in the center of the screen.
+.accountSetupOverviewLoading {
+  text-align: center;
+  margin-top: 100px;
+  font-size: $fontSize3;
+}

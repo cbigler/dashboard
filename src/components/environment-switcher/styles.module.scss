@@ -1,0 +1,39 @@
+@import "@density/ui/variables/colors.scss";
+
+.environmentSwitcher {
+  overflow: visible !important; /* without this style, the last selectbox is chopped off */
+}
+
+.environmentSwitcherItems {
+  list-style-type: none;
+  padding-left: 0px;
+}
+.environmentSwitcherItem {
+  padding-bottom: 32px;
+}
+.environmentSwitcherInput {
+  width: 100%;
+}
+:global(.card-modal) .environmentSwitcherDesc {
+  padding-bottom: 0px;
+}
+
+.environmentswitcherNonProductionRelease {
+  position: absolute;
+  top: 0px;
+  left: calc(50% - 50px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+
+  background-color: $brandDanger;
+  color: #fff;
+  padding: 10px;
+  font-size: 16px;
+
+  z-index: 1000;
+  width: 100px;
+  height: 20px;
+}

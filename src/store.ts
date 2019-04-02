@@ -12,6 +12,7 @@ import doorways from './reducers/doorways/index';
 import links from './reducers/links/index';
 import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
+import spaceHierarchy from './reducers/space-hierarchy/index';
 import tokens from './reducers/tokens/index';
 import user from './reducers/user/index';
 import impersonate from './reducers/impersonate/index';
@@ -36,6 +37,7 @@ const reducer = combineReducers({
   links,
   sessionToken,
   spaces,
+  spaceHierarchy,
   tokens,
   sensors,
   user,

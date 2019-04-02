@@ -1,17 +1,9 @@
 /*
  * Density Dashboard styles
  *
- * This is the master stylesheet for the Density dashboard, and pulls in styles for a css reset, all
- * of the user interface components from Density UI, global style variables, charts styles and all
- * the component styles from all the components inside of src/components in this project.
- *
- * NB: When reading through the imports, you'll probably notice that some of them are pointing to
- * json files, not other sass files! What's up with that? Well, we're using this sass plugin called
- * node-sass-json-importer (https://github.com/DensityCo/node-sass-json-importer) that allows json
- * files to be imported and their keys used as sass variables. If might seem a bit strange, but
- * abstracting variables out into json like this means that variables can be accessed from both
- * javascript and from sass (webpack/node's `require` function can also accept the path to a json
- * file)
+ * This is the master stylesheet for the Density dashboard. It pulls in styles for a css reset, and
+ * any global styles we want in the project. All other css files are component-scoped with css
+ * modules.
  *
  */
 
@@ -19,133 +11,24 @@
 @import "reset";
 
 // Global variables like colors, spacings, etc...
-@import "../node_modules/@density/ui/variables/colors.json";
-@import "../node_modules/@density/ui/variables/spacing.json";
-@import "../node_modules/@density/ui/variables/fonts.json";
-@import "../node_modules/@density/ui/variables/timings.json";
-@import "../node_modules/@density/ui/variables/grid.json";
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
 
 body {
-  font-family: $font-base;
+  font-family: $fontBase;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/**
- * Calculate column size percentage
- */
-@function get-col-percent($column-num) {
-  @return $column-num / $fg-columns * 100%;
+input {
+  box-shadow: none;
 }
-
-@mixin grid-container {
-  margin-left: -1 * $fg-gutter;
-  margin-right: -1 * $fg-gutter;
-  box-sizing: border-box;
-
-  max-width: 1000px;
-  margin: 20px auto;
-  padding-left: 10px;
-  padding-right: 10px;
-}
-
-@mixin grid-row {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-}
-
-.row {
-  @include grid-row;
-}
-
-@mixin grid-column {
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 0;
-  flex-shrink: 0;
-  min-height: 1px;
-  padding-left: $fg-gutter;
-  padding-right: $fg-gutter;
-}
-
-@mixin grid-width($xs, $sm, $md, $lg) {
-  @include grid-column;
-
-  flex-basis: get-col-percent($xs);
-  max-width: get-col-percent($xs);
-
-  @media (min-width: $screen-sm-min) {
-    flex-basis: get-col-percent($sm);
-    max-width: get-col-percent($sm);
-  }
-  @media (min-width: $screen-md-min) {
-    flex-basis: get-col-percent($md);
-    max-width: get-col-percent($md);
-  }
-  @media (min-width: $screen-lg-min) {
-    flex-basis: get-col-percent($lg);
-    max-width: get-col-percent($lg);
-  }
-}
-
-// TODO: @density/ui Modal styles are needed inline here
-@mixin make-modal($width: 460px) {
-  position: relative;
-  margin: 20px auto;
-
-  // Ensure that the width of the modal is either $width or 100%.
-  width: $width;
-  @media (max-width: $width) {
-    width: 100%;
-    height: 100vh;
-  }
-
-  & > :last-child {
-    width: 100%;
-    height: 100%;
-  }
-}
-
-@mixin make-modal-backdrop($background: $gray-darker) {
-  background-color: rgba(0, 0, 0, 0.5);
-
-  z-index: 1000;
-
-  position: fixed;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-
-  overflow-y: auto;
-}
-
-@mixin make-modal-close($color: $gray, $spacing: 15px) {
-  position: absolute;
-  top: $spacing;
-  right: $spacing;
-
-  font-family: $font-base;
-  font-size: $font-size-base;
-  font-weight: bold;
-
-  color: $color;
-  cursor: pointer;
-  user-select: none;
-}
-
-.modal { @include make-modal; }
-.modal-backdrop { @include make-modal-backdrop; }
-.modal-close { @include make-modal-close; }
-
 
 * {
-  font-family: $font-base;
+  font-family: $fontBase;
 }
 
-// TODO: Should these be ported into Density UI?
 input[type="text"],
 input[type="textarea"],
 input[type="password"],
@@ -162,23 +45,23 @@ html {
 }
 
 a {
-  color: $brand-primary-new;
+  color: $brandPrimary;
 }
 
 p {
-  font-size: $font-size-base;
-  font-weight: $font-weight-base;
-  line-height: $line-height-base;
+  font-size: $fontSizeBase;
+  font-weight: $fontWeightBase;
+  line-height: $lineHeightBase;
   margin-top: 0px;
   margin-bottom: 0px;
 }
 pre {
-  line-height: $line-height-base;
+  line-height: $lineHeightBase;
 }
 
 // globally override chrome's terrible autofill background color
 input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 100px white inset !important;
+  -webkit-box-shadow: 0 0 0 100px white inset !important;
 }
 
 // Change autofill color in chrome to be white.
@@ -204,75 +87,3 @@ $cdn-path: "https://densityco.github.io/assets";
 @import "../node_modules/@density/chart-historical-counts/dist/sass";
 @import "../node_modules/@density/chart-real-time-count/dist/sass";
 @import "../node_modules/@density/chart-daily-metrics/dist/sass";
-
-// Component styles are included below for each component in the src/components folder.
-@import "./components/app/styles";
-@import "./components/app-navbar/styles";
-@import "./components/app-bar-subnav/styles";
-@import "./components/admin/styles";
-@import "./components/admin-user-management/styles";
-@import "./components/admin-developer/styles";
-@import "./components/admin-device-status/styles";
-@import "./components/space-count/styles";
-@import "./components/unknown-page/styles";
-@import "./components/login/styles";
-@import "./components/live-space-list/styles";
-@import "./components/modal-header-action-button/styles";
-@import "./components/account/styles";
-@import "./components/admin-integrations-robin-create-modal/styles";
-@import "./components/admin-integrations-robin-update-modal/styles";
-@import "./components/admin-token-create-modal/styles";
-@import "./components/admin-token-update-modal/styles";
-@import "./components/admin-webhook-create-modal/styles";
-@import "./components/admin-webhook-update-modal/styles";
-@import "./components/account-registration/styles";
-@import "./components/live-space-card/styles";
-@import "./components/subnav/styles";
-@import "./components/account-forgot-password/styles";
-@import "./components/icons/styles";
-@import "./components/form-label/styles";
-@import "./components/loading-spinner/styles";
-@import "./components/error-bar/styles";
-@import "./components/environment-switcher/styles";
-@import "./components/explore-space-detail-foot-traffic-card/styles";
-@import "./components/explore-space-detail-daily-metrics-card/styles";
-@import "./components/explore-space-detail-raw-events-card/styles";
-@import "./components/explore-edit-count-modal/styles";
-@import "./components/explore-space-detail-raw-events-pager/styles";
-@import "./components/account-setup-overview/styles";
-@import "./components/account-setup-header/styles";
-@import "./components/account-setup-doorway-list/styles";
-@import "./components/account-setup-doorway-detail/styles";
-@import "./components/account-setup-doorway-detail-image-upload/styles";
-@import "./components/image-retry/styles";
-@import "./components/input-stack/styles";
-@import "./components/live-space-detail/styles";
-@import "./components/explore/styles";
-@import "./components/explore-space-detail-utilization-card/styles";
-@import "./components/sortable-grid-header/styles";
-@import "./components/explore-set-capacity-modal/styles";
-@import "./components/space-hierarchy-select-box/styles";
-@import "./components/explore-space-trends/styles";
-@import "./components/explore-filter-bar/styles";
-@import "./components/explore-space-header/styles";
-@import "./components/explore-space-daily/styles";
-@import "./components/explore-space-detail-hourly-breakdown-card/styles";
-@import "./components/explore-space-data-export/styles";
-@import "./components/explore-space-detail-raw-events-export-card/styles";
-@import "./components/dashboard/styles";
-@import "./components/admin-integrations/styles";
-@import "./components/report/styles";
-@import "./components/dashboards-list/styles";
-@import "./components/dashboard-digest-popup-list/styles";
-@import "./components/dashboard-digest-management-modal/styles";
-@import "./components/modal/styles";
-@import "./components/toast/styles";
-@import "./components/toaster/styles";
-@import "./components/list-view/styles";
-@import "./components/dialogger/styles";
-@import "./components/admin-space-permissions-picker/styles";
-@import "./components/admin-user-management-detail/styles";
-@import "./components/admin-user-management-role-radio-list/styles";
-@import "./components/generic-error-state/styles";
-@import "./components/impersonate-modal/styles";
-@import "./components/explore-space-meetings/styles";

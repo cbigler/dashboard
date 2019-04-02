@@ -2,41 +2,35 @@ import React from 'react';
 import classnames from 'classnames';
 
 import { Icons } from '@density/ui';
+import styles from './styles.module.scss';
 
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
+import { spaceHierarchyFormatter } from '../../helpers/space-hierarchy-formatter/index';
 
 export default class SpaceHierarchySelectBox extends React.Component<any, any> {
-  onMenuFocus: any;
-  onMenuBlur: any;
-  onMenuItemSelected: any;
   selectBoxValueRef: any;
 
-  constructor(props) {
-    super(props);
+  state = {
+    opened: false,
+  };
 
-    this.state = {
-      opened: false,
-    };
+  // Called when the user focuses either the value or an item in the menu part of the box.
+  onMenuFocus = () => {
+    this.setState({opened: true});
+  };
 
-    // Called when the user focuses either the value or an item in the menu part of the box.
-    this.onMenuFocus = () => {
-      this.setState({opened: true});
-    };
+  // Called when the user blurs either the value or an item in the menu part of the box.
+  onMenuBlur = () => {
+    this.setState({opened: false});
+  };
 
-    // Called when the user blurs either the value or an item in the menu part of the box.
-    this.onMenuBlur = () => {
-      this.setState({opened: false});
-    };
-
-    // Called when the user selects an item within the menu of the select box.
-    this.onMenuItemSelected = choice => {
-      this.setState({opened: false}, () => {
-        if (this.props.onChange) {
-          const isDefault = String(choice.id).toLowerCase() === 'default';
-          this.props.onChange(isDefault ? null : choice);
-        }
-      });
-    }
+  // Called when the user selects an item within the menu of the select box.
+  onMenuItemSelected = choice => {
+    this.setState({opened: false}, () => {
+      if (this.props.onChange) {
+        const isDefault = String(choice.id).toLowerCase() === 'default';
+        this.props.onChange(isDefault ? null : choice);
+      }
+    });
   }
 
   render() {
@@ -48,11 +42,11 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
       choice: n.space,
     }));
 
-    return <div className="space-hierarchy-select-box">
+    return <div className={styles.spaceHierarchySelectBox}>
       <div
         id={id}
         ref={r => { this.selectBoxValueRef = r; }}
-        className={classnames(`space-hierarchy-select-box-value`, {disabled, opened})}
+        className={classnames(styles.spaceHierarchySelectBoxValue, {[styles.disabled]: disabled, [styles.opened]: opened})}
         tabIndex={disabled ? -1 : 0}
         aria-expanded={opened}
         aria-autocomplete="list"
@@ -78,21 +72,21 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
       >
         {value ? <span>
           {value.name}
-          <span className="space-hierarchy-select-box-item-highlight">
+          <span className={styles.spaceHierarchySelectBoxItemHighlight}>
             {value.spaceType ? `${value.spaceType[0].toUpperCase()}${value.spaceType.slice(1)}` : ''}
           </span>
         </span> : <span>
           All spaces
-          <span className="space-hierarchy-select-box-item-highlight">Default</span>
+          <span className={styles.spaceHierarchySelectBoxItemHighlight}>Default</span>
         </span>}
-        <div className="input-box-caret">
+        <div className={styles.inputBoxCaret}>
           <Icons.ChevronDown color="primary" width={12} height={12} />
         </div>
       </div>
 
       <div
         role="listbox"
-        className={classnames('space-hierarchy-select-box-menu', {opened})}
+        className={classnames(styles.spaceHierarchySelectBoxMenu, {[styles.opened]: opened})}
       >
         <ul>
           {[
@@ -111,9 +105,9 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
               id={`input-box-select-${String(choice.id).replace(' ', '-')}`}
               role="option"
               style={{paddingLeft: 15 + depth * 10}}
-              className={classnames('space-hierarchy-select-box-menu-item', {
-                disabled: choice.disabled,
-                enabled: !choice.disabled
+              className={classnames(styles.spaceHierarchySelectBoxMenuItem, {
+                [styles.disabled]: choice.disabled,
+                [styles.enabled]: !choice.disabled
               })}
               tabIndex={!choice.disabled && opened ? 0 : -1}
               aria-selected={value && value.id === choice.id}
@@ -138,8 +132,8 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
                 if (!choice.disabled) { this.onMenuItemSelected(choice); }
               }}
             >
-              <span className="space-hierarchy-select-box-item-name">{choice.name}</span>
-              <span className="space-hierarchy-select-box-item-highlight">
+              <span className={styles.spaceHierarchySelectBoxItemName}>{choice.name}</span>
+              <span className={styles.spaceHierarchySelectBoxItemHighlight}>
                 {(() => {
                   if (choice.disabled) {
                     return '(0)';

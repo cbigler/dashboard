@@ -1,0 +1,30 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.explorespaceDetailHourlyBreakdownContainer {
+  border: 1px solid $grayLight;
+  border-radius: $borderRadiusBase;
+}
+
+// Horizontally and vertically center errors and info messages in the hourly breakdown chart
+.exploreSpaceDetailHourlyBreakdownCardBodyInfo,
+.exploreSpaceDetailHourlyBreakdownCardBodyError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 405px;
+  margin-left: 20px;
+  margin-right: 10px;
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.exploreSpaceDetailHourlyBreakdownCardBodyErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+}

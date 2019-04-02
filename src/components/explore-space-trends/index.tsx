@@ -29,6 +29,7 @@ import ErrorBar from '../error-bar/index';
 import DailyMetricsCard from '../explore-space-detail-daily-metrics-card/index';
 import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/index';
 
+import styles from './styles.module.scss';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
@@ -110,13 +111,13 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
       const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
-      return <div className="explore-space-trends-page" ref={r => { this.container = r; }}>
+      return <div className={styles.exploreSpaceTrendsPage} ref={r => { this.container = r; }}>
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <ExploreFilterBar>
             <ExploreFilterBarItem label="Time Segment">
               <InputBox
                 type="select"
-                className="explore-space-trends-time-segment-box"
+                className={styles.exploreSpaceTrendsTimeSegmentBox}
                 value={selectedTimeSegmentGroup.id}
                 choices={spaceTimeSegmentGroupArray.map(ts => {
                   const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
@@ -217,9 +218,9 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
 
         {spaces.filters.startDate && spaces.filters.endDate ? (
-          <div className="explore-space-trends-container" >
-            <div className="explore-space-trends" ref={r => { this.container = r; }}>
-              <div className="explore-space-trends-item">
+          <div className={styles.exploreSpaceTrendsContainer} >
+            <div className={styles.exploreSpaceTrends} ref={r => { this.container = r; }}>
+              <div className={styles.exploreSpaceTrendsItem}>
                 <DailyMetricsCard
                   space={space}
                   startDate={spaces.filters.startDate}
@@ -228,7 +229,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   chartWidth={this.state.width}
                 />
               </div>
-              <div className="explore-space-trends-item">
+              <div className={styles.exploreSpaceTrendsItem}>
                 <HourlyBreakdownCard 
                   space={space}
                   startDate={spaces.filters.startDate}
@@ -238,7 +239,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   aggregation="NONE"
                 />
               </div>
-              <div className="explore-space-trends-item">
+              <div className={styles.exploreSpaceTrendsItem}>
                 <HourlyBreakdownCard 
                   space={space}
                   startDate={spaces.filters.startDate}
@@ -248,7 +249,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   aggregation="AVERAGE"
                 />
               </div>
-              <div className="explore-space-trends-item">
+              <div className={styles.exploreSpaceTrendsItem}>
                 <UtilizationCard
                   space={space}
                   startDate={spaces.filters.startDate}

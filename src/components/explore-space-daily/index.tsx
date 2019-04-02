@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -75,7 +77,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
         space,
       );
 
-      return <div className="explore-space-daily-page" ref={r => { this.container = r; }}>
+      return <div className={styles.exploreSpaceDailyPage} ref={r => { this.container = r; }}>
         <ExploreFilterBar>
           <ExploreFilterBarItem label="Day">
             <DatePicker
@@ -98,7 +100,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
           <ExploreFilterBarItem label="Time Segment">
             <InputBox
               type="select"
-              className="explore-space-daily-time-segment-box"
+              className={styles.exploreSpaceDailyTimeSegmentBox}
               value={selectedTimeSegmentGroup.id}
               choices={spaceTimeSegmentGroupArray.map(ts => {
                 const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
@@ -140,9 +142,9 @@ class ExploreSpaceDaily extends React.Component<any, any> {
 
         <ExploreSpaceHeader />
 
-        <div className="explore-space-daily-container">
-          <div className="explore-space-daily">
-            <div className="explore-space-daily-item">
+        <div className={styles.exploreSpaceDailyContainer}>
+          <div className={styles.exploreSpaceDaily}>
+            <div className={styles.exploreSpaceDailyItem}>
               <FootTrafficCard
                 space={space}
                 date={spaces.filters.date}
@@ -151,7 +153,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
                 chartWidth={this.state.width}
               />
             </div>
-            <div className="explore-space-daily-item">
+            <div className={styles.exploreSpaceDailyItem}>
               <RawEventsCard
                 space={space}
                 date={spaces.filters.date}

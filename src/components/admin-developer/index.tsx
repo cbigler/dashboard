@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
 
@@ -11,8 +13,7 @@ import {
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import Dialogger from '../dialogger';
-import ListView, { ListViewColumn, LIST_CLICKABLE_STYLE } from '../list-view';
+import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 import TokenCreateModal from '../admin-token-create-modal';
 import TokenUpdateModal from '../admin-token-update-modal';
 import WebhookCreateModal from '../admin-webhook-create-modal';
@@ -37,7 +38,7 @@ const PERMISSION_TEXT = {
 
 export function TokenKeyHider ({value, onCopyToken}) {
   const [hidden, setHidden] = useState(true);
-  return <span className="admin-developer-listview-value">
+  return <span className={styles.adminDeveloperListviewValue}>
     <span
       onClick={() => onCopyToken(value)}
       style={{
@@ -127,37 +128,37 @@ export function AdminDeveloper({
     </AppBar>
 
     <AppScrollView>
-      <div className="admin-developer-token-list">
-        <div className="admin-developer-section-header">Tokens</div>
+      <div className={styles.adminDeveloperTokenList}>
+        <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>
           <ListViewColumn title="Name" template={item => (
-            <strong className="admin-developer-listview-value">{item.name}</strong>
+            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
           )} />
           <ListViewColumn title="Permissions" template={item => (
-            <span className="admin-developer-listview-value">{PERMISSION_TEXT[item.tokenType]}</span>
+            <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
           )} />
           <ListViewColumn title="Token" template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />} />
-          <ListViewColumn style={{flexGrow: 1}} />
+          <ListViewColumn flexGrow={1} />
           <ListViewColumn
-            template={item => <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
+            template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: false})} />
           <ListViewColumn
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: true})} />
         </ListView>
       </div>
-      <div className="admin-developer-webhook-list">
-        <div className="admin-developer-section-header">Webhooks</div>
+      <div className={styles.adminDeveloperWebhookList}>
+        <div className={styles.adminDeveloperSectionHeader}>Webhooks</div>
         <ListView data={webhooks.data}>
           <ListViewColumn title="Name" template={item => (
-            <strong className="admin-developer-listview-value">{item.name}</strong>
+            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
           )} />
           <ListViewColumn title="Payload URL" template={item => (
-            <span className="admin-developer-listview-value">{item.endpoint}</span>
+            <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
           )} />
-          <ListViewColumn style={{flexGrow: 1}} />
+          <ListViewColumn flexGrow={1} />
           <ListViewColumn
-            template={item => <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
+            template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: false})} />
           <ListViewColumn
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}

@@ -1,4 +1,5 @@
-import * as React from 'react';
+import React from 'react';
+import styles from './styles.module.scss';
 
 
 // Display modes
@@ -52,9 +53,9 @@ export default class ImageRetry extends React.Component<any, any> {
         onLoad={this.setProportions.bind(this)}
       />;
     } else if (this.state.mode === LOADING) {
-      return this.props.loadingContent || <div className="image-retry-loading"></div>;
+      return this.props.loadingContent || <div className={styles.imageRetryLoading}></div>;
     } else {
-      return this.props.fallbackContent || <div className="image-retry-fallback"></div>;
+      return this.props.fallbackContent || <div className={styles.imageRetryFallback}></div>;
     }
   }
 }

@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 // All the possible states that this component can be rendered in.
@@ -56,16 +58,16 @@ export default class AccountSetupDoorwayDetailImageUpload extends React.Componen
   }
 
   render() {
-    return <div className="account-setup-doorway-detail-image-upload-container">
-      <div className="account-setup-doorway-detail-image-upload-header">
-        <span className="account-setup-doorway-detail-image-upload-header-label">{this.props.label}</span>
+    return <div className={styles.accountSetupDoorwayDetailImageUploadContainer}>
+      <div className={styles.accountSetupDoorwayDetailImageUploadHeader}>
+        <span className={styles.accountSetupDoorwayDetailImageUploadHeaderLabel}>{this.props.label}</span>
         {this.state.view === UPLOADED ? <span
-          className="account-setup-doorway-detail-image-upload-header-edit"
+          className={styles.accountSetupDoorwayDetailImageUploadHeaderEdit}
           onClick={() => this.fileinput.click()}
         >Edit</span> : null}
       </div>
       <div
-        className="account-setup-doorway-detail-image-upload"
+        className={styles.accountSetupDoorwayDetailImageUpload}
         style={{
           borderWidth: this.state.view === UPLOADED ? 0 : 2,
           height: this.state.view === UPLOADED ? 196 : 192
@@ -75,7 +77,7 @@ export default class AccountSetupDoorwayDetailImageUpload extends React.Componen
         {/* This input[type=file] is hidden. It's "clicked" when its parent is clicked. */}
         <input
           type="file"
-          className="account-setup-doorway-detail-form-element"
+          className={styles.accountSetupDoorwayDetailFormElement}
           ref={ref => { this.fileinput = ref; }}
           onChange={() => this.fileUploaded.call(this, this.fileinput.files)}
         />
@@ -83,18 +85,18 @@ export default class AccountSetupDoorwayDetailImageUpload extends React.Componen
         {/* Render empty state of image picker */}
         {
           this.state.view !== UPLOADED ?
-          <span className="account-setup-doorway-detail-image-upload-icon empty">&#xe942;</span> :
+          <span className={`${styles.accountSetupDoorwayDetailImageUploadIcon} empty`}>&#xe942;</span> :
           null
         }
         {
           this.state.view !== UPLOADED ?
-          <span className="account-setup-doorway-detail-image-upload-link">Take a picture or upload file</span> :
+          <span className={styles.accountSetupDoorwayDetailImageUploadLink}>Take a picture or upload file</span> :
           null
         }
 
         {/* Render full state of image picker */}
         {this.state.view === UPLOADED ? <img
-          className="account-setup-doorway-detail-image-upload-preview"
+          className={styles.accountSetupDoorwayDetailImageUploadPreview}
           src={this.props.value}
           alt=""
         /> : null}

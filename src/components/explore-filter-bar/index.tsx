@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 
@@ -31,16 +33,16 @@ export default class ExploreFilterBar extends Component {
 
 
     const bar = (
-      <ul className="explore-filter-bar-items">
+      <ul className={styles.exploreFilterBarItems}>
         {children}
       </ul>
     );
 
     return <div>
-      <div className="explore-filter-bar-tracker" ref={r => { this.tracker = r; }} />
+      <div className={styles.exploreFilterBarTracker} ref={r => { this.tracker = r; }} />
 
       <div
-        className={classnames('explore-filter-bar', {fixed: isFixed})}
+        className={classnames(styles.exploreFilterBar, {[styles.fixed]: isFixed})}
         ref={r => { this.filterBar = r; }}
       >{bar}</div>
 
@@ -50,7 +52,7 @@ export default class ExploreFilterBar extends Component {
       removed.
       */}
       {isFixed ? <div
-        className="explore-filter-bar-height-spacer"
+        className={styles.exploreFilterBarHeightSpacer}
         style={{height: this.filterBar.getBoundingClientRect().height}}
       /> : null}
     </div>;
@@ -64,8 +66,8 @@ interface ExploreFilterBarItemProps {
 }
 
 export function ExploreFilterBarItem({label, right, children}: ExploreFilterBarItemProps) {
-  return <li className={classnames('explore-filter-bar-item', {right})}>
-    <label className="explore-filter-bar-item-label">{label}</label>
+  return <li className={classnames(styles.exploreFilterBarItem, {[styles.right]: right})}>
+    <label className={styles.exploreFilterBarItemLabel}>{label}</label>
     {children}
   </li>;
 }

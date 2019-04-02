@@ -1,0 +1,9 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+.skeleton {
+  display: inline-block;
+  width: 100%;
+  height: 8px;
+  border-radius: $borderRadiusSmall;
+  background-color: $grayDarker;
+}

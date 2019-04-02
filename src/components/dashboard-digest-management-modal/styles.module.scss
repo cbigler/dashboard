@@ -1,0 +1,266 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+$dashboardDigestManagementModalAppBarHeight: 64px;
+
+.dashboardDigestManagementModal {
+  width: 100%;
+  max-width: 895px;
+  height: 636px;
+}
+
+.dashboardDigestManagementModalSplitContainer {
+  display: flex;
+  /* NOTE: there are two app bars, one at the top and one at the bottom */
+  height: calc(100% - (2 * (#{$dashboardDigestManagementModalAppBarHeight} + 1px /* border*/)));
+}
+.dashboardDigestManagementModalSplit.left {
+  width: 45%;
+  border-right: 1px solid $grayLight;
+}
+.dashboardDigestManagementModalSplit.right {
+  width: 55%;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboardDigestManagementModalFooterCancel {
+  margin-right: 24px;
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  user-select: none;
+}
+.dashboardDigestManagementModalFooterCancel:hover { opacity: 0.9; }
+.dashboardDigestManagementModalFooterCancel:active { opacity: 1; }
+
+
+
+.digestManagementForm { padding: 24px; }
+.digestManagementFormGroup { margin-bottom: 32px; }
+.digestManagementFormGroup label {
+  display: block;
+  margin-bottom: 8px;
+}
+.digestManagementFormGroupContainer {
+  display: flex;
+  align-items: center;
+}
+.digestManagementFormGroupDayList {
+  display: flex;
+  margin-left: 16px;
+}
+.digestManagementFormGroupDayItem {
+  margin-left: 3px;
+  margin-right: 3px;
+}
+.digestManagementFormGroupDayStatus {
+  margin-left: 16px;
+  color: $grayDarker;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.digestManagementFormGroupTimeZoneField { margin-top: 8px; }
+
+
+
+.digestManagementRecipientList {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow-y: auto;
+}
+
+.digestManagementRecipientListAppBar {
+  display: flex;
+  align-items: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  font-size: 16px;
+  height: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: $grayLightest;
+  border-bottom: 1px solid $grayLight;
+}
+
+.digestManagementRecipientListTitle {
+  white-space: nowrap;
+  margin-right: 16px;
+}
+
+.digestManagementRecipientListItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: 24px;
+  margin-right: 24px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+.digestManagementRecipientListItemName {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  & > span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 250px;
+  }
+}
+.digestManagementRecipientListItemName.checked { color: $brandPrimary; }
+.digestManagementRecipientListItemNamePlaceholder {
+  background-color: $gray;
+  border-radius: 4px;
+  width: 170px;
+  height: 16px;
+}
+.digestManagementRecipientListItemCheckboxPlaceholder {
+  background-color: $gray;
+  border-radius: 2px;
+  width: 24px;
+  height: 24px;
+  margin-left: auto;
+}
+
+
+.digestManagementRecipientListEmptyState {
+  display: flex;
+  align-items: center;
+  height: 400px;
+  margin-left: 88px;
+  margin-right: 88px;
+  line-height: 24px;
+}
+.digestManagementRecipientListEmptyStateInner {
+  display: flex;
+  flex-direction: column;
+}
+.digestManagementRecipientListEmptyStateTitle {
+  font-size: 24px;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.digestManagementRecipientListEmptyStateDesc { font-size: 16px; }
+
+
+.digestManagementRecipientListSearchBox {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 40px;
+  border: 1px solid $grayDark;
+  border-radius: 2px;
+  background-color: #fff;
+  padding-left: 16px;
+  padding-right: 16px;
+  cursor: text;
+}
+.digestManagementRecipientListSearchBox.focused { border-color: $brandPrimary; }
+.digestManagementRecipientListSearchBox input {
+  border: 0px;
+  background-color: transparent;
+  height: 40px;
+  margin-left: 16px;
+  outline: none;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.digestManagementRecipientListInputBox {
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+  height: 40px;
+  border: 1px solid $grayDark;
+  border-radius: 2px;
+  background-color: #fff;
+  cursor: text;
+  box-sizing: border-box;
+}
+.digestManagementRecipientListInputBox.focused { border-color: $brandPrimary; }
+.digestManagementRecipientListInputBox input {
+  border: 0px;
+  background-color: transparent;
+  height: 40px;
+  margin-left: 16px;
+  outline: none;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+
+.digestManagementRecipientIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  background-color: $grayDarker;
+  color: #fff;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 11px;
+  margin-right: 12px;
+  user-select: none;
+}
+
+
+.digestManagementAddedNotAddedBox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+// The below checkbox styles should be read in the context of
+// https://stackoverflow.com/a/32876109/4115328
+.digestManagementAddedNotAddedBox input[type=checkbox] {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+.digestManagementAddedNotAddedBox label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+}
+
+.digestManagementAddedNotAddedBox .textLabel {
+  font-size: 14px;
+  font-weight: bold;
+  color: $grayDarker;
+  user-select: none;
+  margin-right: 8px;
+  white-space: nowrap;
+}
+.digestManagementAddedNotAddedBox.checked .textLabel { color: $brandPrimary; }
+
+.digestManagementAddedNotAddedBox .checkboxWell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background-color: #fff;
+  width: 24px;
+  height: 24px;
+  border-radius: $borderRadiusBase;
+  border: 1px solid $grayDarker;
+  transition: all 150ms ease-in-out;
+}
+.digestManagementAddedNotAddedBox .checkboxWell:hover { opacity: 0.9; }
+.digestManagementAddedNotAddedBox .checkboxWell:active { opacity: 1; }
+
+.digestManagementAddedNotAddedBox.checked .checkboxWell {
+  background-color: $brandPrimary;
+  border-color: $brandPrimary;
+}
+// end checkbox styles

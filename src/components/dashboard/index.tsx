@@ -1,5 +1,6 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment } from 'react';
-import ReactDOM from 'react-dom';
 import classnames from 'classnames';
 import moment from 'moment';
 
@@ -20,7 +21,6 @@ import {
   DashboardReportGrid,
   Icons,
 } from '@density/ui';
-import Toast from '../toast/index';
 import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
@@ -44,10 +44,10 @@ const DASHBOARD_BACKGROUND = '#F5F5F7';
 function DashboardSidebarItem({selected, id, name, reportSet}) {
   const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
   return (
-    <a className="dashboard-app-frame-sidebar-list-item" href={`#/dashboards/${id}`}>
-      <div className={classnames('dashboard-sidebar-item', {selected})}>
-        <span className="dashboard-sidebar-item-name">{name}</span>
-        <span className="dashboard-sidebar-item-num-reports">
+    <a className={styles.dashboardAppFrameSidebarListItem} href={`#/dashboards/${id}`}>
+      <div className={classnames(styles.dashboardSidebarItem, {[styles.selected]: selected})}>
+        <span className={styles.dashboardSidebarItemName}>{name}</span>
+        <span className={styles.dashboardSidebarItemNumReports}>
           {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
         </span>
         <Icons.ChevronRight
@@ -63,7 +63,7 @@ function DashboardSidebarItem({selected, id, name, reportSet}) {
 function DashboardSidebarHideShowIcon({sidebarVisible, onChangeSidebarVisibility}) {
   return (
     <span
-      className="dashboard-sidebar-hide-show-icon"
+      className={styles.dashboardSidebarHideShowIcon}
       onClick={() => onChangeSidebarVisibility(!sidebarVisible)}
     >
       <Icons.Menu />
@@ -104,7 +104,7 @@ function DashboardMainScrollViewContent({
 }) {
   if (dashboards.error) {
     return (
-      <div className="dashboard-non-ideal-state">
+      <div className={styles.dashboardNonIdealState}>
         <h1>Error loading dashboards</h1>
         <span>{dashboards.error}</span>
       </div>
@@ -112,7 +112,7 @@ function DashboardMainScrollViewContent({
 
   } else if (!dashboards.selected && !dashboards.loading) {
     return (
-      <div className="dashboard-non-ideal-state">
+      <div className={styles.dashboardNonIdealState}>
         <h1>No dashboard selected</h1>
         <span>To create a dashboard, please talk to your Density account manager.</span>
       </div>
@@ -120,7 +120,7 @@ function DashboardMainScrollViewContent({
 
   } else if (selectedDashboard && selectedDashboard.reportSet.length === 0) {
     return (
-      <div className="dashboard-non-ideal-state">
+      <div className={styles.dashboardNonIdealState}>
         <h1>No reports in dashboard</h1>
         <span>To add reports to this dashboard, please talk to your Density account manager.</span>
       </div>
@@ -134,8 +134,8 @@ function DashboardMainScrollViewContent({
     const isDashboardLoading = loadedReports.length < nonHeaderReports.length;
     if (isDashboardLoading) {
       return (
-        <div className="dashboard-loading-wrapper">
-          <div className="dashboard-loading">
+        <div className={styles.dashboardLoadingWrapper}>
+          <div className={styles.dashboardLoading}>
             <ReportLoading
               part={loadedReports.length}
               whole={nonHeaderReports.length}
@@ -164,9 +164,9 @@ function DashboardMainScrollViewContent({
       return (
         <div>
           {reportSections.map(({id, name, contents}) => (
-            <div key={id} className="dashboard-wrapper">
-              {contents.length > 0 ? <div className="dashboard-wrapper-inner">
-                {name !== null ? <h1 className="dashboard-header">{name}</h1> : null}
+            <div key={id} className={styles.dashboardWrapper}>
+              {contents.length > 0 ? <div className={styles.dashboardWrapperInner}>
+                {name !== null ? <h1 className={styles.dashboardHeader}>{name}</h1> : null}
                 <div>
                   <DashboardReportGrid
                     reports={[
@@ -189,7 +189,7 @@ function DashboardMainScrollViewContent({
 
             </div>
           ))}
-          <div className="dashboard-app-frame-scroll-body-spacer" />
+          <div className={styles.dashboardAppFrameScrollBodySpacer} />
         </div>
       );
     }
@@ -242,7 +242,7 @@ export function Dashboard({
         <AppSidebar visible={sidebarVisible}>
           <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
           <AppScrollView>
-            <nav className="dashboard-app-frame-sidebar-list">
+            <nav className={styles.dashboardAppFrameSidebarList}>
               {dashboards.loading ? null :
                 <Fragment>
                   {dashboards.data.sort((a, b) => {

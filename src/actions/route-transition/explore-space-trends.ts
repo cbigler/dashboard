@@ -34,6 +34,7 @@ import {
   DEFAULT_TIME_SEGMENT_GROUP,
   findTimeSegmentsInTimeSegmentGroupForSpace,
 } from '../../helpers/time-segments/index';
+import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -69,8 +70,9 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
     // this view unrfortunately.
-    let spaces, selectedSpace;
+    let spaces, spaceHierarchy, selectedSpace;
     try {
+      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
       spaces = (await fetchAllPages(
         async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
       )).map(s => objectSnakeToCamel<DensitySpace>(s));
@@ -81,6 +83,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     }
 
     dispatch(collectionSpacesSet(spaces));
+    dispatch(collectionSpaceHierarchySet(spaceHierarchy));
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
     let state = getState();

@@ -3,6 +3,8 @@ import classnames from 'classnames';
 
 import core from '../../client/core';
 
+import styles from './styles.module.scss';
+
 import {
   Card,
   CardBody,
@@ -158,19 +160,19 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     const { space } = this.props;
 
     return <div>
-      <Card className="explore-space-detail-raw-events-export-card">
+      <Card className="exploreSpaceDetailRawEventsExportCard">
         {view === LOADING_INITIAL || view === LOADING_PREVIEW || view === LOADING_CSV ? <CardLoading indeterminate /> : null}
         <CardHeader>
           CSV Event Export
           <InfoPopup horizontalIconOffset={8}>
-            <p className="explore-space-detail-raw-events-export-card-description">
+            <p className="exploreSpaceDetailRawEventsExportCardDescription">
               Download all events from <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
               <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong> in CSV format.
               The preview below shows a portion of the data which will be exported.
             </p>
           </InfoPopup>
           <span
-            className={classnames('explore-space-detail-raw-events-export-card-header-refresh', {
+            className={classnames(styles.exploreSpaceDetailRawEventsExportCardHeaderRefresh, {
               disabled: view !== VISIBLE,
             })}
             onClick={() => this.setState({
@@ -182,7 +184,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
           </span>
         </CardHeader>
 
-        <CardBody className="explore-space-detail-raw-events-export-card-sample-rows">
+        <CardBody className={styles.exploreSpaceDetailRawEventsExportCardSampleRows}>
           <strong>Sample rows</strong>
         </CardBody>
 
@@ -192,21 +194,21 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
           mapDataItemToRow={n => n.contents}
         /> : null}
 
-        {view === EMPTY ? <div className="explore-space-detail-raw-events-export-card-body-info">
+        {view === EMPTY ? <div className={styles.exploreSpaceDetailRawEventsExportCardBodyInfo}>
           No data available for this time period.
         </div> : null}
-        {view === LOADING_PREVIEW || view === LOADING_INITIAL ? <div className="explore-space-detail-raw-events-export-card-body-info">
+        {view === LOADING_PREVIEW || view === LOADING_INITIAL ? <div className={styles.exploreSpaceDetailRawEventsExportCardBodyInfo}>
           Fetching data preview ...
         </div> : null}
-        {view === ERROR ? <div className="explore-space-detail-raw-events-export-card-body-error">
+        {view === ERROR ? <div className={styles.exploreSpaceDetailRawEventsExportCardBodyError}>
           <span>
-            <span className="explore-space-detail-raw-events-export-card-body-error-icon">&#xe91a;</span>
+            <span className={styles.exploreSpaceDetailRawEventsExportCardBodyErrorIcon}>&#xe91a;</span>
             {error.toString()}
           </span>
         </div> : null}
 
         <div
-          className={classnames('explore-space-detail-raw-events-export-card-download-bar', {
+          className={classnames(styles.exploreSpaceDetailRawEventsExportCardDownloadBar, {
             disabled: view !== VISIBLE,
             loading: view === LOADING_CSV,
           })}

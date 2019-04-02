@@ -1,0 +1,82 @@
+@import "@density/ui/variables/colors.scss";
+
+.liveSpaceDetail {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.liveSpaceDetailMark {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+}
+
+.liveSpaceDetailStats {
+  flex: 1;
+  background-color: $grayLighter;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-height: 300px) { display: none; }
+}
+
+.liveSpaceDetailStatsItem {
+  text-align: center;
+}
+
+.liveSpaceDetailStatsName {
+  color: $grayDarker;
+  font-weight: normal;
+
+  margin: 0px;
+  font-size: 24px;
+  @media (min-height: 1024px) { font-size: 40px; }
+  @media (max-height: 500px) { font-size: 14px; }
+}
+
+.liveSpaceDetailStatsCount {
+  color: $brandPrimary;
+  font-size: 70px;
+  @media (min-height: 1024px) { font-size: 100px; }
+  @media (max-height: 500px) { font-size: 24px; }
+}
+
+.liveSpaceDetailChart {
+  flex: 1;
+  background-color: $grayCinder;
+
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.liveSpaceDetailRealTimeChart .ingressEgressCard {
+  height: 160px;
+}
+
+// Some hacks to get the real time chart to work in this larger form-factor
+// 1. Remove border (including border-radius)
+// 2. Hide labels above and below chart. Currently, I'm rendering my own labels so that I can
+// customize them a bit.
+// 3. Adjust the size of the markers on the "fake" top label bar to match the size of them in the
+// chart.
+.liveSpaceDetail :global(.ingress-egress-card) { border: 0px; }
+.liveSpaceDetailRealTimeChart :global(.real-time-capacity-legend),
+.liveSpaceDetailRealTimeChart :global(.real-time-capacity-labels) { display: none; }
+.liveSpaceDetailChartTopHeader :global(.real-time-capacity-count-marker) {
+  width: 10px;
+  height: 10px;
+  top: 0px;
+}

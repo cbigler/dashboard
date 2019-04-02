@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
@@ -89,23 +91,23 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
         <Card>
           {calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
 
-          <CardHeader className="explore-space-detail-daily-metrics-card-header">
-            <div className="explore-space-detail-daily-metrics-card-title">
+          <CardHeader className={styles.exploreSpaceDetailDailyMetricsCardHeader}>
+            <div className={styles.exploreSpaceDetailDailyMetricsCardTitle}>
               Daily Metrics
               <InfoPopup horizontalIconOffset={8}>
-                <p className="explore-space-detail-daily-metrics-card-popup-p">
+                <p className={styles.exploreSpaceDetailDailyMetricsCardPopupP}>
                   Visitation metrics for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
                   <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
                   <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
                   grouped by day.
                 </p>
 
-                <p className="explore-space-detail-daily-metrics-card-popup-p">
+                <p className={styles.exploreSpaceDetailDailyMetricsCardPopupP}>
                   Use these metrics to understand the visitation of your space, and how it trends
                   over time.
                 </p>
 
-                <ul className="explore-space-detail-daily-metrics-card-popup-ul">
+                <ul className={styles.exploreSpaceDetailDailyMetricsCardPopupUl}>
                   <li>
                     <strong>Entrances</strong>: Total number of events from people entering the space.
                   </li>
@@ -117,16 +119,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                   </li>
                 </ul>
               </InfoPopup>
-              <span
-                className={classnames('explore-space-detail-daily-metrics-card-refresh mid', {
-                  disabled: calculatedData.state !== 'COMPLETE',
-                })}
-                onClick={() => onRefresh(space)}
-              >
-                <Icons.Refresh color={calculatedData.state === 'LOADING' ? 'gray' : 'primary'} />
-              </span>
             </div>
-            <div className="explore-space-detail-daily-metrics-card-metric-picker">
+            <div className={styles.exploreSpaceDetailDailyMetricsCardMetricPicker}>
               <InputBox
                 type="select"
                 value={spaces.filters.metricToDisplay}
@@ -141,8 +135,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
               />
             </div>
             <span
-              className={classnames('explore-space-detail-daily-metrics-card-refresh end', {
-                disabled: calculatedData.state !== 'COMPLETE',
+              className={classnames(styles.exploreSpaceDetailDailyMetricsCardRefresh, styles.end, {
+                [styles.disabled]: calculatedData.state !== 'COMPLETE',
               })}
               onClick={() => onRefresh(space)}
             >
@@ -150,7 +144,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
             </span>
           </CardHeader>
 
-          <CardBody className="explore-space-detail-daily-metrics-card-body">
+          <CardBody className={styles.exploreSpaceDetailDailyMetricsCardBody}>
             {calculatedData.state === 'COMPLETE' ? (() => {
               if (calculatedData.data.metrics.length > GRAPH_TYPE_TRANSITION_POINT_IN_DAYS) {
                 const data: any[] = calculatedData.data.metrics.slice().sort(
@@ -161,7 +155,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                   value: data[data.length - 1].value
                 })
                 // For more than two weeks of data, show the graph chart.
-                return <div className="large-timespan-chart">
+                return <div className={styles.largeTimespanChart}>
                   <LineChartComponent
                     timeZone={space.timeZone}
                     svgWidth={chartWidth}
@@ -228,7 +222,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 </div>;
               } else {
                 // Less than two weeks should stil use the daily metrics chart.
-                return <div className="short-timespan-chart">
+                return <div className={styles.shortTimespanChart}>
                   <DailyMetricsComponent
                     data={calculatedData.data.metrics.map(i => {
                       return {
@@ -244,18 +238,18 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
               }
             })() : null}
 
-            {calculatedData.state === 'ERROR' ? <div className="explore-space-detail-daily-metrics-card-body-error">
+            {calculatedData.state === 'ERROR' ? <div className={styles.exploreSpaceDetailDailyMetricsCardBodyError}>
               <span>
-                <span className="explore-space-detail-daily-metrics-card-body-error-icon">&#xe91a;</span>
+                <span className={styles.exploreSpaceDetailDailyMetricsCardBodyErrorIcon}>&#xe91a;</span>
                 {calculatedData.error.toString()}
               </span>
             </div> : null }
 
-            {calculatedData.state === 'COMPLETE' && calculatedData.data.metrics === null ? <div className="explore-space-detail-daily-metrics-card-body-info">
+            {calculatedData.state === 'COMPLETE' && calculatedData.data.metrics === null ? <div className={styles.exploreSpaceDetailDailyMetricsCardBodyInfo}>
               No data available for this time range.
             </div> : null }
 
-            {calculatedData.state === 'LOADING' ? <div className="explore-space-detail-daily-metrics-card-body-info">
+            {calculatedData.state === 'LOADING' ? <div className={styles.exploreSpaceDetailDailyMetricsCardBodyInfo}>
               Generating Data&nbsp;.&nbsp;.&nbsp;.
             </div> : null }
           </CardBody>

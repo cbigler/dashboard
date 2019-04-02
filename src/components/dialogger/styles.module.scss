@@ -1,0 +1,9 @@
+@import "@density/ui/variables/colors.scss";
+
+.dashboardModalConfirm {
+  display: flex;
+  flex-direction: column;
+}
+.dashboardModalConfirmContent {
+  padding: 32px;
+}

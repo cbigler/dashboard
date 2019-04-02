@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 import {
@@ -24,7 +26,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
   render() {
     const { visible, onDismiss } = this.props;
     return (
-      <div className="explore-edit-count-modal">
+      <div className={styles.exploreEditCountModal}>
         <Modal
           visible={visible}
           width={460}
@@ -37,23 +39,23 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
             <CardHeader>
               Update Count
               <span
-                className="explore-edit-count-modal-reset-count"
+                className={styles.exploreEditCountModalResetCount}
                 onClick={() => this.setState({count: 0})}
               >Reset to zero</span>
             </CardHeader>
             <CardBody>
-              <div className="explore-edit-count-modal-count-picker">
+              <div className={styles.exploreEditCountModalCountPicker}>
                 <button
                   onClick={() => this.setState({count: Math.max(this.state.count - 1, 0)})}
                   disabled={this.state.count <= 0}
-                  className="explore-edit-count-modal-count-button subtract"
+                  className={`${styles.exploreEditCountModalCountButton} ${styles.subtract}`}
                 >
                   <div>
                     <Icons.Minus color={colorVariables.grayDarker} />
                   </div>
                 </button>
 
-                <div className="explore-edit-count-modal-count-picker-label">
+                <div className={styles.exploreEditCountModalCountPickerLabel}>
                   <input
                     type="number"
                     value={this.state.countText !== null ? this.state.countText : this.state.count}
@@ -74,13 +76,13 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
 
                 <button
                   onClick={() => this.setState({count: this.state.count + 1})}
-                  className="explore-edit-count-modal-count-button add"
+                  className={`${styles.exploreEditCountModalCountButton} ${styles.add}`}
                 >
                   <Icons.Plus color={colorVariables.grayDarker} />
                 </button>
               </div>
 
-              <div className="explore-edit-count-modal-submit">
+              <div className={styles.exploreEditCountModalSubmit}>
                 <Button
                   type="primary"
                   width="100%"

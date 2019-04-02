@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -43,7 +45,7 @@ export function AccountSetupDoorwayList({
   onCreateDoorway,
   onHideSuccessToast,
 }) {
-  return <div className="account-setup-doorway-list">
+  return <div className={styles.accountSetupDoorwayList}>
     <Subnav visible>
       <SubnavItem href="#/onboarding/overview">Overview</SubnavItem>
       <SubnavItem href={undefined} active >Doorways</SubnavItem>
@@ -54,30 +56,30 @@ export function AccountSetupDoorwayList({
       detail="Please provide more information about your doorways."
     />
 
-    {activeModal.name === 'unit-setup-added-doorway' && activeModal.visible ? <div className="account-setup-doorway-list-success-toast">
+    {activeModal.name === 'unit-setup-added-doorway' && activeModal.visible ? <div className={styles.accountSetupDoorwayListSuccessToast}>
       <Toast
         type="success"
-        icon={<span className="account-setup-doorway-list-success-toast-icon">&#xe908;</span>}
+        icon={<span className={styles.accountSetupDoorwayListSuccessToastIcon}>&#xe908;</span>}
       >
         <span
-          className="account-setup-doorway-list-success-toast-dismiss"
+          className={styles.accountSetupDoorwayListSuccessToastDismiss}
           onClick={onHideSuccessToast}
         >&times;</span>
-        <div className="account-setup-doorway-list-success-toast-header" role="heading">Doorway saved!</div>
+        <div className={styles.accountSetupDoorwayListSuccessToastHeader} role="heading">Doorway saved!</div>
         Great, we've added your doorway(s) for review! We'll be in touch shortly!
       </Toast>
     </div> : null}
 
-    <div className="account-setup-doorway-list-body-container">
-      <h1 className="account-setup-doorway-list-title">
+    <div className={styles.accountSetupDoorwayListBodyContainer}>
+      <h1 className={styles.accountSetupDoorwayListTitle}>
         Your Doorways
         <span
-          className="account-setup-doorways-list-add-doorway-link"
+          className={styles.accountSetupDoorwayListAddDoorwayLink}
           role="button"
           onClick={onCreateDoorway}
         >Add a doorway</span>
       </h1>
-      <Card className="account-setup-doorway-list-body">
+      <Card className={styles.accountSetupDoorwayListBody}>
         {/* If the doorways collection is still loading, show the card in a loading state */}
         {doorways.loading ? <CardLoading indeterminate /> : null}
 
@@ -85,30 +87,30 @@ export function AccountSetupDoorwayList({
         {(function(doorways) {
           if (doorways.data.length > 0) {
             return <CardBody>
-              <ul className="account-detail-doorway-list">
+              <ul className={styles.accountDetailDoorwayList}>
                 {doorways.data.map(doorway => {
                   const environment = doorway.environment || {};
 
                   return <li key={doorway.id}>
                     <a
-                      className="account-setup-doorway-list-item"
+                      className={styles.accountSetupDoorwayListItem}
                       href={`#/onboarding/doorways/${doorway.id}`}
                     >
-                      <div className="account-setup-doorway-list-item-image-container">
+                      <div className={styles.accountSetupDoorwayListItemImageContainer}>
                         <ImageRetry
                           src={environment.insideImageUrl}
                           alt="Doorway from inside"
-                          className="account-setup-doorway-list-item-image"
+                          className={styles.accountSetupDoorwayListItemImage}
                           retries={5}
                         />
                       </div>
 
-                      <span className="account-setup-doorway-list-item-name">
+                      <span className={styles.accountSetupDoorwayListItemName}>
                         {doorway.name}
                       </span>
 
                       <span
-                        className="account-setup-doorway-list-item-status"
+                        className={styles.accountSetupDoorwayListItemStatus}
                         style={{ color: doorwayStatusColor(environment.status) }}
                       >{doorwayStatusText(environment.status)}</span>
                     </a>
@@ -122,7 +124,7 @@ export function AccountSetupDoorwayList({
             // When no doorways are visible, add a button to create the first doorway.
             return <CardBody>
               <Button
-                className="account-setup-doorway-list-create"
+                className={styles.accountSetupDoorwayListCreate}
                 onClick={onCreateDoorway}
               >
                 Create your first doorway

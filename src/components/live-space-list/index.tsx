@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import ErrorBar from '../error-bar/index';
 
@@ -14,6 +15,8 @@ import SpaceUpdateModal from '../explore-edit-count-modal/index';
 import { CONNECTION_STATES } from '../../helpers/websocket-event-pusher/index';
 
 import SpaceHierarchySelectBox from '../space-hierarchy-select-box/index';
+
+import styles from './styles.module.scss';
 
 import filterHierarchy from '../../helpers/filter-hierarchy/index';
 import filterCollection from '../../helpers/filter-collection/index';
@@ -45,7 +48,7 @@ export function LiveSpaceList({
   filteredSpaces = filteredSpaces.filter(i => i.spaceType === 'space');
 
 
-  return <div className="live-space-list">
+  return <div className={styles.liveSpaceList}>
     {/* Show errors in the spaces collection. */}
     <ErrorBar message={spaces.error} showRefresh />
 
@@ -57,16 +60,15 @@ export function LiveSpaceList({
       onSubmit={newCount => onResetSpace(activeModal.data.space, newCount)}
     /> : null}
 
-    <div className="live-space-list-container">
-      <div className="live-space-list-header">
-        <div className="live-space-list-header-hierarchy">
+    <div className={styles.liveSpaceListContainer}>
+      <div className={styles.liveSpaceListHeader}>
+        <div className={styles.liveSpaceListHeaderHierarchy}>
           <SpaceHierarchySelectBox
-            className="explore-space-list-space-hierarchy-selector"
             value={spaces.filters.parent ?  spaces.data.find(i => i.id === spaces.filters.parent) : null}
             choices={spaces.data.filter(i => i.spaceType !== 'space')}
             onChange={parent => onSpaceChangeParent(parent ? parent.id : null)}
           />
-          <span className="live-space-list-live-indicator-tag">
+          <span className={styles.liveSpaceListLiveIndicatorTag}>
             {(function(status) {
               switch (status) {
                 case CONNECTION_STATES.ERROR:
@@ -80,14 +82,14 @@ export function LiveSpaceList({
                   return 'OFFLINE';
               }
             })(eventPusherStatus.status)}
-            <i className={`status-${eventPusherStatus.status.toLowerCase()}`} />
+            <i className={classnames(styles.status, styles[eventPusherStatus.status.toLowerCase()])} />
           </span>
         </div>
-        <div className="live-space-list-header-filter">
+        <div className={styles.liveSpaceListHeaderFilter}>
           <InputBox
             type="text"
             width={250}
-            className="live-space-list-search-box"
+            className={styles.liveSpaceListSearchBox}
             placeholder="Filter Spaces ..."
             value={spaces.filters.search}
             onChange={e => onSpaceSearch(e.target.value)}
@@ -95,9 +97,9 @@ export function LiveSpaceList({
         </div>
       </div>
 
-      <div className="live-space-list-row">
+      <div className={styles.liveSpaceListRow}>
         {filteredSpaces.map(space => {
-          return <div className="live-space-list-item" key={space.id}>
+          return <div className={styles.liveSpaceListItem} key={space.id}>
             <SpaceCard
               space={space}
               events={spaces.events[space.id]}
@@ -107,7 +109,7 @@ export function LiveSpaceList({
           </div>;
         })}
         
-        {!spaces.loading && filteredSpaces.length === 0 ? <div className="live-space-list-empty">
+        {!spaces.loading && filteredSpaces.length === 0 ? <div className={styles.liveSpaceListEmpty}>
           <span>No spaces found.</span>
         </div> : null}
       </div>

@@ -1,0 +1,28 @@
+@import "@density/ui/variables/colors.scss";
+
+.adminDeveloperTokenList {
+  padding: 24px;
+}
+
+.adminDeveloperWebhookList {
+  padding: 24px;
+  padding-bottom: 64px;
+}
+
+.adminDeveloperSectionHeader {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray;
+  font-size: 24px;
+  font-weight: 400;
+  color: $grayCinder;
+  margin-bottom: 32px;
+}
+
+.adminDeveloperListviewValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

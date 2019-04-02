@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -93,7 +95,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
       !((this.state.doorway || {}).environment || {}).outsideImageUrl
     );
 
-    return <div className="account-setup-doorway-detail">
+    return <div className={styles.accountSetupDoorwayDetail}>
       <Subnav visible>
         <SubnavItem href="#/onboarding/overview">Overview</SubnavItem>
         <SubnavItem active href="#/onboarding/doorways">Doorways</SubnavItem>
@@ -110,25 +112,25 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
         />
       }
 
-      <div className="account-setup-doorway-detail-body-container">
-        <h1 className="account-setup-doorway-list-title">
+      <div className={styles.accountSetupDoorwayDetailBodyContainer}>
+        <h1 className={styles.accountSetupDoorwayListTitle}>
           {isCreatingNewDoorway ? "Create a doorway" : this.state.doorway.name}
         </h1>
-        <h3 className="account-setup-doorway-list-subtitle">Tools needed: Tape measure</h3>
+        <h3 className={styles.accountSetupDoorwayListSubtitle}>Tools needed: Tape measure</h3>
 
-        <Card className="account-setup-doorway-detail-body">
+        <Card className={styles.accountSetupDoorwayDetailBody}>
           <CardBody>
-            <h2 className="account-setup-doorway-detail-body-header">
+            <h2 className={styles.accountSetupDoorwayDetailBodyHeader}>
               <em>1 &mdash;</em>
               Upload images
             </h2>
 
             {needsPhotos ? <div>
-              <p className="account-setup-doorway-detail-body-section">
+              <p className={styles.accountSetupDoorwayDetailBodySection}>
                 When taking photos, please follow these guidelines:
               </p>
 
-              <div className="account-setup-doorway-detail-body-guidelines-box">
+              <div className={styles.accountSetupDoorwayDetailBodyGuidelinesBox}>
                 Stand at least 10ft away from the center of the doorway to capture the following:
                 <ul>
                   <li>Full, unobstructed view of the door</li>
@@ -138,13 +140,13 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 </ul>
               </div>
 
-              <p className="account-setup-doorway-detail-body-section">
+              <p className={styles.accountSetupDoorwayDetailBodySection}>
                 Here's an example of an ideal image:
               </p>
 
-              <div className="account-setup-doorway-detail-body-ideal-image-container">
+              <div className={styles.accountSetupDoorwayDetailBodyIdealImageContainer}>
                 <img
-                  className="account-setup-doorway-detail-body-ideal-image"
+                  className={styles.accountSetupDoorwayDetailBodyIdealImage}
                   src="https://densityco.github.io/assets/images/ideal-doorway.a87e5b28.jpg"
                   alt="Ideal doorway"
                 />
@@ -216,17 +218,17 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             />
 
 
-            <h2 className="account-setup-doorway-detail-body-header">
+            <h2 className={styles.accountSetupDoorwayDetailBodyHeader}>
               <em>2 &mdash;</em> Name this doorway
             </h2>
-            <p className="account-setup-doorway-detail-body-section">
+            <p className={styles.accountSetupDoorwayDetailBodySection}>
               Create a name for this doorway to be used in the Dashboard.
             </p>
             <label
-              className="account-setup-doorway-detail-body-input-label"
+              className={styles.accountSetupDoorwayDetailBodyInputLabel}
               htmlFor="account-setup-doorway-detail-body-doorway-name"
-            >Doorway Name <span className="account-setup-doorway-detail-body-input-required">*</span></label>
-            <div className="account-setup-doorway-detail-body-input">
+            >Doorway Name <span className={styles.accountSetupDoorwayDetailBodyInputRequired}>*</span></label>
+            <div className={styles.accountSetupDoorwayDetailBodyInput}>
               <InputBox
                 type="text"
                 width="100%"
@@ -237,14 +239,14 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             </div>
 
 
-            <h2 className="account-setup-doorway-detail-body-header">
+            <h2 className={styles.accountSetupDoorwayDetailBodyHeader}>
               <em>3 &mdash;</em>
               Measure your doorway
             </h2>
-            <p className="account-setup-doorway-detail-body-section">
+            <p className={styles.accountSetupDoorwayDetailBodySection}>
               Please provide a height and width measurement.
             </p>
-            <div className="account-setup-doorway-detail-body-guidelines-box">
+            <div className={styles.accountSetupDoorwayDetailBodyGuidelinesBox}>
               <ul>
                 <li>Height measurements should be from floor to top of door frame</li>
                 <li>Width measurements should be from frame to frame</li>
@@ -252,8 +254,8 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
               </ul>
             </div>
 
-            <div className="account-setup-doorway-detail-body-measurement-radio-container">
-              <span className="account-setup-doorway-detail-body-measurement-radio-container-item">
+            <div className={styles.accountSetupDoorwayDetailBodyMeasurementRadioContainer}>
+              <span className={styles.accountSetupDoorwayDetailBodyMeasurementRadioContainerItem}>
                 <RadioButton
                   text="Metric"
                   checked={this.state.measurementUnit === METRIC}
@@ -284,13 +286,13 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             </div>
             <br/>
 
-            <label className="account-setup-doorway-detail-body-input-label">
-              Doorway Width <span className="account-setup-doorway-detail-body-input-required">*</span>
-              <span className="account-setup-doorway-detail-body-input-label-highlight">
+            <label className={styles.accountSetupDoorwayDetailBodyInputLabel}>
+              Doorway Width <span className={styles.accountSetupDoorwayDetailBodyInputRequired}>*</span>
+              <span className={styles.accountSetupDoorwayDetailBodyInputLabelHighlight}>
                 {this.state.measurementUnit === METRIC ? '(Centimeters)' : '(Inches)'}
               </span>
             </label>
-            <div className="account-setup-doorway-detail-body-input">
+            <div className={styles.accountSetupDoorwayDetailBodyInput}>
               <InputBox
                 type="tel"
                 width="100%"
@@ -301,13 +303,13 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             </div>
 
             <br/>
-            <label className="account-setup-doorway-detail-body-input-label">
-              Doorway Height <span className="account-setup-doorway-detail-body-input-required">*</span>
-              <span className="account-setup-doorway-detail-body-input-label-highlight">
+            <label className={styles.accountSetupDoorwayDetailBodyInputLabel}>
+              Doorway Height <span className={styles.accountSetupDoorwayDetailBodyInputRequired}>*</span>
+              <span className={styles.accountSetupDoorwayDetailBodyInputLabelHighlight}>
                 {this.state.measurementUnit === METRIC ? '(Centimeters)' : '(Inches)'}
               </span>
             </label>
-            <div className="account-setup-doorway-detail-body-input">
+            <div className={styles.accountSetupDoorwayDetailBodyInput}>
               <InputBox
                 type="tel"
                 width="100%"
@@ -319,14 +321,14 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
             <br/>
             <label
-              className="account-setup-doorway-detail-body-input-label mounting-space"
-            >Mounting Space <span className="account-setup-doorway-detail-body-input-required">*</span></label>
-            <p className="account-setup-doorway-detail-body-section-clearance">
+              className={`${styles.accountSetupDoorwayDetailBodyInputLabel} ${styles.mountingSpace}`}
+            >Mounting Space <span className={styles.accountSetupDoorwayDetailBodyInputRequired}>*</span></label>
+            <p className={styles.accountSetupDoorwayDetailBodySectionClearance}>
               Does this doorway have at least 5in (0.13m) of clearance above the door to mount a unit?
             </p>
 
-            <div className="account-setup-doorway-detail-body-clearance-radio-container">
-              <span className="account-setup-doorway-detail-body-clearance-radio-container-item">
+            <div className={styles.accountSetupDoorwayDetailBodyClearanceRadioContainer}>
+              <span className={styles.accountSetupDoorwayDetailBodyClearanceRadioContainerItem}>
                 <RadioButton
                   text="Yes"
                   checked={this.state.doorway.environment ? this.state.doorway.environment.clearance === true : false}
@@ -352,12 +354,12 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
             <MountingSpaceGraphic />
 
-            <h2 className="account-setup-doorway-detail-body-header">
+            <h2 className={styles.accountSetupDoorwayDetailBodyHeader}>
               <em>4 &mdash;</em>
               Choose a power option
             </h2>
 
-            <p className="account-setup-doorway-detail-body-section-clearance">
+            <p className={styles.accountSetupDoorwayDetailBodySectionClearance}>
               (Optional) How will you power the unit?
             </p>
             <RadioButton
@@ -370,7 +372,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
                 },
               })}
             />
-            <div className="account-setup-doorway-detail-body-power-radio-button-spacer" />
+            <div className={styles.accountSetupDoorwayDetailBodyPowerRadioButtonSpacer} />
             <RadioButton
               text="Standard 100-240V AC outlet"
               checked={this.state.doorway.environment ? this.state.doorway.environment.powerType === AC_OUTLET : false}
@@ -388,7 +390,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
             <Button
               type="primary"
-              width="100%"
+              width={isCreatingNewDoorway ? 'auto' : '100%'}
               onClick={() => {
                 // Set a flag to disable the submit buttons while the form is sending data to the
                 // server.
@@ -411,7 +413,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
             &nbsp;&nbsp;
             { isCreatingNewDoorway ?
               <Button
-                className="account-setup-doorway-detail-save-add-another-button"
+                className={styles.accountSetupDoorwayDetailSaveAddAnotherButton}
                 onClick={() => {
                   // Set a flag to disable the submit buttons while the form is sending data to the
                   // server.
@@ -443,7 +445,7 @@ export class AccountSetupDoorwayDetail extends React.Component<any, any> {
 
 function MountingSpaceGraphic() {
   return <svg
-    className="account-setup-doorway-detail-clearance-graphic"
+    className={styles.accountSetupDoorwayDetailClearanceGraphic}
     width="422px"
     height="217px"
     viewBox="0 0 422 217"
@@ -551,6 +553,6 @@ export default connect((state: any) => {
   if (typeof props.initialDoorway !== 'undefined') {
     return <AccountSetupDoorwayDetail {...props} />;
   } else {
-    return <div className="account-setup-doorway-detail-loading">Loading ...</div>;
+    return <div className={styles.accountSetupDoorwayDetailLoading}>Loading ...</div>;
   }
 });

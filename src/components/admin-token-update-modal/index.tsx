@@ -1,7 +1,10 @@
-import React from 'react';
+import styles from './styles.module.scss';
+
+import React, { Fragment } from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarSection,
@@ -11,7 +14,6 @@ import {
 
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 export default class TokenUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -27,14 +29,13 @@ export default class TokenUpdateModal extends React.Component<any, any> {
 
   renderEdit = () => {
     return (
-      <div className="token-update-modal">
+      <Fragment>
         <AppBar><AppBarSection><AppBarTitle>Edit Token</AppBarTitle></AppBarSection></AppBar>
 
-        <div className="token-update-modal-body">
+        <div className={styles.tokenUpdateModalBody}>
           <FormLabel
-            className="update-token-name-container"
             label="Token Name"
-            htmlFor="update-token-name"
+            htmlFor="token-update-name"
             input={<InputBox
               type="text"
               id="update-token-name"
@@ -44,21 +45,19 @@ export default class TokenUpdateModal extends React.Component<any, any> {
             />}
           />
           <FormLabel
-            className="update-token-description-container"
             label="Description"
-            htmlFor="update-token-description"
+            htmlFor="token-update-description"
             input={<InputBox
               type="textarea"
-              className="token-update-description-field"
+              className={styles.tokenUpdateDescriptionField}
               id="token-update-description"
               value={this.state.description}
               onChange={e => this.setState({description: e.target.value})}
             />}
           />
           <FormLabel
-            className="update-token-permissions-container"
             label="Permissions"
-            htmlFor="update-token-permissions"
+            htmlFor="token-update-permissions"
             input={<span>To update permissions you must create a new token.</span>}
           />
         </div>
@@ -67,7 +66,9 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 disabled={this.state.name.length === 0}
@@ -81,16 +82,16 @@ export default class TokenUpdateModal extends React.Component<any, any> {
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
-      </div>
+      </Fragment>
     );
   }
   renderDestroy = () => {
     return (
-      <div className="token-update-modal">
+      <Fragment>
         <AppBar><AppBarSection><AppBarTitle>Destroy Token</AppBarTitle></AppBarSection></AppBar>
 
-        <div className="token-update-modal-body">
-          <h2 className="token-update-destroy-warning">Are you ABSOLUTELY sure?</h2>
+        <div className={styles.tokenUpdateModalBody}>
+          <h2 className={styles.tokenUpdateDestroyWarning}>Are you ABSOLUTELY sure?</h2>
 
           <p>
             The act of removing a token is irreversible and generating a duplicate token (with the
@@ -98,7 +99,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
             ("{this.state.name}") to remove.
           </p>
 
-          <div className="token-update-destroy-confirmation">
+          <div className={styles.tokenUpdateDestroyConfirmation}>
             <InputBox
               type="text"
               width="100%"
@@ -112,7 +113,9 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 width="100%"
@@ -122,7 +125,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
-      </div>
+      </Fragment>
     );
   }
 

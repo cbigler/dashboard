@@ -1,7 +1,10 @@
-import React from 'react';
+import styles from './styles.module.scss';
+
+import React, { Fragment } from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarSection,
@@ -11,7 +14,6 @@ import {
 
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 export default class WebhookUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -25,31 +27,29 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
 
   renderEdit = () => {
     return (
-      <div className="webhook-update-modal">
+      <Fragment>
         <AppBar>
           <AppBarSection>
             <AppBarTitle>Edit Webhook</AppBarTitle>
           </AppBarSection>
         </AppBar>
-        <div className="webhook-update-modal-body">
+        <div className={styles.webhookUpdateModalBody}>
           <FormLabel
-            className="webhook-update-name-container"
-            htmlFor="update-webhook-name"
+            htmlFor="webhook-update-name"
             label="Webhook Name"
             input={<InputBox
               type="text"
-              id="update-webhook-name"
+              id="webhook-update-name"
               value={this.state.name}
               onChange={e => this.setState({name: e.target.value})}
             />}
           />
           <FormLabel
-            className="webhook-update-description-container"
-            htmlFor="update-webhook-description"
+            htmlFor="webhook-update-description"
             label="Description"
             input={<InputBox
               type="textarea"
-              id="update-webhook-description"
+              id="webhook-update-description"
               value={this.state.description}
               onChange={e => this.setState({description: e.target.value})}
             />}
@@ -59,7 +59,9 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 width="100%"
@@ -73,15 +75,15 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
-      </div>
+      </Fragment>
     );
   }
   renderDestroy = () => {
     return (
-      <div className="webhook-update-modal">
+      <Fragment>
         <AppBar><AppBarSection><AppBarTitle>Destroy Webhook</AppBarTitle></AppBarSection></AppBar>
 
-        <div className="webhook-update-modal-body">
+        <div className={styles.webhookUpdateModalBody}>
           <p>
             Please confirm you'd like to destroy the webhook "{this.props.initialWebhook.name}".
           </p>
@@ -91,7 +93,9 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 onClick={() => this.props.onDestroyWebhook(this.props.initialWebhook)}
@@ -99,7 +103,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
-      </div>
+      </Fragment>
     );
   }
 

@@ -1,0 +1,60 @@
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+
+// A sub-navbar used on pages to provide a second layer of navigation.
+.subnav {
+  font-size: $fontSizeBase;
+  background-color: #222A2E;
+  line-height: 36px;
+
+  // Remove the paddings from the width.
+  width: calc(100% - 18px - 18px);
+  padding-left: 18px;
+  padding-right: 18px;
+
+  // Hide the subnav on mobile...
+  @media (max-width: $screenXsMax) {
+    display: none;
+  }
+
+  // ...Unless it's always visible
+  &.visible { display: block; }
+}
+
+.subnavItems {
+  max-width: 980px;
+  width: 100%;
+  margin: 0px auto;
+  padding-left: 0px;
+}
+
+.subnavItem {
+  display: inline-block;
+  margin-right: 20px;
+}
+
+.subnavItem a {
+  color: $gray;
+  text-decoration: none;
+}
+
+.subnavItem.active {
+  margin-top: 3px;
+  border-bottom: 3px solid $brandPrimary;
+  font-weight: bold;
+}
+.subnavItem.active a {
+  color: #fff;
+}
+
+// Links that point to external resources in the navbar have a special icon after them.
+.subnavItem.external a:after {
+  font-family: "Densicons";
+  content: '\e91b';
+
+  // Provide an offset from the list item.
+  position: relative;
+  top: 2px;
+  left: 5px;
+}

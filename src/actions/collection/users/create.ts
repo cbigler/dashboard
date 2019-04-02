@@ -10,22 +10,13 @@ export default function collectionUsersCreate(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_USERS_CREATE, item });
 
+    let response;
     try {
-      const response = await accounts().post('/users/invite', {
+      response = await accounts().post('/users/invite', {
         email: item.email,
         role: item.role,
+        spaces: item.spaceIds,
       });
-      dispatch(collectionUsersPush(response.data));
-      dispatch(showToast({
-        text: 'User successfully created',
-      }));
-
-      mixpanelTrack('User Invited', {
-        email: item.email,
-        role: item.role,
-      });
-
-      return response.data;
     } catch (err) {
       // Don't store this error in the error collection for the space, since we are showing a toast
       // for it instead.
@@ -35,5 +26,17 @@ export default function collectionUsersCreate(item) {
       }));
       return false;
     }
+
+    dispatch(collectionUsersPush(response.data));
+    dispatch(showToast({
+      text: 'User successfully created',
+    }));
+
+    mixpanelTrack('User Invited', {
+      email: item.email,
+      role: item.role,
+    });
+
+    return response.data;
   };
 }

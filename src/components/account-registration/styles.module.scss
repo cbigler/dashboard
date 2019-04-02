@@ -1,0 +1,100 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+$accountRegistrationSectionWidth: 480px;
+
+.accountRegistration {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.accountRegistrationSection {
+  height: auto;
+  margin: 0px auto;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.accountRegistrationDensityLogo {
+  display: block;
+  height: 24px;
+  margin-bottom: 24px;
+}
+.accountRegistrationDensityLogo img {
+  height: 100%;
+  width: auto;
+}
+
+.accountRegistrationLead {
+  margin-bottom: 40px;
+  font-size: 18px;
+  color: $grayDarker;
+}
+
+// The header that is above each input box
+.accountRegistrationHeader {
+  display: block;
+  font-size: $fontSize5;
+  color: $grayCinder;
+
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+.accountRegistrationHeaderRequired {
+  color: $brandPrimary;
+  margin-left: 3px;
+}
+
+// Make each input full width within the card.
+.accountRegistrationInput {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.accountRegistrationConsentContainer {
+  display: flex;
+  align-content: center;
+  flex-direction: column;
+  margin: 12px 0 24px 0;
+}
+
+.accountRegistrationConsent {
+  display: flex;
+  align-items: center;
+  padding: 4px 0;
+  font-size: $fontSize4;
+  color: $grayDarker;
+}
+
+.accountRegistrationConsentLabel {
+  line-height: 20px;
+  margin-top: 10px;
+}
+
+.accountRegistrationCheckbox {
+  margin-right: 16px;
+}
+
+// ------------------------------------------------
+// Desktop Styles
+// ------------------------------------------------
+@media (min-width: 450px) {
+  // anything above mobile
+  .accountRegistrationSection {
+    box-sizing: border-box;
+    width: $accountRegistrationSectionWidth;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  // Wrapper for the login form
+  .accountRegistrationFormContainer {
+    padding: 32px;
+    background-color: #fff;
+    border: 1px solid $grayLight;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+    border-radius: $borderRadiusBase;
+  }
+}

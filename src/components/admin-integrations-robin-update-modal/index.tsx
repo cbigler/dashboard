@@ -1,7 +1,10 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarSection,
@@ -11,7 +14,6 @@ import {
 
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 export default class IntegrationsRobinUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -30,7 +32,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
       <div>
         <AppBar><AppBarSection><AppBarTitle>Edit Robin Integration</AppBarTitle></AppBarSection></AppBar>
 
-        <div className="integrations-update">
+        <div className={styles.integrationsUpdate}>
           <FormLabel
             label="Robin API Token"
             htmlFor="integrations-update-token"
@@ -59,7 +61,9 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 disabled={this.state.robinOrganizationId === 0}
@@ -84,8 +88,8 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
       <div>
         <AppBar><AppBarSection><AppBarTitle>Destroy Integration</AppBarTitle></AppBarSection></AppBar>
 
-        <div className="integrations-update">
-          <h2 className="integrations-update-destroy-warning">Are you ABSOLUTELY sure?</h2>
+        <div className={styles.integrationsUpdate}>
+          <h2 className={styles.integrationsUpdateDestroyWarning}>Are you ABSOLUTELY sure?</h2>
 
           <p>
             The act of removing an integration is irreversible and could affect certain integrations
@@ -93,7 +97,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
             ("{this.state.robinOrganizationId}") to remove.
           </p>
 
-          <div className="integrations-update-destroy-confirmation">
+          <div className={styles.integrationsUpdateDestroyConfirmation}>
             <InputBox
               type="text"
               width="100%"
@@ -107,7 +111,9 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={this.props.onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={this.props.onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 width="100%"

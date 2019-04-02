@@ -1,0 +1,126 @@
+@import "@density/ui/variables/colors.scss";
+
+.exploreAppFrameSidebarList {
+  flex-grow: 1;
+  flex-shrink: 1;
+  overflow-y: auto;
+  padding-bottom: 60px;
+}
+
+.exploreAppFrameSidebarListItem {
+  display: block;
+  text-decoration: none;
+  color: $grayDarker;
+}
+
+.exploreSidebarItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  transition: all 250ms ease-in-out;
+
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-left: 24px;
+}
+
+.exploreSidebarItemRow {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.exploreSidebarItemName {
+  margin-right: auto;
+  margin-bottom: -3px;
+  padding-right: 12px;
+  padding-left: 12px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.exploreAppFrameSidebarListItem {
+  color: $grayCinder;
+  cursor: pointer;
+  user-select: none;
+}
+.exploreAppFrameSidebarListItem .exploreSidebarItemName:hover {
+  color: $brandPrimary;
+}
+.exploreAppFrameSidebarListItem.disabled,
+.exploreAppFrameSidebarListItem.disabled .exploreSidebarItemName:hover {
+  color: $grayDarker;
+  cursor: default;
+}
+
+.exploreSidebarItem.selected .exploreSidebarItemName {
+  color: $brandPrimary;
+}
+
+.exploreAppFrameSidebarList:first-child .campusContainer:first-child .campus {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.exploreAppFrameSidebarList:first-child .spaceContainer:first-child {
+  margin-top: 20px;
+}
+
+.spaceContainer .spaceContainer {
+  margin-left: 20px;
+}
+
+.exploreAppFrameSidebarList:first-child .buildingContainer:first-child {
+  margin-top: 20px;
+}
+
+.exploreAppFrameSidebarList:first-child .floorContainer:first-child {
+  margin-top: 20px;
+}
+
+.exploreAppFrameSidebarListItem.campus {
+  font-weight: bold;
+  font-size: 14px;
+  color: $grayDark;
+  margin-top: 20px;
+  border-top: 1px solid $grayLight;
+}
+
+.exploreAppFrameSidebarListItem.campus .exploreSidebarItem {
+  border-bottom: 1px solid $grayLight;
+  padding: 17px 0;
+}
+
+.exploreAppFrameSidebarListItem.campus .exploreSidebarItemName {
+  padding-left: 0;
+}
+
+.exploreAppFrameSidebarListItem.building {
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+}
+
+.exploreAppFrameSidebarListItem.floor {
+  font-weight: bold;
+  font-size: 14px;
+  margin-left: 20px;
+}
+
+.exploreAppFrameSidebarListItem.space {
+  margin-left: 28px;
+}
+
+.exploreAppFrameSidebarListItem.space svg {
+  opacity: 0.5;
+}
+
+.loadingSpaces {
+  margin-left: 24px;
+  margin-top: 20px;
+  color: $grayLight;
+}

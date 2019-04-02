@@ -1,0 +1,51 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.visualizationSpaceDetailRawEventsPager {
+  display: flex;
+  margin-top: 12px;
+  font-size: $fontSizeBase;
+}
+
+.visualizationSpaceDetailRawEventsPagerTotal {
+  line-height: 36px;
+}
+
+// The middle section, used to provide a freeform imput to move to a new page.
+.visualizationSpaceDetailRawEventsPagerPicker {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 36px;
+}
+.visualizationSpaceDetailRawEventsPagerPicker * { display: inline-block; }
+.visualizationSpaceDetailRawEventsPagerPickerBox {
+  display: block;
+  resize: none;
+
+  font-family: $fontBase;
+  font-size: $fontSizeBase;
+
+  color: $grayDarker;
+  background-color: #fff;
+
+  border: 1px solid $grayLight;
+  border-radius: $borderRadiusBase;
+
+  outline: none;
+  padding: 0px;
+  height: 36px;
+  width: 4em;
+  box-sizing: border-box;
+
+  margin-left: 10px;
+  margin-right: 10px;
+
+  text-align: center;
+  font-size: $fontSizeBase;
+
+  &:focus { border-color: $brandPrimary; }
+  &::placeholder { color: $gray; }
+}

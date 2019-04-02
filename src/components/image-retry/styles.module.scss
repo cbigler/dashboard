@@ -1,0 +1,24 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.imageRetryLoading {
+  text-align: center;
+  background-color: $grayLighter;
+}
+.imageRetryLoading:before {
+  font-family: 'Densicons';
+  content: '\e91d';
+  color: $grayDark;
+  font-size: $fontSize3;
+}
+
+.imageRetryFallback {
+  text-align: center;
+  background-color: $grayLighter;
+}
+.imageRetryFallback:before {
+  font-family: 'Densicons';
+  content: '\e91d';
+  color: $grayDark;
+  font-size: $fontSize3;
+}

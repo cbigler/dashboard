@@ -1,5 +1,5 @@
 import assert from 'assert';
-import spaceHierarchyFormatter from './index';
+import { spaceHierarchyFormatter } from './index';
 
 describe('space-hierarchy-formatter', function() {
   it('should come up with a hierarchy given a list of spaces', function() {

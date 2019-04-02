@@ -8,6 +8,8 @@ import {
 
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
 
+import styles from './styles.module.scss';
+
 import Report from '@density/reports';
 
 import {
@@ -56,12 +58,12 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
         );
 
         return (
-          <Card className="explore-space-detail-hourly-breakdown-card">
+          <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
             <CardLoading indeterminate />
             <CardHeader>
               {title}
             </CardHeader>
-            <div className="explore-space-detail-hourly-breakdown-card-body-info" style={{height: 739}}>
+            <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyInfo} style={{height: 739}}>
               {body}
             </div>
           </Card>
@@ -69,15 +71,15 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
 
       case hourlyBreakdown.state === 'ERROR':
         body = (
-          <div className="explore-space-detail-hourly-breakdown-card-body-error">
+          <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyError}>
             <span>
-              <span className="explore-space-detail-hourly-breakdown-card-body-error-icon">&#xe91a;</span>
+              <span className={styles.exploreSpaceDetailHourlyBreakdownCardBodyErrorIcon}>&#xe91a;</span>
                 {hourlyBreakdown.error}
             </span>
           </div>
         );
 
-        return <Card className="explore-space-detail-hourly-breakdown-card">
+        return <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
             {body}
           </Card>;
 
@@ -86,7 +88,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
         // Force this one to be scrollable
         hourlyBreakdown.data.scrollable = true;
 
-        return (<div className="explore-space-detail-hourly-breakdown-container">
+        return (<div className={styles.exploreSpaceDetailHourlyBreakdownContainer}>
           <Report
             report={generateHourlyBreakdownEphemeralReport(
               space,

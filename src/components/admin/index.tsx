@@ -38,21 +38,21 @@ export default function Admin({
                 >
                   User Management
                 </AppBarSubnavLink>
-                {can(user, PERMISSION_CODES.developer_tools_manage) ? 
+                {can(user, PERMISSION_CODES.developerToolsManage) ? 
                   <AppBarSubnavLink
                     href="#/admin/integrations"
                     active={activePage === 'ADMIN_INTEGRATIONS'}
                   >
                     Integrations
                   </AppBarSubnavLink> : null}
-                {can(user, PERMISSION_CODES.developer_tools_manage) ? 
+                {can(user, PERMISSION_CODES.developerToolsManage) ? 
                   <AppBarSubnavLink
                     href="#/admin/developer"
                     active={activePage === 'ADMIN_DEVELOPER'}
                   >
                     Developer
                   </AppBarSubnavLink> : null}
-                {can(user, PERMISSION_CODES.sensors_list) ? 
+                {can(user, PERMISSION_CODES.sensorsList) ? 
                   <AppBarSubnavLink
                     href="#/admin/device-status"
                     active={activePage === 'ADMIN_DEVICE_STATUS'}

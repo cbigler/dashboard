@@ -77,66 +77,68 @@ export default class WebsocketEventPusher extends EventEmitter {
       const client = axios.create(core().defaults);
       const response = await client.post('/sockets');
 
-      this.connectionState = CONNECTION_STATES.CONNECTING;
-      this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
-      this.emit('connectionStateChange', this.connectionState);
-
-      this.socket = new this.WebSocket(response.data.url);
-      this.socket.onopen = () => {
-        this.connectionState = CONNECTION_STATES.CONNECTED;
+      if (response.data.url) {
+        this.connectionState = CONNECTION_STATES.CONNECTING;
         this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
         this.emit('connectionStateChange', this.connectionState);
 
-        // When a successful connection occurs, reset the iteration count back to zero so that the
-        // backoff is reset.
-        iteration = 0;
-        this.emit('connected');
+        this.socket = new this.WebSocket(response.data.url);
+        this.socket.onopen = () => {
+          this.connectionState = CONNECTION_STATES.CONNECTED;
+          this.log('   ... CONNECTION STATE UPDATE: %o', this.connectionState);
+          this.emit('connectionStateChange', this.connectionState);
 
-        // Every one and a while, send a message to the server to keep the websocket message alive.
-        this.log('   ... INITIATING PERIODIC PING INTERVAL OF %o', WEBSOCKET_PING_MESSAGE_INTERVAL_IN_SECONDS);
-        this.pingIntervalId = window.setInterval(() => {
-          this.log('   ... PINGING SOCKETS SERVER TO KEEP WEBSOCKET OPEN');
-          this.socket.send('"ping"');
-        }, WEBSOCKET_PING_MESSAGE_INTERVAL_IN_SECONDS);
-      };
+          // When a successful connection occurs, reset the iteration count back to zero so that the
+          // backoff is reset.
+          iteration = 0;
+          this.emit('connected');
 
-      // Currently, the only events are space updates.
-      this.socket.onmessage = e => {
-        this.log('SOCKET MESSAGE RECEIVED: %o', e.data);
-        this.emit('space', objectSnakeToCamel<DensitySocketPush>(JSON.parse(e.data)).payload);
-      }
+          // Every one and a while, send a message to the server to keep the websocket message alive.
+          this.log('   ... INITIATING PERIODIC PING INTERVAL OF %o', WEBSOCKET_PING_MESSAGE_INTERVAL_IN_SECONDS);
+          this.pingIntervalId = window.setInterval(() => {
+            this.log('   ... PINGING SOCKETS SERVER TO KEEP WEBSOCKET OPEN');
+            this.socket.send('"ping"');
+          }, WEBSOCKET_PING_MESSAGE_INTERVAL_IN_SECONDS);
+        };
 
-      // When the connection disconnects, reconnect after a delay.
-      this.socket.onclose = () => {
-        this.connectionState = CONNECTION_STATES.CLOSED;
-        this.log('SOCKET CLOSE', this.gracefulDisconnect);
-        this.emit('disconnect');
-
-        // Clear the interval that sends a ping to the sockets server if it is open.
-        if (this.pingIntervalId) {
-          window.clearInterval(this.pingIntervalId);
+        // Currently, the only events are space updates.
+        this.socket.onmessage = e => {
+          this.log('SOCKET MESSAGE RECEIVED: %o', e.data);
+          this.emit('space', objectSnakeToCamel<DensitySocketPush>(JSON.parse(e.data)).payload);
         }
 
-        if (this.gracefulDisconnect) {
-          this.log('   ... GRACEFULLY DISCONNECTING');
+        // When the connection disconnects, reconnect after a delay.
+        this.socket.onclose = () => {
+          this.connectionState = CONNECTION_STATES.CLOSED;
+          this.log('SOCKET CLOSE', this.gracefulDisconnect);
+          this.emit('disconnect');
+
+          // Clear the interval that sends a ping to the sockets server if it is open.
+          if (this.pingIntervalId) {
+            window.clearInterval(this.pingIntervalId);
+          }
+
+          if (this.gracefulDisconnect) {
+            this.log('   ... GRACEFULLY DISCONNECTING');
+            this.gracefulDisconnect = false;
+            return;
+          }
+
+          // We're not gracefully disconnecting, so try to reconnect.
+
+          // Calculate the timeout before the next reconnect attempt. Use an exponential backoff.
+          const backoffTimeout = MINIMUM_CONNECTION_INTERVAL + (Math.pow(iteration, 2) * 1000);
+
+          // Queue up the next attempt to reconnect to the socket server.
+          setTimeout(() => this.connect(iteration+1), backoffTimeout);
+
+          // Reset the graceful disconenct value after perfoming the disconnect (ie, default to a
+          // non-graceful disconnect)
           this.gracefulDisconnect = false;
-          return;
-        }
+        };
 
-        // We're not gracefully disconnecting, so try to reconnect.
-
-        // Calculate the timeout before the next reconnect attempt. Use an exponential backoff.
-        const backoffTimeout = MINIMUM_CONNECTION_INTERVAL + (Math.pow(iteration, 2) * 1000);
-
-        // Queue up the next attempt to reconnect to the socket server.
-        setTimeout(() => this.connect(iteration+1), backoffTimeout);
-
-        // Reset the graceful disconenct value after perfoming the disconnect (ie, default to a
-        // non-graceful disconnect)
-        this.gracefulDisconnect = false;
-      };
-
-      this.emit('fetchedUrl');
+        this.emit('fetchedUrl');
+      }
     } catch (err) {
       // An error occured while connection. so log it and try to reconnect.
       this.connectionState = CONNECTION_STATES.ERROR;

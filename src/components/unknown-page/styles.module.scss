@@ -1,0 +1,11 @@
+@import "@density/ui/variables/colors.scss";
+
+.unknownPage {
+  margin-top: 48px;
+  text-align: center;
+  color: $textColor;
+}
+
+.unknownPage a {
+  color: $grayDark;
+}

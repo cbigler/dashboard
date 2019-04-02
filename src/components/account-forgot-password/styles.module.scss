@@ -1,0 +1,73 @@
+/**
+ * Grid container (copy 1 of 2)
+ */
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+$accountForgotPasswordSectionWidth: 468px;
+
+.accountForgotPassword {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.accountForgotPasswordSection {
+  height: auto;
+  margin: 0px auto;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.accountForgotPasswordDensityLogo {
+  display: block;
+  height: 24px;
+  margin-bottom: 24px;
+}
+.accountForgotPasswordDensityLogo img {
+  height: 100%;
+  width: auto;
+}
+
+.accountForgotPasswordLead {
+  margin-bottom: 40px;
+  font-size: 18px;
+  color: $grayDarker;
+}
+
+
+// Log In Form
+// ---------------------------------
+
+.accountForgotPasswordForm {
+  margin-bottom: 20px;
+}
+
+.accountForgotPasswordSubmitButton {
+  margin-top: 30px;
+  width: 100%;
+}
+
+// ------------------------------------------------
+// Desktop Styles
+// ------------------------------------------------
+@media (min-width: 450px) {
+  // anything above mobile
+  .accountForgotPasswordSection {
+    box-sizing: border-box;
+    width: $accountForgotPasswordSectionWidth;
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  // Wrapper for the login form
+  .accountForgotPasswordFormContainer {
+    padding: 32px;
+    background-color: #fff;
+    border: 1px solid $grayLight;
+    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
+    border-radius: $borderRadiusBase;
+  }
+}

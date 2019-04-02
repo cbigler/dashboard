@@ -24,6 +24,7 @@ import logoGoogleG from '../../assets/images/logo-google-g.svg';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import webAuth from "../../auth0";
+import styles from './styles.module.scss';
 
 export const LOGIN = 'LOGIN',
              FORGOT_PASSWORD = 'FORGOT_PASSWORD';
@@ -110,23 +111,23 @@ export class Login extends React.Component<any, any> {
   }
 
   renderLoginForm() {
-    return <div className="login-form-container">
+    return <div className={styles.loginFormContainer}>
       {/* Input stack used to enter login info */}
-      <div className={classnames('login-submit-button', 'google', {loading: this.state.loading})}>
+      <div className={classnames(styles.loginSubmitButton, styles.google, {[styles.loading]: this.state.loading})}>
         <Button
           width="100%"
           onClick={() => webAuth.authorize({
             connection: 'google-oauth2',
           })}
         >
-        <img className="icon-google-login" src={logoGoogleG} />
-        Log in with Google
+          <img className={styles.iconGoogleLogin} src={logoGoogleG} />
+          Log in with Google
         </Button>
       </div>
 
-      <p className="login-sso-divider">or</p>
+      <p className={styles.loginSsoDivider}>or</p>
 
-      <InputStackGroup className="login-form">
+      <InputStackGroup>
         <InputStackItem
           type="email"
           placeholder="Email Address"
@@ -145,7 +146,7 @@ export class Login extends React.Component<any, any> {
       </InputStackGroup>
 
       {/* Submit the form! */}
-      <div className={classnames('login-submit-button', 'email', {loading: this.state.loading})}>
+      <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
         <Button
           width="100%"
           type="primary"
@@ -156,14 +157,14 @@ export class Login extends React.Component<any, any> {
 
       {/* Move to forgot password view */}
       <div
-        className="login-action-secondary login-forgot-password-link"
+        className={classnames(styles.loginActionSecondary, styles.loginForgotPasswordLink)}
         onClick={() => this.setState({view: FORGOT_PASSWORD, error: null})}
       >Forgot Password</div>
     </div>;
   }
 
   renderForgotPasswordForm() {
-    return <div className={classnames('login-form-container', 'login-form-reset')}>
+    return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
       <p>We'll send a recovery link to:</p>
       <InputStackGroup>
         <InputStackItem
@@ -177,29 +178,29 @@ export class Login extends React.Component<any, any> {
       </InputStackGroup>
 
       {/* Submit the form! */}
-      <div className={classnames('login-submit-button', 'email', {loading: this.state.loading})}>
+      <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
         <Button
           onClick={this.onForgotPassword}
-          disabled={!this.isForgotPasswordFormValid.apply(this)}
+          disabled={!this.isForgotPasswordFormValid()}
         >Send Request</Button>
       </div>
 
       {/* Move to back to login page */}
       <div
-        className="login-action-secondary login-forgot-password-back-link"
+        className={styles.loginActionSecondary}
         onClick={() => this.setState({view: LOGIN, error: null})}
       >Back to login</div>
     </div>;
   }
 
   render() {
-    return <div className="login">
+    return <div className={styles.login}>
 
       { this.state.loading ? <CardLoading indeterminate={true} /> : null }
 
-      <div className="login-section">
+      <div className={styles.loginSection}>
         {/* Render a toast if the password reset request worked */}
-        {this.state.forgotPasswordConfirmation ? <div className="login-toast">
+        {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
           <Toast
             type="success"
             icon={<Icons.Check color="white" />}
@@ -211,7 +212,7 @@ export class Login extends React.Component<any, any> {
 
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
-          <div className="login-toast login-toast-forgot-password">
+          <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
             <Toast
               type="success"
               icon={<Icons.No color="white" />}
@@ -223,9 +224,9 @@ export class Login extends React.Component<any, any> {
         ) : null}
 
         {this.props.user && this.props.user.error ? (
-          <div className="login-toast login-toast-forgot-password">
+          <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
             <Toast
-              className="login-toast login-toast-forgot-password"
+              className={classnames(styles.loginToast, styles.loginToastForgotPassword)}
               type="danger"
               title="Error fetching user"
               icon={<Icons.No color="white" />}
@@ -237,7 +238,7 @@ export class Login extends React.Component<any, any> {
 
         {/* Render any errors with previous login attempts */}
         {this.state.error ? (
-          <div className="login-toast">
+          <div className={styles.loginToast}>
             <Toast
               type="danger"
               title={this.state.errorTitle || 'Incorrect password'}
@@ -249,21 +250,19 @@ export class Login extends React.Component<any, any> {
           </div>
         ) : null}
 
-        <div className="login-density-logo">
+        <div className={styles.loginDensityLogo}>
           <img src={logoDensityBlack} />
         </div>
 
-        <p className="login-lead">
+        <p className={styles.loginLead}>
           Log in to your Density account.
         </p>
 
         {/* Login inputs */}
-        {this.state.view === LOGIN ?
-          this.renderLoginForm.apply(this) :
-          this.renderForgotPasswordForm.apply(this)
-        }
-        <p className="login-terms-and-privacy">
-          <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a> and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
+        {this.state.view === LOGIN ? this.renderLoginForm() : this.renderForgotPasswordForm()}
+        <p className={styles.loginTermsAndPrivacy}>
+          <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a>{' '}
+          and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
         </p>
       </div>
     </div>;

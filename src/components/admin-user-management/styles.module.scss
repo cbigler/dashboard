@@ -1,0 +1,133 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.adminUserManagementList {
+  padding: 24px;
+}
+.adminUserManagementList.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding-top: 0px;
+  padding-bottom: 0px;
+  height: 100%;
+}
+
+.adminUserManagementCellNameEmailCell > h5 {
+  margin-top: 0px;
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: bold;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.adminUserManagementCellNameEmailCell > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.adminUserManagementCellInvitation {
+  display: flex;
+  align-items: center;
+}
+.adminUserManagementCellInvitationResend {
+  transform: translate(0px, 2px);
+  cursor: pointer;
+  margin-left: 16px;
+  margin-right: 48px;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
+}
+
+.adminUserManagementNewUserSectionHeader {
+  margin: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray;
+  font-size: 24px;
+  font-weight: 400;
+  color: $grayCinder;
+}
+
+.adminUserManagementEditUser {
+  color: $brandPrimary;
+  user-select: none;
+  text-decoration: underline;
+  &:hover { opacity: 0.9; }
+  &:active { opacity: 1; }
+}
+
+
+.adminUserManagementModalColumns {
+  display: flex;
+  flex-direction: row;
+}
+.adminUserManagementModalColumn {
+  display: flex;
+  flex-direction: column;
+}
+.adminUserManagementModalColumn.left {
+  border-right: 1px solid $grayLighter;
+}
+
+.adminUserManagementEmptySearchState { width: 340px; }
+.adminUserManagementEmptySearchState h2 {
+  font-size: 24px;
+  font-weight: 500;
+}
+.adminUserManagementEmptySearchState p { font-size: 16px; }
+
+
+.adminUserManagementInfoUl {
+  padding-left: 0px;
+  list-style: none;
+  line-height: 24px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+.adminUserManagementInfoUl strong { font-weight: bold; }
+
+
+
+
+.adminUserManagementInfoPopup {
+  position: fixed;
+  margin-top: -24px;
+  margin-right: 24px;
+  z-index: 999;
+
+  user-select: none;
+  cursor: default;
+
+  opacity: 0;
+  pointer-events: none;
+}
+.adminUserManagementInfoPopup.opened {
+  pointer-events: auto;
+  opacity: 1;
+}
+.adminUserManagementInfoPopupContents {
+  margin-top: 28px;
+
+  font-size: $fontSizeBase;
+  font-weight: normal;
+  padding: 16px;
+  color: #fff;
+  background-color: $grayCinder;
+  border-radius: $borderRadiusBase;
+}
+.adminUserManagementInfoPopupBackdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}

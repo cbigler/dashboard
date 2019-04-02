@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -56,7 +58,7 @@ function ExploreSpaceDataExport({
   onChangeSpaceFilter,
 }) {
   if (space) {
-    return <div className="explore-space-data-export-page">
+    return <div className={styles.exploreSpaceDataExportPage}>
       {spaces.filters.startDate && spaces.filters.endDate ? (
         <ExploreFilterBar>
           <ExploreFilterBarItem label="Date Range">
@@ -112,9 +114,9 @@ function ExploreSpaceDataExport({
       <ExploreSpaceHeader />
 
       {spaces.filters.startDate && spaces.filters.endDate ? (
-        <div className="explore-space-data-export-container">
-          <div className="explore-space-data-export">
-            <div className="explore-space-data-export-item">
+        <div className={styles.exploreSpaceDataExportContainer}>
+          <div className={styles.exploreSpaceDataExport}>
+            <div className={styles.exploreSpaceDataExportItem}>
               <RawEventsExportCard
                 space={space}
                 startDate={spaces.filters.startDate}

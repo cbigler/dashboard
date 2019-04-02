@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 
 import { DensityMark } from '@density/ui';
@@ -6,6 +7,8 @@ import { DensityMark } from '@density/ui';
 import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
 
 import { chartAsReactComponent } from '@density/charts';
+
+import styles from './styles.module.scss';
 
 import RealTimeCountFn from '@density/chart-real-time-count';
 const RealTimeCountChart = autoRefreshHoc({
@@ -26,27 +29,27 @@ export function LiveSpaceDetail({
   } else if (spacesError) {
     return <div>Error: {spacesError}</div>;
   } else {
-    return <div className="live-space-detail">
-      <div className="live-space-detail-mark">
+    return <div className={styles.liveSpaceDetail}>
+      <div className={styles.liveSpaceDetailMark}>
         <DensityMark size={100} />
       </div>
-      <div className="live-space-detail-stats">
-        <div className="live-space-detail-stats-item">
-          <h2 className="live-space-detail-stats-count">
+      <div className={styles.liveSpaceDetailStats}>
+        <div className={styles.liveSpaceDetailStatsItem}>
+          <h2 className="liveSpaceDetailStatsCount">
             {space.currentCount}
             {space.currentCount === 1 ? ' person' : ' people'}
           </h2>
-          <h1 className="live-space-detail-stats-name">{space.name}</h1>
+          <h1 className={styles.liveSpaceDetailStatsName}>{space.name}</h1>
         </div>
       </div>
-      <div className="live-space-detail-chart">
-        <span className="real-time-capacity-legend live-space-detail-chart-top-header">
-          <div className="real-time-capacity-count-marker in" />
+      <div className={styles.liveSpaceDetailChart}>
+        <span className={classnames('real-time-capacity-legend', styles.liveSpaceDetailChartTopHeader)}>
+          <div className={classnames('real-time-capacity-count-marker', 'in')} />
           <span>In</span>
-          <div className="real-time-capacity-count-marker out" />
+          <div className={classnames('real-time-capacity-count-marker', 'out')} />
           <span>Out</span>
         </span>
-        <div className="live-space-detail-real-time-chart">
+        <div className={styles.liveSpaceDetailRealTimeChart}>
           <RealTimeCountChart
             events={events[space.id] || []}
 

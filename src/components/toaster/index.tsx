@@ -6,12 +6,14 @@ import { hideToast } from '../../actions/toasts';
 
 import Toast from '../toast/index';
 
+import styles from './styles.module.scss';
+
 export function Toaster({
   toasts,
   onDismiss,
 }) {
   return ReactDOM.createPortal(
-    <div className="toaster">
+    <div className={styles.toaster}>
       {toasts.map((toast, index) => {
         const type = toast.type || 'default';
         return <div key={index} style={{marginBottom: 10}}>
@@ -21,7 +23,7 @@ export function Toaster({
         </div>;
       })}
     </div>,
-    document.body
+    document.body,
   );
 }
 

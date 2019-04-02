@@ -1,18 +1,14 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
 import { DensityUser } from '../../types';
 
-import {
-  DensityMark,
-  Button,
-  InputBox,
-  Card,
-  CardBody,
-} from '@density/ui';
+import { Button, InputBox } from '@density/ui';
 
 import ErrorBar from '../error-bar/index';
-import AccountSetupHeader from '../account-setup-header/index';
+import logoDensityBlack from '../../assets/images/logo-black.svg';
 
 import { impersonateUnset } from '../../actions/impersonate';
 import sessionTokenSet from '../../actions/session-token/set';
@@ -60,103 +56,101 @@ export class AccountRegistration extends React.Component<any, any> {
     return this.state.fullName.split(' ')[0];
   }
   render() {
-    return <div className="account-registration">
+    return <div className={styles.accountRegistration}>
+      <div className={styles.accountRegistrationSection}>
 
-      <ErrorBar message={this.state.error} showRefresh />
+        <ErrorBar message={this.state.error} showRefresh />
 
-      <AccountSetupHeader
-        greeter="Create your account"
-        detail={`Let's get your Density account set up!`}
-      />
+        <div className={styles.accountRegistrationDensityLogo}>
+          <img src={logoDensityBlack} />
+        </div>
+        <p className={styles.accountRegistrationLead}>
+          Let's create your Density account!
+        </p>
 
-      <div className="account-registration-density-logo">
-        <DensityMark size={100} />
-      </div>
-
-      <div className="account-registration-card-container">
-        <Card className="account-registration-card">
-          <CardBody>
-            <label className="account-registration-header" htmlFor="account-registration-full-name">
+        <div className={styles.accountRegistrationFormContainer}>
+          <div className={styles.accountRegistrationForm}>
+            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-full-name">
               Full Name
-              <span className="account-registration-header-required">*</span>
+              <span className={styles.accountRegistrationHeaderRequired}>*</span>
             </label>
             <InputBox
               type="text"
               placeholder="Full Name ..."
-              className="account-registration-input"
+              className={styles.accountRegistrationInput}
               id="account-registration-full-name"
               onChange={e => this.setState({fullName: e.target.value})}
               value={this.state.fullName}
               width="100%"
             />
 
-            <label className="account-registration-header" htmlFor="account-registration-nickname">Nickname</label>
+            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-nickname">Nickname</label>
             <InputBox
               type="text"
               placeholder={
                 this.state.fullName && this.state.fullName.indexOf(' ') >= 0 ? this.generateNickname.apply(this) : 'Nickname ...'
               }
-              className="account-registration-input"
+              className={styles.accountRegistrationInput}
               id="account-registration-nickname"
               onChange={e => this.setState({nickname: e.target.value})}
               value={this.state.nickname}
               width="100%"
             />
 
-            <label className="account-registration-header" htmlFor="account-registration-password">
+            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-password">
               Password
-              <span className="account-registration-header-required">*</span>
+              <span className={styles.accountRegistrationHeaderRequired}>*</span>
             </label>
             <InputBox
               type="password"
               placeholder="Password"
-              className="account-registration-input"
+              className={styles.accountRegistrationInput}
               id="account-registration-password"
               onChange={e => this.setState({password: e.target.value})}
               value={this.state.password}
               width="100%"
             />
 
-            <label className="account-registration-header" htmlFor="account-registration-confirm-password">
+            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-confirm-password">
               Confirm Password
-              <span className="account-registration-header-required">*</span>
+              <span className={styles.accountRegistrationHeaderRequired}>*</span>
             </label>
             <InputBox
               type="password"
               placeholder="Confirm password"
-              className="account-registration-input"
+              className={styles.accountRegistrationInput}
               id="account-registration-confirm-password"
               onChange={e => this.setState({passwordConfirmation: e.target.value})}
               value={this.state.passwordConfirmation}
               width="100%"
             />
 
-            <div className="account-registration-consent-container">
-              <div className="account-registration-consent">
+            <div className={styles.accountRegistrationConsentContainer}>
+              <div className={styles.accountRegistrationConsent}>
                 <input
                   type="checkbox"
                   id="account-registration-core-consent"
-                  className="account-registration-checkbox"
+                  className={styles.accountRegistrationCheckbox}
                   onChange={e => this.setState({coreConsent: e.target.checked})}
                 />
-                <label className="account-registration-consent-label" htmlFor="account-registration-core-consent">I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/msa" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</label>
+                <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-core-consent">I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/msa" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</label>
               </div>
 
-              <div className="account-registration-consent">
+              <div className={styles.accountRegistrationConsent}>
                 <input
                   type="checkbox"
                   id="account-registration-marketing-consent"
-                  className="account-registration-checkbox"
+                  className={styles.accountRegistrationCheckbox}
                   onChange={e => this.setState({marketingConsent: e.target.checked})}
                 />
-                <label className="account-registration-consent-label" htmlFor="account-registration-marketing-consent">I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</label>
+                <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-marketing-consent">I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</label>
               </div>
             </div>
 
             <Button
               type="primary"
               width="100%"
-              className="account-registration-submit-button"
+              className={styles.accountRegistrationSubmitButton}
               size="large"
               onClick={this.onSubmit.bind(this)}
               disabled={!(
@@ -168,8 +162,8 @@ export class AccountRegistration extends React.Component<any, any> {
                 this.state.coreConsent
               )}
             >Create Account</Button>
-          </CardBody>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>;
   }

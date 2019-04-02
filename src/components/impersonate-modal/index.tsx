@@ -10,6 +10,7 @@ import {
   AppBarSection,
   AppBarTitle,
   Button,
+  ButtonContext,
   Icons,
   InputBox,
   RadioButton,
@@ -25,9 +26,10 @@ import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 
-import { CancelLink } from '../dialogger';
 import ListView, { ListViewColumn } from '../list-view';
 import Modal from '../modal';
+
+import styles from './styles.module.scss';
 
 const orgFilterHelper = filterCollection({fields: ['name']});
 const userFilterHelper = filterCollection({fields: ['email', 'fullName']});
@@ -41,7 +43,6 @@ export function ImpersonateModal({
   onSelectImpersonateOrganization,
   onSelectImpersonateUser,
 }) {
-
   const loading = !!activeModal.data.loading;
   const enabled = !!activeModal.data.enabled;
 
@@ -98,7 +99,7 @@ export function ImpersonateModal({
         }}>
           <ListView data={filteredOrgs} showHeaders={false}>
             <ListViewColumn
-              style={{flexGrow: 1}}
+              flexGrow={1}
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
                 activeModal.data.organizations.find(x => x.id === item.id)
@@ -145,7 +146,7 @@ export function ImpersonateModal({
             const disabled = loading || !enabled;
             return <div
               key={item.id}
-              className="impersonate-user-list-item"
+              className={styles.impersonateUserListItem}
               style={{
                 opacity: enabled ? 1.0 : 0.25,
                 cursor: enabled ? 'pointer' : undefined,
@@ -155,7 +156,7 @@ export function ImpersonateModal({
                 activeModal.data.users.find(x => x.id === item.id)
               )}
             >
-              <div className="impersonate-user-icon">{
+              <div className={styles.impersonateUserIcon}>{
                 (item.fullName || '')
                   .split(' ')
                   .slice(0, 2)
@@ -183,7 +184,9 @@ export function ImpersonateModal({
       <AppBar>
         <AppBarSection></AppBarSection>
         <AppBarSection>
-          <CancelLink text="Cancel" onClick={onCancelImpersonate} />
+          <ButtonContext.Provider value="CANCEL_BUTTON">
+            <Button onClick={onCancelImpersonate}>Cancel</Button>
+          </ButtonContext.Provider>
           <Button
             type="primary"
             disabled={loading || (enabled && !activeModal.data.selectedUser)}

@@ -15,6 +15,7 @@ export default function collectionUsersUpdate(item) {
         role: item.role,
         full_name: item.fullName,
         email: item.email,
+        spaces: item.spaces,
       });
     } catch (err) {
       errorThrown = err;
@@ -24,7 +25,7 @@ export default function collectionUsersUpdate(item) {
       dispatch(collectionUsersError(errorThrown));
       return false;
     } else {
-      dispatch(collectionUsersPush(response.data));
+      dispatch(collectionUsersPush(response));
       return true;
     }
   };

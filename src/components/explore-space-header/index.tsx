@@ -9,6 +9,8 @@ import { calculate as calculateTrendsModules } from '../../actions/route-transit
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
+import styles from './styles.module.scss';
+
 export function ExploreSpaceHeader({
   space,
   activeModal,
@@ -30,14 +32,14 @@ export function ExploreSpaceHeader({
         onDismiss={onCloseModal}
       /> : null}
 
-      <div className="explore-space-header-container">
-        <div className="explore-space-header">
+      <div className={styles.exploreSpaceHeaderContainer}>
+        <div className={styles.exploreSpaceHeader}>
           {/* Attempt to display a nicer representation of the time zone, but fall back on the time zone name */}
-          <div className="explore-space-header-row">
-            <div className="explore-space-header-capacity">
+          <div className={styles.exploreSpaceHeaderRow}>
+            <div className={styles.exploreSpaceHeaderCapacity}>
               {space.capacity ? <span>
                 Capacity: {space.capacity} <span
-                  className="explore-space-header-capacity-update-link"
+                  className={styles.exploreSpaceHeaderCapacityUpdateLink}
                   onClick={() => {
                     return onOpenModal('set-capacity', {space});
                   }}
@@ -45,15 +47,15 @@ export function ExploreSpaceHeader({
                 >Edit</span>
               </span> : <span>
                 <span
-                  className="explore-space-header-capacity-set-link"
+                  className={styles.exploreSpaceHeaderCapacitySetLink}
                   onClick={() => {
                     return onOpenModal('set-capacity', {space});
                   }}
                 >Set Capacity</span>
               </span>}
             </div>
-            <div className="explore-space-header-time-zone">
-              Time Zone: <span className="visualization-space-detail-header-time-zone-label">
+            <div className={styles.exploreSpaceHeaderTimeZone}>
+              Time Zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
                 {({
                   'America/New_York': 'US Eastern',
                   'America/Chicago': 'US Central',

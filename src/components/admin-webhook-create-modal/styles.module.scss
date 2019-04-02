@@ -1,0 +1,50 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.webhookCreateColumns {
+  display: flex;
+  flex-direction: row;
+  height: 372px;
+}
+
+.webhookCreateColumn {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 50%;
+  box-sizing: border-box;
+}
+.webhookCreateColumn.left {
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 12px;
+}
+.webhookCreateColumn.right {
+  padding-top: 24px;
+  padding-left: 12px;
+  padding-right: 24px;
+}
+
+.webhookCreateExample {
+  color: $grayDarkest;
+  margin-bottom: 40px;
+
+  p { font-size: 16px; }
+
+  p a { margin-left: 10px; }
+  p:first-child { margin-bottom: 20px; }
+}
+
+.webhookCreateExamplePayload {
+  background-color: $grayLightest;
+  color: $grayDarker;
+  border: 1px solid $grayLight;
+  border-radius: $borderRadiusBase;
+
+  font-family: $fontMonospace;
+  font-size: $fontSizeBase;
+  font-weight: $fontWeightBase;
+
+  padding: 20px;
+}
+

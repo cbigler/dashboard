@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -13,7 +15,7 @@ import AccountSetupHeader from '../account-setup-header/index';
 
 export function AccountSetupOverview({user, onGetStarted}) {
   if (user.data) {
-    return <div className="account-setup-overview-container">
+    return <div className={styles.accountSetupOverviewContainer}>
       <Subnav visible>
         <SubnavItem active href="#/onboarding/overview">Overview</SubnavItem>
         <SubnavItem href="#/onboarding/doorways">Doorways</SubnavItem>
@@ -24,15 +26,15 @@ export function AccountSetupOverview({user, onGetStarted}) {
         detail="Let's prep your space for installation."
       />
 
-      <div className="account-setup-overview-body-container">
-        <h1 className="account-setup-overview-title">Onboarding overview</h1>
-        <Card className="account-setup-overview-body">
+      <div className={styles.accountSetupOverviewBodyContainer}>
+        <h1 className={styles.accountSetupOverviewTitle}>Onboarding overview</h1>
+        <Card className={styles.accountSetupOverviewBody}>
           <CardBody>
             To ensure a successful installation, we have three onboarding steps to complete.
 
             Here's what you should expect:
 
-            <ul className="account-setup-overview-body-list">
+            <ul className={styles.accountSetupOverviewBodyList}>
               <li>Confirming your doorway(s)</li>
               <li>Installing the unit</li>
               <li>Configuring the unit</li>
@@ -40,13 +42,13 @@ export function AccountSetupOverview({user, onGetStarted}) {
 
             Once onboarding is complete, Explore will be made available in the Dashboard.
 
-            <div className="account-setup-overview-glyph">
+            <div className={styles.accountSetupOverviewGlyph}>
               <img
                 src="https://densityco.github.io/assets/images/r60-angle.06524db8.svg"
                 alt=""
               />
             </div>
-            <div className="account-setup-overview-submit">
+            <div className={styles.accountSetupOverviewSubmit}>
               <Button width="100%" type="primary" onClick={onGetStarted}>Lets Get Started!</Button>
             </div>
           </CardBody>
@@ -54,11 +56,11 @@ export function AccountSetupOverview({user, onGetStarted}) {
       </div>
     </div>;
   } else if (user.loading) {
-    return <div className="account-setup-overview account-setup-overview-loading">
+    return <div className={`${styles.accountSetupOverview} ${styles.accountSetupOverviewLoading}`}>
       Loading user information...
     </div>;
   } else {
-    return <div className="account-setup-overview account-setup-overview-loading">
+    return <div className={`${styles.accountSetupOverview} ${styles.accountSetupOverviewLoading}`}>
       No user found.
     </div>;
   }

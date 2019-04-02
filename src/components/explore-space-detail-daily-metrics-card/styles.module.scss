@@ -1,0 +1,138 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/grid.scss";
+
+.exploreSpaceDetailDailyMetricsCard {
+  margin-top: 40px;
+}
+
+:global(.card) :global(.card-body).exploreSpaceDetailDailyMetricsCardBody {
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+
+  border-top: 1px solid $grayLight;
+
+  overflow-x: auto;
+}
+.exploreSpaceDetailDailyMetricsCardBody .shortTimespanChart {
+  padding-bottom: 20px;
+}
+
+// START DAILY METRICS CARD HEADER
+
+// "mobile mode" layout
+// title              refresh-button.mid
+// metric-picker (refresh-button.end hidden)
+
+// "desktop mode" layout
+// title (refresh-button.mid hidden) metric-picker refresh-button.end
+
+:global(.card) .exploreSpaceDetailDailyMetricsCardHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: normal;
+
+  // When in "mobile mode", adjust the size to be smaller
+  height: 70px;
+  padding-top: 35px;
+
+  @media (min-width: $screenSmMin) {
+    flex-direction: row;
+    align-items: center;
+
+    // Reset the values set previously to their default values.
+    height: 18px;
+    padding-top: 30px;
+  }
+}
+.exploreSpaceDetailDailyMetricsCardMetricPicker{
+  .inputBox { color: $grayCinder; }
+  margin-top: 15px;
+
+  // Work around an issue where the z-index of the info popup was below the z-index of the select
+  // box, which on small width screens made the select box show above the popup when their bounding
+  // boxes intersect.
+  position: relative;
+  z-index: -100;
+
+  @media (min-width: $screenSmMin) {
+    margin-top: 0px;
+    margin-left: auto;
+    margin-right: 20px;
+  }
+}
+
+.exploreSpaceDetailDailyMetricsCardTitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+// There are two "refresh buttons" in the dom - one in the middle, and one at the end.
+// The one in the middle is shown in "mobile mode", as it's in an optimal position to flow to the
+// end of the row when the select box is wrapped to the column below. The one at the end is shown in
+// "desktop mode", which makes sense when the select box isn't wrapped to the next line.
+.exploreSpaceDetailDailyMetricsCardRefresh.mid {
+  margin-left: auto;
+  @media (min-width: $screenSmMin) {
+    display: none;
+  }
+}
+.exploreSpaceDetailDailyMetricsCardRefresh.end {
+  display: none;
+  @media (min-width: $screenSmMin) {
+    display: inline-block;
+  }
+}
+
+// END DAILY METRICS CARD HEADER
+
+
+// Horizontally and vertically center errors and info messages in the daily metrics card.
+.exploreSpaceDetailDailyMetricsCardBodyInfo,
+.exploreSpaceDetailDailyMetricsCardBodyError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 373px;
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.exploreSpaceDetailDailyMetricsCardBodyErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+  top: -2px;
+}
+
+// Refresh icon to refetch data
+.exploreSpaceDetailDailyMetricsCardRefresh {
+  display: inline-block;
+  transform: translate(0px, 3px);
+  cursor: pointer;
+}
+.exploreSpaceDetailDailyMetricsCardRefresh:hover { opacity: 0.8; }
+.exploreSpaceDetailDailyMetricsCardRefresh:active { opacity: 1; }
+.exploreSpaceDetailDailyMetricsCardRefresh.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.exploreSpaceDetailDailyMetricsCardPopupUl {
+  line-height: 20px;
+  padding-left: 20px;
+  li { margin-bottom: 10px; }
+}
+.exploreSpaceDetailDailyMetricsCardPopupP {
+  line-height: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.dailyMetricsAxisX .tick text { font-weight: 400; }

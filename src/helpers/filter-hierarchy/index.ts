@@ -1,4 +1,4 @@
-export function getParentsOfSpace(spaces, initialSpace) {
+export function getParentsOfSpace(spaces, initialSpace, throwError = true) {
   const parents: any[] = [];
 
   if (!initialSpace) {
@@ -25,16 +25,31 @@ export function getParentsOfSpace(spaces, initialSpace) {
     // eslint-disable-next-line no-loop-func
     space = spaces.find(s => s.id === space.parentId);
     if (!space) {
-      throw new Error(`No such space found with id ${parentId}`);
+      if (throwError) {
+        throw new Error(`No such space found with id ${parentId}`);
+      } else {
+        return parents;
+      }
     }
   }
 }
 
 export function getChildrenOfSpace(spaces, initialSpace) {
   return spaces.filter(space => {
-    const parents = getParentsOfSpace(spaces, space);
+    const parents = getParentsOfSpace(spaces, space, false);
     return parents.includes(initialSpace.id);
   }).map(s => s.id);
+}
+
+export function isParentSelected(spaces, spaceId, selectedIds) {
+  const space = spaces.find(x => x.id === spaceId);
+  if (space) {
+    return getParentsOfSpace(spaces, space, false).reduce((acc, next, index) => (
+      acc || (index > 0 && selectedIds.includes(next))
+    ), false);
+  } else {
+    return false;
+  }
 }
 
 export default function filterHierarchy(spaces, parentId) {

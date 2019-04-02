@@ -7,7 +7,8 @@ import { DensitySpace } from '../../types';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
-import convertSpacesToSpaceTree from '../../helpers/convert-spaces-to-space-tree/index';
+import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
+import sortSpaceTree from '../../helpers/sort-space-tree/index';
 
 export const ROUTE_TRANSITION_EXPLORE = 'ROUTE_TRANSITION_EXPLORE';
 
@@ -26,10 +27,10 @@ export default function routeTransitionExplore() {
 
     // immediately bring them to the first space trends page if we have spaces
     let state = getState()
-    const currentSpaces = state.spaces.data;
+    const currentSpaces = state.spaceHierarchy.data;
     if (currentSpaces.length > 0) {
-      const spaceTree = convertSpacesToSpaceTree(currentSpaces)
-      const firstSpace = returnSpaceOrFirstChild(spaceTree[0])
+      const spaceTree = sortSpaceTree(currentSpaces);
+      const firstSpace = returnSpaceOrFirstChild(spaceTree[0]);
       if (firstSpace) {
         window.location.href = `#/spaces/explore/${firstSpace.id}/trends`;  
       }  
@@ -37,23 +38,25 @@ export default function routeTransitionExplore() {
 
     // Load a list of all spaces
     errorThrown = false;
-    let spaces;
+    let spaces, spaceHierarchy;
     try {
+      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
       spaces = (await fetchAllPages(
         async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
       )).map(s => objectSnakeToCamel<DensitySpace>(s));
     } catch (err) {
       errorThrown = true;
-      dispatch(collectionSpacesError(`Error loading space: ${err}`));
+      dispatch(collectionSpacesError(`Error loading spaces: ${err}`));
     }
     if (!errorThrown) {
+      dispatch(collectionSpaceHierarchySet(spaceHierarchy));
       dispatch(collectionSpacesSet(spaces));
     }
 
     // if there were no current spaces, then now that we have a list, let's bring them to the first...
-    if (currentSpaces.length == 0) {
-      const spaceTree = convertSpacesToSpaceTree(spaces)
-      const firstSpace = returnSpaceOrFirstChild(spaceTree[0])
+    if (currentSpaces.length === 0) {
+      const spaceTree = sortSpaceTree(spaces);
+      const firstSpace = returnSpaceOrFirstChild(spaceTree[0]);
       if (firstSpace) {
         window.location.href = `#/spaces/explore/${firstSpace.id}/trends`;  
       }  

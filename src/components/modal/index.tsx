@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import classnames from 'classnames';
+import styles from './styles.module.scss';
 
 type ModalProps = {
   visible: boolean,
@@ -34,14 +35,14 @@ export default function Modal({
   return ReactDOM.createPortal(
     <div
       tabIndex={0}
-      className={classnames('dashboard-modal-backdrop', {visible})}
+      className={classnames(styles.dashboardModalBackdrop, {[styles.visible]: visible})}
       onKeyDown={e => e.keyCode === 27 && onEscape && onEscape()}
       onMouseDown={onBlur}
     >
       <div
         ref={dialog}
         tabIndex={0}
-        className="dashboard-modal-dialog"
+        className={styles.dashboardModalDialog}
         style={inlineStyle}
         onMouseDown={e => e.stopPropagation()}
       >

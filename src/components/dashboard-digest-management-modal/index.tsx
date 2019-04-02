@@ -1,5 +1,6 @@
+import styles from './styles.module.scss';
+
 import React, { Fragment, Component } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
@@ -23,7 +24,6 @@ import collectionDigestSchedulesCreate from '../../actions/collection/digest-sch
 import collectionDigestSchedulesUpdate from '../../actions/collection/digest-schedules/update';
 import collectionDigestSchedulesDestroy from '../../actions/collection/digest-schedules/destroy';
 
-import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import showToast from '../../actions/toasts';
 
@@ -183,14 +183,14 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
         onBlur={onCloseModal}
         onEscape={onCloseModal}
       >
-        <div className="dashboard-digest-management-modal">
+        <div className={styles.dashboardDigestManagementModal}>
           <AppBar>
             <AppBarTitle>
               {initialDigestSchedule ? 'Edit Email Digest' : 'New Email Digest'}
             </AppBarTitle>
           </AppBar>
-          <div className="dashboard-digest-management-modal-split-container">
-            <div className="dashboard-digest-management-modal-split left">
+          <div className={styles.dashboardDigestManagementModalSplitContainer}>
+            <div className={`${styles.dashboardDigestManagementModalSplit} ${styles.left}`}>
               <DigestManagementForm
                 name={name}
                 onChangeName={name => this.setState({name})}
@@ -225,7 +225,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
                 }}
               />
             </div>
-            <div className="dashboard-digest-management-modal-split right">
+            <div className={`${styles.dashboardDigestManagementModalSplit} ${styles.right}`}>
               <DigestManagementRecipientList
                 recipients={recipients}
                 users={users}
@@ -251,7 +251,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
               <AppBarSection>
                 <span
                   role="button"
-                  className="dashboard-digest-management-modal-footer-cancel"
+                  className={styles.dashboardDigestManagementModalFooterCancel}
                   onClick={onCloseModal}
                 >Cancel</span>
                 <Button
@@ -356,8 +356,8 @@ function DigestManagementForm({
   onDeleteDigest,
 }) {
   return (
-    <div className="digest-management-form">
-      <div className="digest-management-form-group">
+    <div className={styles.digestManagementForm}>
+      <div className={styles.digestManagementFormGroup}>
         <label htmlFor="digest-name">Name</label>
         <InputBox
           type="text"
@@ -368,9 +368,9 @@ function DigestManagementForm({
           onChange={e => onChangeName(e.target.value)}
         />
       </div>
-      <div className="digest-management-form-group">
+      <div className={styles.digestManagementFormGroup}>
         <label htmlFor="digest-frequency">Frequency</label>
-        <div className="digest-management-form-group-container">
+        <div className={styles.digestManagementFormGroupContainer}>
           <InputBox
             type="select"
             id="digest-frequency"
@@ -384,9 +384,9 @@ function DigestManagementForm({
           />
 
           {frequency === WEEKLY ? (
-            <div className="digest-management-form-group-day-list">
+            <div className={styles.digestManagementFormGroupDayList}>
               {DAYS_OF_WEEK.map(dayName => (
-                <div key={dayName} className="digest-management-form-group-day-item">
+                <div key={dayName} className={styles.digestManagementFormGroupDayItem}>
                   <Button
                     type={daysOfWeek.indexOf(dayName) >= 0 ? 'primary' : 'default'}
                     size="small"
@@ -412,13 +412,13 @@ function DigestManagementForm({
             </div>
           ) : null}
           {frequency === MONTHLY ? (
-            <div className="digest-management-form-group-day-status">
+            <div className={styles.digestManagementFormGroupDayStatus}>
               <span>On the first of the month</span>
             </div>
           ) : null}
         </div>
       </div>
-      <div className="digest-management-form-group">
+      <div className={styles.digestManagementFormGroup}>
         <label htmlFor="digest-name">Time</label>
         <InputBox
           type="select"
@@ -429,7 +429,7 @@ function DigestManagementForm({
           width={150}
           menuMaxHeight={300}
         />
-        <div className="digest-management-form-group-time-zone-field">
+        <div className={styles.digestManagementFormGroupTimeZoneField}>
           <InputBox
             type="select"
             value={timeZone}
@@ -442,7 +442,7 @@ function DigestManagementForm({
         </div>
       </div>
       {showDeleteDigest ? (
-        <div className="digest-management-form-group">
+        <div className={styles.digestManagementFormGroup}>
           <ButtonContext.Provider value="DIGEST_DELETE_BUTTON">
             <Button onClick={onDeleteDigest}>Delete this Digest</Button>
           </ButtonContext.Provider>
@@ -478,8 +478,8 @@ function DigestManagementRecipientList({
 
   return (
     <Fragment>
-      <div className="digest-management-recipient-list-app-bar">
-        <span className="digest-management-recipient-list-title">Add a recipient</span>
+      <div className={styles.digestManagementRecipientListAppBar}>
+        <span className={styles.digestManagementRecipientListTitle}>Add a recipient</span>
         <InputBox
           type="text"
           placeholder={users.view === 'VISIBLE' ? (
@@ -491,23 +491,23 @@ function DigestManagementRecipientList({
           width="100%"
         />
       </div>
-      <div className="digest-management-recipient-list">
+      <div className={styles.digestManagementRecipientList}>
         {/* loading state - show some placeholders */}
         {users.view === 'LOADING' ? (
           <Fragment>
-            <div className="digest-management-recipient-list-item">
-              <div className="digest-management-recipient-list-item-name">
+            <div className={styles.digestManagementRecipientListItem}>
+              <div className={styles.digestManagementRecipientListItemName}>
                 <DigestManagementRecipientIcon user={{fullName: ''}} />
-                <div className="digest-management-recipient-list-item-name-placeholder" />
+                <div className={styles.digestManagementRecipientListItemNamePlaceholder} />
               </div>
-              <div className="digest-management-recipient-list-item-checkbox-placeholder" />
+              <div className={styles.digestManagementRecipientListItemCheckboxPlaceholder} />
             </div>
-            <div className="digest-management-recipient-list-item">
-              <div className="digest-management-recipient-list-item-name">
+            <div className={styles.digestManagementRecipientListItem}>
+              <div className={styles.digestManagementRecipientListItemName}>
                 <DigestManagementRecipientIcon user={{fullName: ''}} />
-                <div className="digest-management-recipient-list-item-name-placeholder" />
+                <div className={styles.digestManagementRecipientListItemNamePlaceholder} />
               </div>
-              <div className="digest-management-recipient-list-item-checkbox-placeholder" />
+              <div className={styles.digestManagementRecipientListItemCheckboxPlaceholder} />
             </div>
           </Fragment>
         ) : null}
@@ -538,10 +538,10 @@ function DigestManagementRecipientList({
 
         {/* empty state */}
         {users.view === 'VISIBLE' && filteredUsers.length === 0 ? (
-          <div className="digest-management-recipient-list-empty-state">
-            <div className="digest-management-recipient-list-empty-state-inner">
-              <span className="digest-management-recipient-list-empty-state-title">Whoops</span>
-              <span className="digest-management-recipient-list-empty-state-desc">
+          <div className={styles.digestManagementRecipientListEmptyState}>
+            <div className={styles.digestManagementRecipientListEmptyStateInner}>
+              <span className={styles.digestManagementRecipientListEmptyStateTitle}>Whoops</span>
+              <span className={styles.digestManagementRecipientListEmptyStateDesc}>
                 We couldn't find any users that matched "{searchQuery}"
               </span>
             </div>
@@ -550,10 +550,10 @@ function DigestManagementRecipientList({
 
         {/* error state */}
         {users.view === 'ERROR' ? (
-          <div className="digest-management-recipient-list-empty-state">
-            <div className="digest-management-recipient-list-empty-state-inner">
-              <span className="digest-management-recipient-list-empty-state-title">Whoops</span>
-              <span className="digest-management-recipient-list-empty-state-desc">
+          <div className={styles.digestManagementRecipientListEmptyState}>
+            <div className={styles.digestManagementRecipientListEmptyStateInner}>
+              <span className={styles.digestManagementRecipientListEmptyStateTitle}>Whoops</span>
+              <span className={styles.digestManagementRecipientListEmptyStateDesc}>
                 Something went wrong. Try refreshing, or contacting{' '}
                 <a href="mailto:support@density.io">support</a>.
               </span>
@@ -567,8 +567,8 @@ function DigestManagementRecipientList({
 
 function DigestManagementRecipientListItem({user, checked, onAddRecipient, onRemoveRecipient}) {
   return (
-    <div className="digest-management-recipient-list-item">
-      <div className={classnames('digest-management-recipient-list-item-name', {checked})}>
+    <div className={styles.digestManagementRecipientListItem}>
+      <div className={classnames(styles.digestManagementRecipientListItemName, {[styles.checked]: checked})}>
         <DigestManagementRecipientIcon user={user} />
         <span>{user.fullName || user.email}</span>
       </div>
@@ -589,7 +589,7 @@ function DigestManagementRecipientListItem({user, checked, onAddRecipient, onRem
 
 function DigestManagementRecipientIcon({ user }) {
   return (
-    <div className="digest-management-recipient-icon">
+    <div className={styles.digestManagementRecipientIcon}>
       {
         user.fullName
         .split(' ')
@@ -605,7 +605,7 @@ function DigestManagementRecipientIcon({ user }) {
 
 function DigestAddedNotAddedBox({id, checked, onChange}) {
   return (
-    <div className={classnames('digest-management-added-not-added-box', {checked})}>
+    <div className={classnames(styles.digestManagementAddedNotAddedBox, {[styles.checked]: checked})}>
       <input
         type="checkbox"
         id={id}
@@ -614,8 +614,8 @@ function DigestAddedNotAddedBox({id, checked, onChange}) {
       />
 
       <label htmlFor={id}>
-        <span className="text-label">{checked ? 'Added' : 'Not Added'}</span>
-        <div className="checkbox-well">
+        <span className={styles.textLabel}>{checked ? 'Added' : 'Not Added'}</span>
+        <div className={styles.checkboxWell}>
           <Icons.Check width={14} height={14} color="#fff" />
         </div>
       </label>

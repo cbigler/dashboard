@@ -1,7 +1,10 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarSection,
@@ -11,7 +14,6 @@ import {
 } from '@density/ui';
 
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 import FormLabel from '../form-label';
 
@@ -34,7 +36,7 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
         <AppBar>
           <AppBarTitle>Connect with Robin</AppBarTitle>
         </AppBar>
-        <div className="integrations-create">
+        <div className={styles.integrationsCreate}>
           <FormLabel
             label="Robin API Token"
             htmlFor="create-token"
@@ -62,7 +64,9 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 disabled={this.state.robinAccessToken.length === 0 && this.state.robinOrganizationId.length === 0}

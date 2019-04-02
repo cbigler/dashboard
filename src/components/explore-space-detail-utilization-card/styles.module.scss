@@ -1,0 +1,108 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+$exploreSpaceDetailCardHeaderBreakpoint: 930px;
+
+.exploreSpaceDetailUtilizationCardAverageWeek {
+  margin-bottom: 40px;
+}
+
+
+.exploreSpaceDetailUtilizationCardHeaderContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.exploreSpaceDetailUtilizationCardPopupP {
+  line-height: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+// Refresh icon to refetch data
+.exploreSpaceDetailUtilizationCardHeaderRefresh {
+  margin-left: auto;
+  cursor: pointer;
+  transform: translate(0px, 3px);
+}
+.exploreSpaceDetailUtilizationCardHeaderRefresh:hover { opacity: 0.8; }
+.exploreSpaceDetailUtilizationCardHeaderRefresh:active { opacity: 1; }
+.exploreSpaceDetailUtilizationCardHeaderRefresh.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+
+.exploreSpaceDetailUtilizationCardAverageWeeklyBreakdown {
+  padding-top: 0px;
+  @media (min-width: $screenXsMax) {
+    padding-top: 20px;
+  }
+}
+
+
+.exploreSpaceDetailUtilizationCardGridHeader {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+.exploreSpaceDetailUtilizationCardGridRow {
+  list-style-type: none;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+}
+.exploreSpaceDetailUtilizationCardGridItem {
+  font-size: $fontSize4;
+  color: $grayCinder;
+  line-height: 43px;
+
+  &:first-child { flex: 7; }
+  &:last-child { flex: 11; }
+  @media (min-width: $screenXsMax) {
+    &:first-child { flex: 1; }
+    &:last-child { flex: 3; }
+  }
+}
+
+// Ensure that the chart is horizontally scrollable on mobile
+.exploreSpaceDetailUtilizationCardDailyBreakdownChart {
+  overflow-x: auto;
+  overflow-y: hidden;
+  text-align: center;
+}
+
+// Hide the max line on the chart - it's not in the right location.
+.exploreSpaceDetailUtilizationCardDailyBreakdownChart :global(.axis-y-maximum-line) { display: none; }
+// Instead, show the capacity line.
+.exploreSpaceDetailUtilizationCardDailyBreakdownChart :global(.axis-y-capacity-line) { display: block; }
+
+.exploreSpaceDetailUtilizationCard :global(.historical-counts) :global(.historical-counts-capacity-region) {
+  fill: transparent;
+}
+
+
+// Horizontally and vertically center errors and info messages in the 24 hour card.
+.exploreSpaceDetailUtilizationCardBodyInfo,
+.exploreSpaceDetailUtilizationCardBodyError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 405px;
+  margin-left: 20px;
+  margin-right: 10px;
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.exploreSpaceDetailUtilizationCardBodyErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+}

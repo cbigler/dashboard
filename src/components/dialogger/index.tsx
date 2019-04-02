@@ -1,27 +1,19 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
+import styles from './styles.module.scss';
+
 import {
   AppBar,
   AppBarContext,
   AppBarSection,
   AppBarTitle,
   Button,
+  ButtonContext,
 } from '@density/ui';
 
 import Modal from '../modal';
 import hideModal from '../../actions/modal/hide';
-
-export function CancelLink({
-  onClick,
-  text = 'Cancel'
-}) {
-  return <span
-    role="button"
-    className="dashboard-modal-cancel-link"
-    onClick={onClick}
-  >{text}</span>
-}
 
 export function Dialogger({
   activeModal,
@@ -36,18 +28,20 @@ export function Dialogger({
         onBlur={onCancel}
         onEscape={onCancel}
       >
-        <div className="dashboard-modal-confirm">
+        <div className={styles.dashboardModalConfirm}>
           <AppBar>
             <AppBarTitle>{activeModal.data.title || 'Confirm'}</AppBarTitle>
           </AppBar>
-          <div className="dashboard-modal-confirm-content">
+          <div className={styles.dashboardModalConfirmContent}>
             {activeModal.data.prompt || 'Are you sure?'}
           </div>
           <AppBarContext.Provider value="BOTTOM_ACTIONS">
             <AppBar>
               <AppBarSection></AppBarSection>
               <AppBarSection>
-                <CancelLink onClick={onCancel} text={activeModal.data.cancelText} />
+                <ButtonContext.Provider value="CANCEL_BUTTON">
+                  <Button onClick={onCancel}>Cancel</Button>
+                </ButtonContext.Provider>
                 <Button
                   type="primary"
                   onClick={() => onConfirm(activeModal.data.callback)}

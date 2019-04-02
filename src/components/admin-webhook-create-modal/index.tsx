@@ -1,7 +1,10 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 
 import {
   Button,
+  ButtonContext,
   InputBox,
   AppBar,
   AppBarTitle,
@@ -11,7 +14,6 @@ import {
 
 import FormLabel from '../form-label';
 import Modal from '../modal';
-import { CancelLink } from '../dialogger';
 
 export default class WebhookCreateModal extends React.Component<any, any> {
   state = {
@@ -33,10 +35,9 @@ export default class WebhookCreateModal extends React.Component<any, any> {
         <AppBar>
           <AppBarTitle>Create Webhook</AppBarTitle>
         </AppBar>
-        <div className="webhook-create-columns">
-          <div className="webhook-create-column left">
+        <div className={styles.webhookCreateColumns}>
+          <div className={`${styles.webhookCreateColumn} ${styles.left}`}>
             <FormLabel
-              className="webhook-create-name-container"
               htmlFor="webhook-create-name"
               label="Webhook name"
               input={<InputBox
@@ -48,7 +49,6 @@ export default class WebhookCreateModal extends React.Component<any, any> {
               />}
             />
             <FormLabel
-              className="webhook-create-description-container"
               htmlFor="webhook-create-desc"
               label="Webhook description"
               input={<InputBox
@@ -60,7 +60,6 @@ export default class WebhookCreateModal extends React.Component<any, any> {
               />}
             />
             <FormLabel
-              className="webhook-create-endpoint-container"
               htmlFor="webhook-create-endpoint"
               label="Webhook URL"
               input={<InputBox
@@ -75,8 +74,8 @@ export default class WebhookCreateModal extends React.Component<any, any> {
             />
           </div>
 
-          <div className="webhook-create-column right">
-            <div className="webhook-create-example">
+          <div className={`${styles.webhookCreateColumn} ${styles.right}`}>
+            <div className={styles.webhookCreateExample}>
               <p>Webhooks will be sent as POST requests to the URL specified in JSON.</p>
               <p>
                 Here's an example webhook payload:
@@ -86,7 +85,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
                   href="https://docs.density.io/v2/#webhooks-receiving"
                 >More information</a>
               </p>
-              <pre className="webhook-create-example-payload">{
+              <pre className={styles.webhookCreateExamplePayload}>{
                 JSON.stringify({
                   "space_id": "spc_12284369797403919085",
                   "doorway_id": "drw_16131794227371328677",
@@ -102,7 +101,9 @@ export default class WebhookCreateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <CancelLink onClick={onDismiss} />
+              <ButtonContext.Provider value="CANCEL_BUTTON">
+                <Button onClick={onDismiss}>Cancel</Button>
+              </ButtonContext.Provider>
               <Button
                 type="primary"
                 disabled={this.state.endpoint.length === 0}

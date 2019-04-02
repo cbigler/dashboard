@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import { connect } from 'react-redux';
 
@@ -38,7 +40,6 @@ export class Account extends React.Component<any, any> {
 
       // Initialize with a prop passing the initial value from the store
       fullName: this.props.user.data ? this.props.user.data.fullName : '',
-      nickname: this.props.user.data ? this.props.user.data.nickname : '',
       email: this.props.user.data ? this.props.user.data.email : '',
       marketingConsent: this.props.user.data ? this.props.user.data.marketingConsent : false,
     };
@@ -47,16 +48,11 @@ export class Account extends React.Component<any, any> {
   componentWillReceiveProps(nextProps) {
     this.setState({
       fullName: nextProps.user.data.fullName || '',
-      nickname: nextProps.user.data.nickname || '',
       email: nextProps.user.data.email || '',
       marketingConsent: nextProps.user.data.marketingConsent,
     });
   }
 
-  // Generate the default nickname if one isn't specified.
-  generateNickname() {
-    return this.state.fullName.indexOf(' ') >= 0 ? this.state.fullName.split(' ')[0] : undefined;
-  }
   render() {
     const {
       user,
@@ -67,15 +63,15 @@ export class Account extends React.Component<any, any> {
     const canChangePassword = user.data && !user.data.isDemo && !user.data.organization.forceSsoLogin;
 
     return (
-      <div className="account-container">
-        <div className="account">
+      <div className={styles.accountContainer}>
+        <div className={styles.account}>
           {/* Render any errors from the server */}
           <ErrorBar message={this.state.error} />
 
-          {this.props.activeModal.name === 'account-password-reset' && this.props.activeModal.visible ? <div className="account-password-reset-toast">
+          {this.props.activeModal.name === 'account-password-reset' && this.props.activeModal.visible ? <div className={styles.accountPasswordResetToast}>
             <Toast
               type="success"
-              icon={<span className="account-password-reset-icon">&#xe908;</span>}
+              icon={<span className={styles.accountPasswordResetIcon}>&#xe908;</span>}
               title="Password updated!"
               onDismiss={this.props.onHideSuccessToast}
             >
@@ -83,7 +79,7 @@ export class Account extends React.Component<any, any> {
             </Toast>
           </div> : null}
 
-          <Card className="account-card" type="modal">
+          <Card className={styles.accountCard} type="modal">
             {this.props.loading ? <CardLoading indeterminate /> : null}
             <CardHeader>
               {this.state.mode === EDIT ? 'Edit Account' : 'Account'}
@@ -106,45 +102,26 @@ export class Account extends React.Component<any, any> {
                     this.setState({mode: EDIT});
                   }
                 }}
-                className="account-edit-button"
+                className={styles.accountEditButton}
               >{this.state.mode === EDIT ? 'Cancel' : 'Edit'}</ModalHeaderActionButton> : null}
             </CardHeader>
 
             <CardBody>
-              <div className="account-name-container">
-                <FormLabel
-                  className="account-full-name-container"
-                  htmlFor="account-full-name"
-                  label="Full Name"
-                  input={<InputBox
-                    type="text"
-                    placeholder="Full Name"
-                    width="100%"
-                    value={this.state.fullName}
-                    onChange={e => this.setState({fullName: e.target.value})}
-                    disabled={this.state.mode !== EDIT}
-                    id="account-full-name"
-                  />}
-                />
-
-                <FormLabel
-                  className="account-nickname-container"
-                  htmlFor="account-nickname"
-                  label="Nickname"
-                  input={<InputBox
-                    type="text"
-                    placeholder={this.generateNickname() || 'Nickname'}
-                    width="100%"
-                    value={this.state.nickname}
-                    onChange={e => this.setState({nickname: e.target.value})}
-                    disabled={this.state.mode !== EDIT}
-                    id="account-nickname"
-                  />}
-                />
-              </div>
+              <FormLabel
+                htmlFor="account-name"
+                label="Name"
+                input={<InputBox
+                  type="text"
+                  placeholder="Name"
+                  width="100%"
+                  value={this.state.fullName}
+                  onChange={e => this.setState({fullName: e.target.value})}
+                  disabled={this.state.mode !== EDIT}
+                  id="account-full-name"
+                />}
+              />
 
               <FormLabel
-                className="account-email-container"
                 htmlFor="account-email"
                 label="Email"
                 input={<InputBox
@@ -159,7 +136,6 @@ export class Account extends React.Component<any, any> {
               />
 
               <FormLabel
-                className="account-organization-container"
                 htmlFor="account-organization"
                 label="Organization"
                 input={<InputBox
@@ -172,12 +148,12 @@ export class Account extends React.Component<any, any> {
                 />}
               />
 
-              <div className="account-consent-container">
-                <div className="account-consent">
+              <div className={styles.accountConsentContainer}>
+                <div className={styles.accountConsent}>
                   <input
                     type="checkbox"
                     id="account-marketing-consent"
-                    className="account-checkbox"
+                    className={styles.accountCheckbox}
                     onChange={e => this.setState({marketingConsent: e.target.checked})}
                     defaultChecked={user.data && user.data.marketingConsent}
                     disabled={this.state.mode !== EDIT}
@@ -188,18 +164,18 @@ export class Account extends React.Component<any, any> {
 
               {/* Trigger changing the password */}
               {this.state.mode === NORMAL && canChangePassword ? <FormLabel
-                className="account-change-password-link-container"
+                className={styles.accountChangePasswordLinkContainer}
                 label="Password"
                 htmlFor="account-change-password"
-                input={ <div id="account-change-password" className="account-change-password-value">
+                input={ <div id="account-change-password" className={styles.accountChangePasswordValue}>
                   <span onClick={() => this.setState({mode: PASSWORD_RESET})}>Change Password</span>
                 </div>}
               /> : null}
 
               {/* The form to change the password that is triggered. */}
-              {this.state.mode === PASSWORD_RESET ? <div className="account-change-password-form-container">
-                <label className="account-change-password-form-header">Password</label>
-                <div className="account-change-password-form-field-wrapper">
+              {this.state.mode === PASSWORD_RESET ? <div className={styles.accountChangePasswordFormContainer}>
+                <label className={styles.accountChangePasswordFormHeader}>Password</label>
+                <div className={styles.accountChangePasswordFormFieldWrapper}>
                   <InputBox
                     type="password"
                     placeholder="Type old password"
@@ -208,7 +184,7 @@ export class Account extends React.Component<any, any> {
                     onChange={e => this.setState({currentPassword: e.target.value})}
                   />
                 </div>
-                <div className="account-change-password-form-field-wrapper">
+                <div className={styles.accountChangePasswordFormFieldWrapper}>
                   <InputBox
                     type="password"
                     placeholder="Type new password (minimum of 8 characters)"
@@ -217,7 +193,7 @@ export class Account extends React.Component<any, any> {
                     onChange={e => this.setState({password: e.target.value})}
                   />
                 </div>
-                <div className="account-change-password-form-field-wrapper">
+                <div className={styles.accountChangePasswordFormFieldWrapper}>
                   <InputBox
                     type="password"
                     placeholder="Confirm new password"
@@ -247,11 +223,11 @@ export class Account extends React.Component<any, any> {
                 >Change Password</Button>
               </div> : null}
 
-              {this.state.mode === NORMAL ? <div className="account-deactivate-container">
+              {this.state.mode === NORMAL ? <div className={styles.accountDeactivateContainer}>
                 <span>If you&apos;d like to deactivate your account, please <a href="mailto:support@density.io?subject=I want to deactivate my Density account"> contact support</a>.</span>
               </div> : null}
 
-              <div className="account-submit-user-details">
+              <div className={styles.accountSubmitUserDetails}>
                 {this.state.mode === EDIT ? <Button
                   onClick={() => {
                     onSubmitUserUpdate(this.state.fullName, this.state.nickname, this.state.marketingConsent)

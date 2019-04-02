@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React from 'react';
 import classnames from 'classnames';
+import styles from './styles.module.scss';
 
 export default function ModalHeaderActionButton({onClick, children, className}) {
   return <div
     onClick={onClick}
-    className={classnames('modal-header-action-button', className)}
+    className={classnames(styles.modalHeaderActionButton, className)}
   >{children}</div>;
 }

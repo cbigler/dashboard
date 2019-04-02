@@ -7,6 +7,8 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
 
+import styles from './styles.module.scss';
+
 import { DensityDashboard, DensityDigestSchedule } from '../../types';
 
 function generateHumanReadableFrequency(digest) {
@@ -65,29 +67,29 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
     ) : [];
 
     return (
-      <div className="dashboard-digest-list">
+      <div className={styles.dashboardDigestList}>
 				<div
-          className={classnames('dashboard-digest-backdrop', {visible})}
+          className={classnames(styles.dashboardDigestBackdrop, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: false})}
         />
 
         <button
-          className={classnames('dashboard-digest-list-button', {visible})}
+          className={classnames(styles.dashboardDigestListButton, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: !visible})}
         >
           <Icons.Mail color={colorVariables.brandPrimaryNew} />
-          <span className="dashboard-digest-list-button-text">Email Digest</span>
+          <span className={styles.dashboardDigestListButtonText}>Email Digest</span>
           <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
         </button>
 
-        <div className={classnames('dashboard-digest-list-dropdown', {visible})}>
+        <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>
           <AppBar>
             <AppBarSection>
               <AppBarTitle>Email Digests</AppBarTitle>
             </AppBarSection>
             <AppBarSection>
               <span
-                className="dashboard-digest-list-dropdown-create-button"
+                className={styles.dashboardDigestListDropdownCreateButton}
                 role="button"
                 onClick={() => {
                   this.setState({visible: false}, () => {
@@ -97,7 +99,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                 tabIndex={visible ? 0 : -1}
               >
                 <Icons.PlusCircle color={colorVariables.brandPrimary} />
-                <span className="dashboard-digest-list-dropdown-create-button-text">
+                <span className={styles.dashboardDigestListDropdownCreateButtonText}>
                   Create New Digest
                 </span>
               </span>
@@ -106,18 +108,18 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
 
           {/* regular state is a list of digestes */}
           {digestSchedules.view === 'VISIBLE' ? (
-            <ul className="dashboard-digest-list-dropdown-list">
+            <ul className={styles.dashboardDigestListDropdownList}>
               {digestSchedulesForSelectedDashboard
               .sort((a, b) => a.name.localeCompare(b.name))
               .map(digest => (
-                <li key={digest.id} className="dashboard-digest-list-dropdown-item">
-                  <div className="dashboard-digest-list-dropdown-item-row">
-                    <span className="dashboard-digest-list-dropdown-item-name">
+                <li key={digest.id} className={styles.dashboardDigestListDropdownItem}>
+                  <div className={styles.dashboardDigestListDropdownItemRow}>
+                    <span className={styles.dashboardDigestListDropdownItemName}>
                       {digest.name}
                     </span>
                     <span
                       role="button"
-                      className="dashboard-digest-list-dropdown-item-edit"
+                      className={styles.dashboardDigestListDropdownItemEdit}
                       onClick={() => {
                         this.setState({visible: false}, () => {
                           onEditDigest(digest);
@@ -126,9 +128,9 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                       tabIndex={visible ? 0 : -1}
                     >Edit</span>
                   </div>
-                  <span className="dashboard-digest-list-dropdown-item-interval">
+                  <span className={styles.dashboardDigestListDropdownItemInterval}>
                     <Icons.Calendar color={colorVariables.grayDarker} />
-                    <span className="dashboard-digest-list-dropdown-item-interval-text">
+                    <span className={styles.dashboardDigestListDropdownItemIntervalText}>
                       {generateHumanReadableFrequency(digest)}
                     </span>
                   </span>
@@ -139,14 +141,14 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
 
           {/* empty state */}
           {digestSchedules.view === 'VISIBLE' && digestSchedulesForSelectedDashboard.length === 0 ? (
-            <div className="dashboard-digest-list-dropdown-list">
-              <div className="dashboard-digest-list-empty-container">
+            <div className={styles.dashboardDigestListDropdownList}>
+              <div className={styles.dashboardDigestListEmptyContainer}>
                 <Letter />
-                <div className="dashboard-digest-list-empty-container-text">
-                  <h3 className="dashboard-digest-list-empty-container-title">
+                <div className={styles.dashboardDigestListEmptyContainerText}>
+                  <h3 className={styles.dashboardDigestListEmptyContainerTitle}>
                     You haven't created any digests.
                   </h3>
-                  <span className="dashboard-digest-list-empty-container-desc">
+                  <span className={styles.dashboardDigestListEmptyContainerDesc}>
                     View dashboards in your inbox.
                   </span>
                 </div>
@@ -156,24 +158,24 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
 
           {/* loading state has a bunch of placeholders */}
           {digestSchedules.view === 'LOADING' ? (
-            <div className="dashboard-digest-list-dropdown-list">
-              <div className="dashboard-digest-list-loading-placeholder-container">
-                <div className="dashboard-digest-list-loading-placeholder-row one">
+            <div className={styles.dashboardDigestListDropdownList}>
+              <div className={styles.dashboardDigestListLoadingPlaceholderContainer}>
+                <div className={classnames(styles.dashboardDigestListLoadingPlaceholderRow, styles.one)}>
                   <div
-                    className="dashboard-digest-list-loading-placeholder dark"
+                    className={classnames(styles.dashboardDigestListLoadingPlaceholder, styles.dark)}
                     style={{width: 245}}
                   />
                   <div
-                    className="dashboard-digest-list-loading-placeholder dark"
+                    className={classnames(styles.dashboardDigestListLoadingPlaceholder, styles.dark)}
                     style={{width: 30}}
                   />
                 </div>
-                <div className="dashboard-digest-list-loading-placeholder-row two">
+                <div className={classnames(styles.dashboardDigestListLoadingPlaceholderRow, styles.two)}>
                   <div
-                    className="dashboard-digest-list-loading-placeholder"
+                    className={styles.dashboardDigestListLoadingPlaceholder}
                     style={{width: 18, marginRight: 8}}
                   />
-                  <div className="dashboard-digest-list-loading-placeholder" style={{width: 225}} />
+                  <div className={styles.dashboardDigestListLoadingPlaceholder} style={{width: 225}} />
                 </div>
               </div>
             </div>
@@ -181,14 +183,14 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
 
           {/* error state */}
           {digestSchedules.view === 'ERROR' ? (
-            <div className="dashboard-digest-list-dropdown-list">
-              <div className="dashboard-digest-list-error-container">
+            <div className={styles.dashboardDigestListDropdownList}>
+              <div className={styles.dashboardDigestListErrorContainer}>
                 <div>
-                  <h3 className="dashboard-digest-list-error-container-title">Whoops</h3>
-                  <p className="dashboard-digest-list-error-container-desc">
+                  <h3 className={styles.dashboardDigestListErrorContainerTitle}>Whoops</h3>
+                  <p className={styles.dashboardDigestListErrorContainerDesc}>
                     Something went wrong.
                   </p>
-                  <p className="dashboard-digest-list-error-container-desc">
+                  <p className={styles.dashboardDigestListErrorContainerDesc}>
                     Try refreshing, or contacting <a href="mailto:support@density.io">support</a>.
                   </p>
                 </div>

@@ -11,11 +11,6 @@ export default function collectionUsersDestroy(item) {
 
     try {
       await accounts().delete(`/users/${item.id}`);
-      dispatch(collectionUsersDelete(item));
-      dispatch(showToast({
-        text: 'User deleted successfully',
-      }));
-      return true;
     } catch (err) {
       dispatch(collectionUsersError(err));
       dispatch(showToast({
@@ -25,5 +20,11 @@ export default function collectionUsersDestroy(item) {
       console.error(err);
       return false;
     }
+
+    dispatch(collectionUsersDelete(item));
+    dispatch(showToast({
+      text: 'User deleted successfully',
+    }));
+    return true;
   };
 }

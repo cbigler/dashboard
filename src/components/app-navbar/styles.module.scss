@@ -1,0 +1,163 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+
+$appNavbarHeight: 40px;
+
+.appNavbarContainer {
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  background-color: #fff;
+  height: $appNavbarHeight;
+  border-bottom: 1px solid $grayLight;
+}
+
+.appNavbar {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+
+  height: $appNavbarHeight;
+
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.appNavbarLeft {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  padding-left: 0px;
+
+  list-style-type: none;
+}
+
+.appNavbarRight {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+
+  padding-right: 0px;
+
+  list-style-type: none;
+}
+
+.appNavbarCenter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.appNavbarItem {
+  display: none;
+  user-select: none;
+  height: $appNavbarHeight;
+
+  opacity: 0.5;
+}
+.appNavbarItem:hover, .appNavbarItem.selected { opacity: 1; }
+
+.appNavbarItem > a, .appNavbarItem > span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  height: $appNavbarHeight;
+
+  padding-left: 16px;
+  padding-right: 16px;
+
+  color: $grayCinder;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.appNavbarItem.selected > a,
+.appNavbarItem.selected > span { color: $brandPrimary; }
+
+.appNavbarItem.showOnMobile {
+  display: flex;
+}
+@media (min-width: $screenSmMax) {
+  .appNavbarItem {
+    display: flex;
+  }
+  .appNavbarItem.hideOnDesktop {
+    display:none;
+  }
+}
+
+.appNavbarIcon { padding-right: 8px; }
+
+
+// Dropdown menu
+.appNavbarMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  // Should not be below anything except modals
+  z-index: 99;
+  position: relative;
+}
+
+.appNavbarMenuTarget {
+  cursor: pointer;
+  outline: none;
+  &:hover { opacity: 0.9; }
+}
+.appNavbarMenuTarget.opened > .appNavbarItem { opacity: 1; }
+
+.appNavbarMenuItems {
+  position: absolute;
+  top: $appNavbarHeight;
+  right: 0;
+
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 32px;
+
+  border: 1px solid $gray;
+  border-radius: 4px;
+
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.appNavbarMenuItems.opened {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.appNavbarMenuItem {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  opacity: 0.5;
+  user-select: none;
+
+  color: $grayCinder;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  white-space: nowrap;
+  outline: none;
+}
+.appNavbarMenuItem:hover { opacity: 1; }
+.appNavbarMenuItem.selected {
+  opacity: 1;
+  color: $brandPrimary;
+}
+
+.appNavbarMenuItemIcon {
+  padding-right: 8px;
+}

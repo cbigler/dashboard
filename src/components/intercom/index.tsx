@@ -4,10 +4,7 @@ import { connect } from 'react-redux';
 
 import Intercom from 'react-intercom';
 
-
-export function IntercomDensity({
-  user,
-}) {
+export function IntercomDensity({ user }) {
   let intercomUser = {};
   if (user.data && user.data.hasOwnProperty("id")) {
     intercomUser = {
@@ -22,7 +19,7 @@ export function IntercomDensity({
     )
   } else {
     return (
-      <div></div>
+      <Fragment />
     )
   }
   

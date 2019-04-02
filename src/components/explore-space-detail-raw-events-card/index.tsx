@@ -2,6 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
+import styles from './styles.module.scss';
+
 import {
   Card,
   CardHeader,
@@ -34,24 +36,24 @@ export function ExploreSpaceDetailRawEventsCard({
 }) {
   return (
     <div>
-      <Card className="explore-space-detail-raw-events-card">
+      <Card className={styles.exploreSpaceDetailRawEventsCard}>
         {calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null}
         <CardHeader>
           Daily Raw Events
           <InfoPopup horizontalIconOffset={8}>
-            <p className="explore-space-detail-raw-events-card-popup-p">
+            <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
               All events at this space on{' '}
               <strong>{parseISOTimeAtSpace(date, space).format('MMMM D, YYYY')}</strong> during{' '}
               the time segment <strong>{timeSegmentGroup.name}</strong>.
             </p>
 
-            <p className="explore-space-detail-raw-events-card-popup-p">
+            <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
               Head to the <a href={`#/spaces/explore/${space.id}/data-export`}>data export</a> page
               to download multiple days worth of event data in csv format.
             </p>
           </InfoPopup>
           <span
-            className={classnames('explore-space-detail-raw-events-card-header-refresh', {
+            className={classnames(styles.exploreSpaceDetailRawEventsCardHeaderRefresh, {
               disabled: !(calculatedData.state === 'COMPLETE' || calculatedData.state === EMPTY),
             })}
             onClick={() => onRefresh(space)}
@@ -70,15 +72,15 @@ export function ExploreSpaceDetailRawEventsCard({
           ]}
         /> : null}
 
-        {calculatedData.state === 'COMPLETE' && (calculatedData.data.data || []).length === 0 ? <div className="explore-space-detail-raw-events-card-body-info">
+        {calculatedData.state === 'COMPLETE' && (calculatedData.data.data || []).length === 0 ? <div className={styles.exploreSpaceDetailRawEventsCardBodyInfo}>
           No data available for this time period.
         </div> : null}
-        {calculatedData.state === 'LOADING' ? <div className="explore-space-detail-raw-events-card-body-info">
+        {calculatedData.state === 'LOADING' ? <div className={styles.exploreSpaceDetailRawEventsCardBodyInfo}>
           Fetching events...
         </div> : null}
-        {calculatedData.state === 'ERROR' ? <div className="explore-space-detail-raw-events-card-body-error">
+        {calculatedData.state === 'ERROR' ? <div className={styles.exploreSpaceDetailRawEventsCardBodyError}>
           <span>
-            <span className="explore-space-detail-raw-events-card-body-error-icon">&#xe91a;</span>
+            <span className={styles.exploreSpaceDetailRawEventsCardBodyErrorIcon}>&#xe91a;</span>
             {calculatedData.error.toString()}
           </span>
         </div> : null}

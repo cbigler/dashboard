@@ -11,6 +11,8 @@ import {
   getDurationBetweenMomentsInDays,
 } from '../../helpers/space-time-utilities/index';
 
+import styles from './styles.module.scss';
+
 import { calculateUtilization } from '../../actions/route-transition/explore-space-trends';
 
 import {
@@ -87,25 +89,25 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
       <CardHeader>
         An Average Week
         <InfoPopup horizontalIconOffset={8}>
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Utilization for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
             <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
             <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
             grouped and averaged by day of week.
           </p>
 
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Use this metric to understand your space's average utilization, as well as how
             utilization varies from day to day. 
           </p>
 
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Utilization is calculated by dividing occupancy by the total space capacity (with 
             a granularity of 10 minute intervals). Does not include incomplete days of data.
           </p>
         </InfoPopup>
         <span
-          className={classnames('explore-space-detail-utilization-card-header-refresh', {
+          className={classnames(styles.exploreSpaceDetailUtilizationCardHeaderRefresh, {
             disabled: calculatedData.state !== 'COMPLETE',
           })}
           onClick={() => onRefresh(space)}
@@ -119,26 +121,26 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
       <CardHeader>
         An Average Day
         <InfoPopup horizontalIconOffset={8}>
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             An average daily breakdown of utilization for
             time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
             <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
             <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>.
           </p>
 
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Use this to understand average peak and trends in utilization over the course of a
             day. 
           </p>
 
-          <p className="explore-space-detail-utilization-card-popup-p">
+          <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Utilization is calculated by dividing occupancy by the total space capacity (with a
             granularity of 10 minute intervals). Utilization is then averaged across all days
             within the date range. Does not include incomplete days of data.
           </p>
         </InfoPopup>
         <span
-          className={classnames('explore-space-detail-utilization-card-header-refresh', {
+          className={classnames(styles.exploreSpaceDetailUtilizationCardHeaderRefresh, {
             disabled: calculatedData.state !== 'COMPLETE',
           })}
           onClick={() => onRefresh(space)}
@@ -165,17 +167,17 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
         return (
           <div>
-            <Card className="explore-space-detail-utilization-card-average-week">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageWeek}>
               <CardLoading indeterminate />
               {averageWeekHeader}
-              <div className="explore-space-detail-utilization-card-body-info" style={{height: 514}}>
+              <div className={styles.exploreSpaceDetailUtilizationCardBodyInfo} style={{height: 514}}>
                 {body}
               </div>
             </Card>
-            <Card className="explore-space-detail-utilization-card-average-day">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageDay}>
               <CardLoading indeterminate />
               {averageDayHeader}
-              <div className="explore-space-detail-utilization-card-body-info" style={{height: 624}}>
+              <div className={styles.exploreSpaceDetailUtilizationCardBodyInfo} style={{height: 624}}>
                 {body}
               </div>
             </Card>
@@ -184,20 +186,20 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
       case calculatedData.state === 'ERROR':
         body = (
-          <div className="explore-space-detail-utilization-card-body-info">
+          <div className={styles.exploreSpaceDetailUtilizationCardBodyInfo}>
             <span>
-              <span className="explore-space-detail-utilization-card-body-error-icon">&#xe91a;</span>
+              <span className={styles.exploreSpaceDetailUtilizationCardBodyErrorIcon}>&#xe91a;</span>
               {calculatedData.error}
             </span>
           </div>
         );
 
         return <div>
-          <Card className="explore-space-detail-utilization-card-average-week">
+          <Card className={styles.exploreSpaceDetailUtilizationCardAverageWeek}>
             {averageWeekHeader}
             {body}
           </Card>
-          <Card className="explore-space-detail-utilization-card-average-day">
+          <Card className={styles.exploreSpaceDetailUtilizationCardAverageDay}>
             {averageDayHeader}
             {body}
           </Card>
@@ -205,18 +207,18 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
       case calculatedData.data.requiresCapacity:
         body = (
-          <div className="explore-space-detail-utilization-card-body-info">
+          <div className={styles.exploreSpaceDetailUtilizationCardBodyInfo}>
             <span>No capacity is set for this space. Capacity is required to calculate utilization.</span>
           </div>
         );
 
         return (
           <div>
-            <Card className="explore-space-detail-utilization-card-average-week">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageWeek}>
               {averageWeekHeader}
               {body}
             </Card>
-            <Card className="explore-space-detail-utilization-card-average-day">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageDay}>
               {averageDayHeader}
               {body}
             </Card>
@@ -225,17 +227,17 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
       case calculatedData.data.counts.length === 0:
         body = (
-          <div className="explore-space-detail-utilization-card-body-info">
+          <div className={styles.exploreSpaceDetailUtilizationCardBodyInfo}>
             <span>No data found in date range.</span>
           </div>
         );
 
         return <div>
-          <Card className="explore-space-detail-utilization-card-average-week">
+          <Card className={styles.exploreSpaceDetailUtilizationCardAverageWeek}>
             {averageWeekHeader}
             {body}
           </Card>
-          <Card className="explore-space-detail-utilization-card-average-day">
+          <Card className={styles.exploreSpaceDetailUtilizationCardAverageDay}>
             {averageDayHeader}
             {body}
           </Card>
@@ -252,7 +254,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         }
         return (
           <div>
-            <Card className="explore-space-detail-utilization-card-average-week">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageWeek}>
               {averageWeekHeader}
               <CardWell type="dark">
                 Average utilization of <CardWellHighlight>
@@ -261,15 +263,15 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                   {timeSegmentGroup.name}
                 </CardWellHighlight>
               </CardWell>
-              <CardBody className="explore-space-detail-utilization-card-average-weekly-breakdown">
-                <div className="explore-space-detail-utilization-card-grid-header">
-                  <div className="explore-space-detail-utilization-card-grid-item">Day</div>
-                  <div className="explore-space-detail-utilization-card-grid-item">Average Utilization</div>
+              <CardBody className={styles.exploreSpaceDetailUtilizationCardAverageWeeklyBreakdown}>
+                <div className={styles.exploreSpaceDetailUtilizationCardGridHeader}>
+                  <div className={styles.exploreSpaceDetailUtilizationCardGridItem}>Day</div>
+                  <div className={styles.exploreSpaceDetailUtilizationCardGridItem}>Average Utilization</div>
                 </div>
                 {calculatedData.data.utilizationsByDay.map(x => {
-                  return <div className="explore-space-detail-utilization-card-grid-row" key={x.day}>
-                    <div className="explore-space-detail-utilization-card-grid-item">{x.day}</div>
-                    <div className="explore-space-detail-utilization-card-grid-item">
+                  return <div className={styles.exploreSpaceDetailUtilizationCardGridRow} key={x.day}>
+                    <div className={styles.exploreSpaceDetailUtilizationCardGridItem}>{x.day}</div>
+                    <div className={styles.exploreSpaceDetailUtilizationCardGridItem}>
                       <PercentageBar
                         percentage={x.average / 100}
                         percentageFormatter={percentage => percentage !== null ? `${formatPercentage(percentage, 0)}%` : null}
@@ -280,7 +282,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                 })}
               </CardBody>
             </Card>
-            <Card className="explore-space-detail-utilization-card-average-day">
+            <Card className={styles.exploreSpaceDetailUtilizationCardAverageDay}>
               {averageDayHeader}
               <CardWell type="dark">
                 {calculatedData.data.peakUtilizationTimestamp === null ? <span>
@@ -317,7 +319,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                 </span>}
               </CardWell>
 
-              <div className="explore-space-detail-utilization-card-daily-breakdown-chart">
+              <div className={styles.exploreSpaceDetailUtilizationCardDailyBreakdownChart}>
                 <LineChartComponent
                   timeZone={space.timeZone}
                   svgWidth={chartWidth}

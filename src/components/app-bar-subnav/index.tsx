@@ -1,3 +1,5 @@
+import styles from './styles.module.scss';
+
 import React from 'react';
 import classnames from 'classnames';
 
@@ -8,8 +10,8 @@ export function AppBarSubnavLink({
 }) {
   return <a 
     href={href}
-    className={classnames('app-bar-subnav-link', {
-      'selected': active
+    className={classnames(styles.appBarSubnavLink, {
+      [styles.selected]: active
     })}
   >
     {children}
@@ -17,7 +19,7 @@ export function AppBarSubnavLink({
 }
 
 export default function AppBarSubnav({children}) {
-  return <div className="app-bar-subnav">
+  return <div className={styles.appBarSubnav}>
     {children}
   </div>;
 }

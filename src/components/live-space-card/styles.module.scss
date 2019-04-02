@@ -1,0 +1,93 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.spaceCard {
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+:global(.card) :global(.card-header).spaceCardHeader {
+  color: $grayCinder;
+  font-size: $fontSize3;
+  font-weight: normal;
+  display: flex;
+  padding-top: 20px;
+  padding-bottom: 0px;
+}
+
+.spaceCardHeaderName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-right: 10px;
+}
+
+.spaceCardHeaderCount {
+  margin-left: auto;
+  color: $brandPrimary;
+}
+
+.spaceCardCapacityInformation {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+// Add a capacity unit after the capacity number indicator above the progress bar.
+.spaceCardUtilizationPercentage { color: $gray; }
+.spaceCardUtilizationPercentageLabel { color: $grayCinder; }
+.spaceCardUtilizationPercentageLabel > span { color: $brandPrimary; }
+
+// Add a capacity percent unit after the percentage indicator directly above and right from the
+// progress bar.
+.spaceCardEditCountLink {
+  margin-left: auto;
+  color: $gray;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// Render a progress bar.
+.spaceCardCapacityLinearProgress {
+
+  // Move the progress bar up to properly space it vertically.
+  position: relative;
+  top: -8px;
+
+  :global(.progress-container), :global(.progress-bar) { height: 2px; }
+  :global(.progress-container) { fill: $grayLighter; }
+  :global(.progress-bar) { fill: $brandPrimary; }
+
+  // The height of the progress bar should be `2px`.
+  :global(.linear-progress-chart) { height: 2px; }
+}
+
+
+// Remove the border radius on the top of the ingress egress chart
+.spaceCard :global(.ingress-egress-card) {
+  border-top-left-radius: 0px;
+  border-top-right-radius: 0px;
+}
+
+.spaceCardChart { position: relative; }
+
+// Add a button to redirect the user to the live, full-screen detail view for the space.
+.spaceCardChartFullScreen {
+  position: absolute;
+  top: 13px;
+  left: 14px;
+
+  color: $grayDarkest;
+  z-index: 50;
+  cursor: pointer;
+
+  font-family: "Densicons";
+
+  transition: all 100ms ease-in-out;
+  transform: rotate(45deg);
+  &:hover { color: $grayDarker; }
+}
+
+.spaceCardHeaderNameLinkLabel {
+  font-family: $fontBase;
+  font-size: $fontSizeBase;
+  margin-right: 5px;
+}

@@ -1,0 +1,64 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.exploreSpaceDetailRawEventsCardHeaderLabel {
+  line-height: 33px;
+  margin-top: 10px;
+}
+
+.exploreSpaceDetailRawEventsCardPopupP {
+  line-height: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+
+.exploreSpaceDetailRawEventsCardBodyPlaceholder {
+  height: 500px;
+}
+
+// Add spacing to the top of the card. Also, specify a minimum height so we never cut off the edge
+// of the date picker.
+.exploreSpaceDetailRawEventsCard {
+  margin-top: 40px;
+  overflow: hidden;
+}
+
+// Horizontally and vertically center errors and info messages in the daily metrics card.
+.exploreSpaceDetailRawEventsCardBodyInfo,
+.exploreSpaceDetailRawEventsCardBodyError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 496px;
+
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.exploreSpaceDetailRawEventsCardBodyErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+  top: -2px;
+}
+
+// Refresh icon to refetch data
+.exploreSpaceDetailRawEventsCardHeaderRefresh {
+  display: inline-block;
+  transform: translate(0px, 3px);
+  margin-left: auto;
+  cursor: pointer;
+}
+.exploreSpaceDetailRawEventsCardHeaderRefresh:hover { opacity: 0.8; }
+.exploreSpaceDetailRawEventsCardHeaderRefresh:active { opacity: 1; }
+.exploreSpaceDetailRawEventsCardHeaderRefresh.disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+.exploreSpaceDetailRawEventsCardHeaderLabel .infoPopupContainer {
+  margin-left: 4px;
+}

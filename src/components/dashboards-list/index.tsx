@@ -1,10 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import styles from './styles.module.scss';
+
 export function DashboardsList({ dashboards }) {
   if (dashboards.error) {
     return (
-      <div className="dashboards-list">
+      <div className={styles.dashboardsList}>
         <h1>Error loading dashboards</h1>
         <span>{dashboards.error}</span>
       </div>
