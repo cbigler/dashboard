@@ -75,7 +75,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
       </div> : null}
 
     {this.state.open ? <Modal
-        width="360px"
+        width="480px"
         onBlur={() => this.setState({open: false})}
         onEscape={() => this.setState({open: false})}
         visible={true}
@@ -87,6 +87,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
             arbitrary microservices for development. If you opened this by mistake, close this
             popup to return to the Density Dashboard.
           </p>
+          <br /><br />
           <ul className={styles.environmentSwitcherItems}>
             {fields.map(field => {
               return <FormLabel

@@ -18,7 +18,7 @@
   padding-bottom: 0px;
 }
 
-.environmentswitcherNonProductionRelease {
+.environmentSwitcherNonProductionRelease {
   position: absolute;
   top: 0px;
   left: calc(50% - 50px);
@@ -33,7 +33,7 @@
   padding: 10px;
   font-size: 16px;
 
-  z-index: 1000;
+  z-index: 99;
   width: 100px;
   height: 20px;
 }
