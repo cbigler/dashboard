@@ -55,7 +55,7 @@ export default function routeTransitionExplore() {
 
     // if there were no current spaces, then now that we have a list, let's bring them to the first...
     if (currentSpaces.length === 0) {
-      const spaceTree = sortSpaceTree(spaces);
+      const spaceTree = sortSpaceTree(spaceHierarchy);
       const firstSpace = returnSpaceOrFirstChild(spaceTree[0]);
       if (firstSpace) {
         window.location.href = `#/spaces/explore/${firstSpace.id}/trends`;  
