@@ -27,10 +27,8 @@ import RobinImage from '../../assets/images/icon-robin.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
-import {
-  integrationsRobinSpacesSelect,
-  integrationsSpaceMappingUpdate,
-} from '../../actions/integrations/robin';
+import { integrationsRobinSpacesSelect } from '../../actions/integrations/robin';
+import { integrationsSpaceMappingUpdate } from '../../actions/integrations/room-booking';
 import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
