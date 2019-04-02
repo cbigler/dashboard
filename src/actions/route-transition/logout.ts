@@ -1,5 +1,6 @@
 import sessionTokenUnset from '../session-token/unset';
 import collectionSpacesSet from '../collection/spaces/set';
+import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionDoorwaysSet from '../collection/doorways/set';
 import collectionLinksSet from '../collection/links/set';
 
@@ -10,6 +11,7 @@ export default function routeTransitionLogout() {
     dispatch({ type: ROUTE_TRANSITION_LOGOUT });
     dispatch(sessionTokenUnset());
     dispatch(collectionSpacesSet([]));
+    dispatch(collectionSpaceHierarchySet([]));
     dispatch(collectionDoorwaysSet([]));
     dispatch(collectionLinksSet([]));
     window.location.hash = '#/login';
