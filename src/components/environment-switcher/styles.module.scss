@@ -1,7 +1,7 @@
 @import "@density/ui/variables/colors.scss";
 
-.environmentSwitcher {
-  overflow: visible !important; /* without this style, the last selectbox is chopped off */
+.environmentSwitcherContent {
+  padding: 24px;
 }
 
 .environmentSwitcherItems {

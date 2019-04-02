@@ -1,15 +1,14 @@
 import React from 'react';
 import FormLabel from '../form-label/index';
+import Modal from '../modal/index';
 
 import styles from './styles.module.scss';
 
 import {
+  AppBar,
+  AppBarTitle,
   Button,
-  Card,
-  CardBody,
-  CardHeader,
   InputBox,
-  Modal,
   Switch,
 } from '@density/ui';
 
@@ -76,67 +75,65 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
       </div> : null}
 
     {this.state.open ? <Modal
-        onClose={() => this.setState({open: false})}
-        onClickBackdrop={() => this.setState({open: false})}
+        width="360px"
+        onBlur={() => this.setState({open: false})}
+        onEscape={() => this.setState({open: false})}
+        visible={true}
       >
-        <Card type="modal" className={styles.environmentSwitcher}>
-          <CardHeader>Choose Environment</CardHeader>
-          <CardBody className={styles.environmentSwitcherDesc}>
-            <p>
-              This is the Density Environment Switcher. Use it to point this dashboard instance to
-              arbitrary microservices for development. If you opened this by mistake, close this
-              popup to return to the Density Dashboard.
-            </p>
-          </CardBody>
-          <CardBody>
-            <ul className={styles.environmentSwitcherItems}>
-              {fields.map(field => {
-                return <FormLabel
-                  className={styles.environmentSwitcherItem}
-                  label={field.name}
-                  htmlFor={`environment-switcher-${field.slug}`}
-                  key={field.slug}
-                  input={<InputBox
-                    type="select"
-                    width="100%"
-                    value={this.state.values[field.slug] || field.defaults[field.default]}
-                    onChange={e => this.setState({values: {...this.state.values, [field.slug]: e.id}})}
-                    className={styles.environmentSwitcherInput}
-                    choices={Object.keys(field.defaults).map(f => ({
-                      id: field.defaults[f] || '(undefined)',
-                      disabled: typeof field.defaults[f] === 'undefined',
-                      label: `${f} (${field.defaults[f]})`,
-                    }))}
-                  />}
-                />
-              })}
-              <FormLabel
+        <AppBar><AppBarTitle>Choose Environment</AppBarTitle></AppBar>
+        <div className={styles.environmentSwitcherContent}>
+          <p>
+            This is the Density Environment Switcher. Use it to point this dashboard instance to
+            arbitrary microservices for development. If you opened this by mistake, close this
+            popup to return to the Density Dashboard.
+          </p>
+          <ul className={styles.environmentSwitcherItems}>
+            {fields.map(field => {
+              return <FormLabel
                 className={styles.environmentSwitcherItem}
-                label="Use legacy 'slow' query for space counts"
-                htmlFor="environment-switcher-go-slow"
-                key="goSlow"
-                input={<Switch
-                    value={this.state.goSlow}
-                    onChange={e => this.setState({goSlow: !this.state.goSlow})}
-                  />}
+                label={field.name}
+                htmlFor={`environment-switcher-${field.slug}`}
+                key={field.slug}
+                input={<InputBox
+                  type="select"
+                  width="100%"
+                  value={this.state.values[field.slug] || field.defaults[field.default]}
+                  onChange={e => this.setState({values: {...this.state.values, [field.slug]: e.id}})}
+                  className={styles.environmentSwitcherInput}
+                  choices={Object.keys(field.defaults).map(f => ({
+                    id: field.defaults[f] || '(undefined)',
+                    disabled: typeof field.defaults[f] === 'undefined',
+                    label: `${f} (${field.defaults[f]})`,
+                  }))}
+                />}
               />
-            </ul>
+            })}
+            <FormLabel
+              className={styles.environmentSwitcherItem}
+              label="Use legacy 'slow' query for space counts"
+              htmlFor="environment-switcher-go-slow"
+              key="goSlow"
+              input={<Switch
+                  value={this.state.goSlow}
+                  onChange={e => this.setState({goSlow: !this.state.goSlow})}
+                />}
+            />
+          </ul>
 
-            <div className={styles.environmentSwitcherFooter}>
-              <Button
-                type="primary"
-                width="100%"
-                className={styles.environmentSwitcherButton}
-                onClick={() => {
-                  this.setState({open: false});
-                  window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
-                  window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
-                  this.props.onChange(this.state.values, this.state.goSlow);
-                }}
-              >OK</Button>
-            </div>
-          </CardBody>
-        </Card>
+          <div className={styles.environmentSwitcherFooter}>
+            <Button
+              type="primary"
+              width="100%"
+              className={styles.environmentSwitcherButton}
+              onClick={() => {
+                this.setState({open: false});
+                window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
+                window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
+                this.props.onChange(this.state.values, this.state.goSlow);
+              }}
+            >OK</Button>
+          </div>
+        </div>
       </Modal> : null}
     </div>;
   }
