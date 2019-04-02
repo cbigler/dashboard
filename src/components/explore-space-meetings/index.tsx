@@ -3,6 +3,9 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import Report, { ReportLoading } from '@density/reports';
 
+import styles from './styles.module.scss';
+import classnames from 'classnames';
+
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import colorVariables from '@density/ui/variables/colors.json'
 import gridVariables from '@density/ui/variables/grid.json'
@@ -155,7 +158,7 @@ function ExploreSpaceMeetings({
                   />
                   <span
                     role="button"
-                    className="explore-space-meetings-refresh-button"
+                    className={styles.refreshButton}
                     onClick={() => onReload(space.id)}
                   >
                     <Icons.Refresh color={colorVariables.brandPrimary} />
@@ -165,7 +168,7 @@ function ExploreSpaceMeetings({
             </AppBarSection>
             <AppBarSection>
               <img
-                className="explore-space-meetings-robin-image"
+                className={styles.robinImage}
                 src={RobinImage}
               />
               {integrations.robinSpaces.view === 'VISIBLE' ? (
@@ -190,15 +193,15 @@ function ExploreSpaceMeetings({
         ) : null}
 
         {integrations.roomBooking.view === 'LOADING' ? (
-          <div className="explore-space-meetings-centered-message">
-            <div className="explore-space-meetings-integration-cta">
+          <div className={styles.centeredMessage}>
+            <div className={styles.integrationCta}>
               Loading integration data...
             </div>
           </div>
         ) : null}
 
         {integrations.robinSpaces.view === 'ERROR' || integrations.roomBooking.view === 'ERROR' ? (
-          <div className="explore-space-meetings-centered-message">
+          <div className={styles.centeredMessage}>
             <GenericErrorState />
           </div>
         ) : null}
@@ -207,16 +210,16 @@ function ExploreSpaceMeetings({
           <Fragment>
             {/* Room booking integration has not been configured */}
             {!roomBookingDefaultService ? (
-              <div className="explore-space-meetings-centered-message">
-                <div className="explore-space-meetings-integration-cta">
-                  <div className="explore-space-meetings-integration-cta-label">
-                    <div className="explore-space-meetings-integration-density-wrapper">
+              <div className={styles.centeredMessage}>
+                <div className={styles.integrationCta}>
+                  <div className={styles.integrationCtaLabel}>
+                    <div className={styles.integrationDensityWrapper}>
                       <DensityMark size={30} color="#fff" />
                     </div>
                     <Icons.Link />
-                    <div className="explore-space-meetings-integration-integration-wrapper">
+                    <div className={styles.integrationIntegrationWrapper}>
                       <img
-                        className="explore-space-meetings-robin-image"
+                        className={styles.robinImage}
                         src={RobinImage}
                       />
                     </div>
@@ -233,8 +236,8 @@ function ExploreSpaceMeetings({
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
             {integrations.robinSpaces.view === 'VISIBLE' && roomBookingDefaultService && !roomBookingSpaceMapping ? (
-              <div className="explore-space-meetings-centered-message">
-                <div className="explore-space-meetings-integration-cta">
+              <div className={styles.centeredMessage}>
+                <div className={styles.integrationCta}>
                   Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
                 </div>
               </div>
@@ -243,8 +246,8 @@ function ExploreSpaceMeetings({
             {roomBookingDefaultService && roomBookingSpaceMapping ? (
               <Fragment>
                 {exploreDataMeetings.state === 'LOADING' ? (
-                  <div className="explore-space-meetings-centered-message">
-                    <div className="explore-space-meetings-integration-cta">
+                  <div className={styles.centeredMessage}>
+                    <div className={styles.integrationCta}>
                       Loading {roomBookingDefaultService.displayName} data and rendering reports...
                     </div>
                   </div>
@@ -256,9 +259,9 @@ function ExploreSpaceMeetings({
                   const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
                   const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
                   return (
-                    <div className="explore-space-meetings-report-grid">
-                      <div className="explore-space-meetings-report-column left">
-                        <div className="explore-space-meetings-report-container">
+                    <div className={styles.reportGrid}>
+                      <div className={classnames(styles.reportColumn, styles.left)}>
+                        <div className={styles.reportContainer}>
                           <Report
                             key={meetingAttendanceReport.report.id}
                             report={meetingAttendanceReport.report}
@@ -268,7 +271,7 @@ function ExploreSpaceMeetings({
                             }}
                           />
                         </div>
-                        <div className="explore-space-meetings-report-container">
+                        <div className={styles.reportContainer}>
                           <Report
                             key={bookingBehaviorReport.report.id}
                             report={bookingBehaviorReport.report}
@@ -279,8 +282,8 @@ function ExploreSpaceMeetings({
                           />
                         </div>
                       </div>
-                      <div className="explore-space-meetings-report-column right">
-                        <div className="explore-space-meetings-report-container">
+                      <div className={classnames(styles.reportColumn, styles.right)}>
+                        <div className={styles.reportContainer}>
                           <Report
                             key={meetingSizeReport.report.id}
                             report={meetingSizeReport.report}
@@ -290,7 +293,7 @@ function ExploreSpaceMeetings({
                             }}
                           />
                         </div>
-                        <div className="explore-space-meetings-report-container">
+                        <div className={styles.reportContainer}>
                           <Report
                             key={dayToDayMeetingsReport.report.id}
                             report={dayToDayMeetingsReport.report}
