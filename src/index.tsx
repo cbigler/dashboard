@@ -196,8 +196,7 @@ router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManag
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(null));
-router.addRoute('admin/locations/:breadcrumb*/:id', (breadcrumb, id) => routeTransitionAdminLocations(id));
-// router.addRoute('admin/locations/:breadcrumb*/:id/edit', (breadcrumb, id) => console.log('EDIT', id));
+router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
 
 // Onboarding flow
 // Redirect #/onboarding => #/onboarding/overview

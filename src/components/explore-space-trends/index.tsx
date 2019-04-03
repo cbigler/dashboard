@@ -8,6 +8,8 @@ import gridVariables from '@density/ui/variables/grid.json'
 import {
   DateRangePicker,
   InputBox,
+  AppBar,
+  AppBarSection,
 } from '@density/ui';
 
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';

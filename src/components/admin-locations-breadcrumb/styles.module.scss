@@ -1,0 +1,25 @@
+@import "@density/ui/variables/colors.scss";
+
+.breadcrumb {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.item {
+  font-size: 24px;
+  margin-left: 16px;
+  margin-right: 16px;
+  font-weight: 500;
+  color: $grayDarker;
+  text-decoration: none;
+}
+.item:first-child { margin-left: 0px; }
+.item:last-child {
+  margin-right: 8px;
+  color: $grayCinder;
+}
+
+.finalText {
+  margin-right: 8px;
+}
