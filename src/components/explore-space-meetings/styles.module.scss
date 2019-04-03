@@ -1,17 +1,20 @@
-.explore-space-meetings-robin-image {
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.robinImage {
   margin-right: 16px;
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.explore-space-meetings-centered-message {
+.centeredMessage {
   display: flex;
   align-items: center;
   justify-content: center;
   height: calc(100% - 64px);
 }
 
-.explore-space-meetings-integration-cta {
+.integrationCta {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -19,14 +22,14 @@
 
   background-color: #fff;
   border: 1px solid $gray;
-  border-radius: $border-radius-base;
+  border-radius: $borderRadiusBase;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
   height: 72px;
 
   padding-left: 24px;
   padding-right: 24px;
 }
-.explore-space-meetings-integration-cta-label {
+.integrationCtaLabel {
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -34,45 +37,50 @@
   user-select: none;
 }
 
-.explore-space-meetings-integration-density-wrapper {
+.integrationDensityWrapper {
   margin-right: 8px;
-  background-color: $gray-cinder;
+  background-color: $grayCinder;
   width: 30px;
   height: 30px;
-  border-radius: $border-radius-small;
+  border-radius: $borderRadiusSmall;
 }
-.explore-space-meetings-integration-integration-wrapper {
+.integrationIntegrationWrapper {
   width: 28px;
   height: 28px;
   margin-left: 8px;
   margin-right: 24px;
 }
 
-.explore-space-meetings-report-grid {
+.reportGrid {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
 
   width: 1064px;
   margin-top: 78px;
   margin-left: auto;
   margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
 }
-.explore-space-meetings-report-column {
+@media (min-width: 1524px) {
+  .reportGrid { flex-direction: row; }
+}
+.reportColumn {
   width: 520px;
   display: flex;
   flex-direction: column;
 }
-.explore-space-meetings-report-column.left { margin-right: 12px; }
-.explore-space-meetings-report-column.right { margin-left: 12px; }
+.reportColumn.left { margin-right: 12px; }
+.reportColumn.right { margin-left: 12px; }
 
-.explore-space-meetings-report-container { margin-bottom: 24px; }
+.reportContainer { margin-bottom: 24px; }
 
 
 
-.explore-space-meetings-refresh-button {
+.refreshButton {
   margin-left: 24px;
   cursor: pointer;
   transform: translateY(3px);
 }
-.explore-space-meetings-refresh-button:hover { opacity: 0.9; }
-.explore-space-meetings-refresh-button:active { opacity: 1; }
+.refreshButton:hover { opacity: 0.9; }
+.refreshButton:active { opacity: 1; }

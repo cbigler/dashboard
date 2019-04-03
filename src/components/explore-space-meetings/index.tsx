@@ -1,7 +1,10 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import Report from '@density/reports';
+import Report, { ReportLoading } from '@density/reports';
+
+import styles from './styles.module.scss';
+import classnames from 'classnames';
 
 import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import colorVariables from '@density/ui/variables/colors.json'
@@ -27,10 +30,8 @@ import RobinImage from '../../assets/images/icon-robin.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
-import {
-  integrationsRobinSpacesSelect,
-  integrationsSpaceMappingUpdate,
-} from '../../actions/integrations/robin';
+import { integrationsRobinSpacesSelect } from '../../actions/integrations/robin';
+import { integrationsSpaceMappingUpdate } from '../../actions/integrations/room-booking';
 import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
@@ -100,74 +101,74 @@ function ExploreSpaceMeetings({
           <AppBar>
             <AppBarSection>
               {isIntegrationSpaceSelected ? (
-                <DateRangePicker
-                  startDate={formatForReactDates(
-                    parseISOTimeAtSpace(spaces.filters.startDate, space),
-                    space,
-                  )}
-                  endDate={formatForReactDates(
-                    parseISOTimeAtSpace(spaces.filters.endDate, space),
-                    space,
-                  )}
-                  onChange={({startDate, endDate}) => {
-                    startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
-                    endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
-
-                    // If the user selected over 14 days, then clamp them back to 14 days.
-                    if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-                      endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
-                    }
-
-                    // Only update the start and end data if one of them has changed from its previous
-                    // value
-                    if (
-                      formatInISOTime(startDate) !== spaces.filters.startDate || 
-                      formatInISOTime(endDate) !== spaces.filters.endDate
-                    ) {
-                      onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate), spaces.filters);
-                    }
-                  }}
-                  // Within the component, store if the user has selected the start of end date picker
-                  // input
-                  focusedInput={spaces.filters.datePickerInput}
-                  onFocusChange={(focused, a) => {
-                    onChangeSpaceFilter(space, 'datePickerInput', focused);
-                  }}
-
-                  // On mobile, make the calendar one month wide and left aligned.
-                  // On desktop, the calendar is two months wide and right aligned.
-                  numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
-
-                  isOutsideRange={day => isOutsideRange(
-                    spaces.filters.startDate,
-                    spaces.filters.datePickerInput,
-                    day
-                  )}
-
-                  // common ranges functionality
-                  commonRanges={getCommonRangesForSpace(space)}
-                  onSelectCommonRange={({startDate, endDate}) => {
-                    onChangeDateRange(
+                <Fragment>
+                  <DateRangePicker
+                    startDate={formatForReactDates(
+                      parseISOTimeAtSpace(spaces.filters.startDate, space),
                       space,
-                      formatInISOTime(startDate),
-                      formatInISOTime(endDate),
-                      {...spaces.filters, startDate, endDate}
-                    );
-                  }}
-                />
-              ) : null}
+                    )}
+                    endDate={formatForReactDates(
+                      parseISOTimeAtSpace(spaces.filters.endDate, space),
+                      space,
+                    )}
+                    onChange={({startDate, endDate}) => {
+                      startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
+                      endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
 
-              <span
-                role="button"
-                className="explore-space-meetings-refresh-button"
-                onClick={() => onReload(space.id)}
-              >
-                <Icons.Refresh color={colorVariables.brandPrimary} />
-              </span>
+                      // If the user selected over 14 days, then clamp them back to 14 days.
+                      if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
+                        endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+                      }
+
+                      // Only update the start and end data if one of them has changed from its previous
+                      // value
+                      if (
+                        formatInISOTime(startDate) !== spaces.filters.startDate || 
+                        formatInISOTime(endDate) !== spaces.filters.endDate
+                      ) {
+                        onChangeDateRange(space, formatInISOTime(startDate), formatInISOTime(endDate));
+                      }
+                    }}
+                    // Within the component, store if the user has selected the start of end date picker
+                    // input
+                    focusedInput={spaces.filters.datePickerInput}
+                    onFocusChange={(focused, a) => {
+                      onChangeSpaceFilter(space, 'datePickerInput', focused);
+                    }}
+
+                    // On mobile, make the calendar one month wide and left aligned.
+                    // On desktop, the calendar is two months wide and right aligned.
+                    numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
+
+                    isOutsideRange={day => isOutsideRange(
+                      spaces.filters.startDate,
+                      spaces.filters.datePickerInput,
+                      day
+                    )}
+
+                    // common ranges functionality
+                    commonRanges={getCommonRangesForSpace(space)}
+                    onSelectCommonRange={({startDate, endDate}) => {
+                      onChangeDateRange(
+                        space,
+                        formatInISOTime(startDate),
+                        formatInISOTime(endDate),
+                      );
+                    }}
+                  />
+                  <span
+                    role="button"
+                    className={styles.refreshButton}
+                    onClick={() => onReload(space.id)}
+                  >
+                    <Icons.Refresh color={colorVariables.brandPrimary} />
+                  </span>
+                </Fragment>
+              ) : null}
             </AppBarSection>
             <AppBarSection>
               <img
-                className="explore-space-meetings-robin-image"
+                className={styles.robinImage}
                 src={RobinImage}
               />
               {integrations.robinSpaces.view === 'VISIBLE' ? (
@@ -192,33 +193,33 @@ function ExploreSpaceMeetings({
         ) : null}
 
         {integrations.roomBooking.view === 'LOADING' ? (
-          <div className="explore-space-meetings-centered-message">
-            <div className="explore-space-meetings-integration-cta">
-              Loading ...
+          <div className={styles.centeredMessage}>
+            <div className={styles.integrationCta}>
+              Loading integration data...
             </div>
           </div>
         ) : null}
 
         {integrations.robinSpaces.view === 'ERROR' || integrations.roomBooking.view === 'ERROR' ? (
-          <div className="explore-space-meetings-centered-message">
+          <div className={styles.centeredMessage}>
             <GenericErrorState />
           </div>
         ) : null}
 
-        {integrations.robinSpaces.view === 'VISIBLE' && integrations.roomBooking.view === 'VISIBLE' ? (
+        {integrations.roomBooking.view === 'VISIBLE' ? (
           <Fragment>
             {/* Room booking integration has not been configured */}
             {!roomBookingDefaultService ? (
-              <div className="explore-space-meetings-centered-message">
-                <div className="explore-space-meetings-integration-cta">
-                  <div className="explore-space-meetings-integration-cta-label">
-                    <div className="explore-space-meetings-integration-density-wrapper">
+              <div className={styles.centeredMessage}>
+                <div className={styles.integrationCta}>
+                  <div className={styles.integrationCtaLabel}>
+                    <div className={styles.integrationDensityWrapper}>
                       <DensityMark size={30} color="#fff" />
                     </div>
                     <Icons.Link />
-                    <div className="explore-space-meetings-integration-integration-wrapper">
+                    <div className={styles.integrationIntegrationWrapper}>
                       <img
-                        className="explore-space-meetings-robin-image"
+                        className={styles.robinImage}
                         src={RobinImage}
                       />
                     </div>
@@ -234,25 +235,33 @@ function ExploreSpaceMeetings({
               </div>
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
-            {roomBookingDefaultService && !roomBookingSpaceMapping ? (
-              <div className="explore-space-meetings-centered-message">
-                <div className="explore-space-meetings-integration-cta">
+            {integrations.robinSpaces.view === 'VISIBLE' && roomBookingDefaultService && !roomBookingSpaceMapping ? (
+              <div className={styles.centeredMessage}>
+                <div className={styles.integrationCta}>
                   Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
                 </div>
               </div>
             ) : null}
 
             {roomBookingDefaultService && roomBookingSpaceMapping ? (
-              <div>
+              <Fragment>
+                {exploreDataMeetings.state === 'LOADING' ? (
+                  <div className={styles.centeredMessage}>
+                    <div className={styles.integrationCta}>
+                      Loading {roomBookingDefaultService.displayName} data and rendering reports...
+                    </div>
+                  </div>
+                ) : null}
+                {/* There is nothing that sets this data into an error state, so that case is omitted */}
                 {exploreDataMeetings.state === 'COMPLETE' ? (() => {
                   const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
                   const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
                   const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
                   const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
                   return (
-                    <div className="explore-space-meetings-report-grid">
-                      <div className="explore-space-meetings-report-column left">
-                        <div className="explore-space-meetings-report-container">
+                    <div className={styles.reportGrid}>
+                      <div className={classnames(styles.reportColumn, styles.left)}>
+                        <div className={styles.reportContainer}>
                           <Report
                             key={meetingAttendanceReport.report.id}
                             report={meetingAttendanceReport.report}
@@ -262,7 +271,7 @@ function ExploreSpaceMeetings({
                             }}
                           />
                         </div>
-                        <div className="explore-space-meetings-report-container">
+                        <div className={styles.reportContainer}>
                           <Report
                             key={bookingBehaviorReport.report.id}
                             report={bookingBehaviorReport.report}
@@ -273,8 +282,8 @@ function ExploreSpaceMeetings({
                           />
                         </div>
                       </div>
-                      <div className="explore-space-meetings-report-column right">
-                        <div className="explore-space-meetings-report-container">
+                      <div className={classnames(styles.reportColumn, styles.right)}>
+                        <div className={styles.reportContainer}>
                           <Report
                             key={meetingSizeReport.report.id}
                             report={meetingSizeReport.report}
@@ -284,7 +293,7 @@ function ExploreSpaceMeetings({
                             }}
                           />
                         </div>
-                        <div className="explore-space-meetings-report-container">
+                        <div className={styles.reportContainer}>
                           <Report
                             key={dayToDayMeetingsReport.report.id}
                             report={dayToDayMeetingsReport.report}
@@ -298,7 +307,7 @@ function ExploreSpaceMeetings({
                     </div>
                   );
                 })() : null}
-              </div>
+              </Fragment>
             ) : null}
           </Fragment>
         ) : null}
@@ -321,16 +330,17 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeDateRange(space, startDate, endDate, spaceFilters) {
+    onChangeDateRange(space, startDate, endDate) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      // dispatch<any>(calculateTrendsModules(space, spaceFilters));
+      dispatch<any>(calculate(space.id));
     },
-    onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
+    async onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
       if (!defaultService) {
         throw new Error('Cannot create a space mapping without a default room booking service!');
       }
-      dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
+      await dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
+      dispatch<any>(calculate(spaceId));
     },
     onReload(id) {
       dispatch<any>(calculate(id));

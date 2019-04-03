@@ -58,6 +58,12 @@ export default function integrations(state=initialState, action) {
   case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
     return {
       ...state,
+      robinSpaces: {
+        ...state.robinSpaces,
+        view: 'LOADING',
+        data: [],
+        error: null,
+      },
       roomBooking: {
         ...state.roomBooking,
         view: 'LOADING',
@@ -72,6 +78,15 @@ export default function integrations(state=initialState, action) {
         ...state.roomBooking,
         view: 'VISIBLE',
         defaultService: action.service,
+      },
+    };
+
+  case INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING:
+    return {
+      ...state,
+      roomBooking: {
+        ...state.roomBooking,
+        spaceMappingForActiveSpace: action.data,
       },
     };
 
@@ -93,15 +108,6 @@ export default function integrations(state=initialState, action) {
         ...state.robinSpaces,
         view: 'ERROR',
         error: action.error,
-      },
-    };
-
-  case INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING:
-    return {
-      ...state,
-      roomBooking: {
-        ...state.roomBooking,
-        spaceMappingForActiveSpace: action.data,
       },
     };
 
