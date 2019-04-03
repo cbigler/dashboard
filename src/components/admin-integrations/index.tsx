@@ -126,7 +126,7 @@ export function AdminIntegrations({
             )} />
             <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
             <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? <span style={LIST_CLICKABLE_STYLE}>Activate</span> : <span style={LIST_CLICKABLE_STYLE}>Edit</span>}
+            template={item => item.serviceAuthorization.id == null ? <span style={LIST_CLICKABLE_STYLE}>Activate</span> : null }
             onClick={item => item.serviceAuthorization.id == null ? window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` : null } />
             <ListViewColumn
               template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}

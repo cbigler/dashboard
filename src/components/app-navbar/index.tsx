@@ -231,6 +231,13 @@ export default function AppNavbar({
               />
               {can(user, PERMISSION_CODES.developer_tools_manage) ?
                 <AppNavbarMenuItem
+                  path="#/admin/integrations"
+                  text="Integrations"
+                  icon={<Icons.Code />}
+                  selected={['ADMIN_INTEGRATIONS'].includes(page)}
+                /> : null}
+              {can(user, PERMISSION_CODES.developer_tools_manage) ?
+                <AppNavbarMenuItem
                   path="#/admin/developer"
                   text="Developer"
                   icon={<Icons.Code />}

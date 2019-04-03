@@ -188,6 +188,7 @@ export type DensityService = {
   name: string,
   displayName: string,
   category: string,
+	serviceAuthorization: DensityServiceAuthorization,
 };
 
 // ServiceAuthorization
@@ -199,4 +200,23 @@ export type DensityServiceAuthorization = {
   user: DensityUser,
 };
 
-// Counts
+export type DensitySpaceMapping = {
+  id: string,
+  serviceId: string,
+  spaceId: string,
+  serviceSpaceId: string,
+};
+
+export type DensityRobinSpace = {
+  id: string,
+  name: string,
+  spaces: Array<DensityRobinSpace>,
+};
+
+export type DensityReportOptions = {
+  date: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
+  weekStart: string; // A weekday for the report week to start on. Default is "Sunday".
+  client: any; // An axios client used to make AJAX requests.
+  slow: boolean; // A flag representing if the report calculations should run specifying the "?slow=true" flag, which bypasses the new reporting database.
+}
+export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;

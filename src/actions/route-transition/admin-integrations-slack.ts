@@ -9,9 +9,7 @@ export const ROUTE_TRANSITION_ADMIN_INTEGRATIONS = 'ROUTE_TRANSITION_ADMIN_INTEG
 export default function routeTransitionAdminIntegrationsSlack(code) {
   return async dispatch => {
     dispatch({ type: ROUTE_TRANSITION_ADMIN_INTEGRATIONS });
-
-    const response = await core().get('integrations/slack/auth', { params: { code: code } });
-
+    await core().get('integrations/slack/auth', { params: { code: code } });
 
     // fetch list of all integrations
     dispatch(integrationServicesList());

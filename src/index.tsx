@@ -48,6 +48,7 @@ import routeTransitionExplore from './actions/route-transition/explore';
 import routeTransitionExploreSpaceTrends from './actions/route-transition/explore-space-trends';
 import routeTransitionExploreSpaceDaily from './actions/route-transition/explore-space-daily';
 import routeTransitionExploreSpaceDataExport from './actions/route-transition/explore-space-data-export';
+import routeTransitionExploreSpaceMeetings from './actions/route-transition/explore-space-meetings';
 import routeTransitionLiveSpaceList from './actions/route-transition/live-space-list';
 import routeTransitionLiveSpaceDetail from './actions/route-transition/live-space-detail';
 import routeTransitionAccount from './actions/route-transition/account';
@@ -177,6 +178,7 @@ router.addRoute('spaces/explore', () => routeTransitionExplore());
 router.addRoute('spaces/explore/:id/trends', id => routeTransitionExploreSpaceTrends(id));
 router.addRoute('spaces/explore/:id/daily', id => routeTransitionExploreSpaceDaily(id));
 router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
+router.addRoute('spaces/explore/:id/meetings', id => routeTransitionExploreSpaceMeetings(id));
 
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList());
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(id));

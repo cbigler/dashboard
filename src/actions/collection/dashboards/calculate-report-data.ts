@@ -2,6 +2,8 @@ import { REPORTS } from '@density/reports';
 import { getGoSlow } from '../../../components/environment-switcher/index';
 import core from '../../../client/core';
 
+import { DensityReportCalculatationFunction } from '../../../types';
+
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 
@@ -43,7 +45,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
       default:
         let data, errorThrown: any = false;
 
-        const reportDataCalculationFunction = REPORTS[report.type].calculations;
+        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
         if (!reportDataCalculationFunction) {
           dispatch({
             type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
