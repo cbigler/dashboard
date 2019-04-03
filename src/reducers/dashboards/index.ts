@@ -9,6 +9,7 @@ import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transitio
 import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
 } from '../../actions/collection/dashboards/calculate-report-data';
 
 import { DensityDashboard } from '../../types';
@@ -108,6 +109,19 @@ export default function dashboards(state=initialState, action) {
           state: 'ERROR',
           data: null,
           error: action.error,
+        },
+      },
+    };
+
+  // If user is not authorized to view report, put it in 'UNAUTHORIZED' state
+  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED:
+    return {
+      ...state,
+      calculatedReportData: {
+        ...state.calculatedReportData,
+        [action.report.id]: {
+          state: 'UNAUTHORIZED',
+          data: null,
         },
       },
     };

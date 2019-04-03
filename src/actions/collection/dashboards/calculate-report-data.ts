@@ -6,6 +6,7 @@ import { DensityReportCalculatationFunction } from '../../../types';
 
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
+export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED';
 
 export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
   return async (dispatch, getState) => {
@@ -65,13 +66,20 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
         }
 
         if (errorThrown) {
-          // Log the error so a developer can see what whent wrong.
+          // Log the error so a developer can see what went wrong.
           console.error(errorThrown); // DON'T REMOVE ME!
-          dispatch({
-            type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
-            report,
-            error: errorThrown.message,
-          });
+          if (errorThrown.message === 'Not found.') {
+            dispatch({
+              type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+              report,
+            });
+          } else {
+            dispatch({
+              type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+              report,
+              error: errorThrown.message,
+            });
+          }
         } else {
           dispatch({
             type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,

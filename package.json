@@ -13,7 +13,7 @@
     "@density/conduit": "^0.3.0",
     "@density/react-dates": "^12.6.0",
     "@density/ui": "^13.2.1",
-    "@density/reports": "^4.3.0",
+    "@density/reports": "^4.4.1",
     "auth0-js": "^9.9.0",
     "axios": "^0.18.0",
     "classnames": "^2.2.6",
