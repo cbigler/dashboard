@@ -51,7 +51,7 @@ export function ImpersonateModal({
     activeModal.data.organizationFilter
   );
   const filteredUsers = userFilterHelper(
-    activeModal.data.users,
+    activeModal.data.users.filter(x => x.role !== 'service'),
     activeModal.data.userFilter
   );
 
