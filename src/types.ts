@@ -18,6 +18,7 @@ export type DensitySpace = {
 	currentCount: number,
 	capacity: number,
 	createdAt: string,
+  ancestry: Array<DensitySpaceAncestryItem>,
 	doorways: Array<{
 		id: string,
 		name: string,
@@ -37,6 +38,11 @@ export type DensitySpace = {
     id: string,
     name: string,
   }>,
+};
+
+export type DensitySpaceAncestryItem = {
+  id: string;
+  name: string;
 };
 
 export type DensityDoorway = {

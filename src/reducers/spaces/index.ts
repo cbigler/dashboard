@@ -23,6 +23,7 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../actions/route-trans
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transition/explore-space-daily';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
@@ -47,6 +48,7 @@ const DATA_DURATION_WEEK = 'DATA_DURATION_WEEK';
       // DATA_DURATION_MONTH = 'DATA_DURATION_MONTH';
 
 const initialState = {
+  view: 'LOADING',
   data: [],
   loading: true,
   error: null,
@@ -98,6 +100,7 @@ export default function spaces(state=initialState, action) {
   case COLLECTION_SPACES_SET:
     return {
       ...state,
+      view: 'VISIBLE',
       loading: false,
       data: action.data.map(s => objectSnakeToCamel<DensitySpace>(s)),
       filters: {
@@ -111,6 +114,7 @@ export default function spaces(state=initialState, action) {
   case COLLECTION_SPACES_PUSH:
     return {
       ...state,
+      view: 'VISIBLE',
       loading: false,
       data: [
         // Update existing items
@@ -135,11 +139,11 @@ export default function spaces(state=initialState, action) {
   case COLLECTION_SPACES_CREATE:
   case COLLECTION_SPACES_DESTROY:
   case COLLECTION_SPACES_UPDATE:
-    return {...state, error: null, loading: true};
+    return {...state, error: null, loading: true, view: 'LOADING'};
 
   // When an error happens in the collection, define an error.
   case COLLECTION_SPACES_ERROR:
-    return {...state, error: action.error, loading: false};
+    return {...state, error: action.error, loading: false, view: 'ERROR'};
 
   // Add a filter to a space
   case COLLECTION_SPACES_FILTER:
@@ -207,6 +211,13 @@ export default function spaces(state=initialState, action) {
     };
   case ROUTE_TRANSITION_LIVE_SPACE_LIST:
     return {...state, error: null};
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS:
+    return {
+      ...state,
+      view: action.setLoading ? 'LOADING' : state.view,
+      loading: action.setLoading || state.loading,
+      selected: action.parentSpaceId,
+    };
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:
     if (state.selected && state.filters.date && state.filters.startDate && state.filters.endDate) {
