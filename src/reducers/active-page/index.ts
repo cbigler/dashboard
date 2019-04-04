@@ -22,6 +22,7 @@ import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../actions/route-tran
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
 import { ROUTE_TRANSITION_ADMIN_DEVELOPER } from '../../actions/route-transition/admin-developer';
 import { ROUTE_TRANSITION_ADMIN_DEVICE_STATUS } from '../../actions/route-transition/admin-device-status';
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../actions/route-transition/logout';
 
@@ -77,6 +78,8 @@ export default function activePage(state=initialState, action) {
     return "ADMIN_DEVICE_STATUS";
   case ROUTE_TRANSITION_ADMIN_INTEGRATIONS:
     return "ADMIN_INTEGRATIONS";
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS:
+    return "ADMIN_LOCATIONS";
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

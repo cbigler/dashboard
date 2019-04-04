@@ -11,6 +11,7 @@ import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
+import AdminLocations from '../admin-locations/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
@@ -90,6 +91,8 @@ function ActivePage({activePage, user, settings}) {
     return <Admin user={user} activePage={activePage} />;
   case "ADMIN_USER_MANAGEMENT_DETAIL":
     return <AdminUserManagementDetail />;
+  case "ADMIN_LOCATIONS":
+    return <AdminLocations />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":

@@ -22,6 +22,7 @@ describe('spaces', function() {
 
     assert.deepEqual(result, {
       ...initialState,
+      view: 'VISIBLE',
       loading: false,
       data: [
         {id: 0, name: 'foo', currentCount: 5},
@@ -47,6 +48,7 @@ describe('spaces', function() {
 
     assert.deepEqual(spaceUpdatedInCollection, {
       ...initialState,
+      view: 'VISIBLE',
       loading: false,
       data: [{id: 0, name: 'new name', currentCount: 4}],
     });
@@ -62,6 +64,7 @@ describe('spaces', function() {
 
     assert.deepEqual(result, {
       ...initialState,
+      view: 'VISIBLE',
       loading: false,
       data: [{id: 0, name: 'foo', currentCount: 5}],
     });
@@ -90,7 +93,7 @@ describe('spaces', function() {
     const result = spaces(spaceInCollection, collectionSpacesDelete(SPACE));
 
     // Initial state should then match final state.
-    assert.deepEqual(result, {...initialState, loading: false});
+    assert.deepEqual(result, {...initialState, view: 'VISIBLE', loading: false});
   });
   it('should set an error when an error happens', function() {
     const initialState = spaces(undefined, {});
@@ -99,7 +102,7 @@ describe('spaces', function() {
     const errorState = spaces(initialState, collectionSpacesError('boom!'));
 
     // Initial state should then match final state.
-    assert.deepEqual(errorState, {...initialState, error: 'boom!', loading: false});
+    assert.deepEqual(errorState, {...initialState, error: 'boom!', view: 'ERROR', loading: false});
   });
   it('should clear an error and start loading when an async operation starts.', function() {
     const initialState = spaces(undefined, {});

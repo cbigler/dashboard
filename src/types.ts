@@ -11,32 +11,38 @@ export type DensitySpace = {
   id: string,
   name: string,
   description: string,
-	parentid: string,
-	spaceType: DensitySpaceTypes,
-	timeZone: string,
-	dailyReset: string,
-	currentCount: number,
-	capacity: number,
-	createdAt: string,
-	doorways: Array<{
-		id: string,
-		name: string,
-		sensorPlacement: 1 | -1,
-	}>,
-	tags: Array<string>,
-	addressLine1: string | null,
-	addressLine2: string | null,
-	city: string | null,
-	stateProvince: string | null,
-	postalCode: string | null,
-	countryCode: string | null,
-	latitude: number | null,
-	longitude: number | null,
+  parentid: string,
+  spaceType: DensitySpaceTypes,
+  timeZone: string,
+  dailyReset: string,
+  currentCount: number,
+  capacity: number,
+  createdAt: string,
+  ancestry: Array<DensitySpaceAncestryItem>,
+  doorways: Array<{
+    id: string,
+    name: string,
+    sensorPlacement: 1 | -1,
+  }>,
+  tags: Array<string>,
+  addressLine1: string | null,
+  addressLine2: string | null,
+  city: string | null,
+  stateProvince: string | null,
+  postalCode: string | null,
+  countryCode: string | null,
+  latitude: number | null,
+  longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
   timeSegmentGroups: Array<{
     id: string,
     name: string,
   }>,
+};
+
+export type DensitySpaceAncestryItem = {
+  id: string;
+  name: string;
 };
 
 export type DensityDoorway = {
