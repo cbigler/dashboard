@@ -6,9 +6,51 @@ import { DensitySpace } from '../../types';
 import {
   AppBar,
   AppBarSection,
+  Button,
 } from '@density/ui';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
+
+function ActionButtons({spaceType}) {
+  switch (spaceType) {
+  case null:
+    return (
+      <Fragment>
+        <span className={styles.leftButton}>
+          <Button type="primary">Add a Campus</Button>
+        </span>
+        <span className={styles.rightButton}>
+          <Button type="primary">Add a Building</Button>
+        </span>
+      </Fragment>
+    );
+  case 'campus':
+    return (
+      <Fragment>
+        <Button type="primary">Add a Building</Button>
+      </Fragment>
+    );
+  case 'building':
+    return (
+      <Fragment>
+        <span className={styles.leftButton}>
+          <Button type="primary">Add a Level</Button>
+        </span>
+        <span className={styles.rightButton}>
+          <Button type="primary">Add a Room</Button>
+        </span>
+      </Fragment>
+    );
+  case 'floor':
+    return (
+      <Fragment>
+        <Button type="primary">Add a Room</Button>
+      </Fragment>
+    );
+  default:
+    return null;
+  }
+}
 
 function AdminLocations({selectedSpace, spaces}) {
   return (
@@ -16,11 +58,16 @@ function AdminLocations({selectedSpace, spaces}) {
       {spaces.view === 'LOADING' ? <span>Loading</span> : null}
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
-          <AppBar>
-            <AppBarSection>
-              <Breadcrumb space={selectedSpace} />
-            </AppBarSection>
-          </AppBar>
+          <div className={styles.appBar}>
+            <AppBar>
+              <AppBarSection>
+                <Breadcrumb space={selectedSpace} />
+              </AppBarSection>
+              <AppBarSection>
+                <ActionButtons spaceType={selectedSpace ? selectedSpace.spaceType : null} />
+              </AppBarSection>
+            </AppBar>
+          </div>
           <ul>
             {spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null)).map(s => (
               <li key={s.id}>
