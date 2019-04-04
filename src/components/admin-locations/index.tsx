@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
+import Skeleton from '../skeleton/index';
+import colorVariables from '@density/ui/variables/colors.json';
 
 import { DensitySpace } from '../../types';
 import {
@@ -55,7 +57,28 @@ function ActionButtons({spaceType}) {
 function AdminLocations({selectedSpace, spaces}) {
   return (
     <div className={styles.adminLocations}>
-      {spaces.view === 'LOADING' ? <span>Loading</span> : null}
+      {spaces.view === 'LOADING' ? (
+        <div className={styles.appBar}>
+          <AppBar>
+            <AppBarSection>
+              <Skeleton width={200} height={18} />
+            </AppBarSection>
+            <AppBarSection>
+              <span className={styles.leftButton}>
+                <Button disabled type="primary">
+                  <Skeleton width={96} color={colorVariables.grayLight} />
+                </Button>
+              </span>
+              <span className={styles.rightButton}>
+                <Button disabled type="primary">
+                  <Skeleton width={96} color={colorVariables.grayLight} />
+                </Button>
+              </span>
+            </AppBarSection>
+          </AppBar>
+        </div>
+      ) : null}
+
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
           <div className={styles.appBar}>
@@ -69,11 +92,15 @@ function AdminLocations({selectedSpace, spaces}) {
             </AppBar>
           </div>
           <ul>
-            {spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null)).map(s => (
-              <li key={s.id}>
-                <a href={`#/admin/locations/${s.id}`}>{s.name}</a>
-              </li>
-            ))}
+            {
+              spaces.data
+              .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null))
+              .map(s => (
+                <li key={s.id}>
+                  <a href={`#/admin/locations/${s.id}`}>{s.name}</a>
+                </li>
+              ))
+            }
           </ul>
         </Fragment>
       ) : null}
