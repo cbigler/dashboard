@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 
 import { Icons } from '@density/ui';
 
-export default function Breadcrumb({ space }) {
+export default function AdminLocationsBreadcrumb({ space }) {
   if (space) {
     return (
       <div className={styles.breadcrumb}>
