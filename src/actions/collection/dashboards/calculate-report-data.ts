@@ -1,4 +1,4 @@
-import { REPORTS } from '@density/reports';
+import { REPORTS, UnauthorizedError } from '@density/reports';
 import { getGoSlow } from '../../../components/environment-switcher/index';
 import core from '../../../client/core';
 
@@ -68,7 +68,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
         if (errorThrown) {
           // Log the error so a developer can see what went wrong.
           console.error(errorThrown); // DON'T REMOVE ME!
-          if (errorThrown.message === 'Not found.') {
+          if (errorThrown instanceof UnauthorizedError) {
             dispatch({
               type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
               report,
