@@ -2,6 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import Skeleton from '../skeleton/index';
+import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { DensitySpace } from '../../types';
@@ -79,12 +80,16 @@ function AdminLocations({selectedSpace, spaces}) {
         </div>
       ) : null}
 
+      {spaces.view === 'ERROR' ? (
+        <GenericErrorState />
+      ) : null}
+
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
           <div className={styles.appBar}>
             <AppBar>
               <AppBarSection>
-                <Breadcrumb space={selectedSpace} />
+                <Breadcrumb space={selectedSpace} spaces={spaces} />
               </AppBarSection>
               <AppBarSection>
                 <ActionButtons spaceType={selectedSpace ? selectedSpace.spaceType : null} />

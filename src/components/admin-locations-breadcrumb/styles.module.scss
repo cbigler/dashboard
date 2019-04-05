@@ -1,4 +1,5 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 
 .breadcrumb {
   display: flex;
@@ -13,6 +14,8 @@
   font-weight: 500;
   color: $grayDarker;
   text-decoration: none;
+  user-select: none;
+  white-space: nowrap;
 }
 .item:first-child { margin-left: 0px; }
 .item:last-child {
@@ -22,4 +25,59 @@
 
 .finalText {
   margin-right: 8px;
+}
+
+
+
+.backdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: transparent;
+}
+.wrapper { position: relative; }
+.target { cursor: pointer; }
+.popup {
+  position: absolute;
+  top: 36px;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 16px;
+  font-size: 16px;
+  font-weight: normal;
+  background-color: #fff;
+  border: 1px solid $grayLight;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  transition: all 100ms ease-in-out;
+  width: 348px;
+}
+.popup nav {
+  margin-top: 16px;
+  height: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.popupItem {
+  line-height: 36px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: $borderRadiusSmall;
+}
+.popupItem a {
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 16px;
+  color: $grayCinder;
+  display: inline-block;
+  width: 100%;
+}
+.popupItem.active { background-color: $grayLighter; }
+.popupItem.active a {
+  color: $brandPrimary;
+  text-decoration: underline;
 }
