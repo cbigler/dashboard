@@ -20,6 +20,7 @@ import {
   Icons,
   InputBox,
   InputBoxContext,
+  Modal,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -38,7 +39,6 @@ import collectionUsersInviteResend from '../../actions/collection/users/invite_r
 
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
-import Modal from '../modal';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 export const INVITATION_STATUS_LABELS = {

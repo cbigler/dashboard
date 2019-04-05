@@ -10,10 +10,10 @@ import {
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Modal,
 } from '@density/ui';
 
 import FormLabel from '../form-label';
-import Modal from '../modal';
 
 export default class TokenUpdateModal extends React.Component<any, any> {
   constructor(props) {

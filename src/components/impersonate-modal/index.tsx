@@ -14,7 +14,8 @@ import {
   Icons,
   InputBox,
   RadioButton,
-  Switch
+  Switch,
+  Modal,
 } from "@density/ui";
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -27,7 +28,6 @@ import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 
 import ListView, { ListViewColumn } from '../list-view';
-import Modal from '../modal';
 
 import styles from './styles.module.scss';
 
