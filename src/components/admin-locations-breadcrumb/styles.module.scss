@@ -20,6 +20,7 @@
 .item:first-child { margin-left: 0px; }
 .item:last-child {
   margin-right: 8px;
+  margin-left: 7px;
   color: $grayCinder;
 }
 
@@ -38,10 +39,24 @@
   background-color: transparent;
 }
 .wrapper { position: relative; }
-.target { cursor: pointer; }
+
+.target {
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid transparent;
+  padding-left: 8px;
+  padding-right: 8px;
+  line-height: 40px;
+  transition: all 100ms ease-in-out;
+  border-radius: $borderRadiusBase;
+}
+.target.visible {
+  border-color: $brandPrimary;
+}
+
 .popup {
   position: absolute;
-  top: 36px;
+  top: 48px;
 
   display: flex;
   flex-direction: column;
