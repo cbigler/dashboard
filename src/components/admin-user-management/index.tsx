@@ -7,7 +7,6 @@ import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 import GenericErrorState from '../generic-error-state/index';
-import Skeleton from '../skeleton/index';
 
 import {
   AppBar,
@@ -21,6 +20,7 @@ import {
   InputBox,
   InputBoxContext,
   Modal,
+  Skeleton,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 

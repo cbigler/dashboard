@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
-import Skeleton from '../skeleton/index';
 import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -10,6 +9,7 @@ import {
   AppBar,
   AppBarSection,
   Button,
+  Skeleton,
 } from '@density/ui';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
