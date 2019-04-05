@@ -102,7 +102,10 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
             className={classnames(styles.target, {[styles.visible]: visible})}
             onClick={() => this.onShow()}
           >{children}</span>
-          <div className={styles.popup} style={{opacity: visible ? 1 : 0}}>
+          <div className={styles.popup} style={{
+            opacity: visible ? 1 : 0,
+            pointerEvents: visible ? 'auto' : 'none',
+          }}>
             <InputBox
               width="auto"
               type="text"
