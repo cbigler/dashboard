@@ -70,8 +70,14 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
     filterText: '',
   }
 
+  filter = React.createRef()
+
   onShow = () => {
-    this.setState({visible: true, activeItemIndex: null, filterText: ''});
+    this.setState({visible: true, activeItemIndex: null, filterText: ''}, () => {
+      if (this.filter) {
+        (this.filter as any).current.focus();
+      }
+    });
   }
   onHide = () => {
     this.setState({visible: false});
@@ -102,6 +108,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
               type="text"
               placeholder="Search by space name"
               value={filterText}
+              ref={this.filter}
               onChange={e => this.setState({
                 filterText: e.target.value,
                 activeItemIndex: null,
