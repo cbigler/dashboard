@@ -8,6 +8,8 @@ import { InputBox, Icons } from '@density/ui';
 
 import filterCollection from '../../helpers/filter-collection/index';
 
+const INACTIVE_INDEX = -1;
+
 export default function AdminLocationsBreadcrumb({ spaces, space }) {
   if (space) {
     return (
@@ -57,7 +59,7 @@ type BreadcrumbSiblingSelectorProps = {
 
 type BreadcrumbSiblingSelectorState = {
   visible: boolean,
-  activeItemIndex: number | null,
+  activeItemIndex: number,
   filterText: string,
 };
 
@@ -66,14 +68,14 @@ const nameFilter = filterCollection({fields: ['name']});
 export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelectorProps, BreadcrumbSiblingSelectorState> {
   state = {
     visible: false,
-    activeItemIndex: null,
+    activeItemIndex: INACTIVE_INDEX,
     filterText: '',
   }
 
   filter = React.createRef()
 
   onShow = () => {
-    this.setState({visible: true, activeItemIndex: null, filterText: ''}, () => {
+    this.setState({visible: true, activeItemIndex: INACTIVE_INDEX, filterText: ''}, () => {
       if (this.filter) {
         (this.filter as any).current.focus();
       }
@@ -114,38 +116,35 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
               ref={this.filter}
               onChange={e => this.setState({
                 filterText: e.target.value,
-                activeItemIndex: null,
+                activeItemIndex: INACTIVE_INDEX,
               })}
               onKeyDown={e => {
                 if (e.key === 'ArrowDown') {
-                  if (activeItemIndex === null) {
+                  if (activeItemIndex === INACTIVE_INDEX) {
                     this.setState({activeItemIndex: 0});
                   } else if (
                     typeof activeItemIndex === 'number' &&
                     (activeItemIndex as any) < items.length-1
                   ) {
-                    this.setState({activeItemIndex: (activeItemIndex as any) + 1});
+                    this.setState({activeItemIndex: activeItemIndex + 1});
                   }
 
                 } else if (e.key === 'ArrowUp') {
                   if (activeItemIndex === null) {
                     this.setState({activeItemIndex: 0});
-                  } else if (
-                    typeof activeItemIndex === 'number' &&
-                    (activeItemIndex as any) > 0
-                  ) {
-                    this.setState({activeItemIndex: (activeItemIndex as any) - 1});
+                  } else if (activeItemIndex > 0) {
+                    this.setState({activeItemIndex: activeItemIndex - 1});
                   }
 
                 } else if (e.key === 'Enter' && activeItemIndex !== null) {
                   this.onHide();
-                  window.location.href = `#/admin/locations/${items[activeItemIndex as any].id}`;
+                  window.location.href = `#/admin/locations/${items[activeItemIndex].id}`;
                 } else if (e.key === 'Escape') {
                   this.onHide();
                 }
               }}
             />
-            <nav onMouseLeave={() => this.setState({activeItemIndex: null})}>
+            <nav onMouseLeave={() => this.setState({activeItemIndex: INACTIVE_INDEX})}>
               {items.map((space, index) => (
                 <div
                   key={space.id}
