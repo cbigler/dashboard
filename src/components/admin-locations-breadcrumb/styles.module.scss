@@ -29,7 +29,7 @@
 .item:first-child { margin-left: 0px; }
 
 .finalText {
-  margin-right: 8px;
+  margin-right: 16px;
 }
 
 
@@ -108,7 +108,7 @@
   overflow: hidden;
 }
 .popupItem:first-child { margin-top: 8px; }
-.popupItem:last-child { margin-bottom: 16px; }
+.popupItem:last-child { margin-bottom: 8px; }
 
 .popupItem a {
   display: inline-block;
