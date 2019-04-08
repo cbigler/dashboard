@@ -66,10 +66,6 @@
   flex-direction: column;
   
   width: 280px;
-  padding-top: 16px;
-  padding-bottom: 0;
-  padding-left: 16px;
-  padding-right: 16px;
 
   background-color: #fff;
   border: 1px solid $grayLight;
@@ -82,9 +78,21 @@
   transition: all 100ms ease-in-out;
 }
 
+.popupSearchBar {
+  display: flex;
+  height: 64px;
+  padding-left: 16px;
+  padding-right: 16px;
+  align-items: center;
+  border-bottom: 1px solid $grayLight;
+}
+
 .popup nav {
+  box-sizing: border-box;
   height: 100%;
   max-height: 200px;
+  padding-left: 8px;
+  padding-right: 8px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
@@ -106,7 +114,6 @@
   display: inline-block;
   width: 100%;
   text-decoration: none;
-  font-weight: bold;
   font-size: 16px;
   color: $grayCinder;
   text-overflow: ellipsis;
