@@ -29,13 +29,17 @@
   color: $grayDarkest;
   margin-bottom: 40px;
 
-  p { font-size: 16px; }
+  p { font-size: $fontSizeBase; }
 
   p a { margin-left: 10px; }
   p:first-child { margin-bottom: 20px; }
+
+  pre { font-size: 14px; }
 }
 
 .webhookCreateExamplePayload {
+  padding: 20px;
+  
   background-color: $grayLightest;
   color: $grayDarker;
   border: 1px solid $grayLight;
@@ -45,6 +49,6 @@
   font-size: $fontSizeBase;
   font-weight: $fontWeightBase;
 
-  padding: 20px;
+  overflow-x: auto; 
 }
 
