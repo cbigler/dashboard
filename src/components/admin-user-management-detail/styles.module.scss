@@ -1,5 +1,6 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
 
 .adminUserManagementDetailAppBar {
   background-color: #fff;
@@ -119,7 +120,7 @@
   list-style-type: none;
   margin-top: 42px;
   color: $grayDarker;
-  font-size: 16px;
+  font-size: $fontSizeBase;
 }
 .adminUserManagementUserInfoDetails li { margin-top: 4px; }
 
