@@ -9,8 +9,8 @@
 
 .item {
   font-size: 16px;
-  margin-left: 16px + 8px;
-  margin-right: 16px + 8px;
+  margin-left: 16px;
+  margin-right: 16px;
   font-weight: 500;
   color: $grayDarker;
   text-decoration: none;
@@ -28,7 +28,9 @@
 }
 .item:first-child { margin-left: 0px; }
 
-.finalItemText { margin-right: 24px; }
+.finalText {
+  margin-right: 8px;
+}
 
 
 
@@ -46,13 +48,15 @@
   display: inline-block;
   cursor: pointer;
   border: 1px solid transparent;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 8px;
+  padding-right: 8px;
   line-height: 40px;
   transition: all 100ms ease-in-out;
   border-radius: $borderRadiusBase;
 }
-.target.visible { border-color: $brandPrimary; }
+.target.visible {
+  border-color: $brandPrimary;
+}
 
 .popup {
   position: absolute;
@@ -64,6 +68,8 @@
   width: 280px;
   padding-top: 16px;
   padding-bottom: 0;
+  padding-left: 16px;
+  padding-right: 16px;
 
   background-color: #fff;
   border: 1px solid $grayLight;
@@ -81,15 +87,6 @@
   max-height: 200px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
-  margin-top: 10px;
-  border-top: 1px solid $grayLight;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-.inputBoxWrapper {
-  padding-left: 16px;
-  padding-right: 16px;
 }
 
 .popupItem {
@@ -109,6 +106,7 @@
   display: inline-block;
   width: 100%;
   text-decoration: none;
+  font-weight: bold;
   font-size: 16px;
   color: $grayCinder;
   text-overflow: ellipsis;

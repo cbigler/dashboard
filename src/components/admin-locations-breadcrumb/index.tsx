@@ -32,7 +32,7 @@ export default function AdminLocationsBreadcrumb({ spaces, space }) {
 
         <span className={styles.item}>
           <BreadcrumbSiblingSelector selectedSpace={space} spaces={spaces}>
-            <span className={styles.finalItemText}>{space.name}</span>
+            <span className={styles.finalText}>{space.name}</span>
             <Icons.ChevronDown width={12} height={12} />
           </BreadcrumbSiblingSelector>
         </span>
@@ -108,45 +108,42 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
             opacity: visible ? 1 : 0,
             pointerEvents: visible ? 'auto' : 'none',
           }}>
-            <div className={styles.inputBoxWrapper}>
-              <InputBox
-                width="auto"
-                type="text"
-                placeholder="Search by space name"
-                value={filterText}
-                ref={this.filter}
-                leftIcon={<Icons.Search />}
-                onChange={e => this.setState({
-                  filterText: e.target.value,
-                  activeItemIndex: INACTIVE_INDEX,
-                })}
-                onKeyDown={e => {
-                  if (e.key === 'ArrowDown') {
-                    if (activeItemIndex === INACTIVE_INDEX) {
-                      this.setState({activeItemIndex: 0});
-                    } else if (
-                      typeof activeItemIndex === 'number' &&
-                      (activeItemIndex as any) < items.length-1
-                    ) {
-                      this.setState({activeItemIndex: activeItemIndex + 1});
-                    }
-
-                  } else if (e.key === 'ArrowUp') {
-                    if (activeItemIndex === null) {
-                      this.setState({activeItemIndex: 0});
-                    } else if (activeItemIndex > 0) {
-                      this.setState({activeItemIndex: activeItemIndex - 1});
-                    }
-
-                  } else if (e.key === 'Enter' && activeItemIndex !== null) {
-                    this.onHide();
-                    window.location.href = `#/admin/locations/${items[activeItemIndex].id}`;
-                  } else if (e.key === 'Escape') {
-                    this.onHide();
+            <InputBox
+              width="auto"
+              type="text"
+              placeholder="Search by space name"
+              value={filterText}
+              ref={this.filter}
+              onChange={e => this.setState({
+                filterText: e.target.value,
+                activeItemIndex: INACTIVE_INDEX,
+              })}
+              onKeyDown={e => {
+                if (e.key === 'ArrowDown') {
+                  if (activeItemIndex === INACTIVE_INDEX) {
+                    this.setState({activeItemIndex: 0});
+                  } else if (
+                    typeof activeItemIndex === 'number' &&
+                    (activeItemIndex as any) < items.length-1
+                  ) {
+                    this.setState({activeItemIndex: activeItemIndex + 1});
                   }
-                }}
-              />
-            </div>
+
+                } else if (e.key === 'ArrowUp') {
+                  if (activeItemIndex === null) {
+                    this.setState({activeItemIndex: 0});
+                  } else if (activeItemIndex > 0) {
+                    this.setState({activeItemIndex: activeItemIndex - 1});
+                  }
+
+                } else if (e.key === 'Enter' && activeItemIndex !== null) {
+                  this.onHide();
+                  window.location.href = `#/admin/locations/${items[activeItemIndex].id}`;
+                } else if (e.key === 'Escape') {
+                  this.onHide();
+                }
+              }}
+            />
             <nav onMouseLeave={() => this.setState({activeItemIndex: INACTIVE_INDEX})}>
               {items.map((space, index) => (
                 <div
