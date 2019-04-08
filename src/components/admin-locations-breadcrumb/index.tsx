@@ -112,6 +112,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
               <InputBox
                 width="100%"
                 type="text"
+                leftIcon={<Icons.Search />}
                 placeholder="Search by space name"
                 value={filterText}
                 ref={this.filter}
