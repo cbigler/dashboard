@@ -36,6 +36,11 @@
   bottom: 0px;
   display: flex;
   flex-direction: column;
+
+  background-color: $grayLighter;
+
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 .adminUserManagementDetailColumns {
@@ -45,11 +50,11 @@
 }
 .adminUserManagementDetailColumn.left {
   display: flex;
-  padding-top: 40px;
-
-  width: 360px;
   flex-grow: 0;
   flex-shrink: 0;
+
+  width: 360px;
+  padding-top: 40px;
 
   border-right: 1px solid $gray;
 }
@@ -71,87 +76,85 @@
 
 .adminUserManagementUserInfo {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
   min-width: 320px;
-  margin-left: 24px;
-  margin-right: 24px;
 }
 
-.adminUserManagementUserInfoIcon {
+.adminUserManagementUserInfoAvatar {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-grow: 0;
   flex-shrink: 0;
-
+  height: 64px;
+  width: 64px;
   background-color: $grayDarker;
-  color: #fff;
   border-radius: 50%;
-  width: 72px;
-  height: 72px;
-  font-size: 22px;
-  margin-right: 12px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 1px;
   user-select: none;
 }
+.adminUserManagementUserInfoTitle {
+  flex-grow: 1;
+  padding-left: 16px;
+}
 .adminUserManagementUserInfoName {
-  font-size: 40px;
+  font-size: 24px;
   font-weight: normal;
-  margin-top: 16px;
-  margin-bottom: 12px;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 .adminUserManagementUserInfoEmail {
   color: $grayDarker;
-  font-size: 20px;
-  margin-bottom: 24px;
+  font-size: 16px;
 }
 .adminUserManagementUserInfoRoleTag {
-  display: inline-block;
   color: $brandPrimary;
   border: 1px solid $brandPrimary;
   border-radius: 4px;
-  padding: 4px;
+  padding: 10px;
   user-select: none;
   cursor: default;
 }
 
 .adminUserManagementUserInfoDetails {
-  padding-left: 0px;
-  list-style-type: none;
-  margin-top: 42px;
-  color: $grayDarker;
+  margin: 0;
   font-size: 16px;
+  color: $grayDarker;
+  list-style-type: none;
 }
-.adminUserManagementUserInfoDetails li { margin-top: 4px; }
+.adminUserManagementUserInfoDetailsItem {
+  margin-bottom: 4px;
+  margin-left: 24px;
+}
+.adminUserManagementUserInfoDetailsItem:last-child { margin-bottom: 0; }
 
-
-
-.adminUserManagementDetailColumnRightSubcolumns {
-  display: flex;
-  flex-direction: column;
+.adminUserManagementDetailSection {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 800px;
   padding-left: 24px;
   padding-right: 24px;
-  margin-top: 40px;
+  margin-bottom: 24px;
+  margin-left: auto;
+  margin-right: auto;
 }
-.adminUserManagementDetailColumnRightSubcolumn {
-  flex-grow: 1;
-  flex-shrink: 1;
-}
-@media (min-width: 1280px) {
-  .adminUserManagementDetailColumnRightSubcolumns {
-    flex-direction: row;
-    justify-content: center;
-  }
-  .adminUserManagementDetailColumnRightSubcolumn.left { margin-right: 22px; }
-  .adminUserManagementDetailColumnRightSubcolumn.right { margin-left: 22px; }
-}
+.adminUserManagementDetailSection:first-child { margin-top: 64px; }
+.adminUserManagementDetailSection:last-child { margin-bottom: 64px; }
 
 .adminUserManagementDetailCard {
+  box-sizing: border-box;
   background-color: #fff;
   border: 1px solid $gray;
   border-radius: $borderRadiusBase;
   overflow: hidden;
-  margin-bottom: 44px;
-  width: 391px;
+  width: 100%;
+}
+.adminUserManagementDetailCardDanger {
+  border-color: $brandDanger;
 }
 .adminUserManagementDetailCardBody {
   padding-top: 16px;
@@ -159,3 +162,15 @@
   padding-left: 24px;
   padding-right: 24px;
 }
+
+.adminUserManagementDetailActionDetail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.adminUserManagementDetailActionDetailInfo {}
+.adminUserManagementDetailActionDetailHeader {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+.adminUserManagementDetailActionDetailLead { margin: 0; }

@@ -9,21 +9,22 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
 .adminSpacePermissionsPicker {
   display: flex;
   flex-direction: column;
-  width: 391px;
+  width: 100%;
   background-color: #fff;
 }
 .adminSpacePermissionsPickerBody {
-  background-color: $grayLightest;
   flex-grow: 1;
   flex-shrink: 0;
   height: calc(100% - 64px);
+  background-color: $grayLightest;
 }
 .adminSpacePermissionsPickerScroll {
   height: calc(100% - 64px);
-  overflow-y: auto;
   padding-left: 0px;
   margin-top: 0px;
   margin-bottom: 0px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .adminSpacePermissionsPickerScroll.noOverflow {
   overflow: hidden;
@@ -108,7 +109,6 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
   white-space: nowrap;
 }
 .adminSpacePermissionsPickerListItemName.bold { font-weight: bold; }
-
 
 .adminSpacePermissionsPickerListItemLabelSkeleton {
   display: flex;

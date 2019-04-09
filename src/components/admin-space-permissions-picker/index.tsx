@@ -115,7 +115,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
                   <InputBox
                     leftIcon={<Icons.Search width={16} height={16} />}
                     placeholder={`ex. "Flex Office", "New York"`}
-                    width={248}
+                    width={300}
                     value={searchQuery}
                     onChange={e => this.setState({searchQuery: e.target.value})}
                   />
