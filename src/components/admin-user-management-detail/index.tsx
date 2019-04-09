@@ -138,6 +138,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                 </a>
                 <span className={styles.adminUserManagementDetailMainTitle}>Edit User</span>
               </AppBarTitle>
+
               <AppBarSection>
                 <ButtonContext.Provider value="CANCEL_BUTTON">
                   <Button onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
@@ -242,7 +243,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
               </div>
 
               <div className={styles.adminUserManagementDetailSection}>
-                <div className={`${styles.adminUserManagementDetailCard} ${styles.adminUserManagementDetailCardDanger}`}>
+                <div className={classnames(styles.adminUserManagementDetailCard, styles.adminUserManagementDetailCardDanger)}>
                   <AppBar>
                     <AppBarTitle>Danger Zone</AppBarTitle>
                   </AppBar>
