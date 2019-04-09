@@ -1,0 +1,16 @@
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/colors.scss";
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-grow: 0;
+  flex-shrink: 0;
+
+  border-radius: $borderRadiusBase;
+  background-color: $grayCinder;
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}

@@ -3,6 +3,7 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
+import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import {
@@ -22,9 +23,7 @@ function AdminLocationsBuildingDetailSpaceList({ spaces }) {
           title="Info"
           template={item => (
             <Fragment>
-              <div className={styles.itemImage}>
-                <Icons.Image color="#fff" />
-              </div>
+              <AdminLocationsListViewImage space={item} />
               <span>{item.name}</span>
             </Fragment>
           )}
@@ -78,25 +77,21 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
         TODO: Waiting on mockups
       </AppSidebar>
       <AppPane>
-        {spaces.view === 'VISIBLE' ? (
+        {spacesNotInFloor.length > 0 ? (
           <Fragment>
-            {spacesNotInFloor.length > 0 ? (
-              <Fragment>
-                <AdminLocationsSubheader title="Rooms" supportsHover={false} />
-                <AdminLocationsBuildingDetailSpaceList spaces={spacesNotInFloor} />
-              </Fragment>
-            ) : null}
-
-            {floors.map((floor, index) => {
-              return (
-                <div key={floor.id} className={styles.section}>
-                  <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
-                  <AdminLocationsBuildingDetailSpaceList spaces={spacesInEachFloor[index]} />
-                </div>
-              );
-            })}
+            <AdminLocationsSubheader title="Rooms" supportsHover={false} />
+            <AdminLocationsBuildingDetailSpaceList spaces={spacesNotInFloor} />
           </Fragment>
         ) : null}
+
+        {floors.map((floor, index) => {
+          return (
+            <div key={floor.id} className={styles.section}>
+              <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
+              <AdminLocationsBuildingDetailSpaceList spaces={spacesInEachFloor[index]} />
+            </div>
+          );
+        })}
       </AppPane>
     </AppFrame>
   );

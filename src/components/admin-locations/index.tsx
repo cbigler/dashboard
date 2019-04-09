@@ -1,12 +1,14 @@
-import React, { Fragment } from 'react';
+import React, { ReactNode, Fragment } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
-import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
-import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
-import AdminLocationsSubheader from '../admin-locations-subheader/index';
+
+import GenericErrorState from '../generic-error-state/index';
 import ListView, { ListViewColumn } from '../list-view/index';
+import AdminLocationsSubheader from '../admin-locations-subheader/index';
+import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
+import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
 
 import { DensitySpace } from '../../types';
 import {
@@ -69,6 +71,36 @@ function AdminLocations({selectedSpace, spaces}) {
   const visibleSpaces = spaces.data
   .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
 
+  let content: ReactNode = null;
+  switch (selectedSpace ? selectedSpace.spaceType : null) {
+  case 'building':
+    content = (
+      <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'campus':
+    content = (
+      <AdminLocationsCampusDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case null:
+  default:
+    content = (
+      <ul>
+        {
+          spaces.data
+          .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null))
+          .map(space => (
+            <li key={space.id}>
+              <a href={`#/admin/locations/${space.id}`}>{space.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    );
+    break;
+  }
+
   return (
     <div className={styles.adminLocations}>
       {spaces.view === 'LOADING' ? (
@@ -92,7 +124,7 @@ function AdminLocations({selectedSpace, spaces}) {
           </AppBar>
           <AppFrame>
             <AppSidebar visible>
-              Waiting on mockups
+              TODO: Waiting on mockups
             </AppSidebar>
             <AppPane>
               <AdminLocationsSubheader
@@ -139,21 +171,7 @@ function AdminLocations({selectedSpace, spaces}) {
             </AppBar>
           </div>
 
-          {selectedSpace && selectedSpace.spaceType === 'building' ? (
-            <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
-          ) : (
-            <ul>
-              {
-                spaces.data
-                .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null))
-                .map(space => (
-                  <li key={space.id}>
-                    <a href={`#/admin/locations/${space.id}`}>{space.name}</a>
-                  </li>
-                ))
-              }
-            </ul>
-          )}
+          {content}
         </Fragment>
       ) : null}
     </div>
