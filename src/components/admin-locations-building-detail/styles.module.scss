@@ -1,0 +1,54 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.subheader {
+  display: block;
+  color: $grayCinder;
+  background-color: $grayLightest;
+  text-decoration: none;
+  padding-right: 24px;
+  cursor: default;
+}
+.subheader.hover { background-color: $grayLighter; }
+.subheader.supportsHover { cursor: pointer; }
+
+.title {
+  font-size: 20px;
+  cursor: pointer;
+}
+.title.hover {
+  color: $brandPrimary;
+  text-decoration: underline;
+}
+
+.manageLink {
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  opacity: 0;
+  margin-right: 16px;
+  color: $brandPrimary;
+}
+.manageLink.hover { opacity: 1; }
+
+
+
+
+.spaceList {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 16px;
+}
+
+.itemImage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $borderRadiusBase;
+  background-color: $grayCinder;
+  width: 40px;
+  height: 40px;
+  margin-right: 16px;
+}
+
+.section { margin-bottom: 32px; }

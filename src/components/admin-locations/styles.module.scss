@@ -1,4 +1,12 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
 .leftButton { margin-right: 8px; }
 .rightButton { margin-left: 8px; }
 
 .appBar { background-color: #fff; }
+
+.adminLocations {
+  overflow-y: auto;
+  height: 100%;
+}

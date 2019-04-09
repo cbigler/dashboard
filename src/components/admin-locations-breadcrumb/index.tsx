@@ -76,7 +76,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
 
   onShow = () => {
     this.setState({visible: true, activeItemIndex: INACTIVE_INDEX, filterText: ''}, () => {
-      if (this.filter) {
+      if (this.filter && this.filter.current) {
         (this.filter as any).current.focus();
       }
     });
@@ -168,6 +168,36 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
           </div>
         </div>
       </Fragment>
+    );
+  }
+}
+
+import * as MapboxGL from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+export class Map extends Component<any, any> {
+  map?: MapboxGL.Map;
+  container = React.createRef<HTMLDivElement>();
+
+  componentDidMount() {
+    (MapboxGL as any).accessToken = 'pk.eyJ1IjoicmdhdXNuZXQiLCJhIjoiY2pxcXdrdWgxMGd2djQybXRpdzU5d2hwcCJ9.DI6bxqLm09Nv5ue6f7Zhow';
+
+    if (this.container) {
+      this.map = new MapboxGL.Map({
+        container: this.container.current,
+        center: [-74.50, 40],
+        zoom: 9,
+      });
+    }
+  }
+  componentWillUnmount() {
+    if (this.map) {
+      this.map.remove();
+      this.map = null;
+    }
+  }
+  render() {
+    return (
+      <div ref={this.container} />
     );
   }
 }
