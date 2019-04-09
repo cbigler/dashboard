@@ -4,7 +4,6 @@ import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
-import Modal from '../../components/modal/index';
 
 import {
   Button,
@@ -15,6 +14,7 @@ import {
   AppBarContext,
   AppBarSection,
   AppBarTitle,
+  Modal,
 } from '@density/ui';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';

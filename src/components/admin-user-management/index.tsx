@@ -7,7 +7,6 @@ import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 import GenericErrorState from '../generic-error-state/index';
-import Skeleton from '../skeleton/index';
 
 import {
   AppBar,
@@ -20,6 +19,8 @@ import {
   Icons,
   InputBox,
   InputBoxContext,
+  Modal,
+  Skeleton,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -38,7 +39,6 @@ import collectionUsersInviteResend from '../../actions/collection/users/invite_r
 
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
-import Modal from '../modal';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 export const INVITATION_STATUS_LABELS = {

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import { hideToast } from '../../actions/toasts';
 
-import Toast from '../toast/index';
+import { Toast } from '@density/ui';
 
 import styles from './styles.module.scss';
 

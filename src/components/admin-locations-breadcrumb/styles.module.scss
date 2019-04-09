@@ -1,4 +1,5 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 
 .breadcrumb {
   display: flex;
@@ -7,19 +8,120 @@
 }
 
 .item {
-  font-size: 24px;
+  font-size: 16px;
   margin-left: 16px;
   margin-right: 16px;
   font-weight: 500;
   color: $grayDarker;
   text-decoration: none;
+  user-select: none;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-.item:first-child { margin-left: 0px; }
 .item:last-child {
   margin-right: 8px;
+  margin-left: 7px;
   color: $grayCinder;
+  overflow: visible;
 }
+.item:first-child { margin-left: 0px; }
 
 .finalText {
-  margin-right: 8px;
+  margin-right: 16px;
+}
+
+
+
+.backdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  background-color: transparent;
+}
+.wrapper { position: relative; }
+
+.target {
+  display: inline-block;
+  cursor: pointer;
+  border: 1px solid transparent;
+  padding-left: 8px;
+  padding-right: 8px;
+  line-height: 40px;
+  transition: all 100ms ease-in-out;
+  border-radius: $borderRadiusBase;
+}
+.target.visible {
+  border-color: $brandPrimary;
+}
+
+.popup {
+  position: absolute;
+  top: 48px;
+
+  display: flex;
+  flex-direction: column;
+  
+  width: 280px;
+
+  background-color: #fff;
+  border: 1px solid $grayLight;
+  border-radius: 4px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+
+  font-size: 16px;
+  font-weight: normal;
+
+  transition: all 100ms ease-in-out;
+}
+
+.popupSearchBar {
+  display: flex;
+  height: 64px;
+  padding-left: 16px;
+  padding-right: 16px;
+  align-items: center;
+  border-bottom: 1px solid $grayLight;
+}
+
+.popup nav {
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 200px;
+  padding-left: 8px;
+  padding-right: 8px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.popupItem {
+  box-sizing: border-box;
+  width: 100%;
+  height: 40px;
+  padding-left: 8px;
+  padding-right: 8px;
+  border-radius: $borderRadiusSmall;
+  line-height: 40px;
+  overflow: hidden;
+}
+.popupItem:first-child { margin-top: 8px; }
+.popupItem:last-child { margin-bottom: 8px; }
+
+.popupItem a {
+  display: inline-block;
+  width: 100%;
+  text-decoration: none;
+  font-size: 16px;
+  color: $grayCinder;
+  text-overflow: ellipsis;
+  white-space: nowrap; 
+  overflow: hidden;
+}
+.popupItem.active { background-color: $grayLighter; }
+.popupItem.active a {
+  color: $brandPrimary;
+  text-decoration: underline;
 }

@@ -15,6 +15,7 @@ import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import AdminDeveloper from '../admin-developer';
 import AdminDeviceStatus from '../admin-device-status';
 import AdminIntegrations from '../admin-integrations';
+import AdminLocations from '../admin-locations';
 
 
 export default function Admin({
@@ -66,6 +67,7 @@ export default function Admin({
           {activePage === 'ADMIN_USER_MANAGEMENT' ? <AdminUserManagement /> : null}
           {activePage === 'ADMIN_DEVELOPER' ? <AdminDeveloper /> : null}
           {activePage === 'ADMIN_DEVICE_STATUS' ? <AdminDeviceStatus /> : null}
+          {activePage === 'ADMIN_LOCATIONS' ? <AdminLocations /> : null}
         </AppPane>
       </AppFrame>
     </Fragment>

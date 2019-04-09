@@ -88,11 +88,10 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_DEVELOPER":
   case "ADMIN_INTEGRATIONS":
   case "ADMIN_DEVICE_STATUS":
+  case "ADMIN_LOCATIONS":
     return <Admin user={user} activePage={activePage} />;
   case "ADMIN_USER_MANAGEMENT_DETAIL":
     return <AdminUserManagementDetail />;
-  case "ADMIN_LOCATIONS":
-    return <AdminLocations />;
   case "LIVE_SPACE_LIST":
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":

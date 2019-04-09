@@ -2,7 +2,6 @@ import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
 import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
 import colorVariables from '@density/ui/variables/colors.json';
-import Skeleton from '../skeleton/index';
 
 import styles from './styles.module.scss';
 
@@ -13,6 +12,7 @@ import {
   AppBarTitle,
   AppBarSection,
   Icons,
+  Skeleton,
 } from '@density/ui';
 
 import { getChildrenOfSpace, getParentsOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
