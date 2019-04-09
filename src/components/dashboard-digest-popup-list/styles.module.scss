@@ -32,11 +32,11 @@ $dashboardDigestBackdropZIndex: 99999;
   color: $brandPrimary;
   background-color: #fff;
   height: 40px;
+  padding-top: 2px;
   padding-left: 16px;
   padding-right: 16px;
-  border: 1px solid $grayCinder;
+  border: 1px solid $gray;
   border-radius: $borderRadiusBase;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.05);
   outline: none;
 }
 @media (max-width: 375px) {
