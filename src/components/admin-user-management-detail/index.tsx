@@ -161,8 +161,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
 
           <div className={styles.adminUserManagementDetail}>
             <div className={styles.adminUserManagementDetailWrapper}>
-              <div className={styles.adminUserManagementDetailColumns}>
-                <div className={`${styles.adminUserManagementDetailColumn} ${styles.left}`}>
+
+              <div className={styles.adminUserManagementDetailSection}>
+                <div className={styles.adminUserManagementDetailCard}>
                   <div className={styles.adminUserManagementUserInfo}>
                     {selectedUser.fullName ? (
                       <div className={styles.adminUserManagementUserInfoIcon}>
@@ -198,54 +199,53 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                     </ul>
                   </div>
                 </div>
-                <div className={`${styles.adminUserManagementDetailColumn} ${styles.right}`}>
-                  <div className={styles.adminUserManagementDetailColumnRightSubcolumns}>
-                    <div className={`${styles.adminUserManagementDetailColumnRightSubcolumn} ${styles.left}`}>
-                      <div className={styles.adminUserManagementDetailCard}>
-                        <AppBar>
-                          <AppBarTitle>Roles</AppBarTitle>
-                        </AppBar>
-                        <div className={styles.adminUserManagementDetailCardBody}>
-                          <AdminUserManagementRoleRadioList
-                            user={user}
-                            value={this.state.role}
-                            onChange={role => this.setState({
-                              role,
-                              spaceFilteringActive: role === 'owner' ? false : this.state.spaceFilteringActive,
-                              spaceIds: role === 'owner' ? [] : this.state.spaceIds,
-                            })}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className={`${styles.adminUserManagementDetailColumnRightSubcolumn} ${styles.right}`}>
-                      <div className={styles.adminUserManagementDetailCard}>
-                        <AdminSpacePermissionsPicker
-                          spaces={spaces}
-                          spaceHierarchy={spaceHierarchy}
-                          disabled={this.state.role === 'owner'}
-                          active={this.state.spaceFilteringActive}
-                          onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
-                          selectedSpaceIds={this.state.spaceIds}
-                          onChange={spaceIds => this.setState({spaceIds})}
-                        />
-                      </div>
-                    </div>
+              </div>
+
+              <div className={styles.adminUserManagementDetailSection}>
+                <div className={styles.adminUserManagementDetailCard}>
+                  <AppBar>
+                    <AppBarTitle>Roles</AppBarTitle>
+                  </AppBar>
+                  <div className={styles.adminUserManagementDetailCardBody}>
+                    <AdminUserManagementRoleRadioList
+                      user={user}
+                      value={this.state.role}
+                      onChange={role => this.setState({
+                        role,
+                        spaceFilteringActive: role === 'owner' ? false : this.state.spaceFilteringActive,
+                        spaceIds: role === 'owner' ? [] : this.state.spaceIds,
+                      })}
+                    />
                   </div>
                 </div>
               </div>
 
-              <AppBarContext.Provider value="BOTTOM_ACTIONS">
-                <AppBar>
-                  <AppBarSection>
-                    <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
-                      <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                        Delete this User
-                      </Button>
-                    </ButtonContext.Provider>
-                  </AppBarSection>
-                </AppBar>
-              </AppBarContext.Provider>
+              <div className={styles.adminUserManagementDetailSection}>
+                <div className={styles.adminUserManagementDetailCard}>
+                  <AdminSpacePermissionsPicker
+                    spaces={spaces}
+                    spaceHierarchy={spaceHierarchy}
+                    disabled={this.state.role === 'owner'}
+                    active={this.state.spaceFilteringActive}
+                    onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
+                    selectedSpaceIds={this.state.spaceIds}
+                    onChange={spaceIds => this.setState({spaceIds})}
+                  />
+                </div>
+              </div>
+
+              <div className={styles.adminUserManagementDetailSection}>
+                <div className={styles.adminUserManagementDetailCard}>
+                  <AppBar>
+                    <AppBarTitle>Danger</AppBarTitle>
+                  </AppBar>
+                  <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
+                    <Button onClick={() => onStartDeleteUser(selectedUser)}>
+                      Delete this User
+                    </Button>
+                  </ButtonContext.Provider>
+                </div>
+              </div>
             </div>
           </div>
         </Fragment>
