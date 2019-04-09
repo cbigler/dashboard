@@ -289,6 +289,7 @@ export function AdminUserManagement({
                       </span>;
                     }
                   }}
+                  flexShrink={0}
                 />
                 <ListViewColumn
                   title="Actions"
@@ -297,6 +298,7 @@ export function AdminUserManagement({
                       Edit User
                     </ListViewClickableLink>
                   ) : null}
+                  flexShrink={0}
                 />
               </ListView>
             )}
