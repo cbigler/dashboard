@@ -7,8 +7,10 @@ import colorVariables from '@density/ui/variables/colors.json';
 import GenericErrorState from '../generic-error-state/index';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
-import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
+import AdminLocationsRootDetail from '../admin-locations-root-detail/index';
 import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
+import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
+import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 
 import { DensitySpace } from '../../types';
 import {
@@ -73,9 +75,9 @@ function AdminLocations({selectedSpace, spaces}) {
 
   let content: ReactNode = null;
   switch (selectedSpace ? selectedSpace.spaceType : null) {
-  case 'building':
+  case null:
     content = (
-      <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case 'campus':
@@ -83,7 +85,21 @@ function AdminLocations({selectedSpace, spaces}) {
       <AdminLocationsCampusDetail spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
-  case null:
+  case 'building':
+    content = (
+      <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'floor':
+    content = (
+      <AdminLocationsFloorDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'space':
+    content = (
+      <p>This page shows space info and hasn't been made yet</p>
+    );
+    break;
   default:
     content = (
       <ul>

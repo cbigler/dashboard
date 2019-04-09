@@ -13,8 +13,9 @@
 
 .title {
   font-size: 20px;
-  cursor: pointer;
+  user-select: none;
 }
+.supportsHover .title { cursor: pointer; }
 .title.hover {
   color: $brandPrimary;
   text-decoration: underline;

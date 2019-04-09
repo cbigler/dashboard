@@ -1,21 +1,19 @@
 @import "@density/ui/variables/colors.scss";
-@import "@density/ui/variables/spacing.scss";
 
-.spaceList {
+.scroll {
+  height: calc(100% - 64px - 64px);
+  overflow-y: auto;
+}
+
+.wrapper {
   padding-left: 24px;
   padding-right: 24px;
   padding-top: 16px;
+  padding-bottom: 24px;
 }
-
-.section { margin-bottom: 32px; }
 
 .name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.scroll {
-  height: 100%;
-  overflow-y: auto;
 }

@@ -1,9 +1,19 @@
 @import "@density/ui/variables/colors.scss";
 
+.scroll {
+  overflow-y: auto;
+  height: calc(100% - 64px - 64px);
+}
+
 .wrapper {
-  background-color: $grayLightest;
-  height: 100%;
   padding-left: 24px;
   padding-right: 24px;
   padding-top: 16px;
+  padding-bottom: 24px;
+}
+
+.name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

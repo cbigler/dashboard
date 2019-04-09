@@ -15,7 +15,7 @@
   text-overflow: ellipsis;
 }
 
-.scroll {
-  height: 100%;
+.wrapper {
+  height: calc(100% - 64px - 64px);
   overflow-y: auto;
 }

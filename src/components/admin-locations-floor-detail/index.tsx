@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
-import AdminLocationsSubheader  from '../admin-locations-subheader/index';
+import AdminLocationsSubheader from '../admin-locations-subheader/index';
 
 import {
   AppFrame,
@@ -11,8 +11,8 @@ import {
   Icons,
 } from '@density/ui';
 
-export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
+export default function AdminLocationsFloorDetail({ spaces, selectedSpace }) {
+  const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
   return (
     <AppFrame>
       <AppSidebar visible>
@@ -20,7 +20,11 @@ export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
       </AppSidebar>
       <AppPane>
         <div className={styles.scroll}>
-          <AdminLocationsSubheader title="Buildings" supportsHover={false} />
+          <AdminLocationsSubheader
+            title="Rooms"
+            supportsHover={false}
+          />
+
           <div className={styles.wrapper}>
             <ListView data={visibleSpaces}>
               <ListViewColumn
@@ -35,33 +39,23 @@ export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
-                title="Levels"
+                title="Spaces"
                 template={item => '0'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
-                title="Spaces"
+                title="Size (sq ft)"
                 template={item => '1200'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
-                title="Size (sq ft)"
+                title="Seats"
                 template={item => '8'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
-                title="Rent"
-                template={item => '12'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Seats"
-                template={item => '2'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
                 title="Capacity"
-                template={item => '2'}
+                template={item => '12'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn

@@ -1,10 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import classnames from 'classnames';
-import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
+
+import styles from './styles.module.scss';
 
 import {
   AppFrame,
@@ -15,7 +16,8 @@ import {
   Icons,
 } from '@density/ui';
 
-function AdminLocationsBuildingDetailSpaceList({ spaces }) {
+
+function SpaceList({ spaces }) {
   return (
     <div className={styles.spaceList}>
       <ListView data={spaces}>
@@ -31,27 +33,27 @@ function AdminLocationsBuildingDetailSpaceList({ spaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Spaces"
+          title="Levels"
           template={item => '0'}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Size (sq ft)"
+          title="Spaces"
           template={item => '1200'}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Seats"
+          title="Size (sq ft)"
           template={item => '8'}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Capacity"
+          title="Rent"
           template={item => '12'}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="DPUs"
+          title="Seats"
           template={item => '2'}
           href={item => `#/admin/locations/${item.id}`}
         />
@@ -65,36 +67,29 @@ function AdminLocationsBuildingDetailSpaceList({ spaces }) {
   );
 }
 
-export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
-  const floors = visibleSpaces.filter(space => space.spaceType === 'floor');
-  const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
-  const spacesNotInFloor = visibleSpaces.filter(space => floors.find(floor => space.parentId === floor.id));
+export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
+  const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
+  const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
+  const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
+  const spacesNotInCampus = [];//visibleSpaces.filter(space => campuses.find(campus => space.parentId === campus.id));
 
   return (
-    <AppFrame>
-      <AppSidebar visible>
-        TODO: Waiting on mockups
-      </AppSidebar>
-      <AppPane>
-        <div className={styles.scroll}>
-          {spacesNotInFloor.length > 0 ? (
-            <Fragment>
-              <AdminLocationsSubheader title="Rooms" supportsHover={false} />
-              <AdminLocationsBuildingDetailSpaceList spaces={spacesNotInFloor} />
-            </Fragment>
-          ) : null}
+    <div className={styles.wrapper}>
+      {spacesNotInCampus.length > 0 ? (
+        <Fragment>
+          <AdminLocationsSubheader title="Rooms" supportsHover={false} />
+          <SpaceList spaces={spacesNotInCampus} />
+        </Fragment>
+      ) : null}
 
-          {floors.map((floor, index) => {
-            return (
-              <div key={floor.id} className={styles.section}>
-                <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
-                <AdminLocationsBuildingDetailSpaceList spaces={spacesInEachFloor[index]} />
-              </div>
-            );
-          })}
-        </div>
-      </AppPane>
-    </AppFrame>
+      {campuses.map((campus, index) => {
+        return (
+          <div key={campus.id} className={styles.section}>
+            <AdminLocationsSubheader title={campus.name} spaceId={campus.id} />
+            <SpaceList spaces={spacesInEachCampus[index]} />
+          </div>
+        );
+      })}
+    </div>
   );
 }
