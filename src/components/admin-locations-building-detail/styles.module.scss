@@ -16,7 +16,7 @@
 }
 
 .scroll {
-  height: 100%;
+  height: calc(100% - 64px - 64px);
   overflow-y: auto;
   background-color: $grayLightest;
 }

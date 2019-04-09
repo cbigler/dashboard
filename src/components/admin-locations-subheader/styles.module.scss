@@ -5,7 +5,6 @@
   color: $grayCinder;
   background-color: $grayLightest;
   text-decoration: none;
-  padding-right: 24px;
   cursor: default;
 }
 .subheader.hover { background-color: $grayLighter; }
@@ -21,6 +20,7 @@
   text-decoration: underline;
 }
 
+.manageLinkWrapper { margin-right: 24px; }
 .manageLink {
   font-weight: bold;
   font-size: 14px;
@@ -29,7 +29,5 @@
   color: $brandPrimary;
   text-decoration: none;
 }
-.manageLink.hover {
-  text-decoration: underline;
-}
+.manageLink.hover { text-decoration: underline; }
 

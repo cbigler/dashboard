@@ -25,8 +25,10 @@ export default function AdminLocationsSubheader({title, spaceId=null, supportsHo
         </AppBarSection>
         {supportsHover ? (
           <AppBarSection>
-            <span className={classnames(styles.manageLink, {[styles.hover]: hover})}>Manage</span>
-            <Icons.ArrowRight color={hover ? colorVariables.brandPrimary : colorVariables.gray} />
+            <span className={styles.manageLinkWrapper}>
+              <span className={classnames(styles.manageLink, {[styles.hover]: hover})}>Manage</span>
+              <Icons.ArrowRight color={hover ? colorVariables.brandPrimary : colorVariables.gray} />
+            </span>
           </AppBarSection>
         ) : null}
       </AppBar>
