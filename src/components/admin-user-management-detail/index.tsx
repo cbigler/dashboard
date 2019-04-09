@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
+import classnames from 'classnames';
 
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
