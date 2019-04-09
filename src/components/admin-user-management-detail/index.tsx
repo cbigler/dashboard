@@ -164,39 +164,45 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
 
               <div className={styles.adminUserManagementDetailSection}>
                 <div className={styles.adminUserManagementDetailCard}>
-                  <div className={styles.adminUserManagementUserInfo}>
-                    {selectedUser.fullName ? (
-                      <div className={styles.adminUserManagementUserInfoIcon}>
-                        {
-                          (selectedUser.fullName || '')
-                          .split(' ')
-                          .slice(0, 2)
-                          .filter(word => word.length > 0)
-                          .map(word => word[0].toUpperCase())
-                          .join('')
-                        }
+                  <div className={styles.adminUserManagementDetailCardBody}>
+                    <div className={styles.adminUserManagementUserInfo}>
+                      
+                      {selectedUser.fullName ? (
+                        <div className={styles.adminUserManagementUserInfoAvatar}>
+                          {
+                            (selectedUser.fullName || '')
+                            .split(' ')
+                            .slice(0, 2)
+                            .filter(word => word.length > 0)
+                            .map(word => word[0].toUpperCase())
+                            .join('')
+                          }
+                        </div>
+                      ) : null}
+
+                      <div className={styles.adminUserManagementUserInfoTitle}>
+                        <h1 className={styles.adminUserManagementUserInfoName}>
+                          {selectedUser.fullName || '---'}
+                        </h1>
+                        <div className={styles.adminUserManagementUserInfoEmail}>{selectedUser.email}</div>
                       </div>
-                    ) : null}
-                    <h1 className={styles.adminUserManagementUserInfoName}>
-                      {selectedUser.fullName || '---'}
-                    </h1>
-                    <span className={styles.adminUserManagementUserInfoEmail}>{selectedUser.email}</span>
-                    <div>
-                      <span className={styles.adminUserManagementUserInfoRoleTag}>
+
+                      <div className={styles.adminUserManagementUserInfoRoleTag}>
                         {ROLE_INFO[selectedUser.role].label}
-                      </span>
+                      </div>
+
+                      <dl className={styles.adminUserManagementUserInfoDetails}>
+                        {selectedUser.lastLogin ? (
+                          <dd className={styles.adminUserManagementUserInfoDetailsItem}>Last sign in {moment.utc(selectedUser.lastLogin).fromNow()}</dd>
+                        ) : (
+                          <dd className={styles.adminUserManagementUserInfoDetailsItem}>Hasn't signed in</dd>
+                        )}
+                        <dd className={styles.adminUserManagementUserInfoDetailsItem}>
+                          Created on{' '}
+                          {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
+                        </dd>
+                      </dl>
                     </div>
-                    <ul className={styles.adminUserManagementUserInfoDetails}>
-                      {selectedUser.lastLogin ? (
-                        <li>Last sign in: {moment.utc(selectedUser.lastLogin).fromNow()}</li>
-                      ) : (
-                        <li>User has never signed in</li>
-                      )}
-                      <li>
-                        Created:{' '}
-                        {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
-                      </li>
-                    </ul>
                   </div>
                 </div>
               </div>
@@ -230,22 +236,32 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                     onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
                     selectedSpaceIds={this.state.spaceIds}
                     onChange={spaceIds => this.setState({spaceIds})}
+                    height={600}
                   />
                 </div>
               </div>
 
               <div className={styles.adminUserManagementDetailSection}>
-                <div className={styles.adminUserManagementDetailCard}>
+                <div className={`${styles.adminUserManagementDetailCard} ${styles.adminUserManagementDetailCardDanger}`}>
                   <AppBar>
-                    <AppBarTitle>Danger</AppBarTitle>
+                    <AppBarTitle>Danger Zone</AppBarTitle>
                   </AppBar>
-                  <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
-                    <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                      Delete this User
-                    </Button>
-                  </ButtonContext.Provider>
+                  <div className={styles.adminUserManagementDetailCardBody}>
+                    <div className={styles.adminUserManagementDetailActionDetail}>
+                      <div className={styles.adminUserManagementDetailActionDetailInfo}>
+                        <h4 className={styles.adminUserManagementDetailActionDetailHeader}>Delete this user</h4>
+                        <p className={styles.adminUserManagementDetailActionDetailLead}>Once deleted, they will be gone forever. Please be certain.</p>
+                      </div>
+                      <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
+                        <Button onClick={() => onStartDeleteUser(selectedUser)}>
+                          Delete this User
+                        </Button>
+                      </ButtonContext.Provider>
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
           </div>
         </Fragment>
