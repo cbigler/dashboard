@@ -5,9 +5,14 @@ import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
 import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
+import AdminLocationsSubheader from '../admin-locations-subheader/index';
+import ListView, { ListViewColumn } from '../list-view/index';
 
 import { DensitySpace } from '../../types';
 import {
+  AppFrame,
+  AppPane,
+  AppSidebar,
   AppBar,
   AppBarSection,
   AppBarTitle,
@@ -85,6 +90,35 @@ function AdminLocations({selectedSpace, spaces}) {
               </span>
             </AppBarSection>
           </AppBar>
+          <AppFrame>
+            <AppSidebar visible>
+              Waiting on mockups
+            </AppSidebar>
+            <AppPane>
+              <AdminLocationsSubheader
+                title={<Skeleton width={200} height={18} />}
+                supportsHover={false}
+              />
+              <div className={styles.loadingWrapper}>
+                <ListView data={[1, 2]} keyTemplate={i => i}>
+                  <ListViewColumn
+                    title="Info"
+                    flexGrow={1}
+                    flexShrink={1}
+                    template={() => (
+                      <Skeleton width={200} height={16} />
+                    )}
+                  />
+                  <ListViewColumn
+                    title=""
+                    template={() => (
+                      <Skeleton width={200} height={16} />
+                    )}
+                  />
+                </ListView>
+              </div>
+            </AppPane>
+          </AppFrame>
         </div>
       ) : null}
 
