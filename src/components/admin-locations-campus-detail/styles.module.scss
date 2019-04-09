@@ -3,6 +3,7 @@
 .scroll {
   overflow-y: auto;
   height: calc(100% - 64px - 64px);
+  background-color: $grayLightest;
 }
 
 .wrapper {

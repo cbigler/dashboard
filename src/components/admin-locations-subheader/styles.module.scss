@@ -25,9 +25,11 @@
   font-weight: bold;
   font-size: 14px;
   text-decoration: underline;
-  opacity: 0;
   margin-right: 16px;
   color: $brandPrimary;
+  text-decoration: none;
 }
-.manageLink.hover { opacity: 1; }
+.manageLink.hover {
+  text-decoration: underline;
+}
 
