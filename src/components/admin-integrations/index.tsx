@@ -32,6 +32,8 @@ import collectionServiceAuthorizationCreate from '../../actions/collection/servi
 import collectionServiceAuthorizationUpdate from '../../actions/collection/service-authorizations/update';
 import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
 
+const DASHBOARD_BACKGROUND = '#FAFAFA';
+
 
 export function AdminIntegrations({
   activeModal,
@@ -83,7 +85,7 @@ export function AdminIntegrations({
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView>
+    <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
       <div className={styles.adminIntegrationsRoomBookingList}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
           <ListView keyTemplate={item => item.displayName} data={integrations.services as Array<DensityService>}>

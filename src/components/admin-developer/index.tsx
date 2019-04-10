@@ -31,6 +31,8 @@ import collectionWebhooksFilter from '../../actions/collection/webhooks/filter';
 import collectionWebhooksUpdate from '../../actions/collection/webhooks/update';
 import collectionWebhooksDestroy from '../../actions/collection/webhooks/destroy';
 
+const DASHBOARD_BACKGROUND = '#FAFAFA';
+
 const PERMISSION_TEXT = {
   'readonly': 'Read-Only',
   'readwrite': 'Read-Write'
@@ -127,7 +129,7 @@ export function AdminDeveloper({
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView>
+    <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
       <div className={styles.adminDeveloperTokenList}>
         <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>

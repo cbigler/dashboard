@@ -39,7 +39,7 @@ import routeTransitionDashboardDetail from '../../actions/route-transition/dashb
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
-const DASHBOARD_BACKGROUND = '#F5F5F7';
+const DASHBOARD_BACKGROUND = '#FAFAFA';
 
 function DashboardSidebarItem({selected, id, name, reportSet}) {
   const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');

@@ -41,6 +41,8 @@ import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
+const DASHBOARD_BACKGROUND = '#FAFAFA';
+
 export const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
   'pending': 'Pending',
@@ -194,7 +196,7 @@ export function AdminUserManagement({
         </AppBarSection>
       </AppBar>
 
-      <AppScrollView>
+      <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
         {users.view === 'ERROR' ? (
           <div className={classnames(styles.adminUserManagementList, styles.centered)}>
             <GenericErrorState />
@@ -295,7 +297,7 @@ export function AdminUserManagement({
                   title="Actions"
                   template={item => item.isEditable && item.id !== user.data.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
-                      Edit User
+                      Edit
                     </ListViewClickableLink>
                   ) : null}
                   flexShrink={0}
