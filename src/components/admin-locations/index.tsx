@@ -75,11 +75,6 @@ function AdminLocations({selectedSpace, spaces}) {
 
   let content: ReactNode = null;
   switch (selectedSpace ? selectedSpace.spaceType : null) {
-  case null:
-    content = (
-      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
-    );
-    break;
   case 'campus':
     content = (
       <AdminLocationsCampusDetail spaces={spaces} selectedSpace={selectedSpace} />
@@ -100,19 +95,10 @@ function AdminLocations({selectedSpace, spaces}) {
       <p>This page shows space info and hasn't been made yet</p>
     );
     break;
+  case null:
   default:
     content = (
-      <ul>
-        {
-          spaces.data
-          .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null))
-          .map(space => (
-            <li key={space.id}>
-              <a href={`#/admin/locations/${space.id}`}>{space.name}</a>
-            </li>
-          ))
-        }
-      </ul>
+      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   }
