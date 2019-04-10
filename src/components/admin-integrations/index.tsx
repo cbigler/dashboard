@@ -13,6 +13,7 @@ import {
 
 import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
+import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -50,9 +51,9 @@ export function AdminIntegrations({
       case "robin":
         return robinIcon;
       case "google_calendar":
-        return googleCalendarIcon
-      case "teem":
-        return teemIcon
+        return googleCalendarIcon;
+      case "slack":
+        return slackIcon;
       default:
         return "";
     }
@@ -100,9 +101,9 @@ export function AdminIntegrations({
     </AppBar>
 
     <AppScrollView>
-      <div className={styles.adminIntegrationsRoomBookingList}>
-        <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
-          <ListView keyTemplate={item => item.displayName} data={integrations.services as Array<DensityService>}>
+      <div className="admin-integrations-room-booking-list">
+        <div className="admin-integrations-section-header">Room Booking</div>
+          <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'ROOM_BOOKING') as Array<DensityService>}>
             <ListViewColumn title="Name" template={item => (
               <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
             )} />
@@ -147,8 +148,29 @@ export function AdminIntegrations({
 
           </ListView>
       </div>
-      <div className={styles.adminIntegrationsChatList}>
-        <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
+      <div className="admin-integrations-chat-list">
+        <div className="admin-integrations-section-header">Chat</div>
+          <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'CHAT') as Array<DensityService>}>
+            <ListViewColumn title="Name" template={item => (
+              <img src={iconForIntegration(item.name)} className="admin-integrations-listview-image" />
+            )} />
+            <ListViewColumn title="" template={item => (
+              <span className="admin-integrations-listview-value"><strong>{item.displayName}</strong></span>
+            )} />
+            <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
+              <span className="admin-integrations-listview-value">{item.serviceAuthorization.user.fullName}</span>) : null
+            } />
+            <ListViewColumn title="Default Service" template={item => (
+              <span className="admin-integrations-listview-value">{item.serviceAuthorization && item.serviceAuthorization.default == true ? "Default" : ""}</span>
+            )} />
+            <ListViewColumn style={{flexGrow: 1, flexShrink: 1}} />
+            <ListViewColumn
+            template={item => item.serviceAuthorization.id == null ? <span style={LIST_CLICKABLE_STYLE}>Activate</span> : null }
+            onClick={item => item.serviceAuthorization.id == null ? window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` : null } />
+            <ListViewColumn
+              template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+              onClick={item => onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} />
+          </ListView>
       </div>
     </AppScrollView>
   </Fragment>;
