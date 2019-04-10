@@ -87,10 +87,13 @@ function AdminLocations({selectedSpace, spaces}) {
 
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
-          <AdminLocationsMetadataModule
-            space={selectedSpace}
-            onChangeField={(fieldName, value) => console.log(fieldName, value)}
-          />
+          {selectedSpace ? (
+            <AdminLocationsMetadataModule
+              space={selectedSpace}
+              state={{rent: 12, size: 1000, capacity: 30, seatAssignments: 50}}
+              onChangeField={(fieldName, value) => console.log(fieldName, value)}
+            />
+          ) : null}
           <div className={styles.appBar}>
             <AppBar>
               <AppBarSection>

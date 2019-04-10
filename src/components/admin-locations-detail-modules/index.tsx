@@ -29,57 +29,129 @@ function Module({title, actions=null, children}) {
   );
 }
 
-export function AdminLocationsMetadataModule({space, onChangeField}) {
+
+/* ---------------------------------------------------------------------------- */
+/* METADATA MODULE */
+/* ---------------------------------------------------------------------------- */
+
+const SPACE_METADATA_FIELDS = {
+  RENT_ANNUAL: {
+    id: 'rent',
+    label: 'Rent (annual)',
+    initialValue: space => space.capacity.toString(),
+    component: (id, value, onChangeValue) => (
+      <InputBox
+        type="number"
+        id={id}
+        value={value}
+        onChange={e => onChangeValue(e.target.value)}
+        leftIcon={<span>$</span>}
+        width="100%"
+      />
+    ),
+  },
+  SIZE_SQ_FT: {
+    id: 'size',
+    label: 'Size (sq ft)',
+    initialValue: space => 'HARDCODED',
+    component: (id, value, onChangeValue) => (
+      <InputBox
+        type="number"
+        id={id}
+        value={value}
+        onChange={e => onChangeValue(e.target.value)}
+        width="100%"
+      />
+    ),
+  },
+  CAPACITY: {
+    id: 'capacity',
+    label: 'Capacity',
+    initialValue: space => space.capacity.toString(),
+    component: (id, value, onChangeValue) => (
+      <InputBox
+        type="number"
+        id={id}
+        value={value}
+        onChange={e => onChangeValue(e.target.value)}
+        width="100%"
+      />
+    ),
+  },
+  SEAT_ASSIGNMENTS: {
+    id: 'seatAssignments',
+    label: 'Seat Assignments',
+    initialValue: space => 'HARDCODED',
+    component: (id, value, onChangeValue) => (
+      <InputBox
+        type="number"
+        id={id}
+        value={value}
+        onChange={e => onChangeValue(e.target.value)}
+        width="100%"
+      />
+    ),
+  },
+};
+
+const SPACE_TYPE_METADATA_FIELDS = {
+  campus: [],
+  building: [
+    SPACE_METADATA_FIELDS.RENT_ANNUAL,
+    SPACE_METADATA_FIELDS.SIZE_SQ_FT,
+    SPACE_METADATA_FIELDS.CAPACITY,
+    SPACE_METADATA_FIELDS.SEAT_ASSIGNMENTS,
+  ],
+  floor: [
+    SPACE_METADATA_FIELDS.SIZE_SQ_FT,
+    SPACE_METADATA_FIELDS.SEAT_ASSIGNMENTS,
+    SPACE_METADATA_FIELDS.CAPACITY,
+  ],
+  space: [
+    SPACE_METADATA_FIELDS.SIZE_SQ_FT,
+    SPACE_METADATA_FIELDS.SEAT_ASSIGNMENTS,
+    SPACE_METADATA_FIELDS.CAPACITY,
+  ],
+};
+
+export function AdminLocationsMetadataModule({space, state, onChangeField}) {
+  const metadataFields = SPACE_TYPE_METADATA_FIELDS[space.spaceType] || [];
+
+  // split array into pairs: https://stackoverflow.com/a/44996257/4115328
+  const metadataFieldPairs = metadataFields.reduce((acc, item, index) => {
+    if (index % 2 === 0) {
+      return [ ...acc, metadataFields.slice(index, index+2) ];
+    }
+    return acc;
+  }, []);
+
   return (
     <Module title="Meta">
       <div className={styles.metadata}>
-        <div className={styles.metadataRow}>
-          <div className={classnames(styles.metadataCell, styles.left)}>
-            <FormLabel
-              label="Capacity"
-              htmlFor="admin-locations-capacity"
-              input={
-                <InputBox
-                  type="number"
-                  id="admin-locations-capacity"
-                  width="100%"
-                  value={space.capacity}
-                  onChange={e => onChangeField('capacity', e.target.value)}
+        {metadataFieldPairs.map(([field1, field2]) => {
+          const field1Id = `admin-locations-metadata-${field1.id}`;
+          const field2Id = field2 ? `admin-locations-metadata-${field2.id}` : '';
+          return (
+            <div className={styles.metadataRow} key={`${field1Id}-${field2Id}`}>
+              <div className={classnames(styles.metadataCell, styles.left)}>
+                <FormLabel
+                  label={field1.label}
+                  htmlFor={field1Id}
+                  input={field1.component(field1Id, state[field1.id], value => onChangeField(field1.id, value))}
                 />
-              }
-            />
-          </div>
-          <div className={classnames(styles.metadataCell, styles.right)}>
-            <FormLabel
-              label="Seat Assignments"
-              htmlFor="admin-locations-metadata-seat-assignments"
-              input={
-                <InputBox
-                  type="number"
-                  id="admin-locations-metadata-seat-assignments"
-                  width="100%"
-                  defaultValue="foo"
-                />
-              }
-            />
-          </div>
-        </div>
-        <div className={styles.metadataRow}>
-          <div className={classnames(styles.metadataCell, styles.left)}>
-            <FormLabel
-              label="Rent (annual)"
-              htmlFor="admin-locations-rent"
-              input={
-                <InputBox
-                  leftIcon={<span>$</span>}
-                  type="number"
-                  width="100%"
-                  defaultValue="foo"
-                />
-              }
-            />
-          </div>
-        </div>
+              </div>
+              {field2 ? (
+                <div className={classnames(styles.metadataCell, styles.right)}>
+                  <FormLabel
+                    label={field2.label}
+                    htmlFor={field2Id}
+                    input={field2.component(field2Id, state[field2.id], value => onChangeField(field2.id, value))}
+                  />
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </div>
     </Module>
   );
