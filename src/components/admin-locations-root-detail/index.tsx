@@ -71,7 +71,7 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
   const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
   const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
-  const spacesNotInCampus = [];//visibleSpaces.filter(space => campuses.find(campus => space.parentId === campus.id));
+  const spacesNotInCampus = visibleSpaces.filter(space => campuses.find(campus => space.parentId === campus.id));
 
   return (
     <div className={styles.wrapper}>
