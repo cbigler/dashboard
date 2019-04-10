@@ -13,11 +13,13 @@ export default function FormLabel({
   // `editable` should default to true if unset.
   editable = typeof editable === 'undefined' ? true : editable;
 
-  return <div className={classnames(styles.formLabel, editable ? styles.formLabelEditable: null, className)}>
-    <label className={styles.formLabelLabel} htmlFor={htmlFor}>
-      <span className={styles.formLabelLabelText}>{label}</span>
-      {infoLabel ? <span className={styles.formLabelInfoIcon} title={infoLabel}>&#xe91e;</span> : null}
-    </label>
-    {input}
-  </div>;
+  return (
+    <div className={classnames(styles.formLabel, editable ? styles.formLabelEditable: null, className)}>
+      <label className={styles.formLabelLabel} htmlFor={htmlFor}>
+        <span className={styles.formLabelLabelText}>{label}</span>
+        {infoLabel ? <span className={styles.formLabelInfoIcon} title={infoLabel}>&#xe91e;</span> : null}
+      </label>
+      {input}
+    </div>
+  );
 }

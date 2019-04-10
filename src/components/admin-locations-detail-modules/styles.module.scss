@@ -1,0 +1,37 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.module {
+  background-color: #fff;
+
+  width: 100%;
+  max-width: 818px;
+  border: 1px solid $grayLight;
+  border-radius: $borderRadiusBase;
+}
+.moduleBody {
+  padding: 24px;
+  padding-top: 18px;
+}
+
+
+.metadataRow {
+  display: flex;
+  flex-direction: row;
+  margin-top: 16px;
+}
+.metadataRow:first-child { margin-top: 0px; }
+.metadataCell {
+  width: 50%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.metadataCell.left {
+  padding-left: 0px;
+  padding-right: 20px;
+}
+.metadataCell.right {
+  padding-left: 20px;
+  padding-right: 0px;
+}

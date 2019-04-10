@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
+import { AdminLocationsMetadataModule } from '../admin-locations-detail-modules/index';
 
 import { DensitySpace } from '../../types';
 import {
@@ -86,6 +87,10 @@ function AdminLocations({selectedSpace, spaces}) {
 
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
+          <AdminLocationsMetadataModule
+            space={selectedSpace}
+            onChangeField={(fieldName, value) => console.log(fieldName, value)}
+          />
           <div className={styles.appBar}>
             <AppBar>
               <AppBarSection>
