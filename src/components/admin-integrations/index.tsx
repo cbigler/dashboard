@@ -16,17 +16,19 @@ import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
+import Toaster from '../toaster/index';
+
 import Dialogger from '../dialogger';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
-import showToast from '../../actions/toasts';
 
 import { DensityService } from '../../types';
 
 import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-modal';
 import IntegrationsRobinUpdateModal from '../admin-integrations-robin-update-modal';
+import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
 
 import collectionServiceAuthorizationCreate from '../../actions/collection/service-authorizations/create';
 import collectionServiceAuthorizationUpdate from '../../actions/collection/service-authorizations/update';
@@ -39,7 +41,7 @@ export function AdminIntegrations({
   onOpenModal,
   onCreateServiceAuthorizationRobin,
   onUpdateServiceAuthorizationRobin,
-  onDestroyServiceAuthorizationRobin,
+  onDestroyServiceAuthorization,
   onCloseModal,
 }) {
 
@@ -49,6 +51,8 @@ export function AdminIntegrations({
         return robinIcon;
       case "google_calendar":
         return googleCalendarIcon
+      case "teem":
+        return teemIcon
       default:
         return "";
     }
@@ -73,8 +77,20 @@ export function AdminIntegrations({
 
       onSubmit={onUpdateServiceAuthorizationRobin}
       onDismiss={onCloseModal}
-      onDestroyServiceAuthorizationRobin={onDestroyServiceAuthorizationRobin}
+      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
     /> : null}
+
+    {activeModal.name === 'integrations-service-destroy' ? <IntegrationsServiceDestroyModal
+      visible={activeModal.visible}
+      initialServiceAuthorization={activeModal.data.serviceAuthorization}
+      error={integrations.error}
+      loading={integrations.loading}
+
+      onDismiss={onCloseModal}
+      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
+    /> : null}
+
+    <Toaster />
 
     <AppBar>
       <AppBarSection>
@@ -96,21 +112,39 @@ export function AdminIntegrations({
             <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
               <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
             } />
-            <ListViewColumn title="Default Service" template={item => (
-              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization && item.serviceAuthorization.default == true ? "Default" : ""}</span>
-            )} />
+            <ListViewColumn title="Default Service" template={item => {
+              if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
+                return <span className={styles.adminIntegrationsListviewValue}>Default</span>
+              } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
+                return <span className={styles.adminIntegrationsListviewValue}>Make Default turn into link</span>
+              } else {
+                return null;
+              }
+            }} />          
             <ListViewColumn flexGrow={1} flexShrink={1} />
             <ListViewColumn
               template={item => item.serviceAuthorization.id == null ? 
                 <ListViewClickableLink>Activate</ListViewClickableLink> :
                 <ListViewClickableLink>Edit</ListViewClickableLink>}
-              onClick={item => onOpenModal(
-                item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', 
-                {serviceAuthorization: item.serviceAuthorization, isDestroying: false}
-              )} />
+              onClick={item => {
+                if (item.name == "teem") {
+                  item.serviceAuthorization.id == null ? window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations` : null;
+                } else {
+                  onOpenModal(item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
+                }
+              }}
+            />
             <ListViewColumn
               template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-              onClick={item => onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} />
+              onClick={item => {
+                if (item.name == "teem") {
+                  onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})
+                } else {
+                  onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} 
+                }
+              }
+             />
+
           </ListView>
       </div>
       <div className={styles.adminIntegrationsChatList}>
@@ -147,7 +181,7 @@ export default connect((state: any) => {
         }
       });
     },
-    onDestroyServiceAuthorizationRobin(serviceAuthorizationId) {
+    onDestroyServiceAuthorization(serviceAuthorizationId) {
       dispatch<any>(collectionServiceAuthorizationDestroy(serviceAuthorizationId)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());
