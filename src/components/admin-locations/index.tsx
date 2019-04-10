@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
-import { AdminLocationsMetadataModule } from '../admin-locations-detail-modules/index';
+import { AdminLocationsGeneralInformationModule } from '../admin-locations-detail-modules/index';
 
 import { DensitySpace } from '../../types';
 import {
@@ -88,10 +88,12 @@ function AdminLocations({selectedSpace, spaces}) {
       {spaces.view === 'VISIBLE' ? (
         <Fragment>
           {selectedSpace ? (
-            <AdminLocationsMetadataModule
-              space={selectedSpace}
-              state={{rent: 12, size: 1000, capacity: 30, seatAssignments: 50}}
-              onChangeField={(fieldName, value) => console.log(fieldName, value)}
+            <AdminLocationsGeneralInformationModule
+              name="Foo"
+              spaceFunction="baz"
+
+              onChangeName={console.log}
+              onChangeSpaceFunction={console.log}
             />
           ) : null}
           <div className={styles.appBar}>

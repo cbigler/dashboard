@@ -29,6 +29,63 @@ function Module({title, actions=null, children}) {
   );
 }
 
+/* ---------------------------------------------------------------------------- */
+/* GENERAL INFORMATION MODULE */
+/* ---------------------------------------------------------------------------- */
+
+export function AdminLocationsGeneralInformationModule({
+  name,
+  spaceFunction,
+
+  onChangeName,
+  onChangeSpaceFunction,
+}) {
+  return (
+    <Module title="General Info">
+      <div className={styles.generalInfo}>
+        <div className={classnames(styles.generalInfoColumn, styles.left)}>
+          <FormLabel
+            label="Photo"
+            htmlFor="photos"
+            input={<div>todo</div>}
+          />
+        </div>
+        <div className={classnames(styles.generalInfoColumn, styles.right)}>
+          <FormLabel
+            label="Name"
+            htmlFor="admin-locations-general-information-module-name"
+            input={
+              <InputBox
+                id="admin-locations-general-information-module-name"
+                type="text"
+                value={name}
+                width="100%"
+                onChange={e => onChangeName(e.target.value)}
+              />
+            }
+          />
+          <FormLabel
+            label="Space Function"
+            htmlFor="admin-locations-general-information-module-space-function"
+            input={
+              <InputBox
+                id="admin-locations-general-information-module-space-function"
+                type="select"
+                width="100%"
+                choices={[
+                  {id: 'example-space-function', label: 'Example Space Function'},
+                ]}
+                value={name}
+                onChange={e => onChangeSpaceFunction(e.id)}
+              />
+            }
+          />
+        </div>
+      </div>
+    </Module>
+  );
+}
+
 
 /* ---------------------------------------------------------------------------- */
 /* METADATA MODULE */
