@@ -40,27 +40,27 @@ export default function AdminLocationsFloorDetail({ spaces, selectedSpace }) {
               />
               <ListViewColumn
                 title="Spaces"
-                template={item => '0'}
+                template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
                 title="Size (sq ft)"
-                template={item => '1200'}
+                template={item => 'HARDCODED'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
                 title="Seats"
-                template={item => '8'}
+                template={item => 'HARDCODED'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
                 title="Capacity"
-                template={item => '12'}
+                template={item => item.capacity === null ? <Fragment>&mdash;</Fragment> : item.capacity}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
                 title="DPUs"
-                template={item => '2'}
+                template={item => 'HARDCODED'}
                 href={item => `#/admin/locations/${item.id}`}
               />
               <ListViewColumn
