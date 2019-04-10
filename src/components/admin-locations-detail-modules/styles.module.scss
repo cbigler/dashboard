@@ -28,23 +28,23 @@
 
 
 
-.metadataRow {
+.spaceFieldRendererRow {
   display: flex;
   flex-direction: row;
   margin-top: 16px;
 }
-.metadataRow:first-child { margin-top: 0px; }
-.metadataCell {
+.spaceFieldRendererRow:first-child { margin-top: 0px; }
+.spaceFieldRendererCell {
   width: 50%;
   flex-grow: 0;
   flex-shrink: 0;
   box-sizing: border-box;
 }
-.metadataCell.left {
+.spaceFieldRendererCell.left {
   padding-left: 0px;
   padding-right: 20px;
 }
-.metadataCell.right {
+.spaceFieldRendererCell.right {
   padding-left: 20px;
   padding-right: 0px;
 }

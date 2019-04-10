@@ -12,7 +12,7 @@ export const ROUTE_TRANSITION_ADMIN_LOCATIONS = 'ROUTE_TRANSITION_ADMIN_LOCATION
 
 export default function routeTransitionAdminLocations(parentSpaceId) {
   return async (dispatch, getState) => {
-    const shouldLoadSpaces = getState().spaces.view !== 'VISIBLE';
+    const shouldLoadSpaces = getState().spaces.view !== 'VISIBLE' && getState().spaces.data.length <= 1;
 
     dispatch({
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS,
