@@ -179,6 +179,7 @@ export function Explore({
               width="100%"
               placeholder="Filter Spaces ..."
               disabled={false}
+              leftIcon={<Icons.Search />}
               value={spaces.filters.search}
               onChange={e => onSpaceSearch(e.target.value)}
             />
