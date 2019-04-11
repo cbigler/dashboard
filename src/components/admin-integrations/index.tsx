@@ -153,7 +153,7 @@ export function AdminIntegrations({
 
         </ListView>
       </div>
-      <div className={styles.adminIntegrationsRoomBookingList}>
+      <div className={styles.adminIntegrationsChatList}>
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
