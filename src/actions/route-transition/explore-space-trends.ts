@@ -106,10 +106,11 @@ export function calculate(space, spaceFilters) {
       parseISOTimeAtSpace(startDate, space)
       .isAfter(parseISOTimeAtSpace(endDate, space))
     ) {
-      const error = "End Time must be before Start Time";
-      dispatch(exploreDataCalculateDataError('dailyMetrics', error));
-      dispatch(exploreDataCalculateDataError('hourlyBreakdownPeaks', error));
-      dispatch(exploreDataCalculateDataError('hourlyBreakdownVisits', error));
+      const error = "End time must be before start time.";
+      const reportNames = ['dailyMetrics', 'hourlyBreakdownPeaks', 'hourlyBreakdownVisits', 'utilization'];
+      reportNames.map(reportName => {
+        dispatch(exploreDataCalculateDataError(reportName, error));  
+      });
       return;
     }
 
