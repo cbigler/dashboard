@@ -76,7 +76,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
 
   onShow = () => {
     this.setState({visible: true, activeItemIndex: INACTIVE_INDEX, filterText: ''}, () => {
-      if (this.filter) {
+      if (this.filter && this.filter.current) {
         (this.filter as any).current.focus();
       }
     });
