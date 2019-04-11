@@ -37,7 +37,7 @@ import { calculate } from '../../actions/route-transition/explore-space-meetings
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { DensitySpaceMapping, DensityRobinSpace } from '../../types';
+import { DensitySpaceMapping, DensityRobinSpace, DensityTeemSpace } from '../../types';
 
 // The maximum number of days that can be selected by the date range picker
 const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
@@ -168,26 +168,48 @@ function ExploreSpaceMeetings({
               ) : null}
             </AppBarSection>
             <AppBarSection>
-              <img
-                className={styles.robinImage}
-                src={RobinImage}
-              />
               {integrations.robinSpaces.view === 'VISIBLE' ? (
-                <InputBox
-                  type="select"
-                  placeholder="Select a space from Robin"
-                  width={275}
-                  menuMaxHeight={500}
-                  value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
-                  choices={
-                    flattenRobinSpaces(integrations.robinSpaces.data as Array<DensityRobinSpace>)
-                      .map(robinSpace => ({
-                        id: robinSpace.id.toString(),
-                        label: robinSpace.name,
-                      }))
-                  }
-                  onChange={robinSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, robinSpaceChoice.id)}
-                />
+                <div className={styles.spaceMappingSelectorContainer}>
+                  <img
+                    className={styles.roomBookingImage}
+                    src={RobinImage}
+                  />
+                  <InputBox
+                    type="select"
+                    placeholder="Select a space from Robin"
+                    width={275}
+                    menuMaxHeight={500}
+                    value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
+                    choices={
+                      flattenRobinSpaces(integrations.robinSpaces.data as Array<DensityRobinSpace>)
+                        .map(robinSpace => ({
+                          id: robinSpace.id.toString(),
+                          label: robinSpace.name,
+                        }))
+                    }
+                    onChange={robinSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, robinSpaceChoice.id)}
+                  />
+                </div>
+              ) : null}
+              {integrations.teemSpaces.view === 'VISIBLE' ? (
+                <div className={styles.spaceMappingSelectorContainer}>
+                  <img
+                    className={styles.roomBookingImage}
+                    src={TeemImage}
+                  />
+                  <InputBox
+                    type="select"
+                    placeholder="Select a space from Teem"
+                    width={275}
+                    menuMaxHeight={500}
+                    value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
+                    choices={(integrations.teemSpaces.data as Array<DensityTeemSpace>).map(teemSpace => ({
+                      id: teemSpace.id.toString(),
+                      label: teemSpace.name,
+                    }))}
+                    onChange={teemSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, teemSpaceChoice.id)}
+                  />
+                </div>
               ) : null}
             </AppBarSection>
           </AppBar>

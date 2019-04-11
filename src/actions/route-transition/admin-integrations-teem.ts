@@ -13,7 +13,7 @@ export default function routeTransitionAdminIntegrationsTeem(access_token, expir
     
 
     try {
-      const response = await core().post('/integrations/teem/confirm', {
+      const response = await core().post('/integrations/teem/confirm/', {
         access_token: access_token,
         expires_in: expires_in,
         refresh_token: refresh_token,

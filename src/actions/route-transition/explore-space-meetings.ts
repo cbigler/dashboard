@@ -119,16 +119,21 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       }
     })();
 
-    // Load robin spaces if robin is active
-    if (roomBookingDefaultService && roomBookingDefaultService.name === 'robin') {
-      let robinSpaces;
+    // Load room booking spaces if room booking service is active
+    let roomBookingProvider;
+    if (roomBookingDefaultService && ['robin', 'teem'].includes(roomBookingDefaultService.name)) {
+      roomBookingProvider = roomBookingDefaultService.name;
+    }
+
+    if (roomBookingProvider) {
+      let spaces;
       try {
-        robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
+        spaces = objectSnakeToCamel(await core().get(`/integrations/${roomBookingProvider}/spaces/`, {})).data
       } catch (err) {
-        dispatch(integrationsRoomBookingSpacesError(`Error loading robin spaces: ${err.message}`, 'robin'));
+        dispatch(integrationsRoomBookingSpacesError(`Error loading ${roomBookingProvider} spaces: ${err.message}`, roomBookingProvider));
         return;
       }
-      dispatch(integrationsRoomBookingSpacesSet(robinSpaces, 'robin'));
+      dispatch(integrationsRoomBookingSpacesSet(spaces, roomBookingProvider));
     }
 
     if (spaceMappingExists) {
