@@ -45,7 +45,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
     dispatch(exploreDataCalculateDataLoading('utilization', null));
     dispatch(exploreDataCalculateDataLoading('hourlyBreakdownVisits', null));
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdowPeaks', null));
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdownPeaks', null));
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
@@ -342,10 +342,11 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
     if (errorThrown) {
       // Log the error so a developer can see what whent wrong.
       console.error(errorThrown); // DON'T REMOVE ME!
+      console.log(reportName);
       dispatch(exploreDataCalculateDataError(reportName, errorThrown));
     } else {
       dispatch(exploreDataCalculateDataComplete(reportName, data));
-    }   
+    }
   }
 }
 
