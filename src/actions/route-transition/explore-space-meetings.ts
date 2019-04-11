@@ -21,9 +21,9 @@ import {
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import {
-  integrationsRobinSpacesSet,
-  integrationsRobinSpacesError,
-} from '../../actions/integrations/robin';
+  integrationsRoomBookingSpacesSet,
+  integrationsRoomBookingSpacesError,
+} from '../../actions/integrations/room-booking';
 import {
   integrationsRoomBookingSetDefaultService,
   integrationsRoomBookingSelectSpaceMapping,
@@ -76,7 +76,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       try {
         servicesResponse = await core().get('/integrations/services/', {});
       } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading integrations list: ${err.message}`));
+        dispatch(integrationsRoomBookingSpacesError(`Error loading integrations list: ${err.message}`, 'robin'));
         return null;
       }
 
@@ -102,7 +102,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
           dispatch(integrationsRoomBookingSelectSpaceMapping(null));
           return false;
         } else {
-          dispatch(integrationsRobinSpacesError(`Error loading space mapping: ${err.message}`));
+          dispatch(integrationsRoomBookingSpacesError(`Error loading space mapping: ${err.message}`, 'robin'));
           return false;
         }
       }
@@ -125,10 +125,10 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       try {
         robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
       } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+        dispatch(integrationsRoomBookingSpacesError(`Error loading robin spaces: ${err.message}`, 'robin'));
         return;
       }
-      dispatch(integrationsRobinSpacesSet(robinSpaces));
+      dispatch(integrationsRoomBookingSpacesSet(robinSpaces, 'robin'));
     }
 
     if (spaceMappingExists) {

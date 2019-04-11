@@ -27,10 +27,11 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import RobinImage from '../../assets/images/icon-robin.svg';
+import TeemImage from '../../assets/images/icon-teem.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
-import { integrationsRobinSpacesSelect } from '../../actions/integrations/robin';
+import { integrationsRoomBookingSpacesSelect } from '../../actions/integrations/room-booking';
 import { integrationsSpaceMappingUpdate } from '../../actions/integrations/room-booking';
 import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
