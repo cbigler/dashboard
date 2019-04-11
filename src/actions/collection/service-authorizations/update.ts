@@ -40,13 +40,9 @@ export function collectionServiceAuthorizationMakeDefault(serviceAuthorizationId
   return async dispatch => {
     dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE });
 
-    let requestBody = {
-      "default": true,
-    }
-
     let response, errorThrown;
     try {
-      response = await core().put(`/integrations/service_authorizations/${serviceAuthorizationId}/`, requestBody);
+      response = await core().put(`/integrations/service_authorizations/${serviceAuthorizationId}/`, {'default': true});
     } catch (err) {
       errorThrown = err  
     }
