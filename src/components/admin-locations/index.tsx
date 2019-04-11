@@ -1,18 +1,32 @@
-import React, { Fragment } from 'react';
+import React, { ReactNode, Fragment } from 'react';
+import classnames from 'classnames';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
-import GenericErrorState from '../generic-error-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
+
+import GenericErrorState from '../generic-error-state/index';
+import ListView, { ListViewColumn } from '../list-view/index';
+import AdminLocationsSubheader from '../admin-locations-subheader/index';
+import AdminLocationsRootDetail from '../admin-locations-root-detail/index';
+import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
+import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
+import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 
 import { DensitySpace } from '../../types';
 import {
+  AppFrame,
+  AppPane,
+  AppSidebar,
   AppBar,
   AppBarSection,
+  AppBarTitle,
   Button,
   Skeleton,
+  Icons,
 } from '@density/ui';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
+
 
 function ActionButtons({spaceType}) {
   switch (spaceType) {
@@ -56,6 +70,39 @@ function ActionButtons({spaceType}) {
 }
 
 function AdminLocations({selectedSpace, spaces}) {
+  const visibleSpaces = spaces.data
+  .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
+
+  let content: ReactNode = null;
+  switch (selectedSpace ? selectedSpace.spaceType : null) {
+  case 'campus':
+    content = (
+      <AdminLocationsCampusDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'building':
+    content = (
+      <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'floor':
+    content = (
+      <AdminLocationsFloorDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  case 'space':
+    content = (
+      <p>This page shows space info and hasn't been made yet</p>
+    );
+    break;
+  case null:
+  default:
+    content = (
+      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
+    );
+    break;
+  }
+
   return (
     <div className={styles.adminLocations}>
       {spaces.view === 'LOADING' ? (
@@ -77,6 +124,35 @@ function AdminLocations({selectedSpace, spaces}) {
               </span>
             </AppBarSection>
           </AppBar>
+          <AppFrame>
+            <AppSidebar visible>
+              TODO: Waiting on mockups
+            </AppSidebar>
+            <AppPane>
+              <AdminLocationsSubheader
+                title={<Skeleton width={200} height={18} />}
+                supportsHover={false}
+              />
+              <div className={styles.loadingWrapper}>
+                <ListView data={[1, 2]} keyTemplate={i => i}>
+                  <ListViewColumn
+                    title="Info"
+                    flexGrow={1}
+                    flexShrink={1}
+                    template={() => (
+                      <Skeleton width={200} height={16} />
+                    )}
+                  />
+                  <ListViewColumn
+                    title=""
+                    template={() => (
+                      <Skeleton width={200} height={16} />
+                    )}
+                  />
+                </ListView>
+              </div>
+            </AppPane>
+          </AppFrame>
         </div>
       ) : null}
 
@@ -96,17 +172,8 @@ function AdminLocations({selectedSpace, spaces}) {
               </AppBarSection>
             </AppBar>
           </div>
-          <ul>
-            {
-              spaces.data
-              .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null))
-              .map(s => (
-                <li key={s.id}>
-                  <a href={`#/admin/locations/${s.id}`}>{s.name}</a>
-                </li>
-              ))
-            }
-          </ul>
+
+          {content}
         </Fragment>
       ) : null}
     </div>

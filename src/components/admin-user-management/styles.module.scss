@@ -74,6 +74,7 @@
 .adminUserManagementModalColumn {
   display: flex;
   flex-direction: column;
+  width: 50%;
 }
 .adminUserManagementModalColumn.left {
   border-right: 1px solid $grayLighter;

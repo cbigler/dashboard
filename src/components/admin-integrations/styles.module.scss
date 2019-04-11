@@ -32,3 +32,10 @@
   height: 28px;
   border-radius: 6px;
 }
+
+.adminIntegrationsMakeDefaultLink {
+  text-decoration: underline;
+  font-weight: 500;
+  color: $brandPrimary;
+  cursor: pointer;  
+}
