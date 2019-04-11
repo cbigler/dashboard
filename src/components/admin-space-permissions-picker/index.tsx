@@ -55,8 +55,7 @@ type AdminSpacePermissionsPickerProps = {
   spaceHierarchy: {
     loading: boolean,
     data: Array<any>,
-  },
-  width: string | number,
+  }
 
   active: boolean,
   onChangeActive: (boolean) => any,
@@ -78,7 +77,6 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
       onChangeActive,
       disabled = false,
       height = undefined,
-      width = undefined,
     } = this.props;
     const { searchQuery } = this.state;
 
@@ -98,7 +96,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
     });
 
     return (
-      <div className={styles.adminSpacePermissionsPicker} style={{height, width}}>
+      <div className={styles.adminSpacePermissionsPicker} style={{height}}>
         <AppBar>
           <AppBarTitle>Space Permissions</AppBarTitle>
           <AppBarSection>
