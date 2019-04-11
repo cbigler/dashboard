@@ -95,10 +95,24 @@ export default function routeTransitionExploreSpaceTrends(id) {
 }
 
 export function calculate(space, spaceFilters) {
-  return dispatch => {
+  return (dispatch, getState) => {
     const multiWeekSelection = isMultiWeekSelection(spaceFilters.startDate, spaceFilters.endDate);
 
     const peakTitle = multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"
+
+    // Don't perform calculations if user hasn't selected an end date yet in the date picker.
+    const { startDate, endDate } = getState().spaces.filters;
+    if (
+      parseISOTimeAtSpace(startDate, space)
+      .isAfter(parseISOTimeAtSpace(endDate, space))
+    ) {
+      const error = "End time must be before start time.";
+      const reportNames = ['dailyMetrics', 'hourlyBreakdownPeaks', 'hourlyBreakdownVisits', 'utilization'];
+      reportNames.map(reportName => {
+        dispatch(exploreDataCalculateDataError(reportName, error));  
+      });
+      return;
+    }
 
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
