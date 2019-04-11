@@ -1,24 +1,25 @@
-import React, { Fragment, Component } from 'react';
+import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 
 import Module, { SpaceFieldRenderer } from '../admin-locations-detail-modules/index';
 
-import { InputBox } from '@density/ui';
+import {
+  AppBar,
+  AppBarTitle,
+  AppBarSection,
+  InputBox,
+  ButtonContext,
+  Button,
+} from '@density/ui';
 
 
 function calculateEmptyFormState(props) {
-  return {
-    loaded: true,
-    generalInformation: SPACE_TYPE_INFO_FIELDS[props.selectedSpace.spaceType].reduce((acc, value) => ({
-      ...acc,
-      [value.id]: value.initialValue(props.selectedSpace),
-    }), {}),
-    metadata: SPACE_TYPE_METADATA_FIELDS[props.selectedSpace.spaceType].reduce((acc, value) => ({
-      ...acc,
-      [value.id]: value.initialValue(props.selectedSpace),
-    }), {}),
-  };
+  const formState = {};
+  for (let key in SPACE_FIELDS) {
+    formState[SPACE_FIELDS[key].id] = SPACE_FIELDS[key].initialValue(props.selectedSpace);
+  }
+  return { loaded: true, ...formState };
 }
 
 const SPACE_FIELDS = {
@@ -78,7 +79,7 @@ const SPACE_FIELDS = {
   LEVEL_NUMBER: {
     id: 'number',
     label: 'Level Number',
-    initialValue: space => space.floorNumber,
+    initialValue: space => 99999999,
     component: (id, value, onChangeValue) => (
       <InputBox
         type="number"
@@ -108,7 +109,7 @@ const SPACE_FIELDS = {
   SIZE_SQ_FT: {
     id: 'size',
     label: 'Size (sq ft)',
-    initialValue: space => 'HARDCODED',
+    initialValue: space => 99999999,
     component: (id, value, onChangeValue) => (
       <InputBox
         type="number"
@@ -136,7 +137,7 @@ const SPACE_FIELDS = {
   SEAT_ASSIGNMENTS: {
     id: 'seatAssignments',
     label: 'Seat Assignments',
-    initialValue: space => 'HARDCODED',
+    initialValue: space => 99999999,
     component: (id, value, onChangeValue) => (
       <InputBox
         type="number"
@@ -147,48 +148,6 @@ const SPACE_FIELDS = {
       />
     ),
   },
-};
-
-const SPACE_TYPE_INFO_FIELDS = {
-  campus: [
-    SPACE_FIELDS.SPACE_NAME,
-    SPACE_FIELDS.SPACE_TYPE,
-  ],
-  building: [
-    SPACE_FIELDS.SPACE_NAME,
-    SPACE_FIELDS.SPACE_TYPE,
-    SPACE_FIELDS.SPACE_FUNCTION,
-  ],
-  floor: [
-    SPACE_FIELDS.LEVEL_NUMBER,
-    SPACE_FIELDS.SPACE_TYPE,
-    SPACE_FIELDS.SPACE_FUNCTION,
-  ],
-  space: [
-    SPACE_FIELDS.SPACE_NAME,
-    SPACE_FIELDS.SPACE_TYPE,
-    SPACE_FIELDS.SPACE_FUNCTION,
-  ],
-};
-
-const SPACE_TYPE_METADATA_FIELDS = {
-  campus: [],
-  building: [
-    SPACE_FIELDS.RENT_ANNUAL,
-    SPACE_FIELDS.SIZE_SQ_FT,
-    SPACE_FIELDS.CAPACITY,
-    SPACE_FIELDS.SEAT_ASSIGNMENTS,
-  ],
-  floor: [
-    SPACE_FIELDS.SIZE_SQ_FT,
-    SPACE_FIELDS.SEAT_ASSIGNMENTS,
-    SPACE_FIELDS.CAPACITY,
-  ],
-  space: [
-    SPACE_FIELDS.SIZE_SQ_FT,
-    SPACE_FIELDS.SEAT_ASSIGNMENTS,
-    SPACE_FIELDS.CAPACITY,
-  ],
 };
 
 
@@ -212,8 +171,47 @@ class AdminLocationsEdit extends Component<any, any> {
     return null;
   }
 
+  onChangeField = (key, value) => {
+    this.setState({[key]: value});
+  }
+
   render() {
     const { spaces, selectedSpace } = this.props;
+
+    let content: ReactNode = null;
+    switch (selectedSpace ? selectedSpace.spaceType : null) {
+    case 'campus':
+      content = (
+        null
+      );
+      break;
+    case 'building':
+      content = (
+        <AdminLocationsBuildingEdit
+          space={selectedSpace}
+          formState={this.state}
+          onChangeField={this.onChangeField}
+        />
+      );
+      break;
+    case 'floor':
+      content = (
+        null
+      );
+      break;
+    case 'space':
+      content = (
+        null
+      );
+      break;
+    case null:
+    default:
+      content = (
+        null
+      );
+      break;
+    }
+
     return (
       <div className={styles.adminLocationsEdit}>
         {spaces.view === 'LOADING' ? (
@@ -221,33 +219,68 @@ class AdminLocationsEdit extends Component<any, any> {
         ) : null}
         {selectedSpace && spaces.view === 'VISIBLE' ? (
           <Fragment>
-            <Module title="General Info">
-              <SpaceFieldRenderer
-                space={this.props.selectedSpace}
-                displayedFields={SPACE_TYPE_INFO_FIELDS[selectedSpace.spaceType] || []}
-                state={this.state.generalInformation}
-                onChangeField={(key, value) => this.setState(s => ({
-                  ...s,
-                  generalInformation: { ...s.generalInformation, [key]: value },
-                }))}
-              />
-            </Module>
-            <Module title="Meta">
-              <SpaceFieldRenderer
-                space={this.props.selectedSpace}
-                displayedFields={SPACE_TYPE_METADATA_FIELDS[selectedSpace.spaceType] || []}
-                state={this.state.metadata}
-                onChangeField={(key, value) => this.setState(s => ({
-                  ...s,
-                  metadata: { ...s.metadata, [key]: value },
-                }))}
-              />
-            </Module>
+            <div className={styles.appBarWrapper}>
+              <AppBar>
+                <AppBarTitle>
+                  Edit {selectedSpace.spaceType[0].toUpperCase()}{selectedSpace.spaceType.slice(1)}
+                </AppBarTitle>
+                <AppBarSection>
+                  <ButtonContext.Provider value="CANCEL_BUTTON">
+                    <Button onClick={() => {
+                      window.location.href = `#/admin/locations/${selectedSpace.id}`;
+                    }}>Cancel</Button>
+                  </ButtonContext.Provider>
+                  <Button type="primary">Save</Button>
+                </AppBarSection>
+              </AppBar>
+            </div>
+            {content}
           </Fragment>
         ) : null}
       </div>
     );
   }
+}
+
+function AdminLocationsBuildingEdit({space, formState, onChangeField}) {
+  return (
+    <div className={styles.moduleContainer}>
+      <div className={styles.moduleWrapper}>
+        <Module title="General Info">
+          <SpaceFieldRenderer
+            space={space}
+            displayedFields={[
+              SPACE_FIELDS.SPACE_NAME,
+              SPACE_FIELDS.SPACE_TYPE,
+              SPACE_FIELDS.SPACE_FUNCTION,
+            ]}
+            state={formState}
+            onChangeField={onChangeField}
+          />
+        </Module>
+      </div>
+      <div className={styles.moduleWrapper}>
+        <Module title="Meta">
+          <SpaceFieldRenderer
+            space={space}
+            displayedFields={[
+              SPACE_FIELDS.RENT_ANNUAL,
+              SPACE_FIELDS.SIZE_SQ_FT,
+              SPACE_FIELDS.CAPACITY,
+              SPACE_FIELDS.SEAT_ASSIGNMENTS,
+            ]}
+            state={formState}
+            onChangeField={onChangeField}
+          />
+        </Module>
+      </div>
+      <div className={styles.moduleWrapper}>
+        <Module title="One more module">
+          Goes here
+        </Module>
+      </div>
+    </div>
+  );
 }
 
 export default connect((state: any) => {

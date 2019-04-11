@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
 import classnames from 'classnames';
@@ -11,7 +11,7 @@ import {
   InputBox,
 } from '@density/ui';
 
-export default function Module({title, actions=null, children}) {
+export default function AdminLocationsDetailModule({title, actions=null, children}) {
   return (
     <div className={styles.module}>
       <div className={styles.moduleHeader}>
@@ -28,7 +28,6 @@ export default function Module({title, actions=null, children}) {
     </div>
   );
 }
-
 
 export function SpaceFieldRenderer({space, displayedFields, state, onChangeField}) {
   // split array into pairs: https://stackoverflow.com/a/44996257/4115328

@@ -23,7 +23,7 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
       let space;
       try {
         const response = await core().get(`/spaces/${spaceId}`);
-        const space = objectSnakeToCamel<DensitySpace>(response.data);
+        space = objectSnakeToCamel<DensitySpace>(response.data);
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return false;
