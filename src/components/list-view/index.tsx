@@ -22,6 +22,7 @@ type ListViewColumnProps = {
   title?: any,
   template?: any,
   onClick?: (any) => any,
+  href?: (any) => string,
   disabled?: (any) => boolean,
   flexGrow?: number,
   flexShrink?: number,
@@ -32,6 +33,7 @@ export function ListViewColumn({
   title = null as any,
   template = null as any,
   onClick = null as any,
+  href = null as any,
   disabled = item => false,
 
   flexGrow = undefined,
@@ -42,14 +44,25 @@ export function ListViewColumn({
     <div className={styles.listViewColumn} style={{flexGrow, flexShrink, width}}>
       {context.showHeaders ? <div className={styles.listViewHeader}>{title}</div> : null}
       {context.data.map(item => {
+        const key = context.keyTemplate(item);
         const clickable = !disabled(item) && Boolean(onClick);
-        return <div
-          key={context.keyTemplate(item)}
-          className={classnames(styles.listViewCell, { [styles.clickable]: clickable })}
-          onClick={() => clickable && onClick(item)}
-        >
-          {template && template(item)}
-        </div>;
+        const result = (
+          <div
+            key={key}
+            className={classnames(styles.listViewCell, { [styles.clickable]: clickable })}
+            onClick={() => clickable && onClick(item)}
+          >
+            {template && template(item)}
+          </div>
+        );
+
+        if (href) {
+          return (
+            <a key={key} href={href(item)}>{result}</a>
+          );
+        } else {
+          return result;
+        }
       })}
     </div>
   )}</ListViewContext.Consumer>;

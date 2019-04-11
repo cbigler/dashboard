@@ -238,6 +238,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                     onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
                     selectedSpaceIds={this.state.spaceIds}
                     onChange={spaceIds => this.setState({spaceIds})}
+                    width="100%"
                     height={600}
                   />
                 </div>
