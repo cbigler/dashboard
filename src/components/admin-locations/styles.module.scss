@@ -1,4 +1,17 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
 .leftButton { margin-right: 8px; }
 .rightButton { margin-left: 8px; }
 
 .appBar { background-color: #fff; }
+
+.adminLocations {
+  height: calc(100% - 64px - 64px);
+}
+
+.loadingWrapper {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 16px;
+}

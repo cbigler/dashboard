@@ -1,0 +1,33 @@
+@import "@density/ui/variables/colors.scss";
+
+.subheader {
+  display: block;
+  color: $grayCinder;
+  background-color: $grayLightest;
+  text-decoration: none;
+  cursor: default;
+}
+.subheader.hover { background-color: $grayLighter; }
+.subheader.supportsHover { cursor: pointer; }
+
+.title {
+  font-size: 20px;
+  user-select: none;
+}
+.supportsHover .title { cursor: pointer; }
+.title.hover {
+  color: $brandPrimary;
+  text-decoration: underline;
+}
+
+.manageLinkWrapper { margin-right: 24px; }
+.manageLink {
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: underline;
+  margin-right: 16px;
+  color: $brandPrimary;
+  text-decoration: none;
+}
+.manageLink.hover { text-decoration: underline; }
+
