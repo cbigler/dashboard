@@ -116,8 +116,8 @@ export function calculate(space, spaceFilters) {
 
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
-    // dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', peakTitle, "AVERAGE"));
-    // dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits', "NONE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', peakTitle, "AVERAGE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits', "NONE"));
   };
 }
 
