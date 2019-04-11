@@ -71,14 +71,14 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
   const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
   const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
-  const spacesNotInCampus = visibleSpaces.filter(space => campuses.find(campus => space.parentId === campus.id));
+  const buildingsNotInCampus = visibleSpaces.filter(space => space.spaceType === 'building');
 
   return (
     <div className={styles.wrapper}>
-      {spacesNotInCampus.length > 0 ? (
+      {buildingsNotInCampus.length > 0 ? (
         <Fragment>
-          <AdminLocationsSubheader title="Rooms" supportsHover={false} />
-          <SpaceList spaces={spaces} renderedSpaces={spacesNotInCampus} />
+          <AdminLocationsSubheader title="Buildings" supportsHover={false} />
+          <SpaceList spaces={spaces} renderedSpaces={buildingsNotInCampus} />
         </Fragment>
       ) : null}
 
