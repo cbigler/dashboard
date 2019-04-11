@@ -148,6 +148,7 @@ export function AdminUserManagement({
                 onChangeActive={spaceFilteringActive => onUpdateNewUser({spaceFilteringActive})}
                 selectedSpaceIds={activeModal.data.spaceIds}
                 onChange={spaceIds => onUpdateNewUser({spaceIds})}
+                width={391}
                 height={556}
               />
             </div>
