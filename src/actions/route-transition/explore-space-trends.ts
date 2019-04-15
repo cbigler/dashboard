@@ -45,7 +45,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
     dispatch(exploreDataCalculateDataLoading('utilization', null));
     dispatch(exploreDataCalculateDataLoading('hourlyBreakdownVisits', null));
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdowPeaks', null));
+    dispatch(exploreDataCalculateDataLoading('hourlyBreakdownPeaks', null));
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
@@ -244,25 +244,35 @@ export function calculateUtilization(space) {
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
     // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
     // logic required to fetch all pages of data from the server.
-    const counts = (await fetchAllPages(async page => (
-      (await core().get(`/spaces/${space.id}/counts`, { params: {
-        id: space.id,
+    let errorThrown, counts;
+    try {
+      counts = (await fetchAllPages(async page => (
+        (await core().get(`/spaces/${space.id}/counts`, { params: {
+          id: space.id,
 
-        start_time: startDate,
-        end_time: endDate,
-        time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id,
+          start_time: startDate,
+          end_time: endDate,
+          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id,
 
-        interval: '10m',
+          interval: '10m',
 
-        // Fetch with a large page size to try to minimize the number of requests that will be
-        // required.
-        page,
-        page_size: 5000,
+          // Fetch with a large page size to try to minimize the number of requests that will be
+          // required.
+          page,
+          page_size: 5000,
 
-        // Legacy "slow" queries
-        slow: getGoSlow(),
-      }})).data
-    ))).map(objectSnakeToCamel);
+          // Legacy "slow" queries
+          slow: getGoSlow(),
+        }})).data
+      ))).map(objectSnakeToCamel);
+    } catch (err) {
+      errorThrown = err;
+    }
+
+    if (errorThrown) {
+      dispatch(exploreDataCalculateDataError('utilization', errorThrown.message));
+      return;
+    }
 
     // Variables for rendering the trends page
     let utilizationsByDay: any[] = [],
@@ -355,11 +365,11 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
 
     if (errorThrown) {
       // Log the error so a developer can see what whent wrong.
-      console.error(errorThrown); // DON'T REMOVE ME!
-      dispatch(exploreDataCalculateDataError(reportName, errorThrown));
+      console.error(errorThrown.message); // DON'T REMOVE ME!
+      dispatch(exploreDataCalculateDataError(reportName, errorThrown.message));
     } else {
       dispatch(exploreDataCalculateDataComplete(reportName, data));
-    }   
+    }
   }
 }
 
