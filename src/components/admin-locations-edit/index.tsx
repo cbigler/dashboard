@@ -2,7 +2,11 @@ import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 
-import Module, { SpaceFieldRenderer } from '../admin-locations-detail-modules/index';
+import {
+  AdminLocationsDetailModulesGeneralInfo,
+  AdminLocationsDetailModulesMetadata,
+  AdminLocationsDetailModulesAddress,
+} from '../admin-locations-detail-modules/index';
 
 import {
   AppBar,
@@ -15,11 +19,16 @@ import {
 
 
 function calculateEmptyFormState(props) {
-  const formState = {};
-  for (let key in SPACE_FIELDS) {
-    formState[SPACE_FIELDS[key].id] = SPACE_FIELDS[key].initialValue(props.selectedSpace);
-  }
-  return { loaded: true, ...formState };
+  return {
+    loaded: true,
+    name: props.selectedSpace.name,
+    spaceType: props.selectedSpace.spaceType,
+    'function': props.selectedSpace['function'],
+    rentAnnual: props.selectedSpace.rentAnnual,
+    size: props.selectedSpace.size,
+    capacity: props.selectedSpace.capacity,
+    seatAssignments: props.selectedSpace.seatAssignments,
+  };
 }
 
 const SPACE_FIELDS = {
@@ -246,38 +255,26 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>
-        <Module title="General Info">
-          <SpaceFieldRenderer
-            space={space}
-            displayedFields={[
-              SPACE_FIELDS.SPACE_NAME,
-              SPACE_FIELDS.SPACE_TYPE,
-              SPACE_FIELDS.SPACE_FUNCTION,
-            ]}
-            state={formState}
-            onChangeField={onChangeField}
-          />
-        </Module>
+        <AdminLocationsDetailModulesGeneralInfo
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
       </div>
       <div className={styles.moduleWrapper}>
-        <Module title="Meta">
-          <SpaceFieldRenderer
-            space={space}
-            displayedFields={[
-              SPACE_FIELDS.RENT_ANNUAL,
-              SPACE_FIELDS.SIZE_SQ_FT,
-              SPACE_FIELDS.CAPACITY,
-              SPACE_FIELDS.SEAT_ASSIGNMENTS,
-            ]}
-            state={formState}
-            onChangeField={onChangeField}
-          />
-        </Module>
+        <AdminLocationsDetailModulesMetadata
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
       </div>
       <div className={styles.moduleWrapper}>
-        <Module title="One more module">
-          Goes here
-        </Module>
+        <AdminLocationsDetailModulesAddress
+          address={formState.address}
+          coordinates={formState.coordinates}
+          onChangeAddress={address => onChangeField('address', address)}
+          onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+        />
       </div>
     </div>
   );
