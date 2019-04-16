@@ -4,9 +4,9 @@ import core from '../../../client/core';
 
 export const COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE = 'COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE';
 
-export default function collectionServiceAuthorizationUpdate(serviceName, serviceAuthorization) {
+export function collectionServiceAuthorizationUpdate(serviceName, serviceAuthorization) {
   return async dispatch => {
-    dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE, serviceAuthorization });
+    dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE });
 
     let requestBody = {};
     if (serviceName == "robin") {
@@ -19,13 +19,40 @@ export default function collectionServiceAuthorizationUpdate(serviceName, servic
       }
     }
 
+    let response, errorThrown;
     try {
-      const response = await core().put(`/integrations/service_authorizations/${serviceAuthorization.id}/`, requestBody);
+      response = await core().put(`/integrations/service_authorizations/${serviceAuthorization.id}/`, requestBody);
+    } catch (err) {
+      errorThrown = err;
+    }
+
+    if (errorThrown) {
+      dispatch(collectionServiceAuthorizationsError(errorThrown));
+      return false;
+    } else {
       dispatch(integrationServicesList());
       return response;
-    } catch (err) {
-      dispatch(collectionServiceAuthorizationsError(err));
-      return false;
     }
-  };
+  }
+}
+
+export function collectionServiceAuthorizationMakeDefault(serviceAuthorizationId) {
+  return async dispatch => {
+    dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE });
+
+    let response, errorThrown;
+    try {
+      response = await core().put(`/integrations/service_authorizations/${serviceAuthorizationId}/`, {'default': true});
+    } catch (err) {
+      errorThrown = err  
+    }
+
+    if (errorThrown) {
+      dispatch(collectionServiceAuthorizationsError(errorThrown));
+      return false;  
+    } else {
+      dispatch(integrationServicesList());
+      return response;  
+    } 
+  }
 }

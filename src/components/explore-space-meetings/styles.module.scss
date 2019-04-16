@@ -1,7 +1,12 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/spacing.scss";
 
-.robinImage {
+.spaceMappingSelectorContainer {
+  display: flex; 
+  align-items: center;
+}
+
+.roomBookingImage {
   margin-right: 16px;
   border-radius: 4px;
   box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);

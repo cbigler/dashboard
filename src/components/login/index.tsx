@@ -9,6 +9,7 @@ import {
   CardLoading,
   Icons,
   Toast,
+  ToastContext,
 } from '@density/ui';
 
 import accounts from '../../client/accounts';
@@ -165,7 +166,7 @@ export class Login extends React.Component<any, any> {
 
   renderForgotPasswordForm() {
     return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
-      <p>We'll send a recovery link to:</p>
+      <p className={styles.loginFormResetHeader}>We'll send a recovery link to:</p>
       <InputStackGroup>
         <InputStackItem
           type="email"
@@ -201,56 +202,62 @@ export class Login extends React.Component<any, any> {
       <div className={styles.loginSection}>
         {/* Render a toast if the password reset request worked */}
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
-          <Toast
-            type="success"
-            visible
-            icon={<Icons.Check color="white" />}
-            onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
-          >
-            {this.state.forgotPasswordConfirmation}
-          </Toast>
+          <ToastContext.Provider value="multiline">
+            <Toast
+              visible
+              icon={<Icons.Check color="white" />}
+              onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
+            >
+              {this.state.forgotPasswordConfirmation}
+            </Toast>
+          </ToastContext.Provider>
         </div> : null}
 
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <Toast
-              type="success"
-              visible
-              icon={<Icons.No color="white" />}
-              onDismiss={() => this.setState({referredFromForgotPassword: false})}
-            >
-              Password reset successful, log in using your new credentials.
-            </Toast>
+            <ToastContext.Provider value="multiline">
+              <Toast
+                visible
+                icon={<Icons.No color="white" />}
+                onDismiss={() => this.setState({referredFromForgotPassword: false})}
+              >
+                Password reset successful, log in using your new credentials.
+              </Toast>
+            </ToastContext.Provider>
           </div>
         ) : null}
 
         {this.props.user && this.props.user.error ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <Toast
-              className={classnames(styles.loginToast, styles.loginToastForgotPassword)}
-              type="error"
-              visible
-              title="Error fetching user"
-              icon={<Icons.No color="white" />}
-            >
-              {this.props.user.error}
-            </Toast>
+            <ToastContext.Provider value="multiline">
+              <Toast
+                type="error"
+                visible
+                title="Error fetching user"
+                icon={<Icons.No color="white" />}
+              >
+                {this.props.user.error}
+              </Toast>
+            </ToastContext.Provider>
           </div>
         ) : null}
 
         {/* Render any errors with previous login attempts */}
         {this.state.error ? (
           <div className={styles.loginToast}>
-            <Toast
-              type="error"
-              visible
-              title={this.state.errorTitle || 'Incorrect password'}
-              icon={<Icons.No color="white" />}
-              onDismiss={() => this.setState({error: null})}
-            >
-              {this.state.error}
-            </Toast>
+            <ToastContext.Provider value="multiline">
+              <Toast
+                type="error"
+                visible
+                title={this.state.errorTitle || 'Incorrect password'}
+                icon={<Icons.No color="white" />}
+                onDismiss={() => this.setState({error: null})}
+              >
+                {console.log(this.state.error)}
+                <span>{this.state.error.message || this.state.error}</span>
+              </Toast>
+            </ToastContext.Provider>
           </div>
         ) : null}
 
