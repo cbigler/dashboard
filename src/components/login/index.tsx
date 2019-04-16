@@ -165,7 +165,7 @@ export class Login extends React.Component<any, any> {
 
   renderForgotPasswordForm() {
     return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
-      <p>We'll send a recovery link to:</p>
+      <p className={styles.loginFormResetHeader}>We'll send a recovery link to:</p>
       <InputStackGroup>
         <InputStackItem
           type="email"
