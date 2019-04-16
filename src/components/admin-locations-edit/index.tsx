@@ -60,7 +60,7 @@ class AdminLocationsEdit extends Component<any, any> {
   render() {
     const { spaces, selectedSpace } = this.props;
 
-    let EditComponent = {
+    const EditComponent = {
       campus: AdminLocationsCampusEdit,
       building: AdminLocationsBuildingEdit,
       floor: AdminLocationsFloorEdit,

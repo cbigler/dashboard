@@ -267,7 +267,7 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
       this.geocoderInstance = new MapboxGLGeocoder({
         accessToken: MapboxGL.accessToken,
         mapboxgl: MapboxGL,
-				placeholder: 'Search for an address',
+        placeholder: 'Search for an address',
         marker: {
           // See: https://docs.mapbox.com/mapbox-gl-js/api/#marker
           element: MARKER_ELEMENT,
@@ -308,11 +308,11 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
       <AdminLocationsDetailModule title="Address">
         Coordinates: {coordinates ? coordinates.join(', ') : ''}
         Address: {address}
-				<div
+        <div
           className={styles.addressMapGeocoder}
           ref={this.geocoder}
         />
-				<div
+        <div
           className={styles.addressMapContainer}
           ref={this.container}
         />
