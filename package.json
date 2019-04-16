@@ -12,7 +12,7 @@
     "@density/charts": "^1.0.1",
     "@density/conduit": "^0.3.0",
     "@density/react-dates": "^12.6.0",
-    "@density/reports": "^4.5.1",
+    "@density/reports": "^4.5.2",
     "@density/ui": "^15.2.0",
     "auth0-js": "^9.9.0",
     "axios": "^0.18.0",
