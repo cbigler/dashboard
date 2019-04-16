@@ -2,6 +2,8 @@ import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 
+import { DensitySpace } from '../../types';
+
 import {
   AdminLocationsDetailModulesGeneralInfo,
   AdminLocationsDetailModulesMetadata,
@@ -31,135 +33,6 @@ function calculateEmptyFormState(props) {
   };
 }
 
-const SPACE_FIELDS = {
-  SPACE_NAME: {
-    id: 'name',
-    label: 'Name',
-    initialValue: space => space.name,
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="text"
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        width="100%"
-      />
-    ),
-  },
-  SPACE_TYPE: {
-    id: 'spaceType',
-    label: 'Space type',
-    initialValue: space => space.spaceType,
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="select"
-        choices={[
-          {id: 'campus', label: 'Campus'},
-          {id: 'building', label: 'Building'},
-          {id: 'floor', label: 'Floor'},
-          {id: 'space', label: 'Space'},
-        ]}
-        id={id}
-        disabled={true}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        width="100%"
-      />
-    ),
-  },
-  SPACE_FUNCTION: {
-    id: 'function',
-    label: 'Space function',
-    initialValue: space => space['function'],
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="select"
-        choices={[
-          {id: 'conference_room', label: 'Conference Room'},
-          {id: 'meeting_room', label: 'Meeting Room'},
-        ]}
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.id)}
-        width="100%"
-      />
-    ),
-  },
-  LEVEL_NUMBER: {
-    id: 'number',
-    label: 'Level Number',
-    initialValue: space => 99999999,
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="number"
-        leftIcon={<strong>Level</strong>}
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.id)}
-        width="100%"
-      />
-    ),
-  },
-  RENT_ANNUAL: {
-    id: 'rent',
-    label: 'Rent (annual)',
-    initialValue: space => space.capacity ? space.capacity.toString() : '',
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="number"
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        leftIcon={<span>$</span>}
-        width="100%"
-      />
-    ),
-  },
-  SIZE_SQ_FT: {
-    id: 'size',
-    label: 'Size (sq ft)',
-    initialValue: space => 99999999,
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="number"
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        width="100%"
-      />
-    ),
-  },
-  CAPACITY: {
-    id: 'capacity',
-    label: 'Capacity',
-    initialValue: space => space.capacity ? space.capacity.toString() : '',
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="number"
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        width="100%"
-      />
-    ),
-  },
-  SEAT_ASSIGNMENTS: {
-    id: 'seatAssignments',
-    label: 'Seat Assignments',
-    initialValue: space => 99999999,
-    component: (id, value, onChangeValue) => (
-      <InputBox
-        type="number"
-        id={id}
-        value={value}
-        onChange={e => onChangeValue(e.target.value)}
-        width="100%"
-      />
-    ),
-  },
-};
-
-
 class AdminLocationsEdit extends Component<any, any> {
   constructor(props) {
     super(props);
@@ -187,39 +60,13 @@ class AdminLocationsEdit extends Component<any, any> {
   render() {
     const { spaces, selectedSpace } = this.props;
 
-    let content: ReactNode = null;
-    switch (selectedSpace ? selectedSpace.spaceType : null) {
-    case 'campus':
-      content = (
-        null
-      );
-      break;
-    case 'building':
-      content = (
-        <AdminLocationsBuildingEdit
-          space={selectedSpace}
-          formState={this.state}
-          onChangeField={this.onChangeField}
-        />
-      );
-      break;
-    case 'floor':
-      content = (
-        null
-      );
-      break;
-    case 'space':
-      content = (
-        null
-      );
-      break;
-    case null:
-    default:
-      content = (
-        null
-      );
-      break;
-    }
+    let EditComponent = {
+      campus: AdminLocationsCampusEdit,
+      building: AdminLocationsBuildingEdit,
+      floor: AdminLocationsFloorEdit,
+      space: AdminLocationsSpaceEdit,
+      [null as any]: AdminLocationsNoopEdit,
+    }[selectedSpace ? selectedSpace.spaceType : null];
 
     return (
       <div className={styles.adminLocationsEdit}>
@@ -243,7 +90,13 @@ class AdminLocationsEdit extends Component<any, any> {
                 </AppBarSection>
               </AppBar>
             </div>
-            {content}
+
+            {/* All the space type components take the same props */}
+            <EditComponent
+              space={selectedSpace}
+              formState={this.state}
+              onChangeField={this.onChangeField}
+            />
           </Fragment>
         ) : null}
       </div>
@@ -251,7 +104,40 @@ class AdminLocationsEdit extends Component<any, any> {
   }
 }
 
-function AdminLocationsBuildingEdit({space, formState, onChangeField}) {
+// Props that all the below "edit pages" take
+type AdminLocationsEditSpaceTypeProps = {
+  space: DensitySpace,
+  formState: { [key: string]: any },
+  onChangeField: (string, any) => any,
+};
+
+function AdminLocationsNoopEdit(props: AdminLocationsEditSpaceTypeProps) { return null; }
+
+function AdminLocationsCampusEdit({space, formState, onChangeField}: AdminLocationsEditSpaceTypeProps) {
+  return (
+    <div className={styles.moduleContainer}>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesGeneralInfo
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesMetadata
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        TODO: add campus modules
+      </div>
+    </div>
+  );
+}
+
+function AdminLocationsBuildingEdit({space, formState, onChangeField}: AdminLocationsEditSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>
@@ -279,6 +165,55 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}) {
     </div>
   );
 }
+
+function AdminLocationsFloorEdit({space, formState, onChangeField}: AdminLocationsEditSpaceTypeProps) {
+  return (
+    <div className={styles.moduleContainer}>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesGeneralInfo
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesMetadata
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        TODO: add floor modules
+      </div>
+    </div>
+  );
+}
+
+function AdminLocationsSpaceEdit({space, formState, onChangeField}: AdminLocationsEditSpaceTypeProps) {
+  return (
+    <div className={styles.moduleContainer}>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesGeneralInfo
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesMetadata
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        TODO: add space modules
+      </div>
+    </div>
+  );
+}
+
 
 export default connect((state: any) => {
   return {
