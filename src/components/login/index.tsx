@@ -203,6 +203,7 @@ export class Login extends React.Component<any, any> {
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
           <Toast
             type="success"
+            visible
             icon={<Icons.Check color="white" />}
             onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
           >
@@ -215,6 +216,7 @@ export class Login extends React.Component<any, any> {
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
             <Toast
               type="success"
+              visible
               icon={<Icons.No color="white" />}
               onDismiss={() => this.setState({referredFromForgotPassword: false})}
             >
@@ -227,7 +229,8 @@ export class Login extends React.Component<any, any> {
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
             <Toast
               className={classnames(styles.loginToast, styles.loginToastForgotPassword)}
-              type="danger"
+              type="error"
+              visible
               title="Error fetching user"
               icon={<Icons.No color="white" />}
             >
@@ -240,7 +243,8 @@ export class Login extends React.Component<any, any> {
         {this.state.error ? (
           <div className={styles.loginToast}>
             <Toast
-              type="danger"
+              type="error"
+              visible
               title={this.state.errorTitle || 'Incorrect password'}
               icon={<Icons.No color="white" />}
               onDismiss={() => this.setState({error: null})}
