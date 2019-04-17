@@ -127,7 +127,7 @@ export function AdminDeveloper({
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView>
+    <AppScrollView backgroundColor={colorVariables.grayLightest}>
       <div className={styles.adminDeveloperTokenList}>
         <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>

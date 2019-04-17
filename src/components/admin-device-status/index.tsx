@@ -32,7 +32,7 @@ export function AdminDeviceStatus({
       return 1;
     return 0;
   });
-  return <AppScrollView>
+  return <AppScrollView backgroundColor={colorVariables.grayLightest}>
     <div className={styles.adminDeviceList}>
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn

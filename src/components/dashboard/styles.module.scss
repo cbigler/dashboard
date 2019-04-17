@@ -21,6 +21,7 @@
   flex-grow: 1;
   flex-shrink: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .dashboardAppFrameSidebarListItem {
@@ -95,6 +96,7 @@
 .dashboardWrapper {
   width: 100%;
   max-width: 1440px;
+  margin: 0 auto;
 
   animation: fadeInUp 0.4s ease-out;
 }
@@ -109,11 +111,12 @@
   }
 }
 .dashboardHeader {
-  color: $grayDarkest;
-  font-size: 22px;
-  border-bottom: 2px solid $gray;
   margin-top: 40px;
-  padding-bottom: 10px;
+  padding-top: 8px;
+  border-top: 1px solid $grayDarker;
+  font-size: 24px;
+  font-weight: 400;
+  color: $grayCinder;
 }
 
 .dashboardNonIdealState {

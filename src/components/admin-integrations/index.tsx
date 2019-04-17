@@ -103,7 +103,7 @@ export function AdminIntegrations({
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView>
+    <AppScrollView backgroundColor={colorVariables.grayLightest}>
       <div className={styles.adminIntegrationsRoomBookingList}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>

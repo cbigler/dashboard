@@ -26,7 +26,7 @@ import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
 
-const EXPLORE_BACKGROUND = '#F5F5F7';
+const EXPLORE_BACKGROUND = '#FAFAFA';
 const spaceFilter = filterCollection({fields: ['name']});
 
 
@@ -179,6 +179,7 @@ export function Explore({
               width="100%"
               placeholder="Filter Spaces ..."
               disabled={false}
+              leftIcon={<Icons.Search />}
               value={spaces.filters.search}
               onChange={e => onSpaceSearch(e.target.value)}
             />

@@ -22,6 +22,7 @@ import {
   Modal,
   Skeleton,
 } from '@density/ui';
+
 import colorVariables from '@density/ui/variables/colors.json';
 
 import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
@@ -194,7 +195,7 @@ export function AdminUserManagement({
         </AppBarSection>
       </AppBar>
 
-      <AppScrollView>
+      <AppScrollView backgroundColor={colorVariables.grayLightest}>
         {users.view === 'ERROR' ? (
           <div className={classnames(styles.adminUserManagementList, styles.centered)}>
             <GenericErrorState />
@@ -295,7 +296,7 @@ export function AdminUserManagement({
                   title="Actions"
                   template={item => item.isEditable && item.id !== user.data.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
-                      Edit User
+                      Edit
                     </ListViewClickableLink>
                   ) : null}
                   flexShrink={0}
