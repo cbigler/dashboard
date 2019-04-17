@@ -21,9 +21,9 @@ import {
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import {
-  integrationsRobinSpacesSet,
-  integrationsRobinSpacesError,
-} from '../../actions/integrations/robin';
+  integrationsRoomBookingSpacesSet,
+  integrationsRoomBookingSpacesError,
+} from '../../actions/integrations/room-booking';
 import {
   integrationsRoomBookingSetDefaultService,
   integrationsRoomBookingSelectSpaceMapping,
@@ -76,7 +76,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       try {
         servicesResponse = await core().get('/integrations/services/', {});
       } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading integrations list: ${err.message}`));
+        dispatch(integrationsRoomBookingSpacesError(`Error loading integrations list: ${err.message}`, 'robin'));
         return null;
       }
 
@@ -102,7 +102,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
           dispatch(integrationsRoomBookingSelectSpaceMapping(null));
           return false;
         } else {
-          dispatch(integrationsRobinSpacesError(`Error loading space mapping: ${err.message}`));
+          dispatch(integrationsRoomBookingSpacesError(`Error loading space mapping: ${err.message}`, 'robin'));
           return false;
         }
       }
@@ -119,16 +119,21 @@ export default function routeTransitionExploreSpaceMeeting(id) {
       }
     })();
 
-    // Load robin spaces if robin is active
-    if (roomBookingDefaultService && roomBookingDefaultService.name === 'robin') {
-      let robinSpaces;
+    // Load room booking spaces if room booking service is active
+    let roomBookingProvider;
+    if (roomBookingDefaultService && ['robin', 'teem'].includes(roomBookingDefaultService.name)) {
+      roomBookingProvider = roomBookingDefaultService.name;
+    }
+
+    if (roomBookingProvider) {
+      let spaces;
       try {
-        robinSpaces = objectSnakeToCamel(await core().get('/integrations/robin/spaces/', {})).data
+        spaces = objectSnakeToCamel(await core().get(`/integrations/${roomBookingProvider}/spaces/`, {})).data
       } catch (err) {
-        dispatch(integrationsRobinSpacesError(`Error loading robin spaces: ${err.message}`));
+        dispatch(integrationsRoomBookingSpacesError(`Error loading ${roomBookingProvider} spaces: ${err.message}`, roomBookingProvider));
         return;
       }
-      dispatch(integrationsRobinSpacesSet(robinSpaces));
+      dispatch(integrationsRoomBookingSpacesSet(spaces, roomBookingProvider));
     }
 
     if (spaceMappingExists) {

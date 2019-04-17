@@ -160,7 +160,7 @@ $dashboardDigestBackdropZIndex: 99999;
 }
 .dashboardDigestListEmptyContainerTitle {
   color: $grayCinder;
-  font-size: 16px;
+  font-size: $fontSizeBase;
   font-weight: 400;
   margin-top: 0px;
   margin-bottom: 4px;
@@ -182,7 +182,7 @@ $dashboardDigestBackdropZIndex: 99999;
   color: $brandDanger;
   margin-top: 0px;
 }
-.dashboardDigestListErrorContainerDesc { font-size: 16px; }
+.dashboardDigestListErrorContainerDesc { font-size: $fontSizeBase; }
 
 
 

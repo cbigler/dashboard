@@ -42,6 +42,11 @@ None of these variables are required. They enable optional features that are use
 - `REACT_APP_GA_TRACKING_CODE`: Optional google analytics tracking code for tracking metrics.
 - `REACT_APP_MIXPANEL_TOKEN`: Optional mixpanel token for tracking user interactions.
 - `REACT_APP_ENVIRONMENT`: Optional parameter to set which set of APIs to use (production vs staging). Used by CircleCi and in `src/index.js`.
+- `REACT_APP_SLACK_CLIENT_ID`: Optional parameter to setup a Slack integration.
+- `REACT_APP_SLACK_REDIRECT_URL`: Optional parameter to handle the redirect after the Slack integration is authorized.
+- `REACT_APP_TEEM_CLIENT_ID`: Optional parameter to setup a Teem integration.
+- `REACT_APP_TEEM_REDIRECT_URL`: Optional parameter to handle the redirect after the Teem integration is authorized.
+
 
 ### Configuring the dashboard to communicate with staging or local deveopment services (advanced)
 The dashboard contains an interface for changing which servers it communicates with for logging in,

@@ -1,5 +1,6 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/fonts.scss";
 
 .dashboardAppFrameScrollBodySpacer {
   height: 150px;
@@ -66,7 +67,7 @@
 .dashboardSidebarItemName {
   color: $grayDarkest;
 
-  font-size: 16px;
+  font-size: $fontSizeBase;
   font-weight: 600;
   margin-right: auto;
   padding-right: 10px;

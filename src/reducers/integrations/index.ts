@@ -11,12 +11,9 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-tra
 import {
   INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE,
   INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING,
+  INTEGRATIONS_ROOM_BOOKING_SPACES_SET,
+  INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR,
 } from '../../actions/integrations/room-booking';
-
-import {
-  INTEGRATIONS_ROBIN_SPACES_SET,
-  INTEGRATIONS_ROBIN_SPACES_ERROR,
-} from '../../actions/integrations/robin';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
@@ -33,6 +30,12 @@ const initialState = {
   },
 
   robinSpaces: {
+    view: ('LOADING' as any),
+    data: ([] as Array<any>),
+    error: (null as any),
+  },
+
+  teemSpaces: {
     view: ('LOADING' as any),
     data: ([] as Array<any>),
     error: (null as any),
@@ -65,6 +68,12 @@ export default function integrations(state=initialState, action) {
         data: [],
         error: null,
       },
+      teemSpaces: {
+        ...state.teemSpaces,
+        view: 'LOADING',
+        data: [],
+        error: null,
+      },
       roomBooking: {
         ...state.roomBooking,
         view: 'LOADING',
@@ -91,26 +100,53 @@ export default function integrations(state=initialState, action) {
       },
     };
 
-  case INTEGRATIONS_ROBIN_SPACES_SET:
-    return {
-      ...state,
-      robinSpaces: {
-        ...state.robinSpaces,
-        view: 'VISIBLE',
-        data: action.data,
-        error: null,
-      },
-    };
-
-  case INTEGRATIONS_ROBIN_SPACES_ERROR:
-    return {
-      ...state,
-      robinSpaces: {
+  case INTEGRATIONS_ROOM_BOOKING_SPACES_SET:
+    if (action.service == "robin") {
+      return {
+        ...state,
+        robinSpaces: {
+          ...state.robinSpaces,
+          view: 'VISIBLE',
+          data: action.data,
+          error: null,
+        }
+      }
+    } else if (action.service == "teem") {
+      return {
+        ...state,
+        teemSpaces: {
+          ...state.teemSpaces,
+          view: 'VISIBLE',
+          data: action.data,
+          error: null,
+        }
+      }
+    } else {
+      return {
+        ...state
+      }
+    }
+    
+  case INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR:
+    let newSpacesErrorKey;
+    if (action.service == "robin") {
+      newSpacesErrorKey = { robinSpaces: {
         ...state.robinSpaces,
         view: 'ERROR',
         error: action.error,
-      },
+      }};
+    } else if (action.service == "teem") {
+      newSpacesErrorKey = { teemSpaces: {
+        ...state.teemSpaces,
+        view: 'ERROR',
+        error: action.error,
+      }};
+    }
+    return {
+      ...state,
+      newSpacesErrorKey
     };
+
 
   default:
     return state;
