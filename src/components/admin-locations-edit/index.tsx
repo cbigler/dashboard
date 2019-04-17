@@ -20,16 +20,27 @@ import {
 } from '@density/ui';
 
 
+// When called from within `AdminLocationsEdit`, returns the initial component state.
 function calculateEmptyFormState(props) {
   return {
     loaded: true,
+
+    // General information module
     name: props.selectedSpace.name,
     spaceType: props.selectedSpace.spaceType,
     'function': props.selectedSpace['function'],
+
+    // Metadata module
     rentAnnual: props.selectedSpace.rentAnnual,
     size: props.selectedSpace.size,
     capacity: props.selectedSpace.capacity,
     seatAssignments: props.selectedSpace.seatAssignments,
+
+    // Address module
+    address: props.selectedSpace.address,
+    coordinates: props.selectedSpace.latitude && props.selectedSpace.longitude ? (
+      [props.selectedSpace.latitude, props.selectedSpace.longitude]
+    ) : null,
   };
 }
 
