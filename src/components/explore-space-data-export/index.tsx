@@ -20,6 +20,10 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 
+import isOutsideRange, {
+  MAXIMUM_DAY_LENGTH,
+} from '../../helpers/date-range-picker-is-outside-range/index';
+
 import {
   parseISOTimeAtSpace,
   parseFromReactDates,
@@ -27,30 +31,9 @@ import {
   formatForReactDates,
 } from '../../helpers/space-time-utilities/index';
 
-// The maximum number of days that can be selected by the date range picker
-const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
-
 // When the user selects a start date, select a range that's this long. THe user can stil ladjust
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
-
-// Given a day on the calendar and the current day, determine if the square on the calendar should
-// be grayed out or not.
-export function isOutsideRange(startISOTime, datePickerInput, day) {
-  const startDate = moment.utc(startISOTime);
-  if (day.isAfter(moment.utc())) {
-    return true;
-  }
-
-  if (datePickerInput === 'endDate') {
-    return datePickerInput === 'endDate' && startDate &&
-      !( // Is the given `day` within `MAXIMUM_DAY_LENGTH` days from the start date?
-        isInclusivelyAfterDay(day, startDate) &&
-        isInclusivelyBeforeDay(day, startDate.clone().add(MAXIMUM_DAY_LENGTH - 1, 'days'))
-      );
-  }
-  return false;
-}
 
 function ExploreSpaceDataExport({
   spaces,
@@ -94,11 +77,7 @@ function ExploreSpaceDataExport({
               // On desktop, the calendar is two months wide and right aligned.
               numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
 
-              isOutsideRange={day => isOutsideRange(
-                spaces.filters.startDate,
-                spaces.filters.datePickerInput,
-                day
-              )}
+              isOutsideRange={isOutsideRange}
 
               // common ranges functionality
               commonRanges={getCommonRangesForSpace(space)}

@@ -350,7 +350,14 @@ export function calculateHourlyBreakdown(space, reportName, metric, title, aggre
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading(reportName, null));
     const { startDate, endDate } = getState().spaces.filters;
-    const report = generateHourlyBreakdownEphemeralReport(space, startDate, endDate, metric, title, aggregation);
+    const report = generateHourlyBreakdownEphemeralReport(
+      space,
+      formatInISOTimeAtSpace(moment.utc(startDate), space),
+      formatInISOTimeAtSpace(moment.utc(endDate), space),
+      metric,
+      title,
+      aggregation,
+    );
 
     let data, errorThrown: any = false;
     try {

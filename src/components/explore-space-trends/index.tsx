@@ -43,30 +43,13 @@ import {
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 
-// The maximum number of days that can be selected by the date range picker
-const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
+import isOutsideRange, {
+  MAXIMUM_DAY_LENGTH,
+} from '../../helpers/date-range-picker-is-outside-range/index';
 
 // When the user selects a start date, select a range that's this long. THe user can stil ladjust
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
-
-// Given a day on the calendar and the current day, determine if the square on the calendar should
-// be grayed out or not.
-export function isOutsideRange(startISOTime, datePickerInput, day) {
-  const startDate = moment.utc(startISOTime);
-  if (day.isAfter(moment.utc())) {
-    return true;
-  }
-
-  if (datePickerInput === 'endDate') {
-    return datePickerInput === 'endDate' && startDate &&
-      !( // Is the given `day` within `MAXIMUM_DAY_LENGTH` days from the start date?
-        isInclusivelyAfterDay(day, startDate) &&
-        isInclusivelyBeforeDay(day, startDate.clone().add(MAXIMUM_DAY_LENGTH - 1, 'days'))
-      );
-  }
-  return false;
-}
 
 class ExploreSpaceTrends extends React.Component<any, any> {
   container: any;
@@ -163,8 +146,16 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space,
                 )}
                 onChange={({startDate, endDate}) => {
-                  startDate = startDate ? parseFromReactDates(startDate, space) : parseISOTimeAtSpace(spaces.filters.startDate, space);
-                  endDate = endDate ? parseFromReactDates(endDate, space) : parseISOTimeAtSpace(spaces.filters.endDate, space);
+                  if (startDate) {
+                    startDate = parseFromReactDates(startDate, space).startOf('day');
+                  } else {
+                    startDate = parseISOTimeAtSpace(spaces.filters.startDate, space);
+                  }
+                  if (endDate) {
+                    endDate = parseFromReactDates(endDate, space).endOf('day');
+                  } else {
+                    endDate = parseISOTimeAtSpace(spaces.filters.endDate, space);
+                  }
 
                   // If the user selected over 14 days, then clamp them back to 14 days.
                   if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
@@ -191,11 +182,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 // On desktop, the calendar is two months wide and right aligned.
                 numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
 
-                isOutsideRange={day => isOutsideRange(
-                  spaces.filters.startDate,
-                  spaces.filters.datePickerInput,
-                  day
-                )}
+                isOutsideRange={isOutsideRange}
 
                 // common ranges functionality
                 commonRanges={getCommonRangesForSpace(space)}
