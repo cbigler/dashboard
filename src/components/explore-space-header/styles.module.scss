@@ -1,5 +1,7 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/fonts.scss";
+
 .exploreSpaceHeaderContainer {
   // padding-top: 20px;
 }
@@ -25,7 +27,7 @@
 }
 
 .exploreSpaceHeaderCapacity {
-  font-size: 16px;
+  font-size: $fontSizeBase;
   font-weight: normal;
   color: $grayCinder;
 }
