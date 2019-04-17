@@ -30,7 +30,7 @@
   font-size: $fontSizeBase;
   color: $grayDarkest;
 }
-:first-child > .listViewCell {
+:first-child > .listViewCell, :first-child > a > .listViewCell {
   padding-left: 0;
 }
 :last-child > .listViewVell {
@@ -51,3 +51,4 @@
   color: $brandPrimary;
   cursor: pointer;
 }
+.listViewColumn > a { text-decoration: none; }

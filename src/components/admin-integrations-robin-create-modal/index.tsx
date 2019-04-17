@@ -11,9 +11,8 @@ import {
   AppBarTitle,
   AppBarContext,
   RadioButton,
+  Modal,
 } from '@density/ui';
-
-import Modal from '../modal';
 
 import FormLabel from '../form-label';
 

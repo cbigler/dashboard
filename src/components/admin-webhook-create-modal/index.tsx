@@ -10,10 +10,10 @@ import {
   AppBarTitle,
   AppBarContext,
   AppBarSection,
+  Modal,
 } from '@density/ui';
 
 import FormLabel from '../form-label';
-import Modal from '../modal';
 
 export default class WebhookCreateModal extends React.Component<any, any> {
   state = {

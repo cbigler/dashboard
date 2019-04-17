@@ -61,6 +61,9 @@ import routeTransitionDashboardList from './actions/route-transition/dashboard-l
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
 import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
+import routeTransitionAdminIntegrationsTeem from './actions/route-transition/admin-integrations-teem';
+import routeTransitionAdminIntegrationsServiceFailure from './actions/route-transition/admin-integrations-service-failure';
+import routeTransitionAdminIntegrationsSlack from './actions/route-transition/admin-integrations-slack';
 import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
 import routeTransitionAdminUserManagementDetail from './actions/route-transition/admin-user-management-detail';
 import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
@@ -191,6 +194,9 @@ router.addRoute('account/forgot-password/:token', token => routeTransitionAccoun
 
 // Advanced account management (Administration)
 router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
+router.addRoute('admin/integrations/teem/fail/', (code) => routeTransitionAdminIntegrationsServiceFailure());
+router.addRoute('admin/integrations/teem/:access_token/:expires_in/:refresh_token/:token_type', (access_token, expires_in, refresh_token, token_type) => routeTransitionAdminIntegrationsTeem(access_token, expires_in, refresh_token, token_type));
+router.addRoute('admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(code));
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
 router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());

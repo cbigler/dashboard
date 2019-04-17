@@ -14,7 +14,7 @@ export function errorHandler(error, store) {
       window.location.hash = '#/login';
     }
     const data = error.response.data;
-    return Promise.reject(new Error(data.detail || data));
+    return Promise.reject(new Error(data.detail || JSON.stringify(data)));
   } else {
     return Promise.reject(error);
   }

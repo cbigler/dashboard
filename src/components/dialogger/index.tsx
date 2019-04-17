@@ -10,9 +10,9 @@ import {
   AppBarTitle,
   Button,
   ButtonContext,
+  Modal,
 } from '@density/ui';
 
-import Modal from '../modal';
 import hideModal from '../../actions/modal/hide';
 
 export function Dialogger({

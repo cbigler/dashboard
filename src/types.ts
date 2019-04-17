@@ -11,7 +11,7 @@ export type DensitySpace = {
   id: string,
   name: string,
   description: string,
-  parentid: string,
+  parentId: string,
   spaceType: DensitySpaceTypes,
   timeZone: string,
   dailyReset: string,
@@ -218,6 +218,11 @@ export type DensityRobinSpace = {
   id: string,
   name: string,
   spaces: Array<DensityRobinSpace>,
+};
+
+export type DensityTeemSpace = {
+  id: string,
+  name: string,
 };
 
 export type DensityReportOptions = {

@@ -1,6 +1,5 @@
 import React from 'react';
 import FormLabel from '../form-label/index';
-import Modal from '../modal/index';
 
 import styles from './styles.module.scss';
 
@@ -10,6 +9,7 @@ import {
   Button,
   InputBox,
   Switch,
+  Modal,
 } from '@density/ui';
 
 // Called initially to get the 

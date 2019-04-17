@@ -10,9 +10,9 @@ import {
   CardLoading,
   InputBox,
   Icons,
+  Modal,
 } from '@density/ui';
 
-import Modal from '../modal/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
 export default class ExploreEditCountModal extends React.Component<any, any> {

@@ -10,10 +10,10 @@ import {
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Modal,
 } from '@density/ui';
 
 import FormLabel from '../form-label';
-import Modal from '../modal';
 
 export default class IntegrationsRobinUpdateModal extends React.Component<any, any> {
   constructor(props) {
@@ -118,7 +118,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
                 type="primary"
                 width="100%"
                 disabled={this.state.robinOrganizationId !== this.state.destroyRobinOrganizationIdConfirmation}
-                onClick={() => this.props.onDestroyServiceAuthorizationRobin(this.props.initialServiceAuthorization.id)}
+                onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
               >I understand the consequences. Delete.</Button>
             </AppBarSection>
           </AppBar>

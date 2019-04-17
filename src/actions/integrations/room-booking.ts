@@ -49,3 +49,20 @@ export function integrationsSpaceMappingUpdate(service, spaceId, serviceSpaceId)
     dispatch(showToast({text: 'Space mapping complete'}));
   };
 }
+
+
+export const INTEGRATIONS_ROOM_BOOKING_SPACES_SET = 'INTEGRATIONS_ROOM_BOOKING_SPACES_SET',
+             INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR = 'INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR',
+             INTEGRATIONS_ROOM_BOOKING_SPACES_SELECT = 'INTEGRATIONS_ROOM_BOOKING_SPACES_SELECT';
+
+export function integrationsRoomBookingSpacesSet(data, service) {
+  return { type: INTEGRATIONS_ROOM_BOOKING_SPACES_SET, data, service };
+}
+
+export function integrationsRoomBookingSpacesError(error, service) {
+  return { type: INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR, error, service };
+}
+
+export function integrationsRoomBookingSpacesSelect(id) {
+  return { type: INTEGRATIONS_ROOM_BOOKING_SPACES_SELECT, id };
+}

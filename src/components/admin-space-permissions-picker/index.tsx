@@ -2,7 +2,6 @@ import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
 import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
 import colorVariables from '@density/ui/variables/colors.json';
-import Skeleton from '../skeleton/index';
 
 import styles from './styles.module.scss';
 
@@ -13,6 +12,7 @@ import {
   AppBarTitle,
   AppBarSection,
   Icons,
+  Skeleton,
 } from '@density/ui';
 
 import { getChildrenOfSpace, getParentsOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
@@ -114,8 +114,8 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
                 <AppBarSection>
                   <InputBox
                     leftIcon={<Icons.Search width={16} height={16} />}
-                    placeholder={`ex. "Flex Office", "New York"`}
-                    width={248}
+                    placeholder={`ex. "New York"`}
+                    width={250}
                     value={searchQuery}
                     onChange={e => this.setState({searchQuery: e.target.value})}
                   />

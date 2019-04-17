@@ -20,11 +20,11 @@ import {
   Button,
   DashboardReportGrid,
   Icons,
+  Modal,
 } from '@density/ui';
 import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
-import Modal from '../modal';
 import Report from '../report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
