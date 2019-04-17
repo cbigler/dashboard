@@ -22,6 +22,7 @@ import {
   Modal,
   Skeleton,
 } from '@density/ui';
+
 import colorVariables from '@density/ui/variables/colors.json';
 
 import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
@@ -40,8 +41,6 @@ import collectionUsersInviteResend from '../../actions/collection/users/invite_r
 import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
-
-const DASHBOARD_BACKGROUND = '#FAFAFA';
 
 export const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
@@ -196,7 +195,7 @@ export function AdminUserManagement({
         </AppBarSection>
       </AppBar>
 
-      <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
+      <AppScrollView backgroundColor={colorVariables.grayLightest}>
         {users.view === 'ERROR' ? (
           <div className={classnames(styles.adminUserManagementList, styles.centered)}>
             <GenericErrorState />

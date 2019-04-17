@@ -39,8 +39,6 @@ import routeTransitionDashboardDetail from '../../actions/route-transition/dashb
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
-const DASHBOARD_BACKGROUND = '#FAFAFA';
-
 function DashboardSidebarItem({selected, id, name, reportSet}) {
   const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
   return (
@@ -316,7 +314,7 @@ export function Dashboard({
               ) : null}
             </AppBarSection>
           </AppBar>
-          <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
+          <AppScrollView backgroundColor={colorVariables.grayLightest}>
             <DashboardMainScrollViewContent
               dashboards={dashboards}
               selectedDashboard={selectedDashboard}

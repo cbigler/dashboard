@@ -96,6 +96,7 @@
 .dashboardWrapper {
   width: 100%;
   max-width: 1440px;
+  margin: 0 auto;
 
   animation: fadeInUp 0.4s ease-out;
 }
@@ -111,7 +112,7 @@
 }
 .dashboardHeader {
   margin-top: 40px;
-  padding-top: 16px;
+  padding-top: 8px;
   border-top: 1px solid $grayDarker;
   font-size: 24px;
   font-weight: 400;

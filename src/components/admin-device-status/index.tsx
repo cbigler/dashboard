@@ -21,8 +21,6 @@ function getStatusColor(status) {
   }
 }
 
-const DASHBOARD_BACKGROUND = '#FAFAFA';
-
 export function AdminDeviceStatus({
   sensors,
   spaces
@@ -34,7 +32,7 @@ export function AdminDeviceStatus({
       return 1;
     return 0;
   });
-  return <AppScrollView backgroundColor={DASHBOARD_BACKGROUND}>
+  return <AppScrollView backgroundColor={colorVariables.grayLightest}>
     <div className={styles.adminDeviceList}>
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
