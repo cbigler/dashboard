@@ -676,15 +676,26 @@ const MAP_ZOOM_BY_SPACE_TYPE = {
   space: 14,
 };
 
-export class AdminLocationsDetailModulesAddress extends Component<any, any> {
+// NOTE TO SELF AND TO ANY REVIEWERS: This component needs to be extracted out into its own file
+// before merging.
+export class Map extends Component<any, any> {
   map?: MapboxGL.Map;
   geocoderInstance?: any;
   initialMarker?: any;
   geocoder = React.createRef<HTMLDivElement>();
   container = React.createRef<HTMLDivElement>();
 
+  static defaultProps = { readonly: false };
+
   componentDidMount() {
-    const { space, address, coordinates, onChangeAddress, onChangeCoordinates } = this.props;
+    const {
+      space,
+      address,
+      coordinates,
+      readonly,
+      onChangeAddress,
+      onChangeCoordinates,
+    } = this.props;
 
     // The below is the mapbox "public token" for our mapbox account.
     (MapboxGL as any).accessToken = 'pk.eyJ1IjoiYnJpYW5kZW5zaXR5IiwiYSI6ImNqbnYwNWxqbTBodnYzcW14d3liMGczMGgifQ.tCIWM2RSxX1Qr3dFlPQ8wQ';
@@ -695,6 +706,7 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
         style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
         center: coordinates ? coordinates : DEFAULT_MAP_COORDINATES,
         zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[space.type] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
+        interactive: readonly ? false : true,
       });
 
       // If coordinates exist prior to typing into the geocoder, render an initital point on the
@@ -704,7 +716,7 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
         this.initialMarker = new MapboxGL.Marker({
           element: MARKER_ELEMENT,
           anchor: 'center',
-          draggable: true,
+          draggable: readonly ? false : true,
         });
         this.initialMarker.setLngLat(coordinates);
         this.initialMarker.addTo(this.map);
@@ -716,47 +728,49 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
       // - https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder-outside-the-map/
       // - https://docs.mapbox.com/mapbox-gl-js/example/mapbox-gl-geocoder-custom-render/
       // - https://docs.mapbox.com/mapbox-gl-js/example/point-from-geocoder-result/
-      this.geocoderInstance = new MapboxGLGeocoder({
-        accessToken: MapboxGL.accessToken,
-        mapboxgl: MapboxGL,
-        placeholder: 'Search for an address',
-        marker: {
-          // See: https://docs.mapbox.com/mapbox-gl-js/api/#marker
-          element: MARKER_ELEMENT,
-          anchor: 'center',
-          draggable: true,
-        },
-        render(item) {
-          return ReactDOMServer.renderToStaticMarkup(
-            <div className={styles.addressMapItem}>
-              <div className={styles.addressMapItemIcon}>
-                <Icons.Locate />
+      if (!readonly) {
+        this.geocoderInstance = new MapboxGLGeocoder({
+          accessToken: MapboxGL.accessToken,
+          mapboxgl: MapboxGL,
+          placeholder: 'Search for an address',
+          marker: {
+            // See: https://docs.mapbox.com/mapbox-gl-js/api/#marker
+            element: MARKER_ELEMENT,
+            anchor: 'center',
+            draggable: readonly ? false : true,
+          },
+          render(item) {
+            return ReactDOMServer.renderToStaticMarkup(
+              <div className={styles.addressMapItem}>
+                <div className={styles.addressMapItemIcon}>
+                  <Icons.Locate />
+                </div>
+                <div className={styles.addressMapItemText}>
+                  {item.place_name}
+                </div>
               </div>
-              <div className={styles.addressMapItemText}>
-                {item.place_name}
-              </div>
-            </div>
-          );
-        },
-        // Adjust transition speed when zooming in / out
-        // See https://docs.mapbox.com/mapbox-gl-js/api/#map#flyto
-        flyTo: {
-          speed: 5.0,
-          maxDuration: 5000,
-        },
-      });
-      // Called when geocoder "x" icon clicked / pressed. Clear the map.
-      this.geocoderInstance.on('clear', () => {
-        onChangeCoordinates(null);
-        onChangeAddress(null);
-      });
+            );
+          },
+          // Adjust transition speed when zooming in / out
+          // See https://docs.mapbox.com/mapbox-gl-js/api/#map#flyto
+          flyTo: {
+            speed: 5.0,
+            maxDuration: 5000,
+          },
+        });
+        // Called when geocoder "x" icon clicked / pressed. Clear the map.
+        this.geocoderInstance.on('clear', () => {
+          onChangeCoordinates(null);
+          onChangeAddress(null);
+        });
 
-      // See: https://gis.stackexchange.com/questions/148985/mapbox-geocoding-and-markers
-      this.geocoderInstance.on('result', this.onGeocoderResult);
+        // See: https://gis.stackexchange.com/questions/148985/mapbox-geocoding-and-markers
+        this.geocoderInstance.on('result', this.onGeocoderResult);
 
-      // Add geocoder to dom
-      const geocoderDomElement = this.geocoderInstance.onAdd(this.map);
-      this.geocoder.current.appendChild(geocoderDomElement);
+        // Add geocoder to dom
+        const geocoderDomElement = this.geocoderInstance.onAdd(this.map);
+        this.geocoder.current.appendChild(geocoderDomElement);
+      }
     }
   }
   componentWillUnmount() {
@@ -786,20 +800,25 @@ export class AdminLocationsDetailModulesAddress extends Component<any, any> {
   }
 
   render() {
-    const { coordinates, address } = this.props;
+    const { readonly, address } = this.props;
     return (
-      <AdminLocationsDetailModule title="Address">
-        <div className={styles.addressWrapper}>
-          <div
-            className={styles.addressMapGeocoder}
-            ref={this.geocoder}
-          />
-          <div
-            className={styles.addressMapContainer}
-            ref={this.container}
-          />
-        </div>
-      </AdminLocationsDetailModule>
+      <div className={styles.addressWrapper}>
+        <div
+          className={styles.addressMapGeocoder}
+          ref={this.geocoder}
+        />
+        <div
+          className={styles.addressMapContainer}
+          ref={this.container}
+        />
+        {readonly ? (
+          <div className={styles.addressMapTooltipWrapper}>
+            <div className={styles.addressMapTooltip}>
+              {address}
+            </div>
+          </div>
+        ) : null}
+      </div>
     );
   }
 }
@@ -833,6 +852,26 @@ MARKER_ELEMENT.innerHTML = `
     </g>
 </svg>
 `;
+
+export function AdminLocationsDetailModulesAddress({
+  space,
+  address,
+  coordinates,
+  onChangeAddress,
+  onChangeCoordinates,
+}) {
+  return (
+    <AdminLocationsDetailModule title="Address">
+      <Map
+        space={space}
+        address={address}
+        onChangeAddress={onChangeAddress}
+        coordinates={coordinates}
+        onChangeCoordinates={onChangeCoordinates}
+      />
+    </AdminLocationsDetailModule>
+  );
+}
 
 
 

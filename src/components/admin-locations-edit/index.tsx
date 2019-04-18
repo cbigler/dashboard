@@ -224,6 +224,7 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}: AdminLoca
       </div>
       <div className={styles.moduleWrapper}>
         <AdminLocationsDetailModulesAddress
+          space={space}
           address={formState.address}
           coordinates={formState.coordinates}
           onChangeAddress={address => onChangeField('address', address)}
