@@ -9,7 +9,7 @@ export default function isOutsideRange(space, localDay) {
   const day = parseISOTimeAtSpace(localDay, space);
   const now = getCurrentLocalTimeAtSpace(space);
 
-  // If a startDate is selected, then permit the next MAXIMUM_DAY_LENGTH days to be selectable
+  // If a startDate is selected, then permit the previous MAXIMUM_DAY_LENGTH days to be selectable
   const rangeStart = now.clone().subtract(MAXIMUM_DAY_LENGTH-1, 'days');
   const rangeEnd = now.clone().subtract(1, 'day');
   const isWithinRange = (
