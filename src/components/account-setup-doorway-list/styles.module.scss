@@ -135,7 +135,7 @@
 
   margin-left: auto;
 
-  font-size: 16px; // FIXME: ugh, a font size that's not one of the presets?
+  font-size: $fontSizeBase; // FIXME: ugh, a font size that's not one of the presets?
   font-weight: normal;
   white-space: nowrap;
 

@@ -21,21 +21,44 @@ import {
 } from '@density/ui';
 
 
-function calculateEmptyFormState(props) {
+function calculateEmptyFormState(props): AdminLocationsEditState {
   return {
     loaded: true,
     name: props.selectedSpace.name,
     spaceType: props.selectedSpace.spaceType,
-    'function': props.selectedSpace['function'],
-    rentAnnual: props.selectedSpace.rentAnnual,
-    size: props.selectedSpace.size,
+    'function': props.selectedSpace['function'] || null,
+    rentAnnual: props.selectedSpace.rentAnnual || '',
+    size: props.selectedSpace.size || '',
     sizeUnit: props.selectedSpace.sizeUnit || 'feet',
     currency: props.selectedSpace.currency || 'USD',
-    capacity: props.selectedSpace.capacity,
-    targetCapacity: props.selectedSpace.targetCapacity,
+    capacity: props.selectedSpace.capacity || '',
+    targetCapacity: props.selectedSpace.targetCapacity || '',
     levelNumber: props.selectedSpace.levelNumber || '',
   };
 }
+
+type AdminLocationsEditProps = {
+  selectedSpace: DensitySpace,
+  spaces: {
+    view: string,
+    spaces: Array<DensitySpace>,
+  },
+};
+
+type AdminLocationsEditState = {
+  loaded: boolean,
+
+  name: string,
+  spaceType: string,
+  'function': string,
+  rentAnnual: any,
+  size: any,
+  sizeUnit: 'feet' | 'meters',
+  currency: 'USD',
+  capacity: string,
+  targetCapacity: string,
+  levelNumber: string,
+};
 
 class AdminLocationsEdit extends Component<any, any> {
   constructor(props) {
@@ -89,7 +112,12 @@ class AdminLocationsEdit extends Component<any, any> {
                   >
                     <Icons.ArrowLeft />
                   </a>
-                  Edit {selectedSpace.spaceType[0].toUpperCase()}{selectedSpace.spaceType.slice(1)}
+                  Edit {{
+                    campus: 'Campus',
+                    building: 'Building',
+                    floor: 'Level',
+                    space: 'Room',
+                  }[selectedSpace.spaceType]}
                 </AppBarTitle>
                 <AppBarSection>
                   <ButtonContext.Provider value="CANCEL_BUTTON">

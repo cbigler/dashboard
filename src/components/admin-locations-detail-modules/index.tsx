@@ -23,6 +23,7 @@ function getAreaUnit(measurementUnit) {
 }
 
 const SPACE_FUNCTION_CHOICES = [
+  { id: null, label: 'No function' },
   { id: 'break_room', label: 'Break Room' },
   { id: 'breakout', label: 'Breakout' },
   { id: 'cafeteria', label: 'Cafeteria' },
@@ -370,7 +371,7 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Target Capacity"
+              label="Target Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
@@ -388,7 +389,7 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Legal Capacity"
+              label="Legal Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -476,7 +477,7 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Target Capacity"
+              label="Target Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
@@ -492,7 +493,7 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Legal Capacity"
+              label="Legal Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -593,23 +594,6 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Rent (annual)"
-              htmlFor="admin-locations-detail-modules-general-info-rent-annual"
-              input={
-                <InputBox
-                  type="number"
-                  id="admin-locations-detail-modules-general-info-rent-annual"
-                  placeholder="ex. 48000"
-                  value={formState.rentAnnual}
-                  onChange={e => onChangeField('rentAnnual', e.target.value)}
-                  leftIcon={<span>$</span>}
-                  width="100%"
-                />
-              }
-            />
-          </div>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
-            <FormLabel
               label={`Size (${getAreaUnit(formState.sizeUnit)})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
@@ -624,35 +608,35 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
               }
             />
           </div>
-        </div>
-        <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Capacity"
-              htmlFor="admin-locations-detail-modules-general-info-capacity"
-              input={
-                <InputBox
-                  type="number"
-                  id="admin-locations-detail-modules-general-info-capacity"
-                  placeholder="ex. 80"
-                  value={formState.capacity || ''}
-                  onChange={e => onChangeField('capacity', e.target.value)}
-                  width="100%"
-                />
-              }
-            />
-          </div>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
-            <FormLabel
-              label="Seat Assignments"
+              label="Target Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
                   type="number"
                   id="admin-locations-detail-modules-general-info-seat-assignments"
+                  placeholder="ex. 80"
+                  value={formState.targetCapacity}
+                  onChange={e => onChangeField('targetCapacity', e.target.value)}
+                  width="100%"
+                />
+              }
+            />
+          </div>
+        </div>
+        <div className={styles.spaceFieldRendererRow}>
+          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
+            <FormLabel
+              label="Legal Capacity (people)"
+              htmlFor="admin-locations-detail-modules-general-info-capacity"
+              input={
+                <InputBox
+                  type="number"
+                  id="admin-locations-detail-modules-general-info-capacity"
                   placeholder="ex. 100"
-                  value={formState.seatAssignments}
-                  onChange={e => onChangeField('seatAssignments', e.target.value)}
+                  value={formState.capacity || ''}
+                  onChange={e => onChangeField('capacity', e.target.value)}
                   width="100%"
                 />
               }
