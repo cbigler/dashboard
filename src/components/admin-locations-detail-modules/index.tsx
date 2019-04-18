@@ -5,6 +5,8 @@ import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
 import classnames from 'classnames';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
+import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
 import showModal from '../../actions/modal/show';
 import { DensitySpace } from '../../types';
@@ -832,6 +834,8 @@ MARKER_ELEMENT.innerHTML = `
 </svg>
 `;
 
+
+
 type AdminLocationsDetailModulesDangerZoneUnconnectedProps = {
   space: DensitySpace,
   onShowConfirm: () => any,
@@ -870,3 +874,42 @@ export const AdminLocationsDetailModulesDangerZone = connect(
     },
   }),
 )(AdminLocationsDetailModulesDangerZoneUnconnected);
+
+
+
+export function AdminLocationsDetailModulesOperatingHours({space, formState, onChangeField}) {
+  return (
+    <AdminLocationsDetailModule title="Operating Hours">
+      <div className={styles.operatingHoursWrapper}>
+        <div className={styles.operatingHoursLeft}>
+          <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
+            Time Zone:
+          </label>
+          <InputBox
+            id="admin-locations-detail-modules-operating-hours-time-zone"
+            type="select"
+            choices={TIME_ZONE_CHOICES}
+            value={formState.timeZone}
+            onChange={choice => onChangeField('timeZone', choice.id)}
+            width={350}
+            menuMaxHeight={300}
+          />
+        </div>
+        <div className={styles.operatingHoursRight}>
+          <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
+            The day starts at:
+          </label>
+          <InputBox
+            id="admin-locations-detail-modules-operating-hours-time-zone"
+            type="select"
+            choices={generateResetTimeChoices(space).map(i => ({ id: i.value, label: i.display }))}
+            value={formState.dailyReset}
+            onChange={choice => onChangeField('dailyReset', choice.id)}
+            menuMaxHeight={300}
+            width={114}
+          />
+        </div>
+      </div>
+    </AdminLocationsDetailModule>
+  );
+}

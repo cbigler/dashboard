@@ -1,5 +1,6 @@
 import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import styles from './styles.module.scss';
 
 import Dialogger from '../dialogger';
@@ -11,6 +12,7 @@ import {
   AdminLocationsDetailModulesMetadata,
   AdminLocationsDetailModulesAddress,
   AdminLocationsDetailModulesDangerZone,
+  AdminLocationsDetailModulesOperatingHours,
 } from '../admin-locations-detail-modules/index';
 
 import {
@@ -47,6 +49,10 @@ function calculateEmptyFormState(props): AdminLocationsEditState {
     coordinates: props.selectedSpace.latitude && props.selectedSpace.longitude ? (
       [props.selectedSpace.latitude, props.selectedSpace.longitude]
     ) : null,
+
+    // Operating hours module
+    timeZone: props.selectedSpace.timeZone || moment.tz.guess(), // Guess the time zone
+    dailyReset: props.selectedSpace.dailyReset || '04:00',
   };
 }
 
@@ -73,6 +79,8 @@ type AdminLocationsEditState = {
   levelNumber: string,
   address: string,
   coordinates: [number, number] | null,
+  timeZone: string,
+  dailyReset: string | null,
 };
 
 class AdminLocationsEdit extends Component<any, any> {
@@ -188,7 +196,17 @@ function AdminLocationsCampusEdit({space, formState, onChangeField}: AdminLocati
         />
       </div>
       <div className={styles.moduleWrapper}>
-        TODO: add campus modules
+        <AdminLocationsDetailModulesOperatingHours
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesDangerZone
+          space={space}
+          onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+        />
       </div>
     </div>
   );
@@ -220,9 +238,16 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}: AdminLoca
         />
       </div>
       <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesOperatingHours
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
         <AdminLocationsDetailModulesDangerZone
           space={space}
-          onDeleteSpace={() => console.log('DELETE')}
+          onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
         />
       </div>
     </div>
@@ -247,7 +272,17 @@ function AdminLocationsFloorEdit({space, formState, onChangeField}: AdminLocatio
         />
       </div>
       <div className={styles.moduleWrapper}>
-        TODO: add floor modules
+        <AdminLocationsDetailModulesOperatingHours
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesDangerZone
+          space={space}
+          onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+        />
       </div>
     </div>
   );
@@ -271,7 +306,17 @@ function AdminLocationsSpaceEdit({space, formState, onChangeField}: AdminLocatio
         />
       </div>
       <div className={styles.moduleWrapper}>
-        TODO: add space modules
+        <AdminLocationsDetailModulesOperatingHours
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesDangerZone
+          space={space}
+          onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+        />
       </div>
     </div>
   );

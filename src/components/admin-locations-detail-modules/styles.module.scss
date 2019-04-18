@@ -315,6 +315,8 @@
 
 .modulesMetadataDropdowns { margin-left: 8px; }
 
+
+
 .dangerZoneWrapper { display: flex; }
 .dangerZoneLeft {
   flex-grow: 1;
@@ -328,3 +330,21 @@
   display: flex;
   align-items: center;
 }
+
+
+
+
+.operatingHoursWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+.operatingHoursLeft {
+  display: flex;
+  align-items: center;
+}
+.operatingHoursLeft label { margin-right: 8px; }
+.operatingHoursRight {
+  display: flex;
+  align-items: center;
+}
+.operatingHoursRight label { margin-right: 8px; }
