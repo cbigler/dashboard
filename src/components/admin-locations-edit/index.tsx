@@ -17,6 +17,7 @@ import {
   InputBox,
   ButtonContext,
   Button,
+  Icons,
 } from '@density/ui';
 
 
@@ -28,8 +29,11 @@ function calculateEmptyFormState(props) {
     'function': props.selectedSpace['function'],
     rentAnnual: props.selectedSpace.rentAnnual,
     size: props.selectedSpace.size,
+    sizeUnit: props.selectedSpace.sizeUnit || 'feet',
+    currency: props.selectedSpace.currency || 'USD',
     capacity: props.selectedSpace.capacity,
-    seatAssignments: props.selectedSpace.seatAssignments,
+    targetCapacity: props.selectedSpace.targetCapacity,
+    levelNumber: props.selectedSpace.levelNumber || '',
   };
 }
 
@@ -78,6 +82,13 @@ class AdminLocationsEdit extends Component<any, any> {
             <div className={styles.appBarWrapper}>
               <AppBar>
                 <AppBarTitle>
+                  <a
+                    role="button"
+                    className={styles.arrow}
+                    href={`#/admin/locations/${selectedSpace.id}`}
+                  >
+                    <Icons.ArrowLeft />
+                  </a>
                   Edit {selectedSpace.spaceType[0].toUpperCase()}{selectedSpace.spaceType.slice(1)}
                 </AppBarTitle>
                 <AppBarSection>
