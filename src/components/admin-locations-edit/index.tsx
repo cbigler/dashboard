@@ -200,18 +200,18 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}: AdminLoca
         />
       </div>
       <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          space={space}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
         <AdminLocationsDetailModulesAddress
           address={formState.address}
           coordinates={formState.coordinates}
           onChangeAddress={address => onChangeField('address', address)}
           onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesMetadata
+          space={space}
+          formState={formState}
+          onChangeField={onChangeField}
         />
       </div>
     </div>
