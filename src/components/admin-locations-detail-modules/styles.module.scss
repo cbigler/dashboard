@@ -54,6 +54,8 @@
 .addressMapContainer {
   height: 300px;
   margin-top: 16px;
+
+  :global(.mapboxgl-ctrl-logo) { display: none; }
 }
 
 .addressWrapper {
