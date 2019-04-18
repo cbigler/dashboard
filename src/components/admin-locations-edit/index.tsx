@@ -2,12 +2,15 @@ import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 
+import Dialogger from '../dialogger';
+
 import { DensitySpace } from '../../types';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
   AdminLocationsDetailModulesMetadata,
   AdminLocationsDetailModulesAddress,
+  AdminLocationsDetailModulesDangerZone,
 } from '../admin-locations-detail-modules/index';
 
 import {
@@ -110,6 +113,8 @@ class AdminLocationsEdit extends Component<any, any> {
 
     return (
       <div className={styles.adminLocationsEdit}>
+        <Dialogger />
+
         {spaces.view === 'LOADING' ? (
           <p>need to make a loading state</p>
         ) : null}
@@ -212,6 +217,12 @@ function AdminLocationsBuildingEdit({space, formState, onChangeField}: AdminLoca
           space={space}
           formState={formState}
           onChangeField={onChangeField}
+        />
+      </div>
+      <div className={styles.moduleWrapper}>
+        <AdminLocationsDetailModulesDangerZone
+          space={space}
+          onDeleteSpace={() => console.log('DELETE')}
         />
       </div>
     </div>

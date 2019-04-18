@@ -14,6 +14,7 @@
   padding: 24px;
   padding-top: 18px;
 }
+.moduleError { border-color: $brandDanger; }
 
 
 
@@ -311,3 +312,17 @@
 
 
 .modulesMetadataDropdowns { margin-left: 8px; }
+
+.dangerZoneWrapper { display: flex; }
+.dangerZoneLeft {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.dangerZoneLeft h4 {
+  margin-top: 0px;
+  margin-bottom: 8px;
+}
+.dangerZoneRight {
+  display: flex;
+  align-items: center;
+}

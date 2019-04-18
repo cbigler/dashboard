@@ -1,9 +1,13 @@
 import React, { ReactNode, Component } from 'react';
+import { connect } from 'react-redux';
 import ReactDOMServer from 'react-dom/server';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
 import classnames from 'classnames';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+
+import showModal from '../../actions/modal/show';
+import { DensitySpace } from '../../types';
 
 import * as MapboxGL from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -14,6 +18,8 @@ import {
   AppBarSection,
   AppBarTitle,
   AppBarContext,
+  Button,
+  ButtonContext,
   InputBox,
   Icons,
 } from '@density/ui';
@@ -55,9 +61,9 @@ const SPACE_FUNCTION_CHOICES = [
   { id: 'work_area', label: 'Work Area' },
 ];
 
-export default function AdminLocationsDetailModule({title, actions=null, children}) {
+export default function AdminLocationsDetailModule({title, error=false, actions=null, children}) {
   return (
-    <div className={styles.module}>
+    <div className={classnames(styles.module, {[styles.moduleError]: error})}>
       <div className={styles.moduleHeader}>
         <AppBarContext.Provider value="ADMIN_LOCATIONS_EDIT_MODULE_HEADER">
           <AppBar>
@@ -826,3 +832,41 @@ MARKER_ELEMENT.innerHTML = `
 </svg>
 `;
 
+type AdminLocationsDetailModulesDangerZoneUnconnectedProps = {
+  space: DensitySpace,
+  onShowConfirm: () => any,
+  onDeleteSpace: () => any,
+};
+
+function AdminLocationsDetailModulesDangerZoneUnconnected(
+  {space, onShowConfirm, onDeleteSpace}: AdminLocationsDetailModulesDangerZoneUnconnectedProps
+) {
+  return (
+    <AdminLocationsDetailModule error title="Danger Zone">
+      <div className={styles.dangerZoneWrapper}>
+        <div className={styles.dangerZoneLeft}>
+          <h4>Delete this space</h4>
+          <span>Once deleted, it will be gone forever. Please be certain.</span>
+        </div>
+        <div className={styles.dangerZoneRight}>
+          <ButtonContext.Provider value="DELETE_BUTTON">
+            <Button onClick={onShowConfirm}>Delete this Space</Button>
+          </ButtonContext.Provider>
+        </div>
+      </div>
+    </AdminLocationsDetailModule>
+  );
+}
+
+export const AdminLocationsDetailModulesDangerZone = connect(
+  state => ({}),
+  (dispatch, props: {onDeleteSpace}) => ({
+    onShowConfirm() {
+      dispatch<any>(showModal('MODAL_CONFIRM', {
+        prompt: 'Are you sure you want to delete this space?',
+        confirmText: 'Delete',
+        callback: () => props.onDeleteSpace(),
+      }));
+    },
+  }),
+)(AdminLocationsDetailModulesDangerZoneUnconnected);
