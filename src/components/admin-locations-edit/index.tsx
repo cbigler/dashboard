@@ -24,9 +24,13 @@ import {
 function calculateEmptyFormState(props): AdminLocationsEditState {
   return {
     loaded: true,
+
+    // General information module
     name: props.selectedSpace.name,
     spaceType: props.selectedSpace.spaceType,
     'function': props.selectedSpace['function'] || null,
+
+    // Metadata module
     rentAnnual: props.selectedSpace.rentAnnual || '',
     size: props.selectedSpace.size || '',
     sizeUnit: props.selectedSpace.sizeUnit || 'feet',
@@ -34,6 +38,12 @@ function calculateEmptyFormState(props): AdminLocationsEditState {
     capacity: props.selectedSpace.capacity || '',
     targetCapacity: props.selectedSpace.targetCapacity || '',
     levelNumber: props.selectedSpace.levelNumber || '',
+
+    // Address module
+    address: props.selectedSpace.address || '',
+    coordinates: props.selectedSpace.latitude && props.selectedSpace.longitude ? (
+      [props.selectedSpace.latitude, props.selectedSpace.longitude]
+    ) : null,
   };
 }
 
@@ -58,11 +68,14 @@ type AdminLocationsEditState = {
   capacity: string,
   targetCapacity: string,
   levelNumber: string,
+  address: string,
+  coordinates: [number, number] | null,
 };
 
 class AdminLocationsEdit extends Component<any, any> {
   constructor(props) {
     super(props);
+    
 
     // There's a potential that the spaces are being loaded. If so, then wait for it to load.
     if (this.props.spaces.view === 'VISIBLE' && this.props.selectedSpace) {
