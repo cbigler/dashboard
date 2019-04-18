@@ -703,7 +703,7 @@ export class Map extends Component<any, any> {
     if (this.container && this.container.current && this.geocoder && this.geocoder.current) {
       this.map = new MapboxGL.Map({
         container: this.container.current,
-        style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+        style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
         center: coordinates ? coordinates : DEFAULT_MAP_COORDINATES,
         zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[space.type] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
         interactive: readonly ? false : true,
