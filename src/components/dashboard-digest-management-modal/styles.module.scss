@@ -1,5 +1,7 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
 $dashboardDigestManagementModalAppBarHeight: 64px;
 
 .dashboardDigestManagementModal {
@@ -79,7 +81,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
   flex-grow: 0;
   flex-shrink: 0;
 
-  font-size: 16px;
+  font-size: $fontSizeBase;
   height: 64px;
   padding-left: 24px;
   padding-right: 24px;
@@ -145,7 +147,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
   margin-bottom: 8px;
   font-weight: bold;
 }
-.digestManagementRecipientListEmptyStateDesc { font-size: 16px; }
+.digestManagementRecipientListEmptyStateDesc { font-size: $fontSizeBase; }
 
 
 .digestManagementRecipientListSearchBox {

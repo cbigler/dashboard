@@ -17,36 +17,65 @@ import {
   InputBox,
   ButtonContext,
   Button,
+  Icons,
 } from '@density/ui';
 
 
-// When called from within `AdminLocationsEdit`, returns the initial component state.
-function calculateEmptyFormState(props) {
+function calculateEmptyFormState(props): AdminLocationsEditState {
   return {
     loaded: true,
 
     // General information module
     name: props.selectedSpace.name,
     spaceType: props.selectedSpace.spaceType,
-    'function': props.selectedSpace['function'],
+    'function': props.selectedSpace['function'] || null,
 
     // Metadata module
-    rentAnnual: props.selectedSpace.rentAnnual,
-    size: props.selectedSpace.size,
-    capacity: props.selectedSpace.capacity,
-    seatAssignments: props.selectedSpace.seatAssignments,
+    rentAnnual: props.selectedSpace.rentAnnual || '',
+    size: props.selectedSpace.size || '',
+    sizeUnit: props.selectedSpace.sizeUnit || 'feet',
+    currency: props.selectedSpace.currency || 'USD',
+    capacity: props.selectedSpace.capacity || '',
+    targetCapacity: props.selectedSpace.targetCapacity || '',
+    levelNumber: props.selectedSpace.levelNumber || '',
 
     // Address module
-    address: props.selectedSpace.address,
+    address: props.selectedSpace.address || '',
     coordinates: props.selectedSpace.latitude && props.selectedSpace.longitude ? (
       [props.selectedSpace.latitude, props.selectedSpace.longitude]
     ) : null,
   };
 }
 
+type AdminLocationsEditProps = {
+  selectedSpace: DensitySpace,
+  spaces: {
+    view: string,
+    spaces: Array<DensitySpace>,
+  },
+};
+
+type AdminLocationsEditState = {
+  loaded: boolean,
+
+  name: string,
+  spaceType: string,
+  'function': string,
+  rentAnnual: any,
+  size: any,
+  sizeUnit: 'feet' | 'meters',
+  currency: 'USD',
+  capacity: string,
+  targetCapacity: string,
+  levelNumber: string,
+  address: string,
+  coordinates: [number, number] | null,
+};
+
 class AdminLocationsEdit extends Component<any, any> {
   constructor(props) {
     super(props);
+    
 
     // There's a potential that the spaces are being loaded. If so, then wait for it to load.
     if (this.props.spaces.view === 'VISIBLE' && this.props.selectedSpace) {
@@ -89,7 +118,19 @@ class AdminLocationsEdit extends Component<any, any> {
             <div className={styles.appBarWrapper}>
               <AppBar>
                 <AppBarTitle>
-                  Edit {selectedSpace.spaceType[0].toUpperCase()}{selectedSpace.spaceType.slice(1)}
+                  <a
+                    role="button"
+                    className={styles.arrow}
+                    href={`#/admin/locations/${selectedSpace.id}`}
+                  >
+                    <Icons.ArrowLeft />
+                  </a>
+                  Edit {{
+                    campus: 'Campus',
+                    building: 'Building',
+                    floor: 'Level',
+                    space: 'Room',
+                  }[selectedSpace.spaceType]}
                 </AppBarTitle>
                 <AppBarSection>
                   <ButtonContext.Provider value="CANCEL_BUTTON">
