@@ -43,32 +43,11 @@ const ONE_MINUTE_IN_MS = 60 * 1000,
       ONE_HOUR_IN_MS = ONE_MINUTE_IN_MS * 60,
       ONE_DAY_IN_MS = ONE_HOUR_IN_MS * 60;
 
-// The maximum number of days that can be selected by the date range picker
-const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
-
 // Below this number of days or equal to this number of days, show the normal daily metrics chart.
 // Above this number of days, show the expanded line chart.
 const GRAPH_TYPE_TRANSITION_POINT_IN_DAYS = 14;
 
 const CHART_HEIGHT = 350;
-
-// Given a day on the calendar and the current day, determine if the square on the calendar should
-// be grayed out or not.
-export function isOutsideRange(startISOTime, datePickerInput, day) {
-  const startDate = moment.utc(startISOTime);
-  if (day.isAfter(moment.utc())) {
-    return true;
-  }
-
-  if (datePickerInput === 'endDate') {
-    return datePickerInput === 'endDate' && startDate &&
-      !( // Is the given `day` within `MAXIMUM_DAY_LENGTH` days from the start date?
-        isInclusivelyAfterDay(day, startDate) &&
-        isInclusivelyBeforeDay(day, startDate.clone().add(MAXIMUM_DAY_LENGTH - 1, 'days'))
-      );
-  }
-  return false;
-}
 
 export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
   render() {
