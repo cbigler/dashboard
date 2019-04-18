@@ -24,6 +24,7 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transi
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-transition/admin-locations-edit';
 import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
@@ -217,6 +218,13 @@ export default function spaces(state=initialState, action) {
       view: action.setLoading ? 'LOADING' : state.view,
       loading: action.setLoading || state.loading,
       selected: action.parentSpaceId,
+    };
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT:
+    return {
+      ...state,
+      view: action.setLoading ? 'LOADING' : state.view,
+      loading: action.setLoading || state.loading,
+      selected: action.spaceId,
     };
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:

@@ -69,7 +69,7 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
   const floors = visibleSpaces.filter(space => space.spaceType === 'floor');
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
-  const spacesNotInFloor = visibleSpaces.filter(space => floors.find(floor => space.parentId === floor.id));
+  const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
 
   return (
     <AppFrame>

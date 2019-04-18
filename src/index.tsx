@@ -69,6 +69,7 @@ import routeTransitionAdminUserManagementDetail from './actions/route-transition
 import routeTransitionAdminDeveloper from './actions/route-transition/admin-developer';
 import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
 import routeTransitionAdminLocations from './actions/route-transition/admin-locations';
+import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-locations-edit';
 
 import sessionTokenSet from './actions/session-token/set';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
@@ -203,6 +204,7 @@ router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(null));
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
+router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(id));
 
 // Onboarding flow
 // Redirect #/onboarding => #/onboarding/overview
