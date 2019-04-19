@@ -6,12 +6,16 @@ import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
+import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
+
 import {
   AppFrame,
   AppPane,
   AppSidebar,
   AppBar,
   AppBarSection,
+  AppBarTitle,
+  Button,
   Icons,
 } from '@density/ui';
 
@@ -74,7 +78,22 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
   return (
     <AppFrame>
       <AppSidebar visible>
-        TODO: Waiting on mockups
+        <AppBar>
+          <AppBarTitle>{selectedSpace.name}</AppBarTitle>
+          <AppBarSection>
+            <Button onClick={() => {
+              window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+            }}>Edit</Button>
+          </AppBarSection>
+        </AppBar>
+        {selectedSpace.latitude !== null && selectedSpace.longitude !== null ? (
+          <AdminLocationsSpaceMap
+            readonly={true}
+            space={selectedSpace}
+            address="WeWork Gramercy, 120 E 23rd St, New York City, New York 10010, United States of America"
+            coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+          />
+        ) : null}
       </AppSidebar>
       <AppPane>
         <div className={styles.scroll}>
