@@ -8,7 +8,9 @@
 
 .adminLocations {
   height: calc(100% - 64px - 64px);
+  background-color: $grayLightest;
 }
+.adminLocations.space { height: calc(100% - 64px); }
 
 .loadingWrapper {
   padding-left: 24px;

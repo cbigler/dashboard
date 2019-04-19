@@ -1,0 +1,14 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.card {
+  width: 100%;
+  max-width: 800px;
+  border: 1px solid $grayLight;
+  border-radius: $borderRadiusBase;
+  background-color: #fff;
+
+  margin-top: 65px;
+  margin-left: auto;
+  margin-right: auto;
+}
