@@ -4,7 +4,6 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader  from '../admin-locations-subheader/index';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
-import { getAreaUnit } from '../admin-locations-detail-modules/index';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';

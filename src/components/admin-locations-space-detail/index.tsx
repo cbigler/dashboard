@@ -6,8 +6,6 @@ import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
-import { getAreaUnit } from '../admin-locations-detail-modules/index';
-
 import {
   AdminLocationsLeftPaneDataRow,
   AdminLocationsLeftPaneDataRowItem,

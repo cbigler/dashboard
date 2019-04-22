@@ -7,7 +7,9 @@ import GenericLoadingState from '../generic-loading-state/index';
 
 import Dialogger from '../dialogger';
 
-import { DensitySpace } from '../../types';
+import { DensityUser, DensitySpace } from '../../types';
+
+import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
@@ -42,7 +44,7 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     // Metadata module
     annualRent: space.annualRent || '',
     sizeArea: space.sizeArea || '',
-    sizeAreaUnit: space.sizeAreaUnit || 'feet',
+    sizeAreaUnit: space.sizeAreaUnit || user.data.sizeAreaUnitDefault || SQUARE_FEET,
     currencyUnit: space.currencyUnit || 'USD',
     capacity: space.capacity || '',
     targetCapacity: space.targetCapacity || '',
@@ -65,6 +67,9 @@ type AdminLocationsFormProps = {
   spaces: {
     view: string,
     spaces: Array<DensitySpace>,
+  },
+  user: {
+    data: DensityUser,
   },
 };
 
@@ -179,6 +184,7 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
 export default connect((state: any) => {
   return {
     spaces: state.spaces,
+    user: state.user,
     selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
   };
 }, (dispatch: any) => {

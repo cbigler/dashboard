@@ -5,6 +5,7 @@ import FormLabel from '../form-label/index';
 import classnames from 'classnames';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
+import { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import showModal from '../../actions/modal/show';
 import { DensitySpace } from '../../types';
@@ -21,10 +22,6 @@ import {
   InputBox,
   Icons,
 } from '@density/ui';
-
-export function getAreaUnit(measurementUnit='ft') {
-  return `sq ${measurementUnit}`;
-}
 
 const SPACE_FUNCTION_CHOICES = [
   { id: null, label: 'No function' },
@@ -463,7 +460,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
+              label={`Size (${UNIT_NAMES[formState.sizeAreaUnit]})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
@@ -539,7 +536,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
+              label={`Size (${UNIT_NAMES[formState.sizeAreaUnit]})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
@@ -598,7 +595,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
+              label={`Size (${UNIT_NAMES[formState.sizeAreaUnit]})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
