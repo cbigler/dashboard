@@ -28,41 +28,69 @@ import {
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
 
+function generateCreateRoute(parentId, type) {
+  if (parentId) {
+    // Not at the root, so there's a parent space id to include in the route
+    return `#/admin/locations/${parentId}/create/${type}`;
+  } else {
+    // At the root, there's no parent space id
+    return `#/admin/locations/create/${type}`;
+  }
+}
 
-function ActionButtons({spaceType}) {
+
+function ActionButtons({spaceId, spaceType}) {
   switch (spaceType) {
   case null:
     return (
       <Fragment>
         <span className={styles.leftButton}>
-          <Button type="primary">Add a Campus</Button>
+          <Button
+            type="primary"
+            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'campus'); }}
+          >Add a Campus</Button>
         </span>
         <span className={styles.rightButton}>
-          <Button type="primary">Add a Building</Button>
+          <Button
+            type="primary"
+            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
+          >Add a Building</Button>
         </span>
       </Fragment>
     );
   case 'campus':
     return (
       <Fragment>
-        <Button type="primary">Add a Building</Button>
+        <Button
+          type="primary"
+          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
+        >Add a Building</Button>
       </Fragment>
     );
   case 'building':
     return (
       <Fragment>
         <span className={styles.leftButton}>
-          <Button type="primary">Add a Level</Button>
+          <Button
+            type="primary"
+            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'floor'); }}
+          >Add a Level</Button>
         </span>
         <span className={styles.rightButton}>
-          <Button type="primary">Add a Room</Button>
+          <Button
+            type="primary"
+            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
+          >Add a Room</Button>
         </span>
       </Fragment>
     );
   case 'floor':
     return (
       <Fragment>
-        <Button type="primary">Add a Room</Button>
+        <Button
+          type="primary"
+          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
+        >Add a Room</Button>
       </Fragment>
     );
   default:
@@ -172,7 +200,10 @@ function AdminLocations({selectedSpace, spaces}) {
                 <Breadcrumb space={selectedSpace} spaces={spaces} />
               </AppBarSection>
               <AppBarSection>
-                <ActionButtons spaceType={selectedSpace ? selectedSpace.spaceType : null} />
+                <ActionButtons
+                  spaceId={selectedSpace ? selectedSpace.id : null}
+                  spaceType={selectedSpace ? selectedSpace.spaceType : null}
+                />
               </AppBarSection>
             </AppBar>
           </div>
