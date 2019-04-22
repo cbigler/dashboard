@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
+import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import colorVariables from '@density/ui/variables/colors.json';
 import { getAreaUnit } from '../admin-locations-detail-modules/index';
 
@@ -156,23 +157,27 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
         </AdminLocationsLeftPaneDataRow>
       </AppSidebar>
       <AppPane>
-        <div className={styles.scroll}>
-          {spacesNotInFloor.length > 0 ? (
-            <Fragment>
-              <AdminLocationsSubheader title="Rooms" supportsHover={false} />
-              <SpaceList renderedSpaces={spacesNotInFloor} spaces={spaces} />
-            </Fragment>
-          ) : null}
+        {visibleSpaces.length > 0 ? (
+          <div className={styles.scroll}>
+            {spacesNotInFloor.length > 0 ? (
+              <Fragment>
+                <AdminLocationsSubheader title="Rooms" supportsHover={false} />
+                <SpaceList renderedSpaces={spacesNotInFloor} spaces={spaces} />
+              </Fragment>
+            ) : null}
 
-          {floors.map((floor, index) => {
-            return (
-              <div key={floor.id} className={styles.section}>
-                <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
-                <SpaceList spaces={spaces} renderedSpaces={spacesInEachFloor[index]} />
-              </div>
-            );
-          })}
-        </div>
+            {floors.map((floor, index) => {
+              return (
+                <div key={floor.id} className={styles.section}>
+                  <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
+                  <SpaceList spaces={spaces} renderedSpaces={spacesInEachFloor[index]} />
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <AdminLocationsDetailEmptyState />
+        )}
       </AppPane>
     </AppFrame>
   );

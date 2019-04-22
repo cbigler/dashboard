@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
+import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 
 import { getAreaUnit } from '../admin-locations-detail-modules/index';
 
@@ -61,7 +62,9 @@ export default function AdminLocationsSpaceDetail({ spaces, selectedSpace }) {
     </Fragment>
   );
 
-  if (visibleSpaces.length === 0) {
+  // If a space has a space as its parent, it's nested as depely as it possibly can be.
+  const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
+  if (parentSpace.spaceType === 'space') {
     // Shown for spaces that are "leaves" in the hierarchy tree
     return (
       <div className={styles.wrapper}>
@@ -98,53 +101,57 @@ export default function AdminLocationsSpaceDetail({ spaces, selectedSpace }) {
           </AdminLocationsLeftPaneDataRow>
         </AppSidebar>
         <AppPane>
-          <div className={styles.scroll}>
-            <AdminLocationsSubheader
-              title="Spaces"
-              supportsHover={false}
-            />
+          {visibleSpaces.length === 0 ? (
+            <div className={styles.scroll}>
+              <AdminLocationsSubheader
+                title="Spaces"
+                supportsHover={false}
+              />
 
-            <div className={styles.wrapper}>
-              <ListView data={visibleSpaces}>
-                <ListViewColumn
-                  title="Info"
-                  template={item => (
-                    <Fragment>
-                      <AdminLocationsListViewImage space={item} />
-                      <span className={styles.name}>{item.name}</span>
-                    </Fragment>
-                  )}
-                  flexGrow={1}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-                <ListViewColumn
-                  title="Size (sq ft)"
-                  template={item => 'HARDCODED'}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-                <ListViewColumn
-                  title="Seats"
-                  template={item => 'HARDCODED'}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-                <ListViewColumn
-                  title="Capacity"
-                  template={item => item.capacity === null ? <Fragment>&mdash;</Fragment> : item.capacity}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-                <ListViewColumn
-                  title="DPUs"
-                  template={item => 'HARDCODED'}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-                <ListViewColumn
-                  title=""
-                  template={item => <Icons.ArrowRight />}
-                  href={item => `#/admin/locations/${item.id}`}
-                />
-              </ListView>
+              <div className={styles.wrapper}>
+                <ListView data={visibleSpaces}>
+                  <ListViewColumn
+                    title="Info"
+                    template={item => (
+                      <Fragment>
+                        <AdminLocationsListViewImage space={item} />
+                        <span className={styles.name}>{item.name}</span>
+                      </Fragment>
+                    )}
+                    flexGrow={1}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                  <ListViewColumn
+                    title="Size (sq ft)"
+                    template={item => 'HARDCODED'}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                  <ListViewColumn
+                    title="Seats"
+                    template={item => 'HARDCODED'}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                  <ListViewColumn
+                    title="Capacity"
+                    template={item => item.capacity === null ? <Fragment>&mdash;</Fragment> : item.capacity}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                  <ListViewColumn
+                    title="DPUs"
+                    template={item => 'HARDCODED'}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                  <ListViewColumn
+                    title=""
+                    template={item => <Icons.ArrowRight />}
+                    href={item => `#/admin/locations/${item.id}`}
+                  />
+                </ListView>
+              </div>
             </div>
-          </div>
+            ) : (
+              <AdminLocationsDetailEmptyState />
+            )}
         </AppPane>
       </AppFrame>
     );
