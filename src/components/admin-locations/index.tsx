@@ -93,12 +93,21 @@ function ActionButtons({spaceId, spaceType}) {
         >Add a Room</Button>
       </Fragment>
     );
+  case 'space':
+    return (
+      <Fragment>
+        <Button
+          type="primary"
+          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
+        >Add a Room</Button>
+      </Fragment>
+    );
   default:
     return null;
   }
 }
 
-function AdminLocations({selectedSpace, spaces}) {
+function AdminLocations({user, selectedSpace, spaces}) {
   const visibleSpaces = spaces.data
   .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
 
@@ -106,22 +115,22 @@ function AdminLocations({selectedSpace, spaces}) {
   switch (selectedSpace ? selectedSpace.spaceType : null) {
   case 'campus':
     content = (
-      <AdminLocationsCampusDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsCampusDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case 'building':
     content = (
-      <AdminLocationsBuildingDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsBuildingDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case 'floor':
     content = (
-      <AdminLocationsFloorDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsFloorDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case 'space':
     content = (
-      <AdminLocationsSpaceDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsSpaceDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case null:
@@ -157,7 +166,7 @@ function AdminLocations({selectedSpace, spaces}) {
             </AppBarSection>
           </AppBar>
           <AppFrame>
-            <AppSidebar visible>
+            <AppSidebar visible width={550}>
               TODO: Waiting on mockups
             </AppSidebar>
             <AppPane>
@@ -219,6 +228,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
+    user: state.user,
   };
 }, (dispatch: any) => {
   return {
