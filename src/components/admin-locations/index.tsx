@@ -26,6 +26,11 @@ import {
   Icons,
 } from '@density/ui';
 
+import {
+  AdminLocationsLeftPaneDataRow,
+  AdminLocationsLeftPaneDataRowItem,
+} from '../admin-locations-left-pane-data-row/index';
+
 import Breadcrumb from '../admin-locations-breadcrumb/index';
 
 function generateCreateRoute(parentId, type) {
@@ -147,19 +152,19 @@ function AdminLocations({user, selectedSpace, spaces}) {
       {[styles.space]: selectedSpace && selectedSpace.spaceType === 'space'}
     )}>
       {spaces.view === 'LOADING' ? (
-        <div className={styles.appBar}>
+        <div className={styles.loading}>
           <AppBar>
             <AppBarSection>
               <Skeleton width={200} height={18} />
             </AppBarSection>
             <AppBarSection>
               <span className={styles.leftButton}>
-                <Button disabled type="primary">
+                <Button type="primary">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
               </span>
               <span className={styles.rightButton}>
-                <Button disabled type="primary">
+                <Button type="primary">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
               </span>
@@ -167,7 +172,54 @@ function AdminLocations({user, selectedSpace, spaces}) {
           </AppBar>
           <AppFrame>
             <AppSidebar visible width={550}>
-              TODO: Waiting on mockups
+              <AppBar>
+                <AppBarSection>
+                  <Skeleton width={200} height={8} />
+                </AppBarSection>
+                <AppBarSection>
+                  <Button>Edit</Button>
+                </AppBarSection>
+              </AppBar>
+              <div className={styles.loadingMapSkeleton} />
+              <AdminLocationsLeftPaneDataRow>
+                <AdminLocationsLeftPaneDataRowItem
+                  id="size"
+                  label="Size (sq ft):"
+                  value={<Skeleton height={8} width={36} />}
+                />
+                <AdminLocationsLeftPaneDataRowItem
+                  id="rent"
+                  label="Rent (per sq ft):"
+                  value={<Skeleton height={8} width={36} />}
+                />
+              </AdminLocationsLeftPaneDataRow>
+              <AdminLocationsLeftPaneDataRow>
+                <AdminLocationsLeftPaneDataRowItem
+                  id="target-capacity"
+                  label="Target Capacity:"
+                  value={<Skeleton height={8} width={36} />}
+                />
+                <AdminLocationsLeftPaneDataRowItem
+                  id="capacity"
+                  label="Capacity"
+                  value={<Skeleton height={8} width={36} />}
+                />
+                <AdminLocationsLeftPaneDataRowItem
+                  id="levels"
+                  label="Levels"
+                  value={<Skeleton height={8} width={36} />}
+                />
+                <AdminLocationsLeftPaneDataRowItem
+                  id="spaces"
+                  label="Spaces"
+                  value={<Skeleton height={8} width={36} />}
+                />
+                <AdminLocationsLeftPaneDataRowItem
+                  id="dpus"
+                  label="DPUs"
+                  value={<Skeleton height={8} width={36} />}
+                />
+              </AdminLocationsLeftPaneDataRow>
             </AppSidebar>
             <AppPane>
               <AdminLocationsSubheader

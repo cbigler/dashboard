@@ -12,6 +12,17 @@
 }
 .adminLocations.space { height: calc(100% - 64px); }
 
+.loading {
+  height: 100%;
+}
+
+.loadingMapSkeleton {
+  height: 300px;
+  background-color: $grayCinder;
+  margin: 24px;
+  border-radius: $borderRadiusBase;
+}
+
 .loadingWrapper {
   padding-left: 24px;
   padding-right: 24px;
