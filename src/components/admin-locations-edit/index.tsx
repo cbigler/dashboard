@@ -213,6 +213,9 @@ type AdminLocationsFormSpaceTypeProps = {
   operationType: 'CREATE' | 'UPDATE',
 };
 
+// NOTE: all the below forms are rendered both when creating a new instance and editing an
+// existing instance of a space. Therefore, a space is not specified as when the form is rendered
+// for the "new" state no space exists yet.
 export function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) { return null; }
 
 export function AdminLocationsCampusForm({
