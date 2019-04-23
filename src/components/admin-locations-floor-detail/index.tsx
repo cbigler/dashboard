@@ -27,12 +27,6 @@ import {
 export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
 
-  // XXX TODO Remove this
-  selectedSpace.sizeArea = 200;
-  selectedSpace.sizeAreaUnit = SQUARE_FEET;
-  selectedSpace.annualRent = 20000
-  // XXX TODO Remove this
-
   const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,

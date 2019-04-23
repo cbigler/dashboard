@@ -25,3 +25,10 @@
   &:hover { opacity: 0.9; }
   &:active { opacity: 1; }
 }
+
+.centered {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}

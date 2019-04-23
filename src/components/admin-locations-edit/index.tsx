@@ -2,6 +2,8 @@ import React, { ReactNode, Fragment, Component } from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import styles from './styles.module.scss';
+import GenericErrorState from '../generic-error-state/index';
+import GenericLoadingState from '../generic-loading-state/index';
 
 import Dialogger from '../dialogger';
 
@@ -224,11 +226,15 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     switch (spaces.view) {
     case 'LOADING':
       return (
-        <p>Need loading state</p>
+        <div className={styles.centered}>
+          <GenericLoadingState />
+        </div>
       );
     case 'ERROR':
       return (
-        <p>Need error state</p>
+        <div className={styles.centered}>
+          <GenericErrorState />
+        </div>
       );
     case 'VISIBLE':
       if (!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType)) {

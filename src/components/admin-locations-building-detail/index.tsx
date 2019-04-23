@@ -85,19 +85,13 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
   const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
 
-  const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
-
-  // XXX TODO Remove this
-  selectedSpace.sizeArea = 200;
-  selectedSpace.sizeAreaUnit = SQUARE_FEET;
-  selectedSpace.annualRent = 20000
-  // XXX TODO Remove this
-
   const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
     user.data.sizeAreaUnitDefault,
   ) : null;
+
+  const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
   return (
     <AppFrame>
