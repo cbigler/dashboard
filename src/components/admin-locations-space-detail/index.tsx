@@ -69,7 +69,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
 
   // If a space has a space as its parent, it's nested as depely as it possibly can be.
   const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
-  if (parentSpace.spaceType === 'space') {
+  if (parentSpace && parentSpace.spaceType === 'space') {
     // Shown for spaces that are "leaves" in the hierarchy tree
     return (
       <div className={styles.wrapper}>
