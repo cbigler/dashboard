@@ -49,7 +49,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
           <div className={styles.leftPaneMap}>
             <AdminLocationsSpaceMap
               readonly={true}
-              space={selectedSpace}
+              spaceType={selectedSpace.spaceType}
               address={selectedSpace.address}
               coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
             />

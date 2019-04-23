@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 
 import { Icons } from '@density/ui';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import { DensitySpace } from '../../types';
 
 import * as MapboxGL from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -20,7 +21,16 @@ const MAP_ZOOM_BY_SPACE_TYPE = {
   space: 14,
 };
 
-export default class AdminLocationsSpaceMap extends Component<any, any> {
+type AdminLocationsSpaceMapProps = {
+  readonly: boolean,
+  spaceType: DensitySpace["spaceType"],
+  address: string,
+  coordinates: [number, number] | null,
+  onChangeAddress?: any,
+  onChangeCoordinates?: any,
+};
+
+export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpaceMapProps, {}> {
   map?: MapboxGL.Map;
   geocoderInstance?: any;
   initialMarker?: any;

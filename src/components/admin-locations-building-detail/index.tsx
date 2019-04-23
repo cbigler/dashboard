@@ -108,7 +108,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <div className={styles.leftPaneMap}>
             <AdminLocationsSpaceMap
               readonly={true}
-              space={selectedSpace}
+              spaceType={selectedSpace.spaceType}
               address={selectedSpace.address}
               coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
             />
