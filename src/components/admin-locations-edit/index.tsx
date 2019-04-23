@@ -27,8 +27,9 @@ import {
   Icons,
 } from '@density/ui';
 
-
-function calculateEmptyFormState(space): AdminLocationsFormState {
+// Given a space and the currently logged in user, return the initial state of eitehr the edit or
+// new form.
+export function calculateInitialFormState(space, user): AdminLocationsFormState {
   return {
     loaded: true,
 
@@ -89,18 +90,19 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
   constructor(props) {
     super(props);
 
-    // There's a potential that the spaces are being loaded. If so, then wait for it to load.
+    // There's a potential that the space is being loaded. If so, then wait for it to load.
     if (props.spaces.view === 'VISIBLE' && props.selectedSpace) {
-      this.state = calculateEmptyFormState(props.selectedSpace);
+      this.state = calculateInitialFormState(props.selectedSpace, props.user);
     } else {
       this.state = { loaded: false };
     }
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    // If the form has not been loaded
+    // If the space had not been loaded and was just recently loaded, then figure out the initial
+    // form state using the recently loaded space.
     if (nextProps.spaces.view === 'VISIBLE' && nextProps.selectedSpace && !prevState.loaded) {
-      return calculateEmptyFormState(nextProps.selectedSpace);
+      return calculateInitialFormState(nextProps.selectedSpace, nextProps.user);
     }
     return null;
   }
@@ -183,15 +185,6 @@ export default connect((state: any) => {
 
 
 
-type AdminLocationsNewProps = {
-  newSpaceParent: DensitySpace,
-  newSpaceType: DensitySpace["spaceType"],
-  spaces: {
-    view: string,
-    spaces: Array<DensitySpace>,
-  },
-};
-
 // This datastructure contains all space types that can be created if a specified space type is
 // selected. This ensures that we are not giving the user the ability to create a space type that
 // would make the hierarchy invalid.
@@ -203,108 +196,7 @@ const ALLOWED_SUB_SPACE_TYPES = {
   space: ['space'],
 };
 
-class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, AdminLocationsFormState> {
-  constructor(props) {
-    super(props);
-    this.state = calculateEmptyFormState({spaceType: props.newSpaceType});
-  }
-
-  onChangeField = (key, value) => {
-    this.setState(s => ({...s, [key]: value}));
-  }
-
-  render() {
-    const { spaces, newSpaceType, newSpaceParent } = this.props;
-
-    const FormComponent = {
-      campus: AdminLocationsCampusForm,
-      building: AdminLocationsBuildingForm,
-      floor: AdminLocationsFloorForm,
-      space: AdminLocationsSpaceForm,
-    }[newSpaceType];
-
-    switch (spaces.view) {
-    case 'LOADING':
-      return (
-        <div className={styles.centered}>
-          <GenericLoadingState />
-        </div>
-      );
-    case 'ERROR':
-      return (
-        <div className={styles.centered}>
-          <GenericErrorState />
-        </div>
-      );
-    case 'VISIBLE':
-      if (!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType)) {
-        return (
-          <p>Need better state here: this space type is not allowed to be made within the selected space</p>
-        );
-      }
-
-      return (
-        <div className={styles.adminLocationsForm}>
-          <Dialogger />
-
-          <div className={styles.appBarWrapper}>
-            <AppBar>
-              <AppBarTitle>
-                <a
-                  role="button"
-                  className={styles.arrow}
-                  href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
-                >
-                  <Icons.ArrowLeft />
-                </a>
-                New {{
-                  campus: 'Campus',
-                  building: 'Building',
-                  floor: 'Level',
-                  space: 'Room',
-                }[newSpaceType]}
-              </AppBarTitle>
-              <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={() => {
-                    window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
-                  }}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button type="primary">Save</Button>
-              </AppBarSection>
-            </AppBar>
-          </div>
-
-          {/* All the space type components take the same props */}
-          <FormComponent
-            spaceType={newSpaceType}
-            formState={this.state}
-            operationType="CREATE"
-            onChangeField={this.onChangeField}
-          />
-        </div>
-      );
-    default:
-      return null;
-    }
-  }
-}
-
-export const AdminLocationsNew = connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    newSpaceType: state.miscellaneous.adminLocationsNewSpaceType,
-    newSpaceParent: state.spaces.data.find(
-      space => space.id === state.miscellaneous.adminLocationsNewSpaceParentId
-    ),
-  };
-}, (dispatch: any) => {
-  return {
-  };
-})(AdminLocationsNewUnconnected);
-
-
-// Props that all the below "edit pages" take
+// Props that all the below forms take
 type AdminLocationsFormSpaceTypeProps = {
   spaceType: DensitySpace["spaceType"],
   formState: { [key: string]: any },
@@ -312,9 +204,14 @@ type AdminLocationsFormSpaceTypeProps = {
   operationType: 'CREATE' | 'UPDATE',
 };
 
-function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) { return null; }
+export function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) { return null; }
 
-function AdminLocationsCampusForm({spaceType, formState, onChangeField, operationType}: AdminLocationsFormSpaceTypeProps) {
+export function AdminLocationsCampusForm({
+  spaceType,
+  formState,
+  onChangeField,
+  operationType,
+}: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>
@@ -357,7 +254,12 @@ function AdminLocationsCampusForm({spaceType, formState, onChangeField, operatio
   );
 }
 
-function AdminLocationsBuildingForm({spaceType, formState, onChangeField, operationType}: AdminLocationsFormSpaceTypeProps) {
+export function AdminLocationsBuildingForm({
+  spaceType,
+  formState,
+  onChangeField,
+  operationType,
+}: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>
@@ -400,7 +302,12 @@ function AdminLocationsBuildingForm({spaceType, formState, onChangeField, operat
   );
 }
 
-function AdminLocationsFloorForm({spaceType, formState, onChangeField, operationType}: AdminLocationsFormSpaceTypeProps) {
+export function AdminLocationsFloorForm({
+  spaceType,
+  formState,
+  onChangeField,
+  operationType,
+}: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>
@@ -434,7 +341,12 @@ function AdminLocationsFloorForm({spaceType, formState, onChangeField, operation
   );
 }
 
-function AdminLocationsSpaceForm({spaceType, formState, onChangeField, operationType}: AdminLocationsFormSpaceTypeProps) {
+export function AdminLocationsSpaceForm({
+  spaceType,
+  formState,
+  onChangeField,
+  operationType,
+}: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleWrapper}>

@@ -13,7 +13,7 @@ import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
 import AdminLocations from '../admin-locations/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
-import { AdminLocationsNew } from '../admin-locations-edit/index';
+import AdminLocationsNew from '../admin-locations-new/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
