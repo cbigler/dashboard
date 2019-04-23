@@ -5,7 +5,7 @@ import FormLabel from '../form-label/index';
 import classnames from 'classnames';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
-import { UNIT_NAMES } from '../../helpers/convert-unit/index';
+import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
 import showModal from '../../actions/modal/show';
 import { DensitySpace } from '../../types';
@@ -109,8 +109,8 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                   choices={[
                     {id: 'campus', label: 'Campus'},
                     {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Floor'},
-                    {id: 'space', label: 'Space'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
                   ]}
                   onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
@@ -154,8 +154,8 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                   choices={[
                     {id: 'campus', label: 'Campus'},
                     {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Floor'},
-                    {id: 'space', label: 'Space'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
                   ]}
                   onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
@@ -219,8 +219,8 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                   choices={[
                     {id: 'campus', label: 'Campus'},
                     {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Floor'},
-                    {id: 'space', label: 'Space'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
                   ]}
                   onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
@@ -240,6 +240,7 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                   id="admin-locations-detail-modules-general-level-number"
                   value={formState.levelNumber}
                   leftIcon={<span>Level</span>}
+                  placeholder="01"
                   onChange={e => onChangeField('levelNumber', e.target.value)}
                   width="100%"
                 />
@@ -300,8 +301,8 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                   choices={[
                     {id: 'campus', label: 'Campus'},
                     {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Floor'},
-                    {id: 'space', label: 'Space'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
                   ]}
                   onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
@@ -347,6 +348,37 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
 
 export function AdminLocationsDetailModulesMetadata({spaceType, formState, onChangeField}) {
   let content, controls;
+  controls = (
+    <AppBarSection>
+      Units:
+      <span className={styles.modulesMetadataDropdowns}>
+        <InputBox
+          type="select"
+          choices={[
+            {id: SQUARE_FEET, label: 'feet'},
+            {id: SQUARE_METERS, label: 'meters'},
+          ]}
+          width={138}
+          value={formState.sizeAreaUnit}
+          disabled={spaceType === 'floor' || spaceType === 'space'}
+          onChange={choice => onChangeField('sizeAreaUnit', choice.id)}
+        />
+      </span>
+      <span className={styles.modulesMetadataDropdowns}>
+        <InputBox
+          type="select"
+          choices={[
+            {id: 'USD', label: 'USD ($)'},
+          ]}
+          disabled
+          width={158}
+          value={formState.currencyUnit}
+          onChange={choice => onChangeField('currencyUnit', choice.id)}
+        />
+      </span>
+    </AppBarSection>
+  );
+
   switch (spaceType) {
   case 'campus':
     controls = null;
@@ -409,35 +441,6 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
     );
     break;
   case 'building':
-    controls = (
-      <AppBarSection>
-        Units:
-        <span className={styles.modulesMetadataDropdowns}>
-          <InputBox
-            type="select"
-            choices={[
-              {id: 'feet', label: 'feet'},
-              {id: 'meters', label: 'meters'},
-            ]}
-            width={138}
-            value={formState.sizeAreaUnit}
-            onChange={choice => onChangeField('sizeAreaUnit', choice.id)}
-          />
-        </span>
-        <span className={styles.modulesMetadataDropdowns}>
-          <InputBox
-            type="select"
-            choices={[
-              {id: 'USD', label: 'USD ($)'},
-            ]}
-            disabled
-            width={158}
-            value={formState.currencyUnit}
-            onChange={choice => onChangeField('currencyUnit', choice.id)}
-          />
-        </span>
-      </AppBarSection>
-    );
     content = (
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
@@ -513,7 +516,6 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
     );
     break;
   case 'floor':
-    controls = null;
     content = (
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
@@ -554,7 +556,23 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Capacity"
+              label="Target Capacity"
+              htmlFor="admin-locations-detail-modules-general-target-capacity"
+              input={
+                <InputBox
+                  type="number"
+                  id="admin-locations-detail-modules-general-info-target-capacity"
+                  placeholder="ex. 100"
+                  value={formState.targetCapacity}
+                  onChange={e => onChangeField('targetCapacity', e.target.value)}
+                  width="100%"
+                />
+              }
+            />
+          </div>
+          <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
+            <FormLabel
+              label="Legal Capacity"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -568,28 +586,11 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
               }
             />
           </div>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
-            <FormLabel
-              label="Seat Assignments"
-              htmlFor="admin-locations-detail-modules-general-seat-assignments"
-              input={
-                <InputBox
-                  type="number"
-                  id="admin-locations-detail-modules-general-info-seat-assignments"
-                  placeholder="ex. 100"
-                  value={formState.seatAssignments}
-                  onChange={e => onChangeField('seatAssignments', e.target.value)}
-                  width="100%"
-                />
-              }
-            />
-          </div>
         </div>
       </div>
     );
     break;
   case 'space':
-    controls = null;
     content = (
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
@@ -649,7 +650,6 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
     break;
   default:
     content = null;
-    controls = null;
     break;
   }
 

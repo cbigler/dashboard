@@ -135,7 +135,7 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace 
             </div>
           </div>
         ) : (
-          <AdminLocationsDetailEmptyState />
+          <AdminLocationsDetailEmptyState text="You haven't added any rooms to this level yet."/>
         )}
       </AppPane>
     </AppFrame>

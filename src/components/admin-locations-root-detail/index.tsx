@@ -26,7 +26,12 @@ function SpaceList({ spaces, renderedSpaces }) {
           template={item => (
             <Fragment>
               <AdminLocationsListViewImage space={item} />
-              <span className={styles.name}>{item.name}</span>
+              <div className={styles.infoWrapper}>
+                <span className={styles.name}>{item.name}</span>
+                {item.address ? (
+                  <span className={styles.address}>{item.address || ''}</span>
+                ) : null}
+              </div>
             </Fragment>
           )}
           flexGrow={1}
@@ -76,10 +81,7 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
   return (
     <div className={styles.wrapper}>
       {buildingsNotInCampus.length > 0 ? (
-        <Fragment>
-          <AdminLocationsSubheader title="Buildings" supportsHover={false} />
-          <SpaceList spaces={spaces} renderedSpaces={buildingsNotInCampus} />
-        </Fragment>
+        <SpaceList spaces={spaces} renderedSpaces={buildingsNotInCampus} />
       ) : null}
 
       {campuses.map((campus, index) => {

@@ -159,7 +159,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
               </div>
             </div>
             ) : (
-              <AdminLocationsDetailEmptyState />
+              <AdminLocationsDetailEmptyState text="You haven't added any rooms inside this room yet."/>
             )}
         </AppPane>
       </AppFrame>

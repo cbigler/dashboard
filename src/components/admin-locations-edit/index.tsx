@@ -18,7 +18,6 @@ import {
   AdminLocationsDetailModulesDangerZone,
   AdminLocationsDetailModulesOperatingHours,
 } from '../admin-locations-detail-modules/index';
-import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 
 import {
   AppBar,
@@ -139,9 +138,18 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
       <div className={styles.adminLocationsForm}>
         <Dialogger />
 
-        {spaces.view === 'LOADING' ? (
-          <p>need to make a loading state</p>
+        {spaces.view === 'ERROR' ? (
+          <div className={styles.centered}>
+            <GenericErrorState />
+          </div>
         ) : null}
+
+        {spaces.view === 'LOADING' ? (
+          <div className={styles.centered}>
+            <GenericLoadingState />
+          </div>
+        ) : null}
+
         {selectedSpace && spaces.view === 'VISIBLE' ? (
           <Fragment>
             <div className={styles.appBarWrapper}>

@@ -9,10 +9,20 @@
 
 .section { margin-bottom: 32px; }
 
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.address {
+  margin-top: 4px;
+  font-size: 14px;
 }
 
 .wrapper {

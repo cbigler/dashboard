@@ -148,7 +148,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title={`Size ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}`}
+                  title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
                   template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
                     item.sizeArea,
                     item.sizeAreaUnit,

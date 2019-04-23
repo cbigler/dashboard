@@ -41,6 +41,11 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
+          title="Levels"
+          template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
           title="Spaces"
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
           href={item => `#/admin/locations/${item.id}`}
@@ -188,7 +193,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             })}
           </div>
         ) : (
-          <AdminLocationsDetailEmptyState />
+          <AdminLocationsDetailEmptyState text="You haven't added any floors or spaces to this building yet." />
         )}
       </AppPane>
     </AppFrame>
