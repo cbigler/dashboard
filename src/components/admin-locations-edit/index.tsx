@@ -4,6 +4,8 @@ import moment from 'moment';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
+import collectionSpacesUpdate from '../../actions/collection/spaces/update';
+import showToast from '../../actions/toasts';
 
 import Dialogger from '../dialogger';
 
@@ -36,9 +38,10 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     loaded: true,
 
     // General information module
-    name: space.name,
+    name: space.name || '',
     spaceType: space.spaceType,
     'function': space['function'] || null,
+    parentId: space.parentId,
 
     // Metadata module
     annualRent: space.annualRent || '',
@@ -47,7 +50,7 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     currencyUnit: space.currencyUnit || 'USD',
     capacity: space.capacity || '',
     targetCapacity: space.targetCapacity || '',
-    levelNumber: space.levelNumber || '',
+    floorLevel: space.floorLevel || '',
 
     // Address module
     address: space.address || '',
@@ -61,7 +64,41 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
   };
 }
 
-type AdminLocationsFormProps = {
+// Given the state of the form, convert that state back into fields that can be sent in the body of
+// a PUT to the space.
+export function convertFormStateToSpaceFields(formState: AdminLocationsFormState, spaceType: DensitySpace["spaceType"]) {
+  function parseIntOrNull(string) {
+    const result = parseInt(string, 10);
+    if (isNaN(result)) {
+      return null;
+    } else {
+      return result;
+    }
+  }
+  return {
+    name: formState.name,
+    spaceType: formState.spaceType,
+    'function': formState['function'],
+    parentId: formState.parentId,
+    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
+
+    annualRent: spaceType !== 'campus' ? parseIntOrNull(formState.annualRent) : undefined,
+    sizeArea: spaceType === 'building' ? parseIntOrNull(formState.sizeArea) : undefined,
+    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
+    currencyUnit: formState.currencyUnit,
+    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
+    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
+
+    address: formState.address && formState.address.length > 0 ? formState.address : null,
+    latitude: formState.coordinates ? formState.coordinates[0] : null,
+    longitude: formState.coordinates ? formState.coordinates[1] : null,
+
+    dailyReset: formState.dailyReset,
+    timeZone: formState.timeZone,
+  };
+}
+
+type AdminLocationsEditProps = {
   selectedSpace: DensitySpace,
   spaces: {
     view: string,
@@ -70,6 +107,8 @@ type AdminLocationsFormProps = {
   user: {
     data: DensityUser,
   },
+
+  onSave: (spaceFieldUpdate: any, id: string) => any,
 };
 
 export type AdminLocationsFormState = {
@@ -84,11 +123,12 @@ export type AdminLocationsFormState = {
   currencyUnit?: 'USD',
   capacity?: string,
   targetCapacity?: string,
-  levelNumber?: string,
+  floorLevel?: string,
   address?: string,
   coordinates?: [number, number] | null,
   timeZone?: string,
   dailyReset?: string | null,
+  parentId?: string | null,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -98,7 +138,7 @@ const SPACE_TYPE_TO_NAME = {
   space: 'Room',
 };
 
-class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocationsFormState> {
+class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {
   constructor(props) {
     super(props);
 
@@ -123,6 +163,20 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
     this.setState(s => ({...s, [key]: value}));
   }
 
+  onSave = () => {
+    const spaceFieldsToUpdate = {
+      id: this.props.selectedSpace.id,
+      ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType),
+    };
+    this.props.onSave(spaceFieldsToUpdate, this.props.selectedSpace.id);
+  }
+
+  isFormComplete = () => {
+    return (
+      this.state.name && this.state.timeZone && this.state.dailyReset
+    );
+  }
+
   render() {
     const { spaces, selectedSpace } = this.props;
 
@@ -144,13 +198,18 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
           </div>
         ) : null}
 
-        {spaces.view === 'LOADING' ? (
+        {/* Show when: */}
+        {/* 1. Space is being loaded for the first time */}
+        {!selectedSpace && spaces.view === 'LOADING' ? (
           <div className={styles.centered}>
             <GenericLoadingState />
           </div>
         ) : null}
 
-        {selectedSpace && spaces.view === 'VISIBLE' ? (
+        {/* Show when: */}
+        {/* 1. Space has loaded */}
+        {/* 2. Space is in the process of being updated */}
+        {selectedSpace && (spaces.view === 'VISIBLE' || spaces.view === 'LOADING') ? (
           <Fragment>
             <div className={styles.appBarWrapper}>
               <AppBar>
@@ -170,7 +229,11 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
                       window.location.href = `#/admin/locations/${selectedSpace.id}`;
                     }}>Cancel</Button>
                   </ButtonContext.Provider>
-                  <Button type="primary">Save</Button>
+                  <Button
+                    type="primary"
+                    onClick={this.onSave}
+                    disabled={!this.isFormComplete() || spaces.view === 'LOADING'}
+                  >Save</Button>
                 </AppBarSection>
               </AppBar>
             </div>
@@ -197,8 +260,17 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
+    async onSave(spaceFieldUpdate, spaceId) {
+      const ok = await dispatch(collectionSpacesUpdate(spaceFieldUpdate));
+      if (ok) {
+        dispatch(showToast({ text: 'Space updated successfully' }));
+      } else {
+        dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+      }
+      window.location.href = `#/admin/locations/${spaceId}`;
+    },
   };
-})(AdminLocationsForm);
+})(AdminLocationsEdit);
 
 
 

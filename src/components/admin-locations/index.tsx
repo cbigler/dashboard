@@ -43,7 +43,6 @@ function generateCreateRoute(parentId, type) {
   }
 }
 
-
 function ActionButtons({spaceId, spaceType}) {
   switch (spaceType) {
   case null:

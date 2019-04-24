@@ -16,6 +16,9 @@ import {
 import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import Dialogger from '../dialogger';
+import showToast from '../../actions/toasts';
+import collectionSpacesCreate from '../../actions/collection/spaces/create';
+import { convertFormStateToSpaceFields } from '../admin-locations-edit/index';
 
 import {
   AppBar,
@@ -34,6 +37,7 @@ type AdminLocationsNewProps = {
     view: string,
     spaces: Array<DensitySpace>,
   },
+  onSave: (spaceFields: any, spaceParentId: string) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -65,6 +69,12 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     this.setState(s => ({...s, [key]: value}));
   }
 
+  onSave = () => {
+    const newSpaceFields = convertFormStateToSpaceFields(this.state, this.props.newSpaceType);
+    this.props.onSave(newSpaceFields, this.props.newSpaceParent.id);
+  }
+
+
   render() {
     const { spaces, newSpaceType, newSpaceParent } = this.props;
 
@@ -75,20 +85,19 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       space: AdminLocationsSpaceForm,
     }[newSpaceType];
 
-    switch (spaces.view) {
-    case 'LOADING':
-      return (
-        <div className={styles.centered}>
-          <GenericLoadingState />
-        </div>
-      );
-    case 'ERROR':
+    // NOTE: there's no top level loading state in this component. This is because this view doesn't
+    // have to load initially (there's no space data to display when making a new space) and when
+    // saving the space at the end of the process, we have to show a different special loading state
+    // anyway.
+
+    if (spaces.view === 'ERROR') {
       return (
         <div className={styles.centered}>
           <GenericErrorState />
         </div>
       );
-    case 'VISIBLE':
+
+    } else {
       if (!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType)) {
         return (
           <AdminLocationsDetailEmptyState
@@ -123,7 +132,11 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                     window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
                   }}>Cancel</Button>
                 </ButtonContext.Provider>
-                <Button type="primary">Save</Button>
+                <Button
+                  type="primary"
+                  onClick={this.onSave}
+                  disabled={spaces.view === 'LOADING'}
+                >Save</Button>
               </AppBarSection>
             </AppBar>
           </div>
@@ -137,8 +150,6 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
           />
         </div>
       );
-    default:
-      return null;
     }
   }
 };
@@ -156,5 +167,14 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
+    async onSave(space, parentSpaceId) {
+      const ok = await dispatch(collectionSpacesCreate(space));
+      if (ok) {
+        dispatch(showToast({ text: 'Space created!' }));
+      } else {
+        dispatch(showToast({ type: 'error', text: 'Error creating space' }));
+      }
+      window.location.href = `#/admin/locations/${parentSpaceId}`;
+    }
   };
 })(AdminLocationsNewUnconnected);
