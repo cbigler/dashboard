@@ -8,9 +8,11 @@ import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/
 import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
 import showModal from '../../actions/modal/show';
-import { DensitySpace } from '../../types';
+import showToast from '../../actions/toasts';
+import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
+import { DensitySpace } from '../../types';
 
 import {
   AppBar,
@@ -664,14 +666,7 @@ export function AdminLocationsDetailModulesAddress({
 
 
 
-type AdminLocationsDetailModulesDangerZoneUnconnectedProps = {
-  onShowConfirm: () => any,
-  onDeleteSpace: () => any,
-};
-
-function AdminLocationsDetailModulesDangerZoneUnconnected(
-  {onShowConfirm, onDeleteSpace}: AdminLocationsDetailModulesDangerZoneUnconnectedProps
-) {
+function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
   return (
     <AdminLocationsDetailModule error title="Danger Zone">
       <div className={styles.dangerZoneWrapper}>
@@ -681,7 +676,7 @@ function AdminLocationsDetailModulesDangerZoneUnconnected(
         </div>
         <div className={styles.dangerZoneRight}>
           <ButtonContext.Provider value="DELETE_BUTTON">
-            <Button onClick={onShowConfirm}>Delete this Space</Button>
+            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
           </ButtonContext.Provider>
         </div>
       </div>
@@ -690,13 +685,23 @@ function AdminLocationsDetailModulesDangerZoneUnconnected(
 }
 
 export const AdminLocationsDetailModulesDangerZone = connect(
-  state => ({}),
-  (dispatch, props: {onDeleteSpace}) => ({
-    onShowConfirm() {
+  (state: any) => ({
+    selectedSpace: state.spaces.data.find(s => s.id === state.spaces.selected),
+  }),
+  (dispatch) => ({
+    onShowConfirm(space) {
       dispatch<any>(showModal('MODAL_CONFIRM', {
         prompt: 'Are you sure you want to delete this space?',
         confirmText: 'Delete',
-        callback: () => props.onDeleteSpace(),
+        callback: async () => {
+          const ok = await dispatch<any>(collectionSpacesDestroy(space));
+          if (ok) {
+            dispatch<any>(showToast({ text: 'Space deleted successfully' }));
+          } else {
+            dispatch<any>(showToast({ type: 'error', text: 'Error deleting space' }));
+          }
+          window.location.href = `#/admin/locations/${space.parentId}`;
+        }
       }));
     },
   }),

@@ -330,9 +330,7 @@ export function AdminLocationsCampusForm({
       </div>
       {operationType === 'UPDATE' ? (
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
-          />
+          <AdminLocationsDetailModulesDangerZone />
         </div>
       ) : null}
     </div>
@@ -378,9 +376,7 @@ export function AdminLocationsBuildingForm({
       </div>
       {operationType === 'UPDATE' ? (
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
-          />
+          <AdminLocationsDetailModulesDangerZone />
         </div>
       ) : null}
     </div>
@@ -417,9 +413,7 @@ export function AdminLocationsFloorForm({
       </div>
       {operationType === 'UPDATE' ? (
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
-          />
+          <AdminLocationsDetailModulesDangerZone />
         </div>
       ) : null}
     </div>
@@ -456,9 +450,7 @@ export function AdminLocationsSpaceForm({
       </div>
       {operationType === 'UPDATE' ? (
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
-          />
+          <AdminLocationsDetailModulesDangerZone />
         </div>
       ) : null}
     </div>
