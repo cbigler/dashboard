@@ -57,30 +57,6 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
         ) : null}
         <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
           <AdminLocationsLeftPaneDataRowItem
-            id="size"
-            label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
-            value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="size"
-            label={`Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
-            value={sizeAreaConverted && selectedSpace.annualRent ? (
-              `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
-            ) : <Fragment>&mdash;</Fragment>}
-          />
-        </AdminLocationsLeftPaneDataRow>
-        <AdminLocationsLeftPaneDataRow>
-          <AdminLocationsLeftPaneDataRowItem
-            id="target-capacity"
-            label="Target Capacity:"
-            value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="capacity"
-            label="Capacity:"
-            value={selectedSpace.capacity ? selectedSpace.capacity : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
             id="buildings"
             label="Buildings:"
             value={

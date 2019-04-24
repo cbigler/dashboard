@@ -328,13 +328,6 @@ export function AdminLocationsCampusForm({
           onChangeField={onChangeField}
         />
       </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
       {operationType === 'UPDATE' ? (
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDangerZone

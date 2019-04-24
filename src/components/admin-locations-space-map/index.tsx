@@ -122,6 +122,14 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
         // Add geocoder to dom
         const geocoderDomElement = this.geocoderInstance.onAdd(this.map);
         this.geocoder.current.appendChild(geocoderDomElement);
+
+        // Set the contents of the geocoder to be the address if the geocoder is visible. This isn't
+        // supported officialyl by the geocoder and I'm using what look to be private instance
+        // values on the geocoder to "hack around" this.
+        if (coordinates) {
+          this.geocoderInstance._inputEl.value = address;
+          this.geocoderInstance._clearEl.style.display = 'block';
+        }
       }
     }
   }
@@ -138,7 +146,8 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
     const { onChangeCoordinates, onChangeAddress } = this.props;
     const object = objectSnakeToCamel(o);
 
-    onChangeCoordinates(object.result.geometry.coordinates);
+    const [lng, lat] = object.result.geometry.coordinates;
+    onChangeCoordinates([lat, lng]);
     onChangeAddress(object.result.placeName);
 
     this.geocoderInstance.mapMarker.on('dragend', this.onMapPointDragged);

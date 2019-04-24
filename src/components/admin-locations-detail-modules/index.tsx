@@ -24,36 +24,18 @@ import {
 } from '@density/ui';
 
 const SPACE_FUNCTION_CHOICES = [
-  { id: null, label: 'No function' },
-  { id: 'break_room', label: 'Break Room' },
-  { id: 'breakout', label: 'Breakout' },
-  { id: 'cafeteria', label: 'Cafeteria' },
-  { id: 'call_room', label: 'Call Room' },
-  { id: 'classroom', label: 'Classroom' },
-  { id: 'conference_room', label: 'Conference Room' },
-  { id: 'event', label: 'Event' },
-  { id: 'female_restroom', label: 'Female Restroom' },
-  { id: 'fitness_gym', label: 'Fitness Gym' },
-  { id: 'huddle', label: 'Huddle' },
-  { id: 'interview_room', label: 'Interview Room' },
-  { id: 'kitchen', label: 'Kitchen' },
-  { id: 'lab', label: 'Lab' },
-  { id: 'lactation_room', label: 'Lactation Room' },
-  { id: 'listening', label: 'Listening' },
-  { id: 'lobby', label: 'Lobby' },
-  { id: 'lounge', label: 'Lounge' },
-  { id: 'male_restroom', label: 'Male Restroom' },
-  { id: 'meeting_room', label: 'Meeting Room' },
-  { id: 'office', label: 'Office' },
-  { id: 'other', label: 'Other' },
-  { id: 'parking', label: 'Parking' },
-  { id: 'project', label: 'Project' },
-  { id: 'restroom', label: 'Restroom' },
-  { id: 'studio', label: 'Studio' },
-  { id: 'study_room', label: 'Study Room' },
-  { id: 'theater', label: 'Theater' },
-  { id: 'utility_room', label: 'Utility Room' },
-  { id: 'work_area', label: 'Work Area' },
+  {id: null, label: 'No function'},
+	{id: 'breakout', label: 'Breakout'},
+	{id: 'cafe', label: 'Cafe'},
+	{id: 'conference_room', label: 'Conference Room'},
+	{id: 'event_space', label: 'Event Space'},
+	{id: 'gym', label: 'Gym'},
+	{id: 'kitchen', label: 'Kitchen'},
+	{id: 'lounge', label: 'Lounge'},
+	{id: 'meeting_room', label: 'Meeting Room'},
+	{id: 'office', label: 'Office'},
+	{id: 'restroom', label: 'Restroom'},
+	{id: 'theater', label: 'Theater'},
 ];
 
 export default function AdminLocationsDetailModule({title, error=false, actions=null, children}) {
@@ -238,10 +220,10 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
                 <InputBox
                   type="text"
                   id="admin-locations-detail-modules-general-level-number"
-                  value={formState.levelNumber}
+                  value={formState.floorLevel}
                   leftIcon={<span>Level</span>}
                   placeholder="01"
-                  onChange={e => onChangeField('levelNumber', e.target.value)}
+                  onChange={e => onChangeField('floorLevel', e.target.value)}
                   width="100%"
                 />
               }
@@ -387,7 +369,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Rent (annual)"
+              label="Annual Rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox
@@ -446,7 +428,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Rent (annual)"
+              label="Annual Rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox
@@ -521,7 +503,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Rent (annual)"
+              label="Annual Rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox

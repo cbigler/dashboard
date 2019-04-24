@@ -48,21 +48,6 @@ function SpaceList({ spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Size (sq ft)"
-          template={item => 'HARDCODED'}
-          href={item => `#/admin/locations/${item.id}`}
-        />
-        <ListViewColumn
-          title="Rent"
-          template={item => 'HARDCODED'}
-          href={item => `#/admin/locations/${item.id}`}
-        />
-        <ListViewColumn
-          title="Seats"
-          template={item => 'HARDCODED'}
-          href={item => `#/admin/locations/${item.id}`}
-        />
-        <ListViewColumn
           title=""
           template={item => <Icons.ArrowRight />}
           href={item => `#/admin/locations/${item.id}`}
@@ -87,7 +72,11 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
       {campuses.map((campus, index) => {
         return (
           <div key={campus.id} className={styles.section}>
-            <AdminLocationsSubheader title={campus.name} spaceId={campus.id} />
+            <AdminLocationsSubheader
+              title={campus.name}
+              subtitle={campus.address}
+              spaceId={campus.id}
+            />
             <SpaceList spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
           </div>
         );
