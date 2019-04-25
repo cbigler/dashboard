@@ -6,10 +6,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 64px;
   overflow-y: auto;
   height: 100%;
 }
+.moduleInner { padding-top: 64px; }
 .moduleWrapper {
   margin-bottom: 24px;
   padding-left: 16px;

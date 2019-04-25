@@ -189,7 +189,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     }[selectedSpace ? selectedSpace.spaceType : 'unknown'];
 
     return (
-      <div className={styles.adminLocationsForm}>
+      <div className={styles.adminLocationsEdit}>
         <Dialogger />
 
         {spaces.view === 'ERROR' ? (
@@ -306,33 +306,35 @@ export function AdminLocationsCampusForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesAddress
-          spaceType={spaceType}
-          address={formState.address}
-          coordinates={formState.coordinates}
-          onChangeAddress={address => onChangeField('address', address)}
-          onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone />
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesAddress
+            spaceType={spaceType}
+            address={formState.address}
+            coordinates={formState.coordinates}
+            onChangeAddress={address => onChangeField('address', address)}
+            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -345,40 +347,42 @@ export function AdminLocationsBuildingForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesAddress
-          spaceType={spaceType}
-          address={formState.address}
-          coordinates={formState.coordinates}
-          onChangeAddress={address => onChangeField('address', address)}
-          onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone />
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesAddress
+            spaceType={spaceType}
+            address={formState.address}
+            coordinates={formState.coordinates}
+            onChangeAddress={address => onChangeField('address', address)}
+            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -391,31 +395,33 @@ export function AdminLocationsFloorForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone />
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -428,31 +434,33 @@ export function AdminLocationsSpaceForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone />
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
