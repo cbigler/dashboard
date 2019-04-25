@@ -22,7 +22,7 @@ export function AccountSetupOverview({user, onGetStarted}) {
       </Subnav>
 
       <AccountSetupHeader
-        greeter={`Welcome, ${user.data.nickname || user.data.fullName}`}
+        greeter={`Welcome, ${user.data.fullName}`}
         detail="Let's prep your space for installation."
       />
 
