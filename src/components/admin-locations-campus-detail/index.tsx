@@ -133,8 +133,8 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title="Rent"
-                  template={item => item.annualRent}
+                  title="Annual Rent"
+                  template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
