@@ -37,7 +37,7 @@ type AdminLocationsNewProps = {
     view: string,
     spaces: Array<DensitySpace>,
   },
-  onSave: (spaceFields: any, spaceParentId: string) => any,
+  onSave: (spaceFields: any, spaceParentId: string | null) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -62,7 +62,10 @@ const ALLOWED_SUB_SPACE_TYPES = {
 class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, AdminLocationsFormState> {
   constructor(props) {
     super(props);
-    this.state = calculateInitialFormState({spaceType: props.newSpaceType}, props.user);
+    this.state = calculateInitialFormState({
+      parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
+      spaceType: props.newSpaceType,
+    }, props.user);
   }
 
   onChangeField = (key, value) => {
@@ -71,7 +74,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 
   onSave = () => {
     const newSpaceFields = convertFormStateToSpaceFields(this.state, this.props.newSpaceType);
-    this.props.onSave(newSpaceFields, this.props.newSpaceParent.id);
+    this.props.onSave(newSpaceFields, this.props.newSpaceParent ? this.props.newSpaceParent.id : null);
   }
 
 

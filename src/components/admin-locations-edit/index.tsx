@@ -82,8 +82,8 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
     parentId: formState.parentId,
     floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
 
-    annualRent: spaceType !== 'campus' ? parseIntOrNull(formState.annualRent) : undefined,
-    sizeArea: spaceType === 'building' ? parseIntOrNull(formState.sizeArea) : undefined,
+    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
+    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
     sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
     currencyUnit: formState.currencyUnit,
     capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,

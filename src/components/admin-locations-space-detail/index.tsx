@@ -25,7 +25,7 @@ import {
 export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
 
-  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
+  const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
     user.data.sizeAreaUnitDefault,
@@ -36,7 +36,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
       <AdminLocationsLeftPaneDataRowItem
         id="size"
         label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
-        value={sizeAreaConverted}
+        value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
       />
       <AdminLocationsLeftPaneDataRowItem
         id="capacity"

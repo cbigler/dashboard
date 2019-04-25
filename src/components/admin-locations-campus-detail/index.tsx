@@ -28,7 +28,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
   const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
-  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
+  const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
     user.data.sizeAreaUnitDefault,

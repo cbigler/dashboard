@@ -90,7 +90,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
   const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
 
-  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
+  const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
     user.data.sizeAreaUnitDefault,
