@@ -4,6 +4,7 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
+import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import styles from './styles.module.scss';
 
@@ -17,7 +18,7 @@ import {
 } from '@density/ui';
 
 
-function SpaceList({ spaces, renderedSpaces }) {
+function SpaceList({ user, spaces, renderedSpaces }) {
   return (
     <div className={styles.spaceList}>
       <ListView data={renderedSpaces}>
@@ -48,6 +49,35 @@ function SpaceList({ spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
+          title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
+          template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
+            item.sizeArea,
+            item.sizeAreaUnit,
+            user.data.sizeAreaUnitDefault,
+          ) : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="Annual Rent"
+          template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="Target Capacity"
+          template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="Capacity"
+          template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="DPUs"
+          template={item => 'HARDCODED'}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
           title=""
           template={item => <Icons.ArrowRight />}
           href={item => `#/admin/locations/${item.id}`}
@@ -57,7 +87,7 @@ function SpaceList({ spaces, renderedSpaces }) {
   );
 }
 
-export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
+export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
   const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
   const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
@@ -66,7 +96,7 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
   return (
     <div className={styles.wrapper}>
       {buildingsNotInCampus.length > 0 ? (
-        <SpaceList spaces={spaces} renderedSpaces={buildingsNotInCampus} />
+        <SpaceList user={user} spaces={spaces} renderedSpaces={buildingsNotInCampus} />
       ) : null}
 
       {campuses.map((campus, index) => {
@@ -77,7 +107,7 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
               subtitle={campus.address}
               spaceId={campus.id}
             />
-            <SpaceList spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
+            <SpaceList user={user} spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
           </div>
         );
       })}

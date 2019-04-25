@@ -152,7 +152,7 @@ function AdminLocations({user, selectedSpace, spaces}) {
   case null:
   default:
     content = (
-      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsRootDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   }
