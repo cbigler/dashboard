@@ -67,7 +67,7 @@ type AdminLocationsFormProps = {
   },
 };
 
-type AdminLocationsFormState = {
+export type AdminLocationsFormState = {
   loaded: boolean,
 
   name?: string,
