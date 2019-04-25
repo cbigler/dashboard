@@ -22,6 +22,8 @@ import {
 } from '../admin-locations-detail-modules/index';
 
 import {
+  AppFrame,
+  AppPane,
   AppBar,
   AppBarTitle,
   AppBarSection,
@@ -189,65 +191,67 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     }[selectedSpace ? selectedSpace.spaceType : 'unknown'];
 
     return (
-      <div className={styles.adminLocationsEdit}>
-        <Dialogger />
+      <AppFrame>
+        <AppPane>
+          <Dialogger />
 
-        {spaces.view === 'ERROR' ? (
-          <div className={styles.centered}>
-            <GenericErrorState />
-          </div>
-        ) : null}
-
-        {/* Show when: */}
-        {/* 1. Space is being loaded for the first time */}
-        {!selectedSpace && spaces.view === 'LOADING' ? (
-          <div className={styles.centered}>
-            <GenericLoadingState />
-          </div>
-        ) : null}
-
-        {/* Show when: */}
-        {/* 1. Space has loaded */}
-        {/* 2. Space is in the process of being updated */}
-        {selectedSpace && (spaces.view === 'VISIBLE' || spaces.view === 'LOADING') ? (
-          <Fragment>
-            <div className={styles.appBarWrapper}>
-              <AppBar>
-                <AppBarTitle>
-                  <a
-                    role="button"
-                    className={styles.arrow}
-                    href={`#/admin/locations/${selectedSpace.id}`}
-                  >
-                    <Icons.ArrowLeft />
-                  </a>
-                  Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
-                </AppBarTitle>
-                <AppBarSection>
-                  <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button onClick={() => {
-                      window.location.href = `#/admin/locations/${selectedSpace.id}`;
-                    }}>Cancel</Button>
-                  </ButtonContext.Provider>
-                  <Button
-                    type="primary"
-                    onClick={this.onSave}
-                    disabled={!this.isFormComplete() || spaces.view === 'LOADING'}
-                  >Save</Button>
-                </AppBarSection>
-              </AppBar>
+          {spaces.view === 'ERROR' ? (
+            <div className={styles.centered}>
+              <GenericErrorState />
             </div>
+          ) : null}
 
-            {/* All the space type components take the same props */}
-            <FormComponent
-              spaceType={selectedSpace.spaceType}
-              formState={this.state}
-              operationType="UPDATE"
-              onChangeField={this.onChangeField}
-            />
-          </Fragment>
-        ) : null}
-      </div>
+          {/* Show when: */}
+          {/* 1. Space is being loaded for the first time */}
+          {!selectedSpace && spaces.view === 'LOADING' ? (
+            <div className={styles.centered}>
+              <GenericLoadingState />
+            </div>
+          ) : null}
+
+          {/* Show when: */}
+          {/* 1. Space has loaded */}
+          {/* 2. Space is in the process of being updated */}
+          {selectedSpace && (spaces.view === 'VISIBLE' || spaces.view === 'LOADING') ? (
+            <Fragment>
+              <div className={styles.appBarWrapper}>
+                <AppBar>
+                  <AppBarTitle>
+                    <a
+                      role="button"
+                      className={styles.arrow}
+                      href={`#/admin/locations/${selectedSpace.id}`}
+                    >
+                      <Icons.ArrowLeft />
+                    </a>
+                    Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
+                  </AppBarTitle>
+                  <AppBarSection>
+                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                      <Button onClick={() => {
+                        window.location.href = `#/admin/locations/${selectedSpace.id}`;
+                      }}>Cancel</Button>
+                    </ButtonContext.Provider>
+                    <Button
+                      type="primary"
+                      onClick={this.onSave}
+                      disabled={!this.isFormComplete() || spaces.view === 'LOADING'}
+                    >Save</Button>
+                  </AppBarSection>
+                </AppBar>
+              </div>
+
+              {/* All the space type components take the same props */}
+              <FormComponent
+                spaceType={selectedSpace.spaceType}
+                formState={this.state}
+                operationType="UPDATE"
+                onChangeField={this.onChangeField}
+              />
+            </Fragment>
+          ) : null}
+        </AppPane>
+      </AppFrame>
     );
   }
 }

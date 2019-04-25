@@ -21,6 +21,8 @@ import collectionSpacesCreate from '../../actions/collection/spaces/create';
 import { convertFormStateToSpaceFields } from '../admin-locations-edit/index';
 
 import {
+  AppFrame,
+  AppPane,
   AppBar,
   AppBarTitle,
   AppBarSection,
@@ -114,44 +116,46 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       }
 
       return (
-        <div className={styles.adminLocationsNew}>
-          <Dialogger />
+        <AppFrame>
+          <AppPane>
+            <Dialogger />
 
-          <div className={styles.appBarWrapper}>
-            <AppBar>
-              <AppBarTitle>
-                <a
-                  role="button"
-                  className={styles.arrow}
-                  href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
-                >
-                  <Icons.ArrowLeft />
-                </a>
-                New {SPACE_TYPE_TO_NAME[newSpaceType]}
-              </AppBarTitle>
-              <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={() => {
-                    window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
-                  }}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  onClick={this.onSave}
-                  disabled={spaces.view === 'LOADING'}
-                >Save</Button>
-              </AppBarSection>
-            </AppBar>
-          </div>
+            <div className={styles.appBarWrapper}>
+              <AppBar>
+                <AppBarTitle>
+                  <a
+                    role="button"
+                    className={styles.arrow}
+                    href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
+                  >
+                    <Icons.ArrowLeft />
+                  </a>
+                  New {SPACE_TYPE_TO_NAME[newSpaceType]}
+                </AppBarTitle>
+                <AppBarSection>
+                  <ButtonContext.Provider value="CANCEL_BUTTON">
+                    <Button onClick={() => {
+                      window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
+                    }}>Cancel</Button>
+                  </ButtonContext.Provider>
+                  <Button
+                    type="primary"
+                    onClick={this.onSave}
+                    disabled={spaces.view === 'LOADING'}
+                  >Save</Button>
+                </AppBarSection>
+              </AppBar>
+            </div>
 
-          {/* All the space type components take the same props */}
-          <FormComponent
-            spaceType={newSpaceType}
-            formState={this.state}
-            operationType="CREATE"
-            onChangeField={this.onChangeField}
-          />
-        </div>
+            {/* All the space type components take the same props */}
+            <FormComponent
+              spaceType={newSpaceType}
+              formState={this.state}
+              operationType="CREATE"
+              onChangeField={this.onChangeField}
+            />
+          </AppPane>
+        </AppFrame>
       );
     }
   }
