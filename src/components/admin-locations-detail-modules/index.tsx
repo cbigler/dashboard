@@ -663,8 +663,6 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
   );
 }
 
-// NOTE TO SELF AND TO ANY REVIEWERS: This component needs to be extracted out into its own file
-// before merging.
 export function AdminLocationsDetailModulesAddress({
   space,
   address,
