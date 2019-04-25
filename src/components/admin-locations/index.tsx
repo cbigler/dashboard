@@ -11,6 +11,7 @@ import AdminLocationsRootDetail from '../admin-locations-root-detail/index';
 import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
 import AdminLocationsBuildingDetail from '../admin-locations-building-detail/index';
 import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
+import AdminLocationsSpaceDetail from '../admin-locations-space-detail/index';
 
 import { DensitySpace } from '../../types';
 import {
@@ -92,7 +93,7 @@ function AdminLocations({selectedSpace, spaces}) {
     break;
   case 'space':
     content = (
-      <p>This page shows space info and hasn't been made yet</p>
+      <AdminLocationsSpaceDetail spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   case null:
@@ -104,7 +105,10 @@ function AdminLocations({selectedSpace, spaces}) {
   }
 
   return (
-    <div className={styles.adminLocations}>
+    <div className={classnames(
+      styles.adminLocations,
+      {[styles.space]: selectedSpace && selectedSpace.spaceType === 'space'}
+    )}>
       {spaces.view === 'LOADING' ? (
         <div className={styles.appBar}>
           <AppBar>

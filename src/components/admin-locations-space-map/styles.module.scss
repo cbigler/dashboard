@@ -6,7 +6,6 @@
 
 .addressMapContainer {
   height: 300px;
-  margin-top: 16px;
   border-radius: $borderRadiusBase;
 
   :global(.mapboxgl-ctrl-logo) { display: none; }
@@ -264,7 +263,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 350px;
+  max-width: 300px;
 }
 
 

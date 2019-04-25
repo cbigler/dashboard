@@ -22,7 +22,7 @@ import {
   Icons,
 } from '@density/ui';
 
-function getAreaUnit(measurementUnit) {
+export function getAreaUnit(measurementUnit='ft') {
   return `sq ${measurementUnit}`;
 }
 
