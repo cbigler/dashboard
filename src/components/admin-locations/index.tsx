@@ -43,7 +43,7 @@ function generateCreateRoute(parentId, type) {
   }
 }
 
-function ActionButtons({spaceId, spaceType}) {
+function ActionButtons({spaceId, spaceType, parentSpaceType}) {
   switch (spaceType) {
   case null:
     return (
@@ -100,10 +100,14 @@ function ActionButtons({spaceId, spaceType}) {
   case 'space':
     return (
       <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a Room</Button>
+        {/* Only show the add a room button when we are not in a room that is within a room */}
+        {/* (rooms can only be two levels in depth) */}
+        {parentSpaceType !== 'space' ? (
+          <Button
+            type="primary"
+            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
+          >Add a Room</Button>
+        ) : null}
       </Fragment>
     );
   default:
@@ -114,6 +118,14 @@ function ActionButtons({spaceId, spaceType}) {
 function AdminLocations({user, selectedSpace, spaces}) {
   const visibleSpaces = spaces.data
   .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
+
+  let selectedSpaceParentSpaceType = null;
+  if (selectedSpace) {
+    const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
+    if (parentSpace) {
+      selectedSpaceParentSpaceType = parentSpace.spaceType;
+    }
+  }
 
   let content: ReactNode = null;
   switch (selectedSpace ? selectedSpace.spaceType : null) {
@@ -263,6 +275,7 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 <ActionButtons
                   spaceId={selectedSpace ? selectedSpace.id : null}
                   spaceType={selectedSpace ? selectedSpace.spaceType : null}
+                  parentSpaceType={selectedSpaceParentSpaceType}
                 />
               </AppBarSection>
             </AppBar>
