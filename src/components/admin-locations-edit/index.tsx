@@ -16,6 +16,7 @@ import {
   AdminLocationsDetailModulesDangerZone,
   AdminLocationsDetailModulesOperatingHours,
 } from '../admin-locations-detail-modules/index';
+import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 
 import {
   AppBar,
@@ -86,6 +87,13 @@ export type AdminLocationsFormState = {
   dailyReset?: string | null,
 };
 
+const SPACE_TYPE_TO_NAME = {
+  campus: 'Campus',
+  building: 'Building',
+  floor: 'Level',
+  space: 'Room',
+};
+
 class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocationsFormState> {
   constructor(props) {
     super(props);
@@ -141,12 +149,7 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
                   >
                     <Icons.ArrowLeft />
                   </a>
-                  Edit {{
-                    campus: 'Campus',
-                    building: 'Building',
-                    floor: 'Level',
-                    space: 'Room',
-                  }[selectedSpace.spaceType]}
+                  Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
                 </AppBarTitle>
                 <AppBarSection>
                   <ButtonContext.Provider value="CANCEL_BUTTON">
