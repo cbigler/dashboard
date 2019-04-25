@@ -114,7 +114,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       }
 
       return (
-        <div className={styles.adminLocationsForm}>
+        <div className={styles.adminLocationsNew}>
           <Dialogger />
 
           <div className={styles.appBarWrapper}>
