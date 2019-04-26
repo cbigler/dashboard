@@ -124,7 +124,7 @@ function ExploreSpaceMeetings({
                     // On desktop, the calendar is two months wide and right aligned.
                     numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
 
-                    isOutsideRange={isOutsideRange}
+                    isOutsideRange={day => isOutsideRange(space, day)}
 
                     // common ranges functionality
                     commonRanges={getCommonRangesForSpace(space)}

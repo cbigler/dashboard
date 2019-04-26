@@ -95,7 +95,6 @@ export class Account extends React.Component<any, any> {
 
                       // Reset back to the values in the user prop (what's in redux)
                       fullName: user.data.fullName || '',
-                      nickname: user.data.nickname || '',
                       email: user.data.email || '',
                     });
                   } else {
@@ -230,7 +229,7 @@ export class Account extends React.Component<any, any> {
               <div className={styles.accountSubmitUserDetails}>
                 {this.state.mode === EDIT ? <Button
                   onClick={() => {
-                    onSubmitUserUpdate(this.state.fullName, this.state.nickname, this.state.marketingConsent)
+                    onSubmitUserUpdate(this.state.fullName, this.state.marketingConsent)
                       .then(() => {
                         this.setState({mode: NORMAL});
                       }).catch(error => {
@@ -260,8 +259,8 @@ export default connect((state: any) => {
         dispatch<any>(showModal('account-password-reset'));
       });
     },
-    onSubmitUserUpdate(fullName, nickname, marketingConsent) {
-      return dispatch<any>(userUpdate(fullName, nickname, marketingConsent));
+    onSubmitUserUpdate(fullName, marketingConsent) {
+      return dispatch<any>(userUpdate(fullName, marketingConsent));
     },
     onHideSuccessToast() {
       dispatch<any>(hideModal());
