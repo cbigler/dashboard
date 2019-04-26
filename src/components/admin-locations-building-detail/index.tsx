@@ -98,7 +98,7 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
             <AdminLocationsSpaceMap
               readonly={true}
               space={selectedSpace}
-              address="WeWork Gramercy, 120 E 23rd St, New York City, New York 10010, United States of America"
+              address="HARDCODED"
               coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
             />
           </div>
