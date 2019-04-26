@@ -86,17 +86,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="select"
+                  type="text"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={formState.spaceType}
-                  choices={[
-                    {id: 'campus', label: 'Campus'},
-                    {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Level'},
-                    {id: 'space', label: 'Room'},
-                  ]}
-                  onChange={e => onChangeField('spaceType', e.target.value)}
+                  value={
+                    ({
+                      campus: 'Campus',
+                      building: 'Building',
+                      floor: 'Level',
+                      space: 'Room',
+                    })[formState.spaceType] || 'Unknown'
+                  }
                   width="100%"
                 />
               }
