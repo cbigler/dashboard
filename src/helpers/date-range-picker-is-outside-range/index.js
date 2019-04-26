@@ -19,8 +19,8 @@ export default function isOutsideRange(space, localDay) {
   // timezone bug in the date picker, look here first.
   //
   // Sorry in advance :(
-  const day = localDay.clone().zone(space.timeZone).startOf('day');
-  //                           ^- That .zone method overrides the time zone on the moment (doesn't
+  const day = localDay.clone().utcOffset(space.timeZone).startOf('day');
+  //                           ^- That .utcOffset method overrides the time zone on the moment (doesn't
   //                           effect the date and time part of the moment), which is different from
   //                           .tz, which adjusts the moment into a time zone and the date and time
   //                           to a new locale.
