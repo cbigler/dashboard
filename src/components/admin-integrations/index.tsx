@@ -35,6 +35,7 @@ import collectionServiceAuthorizationCreate from '../../actions/collection/servi
 import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../actions/collection/service-authorizations/update';
 import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
 
+import doGoogleCalendarAuthRedirect from '../../actions/integrations/google-calendar';
 
 export function AdminIntegrations({
   activeModal,
@@ -59,6 +60,36 @@ export function AdminIntegrations({
         return teemIcon;
       default:
         return "";
+    }
+  }
+
+  function activateEditLink(item) {
+    if (item.serviceAuthorization.id == null) {
+      return <ListViewClickableLink>Activate</ListViewClickableLink>;
+    }
+
+    if (item.name === "robin") {
+      return <ListViewClickableLink>Edit</ListViewClickableLink>;
+    }
+  }
+
+  function handleActivateEditClick(item) {
+    if (item.name == "teem") {
+      item.serviceAuthorization.id == null ? window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations` : null;
+    } else if (item.name == "google_calendar") {
+      if (item.serviceAuthorization.id == null) {
+        return doGoogleCalendarAuthRedirect();
+      }
+    } else {
+      onOpenModal(item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
+    }
+  }
+
+  function handleDeleteClick(item) {
+    if (item.name == "teem" || item.name == "google_calendar") {
+      onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
+    } else {
+      onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});
     }
   }
 
@@ -129,26 +160,12 @@ export function AdminIntegrations({
           />          
           <ListViewColumn flexGrow={1} flexShrink={1} />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? 
-              <ListViewClickableLink>Activate</ListViewClickableLink> :
-              <ListViewClickableLink>Edit</ListViewClickableLink>}
-            onClick={item => {
-              if (item.name == "teem") {
-                item.serviceAuthorization.id == null ? window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations` : null;
-              } else {
-                onOpenModal(item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
-              }
-            }}
+            template={item => activateEditLink(item)}
+            onClick={item => handleActivateEditClick(item)}
           />
           <ListViewColumn
             template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-            onClick={item => {
-              if (item.name == "teem") {
-                onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})
-              } else {
-                onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} 
-              }
-            }
+            onClick={item => handleDeleteClick(item)}
            />
 
         </ListView>
