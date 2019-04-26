@@ -5,6 +5,13 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
+import { getAreaUnit } from '../admin-locations-detail-modules/index';
+
+import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
+import {
+  AdminLocationsLeftPaneDataRow,
+  AdminLocationsLeftPaneDataRowItem,
+} from '../admin-locations-left-pane-data-row/index';
 
 import {
   AppFrame,
@@ -12,6 +19,8 @@ import {
   AppSidebar,
   AppBar,
   AppBarSection,
+  AppBarTitle,
+  Button,
   Icons,
 } from '@density/ui';
 
@@ -71,10 +80,80 @@ export default function AdminLocationsBuildingDetail({ spaces, selectedSpace }) 
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
   const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
 
+  const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
+
   return (
     <AppFrame>
       <AppSidebar visible>
-        TODO: Waiting on mockups
+        <AppBar>
+          <AppBarTitle>{selectedSpace.name}</AppBarTitle>
+          <AppBarSection>
+            <Button onClick={() => {
+              window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+            }}>Edit</Button>
+          </AppBarSection>
+        </AppBar>
+        {mapShown ? (
+          <div className={styles.leftPaneMap}>
+            <AdminLocationsSpaceMap
+              readonly={true}
+              space={selectedSpace}
+              address="HARDCODED"
+              coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+            />
+          </div>
+        ) : null}
+        <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
+          <AdminLocationsLeftPaneDataRowItem
+            id="size"
+            label={`Size (${getAreaUnit(selectedSpace.sizeUnit)}):`}
+            value={"HARDCODED"}
+          />
+          <AdminLocationsLeftPaneDataRowItem
+            id="size"
+            label={`Rent (per ${getAreaUnit(selectedSpace.sizeUnit)}):`}
+            value={"HARDCODED"}
+          />
+        </AdminLocationsLeftPaneDataRow>
+        <AdminLocationsLeftPaneDataRow>
+          <AdminLocationsLeftPaneDataRowItem
+            id="target-capacity"
+            label="Target Capacity:"
+            value={"H"}
+          />
+          <AdminLocationsLeftPaneDataRowItem
+            id="capacity"
+            label="Capacity:"
+            value={"A"}
+          />
+          <AdminLocationsLeftPaneDataRowItem
+            id="levels"
+            label="Levels:"
+            value={
+              spaces.data
+              .filter(space =>
+                space.spaceType === 'floor' &&
+                space.ancestry.map(a => a.id).includes(selectedSpace.id)
+              ).length
+            }
+          />
+          <AdminLocationsLeftPaneDataRowItem
+            id="spaces"
+            label="Spaces:"
+            value={
+              spaces.data
+              .filter(space =>
+                space.spaceType === 'space' &&
+                space.ancestry.map(a => a.id).includes(selectedSpace.id)
+              ).length
+            }
+          />
+          <AdminLocationsLeftPaneDataRowItem
+            id="dpus"
+            label="DPUs:"
+            value={"C"}
+          />
+        </AdminLocationsLeftPaneDataRow>
       </AppSidebar>
       <AppPane>
         <div className={styles.scroll}>
