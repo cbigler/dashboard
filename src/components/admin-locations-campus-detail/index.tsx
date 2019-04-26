@@ -3,9 +3,11 @@ import styles from './styles.module.scss';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader  from '../admin-locations-subheader/index';
+import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
+import { getAreaUnit } from '../admin-locations-detail-modules/index';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
-import { getAreaUnit } from '../admin-locations-detail-modules/index';
+import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
 import {
   AdminLocationsLeftPaneDataRow,
@@ -23,12 +25,19 @@ import {
   Icons,
 } from '@density/ui';
 
-export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
+export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
+
+  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
+    selectedSpace.sizeArea,
+    selectedSpace.sizeAreaUnit,
+    user.data.sizeAreaUnitDefault,
+  ) : null;
+
   return (
     <AppFrame>
-      <AppSidebar visible>
+      <AppSidebar visible width={550}>
         <AppBar>
           <AppBarTitle>{selectedSpace.name}</AppBarTitle>
           <AppBarSection>
@@ -42,7 +51,7 @@ export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
             <AdminLocationsSpaceMap
               readonly={true}
               space={selectedSpace}
-              address="HARDCODED"
+              address={selectedSpace.address}
               coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
             />
           </div>
@@ -50,25 +59,27 @@ export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
         <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
           <AdminLocationsLeftPaneDataRowItem
             id="size"
-            label={`Size (${getAreaUnit(selectedSpace.sizeUnit)}):`}
-            value={"HARDCODED"}
+            label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
             id="size"
-            label={`Rent (per ${getAreaUnit(selectedSpace.sizeUnit)}):`}
-            value={"HARDCODED"}
+            label={`Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            value={sizeAreaConverted && selectedSpace.annualRent ? (
+              `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
+            ) : <Fragment>&mdash;</Fragment>}
           />
         </AdminLocationsLeftPaneDataRow>
         <AdminLocationsLeftPaneDataRow>
           <AdminLocationsLeftPaneDataRowItem
             id="target-capacity"
             label="Target Capacity:"
-            value={"H"}
+            value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
             id="capacity"
             label="Capacity:"
-            value={"A"}
+            value={selectedSpace.capacity ? selectedSpace.capacity : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
             id="buildings"
@@ -106,69 +117,77 @@ export default function AdminLocationsCampusDetail({ spaces, selectedSpace }) {
           <AdminLocationsLeftPaneDataRowItem
             id="dpus"
             label="DPUs:"
-            value={"C"}
+            value={"HARDCODED"}
           />
         </AdminLocationsLeftPaneDataRow>
       </AppSidebar>
       <AppPane>
-        <div className={styles.scroll}>
-          <AdminLocationsSubheader title="Buildings" supportsHover={false} />
-          <div className={styles.wrapper}>
-            <ListView data={visibleSpaces}>
-              <ListViewColumn
-                title="Info"
-                template={item => (
-                  <Fragment>
-                    <AdminLocationsListViewImage space={item} />
-                    <span className={styles.name}>{item.name}</span>
-                  </Fragment>
-                )}
-                flexGrow={1}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Levels"
-                template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Spaces"
-                template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Size (sq ft)"
-                template={item => 'HARDCODED'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Rent"
-                template={item => 'HARDCODED'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Seats"
-                template={item => 'HARDCODED'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="Capacity"
-                template={item => item.capacity === null ? <Fragment>&mdash;</Fragment> : item.capacity}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title="DPUs"
-                template={item => 'HARDCODED'}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-              <ListViewColumn
-                title=""
-                template={item => <Icons.ArrowRight />}
-                href={item => `#/admin/locations/${item.id}`}
-              />
-            </ListView>
+        {visibleSpaces.length > 0 ? (
+          <div className={styles.scroll}>
+            <AdminLocationsSubheader title="Buildings" supportsHover={false} />
+            <div className={styles.wrapper}>
+              <ListView data={visibleSpaces}>
+                <ListViewColumn
+                  title="Info"
+                  template={item => (
+                    <Fragment>
+                      <AdminLocationsListViewImage space={item} />
+                      <span className={styles.name}>{item.name}</span>
+                    </Fragment>
+                  )}
+                  flexGrow={1}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="Levels"
+                  template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="Spaces"
+                  template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title={`Size ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}`}
+                  template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
+                    item.sizeArea,
+                    item.sizeAreaUnit,
+                    user.data.sizeAreaUnitDefault,
+                  ) : <Fragment>&mdash;</Fragment>}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="Rent"
+                  template={item => item.annualRent}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="Target Capacity"
+                  template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="Capacity"
+                  template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title="DPUs"
+                  template={item => 'HARDCODED'}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+                <ListViewColumn
+                  title=""
+                  template={item => <Icons.ArrowRight />}
+                  href={item => `#/admin/locations/${item.id}`}
+                />
+              </ListView>
+            </div>
           </div>
-        </div>
+        ) : (
+          <AdminLocationsDetailEmptyState />
+        )}
       </AppPane>
     </AppFrame>
   );

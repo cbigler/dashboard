@@ -70,6 +70,7 @@ import routeTransitionAdminDeveloper from './actions/route-transition/admin-deve
 import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
 import routeTransitionAdminLocations from './actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-locations-edit';
+import routeTransitionAdminLocationsNew from './actions/route-transition/admin-locations-new';
 
 import sessionTokenSet from './actions/session-token/set';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
@@ -203,8 +204,10 @@ router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManag
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(null));
+router.addRoute('admin/locations/create/:spaceType', (spaceType) => routeTransitionAdminLocationsNew(null, spaceType));
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(id));
+router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => routeTransitionAdminLocationsNew(id, spaceType));
 
 // Onboarding flow
 // Redirect #/onboarding => #/onboarding/overview

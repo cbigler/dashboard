@@ -1,0 +1,26 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.emptyStateWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $grayLightest;
+
+  width: 100%;
+  height: 100%;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #fff;
+
+  height: 72px;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+  white-space: nowrap;
+  width: 500px;
+}

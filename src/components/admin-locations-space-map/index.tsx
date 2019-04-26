@@ -31,7 +31,7 @@ export default class AdminLocationsSpaceMap extends Component<any, any> {
 
   componentDidMount() {
     const {
-      space,
+      spaceType,
       address,
       coordinates,
       readonly,
@@ -47,7 +47,7 @@ export default class AdminLocationsSpaceMap extends Component<any, any> {
         container: this.container.current,
         style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
         center: coordinates ? {lat: coordinates[0], lng: coordinates[1]} : DEFAULT_MAP_COORDINATES,
-        zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[space.spaceType] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
+        zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[spaceType] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
         interactive: readonly ? false : true,
       });
 

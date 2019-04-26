@@ -13,6 +13,7 @@ import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
 import AdminLocations from '../admin-locations/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
+import AdminLocationsNew from '../admin-locations-new/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
@@ -93,6 +94,8 @@ function ActivePage({activePage, user, settings}) {
     return <Admin user={user} activePage={activePage} />;
   case "ADMIN_LOCATIONS_EDIT":
     return <AdminLocationsEdit />;
+  case "ADMIN_LOCATIONS_NEW":
+    return <AdminLocationsNew />;
   case "ADMIN_USER_MANAGEMENT_DETAIL":
     return <AdminUserManagementDetail />;
   case "LIVE_SPACE_LIST":

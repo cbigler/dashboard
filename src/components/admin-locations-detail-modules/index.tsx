@@ -77,9 +77,9 @@ export default function AdminLocationsDetailModule({title, error=false, actions=
   );
 }
 
-export function AdminLocationsDetailModulesGeneralInfo({space, formState, onChangeField}) {
+export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, onChangeField}) {
   let content;
-  switch (space.spaceType) {
+  switch (spaceType) {
   case 'campus':
     content = (
       <div className={styles.spaceFieldRenderer}>
@@ -348,9 +348,9 @@ export function AdminLocationsDetailModulesGeneralInfo({space, formState, onChan
   );
 }
 
-export function AdminLocationsDetailModulesMetadata({space, formState, onChangeField}) {
+export function AdminLocationsDetailModulesMetadata({spaceType, formState, onChangeField}) {
   let content, controls;
-  switch (space.spaceType) {
+  switch (spaceType) {
   case 'campus':
     controls = null;
     content = (
@@ -365,8 +365,8 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
                   type="number"
                   id="admin-locations-detail-modules-general-info-rent-annual"
                   placeholder="ex. 48000"
-                  value={formState.rentAnnual}
-                  onChange={e => onChangeField('rentAnnual', e.target.value)}
+                  value={formState.annualRent}
+                  onChange={e => onChangeField('annualRent', e.target.value)}
                   leftIcon={<span>$</span>}
                   width="100%"
                 />
@@ -423,8 +423,8 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
               {id: 'meters', label: 'meters'},
             ]}
             width={138}
-            value={formState.sizeUnit}
-            onChange={choice => onChangeField('sizeUnit', choice.id)}
+            value={formState.sizeAreaUnit}
+            onChange={choice => onChangeField('sizeAreaUnit', choice.id)}
           />
         </span>
         <span className={styles.modulesMetadataDropdowns}>
@@ -435,8 +435,8 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
             ]}
             disabled
             width={158}
-            value={formState.currency}
-            onChange={choice => onChangeField('currency', choice.id)}
+            value={formState.currencyUnit}
+            onChange={choice => onChangeField('currencyUnit', choice.id)}
           />
         </span>
       </AppBarSection>
@@ -453,8 +453,8 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
                   type="number"
                   id="admin-locations-detail-modules-general-info-rent-annual"
                   placeholder="ex. 48000"
-                  value={formState.rentAnnual}
-                  onChange={e => onChangeField('rentAnnual', e.target.value)}
+                  value={formState.annualRent}
+                  onChange={e => onChangeField('annualRent', e.target.value)}
                   leftIcon={<span>$</span>}
                   width="100%"
                 />
@@ -463,15 +463,15 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeUnit)})`}
+              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
                   type="number"
                   placeholder="ex. 24000"
                   id="admin-locations-detail-modules-general-info-size"
-                  value={formState.size}
-                  onChange={e => onChangeField('size', e.target.value)}
+                  value={formState.sizeArea}
+                  onChange={e => onChangeField('sizeArea', e.target.value)}
                   width="100%"
                 />
               }
@@ -529,8 +529,8 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
                   type="number"
                   id="admin-locations-detail-modules-general-info-rent-annual"
                   placeholder="ex. 48000"
-                  value={formState.rentAnnual}
-                  onChange={e => onChangeField('rentAnnual', e.target.value)}
+                  value={formState.annualRent}
+                  onChange={e => onChangeField('annualRent', e.target.value)}
                   leftIcon={<span>$</span>}
                   width="100%"
                 />
@@ -539,15 +539,15 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeUnit)})`}
+              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
                   type="number"
                   placeholder="ex. 24000"
                   id="admin-locations-detail-modules-general-info-size"
-                  value={formState.size}
-                  onChange={e => onChangeField('size', e.target.value)}
+                  value={formState.sizeArea}
+                  onChange={e => onChangeField('sizeArea', e.target.value)}
                   width="100%"
                 />
               }
@@ -598,15 +598,15 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label={`Size (${getAreaUnit(formState.sizeUnit)})`}
+              label={`Size (${getAreaUnit(formState.sizeAreaUnit)})`}
               htmlFor="admin-locations-detail-modules-general-info-size"
               input={
                 <InputBox
                   type="number"
                   placeholder="ex. 24000"
                   id="admin-locations-detail-modules-general-info-size"
-                  value={formState.size}
-                  onChange={e => onChangeField('size', e.target.value)}
+                  value={formState.sizeArea}
+                  onChange={e => onChangeField('sizeArea', e.target.value)}
                   width="100%"
                 />
               }
@@ -664,7 +664,7 @@ export function AdminLocationsDetailModulesMetadata({space, formState, onChangeF
 }
 
 export function AdminLocationsDetailModulesAddress({
-  space,
+  spaceType,
   address,
   coordinates,
   onChangeAddress,
@@ -673,7 +673,7 @@ export function AdminLocationsDetailModulesAddress({
   return (
     <AdminLocationsDetailModule title="Address">
       <AdminLocationsSpaceMap
-        space={space}
+        spaceType={spaceType}
         address={address}
         onChangeAddress={onChangeAddress}
         coordinates={coordinates}
@@ -686,13 +686,12 @@ export function AdminLocationsDetailModulesAddress({
 
 
 type AdminLocationsDetailModulesDangerZoneUnconnectedProps = {
-  space: DensitySpace,
   onShowConfirm: () => any,
   onDeleteSpace: () => any,
 };
 
 function AdminLocationsDetailModulesDangerZoneUnconnected(
-  {space, onShowConfirm, onDeleteSpace}: AdminLocationsDetailModulesDangerZoneUnconnectedProps
+  {onShowConfirm, onDeleteSpace}: AdminLocationsDetailModulesDangerZoneUnconnectedProps
 ) {
   return (
     <AdminLocationsDetailModule error title="Danger Zone">
@@ -726,7 +725,7 @@ export const AdminLocationsDetailModulesDangerZone = connect(
 
 
 
-export function AdminLocationsDetailModulesOperatingHours({space, formState, onChangeField}) {
+export function AdminLocationsDetailModulesOperatingHours({formState, onChangeField}) {
   return (
     <AdminLocationsDetailModule title="Operating Hours">
       <div className={styles.operatingHoursWrapper}>
@@ -751,7 +750,10 @@ export function AdminLocationsDetailModulesOperatingHours({space, formState, onC
           <InputBox
             id="admin-locations-detail-modules-operating-hours-time-zone"
             type="select"
-            choices={generateResetTimeChoices(space).map(i => ({ id: i.value, label: i.display }))}
+            choices={
+              generateResetTimeChoices({timeZone: formState.timeZone})
+              .map(i => ({ id: i.value, label: i.display }))
+            }
             value={formState.dailyReset}
             onChange={choice => onChangeField('dailyReset', choice.id)}
             menuMaxHeight={300}

@@ -185,6 +185,7 @@ export type DensityUser = {
   createdAt: string,
   permissions: Array<string>,
   spaces: Array<string>,
+  sizeAreaUnitDefault?: 'square_feet' | 'square_meters',
 };
 
 // Counts
