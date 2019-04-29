@@ -1,4 +1,5 @@
 import collectionSpacesPush from './push';
+import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
 
@@ -36,7 +37,18 @@ export default function collectionSpacesUpdate(item) {
       return false;
     }
 
-    dispatch(collectionSpacesPush(response.data));
+    // Fetch all spaces after updating this space. If we changed this space's size area unit, then
+    // the size area unit of child spaces will update too.
+    let response2;
+    try {
+      response2 = await core().get('/spaces');
+    } catch (err) {
+      dispatch(collectionSpacesError(err));
+      return false;
+    }
+
+    dispatch(collectionSpacesSet(response2.data));
+
     return response.data;
   };
 }
