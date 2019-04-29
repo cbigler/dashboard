@@ -63,6 +63,8 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     // Operating hours module
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
+    startTime: '10:30:00',
+    endTime: '16:00:00',
   };
 }
 
@@ -131,6 +133,8 @@ export type AdminLocationsFormState = {
   timeZone?: string,
   dailyReset?: string | null,
   parentId?: string | null,
+  startTime?: string,
+  endTime?: string,
 };
 
 const SPACE_TYPE_TO_NAME = {

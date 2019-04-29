@@ -1,4 +1,5 @@
 import React, { Fragment, ReactNode, Component } from 'react';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
@@ -729,6 +730,99 @@ export const AdminLocationsDetailModulesDangerZone = connect(
 )(AdminLocationsDetailModulesDangerZoneUnconnected);
 
 
+const UTC_DAY_LENGTH_IN_SECONDS = 24 * 60 * 60;
+
+class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any> {
+  pressedButton: 'start' | 'end' | null = null;
+  trackWidthInPx: number = 0;
+
+  onMouseDown = event => {
+    let element = event.target;
+    while (element && element.id.indexOf('track') === -1) {
+      element = element.parentElement;
+    }
+    if (element) {
+      this.pressedButton = event.target.id.indexOf('start') >= 0 ? 'start' : 'end';
+      this.trackWidthInPx = element.offsetWidth;
+    }
+  }
+  onMouseMove = event => {
+    const { startTime, endTime, onChange } = this.props;
+    if (event.buttons !== 1 /* left button */) { return; }
+
+    const percentMoved = event.movementX / this.trackWidthInPx;
+    const secondsDelta = percentMoved * UTC_DAY_LENGTH_IN_SECONDS;
+
+    switch (this.pressedButton) {
+    case 'start':
+      const newStartTime = moment.duration(startTime).add(secondsDelta, 'seconds');
+      onChange(this.formatDuration(newStartTime, 'HH:mm:ss'), endTime);
+      return;
+    case 'end':
+      const newEndTime = moment.duration(endTime).add(secondsDelta, 'seconds');
+      onChange(startTime, this.formatDuration(newEndTime, 'HH:mm:ss'));
+      return;
+    default:
+      return;
+    }
+  }
+  onMouseUp = event => {
+    this.pressedButton = null;
+  }
+
+  formatDuration = (duration, format) => {
+		return moment.utc()
+      .startOf('day')
+			.add(duration.as('milliseconds'))
+			.format(format);
+  }
+
+  render() {
+    const { startTime, endTime } = this.props;
+
+    const startTimeDuration = moment.duration(startTime);
+    const endTimeDuration = moment.duration(endTime);
+
+    const startOfDay = moment.utc().startOf('day');
+    const endOfDay = startOfDay.clone().endOf('day');
+    const dayLengthInSeconds = endOfDay.unix() - startOfDay.unix();
+
+    const sliderStartTime = startOfDay.clone().add(startTimeDuration);
+    const sliderStartTimePercentage = (sliderStartTime.unix() - startOfDay.unix()) / dayLengthInSeconds * 100;
+
+    const sliderEndTime = startOfDay.clone().add(endTimeDuration);
+    const sliderEndTimePercentage = (sliderEndTime.unix() - startOfDay.unix()) / dayLengthInSeconds * 100;
+
+    return (
+      <div
+        className={styles.operatingHoursSliderWrapper}
+        onMouseDown={this.onMouseDown}
+        onMouseMove={this.onMouseMove}
+        onMouseUp={this.onMouseUp}
+      >
+        <div className={styles.operatingHoursSliderTrack} id="track">
+          <div
+            className={styles.operatingHoursSliderTrackFilledSection}
+            style={{
+              left: `${sliderStartTimePercentage}%`,
+              width: `${sliderEndTimePercentage - sliderStartTimePercentage}%`,
+            }}
+          />
+          <div
+            className={styles.operatingHoursSliderHead}
+            id="start"
+            style={{left: `${sliderStartTimePercentage}%`}}
+          >{this.formatDuration(startTimeDuration, 'h:mma')}</div>
+          <div
+            className={styles.operatingHoursSliderHead}
+            id="end"
+            style={{left: `calc(${sliderEndTimePercentage}% - 64px)`}}
+          >{this.formatDuration(endTimeDuration, 'h:mma')}</div>
+        </div>
+      </div>
+    );
+  }
+}
 
 export function AdminLocationsDetailModulesOperatingHours({formState, onChangeField}) {
   return (
@@ -767,6 +861,15 @@ export function AdminLocationsDetailModulesOperatingHours({formState, onChangeFi
             />
           </div>
         </div>
+
+        <AdminLocationsDetailModulesOperatingHoursSlider
+          startTime={formState.startTime}
+          endTime={formState.endTime}
+          onChange={(startTime, endTime) => {
+            onChangeField('startTime', startTime);
+            onChangeField('endTime', endTime);
+          }}
+        />
       </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
