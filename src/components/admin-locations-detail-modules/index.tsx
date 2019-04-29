@@ -44,7 +44,7 @@ export default function AdminLocationsDetailModule({title, error=false, actions=
   return (
     <div className={classnames(styles.module, {[styles.moduleError]: error})}>
       <div className={styles.moduleHeader}>
-        <AppBarContext.Provider value="ADMIN_LOCATIONS_EDIT_MODULE_HEADER">
+        <AppBarContext.Provider value="CARD_HEADER">
           <AppBar>
             <AppBarTitle>{title}</AppBarTitle>
             {actions}

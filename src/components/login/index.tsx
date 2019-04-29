@@ -202,7 +202,7 @@ export class Login extends React.Component<any, any> {
       <div className={styles.loginSection}>
         {/* Render a toast if the password reset request worked */}
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
-          <ToastContext.Provider value="multiline">
+          <ToastContext.Provider value="MULTILINE">
             <Toast
               visible
               icon={<Icons.Check color="white" />}
@@ -216,7 +216,7 @@ export class Login extends React.Component<any, any> {
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 visible
                 icon={<Icons.No color="white" />}
@@ -230,7 +230,7 @@ export class Login extends React.Component<any, any> {
 
         {this.props.user && this.props.user.error ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible
@@ -246,7 +246,7 @@ export class Login extends React.Component<any, any> {
         {/* Render any errors with previous login attempts */}
         {this.state.error ? (
           <div className={styles.loginToast}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible
