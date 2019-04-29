@@ -126,7 +126,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
-            id="size"
+            id="rent"
             label={`Annual Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
             value={sizeAreaConverted && selectedSpace.annualRent ? (
               `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`

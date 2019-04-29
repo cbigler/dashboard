@@ -96,7 +96,10 @@ export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }
   return (
     <div className={styles.wrapper}>
       {buildingsNotInCampus.length > 0 ? (
-        <SpaceList user={user} spaces={spaces} renderedSpaces={buildingsNotInCampus} />
+        <Fragment>
+          <AdminLocationsSubheader title="Buildings" supportsHover={false} />
+          <SpaceList user={user} spaces={spaces} renderedSpaces={buildingsNotInCampus} />
+        </Fragment>
       ) : null}
 
       {campuses.map((campus, index) => {

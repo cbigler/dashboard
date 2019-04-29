@@ -195,12 +195,12 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <AdminLocationsLeftPaneDataRow>
                 <AdminLocationsLeftPaneDataRowItem
                   id="size"
-                  label="Size (sq ft):"
+                  label="Size (sq unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="rent"
-                  label={`Annual Rent (per square unit):`}
+                  label="Annual Rent (per square unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
               </AdminLocationsLeftPaneDataRow>
