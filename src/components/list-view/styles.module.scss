@@ -18,9 +18,8 @@
   font-weight: bold;
   white-space: nowrap;
 }
-:first-child > .listViewHeader {
-  padding-left: 0;
-}
+:first-child > .listViewHeader { padding-left: 0px; }
+:last-child > .listViewHeader { padding-right: 0px; }
 
 .listViewCell {
   display: flex;
@@ -31,16 +30,10 @@
   font-size: $fontSizeBase;
   color: $grayDarkest;
 }
-:first-child > .listViewCell, :first-child > a > .listViewCell {
-  padding-left: 0;
-}
-:last-child > .listViewVell {
-  padding-right: 0;
-}
+:first-child > .listViewCell, :first-child > a > .listViewCell { padding-left: 0px; }
+:last-child > .listViewCell, :last-child > a > .listViewCell { padding-right: 0px; }
 
-.listViewCell.clickable {
-  cursor: pointer;
-}
+.listViewCell.clickable { cursor: pointer; }
 
 .listViewClickableLink {
   width: 100%;

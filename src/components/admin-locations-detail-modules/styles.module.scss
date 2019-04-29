@@ -9,11 +9,11 @@
   border: 1px solid $grayLight;
   border-radius: $borderRadiusBase;
 }
-.moduleBody {
+.moduleError { border-color: $brandDanger; }
+.moduleBody.padding {
   padding: 24px;
   padding-top: 18px;
 }
-.moduleError { border-color: $brandDanger; }
 
 
 

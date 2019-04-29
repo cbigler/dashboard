@@ -1,4 +1,4 @@
-import React, { ReactNode, Component } from 'react';
+import React, { Fragment, ReactNode, Component } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
@@ -6,10 +6,11 @@ import classnames from 'classnames';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
+import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
+import ListView, { ListViewColumn } from '../list-view/index';
 
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
-import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import { DensitySpace } from '../../types';
@@ -24,6 +25,7 @@ import {
   InputBox,
   Icons,
 } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 const SPACE_FUNCTION_CHOICES = [
   {id: null, label: 'No function'},
@@ -40,7 +42,12 @@ const SPACE_FUNCTION_CHOICES = [
 	{id: 'theater', label: 'Theater'},
 ];
 
-export default function AdminLocationsDetailModule({title, error=false, actions=null, children}) {
+export default function AdminLocationsDetailModule({
+  title,
+  error=false,
+  actions=null,
+  children,
+}) {
   return (
     <div className={classnames(styles.module, {[styles.moduleError]: error})}>
       <div className={styles.moduleHeader}>
@@ -51,9 +58,15 @@ export default function AdminLocationsDetailModule({title, error=false, actions=
           </AppBar>
         </AppBarContext.Provider>
       </div>
-      <div className={styles.moduleBody}>
-        {children}
-      </div>
+      {children}
+    </div>
+  );
+}
+
+export function AdminLocationsDetailModuleBody({includePadding=true, children}) {
+  return (
+    <div className={classnames(styles.moduleBody, {[styles.padding]: includePadding})}>
+      {children}
     </div>
   );
 }
@@ -325,7 +338,9 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
 
   return (
     <AdminLocationsDetailModule title="General Info">
-      {content}
+      <AdminLocationsDetailModuleBody>
+        {content}
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }
@@ -639,7 +654,9 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
 
   return (
     <AdminLocationsDetailModule title="Meta" actions={controls}>
-      {content}
+      <AdminLocationsDetailModuleBody>
+        {content}
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }
@@ -653,13 +670,15 @@ export function AdminLocationsDetailModulesAddress({
 }) {
   return (
     <AdminLocationsDetailModule title="Address">
-      <AdminLocationsSpaceMap
-        spaceType={spaceType}
-        address={address}
-        onChangeAddress={onChangeAddress}
-        coordinates={coordinates}
-        onChangeCoordinates={onChangeCoordinates}
-      />
+      <AdminLocationsDetailModuleBody>
+        <AdminLocationsSpaceMap
+          spaceType={spaceType}
+          address={address}
+          onChangeAddress={onChangeAddress}
+          coordinates={coordinates}
+          onChangeCoordinates={onChangeCoordinates}
+        />
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }
@@ -669,17 +688,19 @@ export function AdminLocationsDetailModulesAddress({
 function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
   return (
     <AdminLocationsDetailModule error title="Danger Zone">
-      <div className={styles.dangerZoneWrapper}>
-        <div className={styles.dangerZoneLeft}>
-          <h4>Delete this space</h4>
-          <span>Once deleted, it will be gone forever. Please be certain.</span>
+      <AdminLocationsDetailModuleBody>
+        <div className={styles.dangerZoneWrapper}>
+          <div className={styles.dangerZoneLeft}>
+            <h4>Delete this space</h4>
+            <span>Once deleted, it will be gone forever. Please be certain.</span>
+          </div>
+          <div className={styles.dangerZoneRight}>
+            <ButtonContext.Provider value="DELETE_BUTTON">
+              <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
+            </ButtonContext.Provider>
+          </div>
         </div>
-        <div className={styles.dangerZoneRight}>
-          <ButtonContext.Provider value="DELETE_BUTTON">
-            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
-          </ButtonContext.Provider>
-        </div>
-      </div>
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }
@@ -712,39 +733,41 @@ export const AdminLocationsDetailModulesDangerZone = connect(
 export function AdminLocationsDetailModulesOperatingHours({formState, onChangeField}) {
   return (
     <AdminLocationsDetailModule title="Operating Hours">
-      <div className={styles.operatingHoursWrapper}>
-        <div className={styles.operatingHoursLeft}>
-          <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
-            Time Zone:
-          </label>
-          <InputBox
-            id="admin-locations-detail-modules-operating-hours-time-zone"
-            type="select"
-            choices={TIME_ZONE_CHOICES}
-            value={formState.timeZone}
-            onChange={choice => onChangeField('timeZone', choice.id)}
-            width={350}
-            menuMaxHeight={300}
-          />
+      <AdminLocationsDetailModuleBody>
+        <div className={styles.operatingHoursWrapper}>
+          <div className={styles.operatingHoursLeft}>
+            <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
+              Time Zone:
+            </label>
+            <InputBox
+              id="admin-locations-detail-modules-operating-hours-time-zone"
+              type="select"
+              choices={TIME_ZONE_CHOICES}
+              value={formState.timeZone}
+              onChange={choice => onChangeField('timeZone', choice.id)}
+              width={350}
+              menuMaxHeight={300}
+            />
+          </div>
+          <div className={styles.operatingHoursRight}>
+            <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
+              The day starts at:
+            </label>
+            <InputBox
+              id="admin-locations-detail-modules-operating-hours-time-zone"
+              type="select"
+              choices={
+                generateResetTimeChoices({timeZone: formState.timeZone})
+                .map(i => ({ id: i.value, label: i.display }))
+              }
+              value={formState.dailyReset}
+              onChange={choice => onChangeField('dailyReset', choice.id)}
+              menuMaxHeight={300}
+              width={114}
+            />
+          </div>
         </div>
-        <div className={styles.operatingHoursRight}>
-          <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
-            The day starts at:
-          </label>
-          <InputBox
-            id="admin-locations-detail-modules-operating-hours-time-zone"
-            type="select"
-            choices={
-              generateResetTimeChoices({timeZone: formState.timeZone})
-              .map(i => ({ id: i.value, label: i.display }))
-            }
-            value={formState.dailyReset}
-            onChange={choice => onChangeField('dailyReset', choice.id)}
-            menuMaxHeight={300}
-            width={114}
-          />
-        </div>
-      </div>
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }
