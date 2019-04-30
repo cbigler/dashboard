@@ -731,36 +731,69 @@ export const AdminLocationsDetailModulesDangerZone = connect(
 
 
 const UTC_DAY_LENGTH_IN_SECONDS = 24 * 60 * 60;
+const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
 
 class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any> {
   pressedButton: 'start' | 'end' | null = null;
   trackWidthInPx: number = 0;
+  trackLeftPositionInPx: number = 0;
 
   onMouseDown = event => {
-    let element = event.target;
-    while (element && element.id.indexOf('track') === -1) {
-      element = element.parentElement;
+    // Dragging must be done on the slider control heads
+    if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
+      return;
     }
-    if (element) {
+
+    // Find the track div that is a parent of the handle
+    let track = event.target;
+    while (track && track.id.indexOf('track') === -1) {
+      track = track.parentElement;
+    }
+
+    if (track) {
       this.pressedButton = event.target.id.indexOf('start') >= 0 ? 'start' : 'end';
-      this.trackWidthInPx = element.offsetWidth;
+
+      const trackBbox = track.getBoundingClientRect();
+      this.trackWidthInPx = trackBbox.width;
+      this.trackLeftPositionInPx = trackBbox.left;
+
+      // Add or subtract a small offset from the track left position. This effectively ensures that
+      // further handle movments are relative to the original cursor position so that the handle
+      // doesn't "jump" to the original cursor positino when it is first moved.
+      const handleBbox = event.target.getBoundingClientRect();
+      const cursorXOffsetWithinHandle = event.clientX - handleBbox.left;
+      if (this.pressedButton === 'start') {
+        this.trackLeftPositionInPx += cursorXOffsetWithinHandle;
+      } else {
+        this.trackLeftPositionInPx -= cursorXOffsetWithinHandle;
+      }
     }
   }
   onMouseMove = event => {
     const { startTime, endTime, onChange } = this.props;
-    if (event.buttons !== 1 /* left button */) { return; }
+    if (!this.pressedButton || event.buttons !== 1 /* left button */) { return; }
 
-    const percentMoved = event.movementX / this.trackWidthInPx;
-    const secondsDelta = percentMoved * UTC_DAY_LENGTH_IN_SECONDS;
+    const mouseX = event.clientX - this.trackLeftPositionInPx;
+    const seconds = (mouseX / this.trackWidthInPx) * UTC_DAY_LENGTH_IN_SECONDS;
+
+    function processValue(timeValueInSec) {
+      // Limit on the left hand side to 12:00am
+      if (timeValueInSec < 0) {
+        timeValueInSec = 0;
+      }
+      // Limit on the right hand side to 11:59am
+      if (timeValueInSec > UTC_DAY_LENGTH_IN_SECONDS) {
+        timeValueInSec = UTC_DAY_LENGTH_IN_SECONDS;
+      }
+      return Math.round(timeValueInSec / FIFTEEN_MINUTES_IN_SECONDS) * FIFTEEN_MINUTES_IN_SECONDS;
+    }
 
     switch (this.pressedButton) {
     case 'start':
-      const newStartTime = moment.duration(startTime).add(secondsDelta, 'seconds');
-      onChange(this.formatDuration(newStartTime, 'HH:mm:ss'), endTime);
+      onChange(processValue(seconds), endTime);
       return;
     case 'end':
-      const newEndTime = moment.duration(endTime).add(secondsDelta, 'seconds');
-      onChange(startTime, this.formatDuration(newEndTime, 'HH:mm:ss'));
+      onChange(startTime, processValue(seconds));
       return;
     default:
       return;
@@ -773,25 +806,18 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   formatDuration = (duration, format) => {
 		return moment.utc()
       .startOf('day')
-			.add(duration.as('milliseconds'))
+			.add(duration.as('milliseconds'), 'milliseconds')
 			.format(format);
   }
 
   render() {
     const { startTime, endTime } = this.props;
 
-    const startTimeDuration = moment.duration(startTime);
-    const endTimeDuration = moment.duration(endTime);
+    const startTimeDuration = moment.duration(startTime, 'seconds');
+    const endTimeDuration = moment.duration(endTime, 'seconds');
 
-    const startOfDay = moment.utc().startOf('day');
-    const endOfDay = startOfDay.clone().endOf('day');
-    const dayLengthInSeconds = endOfDay.unix() - startOfDay.unix();
-
-    const sliderStartTime = startOfDay.clone().add(startTimeDuration);
-    const sliderStartTimePercentage = (sliderStartTime.unix() - startOfDay.unix()) / dayLengthInSeconds * 100;
-
-    const sliderEndTime = startOfDay.clone().add(endTimeDuration);
-    const sliderEndTimePercentage = (sliderEndTime.unix() - startOfDay.unix()) / dayLengthInSeconds * 100;
+    const sliderStartTimePercentage = startTime / UTC_DAY_LENGTH_IN_SECONDS * 100;
+    const sliderEndTimePercentage = endTime / UTC_DAY_LENGTH_IN_SECONDS * 100;
 
     return (
       <div
@@ -812,13 +838,18 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
             className={styles.operatingHoursSliderHead}
             id="start"
             style={{left: `${sliderStartTimePercentage}%`}}
-          >{this.formatDuration(startTimeDuration, 'h:mma')}</div>
+          />
           <div
             className={styles.operatingHoursSliderHead}
             id="end"
-            style={{left: `calc(${sliderEndTimePercentage}% - 64px)`}}
-          >{this.formatDuration(endTimeDuration, 'h:mma')}</div>
+            style={{left: `calc(${sliderEndTimePercentage}% - 24px)`}}
+          />
         </div>
+
+        <pre>
+          start: {this.formatDuration(startTimeDuration, 'h:mma')}<br/>
+          end: {this.formatDuration(endTimeDuration, 'h:mma')}
+        </pre>
       </div>
     );
   }
@@ -863,6 +894,7 @@ export function AdminLocationsDetailModulesOperatingHours({formState, onChangeFi
         </div>
 
         <AdminLocationsDetailModulesOperatingHoursSlider
+          dayStartTime={formState.dailyReset}
           startTime={formState.startTime}
           endTime={formState.endTime}
           onChange={(startTime, endTime) => {

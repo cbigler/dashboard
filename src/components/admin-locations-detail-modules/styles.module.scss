@@ -70,6 +70,7 @@
 }
 
 .operatingHoursSliderWrapper {
+  position: relative;
   padding-top: 36px;
   padding-bottom: 36px;
 }
@@ -89,12 +90,12 @@
 
 .operatingHoursSliderHead {
   position: absolute;
-  border-radius: $borderRadiusBase;
+  border-radius: 50%;
 
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 64px;
+  width: 24px;
   height: 24px;
   margin-top: -10px;
 
