@@ -18,8 +18,8 @@ export default function analyticsUserReducerEnhancer(reducer) {
     if (!isUserImpersonating()) {
       // Not impersonating, so tracking is on
 
-      if (process.env.REACT_APP_HEAP_SITE_ID) {
-        setupHotjar(process.env.REACT_APP_HEAP_SITE_ID, 6);  
+      if (process.env.REACT_APP_HOTJAR_SITE_ID) {
+        setupHotjar(process.env.REACT_APP_HOTJAR_SITE_ID, 6);  
       }
 
       if (result.data && process.env.REACT_APP_MIXPANEL_TOKEN) {
