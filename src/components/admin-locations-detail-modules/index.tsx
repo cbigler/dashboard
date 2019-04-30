@@ -732,13 +732,14 @@ export const AdminLocationsDetailModulesDangerZone = connect(
 
 const UTC_DAY_LENGTH_IN_SECONDS = 24 * 60 * 60;
 const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
+const ONE_HOUR_IN_SECONDS = 60 * 60;
 
 class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any> {
   pressedButton: 'start' | 'end' | null = null;
   trackWidthInPx: number = 0;
   trackLeftPositionInPx: number = 0;
 
-  onMouseDown = event => {
+  onStart = (event, clientX) => {
     // Dragging must be done on the slider control heads
     if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
       return;
@@ -761,7 +762,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       // further handle movments are relative to the original cursor position so that the handle
       // doesn't "jump" to the original cursor positino when it is first moved.
       const handleBbox = event.target.getBoundingClientRect();
-      const cursorXOffsetWithinHandle = event.clientX - handleBbox.left - 12;
+      const cursorXOffsetWithinHandle = clientX - handleBbox.left - 12;
       if (this.pressedButton === 'start') {
         this.trackLeftPositionInPx += cursorXOffsetWithinHandle;
       } else {
@@ -769,16 +770,17 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       }
     }
   }
-  onMouseMove = event => {
-    const { dayStartTime, startTime, endTime, onChange } = this.props;
-    if (!this.pressedButton || event.buttons !== 1 /* left button */) { return; }
+  onMouseDown = event => this.onStart(event, event.clientX);
+  onTouchStart = event => this.onStart(event, event.touches[0].clientX);
 
+  onDrag = (event, clientX) => {
+    const { dayStartTime, startTime, endTime, onChange } = this.props;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
-    const mouseX = event.clientX - this.trackLeftPositionInPx;
+    const mouseX = clientX - this.trackLeftPositionInPx;
     const seconds = ((mouseX / this.trackWidthInPx) * UTC_DAY_LENGTH_IN_SECONDS) + dayStartTimeSeconds;
 
-    function processValue(timeValueInSec) {
+    function clampValue(timeValueInSec) {
       // Limit on the left hand side to the daily reset time
       if (timeValueInSec < dayStartTimeSeconds) {
         timeValueInSec = dayStartTimeSeconds;
@@ -790,17 +792,36 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       return Math.round(timeValueInSec / FIFTEEN_MINUTES_IN_SECONDS) * FIFTEEN_MINUTES_IN_SECONDS;
     }
 
+    function testIfValuesOverlap(startTime, endTime) {
+      const secondsBetweenStartAndEndTime = endTime - startTime;
+      return secondsBetweenStartAndEndTime < ONE_HOUR_IN_SECONDS;
+    }
+
     switch (this.pressedButton) {
     case 'start':
-      onChange(processValue(seconds), endTime);
+      let newStartTime = clampValue(seconds);
+      if (testIfValuesOverlap(newStartTime, endTime)) {
+        newStartTime = endTime - ONE_HOUR_IN_SECONDS;
+      }
+      onChange(newStartTime, endTime);
       return;
     case 'end':
-      onChange(startTime, processValue(seconds));
+      let newEndTime = clampValue(seconds);
+      if (testIfValuesOverlap(startTime, newEndTime)) {
+        newEndTime = startTime + ONE_HOUR_IN_SECONDS;
+      }
+      onChange(startTime, newEndTime);
       return;
     default:
       return;
     }
   }
+  onTouchMove = event => this.onDrag(event, event.touches[0].clientX);
+  onMouseMove = event => {
+    if (!this.pressedButton || event.buttons !== 1 /* left button */) { return; }
+    this.onDrag(event, event.clientX);
+  }
+
   onMouseUp = event => {
     this.pressedButton = null;
   }
@@ -837,9 +858,14 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
     return (
       <div
         className={styles.operatingHoursSliderWrapper}
+
         onMouseDown={this.onMouseDown}
         onMouseMove={this.onMouseMove}
         onMouseUp={this.onMouseUp}
+
+        onTouchStart={this.onTouchStart}
+        onTouchMove={this.onTouchMove}
+        onTouchEnd={this.onMouseUp}
       >
         <div className={styles.operatingHoursSliderTrack} id="track">
           <div
