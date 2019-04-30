@@ -51,11 +51,11 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
+          title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
           template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
             item.sizeArea,
             item.sizeAreaUnit,
-            user.data.sizeAreaUnitDefault,
+            user.data.sizeAreaDisplayUnit,
           ) : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
@@ -93,7 +93,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
   const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
-    user.data.sizeAreaUnitDefault,
+    user.data.sizeAreaDisplayUnit,
   ) : null;
 
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
@@ -122,12 +122,12 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
         <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
           <AdminLocationsLeftPaneDataRowItem
             id="size"
-            label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            label={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
             value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
             id="rent"
-            label={`Annual Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            label={`Annual Rent (per ${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
             value={sizeAreaConverted && selectedSpace.annualRent ? (
               `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
             ) : <Fragment>&mdash;</Fragment>}

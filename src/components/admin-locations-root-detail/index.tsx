@@ -49,11 +49,11 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
+          title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
           template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
             item.sizeArea,
             item.sizeAreaUnit,
-            user.data.sizeAreaUnitDefault,
+            user.data.sizeAreaDisplayUnit,
           ) : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
