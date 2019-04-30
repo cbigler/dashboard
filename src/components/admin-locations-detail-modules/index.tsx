@@ -753,7 +753,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
     };
   }
   componentWillReceiveProps({startTime, endTime}) {
-    this.setState({startTime, endTime})
+    this.setState({startTime, endTime});
   }
 
   onStart = (event, clientX) => {
@@ -931,7 +931,11 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 }
 
-export function AdminLocationsDetailModulesOperatingHours({formState, onChangeField}) {
+function AdminLocationsDetailModulesOperatingHoursUnconnected({
+  formState,
+  onChangeField,
+  onClickAddLabel,
+}) {
   return (
     <AdminLocationsDetailModule title="Operating Hours">
       <AdminLocationsDetailModuleBody>
@@ -969,6 +973,32 @@ export function AdminLocationsDetailModulesOperatingHours({formState, onChangeFi
           </div>
         </div>
 
+        <InputBox
+          type="select"
+          value={null}
+          onChange={async item => {
+            if (item.id === 'create') {
+              item = await onClickAddLabel();
+            }
+            console.log('Selected:', item);
+          }}
+          choices={[
+            {
+              id: 'create',
+              label: (
+                <span className={styles.operatingHoursAddLabel}>
+                  <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
+                  <span>Add a label</span>
+                </span>
+              ),
+            },
+            {id: 1, label: 'Breakfast'},
+            {id: 2, label: 'Lunch'},
+            {id: 3, label: 'Open Hours'},
+          ]}
+          placeholder="Select a label"
+        />
+
         <AdminLocationsDetailModulesOperatingHoursSlider
           timeZone="America/New_York"
           dayStartTime={formState.dailyReset}
@@ -983,3 +1013,24 @@ export function AdminLocationsDetailModulesOperatingHours({formState, onChangeFi
     </AdminLocationsDetailModule>
   );
 }
+
+export const AdminLocationsDetailModulesOperatingHours = connect(
+  (state: any) => ({}),
+  (dispatch) => ({
+    async onClickAddLabel() {
+      const newLabelName = await (new Promise(resolve => {
+        dispatch<any>(showModal('MODAL_PROMPT', {
+          title: 'Add a label',
+          prompt: 'Please enter a name for this label:',
+          placeholder: 'ex. Breakfast hours',
+          callback: data => resolve(data),
+        }));
+      }));
+
+      console.log('New Label Name', newLabelName)
+      // TODO: MAKE HTTP REQUEST TO CREATE TIME SEGMENT GROUP OR LABEL OR WHATEVER WE ARE CALLING
+      // THESE THINGS
+      return { id: 'new', name: newLabelName };
+    },
+  }),
+)(AdminLocationsDetailModulesOperatingHoursUnconnected);

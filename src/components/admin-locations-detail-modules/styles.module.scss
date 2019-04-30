@@ -135,3 +135,11 @@
   align-items: center;
 }
 .operatingHoursRight label { margin-right: 8px; }
+
+.operatingHoursAddLabel {
+  display: flex;
+  align-items: center;
+  color: $brandPrimary;
+  font-weight: 500;
+}
+.operatingHoursAddLabel > span { margin-left: 8px; }
