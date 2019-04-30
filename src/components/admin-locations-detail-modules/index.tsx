@@ -52,7 +52,7 @@ export default function AdminLocationsDetailModule({
   return (
     <div className={classnames(styles.module, {[styles.moduleError]: error})}>
       <div className={styles.moduleHeader}>
-        <AppBarContext.Provider value="ADMIN_LOCATIONS_EDIT_MODULE_HEADER">
+        <AppBarContext.Provider value="CARD_HEADER">
           <AppBar>
             <AppBarTitle>{title}</AppBarTitle>
             {actions}
@@ -145,17 +145,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="select"
+                  type="text"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={formState.spaceType}
-                  choices={[
-                    {id: 'campus', label: 'Campus'},
-                    {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Level'},
-                    {id: 'space', label: 'Room'},
-                  ]}
-                  onChange={e => onChangeField('spaceType', e.target.value)}
+                  value={
+                    ({
+                      campus: 'Campus',
+                      building: 'Building',
+                      floor: 'Level',
+                      space: 'Room',
+                    })[formState.spaceType] || 'Unknown'
+                  }
                   width="100%"
                 />
               }
@@ -210,17 +210,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="select"
+                  type="text"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={formState.spaceType}
-                  choices={[
-                    {id: 'campus', label: 'Campus'},
-                    {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Level'},
-                    {id: 'space', label: 'Room'},
-                  ]}
-                  onChange={e => onChangeField('spaceType', e.target.value)}
+                  value={
+                    ({
+                      campus: 'Campus',
+                      building: 'Building',
+                      floor: 'Level',
+                      space: 'Room',
+                    })[formState.spaceType] || 'Unknown'
+                  }
                   width="100%"
                 />
               }
@@ -292,17 +292,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="select"
+                  type="text"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={formState.spaceType}
-                  choices={[
-                    {id: 'campus', label: 'Campus'},
-                    {id: 'building', label: 'Building'},
-                    {id: 'floor', label: 'Level'},
-                    {id: 'space', label: 'Room'},
-                  ]}
-                  onChange={e => onChangeField('spaceType', e.target.value)}
+                  value={
+                    ({
+                      campus: 'Campus',
+                      building: 'Building',
+                      floor: 'Level',
+                      space: 'Room',
+                    })[formState.spaceType] || 'Unknown'
+                  }
                   width="100%"
                 />
               }

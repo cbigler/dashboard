@@ -1,4 +1,9 @@
+import fetchAllPages from '../../../helpers/fetch-all-pages/index';
+import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
+import { DensitySpace } from '../../../types';
+
 import collectionSpacesPush from './push';
+import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
 
@@ -36,7 +41,28 @@ export default function collectionSpacesUpdate(item) {
       return false;
     }
 
-    dispatch(collectionSpacesPush(response.data));
+    // Fetch all spaces after updating this space. If we changed this space's size area unit, then
+    // the size area unit of child spaces will update too.
+    let response2;
+    try {
+      response2 = await core().get('/spaces');
+    } catch (err) {
+      dispatch(collectionSpacesError(err));
+      return false;
+    }
+
+    const rawSpaces = await fetchAllPages(async page => {
+      const response = await core().get(`/spaces`, {
+        params: {
+          page,
+          page_size: 5000,
+        },
+      });
+      return response.data;
+    });
+    const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+    dispatch(collectionSpacesSet(spaces));
+
     return response.data;
   };
 }

@@ -31,7 +31,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
   const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
-    user.data.sizeAreaUnitDefault,
+    user.data.sizeAreaDisplayUnit,
   ) : null;
 
   return (
@@ -80,7 +80,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
           />
           <AdminLocationsLeftPaneDataRowItem
             id="spaces"
-            label="Spaces:"
+            label="Rooms:"
             value={
               spaces.data
               .filter(space =>
@@ -92,7 +92,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
           <AdminLocationsLeftPaneDataRowItem
             id="dpus"
             label="DPUs:"
-            value={"HARDCODED"}
+            value={selectedSpace.dpusTotal ? selectedSpace.dpusTotal : <Fragment>&mdash;</Fragment>}
           />
         </AdminLocationsLeftPaneDataRow>
       </AppSidebar>
@@ -119,16 +119,16 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title="Spaces"
+                  title="Rooms"
                   template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
+                  title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
                   template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
                     item.sizeArea,
                     item.sizeAreaUnit,
-                    user.data.sizeAreaUnitDefault,
+                    user.data.sizeAreaDisplayUnit,
                   ) : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
@@ -149,7 +149,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                 />
                 <ListViewColumn
                   title="DPUs"
-                  template={item => 'HARDCODED'}
+                  template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn

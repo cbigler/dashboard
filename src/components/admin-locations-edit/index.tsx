@@ -48,7 +48,7 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     // Metadata module
     annualRent: space.annualRent || '',
     sizeArea: space.sizeArea || '',
-    sizeAreaUnit: space.sizeAreaUnit || user.data.sizeAreaUnitDefault || SQUARE_FEET,
+    sizeAreaUnit: space.sizeAreaUnit || user.data.sizeAreaDisplayUnit || SQUARE_FEET,
     currencyUnit: space.currencyUnit || 'USD',
     capacity: space.capacity || '',
     targetCapacity: space.targetCapacity || '',
