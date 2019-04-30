@@ -4,7 +4,7 @@ import { USER_ERROR } from '../../actions/user/error';
 import { SESSION_TOKEN_UNSET } from '../../actions/session-token/unset';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import mixpanelUserReducerEnhancer from '../../helpers/mixpanel-user-reducer-enhancer/index';
+import analyticsUserReducerEnhancer from '../../helpers/analytics-user-reducer-enhancer/index';
 
 import { DensityUser } from '../../types';
 
@@ -36,4 +36,4 @@ export function user(state=initialState, action) {
   }
 }
 
-export default mixpanelUserReducerEnhancer(user);
+export default analyticsUserReducerEnhancer(user);

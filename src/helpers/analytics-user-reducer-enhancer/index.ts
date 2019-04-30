@@ -1,4 +1,6 @@
 import mixpanelInitialize from '../mixpanel-initialize/index';
+import { hotjar } from 'react-hotjar';
+
 
 function isUserImpersonating() {
   try {
@@ -9,12 +11,17 @@ function isUserImpersonating() {
   }
 }
 
-export default function mixpanelUserReducerEnhancer(reducer) {
+export default function analyticsUserReducerEnhancer(reducer) {
   return (state, props) => {
     const result = reducer(state, props);
 
     if (!isUserImpersonating()) {
       // Not impersonating, so tracking is on
+
+      if (process.env.REACT_APP_HEAP_SITE_ID) {
+        hotjar.initialize(process.env.REACT_APP_HEAP_SITE_ID, 6);  
+      }
+
       if (result.data && process.env.REACT_APP_MIXPANEL_TOKEN) {
         // Initialize mixpanel
         mixpanelInitialize();

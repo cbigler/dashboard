@@ -82,6 +82,7 @@ jobs:
             REACT_APP_GA_TRACKING_CODE="UA-77313135-1" \
             REACT_APP_INTERCOM_APP_ID="sr9uzcmq" \
             REACT_APP_ENVIRONMENT="staging" \
+            REACT_APP_HEAP_SITE_ID="1194280" \
             REACT_APP_TEEM_CLIENT_ID="hlTZ1YouLjjF6oMAixxeZEfLnzms8VEj2vRn8deh" \
             REACT_APP_TEEM_REDIRECT_URL="https://core-staging.density.io/v2/integrations/teem/callback" \
             REACT_APP_SLACK_CLIENT_ID="2180757426.573398678673" \
@@ -117,6 +118,7 @@ jobs:
             REACT_APP_GA_TRACKING_CODE="UA-77313135-1" \
             REACT_APP_INTERCOM_APP_ID="sr9uzcmq" \
             REACT_APP_ENVIRONMENT="production" \
+            REACT_APP_HEAP_SITE_ID="1194280" \
             REACT_APP_TEEM_CLIENT_ID="0IChGtA59rkE8XgnceJNKPw7txgmGHang2QzezhF" \
             REACT_APP_TEEM_REDIRECT_URL="https://api.density.io/v2/integrations/teem/callback" \
             REACT_APP_SLACK_CLIENT_ID="2180757426.605792767669" \
