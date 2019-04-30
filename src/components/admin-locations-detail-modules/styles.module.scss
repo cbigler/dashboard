@@ -108,6 +108,17 @@
 .operatingHoursSliderHead:hover { background-color: darken($brandPrimary, 5%); }
 .operatingHoursSliderHead:active { background-color: darken($brandPrimary, 10%); }
 
+.operatingHoursLabelContainer {
+  position: relative;
+  margin-top: 16px;
+  font-size: 14px;
+  user-select: none;
+}
+.operatingHoursLabel {
+  position: absolute;
+  transform: translate(-50%, 0px);
+}
+
 
 
 .operatingHoursWrapper {

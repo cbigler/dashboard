@@ -145,17 +145,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="text"
+                  type="select"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={
-                    ({
-                      campus: 'Campus',
-                      building: 'Building',
-                      floor: 'Level',
-                      space: 'Room',
-                    })[formState.spaceType] || 'Unknown'
-                  }
+                  value={formState.spaceType}
+                  choices={[
+                    {id: 'campus', label: 'Campus'},
+                    {id: 'building', label: 'Building'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
+                  ]}
+                  onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
                 />
               }
@@ -210,17 +210,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="text"
+                  type="select"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={
-                    ({
-                      campus: 'Campus',
-                      building: 'Building',
-                      floor: 'Level',
-                      space: 'Room',
-                    })[formState.spaceType] || 'Unknown'
-                  }
+                  value={formState.spaceType}
+                  choices={[
+                    {id: 'campus', label: 'Campus'},
+                    {id: 'building', label: 'Building'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
+                  ]}
+                  onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
                 />
               }
@@ -292,17 +292,17 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               htmlFor="admin-locations-detail-modules-general-info-space-type"
               input={
                 <InputBox
-                  type="text"
+                  type="select"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={
-                    ({
-                      campus: 'Campus',
-                      building: 'Building',
-                      floor: 'Level',
-                      space: 'Room',
-                    })[formState.spaceType] || 'Unknown'
-                  }
+                  value={formState.spaceType}
+                  choices={[
+                    {id: 'campus', label: 'Campus'},
+                    {id: 'building', label: 'Building'},
+                    {id: 'floor', label: 'Level'},
+                    {id: 'space', label: 'Room'},
+                  ]}
+                  onChange={e => onChangeField('spaceType', e.target.value)}
                   width="100%"
                 />
               }
@@ -761,7 +761,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       // further handle movments are relative to the original cursor position so that the handle
       // doesn't "jump" to the original cursor positino when it is first moved.
       const handleBbox = event.target.getBoundingClientRect();
-      const cursorXOffsetWithinHandle = event.clientX - handleBbox.left;
+      const cursorXOffsetWithinHandle = event.clientX - handleBbox.left - 12;
       if (this.pressedButton === 'start') {
         this.trackLeftPositionInPx += cursorXOffsetWithinHandle;
       } else {
@@ -770,20 +770,22 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
     }
   }
   onMouseMove = event => {
-    const { startTime, endTime, onChange } = this.props;
+    const { dayStartTime, startTime, endTime, onChange } = this.props;
     if (!this.pressedButton || event.buttons !== 1 /* left button */) { return; }
 
+    const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
+
     const mouseX = event.clientX - this.trackLeftPositionInPx;
-    const seconds = (mouseX / this.trackWidthInPx) * UTC_DAY_LENGTH_IN_SECONDS;
+    const seconds = ((mouseX / this.trackWidthInPx) * UTC_DAY_LENGTH_IN_SECONDS) + dayStartTimeSeconds;
 
     function processValue(timeValueInSec) {
-      // Limit on the left hand side to 12:00am
-      if (timeValueInSec < 0) {
-        timeValueInSec = 0;
+      // Limit on the left hand side to the daily reset time
+      if (timeValueInSec < dayStartTimeSeconds) {
+        timeValueInSec = dayStartTimeSeconds;
       }
-      // Limit on the right hand side to 11:59am
-      if (timeValueInSec > UTC_DAY_LENGTH_IN_SECONDS) {
-        timeValueInSec = UTC_DAY_LENGTH_IN_SECONDS;
+      // Limit on the right hand side to (the daily reset time + 24 hours)
+      if (timeValueInSec > (UTC_DAY_LENGTH_IN_SECONDS + dayStartTimeSeconds)) {
+        timeValueInSec = UTC_DAY_LENGTH_IN_SECONDS + dayStartTimeSeconds;
       }
       return Math.round(timeValueInSec / FIFTEEN_MINUTES_IN_SECONDS) * FIFTEEN_MINUTES_IN_SECONDS;
     }
@@ -811,13 +813,26 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 
   render() {
-    const { startTime, endTime } = this.props;
+    const { dayStartTime, timeZone, startTime, endTime } = this.props;
+    const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
     const startTimeDuration = moment.duration(startTime, 'seconds');
     const endTimeDuration = moment.duration(endTime, 'seconds');
 
-    const sliderStartTimePercentage = startTime / UTC_DAY_LENGTH_IN_SECONDS * 100;
-    const sliderEndTimePercentage = endTime / UTC_DAY_LENGTH_IN_SECONDS * 100;
+    const sliderStartTimePercentage = (startTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;
+    const sliderEndTimePercentage = (endTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;
+
+    // Render all possible reset time choices underneath the slider, starting at the reset time and
+    // working upwards in hours until that same reset time the next day.
+    const resetTimeChoices = generateResetTimeChoices({timeZone});
+    const splitPointIndex = resetTimeChoices.findIndex(choice => {
+      const choiceSeconds = moment.duration(choice.value).as('seconds');
+      return choiceSeconds === dayStartTimeSeconds;
+    });
+    const tickMarks = [
+      ...resetTimeChoices.slice(splitPointIndex), // Everything after the split point
+      ...resetTimeChoices.slice(0, splitPointIndex), // Everything before the split point
+    ];
 
     return (
       <div
@@ -837,16 +852,31 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
           <div
             className={styles.operatingHoursSliderHead}
             id="start"
-            style={{left: `${sliderStartTimePercentage}%`}}
+            style={{left: `calc(${sliderStartTimePercentage}% - 12px)`}}
           />
           <div
             className={styles.operatingHoursSliderHead}
             id="end"
-            style={{left: `calc(${sliderEndTimePercentage}% - 24px)`}}
+            style={{left: `calc(${sliderEndTimePercentage}% - 12px)`}}
           />
         </div>
 
-        <pre>
+        <div className={styles.operatingHoursLabelContainer}>
+          {tickMarks.map((tickMark, index) => (
+            <span
+              className={styles.operatingHoursLabel}
+              style={{left: `${index * (100 / tickMarks.length)}%`}}
+              key={tickMark.value}
+            >{tickMark.hourOnlyDisplay}</span>
+          ))}
+          <span
+            className={styles.operatingHoursLabel}
+            style={{left: '100%'}}
+            key={tickMarks[0].value}
+          >{tickMarks[0].hourOnlyDisplay}</span>
+        </div>
+
+        <pre style={{marginTop: 64}}>
           start: {this.formatDuration(startTimeDuration, 'h:mma')}<br/>
           end: {this.formatDuration(endTimeDuration, 'h:mma')}
         </pre>
@@ -894,6 +924,7 @@ export function AdminLocationsDetailModulesOperatingHours({formState, onChangeFi
         </div>
 
         <AdminLocationsDetailModulesOperatingHoursSlider
+          timeZone="America/New_York"
           dayStartTime={formState.dailyReset}
           startTime={formState.startTime}
           endTime={formState.endTime}
