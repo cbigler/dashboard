@@ -38,6 +38,7 @@ export type DensitySpace = {
     id: string,
     name: string,
   }>,
+  dpusTotal: number,
 };
 
 export type DensitySpaceAncestryItem = {

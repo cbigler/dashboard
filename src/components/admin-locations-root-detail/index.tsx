@@ -44,7 +44,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Spaces"
+          title="Rooms"
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
           href={item => `#/admin/locations/${item.id}`}
         />
@@ -74,7 +74,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         />
         <ListViewColumn
           title="DPUs"
-          template={item => 'HARDCODED'}
+          template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn

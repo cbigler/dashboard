@@ -1,3 +1,7 @@
+import fetchAllPages from '../../../helpers/fetch-all-pages/index';
+import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
+import { DensitySpace } from '../../../types';
+
 import collectionSpacesPush from './push';
 import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
@@ -47,7 +51,17 @@ export default function collectionSpacesUpdate(item) {
       return false;
     }
 
-    dispatch(collectionSpacesSet(response2.data));
+    const rawSpaces = await fetchAllPages(async page => {
+      const response = await core().get(`/spaces`, {
+        params: {
+          page,
+          page_size: 5000,
+        },
+      });
+      return response.data;
+    });
+    const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+    dispatch(collectionSpacesSet(spaces));
 
     return response.data;
   };
