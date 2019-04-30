@@ -739,6 +739,23 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   trackWidthInPx: number = 0;
   trackLeftPositionInPx: number = 0;
 
+  constructor(props) {
+    super(props);
+
+    // Wait, wait - why are these values stored in the state? Well it turns out that treating this
+    // component as "controlled" and calling `onChange` on every single update is super slow because
+    // the AdminLocationsEdit component has to rerender and this takes a long time. So instead,
+    // store tha values in the component's state and when the user finished dragging a handle, then
+    // call onChange and update the parent component.
+    this.state = {
+      startTime: props.startTime,
+      endTime: props.endTime,
+    };
+  }
+  componentWillReceiveProps({startTime, endTime}) {
+    this.setState({startTime, endTime})
+  }
+
   onStart = (event, clientX) => {
     // Dragging must be done on the slider control heads
     if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
@@ -774,7 +791,8 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   onTouchStart = event => this.onStart(event, event.touches[0].clientX);
 
   onDrag = (event, clientX) => {
-    const { dayStartTime, startTime, endTime, onChange } = this.props;
+    const { dayStartTime, onChange } = this.props;
+    const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
     const mouseX = clientX - this.trackLeftPositionInPx;
@@ -803,14 +821,14 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       if (testIfValuesOverlap(newStartTime, endTime)) {
         newStartTime = endTime - ONE_HOUR_IN_SECONDS;
       }
-      onChange(newStartTime, endTime);
+      this.setState({startTime: newStartTime, endTime});
       return;
     case 'end':
       let newEndTime = clampValue(seconds);
       if (testIfValuesOverlap(startTime, newEndTime)) {
         newEndTime = startTime + ONE_HOUR_IN_SECONDS;
       }
-      onChange(startTime, newEndTime);
+      this.setState({startTime, endTime: newEndTime});
       return;
     default:
       return;
@@ -824,6 +842,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
 
   onMouseUp = event => {
     this.pressedButton = null;
+    this.props.onChange(this.state.startTime, this.state.endTime);
   }
 
   formatDuration = (duration, format) => {
@@ -834,7 +853,8 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 
   render() {
-    const { dayStartTime, timeZone, startTime, endTime } = this.props;
+    const { dayStartTime, timeZone } = this.props;
+    const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
     const startTimeDuration = moment.duration(startTime, 'seconds');
