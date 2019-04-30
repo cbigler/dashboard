@@ -1,5 +1,4 @@
 import mixpanelInitialize from '../mixpanel-initialize/index';
-import { hotjar } from 'react-hotjar';
 
 
 function isUserImpersonating() {
