@@ -6,6 +6,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesPush from '../collection/spaces/push';
+import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import setNewSpaceType from '../miscellaneous/set-new-space-type';
 import setNewSpaceParentId from '../miscellaneous/set-new-space-parent-id';
 
@@ -26,16 +27,19 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
     });
 
     if (!space && parentSpaceId) {
-      let space;
+      let space, hierarchy;
       try {
         const response = await core().get(`/spaces/${parentSpaceId}`);
         space = objectSnakeToCamel<DensitySpace>(response.data);
+
+        hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return false;
       }
 
       dispatch(collectionSpacesPush(space));
+      dispatch(collectionSpaceHierarchySet(hierarchy));
     }
   };
 }

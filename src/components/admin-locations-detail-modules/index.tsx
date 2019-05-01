@@ -1,4 +1,5 @@
 import React, { Fragment, ReactNode, Component } from 'react';
+import uuid from 'uuid';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
@@ -11,7 +12,16 @@ import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
 import ListView, { ListViewColumn } from '../list-view/index';
 
 import showModal from '../../actions/modal/show';
+import hideModal from '../../actions/modal/hide';
 import showToast from '../../actions/toasts';
+
+import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
+import {
+  getChildrenOfSpace,
+  getParentsOfSpace,
+  isParentSelected,
+  searchHierarchy,
+} from '../../helpers/filter-hierarchy/index';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import { DensitySpace } from '../../types';
@@ -25,6 +35,7 @@ import {
   ButtonContext,
   InputBox,
   Icons,
+  Modal,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import DayOfWeekSelector from '../day-of-week-selector/index';
@@ -735,6 +746,13 @@ const UTC_DAY_LENGTH_IN_SECONDS = 24 * 60 * 60;
 const FIFTEEN_MINUTES_IN_SECONDS = 15 * 60;
 const ONE_HOUR_IN_SECONDS = 60 * 60;
 
+function formatDuration(duration, format) {
+  return moment.utc()
+    .startOf('day')
+    .add(duration.as('milliseconds'), 'milliseconds')
+    .format(format);
+}
+
 class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any> {
   pressedButton: 'start' | 'end' | null = null;
   trackWidthInPx: number = 0;
@@ -846,13 +864,6 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
     this.props.onChange(this.state.startTime, this.state.endTime);
   }
 
-  formatDuration = (duration, format) => {
-		return moment.utc()
-      .startOf('day')
-			.add(duration.as('milliseconds'), 'milliseconds')
-			.format(format);
-  }
-
   render() {
     const { dayStartTime, timeZone } = this.props;
     const { startTime, endTime } = this.state;
@@ -922,11 +933,6 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
             key={tickMarks[0].value}
           >{tickMarks[0].hourOnlyDisplay}</span>
         </div>
-
-        <pre style={{marginTop: 64}}>
-          start: {this.formatDuration(startTimeDuration, 'h:mma')}<br/>
-          end: {this.formatDuration(endTimeDuration, 'h:mma')}
-        </pre>
       </div>
     );
   }
@@ -934,145 +940,211 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
 
 function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
+  activeModal,
+  spaceHierarchy,
+
   onChangeField,
   onClickAddLabel,
   onConfirmSegmentCanBeDeleted,
+  onOpenCopyFromSpace,
+  onCloseModal,
 }) {
   return (
-    <AdminLocationsDetailModule title="Operating Hours">
-      <AppBar>
-        <AppBarSection>
-          <div className={styles.operatingHoursLeft}>
-            <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
-              Time Zone:
-            </label>
-            <InputBox
-              id="admin-locations-detail-modules-operating-hours-time-zone"
-              type="select"
-              choices={TIME_ZONE_CHOICES}
-              value={formState.timeZone}
-              onChange={choice => onChangeField('timeZone', choice.id)}
-              width={350}
-              menuMaxHeight={300}
-            />
-          </div>
-        </AppBarSection>
-        <AppBarSection>
-          <div className={styles.operatingHoursRight}>
-            <label htmlFor="admin-locations-detail-modules-operating-hours-reset-time">
-              The day starts at:
-            </label>
-            <InputBox
-              id="admin-locations-detail-modules-operating-hours-reset-time"
-              type="select"
-              choices={
-                generateResetTimeChoices({timeZone: formState.timeZone})
-                .map(i => ({ id: i.value, label: i.display }))
-              }
-              value={formState.dailyReset}
-              onChange={choice => onChangeField('dailyReset', choice.id)}
-              menuMaxHeight={300}
-              width={114}
-            />
-          </div>
-        </AppBarSection>
-      </AppBar>
-
-      {formState.operatingHours.map((operatingHoursItem, index) => (
-        <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
-          <div className={styles.operatingHoursTimeSegmentItemSection}>
-            <AppBarContext.Provider value="TRANSPARENT">
-              <AppBar>
-                <AppBarSection>
-                  <InputBox
-                    type="select"
-                    value={operatingHoursItem.labelId}
-                    onChange={async item => {
-                      if (item.id === 'CREATE') {
-                        item = await onClickAddLabel();
-                      }
-
-                      const operatingHoursCopy = formState.operatingHours.slice();
-                      operatingHoursCopy[index] = { ...operatingHoursCopy[index], labelId: item.id };
-                      onChangeField('operatingHours', operatingHoursCopy);
-                    }}
-                    choices={[
-                      {
-                        id: 'CREATE',
-                        label: (
-                          <span className={styles.operatingHoursAddLabel}>
-                            <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
-                            <span>Add a label</span>
-                          </span>
-                        ),
-                      },
-                      ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
-                    ]}
-                    placeholder="Select a label"
-                  />
-                </AppBarSection>
-                <AppBarSection>
-                  <span className={styles.operatingHoursDayOfWeekLabel}>Days Effected:</span>
-                  <DayOfWeekSelector
-                    daysOfWeek={operatingHoursItem.daysEffected}
-                    onChange={daysEffected => {
-                      const operatingHoursCopy = formState.operatingHours.slice();
-                      operatingHoursCopy[index] = { ...operatingHoursCopy[index], daysEffected };
-                      onChangeField('operatingHours', operatingHoursCopy);
-                    }}
-                  />
-                </AppBarSection>
-              </AppBar>
-            </AppBarContext.Provider>
-          </div>
-          <div className={styles.operatingHoursTimeSegmentItemSection}>
-            <AdminLocationsDetailModulesOperatingHoursSlider
-              timeZone={formState.timeZone}
-              dayStartTime={formState.dailyReset}
-              startTime={operatingHoursItem.startTimeSeconds}
-              endTime={operatingHoursItem.endTimeSeconds}
-              onChange={(startTimeSeconds, endTimeSeconds) => {
-                const operatingHoursCopy = formState.operatingHours.slice();
-                operatingHoursCopy[index] = {
-                  ...operatingHoursCopy[index],
-                  startTimeSeconds,
-                  endTimeSeconds,
-                };
-                onChangeField('operatingHours', operatingHoursCopy);
-              }}
-            />
-          </div>
+    <Fragment>
+      {activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE' ? (
+        <Modal
+          visible={activeModal.visible}
+          width={486}
+          height={636}
+          onBlur={onCloseModal}
+          onEscape={onCloseModal}
+        >
           <AppBar>
-            <AppBarSection />
-            <AppBarSection>
-              <Button onClick={async () => {
-                onConfirmSegmentCanBeDeleted(() => {
-                  const operatingHoursCopy = formState.operatingHours.slice();
-                  delete operatingHoursCopy[index];
-                  onChangeField('operatingHours', operatingHoursCopy);
-                });
-              }}>Delete Segment</Button>
-            </AppBarSection>
+            <AppBarTitle>Copy Operating Hours</AppBarTitle>
           </AppBar>
-        </div>
-      ))}
 
-      <AppBar>
-        <AppBarSection />
-        <AppBarSection>
-          <div className={styles.operatingHoursCopyFromSpaceButton}>
-            <Button>Copy from Space</Button>
+          <AppBar>
+            <InputBox
+              type="text"
+              leftIcon={<Icons.Search />}
+              placeholder="Search for space name"
+              width="100%"
+            />
+          </AppBar>
+
+          <pre>
+            {JSON.stringify(spaceHierarchyFormatterNew(spaceHierarchy.data), null, 2)}
+          </pre>
+        </Modal>
+      ) : null}
+
+      <AdminLocationsDetailModule title="Operating Hours">
+        <AppBar>
+          <AppBarSection>
+            <div className={styles.operatingHoursLeft}>
+              <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
+                Time Zone:
+              </label>
+              <InputBox
+                id="admin-locations-detail-modules-operating-hours-time-zone"
+                type="select"
+                choices={TIME_ZONE_CHOICES}
+                value={formState.timeZone}
+                onChange={choice => onChangeField('timeZone', choice.id)}
+                width={350}
+                menuMaxHeight={300}
+              />
+            </div>
+          </AppBarSection>
+          <AppBarSection>
+            <div className={styles.operatingHoursRight}>
+              <label htmlFor="admin-locations-detail-modules-operating-hours-reset-time">
+                The day starts at:
+              </label>
+              <InputBox
+                id="admin-locations-detail-modules-operating-hours-reset-time"
+                type="select"
+                choices={
+                  generateResetTimeChoices({timeZone: formState.timeZone})
+                  .map(i => ({ id: i.value, label: i.display }))
+                }
+                value={formState.dailyReset}
+                onChange={choice => onChangeField('dailyReset', choice.id)}
+                menuMaxHeight={300}
+                width={114}
+              />
+            </div>
+          </AppBarSection>
+        </AppBar>
+
+        {formState.operatingHours.length === 0 ? (
+          <div>TODO: EMPTY STATE NOT DESIGNED</div>
+        ) : null}
+
+        {formState.operatingHours.map((operatingHoursItem, index) => (
+          <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
+            <div className={styles.operatingHoursTimeSegmentItemSection}>
+              <AppBarContext.Provider value="TRANSPARENT">
+                <AppBar>
+                  <AppBarSection>
+                    <InputBox
+                      type="select"
+                      value={operatingHoursItem.labelId}
+                      onChange={async item => {
+                        if (item.id === 'CREATE') {
+                          item = await onClickAddLabel();
+                          onChangeField('operatingHoursLabels', [
+                            ...formState.operatingHoursLabels,
+                            item,
+                          ]);
+                        }
+
+                        const operatingHoursCopy = formState.operatingHours.slice();
+                        operatingHoursCopy[index] = { ...operatingHoursCopy[index], labelId: item.id };
+                        onChangeField('operatingHours', operatingHoursCopy);
+                      }}
+                      choices={[
+                        {
+                          id: 'CREATE',
+                          label: (
+                            <span className={styles.operatingHoursAddLabel}>
+                              <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
+                              <span>Add a label</span>
+                            </span>
+                          ),
+                        },
+                        ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
+                      ]}
+                      placeholder="Select a label"
+                    />
+                  </AppBarSection>
+                  <AppBarSection>
+                    <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
+                    <DayOfWeekSelector
+                      daysOfWeek={operatingHoursItem.daysAffected}
+                      onChange={daysAffected => {
+                        const operatingHoursCopy = formState.operatingHours.slice();
+                        operatingHoursCopy[index] = { ...operatingHoursCopy[index], daysAffected };
+                        onChangeField('operatingHours', operatingHoursCopy);
+                      }}
+                    />
+                  </AppBarSection>
+                </AppBar>
+              </AppBarContext.Provider>
+            </div>
+            <div className={styles.operatingHoursTimeSegmentItemSection}>
+              <AdminLocationsDetailModulesOperatingHoursSlider
+                timeZone={formState.timeZone}
+                dayStartTime={formState.dailyReset}
+                startTime={operatingHoursItem.startTimeSeconds}
+                endTime={operatingHoursItem.endTimeSeconds}
+                onChange={(startTimeSeconds, endTimeSeconds) => {
+                  const operatingHoursCopy = formState.operatingHours.slice();
+                  operatingHoursCopy[index] = {
+                    ...operatingHoursCopy[index],
+                    startTimeSeconds,
+                    endTimeSeconds,
+                  };
+                  onChangeField('operatingHours', operatingHoursCopy);
+                }}
+              />
+            </div>
+            <AppBar>
+              <AppBarSection>
+                {formatDuration(
+                  moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
+                  'h:mma',
+                ).slice(0, -1)}
+                {' to '}
+                {formatDuration(
+                  moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
+                  'h:mma',
+                ).slice(0, -1)}
+              </AppBarSection>
+              <AppBarSection>
+                <Button onClick={async () => {
+                  onConfirmSegmentCanBeDeleted(() => {
+                    const operatingHoursCopy = formState.operatingHours.slice();
+                    operatingHoursCopy.splice(index, 1);
+                    onChangeField('operatingHours', operatingHoursCopy);
+                  });
+                }}>Delete Segment</Button>
+              </AppBarSection>
+            </AppBar>
           </div>
-          <Button type="primary">Add a Segment</Button>
-        </AppBarSection>
-      </AppBar>
+        ))}
 
-    </AdminLocationsDetailModule>
+        <AppBar>
+          <AppBarSection />
+          <AppBarSection>
+            <div className={styles.operatingHoursCopyFromSpaceButton}>
+              <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
+            </div>
+            <Button type="primary" onClick={() => {
+              onChangeField('operatingHours', [
+                ...formState.operatingHours,
+                {
+                  id: uuid.v4(),
+                  labelId: null,
+                  startTimeSeconds: moment.duration('9:00:00').as('seconds'),
+                  endTimeSeconds: moment.duration('17:00:00').as('seconds'),
+                  daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                  existsOnServer: false,
+                },
+              ]);
+            }}>Add a Segment</Button>
+          </AppBarSection>
+        </AppBar>
+      </AdminLocationsDetailModule>
+    </Fragment>
   );
 }
 
 export const AdminLocationsDetailModulesOperatingHours = connect(
-  (state: any) => ({}),
+  (state: any) => ({
+    activeModal: state.activeModal,
+    spaceHierarchy: state.spaceHierarchy,
+  }),
   (dispatch) => ({
     async onClickAddLabel() {
       const newLabelName = await (new Promise(resolve => {
@@ -1087,13 +1159,19 @@ export const AdminLocationsDetailModulesOperatingHours = connect(
       console.log('New Label Name', newLabelName)
       // TODO: MAKE HTTP REQUEST TO CREATE TIME SEGMENT GROUP OR LABEL OR WHATEVER WE ARE CALLING
       // THESE THINGS
-      return { id: 'new', name: newLabelName };
+      return { id: Math.random().toString(), name: newLabelName };
     },
     async onConfirmSegmentCanBeDeleted(callback) {
       dispatch<any>(showModal('MODAL_CONFIRM', {
         prompt: 'Are you sure you want to delete this time segment?',
         callback,
       }));
+    },
+    onOpenCopyFromSpace() {
+      dispatch<any>(showModal('OPERATING_HOURS_COPY_FROM_SPACE'))
+    },
+    onCloseModal() {
+      dispatch<any>(hideModal());
     },
   }),
 )(AdminLocationsDetailModulesOperatingHoursUnconnected);

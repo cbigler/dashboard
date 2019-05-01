@@ -112,7 +112,10 @@
   position: relative;
   margin-top: 16px;
   font-size: 14px;
+
+  height: 0px; /* can't get pointer events none to work right without this in this case? */
   user-select: none;
+  pointer-events: none;
 }
 .operatingHoursLabel {
   position: absolute;

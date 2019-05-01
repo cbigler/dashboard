@@ -67,17 +67,19 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     operatingHours: [
       {
         id: 'tsm_xxx',
+        existsOnServer: true,
         labelId: 'tsg_breakfast',
         startTimeSeconds: 37800,
         endTimeSeconds: 57600,
-        daysEffected: ['Monday', 'Tuesday', 'Wednesday'],
+        daysAffected: ['Monday', 'Tuesday', 'Wednesday'],
       },
       {
         id: 'tsm_xxy',
+        existsOnServer: true,
         labelId: 'tsg_breakfast',
         startTimeSeconds: 37800,
         endTimeSeconds: 57600,
-        daysEffected: ['Monday', 'Tuesday', 'Wednesday'],
+        daysAffected: ['Monday', 'Tuesday', 'Wednesday'],
       },
     ],
     operatingHoursLabels: [
@@ -159,7 +161,8 @@ export type AdminLocationsFormState = {
     labelId: string,
     startTimeSeconds: number,
     endTimeSeconds: number,
-    daysEffected: Array<DaysOfWeek>,
+    daysAffected: Array<DaysOfWeek>,
+    existsOnServer: boolean,
   }>,
   operatingHoursLabels?: Array<{
     id: string,
