@@ -1,0 +1,5 @@
+.wrapper {
+  display: flex;
+}
+.item { margin-right: 4px; }
+.item:last-child { margin-right: 0px; }

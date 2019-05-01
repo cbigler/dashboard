@@ -9,7 +9,7 @@ import showToast from '../../actions/toasts';
 
 import Dialogger from '../dialogger';
 
-import { DensityUser, DensitySpace } from '../../types';
+import { DaysOfWeek, DensityUser, DensitySpace } from '../../types';
 
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
@@ -64,9 +64,26 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
 
-    // TODO: TEMPORARY, SHOULD BE REMOVED BEFORE MERGING
-    startTime: 37800,
-    endTime: 57600,
+    operatingHours: [
+      {
+        id: 'tsm_xxx',
+        labelId: 'tsg_breakfast',
+        startTimeSeconds: 37800,
+        endTimeSeconds: 57600,
+        daysEffected: ['Monday', 'Tuesday', 'Wednesday'],
+      },
+      {
+        id: 'tsm_xxy',
+        labelId: 'tsg_breakfast',
+        startTimeSeconds: 37800,
+        endTimeSeconds: 57600,
+        daysEffected: ['Monday', 'Tuesday', 'Wednesday'],
+      },
+    ],
+    operatingHoursLabels: [
+      { id: 'tsg_breakfast', name: 'Breakfast' },
+      { id: 'tsg_lunch', name: 'Lunch' },
+    ],
   };
 }
 
@@ -137,6 +154,17 @@ export type AdminLocationsFormState = {
   parentId?: string | null,
   startTime?: number,
   endTime?: number,
+  operatingHours?: Array<{
+    id: string,
+    labelId: string,
+    startTimeSeconds: number,
+    endTimeSeconds: number,
+    daysEffected: Array<DaysOfWeek>,
+  }>,
+  operatingHoursLabels?: Array<{
+    id: string,
+    name: string,
+  }>,
 };
 
 const SPACE_TYPE_TO_NAME = {

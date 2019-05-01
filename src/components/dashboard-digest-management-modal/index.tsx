@@ -16,6 +16,7 @@ import {
   AppBarTitle,
   Modal,
 } from '@density/ui';
+import DayOfWeekSelector from '../day-of-week-selector/index';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';
 
@@ -385,30 +386,10 @@ function DigestManagementForm({
 
           {frequency === WEEKLY ? (
             <div className={styles.digestManagementFormGroupDayList}>
-              {DAYS_OF_WEEK.map(dayName => (
-                <div key={dayName} className={styles.digestManagementFormGroupDayItem}>
-                  <Button
-                    type={daysOfWeek.indexOf(dayName) >= 0 ? 'primary' : 'default'}
-                    size="small"
-                    width={24}
-                    height={24}
-                    onClick={() => {
-                      if (daysOfWeek.indexOf(dayName) === -1) {
-                        // Add day
-                        onChangeDaysOfWeek([...daysOfWeek, dayName]);
-                      } else {
-                        // Ensure the user doesn't deselect the last day
-                        if (daysOfWeek.length <= 1) { return; }
-
-                        // Remove day
-                        onChangeDaysOfWeek(daysOfWeek.filter(day => day !== dayName));
-                      }
-                    }}
-                  >
-                    {dayName[0].toUpperCase()}
-                  </Button>
-                </div>
-              ))}
+              <DayOfWeekSelector
+                daysOfWeek={daysOfWeek}
+                onChange={onChangeDaysOfWeek}
+              />
             </div>
           ) : null}
           {frequency === MONTHLY ? (

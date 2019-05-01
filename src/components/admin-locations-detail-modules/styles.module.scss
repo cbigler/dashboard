@@ -72,7 +72,7 @@
 .operatingHoursSliderWrapper {
   position: relative;
   padding-top: 36px;
-  padding-bottom: 36px;
+  padding-bottom: 16px;
 }
 
 .operatingHoursSliderTrack {
@@ -121,10 +121,6 @@
 
 
 
-.operatingHoursWrapper {
-  display: flex;
-  justify-content: space-between;
-}
 .operatingHoursLeft {
   display: flex;
   align-items: center;
@@ -136,10 +132,29 @@
 }
 .operatingHoursRight label { margin-right: 8px; }
 
+
+
+
+.operatingHoursTimeSegmentItem { background-color: $grayLightest; }
+.operatingHoursTimeSegmentItemSection {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
 .operatingHoursAddLabel {
   display: flex;
   align-items: center;
   color: $brandPrimary;
-  font-weight: 500;
+  font-weight: bold;
+  font-size: 14px;
 }
 .operatingHoursAddLabel > span { margin-left: 8px; }
+
+.operatingHoursDayOfWeekLabel {
+  margin-right: 16px;
+  color: $grayDarkest;
+}
+
+.operatingHoursCopyFromSpaceButton {
+  margin-right: 8px;
+}
