@@ -1,0 +1,286 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.addressWrapper { position: relative; }
+
+.addressMapContainer {
+  height: 300px;
+  border-radius: $borderRadiusBase;
+
+  :global(.mapboxgl-ctrl-logo) { display: none; }
+}
+.addressMapGeocoder {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+
+  :global {
+    /* Basics */
+    .mapboxgl-ctrl-geocoder,
+    .mapboxgl-ctrl-geocoder *,
+    .mapboxgl-ctrl-geocoder *:after,
+    .mapboxgl-ctrl-geocoder *:before {
+      box-sizing: border-box;
+    }
+
+    .mapboxgl-ctrl-geocoder {
+      font-size: 16px;
+      height: 40px;
+      font-family: $fontBase;
+      position: relative;
+      background-color: #fff;
+      width: 100%;
+      min-width: 440px;
+      z-index: 1;
+      border: 1px solid $inputFieldBorderColor;
+      border-radius: $borderRadiusBase;
+      transition: width .25s, min-width .25s;
+    }
+
+    .geocoder-icon.geocoder-icon-search {
+      margin-left: 8px;
+    }
+
+    .mapboxgl-ctrl-geocoder input[type="text"] {
+      font: inherit;
+      width: 100%;
+      border: 0;
+      background-color: transparent;
+      margin: 0;
+      height: 40px;
+      padding-top: 0px;
+      padding-bottom: 5px;
+      padding-left: 44px;
+      padding-right: 16px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .mapboxgl-ctrl-geocoder input::-ms-clear {
+      display: none; /* hide input clear button in IE */
+    }
+
+    .mapboxgl-ctrl-geocoder input:focus {
+      outline: 0;
+      box-shadow: none;
+      outline: none;
+    }
+
+    .mapboxgl-ctrl-geocoder .geocoder-pin-right > * {
+      z-index: 2;
+      position: absolute;
+      right: 8px;
+      top: 7px;
+      display: none;
+    }
+
+    .mapboxgl-ctrl-geocoder ul {
+      box-shadow: 0 0 10px 2px rgba(0,0,0,.1);
+    }
+
+    /* Collapsed */
+    .geocoder-collapsed {
+      width: 30px;
+      min-width: 30px;
+      transition: width .25s, min-width .25s;
+    }
+
+    /* Suggestions */
+    .mapboxgl-ctrl-geocoder ul {
+      position: absolute;
+      left: 0;
+      top: 110%; /* fallback */
+      top: calc(100% + 6px);
+
+      width: 100%;
+      background-color: #fff;
+      border: 1px solid $inputFieldBorderColor;
+      border-radius: $borderRadiusBase;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+      list-style: none;
+      margin: 0;
+      padding: 8px;
+      z-index: 1000;
+      overflow: hidden;
+      font-size: 16px;
+    }
+
+    .mapboxgl-ctrl-bottom-left .mapboxgl-ctrl-geocoder ul,
+    .mapboxgl-ctrl-bottom-right .mapboxgl-ctrl-geocoder ul {
+      top: auto;
+      bottom: 100%;
+    }
+
+    .mapboxgl-ctrl-geocoder ul > li > a {
+      cursor: default;
+      display: block;
+      padding-left: 8px;
+      padding-right: 8px;
+      line-height: 40px;
+      color: #404040;
+      font-size: $fontSizeBase;
+    }
+
+    .mapboxgl-ctrl-geocoder ul > .active > a,
+    .mapboxgl-ctrl-geocoder ul > li > a:hover {
+      color: $brandPrimary;
+      background-color: #f3f3f3;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .geocoder-suggestion-title {
+      font-weight: bold;
+    }
+
+    .geocoder-suggestion-title,
+    .geocoder-suggestion-address {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    /* Icons */
+    .geocoder-icon {
+      display: inline-block;
+      vertical-align: middle;
+      speak: none;
+      fill: #757575;
+      top: 15px;
+    }
+
+    .geocoder-icon-search {
+      position: absolute;
+      top: 15px;
+      left: 5px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .mapboxgl-ctrl-geocoder button {
+      padding: 0;
+      margin: 0;
+      border: none;
+      cursor: pointer;
+      background: #fff;
+    }
+
+    .geocoder-icon-close {
+      width: 20px;
+      height: 20px;
+      margin-top: 8px;
+      margin-right: 3px;
+    }
+
+    .mapboxgl-ctrl-geocoder button:hover .geocoder-icon-close {
+      fill: #909090;
+    }
+
+    .geocoder-icon-loading {
+      width: 26px;
+      height: 26px;
+      margin-top: 5px;
+      margin-right: 0px;
+      -moz-animation: rotate 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      -webkit-animation: rotate 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+      animation: rotate 0.8s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    }
+
+    /* Animation */
+    @-webkit-keyframes rotate {
+      from {
+        -webkit-transform: rotate(0);
+        transform: rotate(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotate {
+      from {
+        -webkit-transform: rotate(0);
+        transform: rotate(0);
+      }
+      to {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Media queries*/
+    @media screen and (min-width: 640px) {
+      .mapboxgl-ctrl-geocoder {
+        font-size: 15px;
+        line-height: 20px;
+        max-width: 360px;
+      }
+      .mapboxgl-ctrl-geocoder ul { font-size: 13px; }
+
+      .geocoder-icon { top: 8px; }
+
+      .geocoder-icon-close {
+        width: 16px;
+        height: 16px;
+        margin-top: 3px;
+        margin-right: 0;
+      }
+
+      .geocoder-icon-loading {
+        width: 26px;
+        height: 26px;
+        margin-top: -2px;
+        margin-right: -5px;
+      }
+
+    }
+  }
+}
+
+.addressMapTooltipWrapper {
+  position: absolute;
+  top: calc(50% + 16px);
+  left: 0px;
+  width: 100%;
+  text-align: center;
+}
+.addressMapTooltip {
+  display: inline-block;
+  color: $grayDarkest;
+  background-color: #fff;
+  border-radius: $borderRadiusBase;
+  user-select: none;
+
+  line-height: 32px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: 8px;
+  margin-right: 8px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px;
+}
+
+
+.addressMapItem {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.addressMapItemIcon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  padding-right: 8px;
+}
+.addressMapItemText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

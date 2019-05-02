@@ -1,12 +1,10 @@
-.adminLocationsEdit { height: 100%; }
-
 .appBarWrapper { background-color: #fff; }
 
 .moduleContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 64px;
+  padding-top: 64px;
   overflow-y: auto;
   height: 100%;
 }

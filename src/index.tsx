@@ -70,6 +70,7 @@ import routeTransitionAdminDeveloper from './actions/route-transition/admin-deve
 import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-device-status';
 import routeTransitionAdminLocations from './actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-locations-edit';
+import routeTransitionAdminLocationsNew from './actions/route-transition/admin-locations-new';
 
 import sessionTokenSet from './actions/session-token/set';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
@@ -203,8 +204,10 @@ router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManag
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper());
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus());
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(null));
+router.addRoute('admin/locations/create/:spaceType', (spaceType) => routeTransitionAdminLocationsNew(null, spaceType));
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(id));
+router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => routeTransitionAdminLocationsNew(id, spaceType));
 
 // Onboarding flow
 // Redirect #/onboarding => #/onboarding/overview
@@ -220,13 +223,31 @@ router.addRoute('onboarding/doorways/:id', id => routeTransitionAccountSetupDoor
 (window as any).resizeHandler = unsafeHandleWindowResize(store);
 
 // Make sure that the user is logged in prior to going to a page.
-function preRouteAuthentication() {
+async function preRouteAuthentication() {
   const loggedIn = (store.getState() as any).sessionToken !== null;
   const locationHash = window.location.hash;
   const accessTokenMatch = locationHash.match(/^#access_token=([^&]+)/);
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
+    // If the originating origin of the login request was not this dashboard instance, then redirect
+    // to the originating dashboard instance. Ie, a user tried to login via oauth on a preview link,
+    // and it redirected to the staging dashboard, not the preview link dashboard. Redirect back to
+    // the preview link.
+    const loginOAuthOrigin = window.localStorage.loginOAuthOrigin;
+    delete window.localStorage.loginOAuthOrigin;
+
+    const hashIndex = window.location.href.indexOf('#');
+    const currentOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+
+    if (loginOAuthOrigin && loginOAuthOrigin !== currentOrigin) {
+      const hashIndex = window.location.href.indexOf('#');
+      const newHref = loginOAuthOrigin + window.location.href.slice(hashIndex);
+
+      console.warn(`Redirecting from ${window.location.href} to ${newHref} because oauth callback hit a different domain than it originated at`); 
+      window.location.href = newHref;
+    }
+
     return accounts().post('/tokens/exchange/auth0', null, {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
     }).then(response => {
@@ -245,12 +266,14 @@ function preRouteAuthentication() {
     locationHash.startsWith("#/account/register") ||
     locationHash.startsWith("#/account/forgot-password")
   ) {
-    return Promise.resolve();
+    return;
+
   // If the user isn't logged in, send them to the login page.
   } else if (!loggedIn) {
     store.dispatch(redirectAfterLogin(locationHash));
     router.navigate('login');
-    return Promise.resolve();
+    return;
+
   // Otherwise, fetch the logged in user's info since there's a session token available.
   } else {
     // Look up the user info before we can redirect to the landing page.
