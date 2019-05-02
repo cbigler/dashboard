@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
-import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -15,14 +15,9 @@ import {
   Skeleton,
 } from '@density/ui';
 
-import {
-  getChildrenOfSpace,
-  getParentsOfSpace,
-  isParentSelected,
-  searchHierarchy,
-} from '../../helpers/filter-hierarchy/index';
+import { getChildrenOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
+import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 import deduplicate from '../../helpers/deduplicate';
-import fuzzy from 'fuzzy';
 
 type AdminSpacePermissionsPickerProps = {
   height?: number,
@@ -59,9 +54,9 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
     } = this.props;
     const { searchQuery } = this.state;
 
-    let hierarchy = spaceHierarchyFormatterNew(spaceHierarchy.data);
+    let hierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
     if (searchQuery.length > 0) {
-      hierarchy = searchHierarchy(hierarchy, spaces.data, searchQuery);
+      hierarchy = spaceHierarchySearcher(hierarchy, searchQuery);
     }
 
     const selectedIdsWithChildren = deduplicate(

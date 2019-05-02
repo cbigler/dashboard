@@ -234,3 +234,10 @@ export type DensityReportOptions = {
   slow: boolean; // A flag representing if the report calculations should run specifying the "?slow=true" flag, which bypasses the new reporting database.
 }
 export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;
+
+export type DensitySpaceHierarchyItem = {
+  id: string,
+  name: string,
+  spaceType: string,
+  children?: Array<DensitySpaceHierarchyItem>,
+};

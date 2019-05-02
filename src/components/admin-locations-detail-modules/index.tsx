@@ -5,25 +5,21 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
 import classnames from 'classnames';
+
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
-import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
-import ListView, { ListViewColumn } from '../list-view/index';
 
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
+import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
+
+
+import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
+import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 import showToast from '../../actions/toasts';
 
-import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
-import {
-  getChildrenOfSpace,
-  getParentsOfSpace,
-  isParentSelected,
-  searchHierarchy,
-} from '../../helpers/filter-hierarchy/index';
-
-import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import { DensitySpace } from '../../types';
 
 import {
@@ -39,6 +35,8 @@ import {
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import DayOfWeekSelector from '../day-of-week-selector/index';
+import ListView, { ListViewColumn } from '../list-view/index';
+import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 
 const SPACE_FUNCTION_CHOICES = [
   {id: null, label: 'No function'},
@@ -864,6 +862,10 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
     this.props.onChange(this.state.startTime, this.state.endTime);
   }
 
+  shouldRenderHourMark(value) {
+    return parseInt(value.hourOnlyDisplay.split(':')[0], 10) % 2 === 0;
+  }
+
   render() {
     const { dayStartTime, timeZone } = this.props;
     const { startTime, endTime } = this.state;
@@ -920,18 +922,26 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
         </div>
 
         <div className={styles.operatingHoursLabelContainer}>
-          {tickMarks.map((tickMark, index) => (
+          {tickMarks.map((tickMark, index) => {
+            if (this.shouldRenderHourMark(tickMark)) {
+              return (
+                <span
+                  className={styles.operatingHoursLabel}
+                  style={{left: `${index * (100 / tickMarks.length)}%`}}
+                  key={tickMark.value}
+                >{tickMark.hourOnlyDisplay}</span>
+              );
+            } else {
+              return null;
+            }
+          })}
+          {this.shouldRenderHourMark(tickMarks[0]) ? (
             <span
               className={styles.operatingHoursLabel}
-              style={{left: `${index * (100 / tickMarks.length)}%`}}
-              key={tickMark.value}
-            >{tickMark.hourOnlyDisplay}</span>
-          ))}
-          <span
-            className={styles.operatingHoursLabel}
-            style={{left: '100%'}}
-            key={tickMarks[0].value}
-          >{tickMarks[0].hourOnlyDisplay}</span>
+              style={{left: '100%'}}
+              key={tickMarks[0].value}
+            >{tickMarks[0].hourOnlyDisplay}</span>
+          ) : null}
         </div>
       </div>
     );
@@ -941,6 +951,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
 function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
   activeModal,
+  spaces,
   spaceHierarchy,
 
   onChangeField,
@@ -948,7 +959,12 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   onConfirmSegmentCanBeDeleted,
   onOpenCopyFromSpace,
   onCloseModal,
+  onChangeSearchText,
 }) {
+  let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
+  if (spaces.filters.search) {
+    formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, spaces.filters.search);
+  }
   return (
     <Fragment>
       {activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE' ? (
@@ -969,11 +985,13 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               leftIcon={<Icons.Search />}
               placeholder="Search for space name"
               width="100%"
+              value={spaces.filters.search}
+              onChange={e => onChangeSearchText(e.target.value)}
             />
           </AppBar>
 
           <pre>
-            {JSON.stringify(spaceHierarchyFormatterNew(spaceHierarchy.data), null, 2)}
+            {JSON.stringify(formattedHierarchy, null, 2)}
           </pre>
         </Modal>
       ) : null}
@@ -1144,6 +1162,7 @@ export const AdminLocationsDetailModulesOperatingHours = connect(
   (state: any) => ({
     activeModal: state.activeModal,
     spaceHierarchy: state.spaceHierarchy,
+    spaces: state.spaces,
   }),
   (dispatch) => ({
     async onClickAddLabel() {
@@ -1172,6 +1191,9 @@ export const AdminLocationsDetailModulesOperatingHours = connect(
     },
     onCloseModal() {
       dispatch<any>(hideModal());
+    },
+    onChangeSearchText(text) {
+      dispatch<any>(collectionSpacesFilter('search', text));
     },
   }),
 )(AdminLocationsDetailModulesOperatingHoursUnconnected);

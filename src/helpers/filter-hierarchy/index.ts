@@ -1,5 +1,3 @@
-import fuzzy from 'fuzzy';
-
 export function getParentsOfSpace(spaces, initialSpace, throwError = true) {
   const parents: any[] = [];
 
@@ -53,39 +51,3 @@ export function isParentSelected(spaces, spaceId, selectedIds) {
     return false;
   }
 }
-
-export default function filterHierarchy(spaces, parentId) {
-  return spaces.filter(space => {
-    return (
-      space.spaceType === 'space' && /* must be of type space */
-      getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
-    );
-  });
-}
-
-export function searchHierarchy(hierarchy, spaces: Array<{id: string, name: string}>, searchQuery: string) {
-  let ids: Array<string> = [];
-  hierarchy.forEach(({space}) => {
-    const parentIds = getParentsOfSpace(spaces, space);
-
-    // It can either match the name of the space
-    const result = fuzzy.match(searchQuery, space.name);
-    if (result) {
-      ids.push(space.id);
-      ids = [...ids, ...parentIds];
-      return;
-    }
-
-    // Or the name of a parent higher up in the hierarchy.
-    const parentNames = parentIds.map(id => (spaces as any).find(s => s.id === id).name);
-    const parentMatches = fuzzy.filter(searchQuery, parentNames);
-    if (parentMatches.length > 0) {
-      ids.push(space.id);
-      ids = [...ids, ...parentIds];
-      return;
-    }
-  });
-
-  return hierarchy.filter(h => ids.includes(h.space.id));
-}
-

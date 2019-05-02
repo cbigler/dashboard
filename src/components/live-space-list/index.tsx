@@ -18,9 +18,18 @@ import SpaceHierarchySelectBox from '../space-hierarchy-select-box/index';
 
 import styles from './styles.module.scss';
 
-import filterHierarchy from '../../helpers/filter-hierarchy/index';
+import { getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
 import filterCollection from '../../helpers/filter-collection/index';
 const spaceFilter = filterCollection({fields: ['name']});
+
+function filterHierarchy(spaces, parentId) {
+  return spaces.filter(space => {
+    return (
+      space.spaceType === 'space' && /* must be of type space */
+      getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
+    );
+  });
+}
 
 export function LiveSpaceList({
   spaces,
