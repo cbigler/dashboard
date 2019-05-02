@@ -3,19 +3,82 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
-.accountContainer {
-  padding-left: 20px;
-  padding-right: 20px;
+
+.accountPage {
   overflow-y: auto;
   height: 100%;
+  background-color: #f7f7f7;
+  // each section has 24px margin, so +40 to get to 64px at the top and bottom
+  padding-top: 40px;
+  padding-bottom: 40px;
+  // not sure why this isn't the default...
+  box-sizing: border-box;
 }
-.account {
-  max-width: 600px;
-  margin-top: 0px;
+
+.accountPageSection {
+  max-width: 800px;
+  margin-top: 24px;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 50px;
+  margin-bottom: 24px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
+
+.accountPageSectionHeader {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 60px;
+  padding-top: 0;
+  padding-right: 1rem;
+  padding-bottom: 0;
+  padding-left: 1rem;
+  border-bottom: 1px solid #ccc;
+
+  // FIXME: yuck...
+  button { margin-left: 0.5rem; }
+}
+
+.accountPageSectionHeaderText {
+  flex: 1;
+  font-size: 1.2rem;
+  font-weight: 500;  
+  color: #999;
+}
+
+.accountPageSectionBody {
+  padding: 1rem 0;
+}
+
+.generalInfoForm {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.generalInfoFormFieldContainer {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+  padding: 0 1.5rem;
+
+  > * {
+    width: 100%;
+  }
+
+  // if we're not on a phone, show the fields in 2 columns
+  @media screen and (min-width: $screenSmMin) {
+    width: 50%;
+    max-width: 50%;
+  }
+}
+
 // Position the account card below the navbar. I would have used margin here, but the error bar
 // somehow is spaced with margin there too?
 .accountCard {
@@ -24,7 +87,6 @@
   margin-bottom: 40px;
   background-color: #fff;
   border: 1px solid $grayLight;
-  box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
   border-radius: $borderRadiusBase;
 }
 
@@ -84,14 +146,10 @@
   }
 }
 
-.accountConsentContainer {
-  margin-bottom: 40px;
-}
-
 .accountConsent {
   display: flex;
   align-items: center;
-  padding: 4px 0;
+  padding: 0 1rem;
 }
 
 .accountCheckbox {
@@ -102,4 +160,5 @@
   display: flex;
   justify-content: center;
   font-size: smaller;
+  margin-top: 40px;
 }
