@@ -63,29 +63,8 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     // Operating hours module
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
-
-    operatingHours: [
-      {
-        id: 'tsm_xxx',
-        existsOnServer: true,
-        labelId: 'tsg_breakfast',
-        startTimeSeconds: 37800,
-        endTimeSeconds: 57600,
-        daysAffected: ['Monday', 'Tuesday', 'Wednesday'],
-      },
-      {
-        id: 'tsm_xxy',
-        existsOnServer: true,
-        labelId: 'tsg_breakfast',
-        startTimeSeconds: 37800,
-        endTimeSeconds: 57600,
-        daysAffected: ['Monday', 'Tuesday', 'Wednesday'],
-      },
-    ],
-    operatingHoursLabels: [
-      { id: 'tsg_breakfast', name: 'Breakfast' },
-      { id: 'tsg_lunch', name: 'Lunch' },
-    ],
+    operatingHours: [],
+    operatingHoursLabels: [],
   };
 }
 

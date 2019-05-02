@@ -13,6 +13,7 @@ import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
+import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
 
 import {
@@ -70,6 +71,9 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   onStart = (event, clientX) => {
     // Dragging must be done on the slider control heads
     if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
+      return;
+    }
+    if (event.target.id.indexOf('track') >= 0) {
       return;
     }
 
@@ -246,12 +250,13 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   activeModal,
   spaceHierarchy,
   spaces,
+  selectedSpaceId,
 
+  onSubmitModal,
   onCloseModal,
   onChangeSearchText,
+  onChangeSelectedSpace,
 }) {
-  const selectedSpaceId = null;
-
   if (activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE') {
     let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
     if (spaces.filters.search) {
@@ -270,16 +275,18 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
           <AppBarTitle>Copy Operating Hours</AppBarTitle>
         </AppBar>
 
-        <AppBar>
-          <InputBox
-            type="text"
-            leftIcon={<Icons.Search />}
-            placeholder="Search for space name"
-            width="100%"
-            value={spaces.filters.search}
-            onChange={e => onChangeSearchText(e.target.value)}
-          />
-        </AppBar>
+        <div className={styles.operatingHoursCopyFromSpaceModalSearchBar}>
+          <AppBar>
+            <InputBox
+              type="text"
+              leftIcon={<Icons.Search />}
+              placeholder="Search for space name"
+              width="100%"
+              value={spaces.filters.search}
+              onChange={e => onChangeSearchText(e.target.value)}
+            />
+          </AppBar>
+        </div>
 
         <div className={styles.operatingHoursCopyFromSpaceModalContainer}>
           {formattedHierarchy.map(item => (
@@ -289,10 +296,12 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 [styles.depth0]: item.depth === 0,
               })}
               style={{marginLeft: item.depth * 24}}
+              onClick={() => onChangeSelectedSpace(item.space.id)}
             >
               <RadioButton
+                disabled={spaces.data.find(s => s.id === item.space.id).timeSegments.length === 0}
                 checked={selectedSpaceId === item.space.id}
-                onChange={console.log}
+                onChange={() => onChangeSelectedSpace(item.space.id)}
               />
 
               {item.space.spaceType === 'building' ? (
@@ -306,9 +315,11 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 </span>
               ) : null}
 
-              <span className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
-                [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
-              })}>
+              <span
+                className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
+                  [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                })}
+              >
                 {item.space.name}
               </span>
             </div>
@@ -322,7 +333,11 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
               <ButtonContext.Provider value="CANCEL_BUTTON">
                 <Button onClick={onCloseModal}>Cancel</Button>
               </ButtonContext.Provider>
-              <Button type="primary">Copy Hours</Button>
+              <Button
+                type="primary"
+                disabled={selectedSpaceId === null}
+                onClick={() => onSubmitModal(selectedSpaceId)}
+              >Copy Hours</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -345,6 +360,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   onOpenCopyFromSpace,
   onCloseModal,
   onChangeSearchText,
+  onChangeSelectedSpace,
 }) {
   return (
     <Fragment>
@@ -352,8 +368,40 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         activeModal={activeModal}
         spaceHierarchy={spaceHierarchy}
         spaces={spaces}
+
+        onSubmitModal={spaceId => {
+          const space = spaces.data.find(s => s.id === spaceId);
+
+          const operatingHours = space.timeSegments.map(tsm => {
+            const parentTimeSegmentGroup = space.timeSegmentGroups.find(tsg => tsg.name === tsm.name);
+            return {
+              id: tsm.id,
+              labelId: parentTimeSegmentGroup ? parentTimeSegmentGroup.id : null,
+              startTimeSeconds: moment.duration(tsm.start).as('seconds'),
+              endTimeSeconds: moment.duration(tsm.end).as('seconds'),
+              daysAffected: tsm.days,
+              existsOnServer: true,
+            };
+          });
+          onChangeField('operatingHours', operatingHours);
+
+          const operatingHoursLabels = space.timeSegmentGroups;
+          const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
+          // Only add operating hours labels that aren't alraedy assigned to the space
+          operatingHoursLabels.forEach(label => {
+            if (!newOperatingHoursLabels.find(l => l.id === label.id)) {
+              newOperatingHoursLabels.push(label);
+            }
+          });
+          onChangeField('operatingHoursLabels', newOperatingHoursLabels);
+
+          onCloseModal();
+        }}
         onCloseModal={onCloseModal}
         onChangeSearchText={onChangeSearchText}
+
+        selectedSpaceId={activeModal.data.selectedSpaceId}
+        onChangeSelectedSpace={onChangeSelectedSpace}
       />
 
       <AdminLocationsDetailModule title="Operating Hours">
@@ -396,7 +444,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         </AppBar>
 
         {formState.operatingHours.length === 0 ? (
-          <div>TODO: EMPTY STATE NOT DESIGNED</div>
+          <div style={{height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>TODO: EMPTY STATE NOT DESIGNED</div>
         ) : null}
 
         {formState.operatingHours.map((operatingHoursItem, index) => (
@@ -535,10 +583,12 @@ export default connect(
         }));
       }));
 
-      console.log('New Label Name', newLabelName)
-      // TODO: MAKE HTTP REQUEST TO CREATE TIME SEGMENT GROUP OR LABEL OR WHATEVER WE ARE CALLING
-      // THESE THINGS
-      return { id: Math.random().toString(), name: newLabelName };
+      // TODO: MAKE REQUEST TO API TO CREATE TIME SEGMENT GROUP, NOT ASSOCIATED WITH ANY TIME SEGMENTS
+
+      return {
+        id: uuid.v4(),
+        name: newLabelName,
+      };
     },
     async onConfirmSegmentCanBeDeleted(callback) {
       dispatch<any>(showModal('MODAL_CONFIRM', {
@@ -547,13 +597,16 @@ export default connect(
       }));
     },
     onOpenCopyFromSpace() {
-      dispatch<any>(showModal('OPERATING_HOURS_COPY_FROM_SPACE'))
+      dispatch<any>(showModal('OPERATING_HOURS_COPY_FROM_SPACE', { selectedSpaceId: null }));
     },
     onCloseModal() {
       dispatch<any>(hideModal());
     },
     onChangeSearchText(text) {
       dispatch<any>(collectionSpacesFilter('search', text));
+    },
+    onChangeSelectedSpace(selectedSpaceId) {
+      dispatch<any>(updateModal({ selectedSpaceId }));
     },
   }),
 )(AdminLocationsDetailModulesOperatingHoursUnconnected);

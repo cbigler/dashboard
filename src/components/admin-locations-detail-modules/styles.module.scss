@@ -162,9 +162,13 @@
   margin-right: 8px;
 }
 
+.operatingHoursCopyFromSpaceModalSearchBar {
+  background-color: $grayLightest;
+}
 .operatingHoursCopyFromSpaceModalContainer {
   overflow-y: auto;
   height: calc(100% - 64px - 64px - 64px);
+  background-color: #FEFEFE;
 }
 .operatingHoursCopyFromSpaceModalItem {
   display: flex;
@@ -173,9 +177,17 @@
   height: 40px;
   padding-left: 24px;
   padding-right: 24px;
+  cursor: pointer;
 }
 .operatingHoursCopyFromSpaceModalItem.depth0 { border-top: 1px solid $gray; }
+.operatingHoursCopyFromSpaceModalItem.depth0:first-child { border-top-width: 0px; }
 
-.operatingHoursCopyFromSpaceModalItemIcon { margin-right: 8px; }
+.operatingHoursCopyFromSpaceModalItemIcon { margin-left: 8px; }
 
+.operatingHoursCopyFromSpaceModalItemName {
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .operatingHoursCopyFromSpaceModalItemName.bold { font-weight: bold; }

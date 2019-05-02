@@ -20,20 +20,28 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
       setLoading: !space,
     });
 
-    if (!space) {
-      let space, hierarchy;
-      try {
-        const response = await core().get(`/spaces/${spaceId}`);
-        space = objectSnakeToCamel<DensitySpace>(response.data);
 
+    if (getState().spaceHierarchy.data.length === 0) {
+      let hierarchy;
+      try {
         hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return false;
       }
-
-      dispatch(collectionSpacesPush(space));
       dispatch(collectionSpaceHierarchySet(hierarchy));
+    }
+
+    if (!space) {
+      let space, hierarchy;
+      try {
+        const response = await core().get(`/spaces/${spaceId}`);
+        space = objectSnakeToCamel<DensitySpace>(response.data);
+      } catch (err) {
+        dispatch(collectionSpacesError(err));
+        return false;
+      }
+      dispatch(collectionSpacesPush(space));
     }
   };
 }

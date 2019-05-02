@@ -26,20 +26,28 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       setLoading: parentSpaceId && !space,
     });
 
+    if (getState().spaceHierarchy.data.length === 0) {
+      let hierarchy;
+      try {
+        hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+      } catch (err) {
+        dispatch(collectionSpacesError(err));
+        return false;
+      }
+      dispatch(collectionSpaceHierarchySet(hierarchy));
+    }
+
     if (!space && parentSpaceId) {
-      let space, hierarchy;
+      let space;
       try {
         const response = await core().get(`/spaces/${parentSpaceId}`);
         space = objectSnakeToCamel<DensitySpace>(response.data);
-
-        hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return false;
       }
 
       dispatch(collectionSpacesPush(space));
-      dispatch(collectionSpaceHierarchySet(hierarchy));
     }
   };
 }
