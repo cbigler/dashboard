@@ -4,10 +4,14 @@ import moment from 'moment';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
+import collectionSpacesUpdate from '../../actions/collection/spaces/update';
+import showToast from '../../actions/toasts';
 
 import Dialogger from '../dialogger';
 
-import { DensitySpace } from '../../types';
+import { DensityUser, DensitySpace } from '../../types';
+
+import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
@@ -18,6 +22,8 @@ import {
 } from '../admin-locations-detail-modules/index';
 
 import {
+  AppFrame,
+  AppPane,
   AppBar,
   AppBarTitle,
   AppBarSection,
@@ -34,18 +40,19 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     loaded: true,
 
     // General information module
-    name: space.name,
+    name: space.name || '',
     spaceType: space.spaceType,
     'function': space['function'] || null,
+    parentId: space.parentId,
 
     // Metadata module
     annualRent: space.annualRent || '',
     sizeArea: space.sizeArea || '',
-    sizeAreaUnit: space.sizeAreaUnit || 'feet',
+    sizeAreaUnit: space.sizeAreaUnit || user.data.sizeAreaDisplayUnit || SQUARE_FEET,
     currencyUnit: space.currencyUnit || 'USD',
     capacity: space.capacity || '',
     targetCapacity: space.targetCapacity || '',
-    levelNumber: space.levelNumber || '',
+    floorLevel: space.floorLevel || '',
 
     // Address module
     address: space.address || '',
@@ -59,12 +66,51 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
   };
 }
 
-type AdminLocationsFormProps = {
+// Given the state of the form, convert that state back into fields that can be sent in the body of
+// a PUT to the space.
+export function convertFormStateToSpaceFields(formState: AdminLocationsFormState, spaceType: DensitySpace["spaceType"]) {
+  function parseIntOrNull(string) {
+    const result = parseInt(string, 10);
+    if (isNaN(result)) {
+      return null;
+    } else {
+      return result;
+    }
+  }
+  return {
+    name: formState.name,
+    spaceType: formState.spaceType,
+    'function': formState['function'],
+    parentId: formState.parentId,
+    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
+
+    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
+    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
+    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
+    currencyUnit: formState.currencyUnit,
+    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
+    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
+
+    address: formState.address && formState.address.length > 0 ? formState.address : null,
+    latitude: formState.coordinates ? formState.coordinates[0] : null,
+    longitude: formState.coordinates ? formState.coordinates[1] : null,
+
+    dailyReset: formState.dailyReset,
+    timeZone: formState.timeZone,
+  };
+}
+
+type AdminLocationsEditProps = {
   selectedSpace: DensitySpace,
   spaces: {
     view: string,
     spaces: Array<DensitySpace>,
   },
+  user: {
+    data: DensityUser,
+  },
+
+  onSave: (spaceFieldUpdate: any, id: string) => any,
 };
 
 export type AdminLocationsFormState = {
@@ -79,14 +125,22 @@ export type AdminLocationsFormState = {
   currencyUnit?: 'USD',
   capacity?: string,
   targetCapacity?: string,
-  levelNumber?: string,
+  floorLevel?: string,
   address?: string,
   coordinates?: [number, number] | null,
   timeZone?: string,
   dailyReset?: string | null,
+  parentId?: string | null,
 };
 
-class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocationsFormState> {
+const SPACE_TYPE_TO_NAME = {
+  campus: 'Campus',
+  building: 'Building',
+  floor: 'Level',
+  space: 'Room',
+};
+
+class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {
   constructor(props) {
     super(props);
 
@@ -111,6 +165,20 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
     this.setState(s => ({...s, [key]: value}));
   }
 
+  onSave = () => {
+    const spaceFieldsToUpdate = {
+      id: this.props.selectedSpace.id,
+      ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType),
+    };
+    this.props.onSave(spaceFieldsToUpdate, this.props.selectedSpace.id);
+  }
+
+  isFormComplete = () => {
+    return (
+      this.state.name && this.state.timeZone && this.state.dailyReset
+    );
+  }
+
   render() {
     const { spaces, selectedSpace } = this.props;
 
@@ -123,52 +191,67 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
     }[selectedSpace ? selectedSpace.spaceType : 'unknown'];
 
     return (
-      <div className={styles.adminLocationsForm}>
-        <Dialogger />
+      <AppFrame>
+        <AppPane>
+          <Dialogger />
 
-        {spaces.view === 'LOADING' ? (
-          <p>need to make a loading state</p>
-        ) : null}
-        {selectedSpace && spaces.view === 'VISIBLE' ? (
-          <Fragment>
-            <div className={styles.appBarWrapper}>
-              <AppBar>
-                <AppBarTitle>
-                  <a
-                    role="button"
-                    className={styles.arrow}
-                    href={`#/admin/locations/${selectedSpace.id}`}
-                  >
-                    <Icons.ArrowLeft />
-                  </a>
-                  Edit {{
-                    campus: 'Campus',
-                    building: 'Building',
-                    floor: 'Level',
-                    space: 'Room',
-                  }[selectedSpace.spaceType]}
-                </AppBarTitle>
-                <AppBarSection>
-                  <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button onClick={() => {
-                      window.location.href = `#/admin/locations/${selectedSpace.id}`;
-                    }}>Cancel</Button>
-                  </ButtonContext.Provider>
-                  <Button type="primary">Save</Button>
-                </AppBarSection>
-              </AppBar>
+          {spaces.view === 'ERROR' ? (
+            <div className={styles.centered}>
+              <GenericErrorState />
             </div>
+          ) : null}
 
-            {/* All the space type components take the same props */}
-            <FormComponent
-              spaceType={selectedSpace.spaceType}
-              formState={this.state}
-              operationType="UPDATE"
-              onChangeField={this.onChangeField}
-            />
-          </Fragment>
-        ) : null}
-      </div>
+          {/* Show when: */}
+          {/* 1. Space is being loaded for the first time */}
+          {!selectedSpace && spaces.view === 'LOADING' ? (
+            <div className={styles.centered}>
+              <GenericLoadingState />
+            </div>
+          ) : null}
+
+          {/* Show when: */}
+          {/* 1. Space has loaded */}
+          {/* 2. Space is in the process of being updated */}
+          {selectedSpace && (spaces.view === 'VISIBLE' || spaces.view === 'LOADING') ? (
+            <Fragment>
+              <div className={styles.appBarWrapper}>
+                <AppBar>
+                  <AppBarTitle>
+                    <a
+                      role="button"
+                      className={styles.arrow}
+                      href={`#/admin/locations/${selectedSpace.id}`}
+                    >
+                      <Icons.ArrowLeft />
+                    </a>
+                    Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
+                  </AppBarTitle>
+                  <AppBarSection>
+                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                      <Button onClick={() => {
+                        window.location.href = `#/admin/locations/${selectedSpace.id}`;
+                      }}>Cancel</Button>
+                    </ButtonContext.Provider>
+                    <Button
+                      type="primary"
+                      onClick={this.onSave}
+                      disabled={!this.isFormComplete() || spaces.view === 'LOADING'}
+                    >Save</Button>
+                  </AppBarSection>
+                </AppBar>
+              </div>
+
+              {/* All the space type components take the same props */}
+              <FormComponent
+                spaceType={selectedSpace.spaceType}
+                formState={this.state}
+                operationType="UPDATE"
+                onChangeField={this.onChangeField}
+              />
+            </Fragment>
+          ) : null}
+        </AppPane>
+      </AppFrame>
     );
   }
 }
@@ -176,12 +259,22 @@ class AdminLocationsForm extends Component<AdminLocationsFormProps, AdminLocatio
 export default connect((state: any) => {
   return {
     spaces: state.spaces,
+    user: state.user,
     selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
   };
 }, (dispatch: any) => {
   return {
+    async onSave(spaceFieldUpdate, spaceId) {
+      const ok = await dispatch(collectionSpacesUpdate(spaceFieldUpdate));
+      if (ok) {
+        dispatch(showToast({ text: 'Space updated successfully' }));
+      } else {
+        dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+      }
+      window.location.href = `#/admin/locations/${spaceId}`;
+    },
   };
-})(AdminLocationsForm);
+})(AdminLocationsEdit);
 
 
 
@@ -204,6 +297,9 @@ type AdminLocationsFormSpaceTypeProps = {
   operationType: 'CREATE' | 'UPDATE',
 };
 
+// NOTE: all the below forms are rendered both when creating a new instance and editing an
+// existing instance of a space. Therefore, a space is not specified as when the form is rendered
+// for the "new" state no space exists yet.
 export function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) { return null; }
 
 export function AdminLocationsCampusForm({
@@ -214,42 +310,35 @@ export function AdminLocationsCampusForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesAddress
-          spaceType={spaceType}
-          address={formState.address}
-          coordinates={formState.coordinates}
-          onChangeAddress={address => onChangeField('address', address)}
-          onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
           />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesAddress
+            spaceType={spaceType}
+            address={formState.address}
+            coordinates={formState.coordinates}
+            onChangeAddress={address => onChangeField('address', address)}
+            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -262,42 +351,42 @@ export function AdminLocationsBuildingForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesAddress
-          spaceType={spaceType}
-          address={formState.address}
-          coordinates={formState.coordinates}
-          onChangeAddress={address => onChangeField('address', address)}
-          onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
           />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesAddress
+            spaceType={spaceType}
+            address={formState.address}
+            coordinates={formState.coordinates}
+            onChangeAddress={address => onChangeField('address', address)}
+            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -310,33 +399,33 @@ export function AdminLocationsFloorForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
           />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }
@@ -349,33 +438,33 @@ export function AdminLocationsSpaceForm({
 }: AdminLocationsFormSpaceTypeProps) {
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesGeneralInfo
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesMetadata
-          spaceType={spaceType}
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      <div className={styles.moduleWrapper}>
-        <AdminLocationsDetailModulesOperatingHours
-          formState={formState}
-          onChangeField={onChangeField}
-        />
-      </div>
-      {operationType === 'UPDATE' ? (
+      <div className={styles.moduleInner}>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDangerZone
-            onDeleteSpace={() => console.log('TODO: ADD DELETE LOGIC')}
+          <AdminLocationsDetailModulesGeneralInfo
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
           />
         </div>
-      ) : null}
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesMetadata
+            spaceType={spaceType}
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesOperatingHours
+            formState={formState}
+            onChangeField={onChangeField}
+          />
+        </div>
+        {operationType === 'UPDATE' ? (
+          <div className={styles.moduleWrapper}>
+            <AdminLocationsDetailModulesDangerZone />
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

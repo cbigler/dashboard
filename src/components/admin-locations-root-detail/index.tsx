@@ -4,6 +4,7 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import colorVariables from '@density/ui/variables/colors.json';
+import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import styles from './styles.module.scss';
 
@@ -17,7 +18,7 @@ import {
 } from '@density/ui';
 
 
-function SpaceList({ spaces, renderedSpaces }) {
+function SpaceList({ user, spaces, renderedSpaces }) {
   return (
     <div className={styles.spaceList}>
       <ListView data={renderedSpaces}>
@@ -26,7 +27,12 @@ function SpaceList({ spaces, renderedSpaces }) {
           template={item => (
             <Fragment>
               <AdminLocationsListViewImage space={item} />
-              <span className={styles.name}>{item.name}</span>
+              <div className={styles.infoWrapper}>
+                <span className={styles.name}>{item.name}</span>
+                {item.address ? (
+                  <span className={styles.address}>{item.address || ''}</span>
+                ) : null}
+              </div>
             </Fragment>
           )}
           flexGrow={1}
@@ -38,23 +44,37 @@ function SpaceList({ spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Spaces"
+          title="Rooms"
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Size (sq ft)"
-          template={item => 'HARDCODED'}
+          title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+          template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
+            item.sizeArea,
+            item.sizeAreaUnit,
+            user.data.sizeAreaDisplayUnit,
+          ) : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Rent"
-          template={item => 'HARDCODED'}
+          title="Annual Rent"
+          template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Seats"
-          template={item => 'HARDCODED'}
+          title="Target Capacity"
+          template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="Capacity"
+          template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="DPUs"
+          template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
@@ -67,7 +87,7 @@ function SpaceList({ spaces, renderedSpaces }) {
   );
 }
 
-export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
+export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }) {
   const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
   const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
   const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
@@ -78,15 +98,19 @@ export default function AdminLocationsRootDetail({ spaces, selectedSpace }) {
       {buildingsNotInCampus.length > 0 ? (
         <Fragment>
           <AdminLocationsSubheader title="Buildings" supportsHover={false} />
-          <SpaceList spaces={spaces} renderedSpaces={buildingsNotInCampus} />
+          <SpaceList user={user} spaces={spaces} renderedSpaces={buildingsNotInCampus} />
         </Fragment>
       ) : null}
 
       {campuses.map((campus, index) => {
         return (
           <div key={campus.id} className={styles.section}>
-            <AdminLocationsSubheader title={campus.name} spaceId={campus.id} />
-            <SpaceList spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
+            <AdminLocationsSubheader
+              title={campus.name}
+              subtitle={campus.address}
+              spaceId={campus.id}
+            />
+            <SpaceList user={user} spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
           </div>
         );
       })}

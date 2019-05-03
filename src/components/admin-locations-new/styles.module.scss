@@ -1,3 +1,4 @@
+.adminLocationsNew { height: 100% }
 .appBarWrapper { background-color: #fff; }
 
 .moduleContainer {
@@ -28,5 +29,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: calc(100vh - 40px);
 }
