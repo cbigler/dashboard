@@ -40,6 +40,12 @@ const initialState = {
     data: ([] as Array<any>),
     error: (null as any),
   },
+
+  googleCalendarSpaces: {
+    view: ('LOADING' as any),
+    data: ([] as Array<any>),
+    error: (null as any),
+  },
 };
 
 export default function integrations(state=initialState, action) {
@@ -70,6 +76,12 @@ export default function integrations(state=initialState, action) {
       },
       teemSpaces: {
         ...state.teemSpaces,
+        view: 'LOADING',
+        data: [],
+        error: null,
+      },
+      googleCalendarSpaces: {
+        ...state.googleCalendarSpaces,
         view: 'LOADING',
         data: [],
         error: null,

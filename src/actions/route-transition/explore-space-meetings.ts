@@ -121,7 +121,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
 
     // Load room booking spaces if room booking service is active
     let roomBookingProvider;
-    if (roomBookingDefaultService && ['robin', 'teem'].includes(roomBookingDefaultService.name)) {
+    if (roomBookingDefaultService && ['robin', 'teem', 'google_calendar'].includes(roomBookingDefaultService.name)) {
       roomBookingProvider = roomBookingDefaultService.name;
     }
 
