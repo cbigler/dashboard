@@ -7,6 +7,9 @@ export default function spaceHierarchySearcher(
   hierarchy: Array<SpaceHierarchyDisplayItem>,
   searchQuery: string,
 ): Array<SpaceHierarchyDisplayItem> {
+  if (searchQuery.length === 0) {
+    return hierarchy;
+  }
   return hierarchy.filter(item => {
     // It can either match the name of the space
     if (fuzzy.match(searchQuery, item.space.name)) {
