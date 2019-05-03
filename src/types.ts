@@ -38,7 +38,7 @@ export type DensitySpace = {
     id: string,
     name: string,
   }>,
-  dpusTotal: number,
+  sensorsTotal: number,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -176,7 +176,6 @@ export type DensityUser = {
   id: string,
   email: string,
   fullName: string | null,
-  nickname: string | null,
   organization: DensityOrganization,
   isDemo: boolean,
   coreConsent: boolean,

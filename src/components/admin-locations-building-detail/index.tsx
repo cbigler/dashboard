@@ -71,7 +71,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         />
         <ListViewColumn
           title="DPUs"
-          template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
+          template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
@@ -169,7 +169,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <AdminLocationsLeftPaneDataRowItem
             id="dpus"
             label="DPUs:"
-            value={selectedSpace.dpusTotal}
+            value={selectedSpace.sensorsTotal}
           />
         </AdminLocationsLeftPaneDataRow>
       </AppSidebar>

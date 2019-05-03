@@ -62,7 +62,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
       <AdminLocationsLeftPaneDataRowItem
         id="dpus"
         label="DPUs:"
-        value={selectedSpace.dpusTotal ? selectedSpace.dpusTotal : <Fragment>&mdash;</Fragment>}
+        value={selectedSpace.sensorsTotal ? selectedSpace.sensorsTotal : <Fragment>&mdash;</Fragment>}
       />
     </Fragment>
   );
@@ -147,7 +147,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
                   />
                   <ListViewColumn
                     title="DPUs"
-                    template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
+                    template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
                     href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
