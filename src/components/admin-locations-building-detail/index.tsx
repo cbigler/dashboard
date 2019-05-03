@@ -41,16 +41,21 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Spaces"
+          title="Levels"
+          template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
+          href={item => `#/admin/locations/${item.id}`}
+        />
+        <ListViewColumn
+          title="Rooms"
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]})`}
+          title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
           template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
             item.sizeArea,
             item.sizeAreaUnit,
-            user.data.sizeAreaUnitDefault,
+            user.data.sizeAreaDisplayUnit,
           ) : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
@@ -66,7 +71,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         />
         <ListViewColumn
           title="DPUs"
-          template={item => 'HARDCODED'}
+          template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
@@ -85,10 +90,10 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
   const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
 
-  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
+  const sizeAreaConverted = selectedSpace.sizeArea && selectedSpace.sizeAreaUnit ? convertUnit(
     selectedSpace.sizeArea,
     selectedSpace.sizeAreaUnit,
-    user.data.sizeAreaUnitDefault,
+    user.data.sizeAreaDisplayUnit,
   ) : null;
 
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
@@ -108,7 +113,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <div className={styles.leftPaneMap}>
             <AdminLocationsSpaceMap
               readonly={true}
-              space={selectedSpace}
+              spaceType={selectedSpace.spaceType}
               address={selectedSpace.address}
               coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
             />
@@ -117,12 +122,12 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
         <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
           <AdminLocationsLeftPaneDataRowItem
             id="size"
-            label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            label={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
             value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
           />
           <AdminLocationsLeftPaneDataRowItem
-            id="size"
-            label={`Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
+            id="rent"
+            label={`Annual Rent (per ${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
             value={sizeAreaConverted && selectedSpace.annualRent ? (
               `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
             ) : <Fragment>&mdash;</Fragment>}
@@ -152,7 +157,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           />
           <AdminLocationsLeftPaneDataRowItem
             id="spaces"
-            label="Spaces:"
+            label="Rooms:"
             value={
               spaces.data
               .filter(space =>
@@ -164,7 +169,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <AdminLocationsLeftPaneDataRowItem
             id="dpus"
             label="DPUs:"
-            value={"HARDCODED"}
+            value={selectedSpace.dpusTotal}
           />
         </AdminLocationsLeftPaneDataRow>
       </AppSidebar>
@@ -188,7 +193,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             })}
           </div>
         ) : (
-          <AdminLocationsDetailEmptyState />
+          <AdminLocationsDetailEmptyState text="You haven't added any floors or spaces to this building yet." />
         )}
       </AppPane>
     </AppFrame>

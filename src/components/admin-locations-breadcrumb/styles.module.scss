@@ -121,6 +121,7 @@
   white-space: nowrap; 
   overflow: hidden;
 }
+.popupItem a:focus { outline: none; }
 .popupItem.active { background-color: $grayLighter; }
 .popupItem.active a {
   color: $brandPrimary;

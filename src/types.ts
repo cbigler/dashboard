@@ -38,6 +38,7 @@ export type DensitySpace = {
     id: string,
     name: string,
   }>,
+  dpusTotal: number,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -185,7 +186,7 @@ export type DensityUser = {
   createdAt: string,
   permissions: Array<string>,
   spaces: Array<string>,
-  sizeAreaUnitDefault?: 'square_feet' | 'square_meters',
+  sizeAreaDisplayUnit: 'square_feet' | 'square_meters',
 };
 
 // Counts

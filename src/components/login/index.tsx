@@ -117,9 +117,19 @@ export class Login extends React.Component<any, any> {
       <div className={classnames(styles.loginSubmitButton, styles.google, {[styles.loading]: this.state.loading})}>
         <Button
           width="100%"
-          onClick={() => webAuth.authorize({
-            connection: 'google-oauth2',
-          })}
+          onClick={() => {
+            // Store the orginating origin in localStorage from the oauth request. This is used so
+            // that we can redirect to the login route on the correct version of the dashboard as
+            // soon as possible in the oauth callback. For example, a user tried to login via oauth
+            // on a preview link, and normally, it would redirect to the staging dashboard, not the
+            // preview link. Store the current url so we can redirect back to here after logging in.
+            const hashIndex = window.location.href.indexOf('#');
+            window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+
+            webAuth.authorize({
+              connection: 'google-oauth2',
+            });
+          }}
         >
           <img className={styles.iconGoogleLogin} src={logoGoogleG} />
           Log in with Google
@@ -202,7 +212,7 @@ export class Login extends React.Component<any, any> {
       <div className={styles.loginSection}>
         {/* Render a toast if the password reset request worked */}
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
-          <ToastContext.Provider value="multiline">
+          <ToastContext.Provider value="MULTILINE">
             <Toast
               visible
               icon={<Icons.Check color="white" />}
@@ -216,7 +226,7 @@ export class Login extends React.Component<any, any> {
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 visible
                 icon={<Icons.No color="white" />}
@@ -230,7 +240,7 @@ export class Login extends React.Component<any, any> {
 
         {this.props.user && this.props.user.error ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible
@@ -246,7 +256,7 @@ export class Login extends React.Component<any, any> {
         {/* Render any errors with previous login attempts */}
         {this.state.error ? (
           <div className={styles.loginToast}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible

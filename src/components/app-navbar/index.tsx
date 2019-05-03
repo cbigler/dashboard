@@ -224,7 +224,7 @@ export default function AppNavbar({
           {showAdminMenu ?
             <AppNavbarMenu
               header={<AppNavbarItem
-                selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_DEVICE_STATUS'].includes(page)}
+                selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_LOCATIONS', 'ADMIN_DEVICE_STATUS'].includes(page)}
                 showOnMobile={false}
                 icon={<Icons.Cog />}
                 text="Admin"
@@ -257,6 +257,12 @@ export default function AppNavbar({
                   icon={<Icons.Heartbeat />}
                   selected={['ADMIN_DEVICE_STATUS'].includes(page)}
                 /> : null}
+                <AppNavbarMenuItem
+                  path="#/admin/locations"
+                  text="Locations"
+                  icon={<Icons.Globe />}
+                  selected={['ADMIN_LOCATIONS'].includes(page)}
+                />
             </AppNavbarMenu> : null
           }
           <AppNavbarMenu
