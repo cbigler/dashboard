@@ -176,7 +176,6 @@ export type DensityUser = {
   id: string,
   email: string,
   fullName: string | null,
-  nickname: string | null,
   organization: DensityOrganization,
   isDemo: boolean,
   coreConsent: boolean,

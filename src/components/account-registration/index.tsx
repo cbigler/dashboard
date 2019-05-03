@@ -27,7 +27,6 @@ export class AccountRegistration extends React.Component<any, any> {
       error: null,
 
       fullName: '',
-      nickname: '',
       password: '',
       passwordConfirmation: '',
       coreConsent: false,
@@ -41,7 +40,6 @@ export class AccountRegistration extends React.Component<any, any> {
       password: this.state.password,
       confirm_password: this.state.password,
       full_name: this.state.fullName,
-      nickname: this.state.nickname || this.generateNickname.apply(this),
       core_consent: this.state.coreConsent,
       marketing_consent: this.state.marketingConsent,
     }).then(response => {
@@ -51,10 +49,6 @@ export class AccountRegistration extends React.Component<any, any> {
     });
   }
 
-  // Generate the default nickname if one isn't specified.
-  generateNickname() {
-    return this.state.fullName.split(' ')[0];
-  }
   render() {
     return <div className={styles.accountRegistration}>
       <div className={styles.accountRegistrationSection}>
@@ -81,19 +75,6 @@ export class AccountRegistration extends React.Component<any, any> {
               id="account-registration-full-name"
               onChange={e => this.setState({fullName: e.target.value})}
               value={this.state.fullName}
-              width="100%"
-            />
-
-            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-nickname">Nickname</label>
-            <InputBox
-              type="text"
-              placeholder={
-                this.state.fullName && this.state.fullName.indexOf(' ') >= 0 ? this.generateNickname.apply(this) : 'Nickname ...'
-              }
-              className={styles.accountRegistrationInput}
-              id="account-registration-nickname"
-              onChange={e => this.setState({nickname: e.target.value})}
-              value={this.state.nickname}
               width="100%"
             />
 
@@ -157,7 +138,6 @@ export class AccountRegistration extends React.Component<any, any> {
                 this.state.password.length > 0 &&
                 this.state.password === this.state.passwordConfirmation &&
                 this.state.fullName.length > 0 &&
-                (this.state.fullName.indexOf(' ') >= 0 || this.state.nickname.length > 0) &&
                 this.state.email.indexOf('@') >= 0 &&
                 this.state.coreConsent
               )}
