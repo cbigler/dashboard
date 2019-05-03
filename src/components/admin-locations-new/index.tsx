@@ -181,7 +181,7 @@ export default connect((state: any) => {
       } else {
         dispatch(showToast({ type: 'error', text: 'Error creating space' }));
       }
-      window.location.href = `#/admin/locations/${parentSpaceId}`;
+      window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
     }
   };
 })(AdminLocationsNewUnconnected);
