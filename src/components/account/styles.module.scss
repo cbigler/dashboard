@@ -11,8 +11,8 @@
   // each section has 24px margin, so +40 to get to 64px at the top and bottom
   padding-top: 40px;
   padding-bottom: 40px;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 24px;
+  padding-right: 24px;
   // not sure why this isn't the default...
   box-sizing: border-box;
 }
@@ -34,9 +34,9 @@
   align-items: center;
   height: 60px;
   padding-top: 0;
-  padding-right: 1rem;
+  padding-right: 24px;
   padding-bottom: 0;
-  padding-left: 1rem;
+  padding-left: 24px;
   border-bottom: 1px solid #ccc;
 
   // FIXME: yuck...
@@ -68,7 +68,7 @@
   display: flex;
   flex-direction: row;
   flex-grow: 1;
-  padding: 0 1.5rem;
+  padding: 0 24px;
 
   > * {
     width: 100%;
