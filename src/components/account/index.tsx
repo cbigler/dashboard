@@ -30,6 +30,122 @@ export const NORMAL = 0;
 export const EDIT = 1;
 export const PASSWORD_RESET = 2;
 
+
+const GeneralInfoSection = props => {
+  return (
+    <div className={styles.accountPageSection}>
+      <div className={styles.accountPageSectionHeader}>
+        <div className={styles.accountPageSectionHeaderText}>General Info</div>
+
+        {/* Edit / Cancel button */}
+        {user.data && !user.data.isDemo ? (
+          <Button
+            className={styles.accountPageSectionHeaderActionButton}
+            onClick={() => {
+              // If currently in edit mode, then reset all edits before transitioning back to normal
+              // mode.
+              if (this.state.mode === EDIT) {
+                this.setState({
+                  mode: NORMAL,
+
+                  // Reset back to the values in the user prop (what's in redux)
+                  fullName: user.data.fullName || '',
+                  email: user.data.email || '',
+                });
+              } else {
+                this.setState({mode: EDIT});
+              }
+            }}
+          >{this.state.mode === EDIT ? 'Cancel' : 'Edit'}</Button>
+        ) : null}
+        {this.state.mode === EDIT ? (
+          <Button
+            className={styles.accountPageSectionHeaderActionButton}
+            onClick={() => {
+              onSubmitUserUpdate(this.state.fullName, this.state.marketingConsent)
+                .then(() => {
+                  this.setState({mode: NORMAL});
+                }).catch(error => {
+                  this.setState({error});
+                });
+            }}
+          >Save Changes</Button>
+        ) : null}
+      </div>
+
+      <div className={styles.accountPageSectionBody}>
+        <div className={styles.generalInfoForm}>
+          <div className={styles.generalInfoFormFieldContainer}>
+            <FormLabel
+              htmlFor="account-name"
+              label="Name"
+              input={<InputBox
+                type="text"
+                placeholder="Name"
+                width="100%"
+                value={this.state.fullName}
+                onChange={e => this.setState({fullName: e.target.value})}
+                disabled={this.state.mode !== EDIT}
+                id="account-full-name"
+              />}
+            />
+          </div>
+          <div className={styles.generalInfoFormFieldContainer}>
+            <FormLabel
+              htmlFor="account-email"
+              label="Email"
+              input={<InputBox
+                type="email"
+                placeholder="Email"
+                width="100%"
+                value={this.state.email}
+                onChange={e => this.setState({email: e.target.value})}
+                disabled={true}
+                id="account-email"
+              />}
+            />
+          </div>
+          <div className={styles.generalInfoFormFieldContainer}>  
+            <FormLabel
+              htmlFor="account-organization"
+              label="Organization"
+              input={<InputBox
+                type="text"
+                value={user.data && user.data.organization ? user.data.organization.name : '(unknown organization)'}
+                width="100%"
+                onChange={e => this.setState({email: e.target.value})}
+                disabled={true}
+                id="account-organization"
+              />}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const PasswordSection = props => {
+  return (
+    <div className={styles.accountPageSection}>
+      <div className={styles.accountPageSectionHeader}>
+        <div className={styles.accountPageSectionHeaderText}>Password</div>
+      </div>
+      <div className={styles.accountPageSectionBody}>
+        <div className={styles.accountPageSectionPopoutFormContainer}>
+          <div className={styles.accountPageSectionPopoutFormText}>
+            <header>Change your password</header>
+            <p>Update your super-secret password</p>
+          </div>
+          <div className={styles.accountPageSectionPopoutForm}>
+            
+          </div>
+        </div>    
+      </div>
+    </div>
+  )
+}
+
 export class Account extends React.Component<any, any> {
   constructor(props) {
     super(props);
@@ -80,108 +196,11 @@ export class Account extends React.Component<any, any> {
               <ErrorBar message={this.state.error} />
 
               {/* GENERAL INFO */}
-              <div className={styles.accountPageSection}>
-                <div className={styles.accountPageSectionHeader}>
-                  <div className={styles.accountPageSectionHeaderText}>General Info</div>
-
-                  {/* Edit / Cancel button */}
-                  {user.data && !user.data.isDemo ? (
-                    <Button
-                      className={styles.accountPageSectionHeaderActionButton}
-                      onClick={() => {
-                        // If currently in edit mode, then reset all edits before transitioning back to normal
-                        // mode.
-                        if (this.state.mode === EDIT) {
-                          this.setState({
-                            mode: NORMAL,
-
-                            // Reset back to the values in the user prop (what's in redux)
-                            fullName: user.data.fullName || '',
-                            email: user.data.email || '',
-                          });
-                        } else {
-                          this.setState({mode: EDIT});
-                        }
-                      }}
-                    >{this.state.mode === EDIT ? 'Cancel' : 'Edit'}</Button>
-                  ) : null}
-                  {this.state.mode === EDIT ? (
-                    <Button
-                      className={styles.accountPageSectionHeaderActionButton}
-                      onClick={() => {
-                        onSubmitUserUpdate(this.state.fullName, this.state.marketingConsent)
-                          .then(() => {
-                            this.setState({mode: NORMAL});
-                          }).catch(error => {
-                            this.setState({error});
-                          });
-                      }}
-                    >Save Changes</Button>
-                  ) : null}
-                </div>
-
-                <div className={styles.accountPageSectionBody}>
-                  <div className={styles.generalInfoForm}>
-                    <div className={styles.generalInfoFormFieldContainer}>
-                      <FormLabel
-                        htmlFor="account-name"
-                        label="Name"
-                        input={<InputBox
-                          type="text"
-                          placeholder="Name"
-                          width="100%"
-                          value={this.state.fullName}
-                          onChange={e => this.setState({fullName: e.target.value})}
-                          disabled={this.state.mode !== EDIT}
-                          id="account-full-name"
-                        />}
-                      />
-                    </div>
-                    <div className={styles.generalInfoFormFieldContainer}>
-                      <FormLabel
-                        htmlFor="account-email"
-                        label="Email"
-                        input={<InputBox
-                          type="email"
-                          placeholder="Email"
-                          width="100%"
-                          value={this.state.email}
-                          onChange={e => this.setState({email: e.target.value})}
-                          disabled={true}
-                          id="account-email"
-                        />}
-                      />
-                    </div>
-                    <div className={styles.generalInfoFormFieldContainer}>  
-                      <FormLabel
-                        htmlFor="account-organization"
-                        label="Organization"
-                        input={<InputBox
-                          type="text"
-                          value={user.data && user.data.organization ? user.data.organization.name : '(unknown organization)'}
-                          width="100%"
-                          onChange={e => this.setState({email: e.target.value})}
-                          disabled={true}
-                          id="account-organization"
-                        />}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <GeneralInfoSection />
               
               {/* PASSWORD */}
               {canChangePassword ? (
-                <div className={styles.accountPageSection}>
-                  <div className={styles.accountPageSectionHeader}>
-                    <div className={styles.accountPageSectionHeaderText}>Password</div>
-                  </div>
-                  <div className={styles.accountPageSectionBody}>
-
-                  {/* TODO: put password form back here */}
-                    
-                  </div>
-                </div>
+                <PasswordSection />
               ): null}
               
               <div className={styles.accountDeactivateContainer}>
