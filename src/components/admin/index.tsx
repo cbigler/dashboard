@@ -34,6 +34,12 @@ export default function Admin({
             <AppBarSection>
               <AppBarSubnav>
                 <AppBarSubnavLink
+                  href="#/admin/locations"
+                  active={activePage === 'ADMIN_LOCATIONS'}
+                >
+                  Locations
+                </AppBarSubnavLink>
+                <AppBarSubnavLink
                   href="#/admin/user-management"
                   active={activePage === 'ADMIN_USER_MANAGEMENT'}
                 >
