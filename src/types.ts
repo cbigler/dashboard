@@ -38,7 +38,7 @@ export type DensitySpace = {
     id: string,
     name: string,
   }>,
-  dpusTotal: number,
+  sensorsTotal: number,
 };
 
 export type DensitySpaceAncestryItem = {

@@ -74,7 +74,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         />
         <ListViewColumn
           title="DPUs"
-          template={item => item.dpusTotal ? item.dpusTotal : <Fragment>&mdash;</Fragment>}
+          template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
