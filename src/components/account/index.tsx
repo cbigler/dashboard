@@ -134,7 +134,66 @@ const PasswordSection = props => {
             <p>Update your super-secret password</p>
           </div>
           <div className={styles.accountPageSectionPopoutForm}>
-            
+            {/* Trigger changing the password */}
+            {this.state.mode === NORMAL && canChangePassword ? <FormLabel
+              className={styles.accountChangePasswordLinkContainer}
+              label="Password"
+              htmlFor="account-change-password"
+              input={ <div id="account-change-password" className={styles.accountChangePasswordValue}>
+                <span onClick={() => this.setState({mode: PASSWORD_RESET})}>Change Password</span>
+              </div>}
+            /> : null}
+
+            {/* The form to change the password that is triggered. */}
+            {this.state.mode === PASSWORD_RESET || true ? <div className={styles.accountChangePasswordFormContainer}>
+              <label className={styles.accountChangePasswordFormHeader}>Password</label>
+              <div className={styles.accountChangePasswordFormFieldWrapper}>
+                <InputBox
+                  type="password"
+                  placeholder="Type old password"
+                  width="100%"
+                  value={this.state.currentPassword}
+                  onChange={e => this.setState({currentPassword: e.target.value})}
+                />
+              </div>
+              <div className={styles.accountChangePasswordFormFieldWrapper}>
+                <InputBox
+                  type="password"
+                  placeholder="Type new password (minimum of 8 characters)"
+                  width="100%"
+                  value={this.state.password}
+                  onChange={e => this.setState({password: e.target.value})}
+                />
+              </div>
+              <div className={styles.accountChangePasswordFormFieldWrapper}>
+                <InputBox
+                  type="password"
+                  placeholder="Confirm new password"
+                  width="100%"
+                  value={this.state.passwordConfirmation}
+                  onChange={e => this.setState({passwordConfirmation: e.target.value})}
+                />
+              </div>
+              <Button
+                type="primary"
+                width="100%"
+                onClick={() => {
+                  if (this.state.password === this.state.passwordConfirmation) {
+                    this.setState({error: null});
+                    return onSubmitPassword(this.state.currentPassword, this.state.password)
+                      .then(() => {
+                        this.setState({mode: NORMAL});
+                      })
+                      .catch(error => {
+                        this.setState({ error });
+                      });
+                  } else {
+                    this.setState({error: `Passwords don't match.`});
+                  }
+                }}
+                disabled={this.state.password.length < 8}
+              >Change Password</Button>
+            </div> : null}
           </div>
         </div>    
       </div>
