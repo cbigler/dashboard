@@ -32,44 +32,42 @@ export const PASSWORD_RESET = 2;
 
 
 const GeneralInfoSection = props => {
+
+  const { user, onSubmitUserUpdate } = props;
+
+  const [mode, setMode] = useState(NORMAL);
+  
+  // this state is only used for editing the user info, not for display (display is always pulled from props)
+  const [userFullName, setUserFullName] = useState(user.data.fullName || '');
+
+  const handleEditButtonClick = evt => {
+    setMode(EDIT);
+  }
+
+  const handleCancelButtonClick = evt => {
+    setUserFullName(user.data.fullName || '');
+    setMode(NORMAL);
+  }
+
+  const handleSaveButtonClick = evt => {
+    onSubmitUserUpdate(userFullName)
+      .then(setMode(NORMAL))
+  }
+
   return (
     <div className={styles.accountPageSection}>
       <div className={styles.accountPageSectionHeader}>
         <div className={styles.accountPageSectionHeaderText}>General Info</div>
 
         {/* Edit / Cancel button */}
-        {user.data && !user.data.isDemo ? (
-          <Button
-            className={styles.accountPageSectionHeaderActionButton}
-            onClick={() => {
-              // If currently in edit mode, then reset all edits before transitioning back to normal
-              // mode.
-              if (this.state.mode === EDIT) {
-                this.setState({
-                  mode: NORMAL,
-
-                  // Reset back to the values in the user prop (what's in redux)
-                  fullName: user.data.fullName || '',
-                  email: user.data.email || '',
-                });
-              } else {
-                this.setState({mode: EDIT});
-              }
-            }}
-          >{this.state.mode === EDIT ? 'Cancel' : 'Edit'}</Button>
+        {mode === NORMAL && user.data && !user.data.isDemo ? (
+          <Button onClick={handleEditButtonClick}>Edit</Button>
         ) : null}
-        {this.state.mode === EDIT ? (
-          <Button
-            className={styles.accountPageSectionHeaderActionButton}
-            onClick={() => {
-              onSubmitUserUpdate(this.state.fullName, this.state.marketingConsent)
-                .then(() => {
-                  this.setState({mode: NORMAL});
-                }).catch(error => {
-                  this.setState({error});
-                });
-            }}
-          >Save Changes</Button>
+        {mode === EDIT ? (
+          <Button onClick={handleCancelButtonClick}>Cancel</Button>
+        ) : null}
+        {mode === EDIT ? (
+          <Button type="primary" onClick={handleSaveButtonClick}>Save Changes</Button>
         ) : null}
       </div>
 
@@ -83,9 +81,9 @@ const GeneralInfoSection = props => {
                 type="text"
                 placeholder="Name"
                 width="100%"
-                value={this.state.fullName}
-                onChange={e => this.setState({fullName: e.target.value})}
-                disabled={this.state.mode !== EDIT}
+                value={mode === NORMAL ? user.data.fullName : userFullName}
+                onChange={e => setUserFullName(e.target.value)}
+                disabled={mode !== EDIT}
                 id="account-full-name"
               />}
             />
@@ -98,8 +96,7 @@ const GeneralInfoSection = props => {
                 type="email"
                 placeholder="Email"
                 width="100%"
-                value={this.state.email}
-                onChange={e => this.setState({email: e.target.value})}
+                value={user.data.email}
                 disabled={true}
                 id="account-email"
               />}
@@ -113,7 +110,6 @@ const GeneralInfoSection = props => {
                 type="text"
                 value={user.data && user.data.organization ? user.data.organization.name : '(unknown organization)'}
                 width="100%"
-                onChange={e => this.setState({email: e.target.value})}
                 disabled={true}
                 id="account-organization"
               />}
@@ -189,14 +185,14 @@ export class Account extends React.Component<any, any> {
               <AppBarTitle>Account Management</AppBarTitle>
             </AppBarSection>
           </AppBar>
+          
           <AppScrollView>
+            {/* Render any errors from the server */}
+            <ErrorBar message={this.state.error} />
             <div className={styles.accountPage}>
 
-              {/* Render any errors from the server */}
-              <ErrorBar message={this.state.error} />
-
               {/* GENERAL INFO */}
-              <GeneralInfoSection />
+              <GeneralInfoSection user={user} onSubmitUserUpdate={onSubmitUserUpdate} />
               
               {/* PASSWORD */}
               {canChangePassword ? (
@@ -228,8 +224,8 @@ export default connect((state: any) => {
         dispatch<any>(showModal('account-password-reset'));
       });
     },
-    onSubmitUserUpdate(fullName, marketingConsent) {
-      return dispatch<any>(userUpdate(fullName, marketingConsent));
+    onSubmitUserUpdate(fullName) {
+      return dispatch<any>(userUpdate(fullName));
     },
     onHideSuccessToast() {
       dispatch<any>(hideModal());
