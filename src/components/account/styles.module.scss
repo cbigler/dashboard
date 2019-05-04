@@ -24,7 +24,7 @@
   margin-right: auto;
   margin-bottom: 24px;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid $gray;
   border-radius: 4px;
 }
 
@@ -37,7 +37,7 @@
   padding-right: 24px;
   padding-bottom: 0;
   padding-left: 24px;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid $gray;
 
   // FIXME: yuck...
   button { margin-left: 0.5rem; }
@@ -47,12 +47,16 @@
   flex: 1;
   font-size: 1.2rem;
   font-weight: 500;  
-  color: #999;
+  color: $grayDarkest;
 }
 
 .accountPageSectionBody {
   padding: 1rem 0;
 }
+
+/**
+ * GENERAL INFO SECTION
+ */
 
 .generalInfoForm {
   display: flex;
@@ -70,6 +74,7 @@
   flex-grow: 1;
   padding: 0 24px;
 
+  // FIXME: bad, bad, bad
   > * {
     width: 100%;
   }
@@ -81,20 +86,25 @@
   }
 }
 
-// Position the account card below the navbar. I would have used margin here, but the error bar
-// somehow is spaced with margin there too?
-.accountCard {
-  position: relative;
-  top: 40px;
-  margin-bottom: 40px;
-  background-color: #fff;
-  border: 1px solid $grayLight;
-  border-radius: $borderRadiusBase;
-}
+/**
+ * PASSWORD SECTION
+ */
+.passwordForm {}
+.passwordFormFieldContainer {
+  margin-bottom: 1rem;
 
-.accountEditButton {
-  float: right;
-  font-weight: normal;
+  // FIXME: also bad
+  label {
+    color: #555;
+  }
+}
+.passwordFormActions {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+.passwordFormAction {
+  margin-left: 0.5rem;
 }
 
 // Change color of all text in text fields
@@ -112,6 +122,41 @@
   color: $brandPrimary;
 }
 
+.accountPageSectionPopoutFormContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.accountPageSectionPopoutForm {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.accountPageSectionPopoutFormText {
+  flex: 1;
+  padding: 1rem 0;
+  color: $headerColor;
+  align-self: flex-start;
+
+  header {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+  }
+}
+.accountPageSectionPopoutFormTrigger {
+  align-self: flex-end;
+  color: $brandPrimary;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.accountPageSectionPopoutFormContent {
+  flex: 1;
+}
 // The password reset form.
 .accountChangePasswordFormHeader {
   margin-bottom: 10px;

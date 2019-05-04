@@ -1,0 +1,22 @@
+.inputBoxInfo {
+    position: relative;
+    cursor: help;
+
+    &:hover {
+        .inputBoxInfoContent {
+            display: block;
+        }
+    }
+}
+
+.inputBoxInfoContent {
+    white-space: nowrap;
+    position: absolute;
+    display: none;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+    box-shadow: 5px 5px 0 rgba(#000, 0.1);
+    z-index: 1000;
+}
