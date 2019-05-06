@@ -289,41 +289,44 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
         </div>
 
         <div className={styles.operatingHoursCopyFromSpaceModalContainer}>
-          {formattedHierarchy.map(item => (
-            <div
-              key={item.space.id}
-              className={classnames(styles.operatingHoursCopyFromSpaceModalItem, {
-                [styles.depth0]: item.depth === 0,
-              })}
-              style={{marginLeft: item.depth * 24}}
-              onClick={() => onChangeSelectedSpace(item.space.id)}
-            >
-              <RadioButton
-                disabled={spaces.data.find(s => s.id === item.space.id).timeSegments.length === 0}
-                checked={selectedSpaceId === item.space.id}
-                onChange={() => onChangeSelectedSpace(item.space.id)}
-              />
-
-              {item.space.spaceType === 'building' ? (
-                <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
-                  <Icons.Building color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                </span>
-              ) : null}
-              {item.space.spaceType === 'floor' ? (
-                <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
-                  <Icons.Folder color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                </span>
-              ) : null}
-
-              <span
-                className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
-                  [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+          {formattedHierarchy.map(item => {
+            const space = spaces.data.find(s => s.id === item.space.id);
+            return (
+              <div
+                key={item.space.id}
+                className={classnames(styles.operatingHoursCopyFromSpaceModalItem, {
+                  [styles.depth0]: item.depth === 0,
                 })}
+                style={{marginLeft: item.depth * 24}}
+                onClick={() => onChangeSelectedSpace(item.space.id)}
               >
-                {item.space.name}
-              </span>
-            </div>
-          ))}
+                <RadioButton
+                  disabled={space ? space.timeSegments.length === 0 : true}
+                  checked={selectedSpaceId === item.space.id}
+                  onChange={() => onChangeSelectedSpace(item.space.id)}
+                />
+
+                {item.space.spaceType === 'building' ? (
+                  <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
+                    <Icons.Building color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                  </span>
+                ) : null}
+                {item.space.spaceType === 'floor' ? (
+                  <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
+                    <Icons.Folder color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                  </span>
+                ) : null}
+
+                <span
+                  className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
+                    [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                  })}
+                >
+                  {item.space.name}
+                </span>
+              </div>
+            );
+          })}
         </div>
 
         <AppBarContext.Provider value="BOTTOM_ACTIONS">
@@ -482,6 +485,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
                       ]}
                       placeholder="Select a label"
+                      width={350}
                     />
                   </AppBarSection>
                   <AppBarSection>
