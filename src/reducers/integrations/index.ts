@@ -133,6 +133,16 @@ export default function integrations(state=initialState, action) {
           error: null,
         }
       }
+    } else if (action.service == "google_calendar") {
+      return {
+        ...state,
+        googleCalendarSpaces: {
+          ...state.googleCalendarSpaces,
+          view: 'VISIBLE',
+          data: action.data,
+          error: null,
+        }
+      }
     } else {
       return {
         ...state
@@ -150,6 +160,12 @@ export default function integrations(state=initialState, action) {
     } else if (action.service == "teem") {
       newSpacesErrorKey = { teemSpaces: {
         ...state.teemSpaces,
+        view: 'ERROR',
+        error: action.error,
+      }};
+    } else if (action.service == "google_calendar") {
+      newSpacesErrorKey = { googleCalendarSpaces: {
+        ...state.googleCalendarSpaces,
         view: 'ERROR',
         error: action.error,
       }};
