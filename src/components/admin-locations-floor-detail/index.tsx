@@ -37,9 +37,11 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace 
         <AppBar>
           <AppBarTitle>{selectedSpace.name}</AppBarTitle>
           <AppBarSection>
-            <Button onClick={() => {
-              window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
-            }}>Edit</Button>
+            {user.data.permissions.includes('core_write') ? (
+              <Button onClick={() => {
+                window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+              }}>Edit</Button>
+            ) : null}
           </AppBarSection>
         </AppBar>
         <AdminLocationsLeftPaneDataRow includeTopBorder={false}>

@@ -188,7 +188,9 @@ function AdminLocations({user, selectedSpace, spaces}) {
                   <Skeleton width={200} height={8} />
                 </AppBarSection>
                 <AppBarSection>
-                  <Button>Edit</Button>
+                  {user.data.permissions.includes('core_write') ? (
+                    <Button>Edit</Button>
+                  ) : null}
                 </AppBarSection>
               </AppBar>
               <div className={styles.loadingMapSkeleton} />
@@ -272,11 +274,13 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 <Breadcrumb space={selectedSpace} spaces={spaces} />
               </AppBarSection>
               <AppBarSection>
-                <ActionButtons
-                  spaceId={selectedSpace ? selectedSpace.id : null}
-                  spaceType={selectedSpace ? selectedSpace.spaceType : null}
-                  parentSpaceType={selectedSpaceParentSpaceType}
-                />
+                {user.data.permissions.includes('core_write') ? (
+                  <ActionButtons
+                    spaceId={selectedSpace ? selectedSpace.id : null}
+                    spaceType={selectedSpace ? selectedSpace.spaceType : null}
+                    parentSpaceType={selectedSpaceParentSpaceType}
+                  />
+                ) : null}
               </AppBarSection>
             </AppBar>
           </div>
