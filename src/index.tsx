@@ -197,6 +197,7 @@ router.addRoute('account/forgot-password/:token', token => routeTransitionAccoun
 
 // Advanced account management (Administration)
 router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
+router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess());
 router.addRoute('admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/teem/:access_token/:expires_in/:refresh_token/:token_type', (access_token, expires_in, refresh_token, token_type) => routeTransitionAdminIntegrationsTeem(access_token, expires_in, refresh_token, token_type));
