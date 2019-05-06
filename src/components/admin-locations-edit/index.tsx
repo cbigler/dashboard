@@ -7,7 +7,6 @@ import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
 
-import Dialogger from '../dialogger';
 
 import { DaysOfWeek, DensityUser, DensitySpace } from '../../types';
 

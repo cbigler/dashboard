@@ -22,7 +22,6 @@ import {
   Icons,
   Modal,
 } from '@density/ui';
-import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
@@ -223,8 +222,6 @@ export function Dashboard({
           onCloseModal={onCloseModal}
         />
       ) : null}
-
-      <Toaster />
 
       {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
         <DashboardDigestManagementModal

@@ -38,7 +38,6 @@ import collectionUsersCreate from '../../actions/collection/users/create';
 import collectionUsersUpdate from '../../actions/collection/users/update';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
-import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
@@ -92,9 +91,6 @@ export function AdminUserManagement({
 
   return (
     <Fragment>
-      {/* Display user delete confirmation dialog */}
-      <Dialogger />
-
       {/* If the "add user" modal is visible, render it above the view */}
       {activeModal.name === 'MODAL_ADMIN_USER_ADD' ? (
         <Modal

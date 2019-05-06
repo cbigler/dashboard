@@ -15,7 +15,6 @@ import {
 } from '../admin-locations-edit/index';
 import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
-import Dialogger from '../dialogger';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
 import { convertFormStateToSpaceFields } from '../admin-locations-edit/index';
@@ -118,8 +117,6 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       return (
         <AppFrame>
           <AppPane>
-            <Dialogger />
-
             <div className={styles.appBarWrapper}>
               <AppBar>
                 <AppBarTitle>

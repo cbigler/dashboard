@@ -27,8 +27,6 @@ import {
   ButtonContext,
 } from '@density/ui';
 
-import Dialogger from '../dialogger';
-
 import { DensitySpace, DensityUser } from '../../types';
 
 type AdminUserManagementDetailProps = {
@@ -124,9 +122,6 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
 
       return (
         <Fragment>
-          {/* Display user delete confirmation dialog */}
-          <Dialogger />
-
           <div className={styles.adminUserManagementDetailAppBar}>
             <AppBar>
               <AppBarTitle>
