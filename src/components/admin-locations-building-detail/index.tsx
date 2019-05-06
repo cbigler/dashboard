@@ -104,9 +104,11 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
         <AppBar>
           <AppBarTitle>{selectedSpace.name}</AppBarTitle>
           <AppBarSection>
-            <Button onClick={() => {
-              window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
-            }}>Edit</Button>
+            {user.data.permissions.includes('core_write') ? (
+              <Button onClick={() => {
+                window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+              }}>Edit</Button>
+            ) : null}
           </AppBarSection>
         </AppBar>
         {mapShown ? (
