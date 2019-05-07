@@ -148,6 +148,7 @@ type AdminLocationsEditProps = {
     spaceFieldUpdate: any,
     operatingHours: Array<OperatingHoursItem>,
     operatingHoursLabels: Array<OperatingHoursLabelItem>,
+    any,
   ) => any,
 };
 
@@ -236,6 +237,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       // To create new time segments and update existing time segments
       this.state.operatingHours as any,
       this.state.operatingHoursLabels as any,
+      this.state.operatingHoursLog as any,
     );
   }
 
@@ -337,12 +339,13 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
-    async onSave(spaceId, spaceFieldUpdate, operatingHours, operatingHoursLabels) {
+    async onSave(spaceId, spaceFieldUpdate, operatingHours, operatingHoursLabels, operatingHoursLog) {
       const ok = await dispatch(spaceManagementUpdate(
         spaceId,
         spaceFieldUpdate,
         operatingHours,
         operatingHoursLabels,
+        operatingHoursLog,
       ));
       if (ok) {
         window.location.href = `#/admin/locations/${spaceId}`;
