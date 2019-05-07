@@ -28,6 +28,7 @@ import {
 
 import RobinImage from '../../assets/images/icon-robin.svg';
 import TeemImage from '../../assets/images/icon-teem.svg';
+import GoogleCalendarImage from '../../assets/images/icon-google-calendar.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
@@ -37,7 +38,7 @@ import { calculate } from '../../actions/route-transition/explore-space-meetings
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { DensitySpaceMapping, DensityRobinSpace, DensityTeemSpace } from '../../types';
+import { DensitySpaceMapping, DensityRobinSpace, DensityTeemSpace, DensityGoogleCalendarSpace } from '../../types';
 
 import isOutsideRange, {
   MAXIMUM_DAY_LENGTH,
@@ -187,6 +188,26 @@ function ExploreSpaceMeetings({
                       label: teemSpace.name,
                     }))}
                     onChange={teemSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, teemSpaceChoice.id)}
+                  />
+                </div>
+              ) : null}
+              {integrations.googleCalendarSpaces.view === 'VISIBLE' ? (
+                <div className={styles.spaceMappingSelectorContainer}>
+                  <img
+                    className={styles.roomBookingImage}
+                    src={GoogleCalendarImage}
+                  />
+                  <InputBox
+                    type="select"
+                    placeholder="Select a space from Google"
+                    width={275}
+                    menuMaxHeight={500}
+                    value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
+                    choices={(integrations.googleCalendarSpaces.data as Array<DensityGoogleCalendarSpace>).map(integrationSpace => ({
+                      id: integrationSpace.id.toString(),
+                      label: integrationSpace.name,
+                    }))}
+                    onChange={integrationSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, integrationSpaceChoice.id)}
                   />
                 </div>
               ) : null}
