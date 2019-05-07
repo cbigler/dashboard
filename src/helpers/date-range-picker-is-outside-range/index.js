@@ -1,7 +1,7 @@
 import { getCurrentLocalTimeAtSpace } from '../space-time-utilities/index';
 
 // The maximum number of days in the past that can be selected by the date range picker
-export const MAXIMUM_DAY_LENGTH = 3 * 31; // Three months of data
+export const MAXIMUM_DAY_LENGTH = 6 * 31; // Three months of data
 
 // Given a day on the calendar and the current day, determine if the square on the calendar should
 // be grayed out or not.
