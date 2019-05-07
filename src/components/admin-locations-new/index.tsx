@@ -66,7 +66,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     this.state = calculateInitialFormState({
       parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
       spaceType: props.newSpaceType,
-    }, props.user);
+    }, props.user, props.timeSegmentGroups.data);
   }
 
   onChangeField = (key, value) => {

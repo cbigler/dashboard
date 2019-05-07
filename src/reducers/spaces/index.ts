@@ -227,6 +227,7 @@ export default function spaces(state=initialState, action) {
       view: action.setLoading ? 'LOADING' : 'VISIBLE',
       loading: action.setLoading,
       selected: action.spaceId,
+      data: [],
     };
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:

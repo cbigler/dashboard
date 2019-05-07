@@ -7,8 +7,7 @@ import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
 
-
-import { DaysOfWeek, DensityUser, DensitySpace } from '../../types';
+import { DensityUser, DensitySpace, DensityTimeSegmentGroup } from '../../types';
 
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
@@ -26,15 +25,43 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  InputBox,
   ButtonContext,
   Button,
   Icons,
 } from '@density/ui';
 
+import spaceManagementUpdate, {
+  OperatingHoursItem,
+  OperatingHoursLabelItem,
+} from '../../actions/space-management/update';
+
+export function calculateOperatingHoursFromSpace(
+  space: DensitySpace,
+  timeSegmentGroups: Array<DensityTimeSegmentGroup>,
+): Array<OperatingHoursItem> {
+  if (!space.timeSegments) {
+    return [];
+  }
+
+  return space.timeSegments.map(tsm => {
+    const parentTimeSegmentGroup = timeSegmentGroups.find(timeSegmentGroup => {
+      const matchingTimeSegmentGroup = timeSegmentGroup.timeSegments.find(t => t.timeSegmentId === tsm.id);
+      return Boolean(matchingTimeSegmentGroup);
+    });
+    return {
+      id: tsm.id,
+      labelId: parentTimeSegmentGroup ? parentTimeSegmentGroup.id : null,
+      startTimeSeconds: moment.duration(tsm.start).as('seconds'),
+      endTimeSeconds: moment.duration(tsm.end).as('seconds'),
+      daysAffected: tsm.days,
+      actionToPerform: null,
+    };
+  });
+}
+
 // Given a space and the currently logged in user, return the initial state of eitehr the edit or
 // new form.
-export function calculateInitialFormState(space, user): AdminLocationsFormState {
+export function calculateInitialFormState(space, user, timeSegmentGroups): AdminLocationsFormState {
   return {
     loaded: true,
 
@@ -62,8 +89,9 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     // Operating hours module
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
-    operatingHours: [],
-    operatingHoursLabels: [],
+    operatingHours: calculateOperatingHoursFromSpace(space, timeSegmentGroups),
+    operatingHoursLabels: timeSegmentGroups,
+    operatingHoursLog: [],
   };
 }
 
@@ -105,13 +133,22 @@ type AdminLocationsEditProps = {
   selectedSpace: DensitySpace,
   spaces: {
     view: string,
-    spaces: Array<DensitySpace>,
+    data: Array<DensitySpace>,
+  },
+  timeSegmentGroups: {
+    view: string,
+    data: Array<DensityTimeSegmentGroup>,
   },
   user: {
     data: DensityUser,
   },
 
-  onSave: (spaceFieldUpdate: any, id: string) => any,
+  onSave: (
+    spaceId: string,
+    spaceFieldUpdate: any,
+    operatingHours: Array<OperatingHoursItem>,
+    operatingHoursLabels: Array<OperatingHoursLabelItem>,
+  ) => any,
 };
 
 export type AdminLocationsFormState = {
@@ -134,18 +171,9 @@ export type AdminLocationsFormState = {
   parentId?: string | null,
   startTime?: number,
   endTime?: number,
-  operatingHours?: Array<{
-    id: string,
-    labelId: string,
-    startTimeSeconds: number,
-    endTimeSeconds: number,
-    daysAffected: Array<DaysOfWeek>,
-    existsOnServer: boolean,
-  }>,
-  operatingHoursLabels?: Array<{
-    id: string,
-    name: string,
-  }>,
+  operatingHours?: Array<OperatingHoursItem>,
+  operatingHoursLabels?: Array<OperatingHoursLabelItem>,
+  operatingHoursLog?: Array<any>,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -160,18 +188,34 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     super(props);
 
     // There's a potential that the space is being loaded. If so, then wait for it to load.
-    if (props.spaces.view === 'VISIBLE' && props.selectedSpace) {
-      this.state = calculateInitialFormState(props.selectedSpace, props.user);
+    if (AdminLocationsEdit.isReadyToCalculateFormState(props)) {
+      this.state = calculateInitialFormState(
+        props.selectedSpace,
+        props.user,
+        props.timeSegmentGroups.data,
+      );
     } else {
       this.state = { loaded: false };
     }
   }
 
+  static isReadyToCalculateFormState(props) {
+    return (
+      props.selectedSpace &&
+      props.spaces.view === 'VISIBLE' &&
+      props.timeSegmentGroups.view === 'VISIBLE'
+    );
+  }
+
   static getDerivedStateFromProps(nextProps, prevState) {
     // If the space had not been loaded and was just recently loaded, then figure out the initial
     // form state using the recently loaded space.
-    if (nextProps.spaces.view === 'VISIBLE' && nextProps.selectedSpace && !prevState.loaded) {
-      return calculateInitialFormState(nextProps.selectedSpace, nextProps.user);
+    if (!prevState.loaded && AdminLocationsEdit.isReadyToCalculateFormState(nextProps)) {
+      return calculateInitialFormState(
+        nextProps.selectedSpace,
+        nextProps.user,
+        nextProps.timeSegmentGroups.data,
+      );
     }
     return null;
   }
@@ -185,17 +229,28 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       id: this.props.selectedSpace.id,
       ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType),
     };
-    this.props.onSave(spaceFieldsToUpdate, this.props.selectedSpace.id);
+    this.props.onSave(
+      this.props.selectedSpace.id,
+      spaceFieldsToUpdate,
+
+      // To create new time segments and update existing time segments
+      this.state.operatingHours as any,
+      this.state.operatingHoursLabels as any,
+    );
   }
 
   isFormComplete = () => {
     return (
-      this.state.name && this.state.timeZone && this.state.dailyReset
+      this.state.name &&
+
+      // Operating hours module valid
+      this.state.timeZone && this.state.dailyReset && this.state.operatingHours &&
+      this.state.operatingHours.filter(i => i.labelId === null).length === 0
     );
   }
 
   render() {
-    const { spaces, selectedSpace } = this.props;
+    const { spaces, timeSegmentGroups, selectedSpace } = this.props;
 
     const FormComponent = {
       campus: AdminLocationsCampusForm,
@@ -208,8 +263,6 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     return (
       <AppFrame>
         <AppPane>
-          <Dialogger />
-
           {spaces.view === 'ERROR' ? (
             <div className={styles.centered}>
               <GenericErrorState />
@@ -218,16 +271,20 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
 
           {/* Show when: */}
           {/* 1. Space is being loaded for the first time */}
-          {!selectedSpace && spaces.view === 'LOADING' ? (
+          {/* 2. Time segments are being loaded*/}
+          {(!selectedSpace && spaces.view === 'LOADING') || timeSegmentGroups.view === 'LOADING' ? (
             <div className={styles.centered}>
               <GenericLoadingState />
             </div>
           ) : null}
 
           {/* Show when: */}
-          {/* 1. Space has loaded */}
+          {/* 1. Space and time segment groups have both loaded */}
           {/* 2. Space is in the process of being updated */}
-          {selectedSpace && (spaces.view === 'VISIBLE' || spaces.view === 'LOADING') ? (
+          {(
+            (spaces.view === 'VISIBLE' || (selectedSpace && spaces.view === 'LOADING')) &&
+            timeSegmentGroups.view === 'VISIBLE' 
+          ) ? (
             <Fragment>
               <div className={styles.appBarWrapper}>
                 <AppBar>
@@ -276,17 +333,20 @@ export default connect((state: any) => {
     spaces: state.spaces,
     user: state.user,
     selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
+    timeSegmentGroups: state.timeSegmentGroups,
   };
 }, (dispatch: any) => {
   return {
-    async onSave(spaceFieldUpdate, spaceId) {
-      const ok = await dispatch(collectionSpacesUpdate(spaceFieldUpdate));
+    async onSave(spaceId, spaceFieldUpdate, operatingHours, operatingHoursLabels) {
+      const ok = await dispatch(spaceManagementUpdate(
+        spaceId,
+        spaceFieldUpdate,
+        operatingHours,
+        operatingHoursLabels,
+      ));
       if (ok) {
-        dispatch(showToast({ text: 'Space updated successfully' }));
-      } else {
-        dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+        window.location.href = `#/admin/locations/${spaceId}`;
       }
-      window.location.href = `#/admin/locations/${spaceId}`;
     },
   };
 })(AdminLocationsEdit);

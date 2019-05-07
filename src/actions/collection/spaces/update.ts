@@ -35,6 +35,8 @@ export default function collectionSpacesUpdate(item) {
         longitude: item.longitude,
         time_zone: item.timeZone,
         daily_reset: item.dailyReset,
+
+        time_segment_groups: item.timeSegmentGroups,
       });
     } catch (err) {
       dispatch(collectionSpacesError(err));
