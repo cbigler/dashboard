@@ -490,9 +490,24 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         ) : null}
 
         {formState.operatingHours.map((operatingHoursItem, index) => {
+          const isTimeSegmentLinkedToMultipleGroups = timeSegmentGroups.data.filter(tsg => {
+            return tsg.timeSegments
+              .map(t => t.timeSegmentId)
+              .includes(operatingHoursItem.id);
+          }).length > 1;
+
           return (
             <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
-              <div className={styles.operatingHoursTimeSegmentItemSection}>
+              {isTimeSegmentLinkedToMultipleGroups ? (
+                <div className={styles.operatingHoursTimeSegmentsItemInvalid}>
+                  This segment has multiple labels and can cannot be edited using this interface.
+                </div>
+              ) : null}
+              <div
+                className={classnames(styles.operatingHoursTimeSegmentItemSection, {
+                  [styles.disabled]: isTimeSegmentLinkedToMultipleGroups,
+                })}
+              >
                 <AppBarContext.Provider value="TRANSPARENT">
                   <AppBar>
                     <AppBarSection>
@@ -575,7 +590,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   </AppBar>
                 </AppBarContext.Provider>
               </div>
-              <div className={styles.operatingHoursTimeSegmentItemSection}>
+              <div
+                className={classnames(styles.operatingHoursTimeSegmentItemSection, {
+                  [styles.disabled]: isTimeSegmentLinkedToMultipleGroups,
+                })}
+              >
                 <AdminLocationsDetailModulesOperatingHoursSlider
                   timeZone={formState.timeZone}
                   dayStartTime={formState.dailyReset}
@@ -614,21 +633,23 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   ).slice(0, -1)}
                 </AppBarSection>
                 <AppBarSection>
-                  <Button onClick={async () => {
-                    onConfirmSegmentCanBeDeleted(() => {
-											const operatingHoursCopy = formState.operatingHours.slice();
-											operatingHoursCopy.splice(index, 1);
-                      onChangeField('operatingHours', operatingHoursCopy);
+                  <Button
+                    onClick={async () => {
+                      onConfirmSegmentCanBeDeleted(() => {
+                        const operatingHoursCopy = formState.operatingHours.slice();
+                        operatingHoursCopy.splice(index, 1);
+                        onChangeField('operatingHours', operatingHoursCopy);
 
-                      onChangeField('operatingHoursLog', [
-                        ...formState.operatingHoursLog,
-                        {
-                          action: TIME_SEGMENT_DELETE,
-                          id: operatingHoursItem.id,
-                        },
-                      ]);
-                    });
-                  }}>Delete Segment</Button>
+                        onChangeField('operatingHoursLog', [
+                          ...formState.operatingHoursLog,
+                          {
+                            action: TIME_SEGMENT_DELETE,
+                            id: operatingHoursItem.id,
+                          },
+                        ]);
+                      });
+                    }}
+                  >Delete Segment</Button>
                 </AppBarSection>
               </AppBar>
             </div>
