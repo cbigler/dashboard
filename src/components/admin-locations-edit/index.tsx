@@ -30,10 +30,8 @@ import {
   Icons,
 } from '@density/ui';
 
-import spaceManagementUpdate, {
-  OperatingHoursItem,
-  OperatingHoursLabelItem,
-} from '../../actions/space-management/update';
+import spaceManagementUpdate from '../../actions/space-management/update';
+import { OperatingHoursItem, OperatingHoursLabelItem } from '../../actions/space-management/time-segments';
 
 export function calculateOperatingHoursFromSpace(
   space: DensitySpace,
@@ -146,9 +144,7 @@ type AdminLocationsEditProps = {
   onSave: (
     spaceId: string,
     spaceFieldUpdate: any,
-    operatingHours: Array<OperatingHoursItem>,
-    operatingHoursLabels: Array<OperatingHoursLabelItem>,
-    any,
+    operatingHoursLog: Array<{ action: string, [key: string]: any }>,
   ) => any,
 };
 
@@ -174,7 +170,7 @@ export type AdminLocationsFormState = {
   endTime?: number,
   operatingHours?: Array<OperatingHoursItem>,
   operatingHoursLabels?: Array<OperatingHoursLabelItem>,
-  operatingHoursLog?: Array<any>,
+  operatingHoursLog?: Array<{ action: string, [key: string]: any }>,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -235,8 +231,6 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       spaceFieldsToUpdate,
 
       // To create new time segments and update existing time segments
-      this.state.operatingHours as any,
-      this.state.operatingHoursLabels as any,
       this.state.operatingHoursLog as any,
     );
   }
@@ -339,12 +333,10 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
-    async onSave(spaceId, spaceFieldUpdate, operatingHours, operatingHoursLabels, operatingHoursLog) {
+    async onSave(spaceId, spaceFieldUpdate, operatingHoursLog) {
       const ok = await dispatch(spaceManagementUpdate(
         spaceId,
         spaceFieldUpdate,
-        operatingHours,
-        operatingHoursLabels,
         operatingHoursLog,
       ));
       if (ok) {

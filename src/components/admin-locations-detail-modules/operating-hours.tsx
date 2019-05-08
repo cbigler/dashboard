@@ -16,10 +16,12 @@ import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
 import {
-  OPERATING_HOURS_CREATE,
-  OPERATING_HOURS_UPDATE,
-  OPERATING_HOURS_DELETE,
-} from '../../actions/space-management/update';
+  TIME_SEGMENT_CREATE,
+  TIME_SEGMENT_UPDATE,
+  TIME_SEGMENT_DELETE,
+  TIME_SEGMENT_GROUP_CREATE,
+  TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
+} from '../../actions/space-management/time-segments';
 
 import { calculateOperatingHoursFromSpace } from '../admin-locations-edit/index';
 
@@ -390,11 +392,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
           // Each time segment on the space becomes an entry in the operating hours structure
           const operatingHours = calculateOperatingHoursFromSpace(space, timeSegmentGroups.data);
-          onChangeField('operatingHours', operatingHours);
           log = [
             ...log,
             ...operatingHours.map((data, index) => ({
-              action: 'TIME_SEGMENT_CREATE',
+              action: TIME_SEGMENT_CREATE,
               id: data.id,
               data,
             })),
@@ -412,24 +413,28 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 name: tsg.name,
               });
               log.push({
-                action: 'TIME_SEGMENT_GROUP_CREATE',
+                action: TIME_SEGMENT_GROUP_CREATE,
                 data: tsg,
               });
             }
 
             // Link the new time segment group with each operating hours item (time segment)
-            operatingHours
-              .filter(o => o.labelId === tsg.id)
-              .forEach(operatingHour => {
-                log.push({
-                  action: 'TIME_SEGMENT_GROUP_ADD_TIME_SEGMENT',
-                  id: tsg.id,
-                  timeSegmentId: operatingHour.id,
-                });
-              });
+            log = [
+              ...log,
+              ...(
+                operatingHours
+                  .filter(o => o.labelId === tsg.id)
+                  .map(operatingHour => ({
+                    action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
+                    timeSegmentGroupId: tsg.id,
+                    timeSegmentId: operatingHour.id,
+                  }))
+              ),
+            ];
           });
-          onChangeField('operatingHoursLabels', newOperatingHoursLabels);
 
+          onChangeField('operatingHours', operatingHours);
+          onChangeField('operatingHoursLabels', newOperatingHoursLabels);
           onChangeField('operatingHoursLog', log);
 
           onCloseModal();
@@ -496,6 +501,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         value={operatingHoursItem.labelId}
                         onChange={async item => {
                           let log = formState.operatingHoursLog.slice();
+
+                          // When adding a new label, display a prompt to get the user's
+                          // information.
                           if (item.id === 'ADD_A_LABEL') {
                             item = await onClickAddLabel();
                             onChangeField('operatingHoursLabels', [
@@ -503,7 +511,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               item,
                             ]);
                             log.push({
-                              action: 'TIME_SEGMENT_GROUP_CREATE',
+                              action: TIME_SEGMENT_GROUP_CREATE,
                               id: item.id,
                               data: item,
                             });
@@ -517,8 +525,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           onChangeField('operatingHours', operatingHoursCopy);
 
                           log.push({
-                            action: 'TIME_SEGMENT_GROUP_ADD_TIME_SEGMENT',
-                            id: item.id,
+                            action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
+                            timeSegmentGroupId: item.id,
                             timeSegmentId: operatingHoursItem.id,
                           });
 
@@ -556,7 +564,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           onChangeField('operatingHoursLog', [
                             ...formState.operatingHoursLog,
                             {
-                              action: 'TIME_SEGMENT_UPDATE',
+                              action: TIME_SEGMENT_UPDATE,
                               id: operatingHoursCopy[index].id,
                               data: operatingHoursCopy[index],
                             },
@@ -585,7 +593,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     onChangeField('operatingHoursLog', [
                       ...formState.operatingHoursLog,
                       {
-                        action: 'TIME_SEGMENT_UPDATE',
+                        action: TIME_SEGMENT_UPDATE,
                         id: operatingHoursCopy[index].id,
                         data: operatingHoursCopy[index],
                       },
@@ -615,7 +623,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       onChangeField('operatingHoursLog', [
                         ...formState.operatingHoursLog,
                         {
-                          action: 'TIME_SEGMENT_DELETE',
+                          action: TIME_SEGMENT_DELETE,
                           id: operatingHoursItem.id,
                         },
                       ]);
@@ -637,7 +645,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
               // the server yet have a unique identifier. This uuid will be discarded after the
               // time segment is sent to the server and has a real id.
-              const id = 'TEMP:'+uuid.v4();
+              const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
 
               const operatingHoursItem = {
                 labelId: null,
@@ -654,7 +662,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               onChangeField('operatingHoursLog', [
                 ...formState.operatingHoursLog,
                 {
-                  action: 'TIME_SEGMENT_CREATE',
+                  action: TIME_SEGMENT_CREATE,
                   data: operatingHoursItem,
                   id,
                 },
@@ -686,7 +694,7 @@ export default connect(
       }));
 
       return {
-        id: 'TEMP:'+uuid.v4(),
+        id: 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4(),
         name: newLabelName,
       };
     },
