@@ -51,7 +51,11 @@ export default function updateTimeSegments(id, operatingHoursLog) {
     // used, wrap it in a call to getId.
     const tempIdsToRealIds = {};
     function getId(id) {
-      return tempIdsToRealIds[id] || id;
+      if (tempIdsToRealIds[id]) {
+        return tempIdsToRealIds[id];
+      } else {
+        return id;
+      }
     }
 
     try {

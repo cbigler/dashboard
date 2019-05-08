@@ -46,11 +46,25 @@ export function calculateOperatingHoursFromSpace(
       const matchingTimeSegmentGroup = timeSegmentGroup.timeSegments.find(t => t.timeSegmentId === tsm.id);
       return Boolean(matchingTimeSegmentGroup);
     });
+
+    const resetTimeSeconds = moment.duration(space.dailyReset).as('seconds');
+    let startTimeSeconds = moment.duration(tsm.start).as('seconds');
+    let endTimeSeconds = moment.duration(tsm.end).as('seconds');
+
+    // Time segments where the start time is after the end time go overnight, so add 24 hours to the
+    // end time.
+    if (startTimeSeconds < resetTimeSeconds) {
+      startTimeSeconds += moment.duration('24:00:00').as('seconds');
+    }
+    if (endTimeSeconds < resetTimeSeconds) {
+      endTimeSeconds += moment.duration('24:00:00').as('seconds');
+    }
+
     return {
       id: tsm.id,
       labelId: parentTimeSegmentGroup ? parentTimeSegmentGroup.id : null,
-      startTimeSeconds: moment.duration(tsm.start).as('seconds'),
-      endTimeSeconds: moment.duration(tsm.end).as('seconds'),
+      startTimeSeconds,
+      endTimeSeconds,
       daysAffected: tsm.days,
       actionToPerform: null,
     };

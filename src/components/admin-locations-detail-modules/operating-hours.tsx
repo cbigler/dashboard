@@ -391,10 +391,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           const space = spaces.data.find(s => s.id === spaceId);
 
           // Each time segment on the space becomes an entry in the operating hours structure
-          const operatingHours = calculateOperatingHoursFromSpace(space, timeSegmentGroups.data);
+          const newOperatingHours = calculateOperatingHoursFromSpace(space, timeSegmentGroups.data);
           log = [
             ...log,
-            ...operatingHours.map((data, index) => ({
+            ...newOperatingHours.map((data, index) => ({
               action: TIME_SEGMENT_CREATE,
               id: data.id,
               data,
@@ -422,7 +422,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
             log = [
               ...log,
               ...(
-                operatingHours
+                newOperatingHours
                   .filter(o => o.labelId === tsg.id)
                   .map(operatingHour => ({
                     action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
@@ -433,7 +433,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
             ];
           });
 
-          onChangeField('operatingHours', operatingHours);
+          onChangeField('operatingHours', [...formState.operatingHours, ...newOperatingHours]);
           onChangeField('operatingHoursLabels', newOperatingHoursLabels);
           onChangeField('operatingHoursLog', log);
 
