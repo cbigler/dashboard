@@ -67,6 +67,8 @@ export function calculateOperatingHoursFromSpace(
       endTimeSeconds,
       daysAffected: tsm.days,
     };
+  }).sort((a, b) => {
+    return a.startTimeSeconds - b.startTimeSeconds;
   });
 }
 

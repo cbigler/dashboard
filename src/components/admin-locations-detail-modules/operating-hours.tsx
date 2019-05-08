@@ -633,23 +633,25 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   ).slice(0, -1)}
                 </AppBarSection>
                 <AppBarSection>
-                  <Button
-                    onClick={async () => {
-                      onConfirmSegmentCanBeDeleted(() => {
-                        const operatingHoursCopy = formState.operatingHours.slice();
-                        operatingHoursCopy.splice(index, 1);
-                        onChangeField('operatingHours', operatingHoursCopy);
+                  <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
+                    <Button
+                      onClick={async () => {
+                        onConfirmSegmentCanBeDeleted(() => {
+                          const operatingHoursCopy = formState.operatingHours.slice();
+                          operatingHoursCopy.splice(index, 1);
+                          onChangeField('operatingHours', operatingHoursCopy);
 
-                        onChangeField('operatingHoursLog', [
-                          ...formState.operatingHoursLog,
-                          {
-                            action: TIME_SEGMENT_DELETE,
-                            id: operatingHoursItem.id,
-                          },
-                        ]);
-                      });
-                    }}
-                  >Delete Segment</Button>
+                          onChangeField('operatingHoursLog', [
+                            ...formState.operatingHoursLog,
+                            {
+                              action: TIME_SEGMENT_DELETE,
+                              id: operatingHoursItem.id,
+                            },
+                          ]);
+                        });
+                      }}
+                    >Delete Segment</Button>
+                  </ButtonContext.Provider>
                 </AppBarSection>
               </AppBar>
             </div>
