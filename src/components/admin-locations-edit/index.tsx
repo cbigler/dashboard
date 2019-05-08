@@ -51,8 +51,8 @@ export function calculateOperatingHoursFromSpace(
     let startTimeSeconds = moment.duration(tsm.start).as('seconds');
     let endTimeSeconds = moment.duration(tsm.end).as('seconds');
 
-    // Time segments where the start time is after the end time go overnight, so add 24 hours to the
-    // end time.
+    // Time segments where the start time or end time is before the reset time go overnight, so add
+    // 24 hours (don't have to worryabout DST here) to the start or end time.
     if (startTimeSeconds < resetTimeSeconds) {
       startTimeSeconds += moment.duration('24:00:00').as('seconds');
     }
@@ -66,7 +66,6 @@ export function calculateOperatingHoursFromSpace(
       startTimeSeconds,
       endTimeSeconds,
       daysAffected: tsm.days,
-      actionToPerform: null,
     };
   });
 }

@@ -24,12 +24,10 @@ export type OperatingHoursItem = {
   startTimeSeconds: number,
   endTimeSeconds: number,
   daysAffected: Array<string>,
-  actionToPerform: 'OPERATION_CREATE' | 'OPERATION_UPDATE' | 'OPERATION_DELETE' | null,
 };
 export type OperatingHoursLabelItem = {
   id: string,
   name: string,
-  actionToPerform: 'CREATE' | 'UPDATE' | null,
 };
 
 const ONE_UTC_DAY_IN_SECONDS = 84000;
