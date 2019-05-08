@@ -2,6 +2,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_TIME_SEGMENT_GROUPS_SET } from '../../actions/collection/time-segment-groups/set';
 import { COLLECTION_TIME_SEGMENT_GROUPS_ERROR } from '../../actions/collection/time-segment-groups/error';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-transition/admin-locations-edit';
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
 
 import { DensityTimeSegment } from '../../types';
 
@@ -31,6 +32,7 @@ export default function timeSegmentGroups(state=initialState, action) {
     return {...state, view: 'ERROR', loading: false, error: action.error};
 
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT:
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return { ...state, view: 'LOADING', error: null, data: [], loading: false };
 
   default:

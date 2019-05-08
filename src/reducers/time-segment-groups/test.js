@@ -4,6 +4,9 @@ import timeSegmentGroups from './index';
 import set from '../../actions/collection/time-segment-groups/set';
 import error from '../../actions/collection/time-segment-groups/error';
 
+import routeTransitionAdminLocationsNew from '../../actions/route-transition/admin-locations-new';
+import routeTransitionAdminLocationsEdit from '../../actions/route-transition/admin-locations-edit';
+
 const INITIAL_STATE = timeSegmentGroups(undefined, {});
 
 describe('time-segment-groups', function() {
@@ -24,6 +27,15 @@ describe('time-segment-groups', function() {
   it('should error when given an error', () => {
     const results = timeSegmentGroups(INITIAL_STATE, error(new Error('Boom')));
     assert.deepEqual(results.error, 'Error: Boom');
+  });
+  it('should reset time segment groups collection when edit or new page is navigated to', () => {
+    let results = timeSegmentGroups(INITIAL_STATE, routeTransitionAdminLocationsEdit('spc_xxx'));
+    assert.deepEqual(results.view, 'LOADING');
+    assert.deepEqual(results.data, []);
+
+    results = timeSegmentGroups(INITIAL_STATE, routeTransitionAdminLocationsNew('spc_xxx'));
+    assert.deepEqual(results.view, 'LOADING');
+    assert.deepEqual(results.data, []);
   });
 });
 
