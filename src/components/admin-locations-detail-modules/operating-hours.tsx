@@ -467,7 +467,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           <AppBarSection>
             <div className={styles.operatingHoursRight}>
               <label htmlFor="admin-locations-detail-modules-operating-hours-reset-time">
-                This space's count resets at:
+                Reset the count at:
               </label>
               <InputBox
                 id="admin-locations-detail-modules-operating-hours-reset-time"

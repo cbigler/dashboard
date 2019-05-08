@@ -5,6 +5,7 @@ import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import {
   calculateInitialFormState,
+  convertFormStateToSpaceFields,
   AdminLocationsFormState,
 
   AdminLocationsNoopForm,
@@ -17,7 +18,7 @@ import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
-import { convertFormStateToSpaceFields } from '../admin-locations-edit/index';
+import spaceManagementCreate from '../../actions/space-management/create';
 
 import {
   AppFrame,
@@ -38,7 +39,11 @@ type AdminLocationsNewProps = {
     view: string,
     spaces: Array<DensitySpace>,
   },
-  onSave: (spaceFields: any, spaceParentId: string | null) => any,
+  onSave: (
+    spaceFields: any,
+    spaceParentId: string | null,
+    operatingHoursLog: Array<{action: string, [key: string]: any}>,
+  ) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -63,10 +68,35 @@ const ALLOWED_SUB_SPACE_TYPES = {
 class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, AdminLocationsFormState> {
   constructor(props) {
     super(props);
-    this.state = calculateInitialFormState({
-      parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
-      spaceType: props.newSpaceType,
-    }, props.user, props.timeSegmentGroups.data);
+
+    // There's a potential that the time segment groups are being loaded. If so, then wait for it to
+    // load.
+    if (AdminLocationsNewUnconnected.isReadyToCalculateFormState(props)) {
+      this.state = calculateInitialFormState({
+        parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
+        spaceType: props.newSpaceType,
+      }, props.user, props.timeSegmentGroups.data);
+    } else {
+      this.state = { loaded: false };
+    }
+  }
+
+  static isReadyToCalculateFormState(props) {
+    return (
+      props.timeSegmentGroups.view === 'VISIBLE' &&
+      props.spaces.view === 'VISIBLE'
+    );
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    // Once all data has been loaded, the determine the initial form state.
+    if (!prevState.loaded && AdminLocationsNewUnconnected.isReadyToCalculateFormState(nextProps)) {
+      return calculateInitialFormState({
+        parentId: nextProps.newSpaceParent ? nextProps.newSpaceParent.id : null,
+        spaceType: nextProps.newSpaceType,
+      }, nextProps.user, nextProps.timeSegmentGroups.data);
+    }
+    return null;
   }
 
   onChangeField = (key, value) => {
@@ -75,7 +105,11 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 
   onSave = () => {
     const newSpaceFields = convertFormStateToSpaceFields(this.state, this.props.newSpaceType);
-    this.props.onSave(newSpaceFields, this.props.newSpaceParent ? this.props.newSpaceParent.id : null);
+    this.props.onSave(
+      newSpaceFields,
+      this.props.newSpaceParent ? this.props.newSpaceParent.id : null,
+      this.state.operatingHoursLog || [],
+    );
   }
 
 
@@ -89,12 +123,14 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       space: AdminLocationsSpaceForm,
     }[newSpaceType];
 
-    // NOTE: there's no top level loading state in this component. This is because this view doesn't
-    // have to load initially (there's no space data to display when making a new space) and when
-    // saving the space at the end of the process, we have to show a different special loading state
-    // anyway.
+    if (!this.state.loaded) {
+      return (
+        <div className={styles.centered}>
+          <GenericLoadingState />
+        </div>
+      );
 
-    if (spaces.view === 'ERROR') {
+    } else if (spaces.view === 'ERROR') {
       return (
         <div className={styles.centered}>
           <GenericErrorState />
@@ -162,6 +198,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     user: state.user,
+    timeSegmentGroups: state.timeSegmentGroups,
 
     // Figure out the type of the new space, and its parent
     newSpaceType: state.miscellaneous.adminLocationsNewSpaceType,
@@ -171,14 +208,11 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
-    async onSave(space, parentSpaceId) {
-      const ok = await dispatch(collectionSpacesCreate(space));
+    async onSave(space, parentSpaceId, operatingHoursLog) {
+      const ok = await dispatch(spaceManagementCreate(space, operatingHoursLog));
       if (ok) {
-        dispatch(showToast({ text: 'Space created!' }));
-      } else {
-        dispatch(showToast({ type: 'error', text: 'Error creating space' }));
+        window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
       }
-      window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
     }
   };
 })(AdminLocationsNewUnconnected);
