@@ -98,7 +98,14 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       }
     }
   }
-  onMouseDown = event => this.onStart(event, event.clientX);
+  onMouseDown = event => {
+    this.onStart(event, event.clientX);
+
+    // Assign these events to window so that mouse movements outside of this component will
+    // still cause this control to update.
+    window.addEventListener('mousemove', this.onMouseMove);
+    window.addEventListener('mouseup', this.onMouseUp);
+  }
   onTouchStart = event => this.onStart(event, event.touches[0].clientX);
 
   onDrag = (event, clientX) => {
@@ -152,6 +159,10 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 
   onMouseUp = event => {
+    // Remove these mouse events from window so that they will no longer fire and pollute the
+    window.removeEventListener('mousemove', this.onMouseMove);
+    window.removeEventListener('mouseup', this.onMouseUp);
+
     this.pressedButton = null;
     this.props.onChange(this.state.startTime, this.state.endTime);
   }
@@ -188,8 +199,8 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
         className={styles.operatingHoursSliderWrapper}
 
         onMouseDown={this.onMouseDown}
-        onMouseMove={this.onMouseMove}
-        onMouseUp={this.onMouseUp}
+        /* onMouseMove={this.onMouseMove} */
+        /* no onmouseup, this is assigned to window when mousedown happens */
 
         onTouchStart={this.onTouchStart}
         onTouchMove={this.onTouchMove}
