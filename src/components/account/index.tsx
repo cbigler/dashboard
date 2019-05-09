@@ -67,12 +67,10 @@ const GeneralInfoSection = props => {
         {mode === DISPLAY && user.data && !user.data.isDemo ? (
           <Button onClick={handleEditButtonClick}>Edit</Button>
         ) : null}
-        {mode === EDIT ? (
-          <Button onClick={handleCancelButtonClick}>Cancel</Button>
-        ) : null}
-        {mode === EDIT ? (
+        {mode === EDIT ? ([
+          <Button onClick={handleCancelButtonClick}>Cancel</Button>,
           <Button type="primary" onClick={handleSaveButtonClick}>Save Changes</Button>
-        ) : null}
+        ]) : null}
       </div>
 
       <div className={styles.accountPageSectionBody}>
