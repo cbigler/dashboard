@@ -18,7 +18,7 @@ import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
-import spaceManagementCreate from '../../actions/space-management/create';
+import updateTimeSegments from '../../actions/space-management/time-segments';
 
 import {
   AppFrame,
@@ -209,10 +209,17 @@ export default connect((state: any) => {
 }, (dispatch: any) => {
   return {
     async onSave(space, parentSpaceId, operatingHoursLog) {
-      const ok = await dispatch(spaceManagementCreate(space, operatingHoursLog));
-      if (ok) {
-        window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
+      const newSpace = await dispatch(collectionSpacesCreate(space));
+      if (!newSpace) {
+        dispatch(showToast({ type: 'error', text: 'Error creating space' }));
+        return false;
       }
+
+      const timeSegmentsOk = await dispatch(updateTimeSegments(newSpace.id, operatingHoursLog));
+      if (!timeSegmentsOk) { return; }
+
+      dispatch(showToast({ text: 'Space created!' }));
+      window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
     }
   };
 })(AdminLocationsNewUnconnected);

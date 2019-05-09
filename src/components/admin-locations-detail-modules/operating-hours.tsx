@@ -247,6 +247,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   spaceHierarchy,
   spaces,
   selectedSpaceId,
+  user,
 
   onSubmitModal,
   onCloseModal,
@@ -302,7 +303,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 }}
               >
                 <RadioButton
-                  disabled={spaceDisabled}
+                  disabled={spaceDisabled || user.data.spaces.includes(item.space.id)}
                   checked={selectedSpaceId === item.space.id}
                   onChange={() => onChangeSelectedSpace(item.space.id)}
                 />
@@ -369,6 +370,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   spaces,
   spaceHierarchy,
   timeSegmentGroups,
+  user,
 
   onChangeField,
   onClickAddLabel,
@@ -380,11 +382,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 }) {
   return (
     <Fragment>
-
       <AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal
         activeModal={activeModal}
         spaceHierarchy={spaceHierarchy}
         spaces={spaces}
+        user={user}
 
         onSubmitModal={spaceId => {
           let log = formState.operatingHoursLog.slice();
@@ -704,6 +706,7 @@ export default connect(
     spaceHierarchy: state.spaceHierarchy,
     spaces: state.spaces,
     timeSegmentGroups: state.timeSegmentGroups,
+    user: state.user,
   }),
   (dispatch) => ({
     async onClickAddLabel() {

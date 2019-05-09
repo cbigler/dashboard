@@ -30,7 +30,7 @@ import {
   Icons,
 } from '@density/ui';
 
-import spaceManagementUpdate from '../../actions/space-management/update';
+import updateTimeSegments from '../../actions/space-management/time-segments';
 import { OperatingHoursItem, OperatingHoursLabelItem } from '../../actions/space-management/time-segments';
 
 export function calculateOperatingHoursFromSpace(
@@ -56,7 +56,7 @@ export function calculateOperatingHoursFromSpace(
     if (startTimeSeconds < resetTimeSeconds) {
       startTimeSeconds += moment.duration('24:00:00').as('seconds');
     }
-    if (endTimeSeconds < resetTimeSeconds) {
+    if (endTimeSeconds <= resetTimeSeconds) {
       endTimeSeconds += moment.duration('24:00:00').as('seconds');
     }
 
@@ -349,14 +349,21 @@ export default connect((state: any) => {
 }, (dispatch: any) => {
   return {
     async onSave(spaceId, spaceFieldUpdate, operatingHoursLog) {
-      const ok = await dispatch(spaceManagementUpdate(
-        spaceId,
-        spaceFieldUpdate,
-        operatingHoursLog,
-      ));
-      if (ok) {
-        window.location.href = `#/admin/locations/${spaceId}`;
+      const ok = await dispatch(collectionSpacesUpdate({
+        ...spaceFieldUpdate,
+        id: spaceId,
+        timeSegmentGroups: [],
+      }));
+      if (!ok) {
+        dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+        return false;
       }
+
+      const timeSegmentsOk = await dispatch(updateTimeSegments(spaceId, operatingHoursLog));
+      if (!timeSegmentsOk) { return; }
+
+      dispatch(showToast({ text: 'Space updated successfully' }));
+      window.location.href = `#/admin/locations/${spaceId}`;
     },
   };
 })(AdminLocationsEdit);
