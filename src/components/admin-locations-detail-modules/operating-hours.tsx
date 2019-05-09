@@ -36,6 +36,7 @@ import {
   Icons,
   Modal,
   RadioButton,
+  Switch,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import DayOfWeekSelector from '../day-of-week-selector/index';
@@ -459,7 +460,24 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         onChangeSelectedSpace={onChangeSelectedSpace}
       />
 
-      <AdminLocationsDetailModule title="Operating Hours">
+      <AdminLocationsDetailModule
+        title="Operating Hours"
+        actions={
+          <AppBarSection>
+            <label
+              className={styles.operatingHoursOverrideDefaultLabel}
+              htmlFor="admin-locations-detail-module-operating-hours-override-default"
+            >
+              Override Default:
+            </label>
+            <Switch
+              id="admin-locations-detail-module-operating-hours-override-default"
+              value={formState.overrideDefault}
+              onChange={e => onChangeField('overrideDefault', e.target.checked)}
+            />
+          </AppBarSection> as any
+        }
+      >
         <AppBar>
           <AppBarSection>
             <div className={styles.operatingHoursLeft}>

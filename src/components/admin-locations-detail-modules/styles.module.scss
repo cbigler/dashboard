@@ -136,6 +136,11 @@
 .operatingHoursRight label { margin-right: 8px; }
 
 
+.operatingHoursOverrideDefaultLabel {
+  margin-right: 16px;
+  font-size: $fontSizeBase;
+  transform: translate(0px, -2px);
+}
 
 
 .operatingHoursTimeSegmentItem {
