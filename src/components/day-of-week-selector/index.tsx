@@ -13,7 +13,7 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
-export default function DayOfWeekSelector({ daysOfWeek, onChange }) {
+export default function DayOfWeekSelector({ daysOfWeek, disabled=false, onChange }) {
   return (
     <div className={styles.wrapper}>
       {DAYS_OF_WEEK.map(dayName => (
@@ -21,6 +21,7 @@ export default function DayOfWeekSelector({ daysOfWeek, onChange }) {
           <Button
             type={daysOfWeek.includes(dayName) ? 'primary' : 'default'}
             size="small"
+            disabled={disabled}
             width={24}
             height={24}
             onClick={() => {

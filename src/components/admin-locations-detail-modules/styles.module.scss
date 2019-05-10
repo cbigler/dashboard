@@ -87,6 +87,7 @@
   background-color: $brandPrimary;
   height: 100%;
 }
+.disabled .operatingHoursSliderTrackFilledSection { background-color: $grayDarker; }
 
 .operatingHoursSliderHead {
   position: absolute;
@@ -95,9 +96,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin-top: -10px;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
 
   color: #fff;
   font-size: 14px;
@@ -107,6 +108,10 @@
 }
 .operatingHoursSliderHead:hover { background-color: darken($brandPrimary, 5%); }
 .operatingHoursSliderHead:active { background-color: darken($brandPrimary, 10%); }
+.disabled .operatingHoursSliderHead {
+  background-color: $grayDarker;
+  cursor: default;
+}
 
 .operatingHoursLabelContainer {
   position: relative;
@@ -121,6 +126,7 @@
   position: absolute;
   transform: translate(-50%, 0px);
 }
+.disabled .operatingHoursLabel { color: $grayDarkest; }
 
 
 
@@ -167,6 +173,25 @@
   padding-left: 24px;
   padding-right: 24px;
 }
+
+.operatingHoursTimeRangeBubble {
+  height: 24px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $brandPrimary;
+  border-radius: $borderRadiusBase;
+  font-size: 14px;
+  color: #fff;
+}
+.operatingHoursTimeRangeBubble.disabled { background-color: $grayDarker; }
+.operatingHoursTimeRangeBubbleBridge {
+  height: 4px;
+  width: 10px;
+  background-color: $brandPrimary;
+}
+.operatingHoursTimeRangeBubbleBridge.disabled { background-color: $grayDarker; }
 
 
 .operatingHoursAddLabel {

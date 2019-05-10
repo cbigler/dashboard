@@ -66,6 +66,8 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 
   onStart = (event, clientX) => {
+    if (this.props.disabled) { return; }
+
     // Dragging must be done on the slider control heads
     if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
       return;
@@ -91,7 +93,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
       // further handle movments are relative to the original cursor position so that the handle
       // doesn't "jump" to the original cursor position when it is first moved.
       const handleBbox = event.target.getBoundingClientRect();
-      const cursorXOffsetWithinHandle = clientX - handleBbox.left - 12;
+      const cursorXOffsetWithinHandle = clientX - handleBbox.left - 8;
       if (this.pressedButton === 'start') {
         this.trackLeftPositionInPx += cursorXOffsetWithinHandle;
       } else {
@@ -173,7 +175,7 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
   }
 
   render() {
-    const { dayStartTime, timeZone } = this.props;
+    const { dayStartTime, timeZone, disabled } = this.props;
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
@@ -197,10 +199,10 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
 
     return (
       <div
-        className={styles.operatingHoursSliderWrapper}
+        className={classnames(styles.operatingHoursSliderWrapper, {[styles.disabled]: disabled})}
 
         onMouseDown={this.onMouseDown}
-        /* onMouseMove={this.onMouseMove} */
+        /* no onmousemove, this is assigned to window when mousemove happens */
         /* no onmouseup, this is assigned to window when mousedown happens */
 
         onTouchStart={this.onTouchStart}
@@ -218,12 +220,12 @@ class AdminLocationsDetailModulesOperatingHoursSlider extends Component<any, any
           <div
             className={styles.operatingHoursSliderHead}
             id="start"
-            style={{left: `calc(${sliderStartTimePercentage}% - 12px)`}}
+            style={{left: `calc(${sliderStartTimePercentage}% - 8px)`}}
           />
           <div
             className={styles.operatingHoursSliderHead}
             id="end"
-            style={{left: `calc(${sliderEndTimePercentage}% - 12px)`}}
+            style={{left: `calc(${sliderEndTimePercentage}% - 8px)`}}
           />
         </div>
 
@@ -487,6 +489,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               <InputBox
                 id="admin-locations-detail-modules-operating-hours-time-zone"
                 type="select"
+                disabled={!formState.overrideDefault}
                 choices={TIME_ZONE_CHOICES}
                 value={formState.timeZone}
                 onChange={choice => onChangeField('timeZone', choice.id)}
@@ -503,6 +506,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               <InputBox
                 id="admin-locations-detail-modules-operating-hours-reset-time"
                 type="select"
+                disabled={!formState.overrideDefault}
                 choices={
                   generateResetTimeChoices({timeZone: formState.timeZone})
                   .map(i => ({ id: i.value, label: i.display }))
@@ -534,17 +538,14 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   This segment has multiple labels and can cannot be edited using this interface.
                 </div>
               ) : null}
-              <div
-                className={classnames(styles.operatingHoursTimeSegmentItemSection, {
-                  [styles.disabled]: isTimeSegmentLinkedToMultipleGroups,
-                })}
-              >
+              <div className={styles.operatingHoursTimeSegmentItemSection}>
                 <AppBarContext.Provider value="TRANSPARENT">
                   <AppBar>
                     <AppBarSection>
                       <InputBox
                         type="select"
                         value={operatingHoursItem.labelId}
+                        disabled={!formState.overrideDefault}
                         onChange={async item => {
                           let log = formState.operatingHoursLog.slice();
 
@@ -599,6 +600,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
                       <DayOfWeekSelector
                         daysOfWeek={operatingHoursItem.daysAffected}
+                        disabled={!formState.overrideDefault}
                         onChange={daysAffected => {
                           const operatingHoursCopy = formState.operatingHours.slice();
                           operatingHoursCopy[index] = {
@@ -631,6 +633,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   dayStartTime={formState.dailyReset}
                   startTime={operatingHoursItem.startTimeSeconds}
                   endTime={operatingHoursItem.endTimeSeconds}
+                  disabled={!formState.overrideDefault}
                   onChange={(startTimeSeconds, endTimeSeconds) => {
                     const operatingHoursCopy = formState.operatingHours.slice();
                     operatingHoursCopy[index] = {
@@ -653,77 +656,92 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               </div>
               <AppBar>
                 <AppBarSection>
-                  {formatDuration(
-                    moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
-                    'h:mma',
-                  ).slice(0, -1)}
-                  {' to '}
-                  {formatDuration(
-                    moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
-                    'h:mma',
-                  ).slice(0, -1)}
+                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    [styles.disabled]: !formState.overrideDefault,
+                  })}>
+                    {formatDuration(
+                      moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
+                      'h:mma',
+                    ).slice(0, -1)}
+                  </div>
+                  <div className={classnames(
+                    styles.operatingHoursTimeRangeBubbleBridge,
+                    { [styles.disabled]: !formState.overrideDefault }
+                  )} />
+                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    [styles.disabled]: !formState.overrideDefault,
+                  })}>
+                    {formatDuration(
+                      moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
+                      'h:mma',
+                    ).slice(0, -1)}
+                  </div>
                 </AppBarSection>
-                <AppBarSection>
-                  <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
-                    <Button
-                      onClick={async () => {
-                        onConfirmSegmentCanBeDeleted(() => {
-                          const operatingHoursCopy = formState.operatingHours.slice();
-                          operatingHoursCopy.splice(index, 1);
-                          onChangeField('operatingHours', operatingHoursCopy);
+                {formState.overrideDefault ? (
+                  <AppBarSection>
+                    <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
+                      <Button
+                        onClick={async () => {
+                          onConfirmSegmentCanBeDeleted(() => {
+                            const operatingHoursCopy = formState.operatingHours.slice();
+                            operatingHoursCopy.splice(index, 1);
+                            onChangeField('operatingHours', operatingHoursCopy);
 
-                          onChangeField('operatingHoursLog', [
-                            ...formState.operatingHoursLog,
-                            {
-                              action: TIME_SEGMENT_DELETE,
-                              id: operatingHoursItem.id,
-                            },
-                          ]);
-                        });
-                      }}
-                    >Delete Segment</Button>
-                  </ButtonContext.Provider>
-                </AppBarSection>
+                            onChangeField('operatingHoursLog', [
+                              ...formState.operatingHoursLog,
+                              {
+                                action: TIME_SEGMENT_DELETE,
+                                id: operatingHoursItem.id,
+                              },
+                            ]);
+                          });
+                        }}
+                      >Delete Segment</Button>
+                    </ButtonContext.Provider>
+                  </AppBarSection>
+                ) : null}
               </AppBar>
             </div>
           );
         })}
 
-        <AppBar>
-          <AppBarSection />
-          <AppBarSection>
-            <div className={styles.operatingHoursCopyFromSpaceButton}>
-              <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
-            </div>
-            <Button type="primary" onClick={() => {
-              // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
-              // the server yet have a unique identifier. This uuid will be discarded after the
-              // time segment is sent to the server and has a real id.
-              const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
+        {formState.overrideDefault ? (
+          <AppBar>
+            <AppBarSection />
+            <AppBarSection>
+              <div className={styles.operatingHoursCopyFromSpaceButton}>
+                <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
+              </div>
+              <Button type="primary" onClick={() => {
+                // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
+                // the server yet have a unique identifier. This uuid will be discarded after the
+                // time segment is sent to the server and has a real id.
+                const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
 
-              const operatingHoursItem = {
-                labelId: null,
-                startTimeSeconds: moment.duration('8:00:00').as('seconds'),
-                endTimeSeconds: moment.duration('20:00:00').as('seconds'),
-                daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-              };
+                const operatingHoursItem = {
+                  labelId: null,
+                  startTimeSeconds: moment.duration('8:00:00').as('seconds'),
+                  endTimeSeconds: moment.duration('20:00:00').as('seconds'),
+                  daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                };
 
-              onChangeField('operatingHours', [
-                ...formState.operatingHours,
-                { ...operatingHoursItem, id },
-              ]);
+                onChangeField('operatingHours', [
+                  ...formState.operatingHours,
+                  { ...operatingHoursItem, id },
+                ]);
 
-              onChangeField('operatingHoursLog', [
-                ...formState.operatingHoursLog,
-                {
-                  action: TIME_SEGMENT_CREATE,
-                  data: operatingHoursItem,
-                  id,
-                },
-              ]);
-            }}>Add a Segment</Button>
-          </AppBarSection>
-        </AppBar>
+                onChangeField('operatingHoursLog', [
+                  ...formState.operatingHoursLog,
+                  {
+                    action: TIME_SEGMENT_CREATE,
+                    data: operatingHoursItem,
+                    id,
+                  },
+                ]);
+              }}>Add a Segment</Button>
+            </AppBarSection>
+          </AppBar>
+        ) : null}
       </AdminLocationsDetailModule>
     </Fragment>
   );
