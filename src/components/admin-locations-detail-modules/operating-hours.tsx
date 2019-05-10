@@ -97,6 +97,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 key={item.space.id}
                 className={classnames(styles.operatingHoursCopyFromSpaceModalItem, {
                   [styles.depth0]: item.depth === 0,
+                  [styles.disabled]: spaceDisabled,
                 })}
                 style={{marginLeft: item.depth * 24}}
                 onClick={() => {
@@ -106,7 +107,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 }}
               >
                 <RadioButton
-                  disabled={spaceDisabled || user.data.spaces.includes(item.space.id)}
+                  disabled={spaceDisabled}
                   checked={selectedSpaceId === item.space.id}
                   onChange={() => onChangeSelectedSpace(item.space.id)}
                 />
@@ -125,6 +126,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 <span
                   className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
                     [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                    [styles.disabled]: spaceDisabled,
                   })}
                 >
                   {item.space.name}
@@ -178,6 +180,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   onCloseModal,
   onChangeSearchText,
   onChangeSelectedSpace,
+  onConfirmResetTimeChange,
 }) {
   const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
   return (
@@ -313,7 +316,19 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   }))
                   .find(choice => choice.id === formState.dailyReset)
                 }
-                onChange={choice => onChangeField('dailyReset', choice.id)}
+                onChange={choice => {
+                  onConfirmResetTimeChange(() => {
+                    onChangeField('dailyReset', choice.id);
+                    const startTimeSeconds = moment.duration(choice.id).add(4, 'hours').as('seconds');
+                    const endTimeSeconds = moment.duration(choice.id).add(4+12, 'hours').as('seconds');
+
+                    onChangeField(
+                      'operatingHours',
+                      formState.operatingHours
+                      .map(o => ({ ...o, startTimeSeconds, endTimeSeconds })),
+                    );
+                  })
+                }}
                 menuMaxHeight={300}
                 width={154}
               />
@@ -575,6 +590,12 @@ export default connect(
     async onConfirmSegmentCanBeDeleted(callback) {
       dispatch<any>(showModal('MODAL_CONFIRM', {
         prompt: 'Are you sure you want to delete this time segment?',
+        callback,
+      }));
+    },
+    async onConfirmResetTimeChange(callback) {
+      dispatch<any>(showModal('MODAL_CONFIRM', {
+        prompt: `Are you sure you want to change this space's reset time? All time segment time ranges will be reset.`,
         callback,
       }));
     },

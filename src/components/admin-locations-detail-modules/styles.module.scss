@@ -173,6 +173,7 @@
 }
 .operatingHoursCopyFromSpaceModalItem.depth0 { border-top: 1px solid $gray; }
 .operatingHoursCopyFromSpaceModalItem.depth0:first-child { border-top-width: 0px; }
+.operatingHoursCopyFromSpaceModalItem.disabled { cursor: default; }
 
 .operatingHoursCopyFromSpaceModalItemIcon { margin-left: 8px; }
 
@@ -183,6 +184,9 @@
   text-overflow: ellipsis;
 }
 .operatingHoursCopyFromSpaceModalItemName.bold { font-weight: bold; }
+.operatingHoursCopyFromSpaceModalItemName.disabled {
+  color: $grayDark;
+}
 
 .operatingHoursResetTimeChoiceWrapper {
   display: flex;
