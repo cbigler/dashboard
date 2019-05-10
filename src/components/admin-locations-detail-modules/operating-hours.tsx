@@ -319,9 +319,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 onChange={choice => {
                   onConfirmResetTimeChange(() => {
                     onChangeField('dailyReset', choice.id);
+
+                    // Reset all time segments to start 4 hours after the reset time and to go for
+                    // 12 hours.
                     const startTimeSeconds = moment.duration(choice.id).add(4, 'hours').as('seconds');
                     const endTimeSeconds = moment.duration(choice.id).add(4+12, 'hours').as('seconds');
-
                     onChangeField(
                       'operatingHours',
                       formState.operatingHours

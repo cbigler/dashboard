@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 import { Button } from '@density/ui';
@@ -18,12 +19,11 @@ export default function DayOfWeekSelector({ daysOfWeek, disabled=false, onChange
     <div className={styles.wrapper}>
       {DAYS_OF_WEEK.map(dayName => (
         <div key={dayName} className={styles.item}>
-          <Button
-            type={daysOfWeek.includes(dayName) ? 'primary' : 'default'}
-            size="small"
-            disabled={disabled}
-            width={24}
-            height={24}
+         <div
+            className={classnames(styles.button, {
+              [styles.active]: daysOfWeek.includes(dayName),
+              [styles.disabled]: disabled,
+            })}
             onClick={() => {
               if (!daysOfWeek.includes(dayName)) {
                 // Add day
@@ -38,7 +38,7 @@ export default function DayOfWeekSelector({ daysOfWeek, disabled=false, onChange
             }}
           >
             {dayName[0].toUpperCase()}
-          </Button>
+          </div>
         </div>
       ))}
     </div>
