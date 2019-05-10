@@ -2,6 +2,7 @@ import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import moment from 'moment';
+import { Icons } from '@density/ui';
 
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
@@ -137,7 +138,13 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
   }
 
   shouldRenderHourMark(value) {
-    return parseInt(value.hourOnlyDisplay.split(':')[0], 10) % 2 === 0;
+    const valueHour = parseInt(value.hourOnlyDisplay.split(':')[0], 10);
+    const startTimeHour = Math.floor(
+      moment.duration(this.props.dayStartTime).as('hours')
+    );
+    const bothOdd = valueHour % 2 === 1 && startTimeHour % 2 === 1;
+    const bothEven = valueHour % 2 === 0 && startTimeHour % 2 === 0;
+    return bothOdd || bothEven;
   }
 
   render() {
@@ -196,6 +203,9 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
         </div>
 
         <div className={styles.operatingHoursLabelContainer}>
+          <div className={styles.operatingHoursLabelResetTimeIcon}>
+            <Icons.Reset />
+          </div>
           {tickMarks.map((tickMark, index) => {
             if (this.shouldRenderHourMark(tickMark)) {
               return (

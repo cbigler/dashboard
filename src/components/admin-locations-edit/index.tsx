@@ -102,7 +102,9 @@ export function calculateInitialFormState(space, user, timeSegmentGroups): Admin
     // Operating hours module
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
-    overrideDefault: true,
+    // Override default is on / control is hidden if this is the top level space in the tree
+    overrideDefault: space.parentId === null ? true : false /* TODO: based on number of time segments */,
+    overrideDefaultControlHidden: space.parentId === null,
     operatingHours: calculateOperatingHoursFromSpace(space, timeSegmentGroups),
     operatingHoursLabels: timeSegmentGroups,
     operatingHoursLog: [],
@@ -188,6 +190,7 @@ export type AdminLocationsFormState = {
   operatingHoursLabels?: Array<OperatingHoursLabelItem>,
   operatingHoursLog?: Array<{ action: string, [key: string]: any }>,
   overrideDefault?: boolean,
+  overrideDefaultControlHidden?: boolean,
 };
 
 const SPACE_TYPE_TO_NAME = {

@@ -179,6 +179,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   onChangeSearchText,
   onChangeSelectedSpace,
 }) {
+  const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
   return (
     <Fragment>
       <AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal
@@ -251,17 +252,21 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         title="Operating Hours"
         actions={
           <AppBarSection>
-            <label
-              className={styles.operatingHoursOverrideDefaultLabel}
-              htmlFor="admin-locations-detail-module-operating-hours-override-default"
-            >
-              Override Default:
-            </label>
-            <Switch
-              id="admin-locations-detail-module-operating-hours-override-default"
-              value={formState.overrideDefault}
-              onChange={e => onChangeField('overrideDefault', e.target.checked)}
-            />
+            {!formState.overrideDefaultControlHidden ? (
+              <Fragment>
+                <label
+                  className={styles.operatingHoursOverrideDefaultLabel}
+                  htmlFor="admin-locations-detail-module-operating-hours-override-default"
+                >
+                  Override Default:
+                </label>
+                <Switch
+                  id="admin-locations-detail-module-operating-hours-override-default"
+                  value={formState.overrideDefault}
+                  onChange={e => onChangeField('overrideDefault', e.target.checked)}
+                />
+                </Fragment>
+            ) : null}
           </AppBarSection> as any
         }
       >
@@ -292,14 +297,25 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 id="admin-locations-detail-modules-operating-hours-reset-time"
                 type="select"
                 disabled={!formState.overrideDefault}
-                choices={
-                  generateResetTimeChoices({timeZone: formState.timeZone})
-                  .map(i => ({ id: i.value, label: i.display }))
+                choices={resetTimeChoices.map(i => ({ id: i.value, label: i.display }))}
+                value={
+                  resetTimeChoices
+                  .map(i => ({
+                    id: i.value,
+                    label: (
+                      <div className={styles.operatingHoursResetTimeChoiceWrapper}>
+                        <div className={styles.operatingHoursResetTimeIconWrapper}>
+                          <Icons.Reset width={20} height={20} color={colorVariables.gray} />
+                        </div>
+                        {i.display}
+                      </div>
+                    ),
+                  }))
+                  .find(choice => choice.id === formState.dailyReset)
                 }
-                value={formState.dailyReset}
                 onChange={choice => onChangeField('dailyReset', choice.id)}
                 menuMaxHeight={300}
-                width={114}
+                width={154}
               />
             </div>
           </AppBarSection>
