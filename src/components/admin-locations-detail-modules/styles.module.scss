@@ -69,65 +69,6 @@
   align-items: center;
 }
 
-.operatingHoursSliderWrapper {
-  position: relative;
-  padding-top: 36px;
-  padding-bottom: 16px;
-}
-
-.operatingHoursSliderTrack {
-  position: relative;
-  height: 5px;
-  width: 100%;
-  background-color: $gray;
-}
-
-.operatingHoursSliderTrackFilledSection {
-  position: absolute;
-  background-color: $brandPrimary;
-  height: 100%;
-}
-.disabled .operatingHoursSliderTrackFilledSection { background-color: $grayDarker; }
-
-.operatingHoursSliderHead {
-  position: absolute;
-  border-radius: 50%;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  margin-top: -6px;
-
-  color: #fff;
-  font-size: 14px;
-  background-color: $brandPrimary;
-  user-select: none;
-  cursor: pointer;
-}
-.operatingHoursSliderHead:hover { background-color: darken($brandPrimary, 5%); }
-.operatingHoursSliderHead:active { background-color: darken($brandPrimary, 10%); }
-.disabled .operatingHoursSliderHead {
-  background-color: $grayDarker;
-  cursor: default;
-}
-
-.operatingHoursLabelContainer {
-  position: relative;
-  margin-top: 16px;
-  font-size: 14px;
-
-  height: 0px; /* can't get pointer events none to work right without this in this case? */
-  user-select: none;
-  pointer-events: none;
-}
-.operatingHoursLabel {
-  position: absolute;
-  transform: translate(-50%, 0px);
-}
-.disabled .operatingHoursLabel { color: $grayDarkest; }
-
 
 
 .operatingHoursLeft {
