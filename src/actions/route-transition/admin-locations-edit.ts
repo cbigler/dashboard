@@ -6,7 +6,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesPush from '../collection/spaces/push';
+import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
 import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
@@ -47,14 +47,16 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
     }
     dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups));
 
-    let space, hierarchy;
+    let spaces;
     try {
-      const response = await core().get(`/spaces/${spaceId}`);
-      space = objectSnakeToCamel<DensitySpace>(response.data);
+      const spacesRaw = await fetchAllPages(async page => (
+        await core().get('/spaces', {params: {page_size: 5000, page}})
+      ).data)
+      spaces = spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
     } catch (err) {
       dispatch(collectionSpacesError(err));
       return false;
     }
-    dispatch(collectionSpacesPush(space));
+    dispatch(collectionSpacesSet(spaces));
   };
 }
