@@ -196,3 +196,45 @@
   margin-right: 16px;
   transform: translate(0, 1px);
 }
+
+.operatingHoursEmptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  border-bottom: 1px solid $gray;
+}
+.operatingHoursEmptyStateInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.operatingHoursEmptyStateInnerLeft {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 76px;
+  margin-right: 42px;
+  height: 100px;
+}
+.operatingHoursEmptyStateInnerRight {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+}
+.operatingHoursEmptyStateInnerRight h3 {
+  font-weight: normal;
+  font-size: 18px;
+  color: $grayDarkest;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}
+.operatingHoursEmptyStateInnerRight p {
+  font-size: 14px;
+  color: $grayDarker;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}

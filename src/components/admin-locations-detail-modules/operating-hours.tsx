@@ -165,6 +165,42 @@ function formatDuration(duration, format) {
     .format(format);
 }
 
+const HOURGLASS_ICON = (
+  <svg width="78" height="88" viewBox="0 0 78 88" xmlns="http://www.w3.org/2000/svg">
+      <g id="⌞-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
+          <g id="org.locations.level.edit" transform="translate(-459 -1670)">
+              <g id="operating-hours" transform="translate(297 1484)">
+                  <g id="empty" transform="translate(163 187)">
+                      <g id="alarm-thing">
+                          <circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="73" cy="13" r="3"
+                          />
+                          <circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="3" cy="3" r="3"
+                          />
+                          <circle id="Oval" fill="#D8D8D8" cx="30.5" cy="6.5" r="1.5" />
+                          <path d="M19.5,14 C18.5,38 25,50 39,50 C53,50 59.5,38 58.5,14 L19.5,14 Z"
+                          id="Path-2" stroke="#D7D7D7" strokeWidth="2" />
+                          <path d="M58.0829103,28 C56.3052735,42.6666667 49.9443034,50 39,50 C28.0556966,50 21.6947265,42.6666667 19.9170897,28 L58.0829103,28 Z"
+                          id="Combined-Shape" stroke="#D7D7D7" strokeWidth="2" fill="#EDEDED" />
+                          <rect id="Rectangle" fill="#EDEDED" x="38" y="49" width="2" height="12"
+                          />
+                          <rect id="Rectangle" fill="#EDEDED" x="38" y="63" width="2" height="5"
+                          />
+                          <path d="M19.5,86 C18.5,62 25,50 39,50 C53,50 59.5,62 58.5,86 L19.5,86 Z"
+                          id="Path-2" stroke="#D7D7D7" strokeWidth="2" />
+                          <path d="M19.5,86 C18.8333333,78.8888889 25.3333333,74.5555556 39,73 C52.6666667,74.5555556 59.1666667,78.8888889 58.5,86 L19.5,86 Z"
+                          id="Path-2" stroke="#D7D7D7" strokeWidth="2" fill="#EDEDED" />
+                          <path d="M11.5,14 L66,14" id="Path-3" stroke="#D7D7D7" strokeWidth="2"
+                          />
+                          <path d="M11.5,86 L66,86" id="Path-3" stroke="#D7D7D7" strokeWidth="2"
+                          />
+                      </g>
+                  </g>
+              </g>
+          </g>
+      </g>
+  </svg>
+);
+
 function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
   activeModal,
@@ -187,6 +223,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   const parentSpace = spaces.data.find(space => space.id === selectedSpaceParentId);
   const parentOperatingHours = calculateOperatingHoursFromSpace(parentSpace, timeSegmentGroups.data);
+
+  // Depending on if "override default" is checked, show either this space's segments or
+  // the parent space's segments.
+  const shownOperatingHours = formState.overrideDefault ? formState.operatingHours : parentOperatingHours;
 
   return (
     <Fragment>
@@ -333,7 +373,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   .find(choice => choice.id === formState.dailyReset)
                 }
                 onChange={choice => {
-                  onConfirmResetTimeChange(() => {
+                  function changeResetTime() {
                     onChangeField('dailyReset', choice.id);
 
                     // Reset all time segments to start 4 hours after the reset time and to go for
@@ -345,7 +385,14 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       formState.operatingHours
                       .map(o => ({ ...o, startTimeSeconds, endTimeSeconds })),
                     );
-                  })
+                  }
+
+                  // Only propmpt if operating hours entries need to change
+                  if (formState.operatingHours > 0) {
+                    onConfirmResetTimeChange(changeResetTime);
+                  } else {
+                    changeResetTime();
+                  }
                 }}
                 menuMaxHeight={300}
                 width={154}
@@ -354,190 +401,188 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           </AppBarSection>
         </AppBar>
 
-        {formState.overrideDefault ? (
-          formState.operatingHours.length === 0 ? (
-            <div style={{height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              TODO: EMPTY STATE NOT DESIGNED<br/>Add time segments below
+        {shownOperatingHours.length === 0 ? (
+          <div className={styles.operatingHoursEmptyState}>
+            <div className={styles.operatingHoursEmptyStateInner}>
+              <div className={styles.operatingHoursEmptyStateInnerLeft}>
+                {HOURGLASS_ICON}
+              </div>
+              <div className={styles.operatingHoursEmptyStateInnerRight}>
+                <h3>
+                  You haven't assigned any operating hours to
+                  {formState.overrideDefault ? ' this' : ' the parent'} space
+                </h3>
+                <p>Doing so allows you to conveniently organize count data by time</p>
+              </div>
             </div>
-          ) : null
-        ) : (
-          parentOperatingHours.length === 0 ? (
-            <div style={{height: 300, display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-              TODO: EMPTY STATE NOT DESIGNED<br/>Add time segments to the parent
-            </div>
-          ) : null
-        )}
+          </div>
+        ) : null}
 
-        {
-          // Depending on if "override default" is checked, show either this space's segments or
-          // the parent space's segments.
-          (formState.overrideDefault ? formState.operatingHours : parentOperatingHours)
-          .map((operatingHoursItem, index) => {
-            return (
-              <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
-                <div className={styles.operatingHoursTimeSegmentItemSection}>
-                  <AppBarContext.Provider value="TRANSPARENT">
-                    <AppBar>
-                      <AppBarSection>
-                        <InputBox
-                          type="select"
-                          value={operatingHoursItem.labelId}
-                          disabled={!formState.overrideDefault}
-                          onChange={async item => {
-                            let log = formState.operatingHoursLog.slice();
+        {shownOperatingHours.map((operatingHoursItem, index) => {
+          return (
+            <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
+              <div className={styles.operatingHoursTimeSegmentItemSection}>
+                <AppBarContext.Provider value="TRANSPARENT">
+                  <AppBar>
+                    <AppBarSection>
+                      <InputBox
+                        type="select"
+                        value={operatingHoursItem.labelId}
+                        disabled={!formState.overrideDefault}
+                        onChange={async item => {
+                          let log = formState.operatingHoursLog.slice();
 
-                            // When adding a new label, display a prompt to get the user's
-                            // information.
-                            if (item.id === 'ADD_A_LABEL') {
-                              item = await onClickAddLabel();
-                              onChangeField('operatingHoursLabels', [
-                                ...formState.operatingHoursLabels,
-                                item,
-                              ]);
-                              log.push({
-                                action: TIME_SEGMENT_GROUP_CREATE,
-                                id: item.id,
-                                data: item,
-                              });
-                            }
-
-                            const operatingHoursCopy = formState.operatingHours.slice();
-                            operatingHoursCopy[index] = {
-                              ...operatingHoursCopy[index],
-                              labelId: item.id,
-                            };
-                            onChangeField('operatingHours', operatingHoursCopy);
-
+                          // When adding a new label, display a prompt to get the user's
+                          // information.
+                          if (item.id === 'ADD_A_LABEL') {
+                            item = await onClickAddLabel();
+                            onChangeField('operatingHoursLabels', [
+                              ...formState.operatingHoursLabels,
+                              item,
+                            ]);
                             log.push({
-                              action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
-                              timeSegmentGroupId: item.id,
-                              timeSegmentId: operatingHoursItem.id,
+                              action: TIME_SEGMENT_GROUP_CREATE,
+                              id: item.id,
+                              data: item,
                             });
+                          }
 
-                            onChangeField('operatingHoursLog', log);
-                          }}
-                          choices={[
+                          const operatingHoursCopy = formState.operatingHours.slice();
+                          operatingHoursCopy[index] = {
+                            ...operatingHoursCopy[index],
+                            labelId: item.id,
+                          };
+                          onChangeField('operatingHours', operatingHoursCopy);
+
+                          log.push({
+                            action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
+                            timeSegmentGroupId: item.id,
+                            timeSegmentId: operatingHoursItem.id,
+                          });
+
+                          onChangeField('operatingHoursLog', log);
+                        }}
+                        choices={[
+                          {
+                            id: 'ADD_A_LABEL',
+                            label: (
+                              <span className={styles.operatingHoursAddLabel}>
+                                <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
+                                <span>Add a label</span>
+                              </span>
+                            ),
+                          },
+                          ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
+                        ]}
+                        placeholder="Select a label"
+                        invalid={operatingHoursItem.labelId === null}
+                        width={350}
+                      />
+                    </AppBarSection>
+                    <AppBarSection>
+                      <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
+                      <DayOfWeekSelector
+                        daysOfWeek={operatingHoursItem.daysAffected}
+                        disabled={!formState.overrideDefault}
+                        onChange={daysAffected => {
+                          const operatingHoursCopy = formState.operatingHours.slice();
+                          operatingHoursCopy[index] = {
+                            ...operatingHoursCopy[index],
+                            daysAffected,
+                          };
+                          onChangeField('operatingHours', operatingHoursCopy);
+
+                          onChangeField('operatingHoursLog', [
+                            ...formState.operatingHoursLog,
                             {
-                              id: 'ADD_A_LABEL',
-                              label: (
-                                <span className={styles.operatingHoursAddLabel}>
-                                  <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
-                                  <span>Add a label</span>
-                                </span>
-                              ),
+                              action: TIME_SEGMENT_UPDATE,
+                              id: operatingHoursCopy[index].id,
+                              data: operatingHoursCopy[index],
                             },
-                            ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
-                          ]}
-                          placeholder="Select a label"
-                          invalid={operatingHoursItem.labelId === null}
-                          width={350}
-                        />
-                      </AppBarSection>
-                      <AppBarSection>
-                        <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
-                        <DayOfWeekSelector
-                          daysOfWeek={operatingHoursItem.daysAffected}
-                          disabled={!formState.overrideDefault}
-                          onChange={daysAffected => {
+                          ]);
+                        }}
+                      />
+                    </AppBarSection>
+                  </AppBar>
+                </AppBarContext.Provider>
+              </div>
+              <div className={styles.operatingHoursTimeSegmentItemSection}>
+                <AdminLocationsDetailModulesOperatingHoursSlider
+                  timeZone={formState.timeZone}
+                  dayStartTime={formState.dailyReset}
+                  startTime={operatingHoursItem.startTimeSeconds}
+                  endTime={operatingHoursItem.endTimeSeconds}
+                  disabled={!formState.overrideDefault}
+                  onChange={(startTimeSeconds, endTimeSeconds) => {
+                    const operatingHoursCopy = formState.operatingHours.slice();
+                    operatingHoursCopy[index] = {
+                      ...operatingHoursCopy[index],
+                      startTimeSeconds,
+                      endTimeSeconds,
+                    };
+                    onChangeField('operatingHours', operatingHoursCopy);
+
+                    onChangeField('operatingHoursLog', [
+                      ...formState.operatingHoursLog,
+                      {
+                        action: TIME_SEGMENT_UPDATE,
+                        id: operatingHoursCopy[index].id,
+                        data: operatingHoursCopy[index],
+                      },
+                    ]);
+                  }}
+                />
+              </div>
+              <AppBar>
+                <AppBarSection>
+                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    [styles.disabled]: !formState.overrideDefault,
+                  })}>
+                    {formatDuration(
+                      moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
+                      'h:mma',
+                    ).slice(0, -1)}
+                  </div>
+                  <div className={classnames(
+                    styles.operatingHoursTimeRangeBubbleBridge,
+                    { [styles.disabled]: !formState.overrideDefault }
+                  )} />
+                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    [styles.disabled]: !formState.overrideDefault,
+                  })}>
+                    {formatDuration(
+                      moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
+                      'h:mma',
+                    ).slice(0, -1)}
+                  </div>
+                </AppBarSection>
+                {formState.overrideDefault ? (
+                  <AppBarSection>
+                    <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
+                      <Button
+                        onClick={async () => {
+                          onConfirmSegmentCanBeDeleted(() => {
                             const operatingHoursCopy = formState.operatingHours.slice();
-                            operatingHoursCopy[index] = {
-                              ...operatingHoursCopy[index],
-                              daysAffected,
-                            };
+                            operatingHoursCopy.splice(index, 1);
                             onChangeField('operatingHours', operatingHoursCopy);
 
                             onChangeField('operatingHoursLog', [
                               ...formState.operatingHoursLog,
                               {
-                                action: TIME_SEGMENT_UPDATE,
-                                id: operatingHoursCopy[index].id,
-                                data: operatingHoursCopy[index],
+                                action: TIME_SEGMENT_DELETE,
+                                id: operatingHoursItem.id,
                               },
                             ]);
-                          }}
-                        />
-                      </AppBarSection>
-                    </AppBar>
-                  </AppBarContext.Provider>
-                </div>
-                <div className={styles.operatingHoursTimeSegmentItemSection}>
-                  <AdminLocationsDetailModulesOperatingHoursSlider
-                    timeZone={formState.timeZone}
-                    dayStartTime={formState.dailyReset}
-                    startTime={operatingHoursItem.startTimeSeconds}
-                    endTime={operatingHoursItem.endTimeSeconds}
-                    disabled={!formState.overrideDefault}
-                    onChange={(startTimeSeconds, endTimeSeconds) => {
-                      const operatingHoursCopy = formState.operatingHours.slice();
-                      operatingHoursCopy[index] = {
-                        ...operatingHoursCopy[index],
-                        startTimeSeconds,
-                        endTimeSeconds,
-                      };
-                      onChangeField('operatingHours', operatingHoursCopy);
-
-                      onChangeField('operatingHoursLog', [
-                        ...formState.operatingHoursLog,
-                        {
-                          action: TIME_SEGMENT_UPDATE,
-                          id: operatingHoursCopy[index].id,
-                          data: operatingHoursCopy[index],
-                        },
-                      ]);
-                    }}
-                  />
-                </div>
-                <AppBar>
-                  <AppBarSection>
-                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
-                      [styles.disabled]: !formState.overrideDefault,
-                    })}>
-                      {formatDuration(
-                        moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
-                        'h:mma',
-                      ).slice(0, -1)}
-                    </div>
-                    <div className={classnames(
-                      styles.operatingHoursTimeRangeBubbleBridge,
-                      { [styles.disabled]: !formState.overrideDefault }
-                    )} />
-                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
-                      [styles.disabled]: !formState.overrideDefault,
-                    })}>
-                      {formatDuration(
-                        moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
-                        'h:mma',
-                      ).slice(0, -1)}
-                    </div>
+                          });
+                        }}
+                      >Delete Segment</Button>
+                    </ButtonContext.Provider>
                   </AppBarSection>
-                  {formState.overrideDefault ? (
-                    <AppBarSection>
-                      <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
-                        <Button
-                          onClick={async () => {
-                            onConfirmSegmentCanBeDeleted(() => {
-                              const operatingHoursCopy = formState.operatingHours.slice();
-                              operatingHoursCopy.splice(index, 1);
-                              onChangeField('operatingHours', operatingHoursCopy);
-
-                              onChangeField('operatingHoursLog', [
-                                ...formState.operatingHoursLog,
-                                {
-                                  action: TIME_SEGMENT_DELETE,
-                                  id: operatingHoursItem.id,
-                                },
-                              ]);
-                            });
-                          }}
-                        >Delete Segment</Button>
-                      </ButtonContext.Provider>
-                    </AppBarSection>
-                  ) : null}
-                </AppBar>
-              </div>
-            );
-          })
-        }
+                ) : null}
+              </AppBar>
+            </div>
+          );
+        })}
 
         {formState.overrideDefault ? (
           <AppBar>
@@ -554,8 +599,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
                 const operatingHoursItem = {
                   labelId: null,
-                  startTimeSeconds: moment.duration('8:00:00').as('seconds'),
-                  endTimeSeconds: moment.duration('20:00:00').as('seconds'),
+                  startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
+                  endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
                   daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
                 };
 

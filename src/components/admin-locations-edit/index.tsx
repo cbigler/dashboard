@@ -74,7 +74,11 @@ export function calculateOperatingHoursFromSpace(
 
 // Given a space and the currently logged in user, return the initial state of eitehr the edit or
 // new form.
-export function calculateInitialFormState(space, user, timeSegmentGroups): AdminLocationsFormState {
+export function calculateInitialFormState(space, user, timeSegmentGroups, spaces): AdminLocationsFormState {
+  const spaceAncestryIds = space.ancestry.map(i => i.id);
+  const highestLevelSpaceWithOperatingHoursOverrideDefaultEnabled = spaces.find(
+    s => spaceAncestryIds.includes(s.id) && space.timeSegments.length === 0
+  );
   return {
     loaded: true,
 
@@ -83,6 +87,7 @@ export function calculateInitialFormState(space, user, timeSegmentGroups): Admin
     spaceType: space.spaceType,
     'function': space['function'] || null,
     parentId: space.parentId,
+
 
     // Metadata module
     annualRent: space.annualRent || '',
@@ -93,18 +98,23 @@ export function calculateInitialFormState(space, user, timeSegmentGroups): Admin
     targetCapacity: space.targetCapacity || '',
     floorLevel: space.floorLevel || '',
 
+
     // Address module
     address: space.address || '',
     coordinates: space.latitude && space.longitude ? (
       [space.latitude, space.longitude]
     ) : null,
 
+
     // Operating hours module
     timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || '04:00',
-    // Override default is on / control is hidden if this is the top level space in the tree
-    overrideDefault: space.parentId === null ? true : false /* TODO: based on number of time segments */,
+
+    // Override default is always on and the control is hidden if this is the top level space in the
+    // tree. Otherwise, it's enabled if the space has some of its own time segments
+    overrideDefault: space.parentId === null ? true : space.timeSegments.length > 0,
     overrideDefaultControlHidden: space.parentId === null,
+
     operatingHours: calculateOperatingHoursFromSpace(space, timeSegmentGroups),
     operatingHoursLabels: timeSegmentGroups,
     operatingHoursLog: [],
@@ -210,6 +220,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
         props.selectedSpace,
         props.user,
         props.timeSegmentGroups.data,
+        props.spaces.data,
       );
     } else {
       this.state = { loaded: false };
@@ -232,6 +243,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
         nextProps.selectedSpace,
         nextProps.user,
         nextProps.timeSegmentGroups.data,
+        nextProps.spaces.data,
       );
     }
     return null;

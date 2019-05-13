@@ -75,7 +75,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       this.state = calculateInitialFormState({
         parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
         spaceType: props.newSpaceType,
-      }, props.user, props.timeSegmentGroups.data);
+      }, props.user, props.timeSegmentGroups.data, props.spaces);
     } else {
       this.state = { loaded: false };
     }
@@ -94,7 +94,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       return calculateInitialFormState({
         parentId: nextProps.newSpaceParent ? nextProps.newSpaceParent.id : null,
         spaceType: nextProps.newSpaceType,
-      }, nextProps.user, nextProps.timeSegmentGroups.data);
+      }, nextProps.user, nextProps.timeSegmentGroups.data, nextProps.spaces.data);
     }
     return null;
   }
