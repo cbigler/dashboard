@@ -44,6 +44,7 @@ export function calculateInitialFormState(space, user): AdminLocationsFormState 
     spaceType: space.spaceType,
     'function': space['function'] || null,
     parentId: space.parentId,
+    imageUrl: space.imageUrl,
 
     // Metadata module
     annualRent: space.annualRent || '',
@@ -97,6 +98,8 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
 
     dailyReset: formState.dailyReset,
     timeZone: formState.timeZone,
+
+    newImageFile: formState.newImageFile,
   };
 }
 
@@ -131,6 +134,8 @@ export type AdminLocationsFormState = {
   timeZone?: string,
   dailyReset?: string | null,
   parentId?: string | null,
+  imageUrl?: string,
+  newImageFile?: any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -228,9 +233,11 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                   </AppBarTitle>
                   <AppBarSection>
                     <ButtonContext.Provider value="CANCEL_BUTTON">
-                      <Button onClick={() => {
-                        window.location.href = `#/admin/locations/${selectedSpace.id}`;
-                      }}>Cancel</Button>
+                      <Button
+                        disabled={spaces.view === 'LOADING'}
+                        onClick={() => {
+                          window.location.href = `#/admin/locations/${selectedSpace.id}`;
+                        }}>Cancel</Button>
                     </ButtonContext.Provider>
                     <Button
                       type="primary"
