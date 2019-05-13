@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import fetchAllPages from '../../../helpers/fetch-all-pages/index';
 import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
 import { DensitySpace } from '../../../types';
@@ -6,7 +7,7 @@ import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
-import showToast from '../../toasts';
+import showToast, { hideToast } from '../../toasts';
 
 export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
 
@@ -41,8 +42,10 @@ export default function collectionSpacesUpdate(item) {
       // Upload any new image data for this space
       // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
       if (item.newImageFile) {
-        dispatch(showToast({text: 'Processing...'}));
+        const id = uuid();
+        dispatch(showToast({text: 'Processing...', timeout: 10000, id}));
         await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
+        dispatch(hideToast(id));
       }
 
       // Fetch all spaces after updating this space. If we changed this space's size area unit, then

@@ -17,9 +17,6 @@ import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import Toaster from '../toaster/index';
-
-import Dialogger from '../dialogger';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import showModal from '../../actions/modal/show';
@@ -123,8 +120,6 @@ export function AdminIntegrations({
       onDismiss={onCloseModal}
       onDestroyServiceAuthorization={onDestroyServiceAuthorization}
     /> : null}
-
-    <Toaster />
 
     <AppBar>
       <AppBarSection>

@@ -16,6 +16,7 @@ import {
 import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import Dialogger from '../dialogger';
+import Toaster from '../toaster';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
 import { convertFormStateToSpaceFields } from '../admin-locations-edit/index';
@@ -119,6 +120,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
         <AppFrame>
           <AppPane>
             <Dialogger />
+            <Toaster />
 
             <div className={styles.appBarWrapper}>
               <AppBar>
@@ -134,14 +136,17 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                 </AppBarTitle>
                 <AppBarSection>
                   <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button onClick={() => {
-                      window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
-                    }}>Cancel</Button>
+                    <Button
+                      disabled={spaces.view === 'LOADING'}
+                      onClick={() => {
+                        window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
+                      }}
+                    >Cancel</Button>
                   </ButtonContext.Provider>
                   <Button
                     type="primary"
-                    onClick={this.onSave}
                     disabled={spaces.view === 'LOADING'}
+                    onClick={this.onSave}
                   >Save</Button>
                 </AppBarSection>
               </AppBar>

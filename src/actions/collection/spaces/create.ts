@@ -1,8 +1,9 @@
+import uuid from 'uuid';
 import collectionSpacesPush from './push';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
-import showToast from '../../toasts';
+import showToast, { hideToast } from '../../toasts';
 
 export const COLLECTION_SPACES_CREATE = 'COLLECTION_SPACES_CREATE';
 
@@ -33,11 +34,15 @@ export default function collectionSpacesCreate(item) {
         daily_reset: item.dailyReset,
       });
       if (item.newImageFile) {
-        dispatch(showToast({text: 'Processing...'}));
+        const id = uuid();
+        dispatch(showToast({text: 'Processing...', timeout: 10000, id}));
         const upload = await uploadMedia(`/uploads/space_image/${response.data.id}`, item.newImageFile);
-        response.data.image = upload.media[0].signedUrl;
+        dispatch(hideToast(id));
+        if (upload.media.length > 0) {
+          response.data.imageUrl = upload.media[0].signedUrl;
+        }
       } else {
-        response.data.image = item.newImageData;
+        response.data.imageUrl = item.newImageData;
       }
       dispatch(collectionSpacesPush(response.data));
       return response.data;

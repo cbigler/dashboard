@@ -13,6 +13,7 @@ import { DensityUser, DensitySpace } from '../../types';
 
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
+import Toaster from '../toaster';
 import {
   AdminLocationsDetailModulesGeneralInfo,
   AdminLocationsDetailModulesMetadata,
@@ -199,6 +200,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       <AppFrame>
         <AppPane>
           <Dialogger />
+          <Toaster />
 
           {spaces.view === 'ERROR' ? (
             <div className={styles.centered}>
