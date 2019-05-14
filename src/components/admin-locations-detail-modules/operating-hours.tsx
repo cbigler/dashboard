@@ -222,7 +222,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
 
   const parentSpace = spaces.data.find(space => space.id === selectedSpaceParentId);
-  const parentOperatingHours = calculateOperatingHoursFromSpace(parentSpace, timeSegmentGroups.data);
+  const parentOperatingHours = parentSpace ? calculateOperatingHoursFromSpace(parentSpace, timeSegmentGroups.data) : [];
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the parent space's segments.
