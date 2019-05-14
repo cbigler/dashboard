@@ -346,20 +346,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 onChange={choice => {
                   function changeResetTime() {
                     onChangeField('dailyReset', choice.id);
-
-                    // Reset all time segments to start 4 hours after the reset time and to go for
-                    // 12 hours.
-                    const startTimeSeconds = moment.duration(choice.id).add(4, 'hours').as('seconds');
-                    const endTimeSeconds = moment.duration(choice.id).add(4+12, 'hours').as('seconds');
-                    onChangeField(
-                      'operatingHours',
-                      formState.operatingHours
-                      .map(o => ({ ...o, startTimeSeconds, endTimeSeconds })),
-                    );
+                    onChangeField('operatingHours', []);
                   }
 
                   // Only propmpt if operating hours entries need to change
-                  if (formState.operatingHours.length > 0) {
+                  if (formState.operatingHours.filter(i => i.operationToPerform !== 'DELETE').length > 0) {
                     onConfirmResetTimeChange(changeResetTime);
                   } else {
                     changeResetTime();
@@ -597,7 +588,7 @@ export default connect(
     },
     async onConfirmResetTimeChange(callback) {
       dispatch<any>(showModal('MODAL_CONFIRM', {
-        prompt: `Are you sure you want to change this space's reset time? All time segment time ranges will be reset.`,
+        prompt: `Changing this space's reset time will remove this space's time segments. Are you sure?`,
         callback,
       }));
     },
