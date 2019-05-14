@@ -23,7 +23,7 @@ import {
   TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
 } from '../../actions/space-management/time-segments';
 
-import { calculateOperatingHoursFromSpace } from '../admin-locations-edit/index';
+import { calculateOperatingHoursFromSpace } from '../../reducers/space-management';
 
 import {
   AppBar,
@@ -204,11 +204,10 @@ const HOURGLASS_ICON = (
 function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
   activeModal,
-  spaces,
-  spaceHierarchy,
   selectedSpaceParentId,
   timeSegmentGroups,
   user,
+  spaceManagement,
 
   onChangeField,
   onClickAddLabel,
@@ -221,8 +220,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 }) {
   const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
 
-  const parentSpace = spaces.data.find(space => space.id === selectedSpaceParentId);
-  const parentOperatingHours = parentSpace ? calculateOperatingHoursFromSpace(parentSpace, timeSegmentGroups.data) : [];
+  const parentSpace = spaceManagement.spaces.data.find(space => space.id === selectedSpaceParentId);
+  const parentOperatingHours = parentSpace ? calculateOperatingHoursFromSpace(parentSpace) : [];
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the parent space's segments.
@@ -232,24 +231,18 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
     <Fragment>
       <AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal
         activeModal={activeModal}
-        spaceHierarchy={spaceHierarchy}
-        spaces={spaces}
+        spaceHierarchy={spaceManagement.hierarchy}
         user={user}
+        spaces={spaceManagement.spaces}
 
         onSubmitModal={spaceId => {
-          let log = formState.operatingHoursLog.slice();
-          const space = spaces.data.find(s => s.id === spaceId);
+          const space = spaceManagement.spaces.data.find(s => s.id === spaceId);
 
           // Each time segment on the space becomes an entry in the operating hours structure
-          const newOperatingHours = calculateOperatingHoursFromSpace(space, timeSegmentGroups.data);
-          log = [
-            ...log,
-            ...newOperatingHours.map((data, index) => ({
-              action: TIME_SEGMENT_CREATE,
-              id: data.id,
-              data,
-            })),
-          ];
+          const newOperatingHours = calculateOperatingHoursFromSpace(space).map(oh => ({
+            ...oh,
+            operationToPerform: 'CREATE',
+          }));
 
           // And each set of operating hours has a label that is determined from the associated time
           // segment.
@@ -262,30 +255,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 id: tsg.id,
                 name: tsg.name,
               });
-              log.push({
-                action: TIME_SEGMENT_GROUP_CREATE,
-                data: tsg,
-              });
             }
-
-            // Link the new time segment group with each operating hours item (time segment)
-            log = [
-              ...log,
-              ...(
-                newOperatingHours
-                  .filter(o => o.labelId === tsg.id)
-                  .map(operatingHour => ({
-                    action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
-                    timeSegmentGroupId: tsg.id,
-                    timeSegmentId: operatingHour.id,
-                  }))
-              ),
-            ];
           });
 
           onChangeField('operatingHours', [...formState.operatingHours, ...newOperatingHours]);
           onChangeField('operatingHoursLabels', newOperatingHoursLabels);
-          onChangeField('operatingHoursLog', log);
 
           onCloseModal();
         }}
@@ -388,7 +362,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   }
 
                   // Only propmpt if operating hours entries need to change
-                  if (formState.operatingHours > 0) {
+                  if (formState.operatingHours.length > 0) {
                     onConfirmResetTimeChange(changeResetTime);
                   } else {
                     changeResetTime();
@@ -430,8 +404,6 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         value={operatingHoursItem.labelId}
                         disabled={!formState.overrideDefault}
                         onChange={async item => {
-                          let log = formState.operatingHoursLog.slice();
-
                           // When adding a new label, display a prompt to get the user's
                           // information.
                           if (item.id === 'ADD_A_LABEL') {
@@ -440,27 +412,15 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               ...formState.operatingHoursLabels,
                               item,
                             ]);
-                            log.push({
-                              action: TIME_SEGMENT_GROUP_CREATE,
-                              id: item.id,
-                              data: item,
-                            });
                           }
 
                           const operatingHoursCopy = formState.operatingHours.slice();
                           operatingHoursCopy[index] = {
                             ...operatingHoursCopy[index],
                             labelId: item.id,
+                            operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
                           };
                           onChangeField('operatingHours', operatingHoursCopy);
-
-                          log.push({
-                            action: TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
-                            timeSegmentGroupId: item.id,
-                            timeSegmentId: operatingHoursItem.id,
-                          });
-
-                          onChangeField('operatingHoursLog', log);
                         }}
                         choices={[
                           {
@@ -489,17 +449,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           operatingHoursCopy[index] = {
                             ...operatingHoursCopy[index],
                             daysAffected,
+                            operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
                           };
                           onChangeField('operatingHours', operatingHoursCopy);
-
-                          onChangeField('operatingHoursLog', [
-                            ...formState.operatingHoursLog,
-                            {
-                              action: TIME_SEGMENT_UPDATE,
-                              id: operatingHoursCopy[index].id,
-                              data: operatingHoursCopy[index],
-                            },
-                          ]);
                         }}
                       />
                     </AppBarSection>
@@ -519,17 +471,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ...operatingHoursCopy[index],
                       startTimeSeconds,
                       endTimeSeconds,
+                      operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
                     };
                     onChangeField('operatingHours', operatingHoursCopy);
-
-                    onChangeField('operatingHoursLog', [
-                      ...formState.operatingHoursLog,
-                      {
-                        action: TIME_SEGMENT_UPDATE,
-                        id: operatingHoursCopy[index].id,
-                        data: operatingHoursCopy[index],
-                      },
-                    ]);
                   }}
                 />
               </div>
@@ -563,16 +507,16 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         onClick={async () => {
                           onConfirmSegmentCanBeDeleted(() => {
                             const operatingHoursCopy = formState.operatingHours.slice();
-                            operatingHoursCopy.splice(index, 1);
+                            if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
+                              // The server has not received the operating hours item yet, so just
+                              // remove it
+                              operatingHoursCopy.splice(index, 1);
+                            } else {
+                              // The server has a copy of the operating hours item, so it must be
+                              // explicitly deleted
+                              operatingHoursCopy[index].operationToPerform = 'DELETE';
+                            }
                             onChangeField('operatingHours', operatingHoursCopy);
-
-                            onChangeField('operatingHoursLog', [
-                              ...formState.operatingHoursLog,
-                              {
-                                action: TIME_SEGMENT_DELETE,
-                                id: operatingHoursItem.id,
-                              },
-                            ]);
                           });
                         }}
                       >Delete Segment</Button>
@@ -602,20 +546,12 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
                   endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
                   daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                  operationToPerform: 'CREATE',
                 };
 
                 onChangeField('operatingHours', [
                   ...formState.operatingHours,
                   { ...operatingHoursItem, id },
-                ]);
-
-                onChangeField('operatingHoursLog', [
-                  ...formState.operatingHoursLog,
-                  {
-                    action: TIME_SEGMENT_CREATE,
-                    data: operatingHoursItem,
-                    id,
-                  },
                 ]);
               }}>Add a Segment</Button>
             </AppBarSection>
@@ -629,9 +565,12 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 export default connect(
   (state: any) => ({
     activeModal: state.activeModal,
+    spaceManagement: state.spaceManagement,
     spaceHierarchy: state.spaceHierarchy,
     spaces: state.spaces,
-    selectedSpaceParentId: state.spaces.selected ? state.spaces.data.find(s => s.id === state.spaces.selected).parentId : state.miscellaneous.newSpaceParentId,
+    selectedSpaceParentId: state.spaceManagement.spaces.selected ? (
+      state.spaceManagement.spaces.data.find(s => s.id === state.spaceManagement.spaces.selected).parentId
+    ) : state.spaceManagement.formParentSpaceId,
     timeSegmentGroups: state.timeSegmentGroups,
     user: state.user,
   }),

@@ -27,6 +27,7 @@ import users from './reducers/users/index';
 import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
 import integrations from './reducers/integrations/index';
+import spaceManagement from './reducers/space-management/index';
 const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
@@ -52,6 +53,7 @@ const reducer = combineReducers({
   digestSchedules,
   miscellaneous,
   integrations,
+  spaceManagement,
 });
 
 // Create our redux store for storing the application state.

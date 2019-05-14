@@ -7,7 +7,7 @@ import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
 
-import { DensityUser, DensitySpace, DensityTimeSegmentGroup } from '../../types';
+import { DensitySpace, DensityTimeSegmentGroup } from '../../types';
 
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 
@@ -75,10 +75,10 @@ export function calculateOperatingHoursFromSpace(
 // Given a space and the currently logged in user, return the initial state of eitehr the edit or
 // new form.
 export function calculateInitialFormState(space, user, timeSegmentGroups, spaces): AdminLocationsFormState {
-  const spaceAncestryIds = space.ancestry.map(i => i.id);
-  const highestLevelSpaceWithOperatingHoursOverrideDefaultEnabled = spaces.find(
-    s => spaceAncestryIds.includes(s.id) && space.timeSegments.length === 0
-  );
+  /* const spaceAncestryIds = space.ancestry.map(i => i.id); */
+  /* const highestLevelSpaceWithOperatingHoursOverrideDefaultEnabled = spaces.find( */
+  /*   s => spaceAncestryIds.includes(s.id) && space.timeSegments.length === 0 */
+  /* ); */
   return {
     loaded: true,
 
@@ -156,19 +156,9 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
 }
 
 type AdminLocationsEditProps = {
+  spaceManagement: any,
   selectedSpace: DensitySpace,
-  spaces: {
-    view: string,
-    data: Array<DensitySpace>,
-  },
-  timeSegmentGroups: {
-    view: string,
-    data: Array<DensityTimeSegmentGroup>,
-  },
-  user: {
-    data: DensityUser,
-  },
-
+  onChangeField: (string, any) => any,
   onSave: (
     spaceId: string,
     spaceFieldUpdate: any,
@@ -211,74 +201,34 @@ const SPACE_TYPE_TO_NAME = {
 };
 
 class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {
-  constructor(props) {
-    super(props);
-
-    // There's a potential that the space is being loaded. If so, then wait for it to load.
-    if (AdminLocationsEdit.isReadyToCalculateFormState(props)) {
-      this.state = calculateInitialFormState(
-        props.selectedSpace,
-        props.user,
-        props.timeSegmentGroups.data,
-        props.spaces.data,
-      );
-    } else {
-      this.state = { loaded: false };
-    }
-  }
-
-  static isReadyToCalculateFormState(props) {
-    return (
-      props.selectedSpace &&
-      props.spaces.view === 'VISIBLE' &&
-      props.timeSegmentGroups.view === 'VISIBLE'
-    );
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // If the space had not been loaded and was just recently loaded, then figure out the initial
-    // form state using the recently loaded space.
-    if (!prevState.loaded && AdminLocationsEdit.isReadyToCalculateFormState(nextProps)) {
-      return calculateInitialFormState(
-        nextProps.selectedSpace,
-        nextProps.user,
-        nextProps.timeSegmentGroups.data,
-        nextProps.spaces.data,
-      );
-    }
-    return null;
-  }
-
-  onChangeField = (key, value) => {
-    this.setState(s => ({...s, [key]: value}));
-  }
-
   onSave = () => {
-    const spaceFieldsToUpdate = {
-      id: this.props.selectedSpace.id,
-      ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType),
-    };
-    this.props.onSave(
-      this.props.selectedSpace.id,
-      spaceFieldsToUpdate,
-
-      // To create new time segments and update existing time segments
-      this.state.operatingHoursLog as any,
-    );
+    /* const spaceFieldsToUpdate = { */
+    /*   id: this.props.spaceManagement.spaces.selected, */
+    /*   ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType), */
+    /* }; */
+    /* this.props.onSave( */
+    /*   this.props.spaceManagement.spaces.selected, */
+    /*   spaceFieldsToUpdate, */
+    /*  */
+    /*   // To create new time segments and update existing time segments */
+    /*   [], */
+    /* ); */
   }
 
   isFormComplete = () => {
+    const formState = this.props.spaceManagement.formState;
     return (
-      this.state.name &&
+      formState &&
+      formState.name &&
 
       // Operating hours module valid
-      this.state.timeZone && this.state.dailyReset && this.state.operatingHours &&
-      this.state.operatingHours.filter(i => i.labelId === null).length === 0
+      formState.timeZone && formState.dailyReset && formState.operatingHours &&
+      formState.operatingHours.filter(i => i.labelId === null).length === 0
     );
   }
 
   render() {
-    const { spaces, timeSegmentGroups, selectedSpace } = this.props;
+    const { spaceManagement, selectedSpace, onChangeField } = this.props;
 
     const FormComponent = {
       campus: AdminLocationsCampusForm,
@@ -291,16 +241,13 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     return (
       <AppFrame>
         <AppPane>
-          {spaces.view === 'ERROR' ? (
+          {spaceManagement.view === 'ERROR' ? (
             <div className={styles.centered}>
               <GenericErrorState />
             </div>
           ) : null}
 
-          {/* Show when: */}
-          {/* 1. Space is being loaded for the first time */}
-          {/* 2. Time segments are being loaded*/}
-          {(!selectedSpace && spaces.view === 'LOADING') || timeSegmentGroups.view === 'LOADING' ? (
+          {spaceManagement.view === 'LOADING_INITIAL' ? (
             <div className={styles.centered}>
               <GenericLoadingState />
             </div>
@@ -309,10 +256,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
           {/* Show when: */}
           {/* 1. Space and time segment groups have both loaded */}
           {/* 2. Space is in the process of being updated */}
-          {(
-            (spaces.view === 'VISIBLE' || (selectedSpace && spaces.view === 'LOADING')) &&
-            timeSegmentGroups.view === 'VISIBLE' 
-          ) ? (
+          {spaceManagement.view === 'VISIBLE' ? (
             <Fragment>
               <div className={styles.appBarWrapper}>
                 <AppBar>
@@ -335,7 +279,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                     <Button
                       type="primary"
                       onClick={this.onSave}
-                      disabled={!this.isFormComplete() || spaces.view === 'LOADING'}
+                      disabled={!this.isFormComplete() || spaceManagement.view === 'LOADING'}
                     >Save</Button>
                   </AppBarSection>
                 </AppBar>
@@ -344,9 +288,9 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
               {/* All the space type components take the same props */}
               <FormComponent
                 spaceType={selectedSpace.spaceType}
-                formState={this.state}
+                formState={spaceManagement.formState}
                 operationType="UPDATE"
-                onChangeField={this.onChangeField}
+                onChangeField={onChangeField}
               />
             </Fragment>
           ) : null}
@@ -358,10 +302,8 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
 
 export default connect((state: any) => {
   return {
-    spaces: state.spaces,
-    user: state.user,
-    selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
-    timeSegmentGroups: state.timeSegmentGroups,
+    spaceManagement: state.spaceManagement,
+    selectedSpace: state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id),
   };
 }, (dispatch: any) => {
   return {
@@ -381,6 +323,9 @@ export default connect((state: any) => {
 
       dispatch(showToast({ text: 'Space updated successfully' }));
       window.location.href = `#/admin/locations/${spaceId}`;
+    },
+    onChangeField(key, value) {
+      dispatch({ type: 'SPACE_MANAGEMENT_UPDATE_FORM_STATE', key, value });
     },
   };
 })(AdminLocationsEdit);

@@ -22,16 +22,14 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
     });
 
 
-    if (getState().spaceHierarchy.data.length === 0) {
-      let hierarchy;
-      try {
-        hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
-      } catch (err) {
-        dispatch(collectionSpacesError(err));
-        return false;
-      }
-      dispatch(collectionSpaceHierarchySet(hierarchy));
+    let hierarchy;
+    try {
+      hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+    } catch (err) {
+      dispatch(collectionSpacesError(err));
+      return false;
     }
+    dispatch(collectionSpaceHierarchySet(hierarchy));
 
     let timeSegmentGroups;
 
@@ -58,5 +56,12 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
       return false;
     }
     dispatch(collectionSpacesSet(spaces));
+
+    dispatch({
+      type: 'SPACE_MANAGEMENT_SET_DATA',
+      spaces,
+      hierarchy,
+      labels: [],
+    });
   };
 }
