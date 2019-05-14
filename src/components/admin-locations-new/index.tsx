@@ -4,9 +4,7 @@ import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import {
-  calculateInitialFormState,
   convertFormStateToSpaceFields,
-  AdminLocationsFormState,
 
   AdminLocationsNoopForm,
   AdminLocationsCampusForm,
@@ -14,6 +12,9 @@ import {
   AdminLocationsFloorForm,
   AdminLocationsSpaceForm,
 } from '../admin-locations-edit/index';
+import {
+  AdminLocationsFormState,
+} from '../../reducers/space-management';
 import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
@@ -33,17 +34,12 @@ import {
 } from '@density/ui';
 
 type AdminLocationsNewProps = {
+  user: any,
+  spaceManagement: any,
   newSpaceParent: DensitySpace,
   newSpaceType: DensitySpace["spaceType"],
-  spaces: {
-    view: string,
-    spaces: Array<DensitySpace>,
-  },
-  onSave: (
-    spaceFields: any,
-    spaceParentId: string | null,
-    operatingHoursLog: Array<{action: string, [key: string]: any}>,
-  ) => any,
+  onChangeField: (string, any) => any,
+  onSave: (spaceFields: any, spaceParentId: string | null) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -66,55 +62,20 @@ const ALLOWED_SUB_SPACE_TYPES = {
 
 
 class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, AdminLocationsFormState> {
-  constructor(props) {
-    super(props);
-
-    // There's a potential that the time segment groups are being loaded. If so, then wait for it to
-    // load.
-    if (AdminLocationsNewUnconnected.isReadyToCalculateFormState(props)) {
-      this.state = calculateInitialFormState({
-        parentId: props.newSpaceParent ? props.newSpaceParent.id : null,
-        spaceType: props.newSpaceType,
-      }, props.user, props.timeSegmentGroups.data, props.spaces);
-    } else {
-      this.state = { loaded: false };
-    }
-  }
-
-  static isReadyToCalculateFormState(props) {
-    return (
-      props.timeSegmentGroups.view === 'VISIBLE' &&
-      props.spaces.view === 'VISIBLE'
-    );
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    // Once all data has been loaded, the determine the initial form state.
-    if (!prevState.loaded && AdminLocationsNewUnconnected.isReadyToCalculateFormState(nextProps)) {
-      return calculateInitialFormState({
-        parentId: nextProps.newSpaceParent ? nextProps.newSpaceParent.id : null,
-        spaceType: nextProps.newSpaceType,
-      }, nextProps.user, nextProps.timeSegmentGroups.data, nextProps.spaces.data);
-    }
-    return null;
-  }
-
-  onChangeField = (key, value) => {
-    this.setState(s => ({...s, [key]: value}));
-  }
-
   onSave = () => {
-    const newSpaceFields = convertFormStateToSpaceFields(this.state, this.props.newSpaceType);
+    const newSpaceFields = convertFormStateToSpaceFields(
+      this.props.spaceManagement.formState,
+      this.props.newSpaceType,
+    );
     this.props.onSave(
       newSpaceFields,
       this.props.newSpaceParent ? this.props.newSpaceParent.id : null,
-      this.state.operatingHoursLog || [],
     );
   }
 
 
   render() {
-    const { spaces, newSpaceType, newSpaceParent } = this.props;
+    const { spaceManagement, newSpaceType, newSpaceParent } = this.props;
 
     const FormComponent = {
       campus: AdminLocationsCampusForm,
@@ -123,17 +84,17 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       space: AdminLocationsSpaceForm,
     }[newSpaceType];
 
-    if (!this.state.loaded) {
+    if (spaceManagement.view === 'ERROR') {
       return (
         <div className={styles.centered}>
           <GenericLoadingState />
         </div>
       );
 
-    } else if (spaces.view === 'ERROR') {
+    } else if (spaceManagement.view === 'LOADING_INITIAL') {
       return (
         <div className={styles.centered}>
-          <GenericErrorState />
+          <GenericLoadingState />
         </div>
       );
 
@@ -174,7 +135,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                   <Button
                     type="primary"
                     onClick={this.onSave}
-                    disabled={spaces.view === 'LOADING'}
+                    disabled={spaceManagement.view === 'LOADING'}
                   >Save</Button>
                 </AppBarSection>
               </AppBar>
@@ -183,9 +144,9 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
             {/* All the space type components take the same props */}
             <FormComponent
               spaceType={newSpaceType}
-              formState={this.state}
+              formState={this.props.spaceManagement.formState}
               operationType="CREATE"
-              onChangeField={this.onChangeField}
+              onChangeField={this.props.onChangeField}
             />
           </AppPane>
         </AppFrame>
@@ -196,30 +157,29 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 
 export default connect((state: any) => {
   return {
-    spaces: state.spaces,
     user: state.user,
-    timeSegmentGroups: state.timeSegmentGroups,
+    spaceManagement: state.spaceManagement,
 
     // Figure out the type of the new space, and its parent
     newSpaceType: state.miscellaneous.adminLocationsNewSpaceType,
-    newSpaceParent: state.spaces.data.find(
+    newSpaceParent: state.spaceManagement.spaces.data.find(
       space => space.id === state.miscellaneous.adminLocationsNewSpaceParentId
     ),
   };
 }, (dispatch: any) => {
   return {
-    async onSave(space, parentSpaceId, operatingHoursLog) {
+    async onSave(space, parentSpaceId) {
       const newSpace = await dispatch(collectionSpacesCreate(space));
       if (!newSpace) {
         dispatch(showToast({ type: 'error', text: 'Error creating space' }));
         return false;
       }
 
-      const timeSegmentsOk = await dispatch(updateTimeSegments(newSpace.id, operatingHoursLog));
-      if (!timeSegmentsOk) { return; }
-
       dispatch(showToast({ text: 'Space created!' }));
       window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
-    }
+    },
+    onChangeField(key, value) {
+      dispatch({ type: 'SPACE_MANAGEMENT_UPDATE_FORM_STATE', key, value });
+    },
   };
 })(AdminLocationsNewUnconnected);

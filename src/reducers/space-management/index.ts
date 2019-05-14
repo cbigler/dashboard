@@ -90,16 +90,20 @@ export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<Ope
 // Given a space and the currently logged in user, return the initial state of eitehr the edit or
 // new form.
 function calculateInitialFormState({
-  userDataSizeAreaDisplayUnit,
-  operatingHoursLabels,
   spaces,
-}): AdminLocationsFormState {
-  const space = spaces.data.find(s => s.id === spaces.selected);
+  operatingHoursLabels,
+  userDataSizeAreaDisplayUnit,
 
-  const spaceAncestryIds = space.ancestry.map(i => i.id);
-  const highestLevelSpaceWithOperatingHoursOverrideDefaultEnabled = spaces.data.find(
-    s => spaceAncestryIds.includes(s.id) && space.timeSegments.length === 0
-  );
+  // These values exist when a new space is being created
+  formParentSpaceId,
+  formSpaceType,
+}): AdminLocationsFormState {
+  const space = spaces.data.find(s => s.id === spaces.selected) || {
+    parentId: formParentSpaceId,
+    spaceType: formSpaceType,
+    timeSegments: [],
+  };
+
   return {
     // General information module
     name: space.name || '',

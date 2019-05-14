@@ -25,6 +25,8 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW,
       spaceId: parentSpaceId,
       setLoading: true,
+      parentSpaceId,
+      spaceType: newSpaceType,
     });
 
     // Load a list of all time segment groups, which is required in order to render in the time
@@ -58,5 +60,12 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       return false;
     }
     dispatch(collectionSpacesSet(spaces));
+
+    dispatch({
+      type: 'SPACE_MANAGEMENT_SET_DATA',
+      spaces,
+      hierarchy,
+      labels: [],
+    });
   };
 }

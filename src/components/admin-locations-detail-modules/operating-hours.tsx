@@ -15,13 +15,6 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
-import {
-  TIME_SEGMENT_CREATE,
-  TIME_SEGMENT_UPDATE,
-  TIME_SEGMENT_DELETE,
-  TIME_SEGMENT_GROUP_CREATE,
-  TIME_SEGMENT_ASSIGN_TO_TIME_SEGMENT_GROUP,
-} from '../../actions/space-management/time-segments';
 
 import { calculateOperatingHoursFromSpace } from '../../reducers/space-management';
 
@@ -58,7 +51,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   onChangeSelectedSpace,
 }) {
   if (activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE') {
-    let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
+    let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
     if (spaces.filters.search) {
       formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, spaces.filters.search);
     }
@@ -208,6 +201,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   timeSegmentGroups,
   user,
   spaceManagement,
+  spaces,
 
   onChangeField,
   onClickAddLabel,
@@ -220,20 +214,23 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 }) {
   const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
 
+  // Get all operating hours for all spaces above this one in the hierarchy
   const parentSpace = spaceManagement.spaces.data.find(space => space.id === selectedSpaceParentId);
-  const parentOperatingHours = parentSpace ? calculateOperatingHoursFromSpace(parentSpace) : [];
+  const spaceAncestryIds = [ parentSpace.id, ...parentSpace.ancestry.map(i => i.id) ];
+  const spaceAncestrySpaces = spaceAncestryIds.map(id => spaceManagement.spaces.data.find(s => s.id === id));
+  const parentOperatingHours = spaceAncestrySpaces.flatMap(s => calculateOperatingHoursFromSpace(s));
 
   // Depending on if "override default" is checked, show either this space's segments or
-  // the parent space's segments.
-  const shownOperatingHours = formState.overrideDefault ? formState.operatingHours : parentOperatingHours;
+  // the the above calculated operating hours.
+  const shownOperatingHours = (formState.overrideDefault ? formState.operatingHours : parentOperatingHours);
 
   return (
     <Fragment>
       <AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal
         activeModal={activeModal}
-        spaceHierarchy={spaceManagement.hierarchy}
+        spaceHierarchy={spaceManagement.spaceHierarchy}
         user={user}
-        spaces={spaceManagement.spaces}
+        spaces={spaces}
 
         onSubmitModal={spaceId => {
           const space = spaceManagement.spaces.data.find(s => s.id === spaceId);
@@ -375,7 +372,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           </AppBarSection>
         </AppBar>
 
-        {shownOperatingHours.length === 0 ? (
+        {shownOperatingHours.filter(i => i.operationToPerform !== 'DELETE').length === 0 ? (
           <div className={styles.operatingHoursEmptyState}>
             <div className={styles.operatingHoursEmptyStateInner}>
               <div className={styles.operatingHoursEmptyStateInnerLeft}>
@@ -393,6 +390,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         ) : null}
 
         {shownOperatingHours.map((operatingHoursItem, index) => {
+          if (operatingHoursItem.operationToPerform === 'DELETE') { return; }
           return (
             <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
               <div className={styles.operatingHoursTimeSegmentItemSection}>
@@ -507,6 +505,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         onClick={async () => {
                           onConfirmSegmentCanBeDeleted(() => {
                             const operatingHoursCopy = formState.operatingHours.slice();
+                            console.log('OH', operatingHoursCopy[index].operationToPerform)
                             if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
                               // The server has not received the operating hours item yet, so just
                               // remove it

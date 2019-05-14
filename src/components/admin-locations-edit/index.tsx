@@ -159,11 +159,7 @@ type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
   onChangeField: (string, any) => any,
-  onSave: (
-    spaceId: string,
-    spaceFieldUpdate: any,
-    operatingHoursLog: Array<{ action: string, [key: string]: any }>,
-  ) => any,
+  onSave: (spaceId: string, spaceFieldUpdate: any) => any,
 };
 
 export type AdminLocationsFormState = {
@@ -202,17 +198,17 @@ const SPACE_TYPE_TO_NAME = {
 
 class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {
   onSave = () => {
-    /* const spaceFieldsToUpdate = { */
-    /*   id: this.props.spaceManagement.spaces.selected, */
-    /*   ...convertFormStateToSpaceFields(this.state, this.props.selectedSpace.spaceType), */
-    /* }; */
-    /* this.props.onSave( */
-    /*   this.props.spaceManagement.spaces.selected, */
-    /*   spaceFieldsToUpdate, */
-    /*  */
-    /*   // To create new time segments and update existing time segments */
-    /*   [], */
-    /* ); */
+    const spaceFieldsToUpdate = {
+      id: this.props.spaceManagement.spaces.selected,
+      ...convertFormStateToSpaceFields(
+        this.props.spaceManagement.formState,
+        this.props.selectedSpace.spaceType,
+      ),
+    };
+    this.props.onSave(
+      this.props.spaceManagement.spaces.selected,
+      spaceFieldsToUpdate,
+    );
   }
 
   isFormComplete = () => {
@@ -307,7 +303,7 @@ export default connect((state: any) => {
   };
 }, (dispatch: any) => {
   return {
-    async onSave(spaceId, spaceFieldUpdate, operatingHoursLog) {
+    async onSave(spaceId, spaceFieldUpdate) {
       const ok = await dispatch(collectionSpacesUpdate({
         ...spaceFieldUpdate,
         id: spaceId,
@@ -317,9 +313,6 @@ export default connect((state: any) => {
         dispatch(showToast({ type: 'error', text: 'Error updating space' }));
         return false;
       }
-
-      const timeSegmentsOk = await dispatch(updateTimeSegments(spaceId, operatingHoursLog));
-      if (!timeSegmentsOk) { return; }
 
       dispatch(showToast({ text: 'Space updated successfully' }));
       window.location.href = `#/admin/locations/${spaceId}`;
