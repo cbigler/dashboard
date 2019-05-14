@@ -129,7 +129,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                 <AppBarSection>
                   <ButtonContext.Provider value="CANCEL_BUTTON">
                     <Button
-                      disabled={spaces.view === 'LOADING'}
+                      disabled={spaceManagement.view.startsWith('LOADING')}
                       onClick={() => {
                         window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
                       }}

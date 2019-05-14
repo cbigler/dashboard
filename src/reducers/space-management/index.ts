@@ -55,7 +55,7 @@ export type AdminLocationsFormState = {
   overrideDefault: boolean,
   overrideDefaultControlHidden: boolean,
   imageUrl: string,
-  newImageFile: any,
+  newImageFile?: any,
 };
 
 export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<OperatingHoursItem> {
@@ -112,6 +112,7 @@ function calculateInitialFormState({
     spaceType: space.spaceType,
     'function': space['function'] || null,
     parentId: space.parentId,
+    imageUrl: space.imageUrl,
 
 
     // Metadata module

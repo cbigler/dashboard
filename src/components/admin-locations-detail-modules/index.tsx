@@ -31,7 +31,6 @@ import {
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import ListView, { ListViewColumn } from '../list-view/index';
-import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 
 import AdminLocationsDetailModulesOperatingHoursLocal from './operating-hours';
 import { fileToDataURI } from '../../helpers/media-files';
@@ -295,29 +294,31 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
 
   return (
     <AdminLocationsDetailModule title="General Info">
-      <div className={styles.spaceFieldRenderer}>
-        <div className={styles.spaceFieldRendererRow}>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
-            {inputs}
-          </div>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
-            <AdminLocationsImageUpload
-              label="Photo"
-              value={formState.newImageData || formState.imageUrl}
-              onChange={async file => {
-                if (file) {
-                  const result = await fileToDataURI(file);
-                  onChangeField('newImageData', result);
-                  onChangeField('newImageFile', file);
-                } else {
-                  onChangeField('newImageData', null);
-                  onChangeField('newImageFile', null);
-                }
-              }}
-            />
+      <AdminLocationsDetailModuleBody>
+        <div className={styles.spaceFieldRenderer}>
+          <div className={styles.spaceFieldRendererRow}>
+            <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
+              {inputs}
+            </div>
+            <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
+              <AdminLocationsImageUpload
+                label="Photo"
+                value={formState.newImageData || formState.imageUrl}
+                onChange={async file => {
+                  if (file) {
+                    const result = await fileToDataURI(file);
+                    onChangeField('newImageData', result);
+                    onChangeField('newImageFile', file);
+                  } else {
+                    onChangeField('newImageData', null);
+                    onChangeField('newImageFile', null);
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </AdminLocationsDetailModuleBody>
     </AdminLocationsDetailModule>
   );
 }

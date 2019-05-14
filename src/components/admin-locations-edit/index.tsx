@@ -275,7 +275,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                   <AppBarSection>
                     <ButtonContext.Provider value="CANCEL_BUTTON">
                       <Button
-                        disabled={spaces.view === 'LOADING'}
+                        disabled={spaceManagement.view.startsWith('LOADING')}
                         onClick={() => {
                           window.location.href = `#/admin/locations/${selectedSpace.id}`;
                         }}>Cancel</Button>
@@ -283,7 +283,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                     <Button
                       type="primary"
                       onClick={this.onSave}
-                      disabled={!this.isFormComplete() || spaceManagement.view === 'LOADING'}
+                      disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
                     >Save</Button>
                   </AppBarSection>
                 </AppBar>
