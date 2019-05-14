@@ -54,6 +54,8 @@ export type AdminLocationsFormState = {
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
   overrideDefaultControlHidden: boolean,
+  imageUrl: string,
+  newImageFile: any,
 };
 
 export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<OperatingHoursItem> {

@@ -16,7 +16,7 @@ export default function FormLabel({
   return (
     <div className={classnames(styles.formLabel, editable ? styles.formLabelEditable: null, className)}>
       <label className={styles.formLabelLabel} htmlFor={htmlFor}>
-        <span className={styles.formLabelLabelText}>{label}</span>
+        {typeof label === 'string' ? <span className={styles.formLabelLabelText}>{label}</span> : label}
         {infoLabel ? <span className={styles.formLabelInfoIcon} title={infoLabel}>&#xe91e;</span> : null}
       </label>
       {input}

@@ -50,8 +50,6 @@ function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}
       break;
   }
 
-  const isSpace = (spaceType == "space")
-
   let icon;
   switch(spaceType) {
     case 'campus':
@@ -71,7 +69,7 @@ function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}
       break;
   }
 
-  if (isSpace && enabled) {
+  if (enabled) {
     return (
       <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
         <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
@@ -109,7 +107,7 @@ function RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, dept
         spaceType={space.spaceType}
         activePage={activePage}
         selected={selectedSpace ? selectedSpace.id === space.id : false}
-        enabled={!!spaces.data.find(x => x.id === space.id)}
+        enabled={!!spaces.data.find(x => x.id === space.id && x.doorways.length > 0)}
       />
       {space.children && space.children.map(space => (
         RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth+1)

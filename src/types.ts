@@ -226,6 +226,11 @@ export type DensityTeemSpace = {
   name: string,
 };
 
+export type DensityGoogleCalendarSpace = {
+  id: string,
+  name: string,
+};
+
 export type DensityReportOptions = {
   date: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
   weekStart: string; // A weekday for the report week to start on. Default is "Sunday".

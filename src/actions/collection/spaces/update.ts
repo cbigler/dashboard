@@ -1,11 +1,13 @@
+import uuid from 'uuid';
 import fetchAllPages from '../../../helpers/fetch-all-pages/index';
 import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
 import { DensitySpace } from '../../../types';
 
-import collectionSpacesPush from './push';
 import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
+import uploadMedia from '../../../helpers/media-files';
+import showToast, { hideToast } from '../../toasts';
 
 export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
 
@@ -38,33 +40,34 @@ export default function collectionSpacesUpdate(item) {
 
         time_segment_groups: item.timeSegmentGroups,
       });
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
-      return false;
-    }
 
-    // Fetch all spaces after updating this space. If we changed this space's size area unit, then
-    // the size area unit of child spaces will update too.
-    let response2;
-    try {
-      response2 = await core().get('/spaces');
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
-      return false;
-    }
+      // Upload any new image data for this space
+      // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
+      if (item.newImageFile) {
+        const id = uuid();
+        dispatch(showToast({text: 'Processing...', timeout: 10000, id}));
+        await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
+        dispatch(hideToast(id));
+      }
 
-    const rawSpaces = await fetchAllPages(async page => {
-      const response = await core().get(`/spaces`, {
-        params: {
-          page,
-          page_size: 5000,
-        },
+      // Fetch all spaces after updating this space. If we changed this space's size area unit, then
+      // the size area unit of child spaces will update too.
+      const rawSpaces = await fetchAllPages(async page => {
+        const response = await core().get(`/spaces`, {
+          params: {
+            page,
+            page_size: 5000,
+          },
+        });
+        return response.data;
       });
+      const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+      dispatch(collectionSpacesSet(spaces));
       return response.data;
-    });
-    const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
-    dispatch(collectionSpacesSet(spaces));
 
-    return response.data;
+    } catch (err) {
+      dispatch(collectionSpacesError(err));
+      return false;
+    }
   };
 }

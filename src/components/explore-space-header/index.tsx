@@ -10,6 +10,7 @@ import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 import styles from './styles.module.scss';
+import cleanSpaceData from '../../helpers/clean-space-data';
 
 export function ExploreSpaceHeader({
   space,
@@ -88,7 +89,8 @@ export default connect((state: any) => {
       dispatch<any>(hideModal());
     },
     async onSetCapacity(space, capacity, spaceFilters) {
-      const ok = await dispatch<any>(collectionSpacesUpdate({...space, capacity}));
+      const spaceData = cleanSpaceData({...space, capacity});
+      const ok = await dispatch<any>(collectionSpacesUpdate(spaceData));
       if (ok) {
         dispatch<any>(hideModal());
         dispatch<any>(calculateTrendsModules(space, spaceFilters));

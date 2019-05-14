@@ -63,6 +63,7 @@ import routeTransitionDashboardDetail from './actions/route-transition/dashboard
 import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
 import routeTransitionAdminIntegrationsTeem from './actions/route-transition/admin-integrations-teem';
 import routeTransitionAdminIntegrationsServiceFailure from './actions/route-transition/admin-integrations-service-failure';
+import routeTransitionAdminIntegrationsServiceSuccess from './actions/route-transition/admin-integrations-service-success';
 import routeTransitionAdminIntegrationsSlack from './actions/route-transition/admin-integrations-slack';
 import routeTransitionAdminUserManagement from './actions/route-transition/admin-user-management';
 import routeTransitionAdminUserManagementDetail from './actions/route-transition/admin-user-management-detail';
@@ -136,7 +137,7 @@ function trackHashChange() {
     url: window.location.hash,
   });
 
-  // Google analytics: track page view
+  // google analytics: track page view
   if (process.env.REACT_APP_GA_TRACKING_CODE) {
     ReactGA.pageview(window.location.hash);
     ReactGA.set(analyticsParameters);
@@ -196,7 +197,9 @@ router.addRoute('account/forgot-password/:token', token => routeTransitionAccoun
 
 // Advanced account management (Administration)
 router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
-router.addRoute('admin/integrations/teem/fail/', (code) => routeTransitionAdminIntegrationsServiceFailure());
+router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
+router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess());
+router.addRoute('admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/teem/:access_token/:expires_in/:refresh_token/:token_type', (access_token, expires_in, refresh_token, token_type) => routeTransitionAdminIntegrationsTeem(access_token, expires_in, refresh_token, token_type));
 router.addRoute('admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(code));
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement());
