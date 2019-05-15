@@ -402,10 +402,24 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           // information.
                           if (item.id === 'ADD_A_LABEL') {
                             item = await onClickAddLabel();
-                            onChangeField('operatingHoursLabels', [
-                              ...formState.operatingHoursLabels,
-                              item,
-                            ]);
+
+                            const existingItemThatMatchesCaseInsensitively = (
+                              formState.operatingHoursLabels.find(
+                                i => i.name.toLowerCase() === item.name.toLowerCase()
+                              )
+                            );
+                            if (existingItemThatMatchesCaseInsensitively) {
+                              // Label matches casing, don't add a new label and instead use the one
+                              // that matches.
+                              item = existingItemThatMatchesCaseInsensitively;
+                            } else {
+                              // There are no similar labels that have the came content, so make a
+                              // new label
+                              onChangeField('operatingHoursLabels', [
+                                ...formState.operatingHoursLabels,
+                                item,
+                              ]);
+                            }
                           }
 
                           const operatingHoursCopy = formState.operatingHours.slice();
