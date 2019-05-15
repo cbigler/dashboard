@@ -4,6 +4,14 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 import { DensityUser, DensitySpace } from '../../types';
 
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-transition/admin-locations-edit';
+import { USER_SET } from '../../actions/user/set';
+import { USER_PUSH } from '../../actions/user/push';
+import { SPACE_MANAGEMENT_UPDATE_FORM_STATE } from '../../actions/space-management/update-form-state';
+import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
+import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
+
 const initialState = {
   view: 'LOADING_INITIAL',
   error: null,
@@ -150,14 +158,14 @@ function calculateInitialFormState({
 export default function spaceManagement(state=initialState, action) {
   switch (action.type) {
 
-  case 'ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW':
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return {
       ...state,
       formParentSpaceId: action.parentSpaceId,
       formSpaceType: action.spaceType,
     };
 
-  case 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT':
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT:
     return {
       ...state,
       spaces: {
@@ -168,11 +176,11 @@ export default function spaceManagement(state=initialState, action) {
 
   // Keep a copy of `sizeAreaDisplayUnit` in this reducer as it is needed when calculating the
   // initial form state.
-  case 'USER_SET': {
+  case USER_SET: {
     const user = objectSnakeToCamel<DensityUser>(action.data);
     return { ...state, userDataSizeAreaDisplayUnit: user.sizeAreaDisplayUnit };
   }
-  case 'USER_PUSH': {
+  case USER_PUSH: {
     const user = objectSnakeToCamel(action.data);
     if (user.sizeAreaDisplayUnit) {
       return { ...state, userDataSizeAreaDisplayUnit: user.sizeAreaDisplayUnit };
@@ -181,7 +189,7 @@ export default function spaceManagement(state=initialState, action) {
     }
   }
 
-  case 'SPACE_MANAGEMENT_SET_DATA':
+  case SPACE_MANAGEMENT_SET_DATA:
     const newState = {
       ...state,
       view: 'VISIBLE',
@@ -195,14 +203,14 @@ export default function spaceManagement(state=initialState, action) {
     newState.formState = calculateInitialFormState(newState);
     return newState;
 
-  case 'SPACE_MANAGEMENT_ERROR':
+  case SPACE_MANAGEMENT_ERROR:
     return {
       ...state,
       view: 'ERROR',
       error: action.error.message || action.error,
     };
 
-  case 'SPACE_MANAGEMENT_UPDATE_FORM_STATE':
+  case SPACE_MANAGEMENT_UPDATE_FORM_STATE:
     return {
       ...state,
       formState: { ...state.formState, [action.key]: action.value },

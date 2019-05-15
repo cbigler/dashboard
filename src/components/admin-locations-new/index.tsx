@@ -71,7 +71,6 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     );
   }
 
-
   render() {
     const { spaceManagement, newSpaceType, newSpaceParent } = this.props;
 

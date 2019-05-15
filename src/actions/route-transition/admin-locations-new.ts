@@ -10,17 +10,13 @@ import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
 import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
-import setNewSpaceType from '../miscellaneous/set-new-space-type';
-import setNewSpaceParentId from '../miscellaneous/set-new-space-parent-id';
+
+import spaceManagementSetData from '../space-management/set-data';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW';
 
 export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpaceType) {
   return async (dispatch, getState) => {
-    // Store the new space type and space parent somewhere so we can access it in the component later.
-    dispatch(setNewSpaceType(newSpaceType));
-    dispatch(setNewSpaceParentId(parentSpaceId));
-
     dispatch({
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW,
       spaceId: parentSpaceId,
@@ -61,11 +57,7 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
     }
     dispatch(collectionSpacesSet(spaces));
 
-    dispatch({
-      type: 'SPACE_MANAGEMENT_SET_DATA',
-      spaces,
-      hierarchy,
-      labels: [],
-    });
+    const labels = [];
+    dispatch(spaceManagementSetData(spaces, hierarchy, labels));
   };
 }

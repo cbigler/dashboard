@@ -6,6 +6,7 @@ import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
+import spaceManagementUpdateFormState from '../../actions/space-management/update-form-state';
 
 import { DensitySpace, DensityTimeSegmentGroup } from '../../types';
 
@@ -209,7 +210,7 @@ export default connect((state: any) => {
       window.location.href = `#/admin/locations/${spaceId}`;
     },
     onChangeField(key, value) {
-      dispatch({ type: 'SPACE_MANAGEMENT_UPDATE_FORM_STATE', key, value });
+      dispatch(spaceManagementUpdateFormState(key, value));
     },
   };
 })(AdminLocationsEdit);
