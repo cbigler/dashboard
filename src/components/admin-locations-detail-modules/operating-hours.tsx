@@ -236,10 +236,15 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           const space = spaceManagement.spaces.data.find(s => s.id === spaceId);
 
           // Each time segment on the space becomes an entry in the operating hours structure
-          const newOperatingHours = calculateOperatingHoursFromSpace(space).map(oh => ({
-            ...oh,
-            operationToPerform: 'CREATE',
-          }));
+          const newOperatingHours = [
+            ...formState.operatingHours.slice(),
+            ...(
+              // Ensure that there aren't duplicate segments
+              calculateOperatingHoursFromSpace(space)
+                .filter(oh => !formState.operatingHours.find(i => i.id === oh.id))
+                .map(oh => ({ ...oh, operationToPerform: 'CREATE' }))
+            ),
+          ];
 
           // And each set of operating hours has a label that is determined from the associated time
           // segment.
@@ -255,7 +260,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
             }
           });
 
-          onChangeField('operatingHours', [...formState.operatingHours, ...newOperatingHours]);
+          onChangeField('operatingHours', newOperatingHours);
           onChangeField('operatingHoursLabels', newOperatingHoursLabels);
 
           onCloseModal();
@@ -496,7 +501,6 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         onClick={async () => {
                           onConfirmSegmentCanBeDeleted(() => {
                             const operatingHoursCopy = formState.operatingHours.slice();
-                            console.log('OH', operatingHoursCopy[index].operationToPerform)
                             if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
                               // The server has not received the operating hours item yet, so just
                               // remove it

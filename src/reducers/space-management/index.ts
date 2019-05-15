@@ -77,7 +77,8 @@ export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<Ope
     let endTimeSeconds = moment.duration(tsm.end).as('seconds');
 
     // Time segments where the start time or end time is before the reset time go overnight, so add
-    // 24 hours (don't have to worryabout DST here) to the start or end time.
+    // 24 hours (don't have to worry about DST here, since time segments are scheduled on a fxed
+    // 24-hour span) to the start or end time.
     if (startTimeSeconds < resetTimeSeconds) {
       startTimeSeconds += moment.duration('24:00:00').as('seconds');
     }
@@ -149,8 +150,7 @@ function calculateInitialFormState({
     overrideDefault: space.parentId === null ? true : space.timeSegments.length > 0,
     overrideDefaultControlHidden: space.parentId === null,
 
-    // operatingHours: calculateOperatingHoursFromSpace(space, timeSegmentGroups),
-    operatingHours: [],
+    operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels,
   };
 }
