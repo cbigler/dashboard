@@ -216,7 +216,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   // Get all operating hours for all spaces above this one in the hierarchy
   const parentSpace = spaceManagement.spaces.data.find(space => space.id === selectedSpaceParentId);
-  const spaceAncestryIds = [ parentSpace.id, ...parentSpace.ancestry.map(i => i.id) ];
+  const spaceAncestryIds = parentSpace ? [ parentSpace.id, ...parentSpace.ancestry.map(i => i.id) ] : [];
   const spaceAncestrySpaces = spaceAncestryIds.map(id => spaceManagement.spaces.data.find(s => s.id === id));
   const parentOperatingHours = spaceAncestrySpaces.flatMap(s => calculateOperatingHoursFromSpace(s));
 
