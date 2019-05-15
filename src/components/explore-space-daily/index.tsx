@@ -29,9 +29,11 @@ import ErrorBar from '../error-bar/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
+  DEFAULT_TIME_SEGMENT_LABEL,
   findTimeSegmentsInTimeSegmentGroupForSpace,
   parseStartAndEndTimesInTimeSegment,
+  getAllTimeSegmentLabelsForSpace,
+  findTimeSegmentsForTimeSegmentLabel,
 } from '../../helpers/time-segments/index';
 
 class ExploreSpaceDaily extends React.Component<any, any> {
@@ -58,22 +60,18 @@ class ExploreSpaceDaily extends React.Component<any, any> {
     } = this.props;
 
     if (space) {
-      const spaceTimeSegmentGroupArray = [
-        DEFAULT_TIME_SEGMENT_GROUP,
-        ...timeSegmentGroups.data.filter(tsg => {
-          return space.timeSegmentGroups.find(i => i.id === tsg.id);
-        })
+      const spaceTimeSegmentLabelsArray = [
+        DEFAULT_TIME_SEGMENT_LABEL,
+        ...getAllTimeSegmentLabelsForSpace(space),
       ];
 
-      // Which time segment group was selected?
-      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-        return i.id === spaces.filters.timeSegmentGroupId;
-      });
+      // Which time segment label was selected?
+      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
       // And, with the knowlege of the selected space, which time segment within that time segment
-      // group is applicable to this space?
-      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-        selectedTimeSegmentGroup,
+      // label is applicable to this space?
+      const applicableTimeSegments = findTimeSegmentsForTimeSegmentLabel(
+        selectedTimeSegmentLabel,
         space,
       );
 
@@ -101,18 +99,18 @@ class ExploreSpaceDaily extends React.Component<any, any> {
             <InputBox
               type="select"
               className={styles.exploreSpaceDailyTimeSegmentBox}
-              value={selectedTimeSegmentGroup.id}
-              choices={spaceTimeSegmentGroupArray.map(ts => {
-                const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
-                  ts,
+              value={selectedTimeSegmentLabel}
+              choices={spaceTimeSegmentLabelsArray.map(label => {
+                const applicableTimeSegmentsForGroup = findTimeSegmentsForTimeSegmentLabel(
+                  label,
                   space,
                 );
                 if (applicableTimeSegmentsForGroup.length === 1) {
                   const timeSegment = applicableTimeSegmentsForGroup[0];
                   const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
                   return {
-                    id: ts.id,
-                    label: `${ts.name} (${prettyPrintHoursMinutes(
+                    id: label,
+                    label: `${label} (${prettyPrintHoursMinutes(
                       getCurrentLocalTimeAtSpace(space)
                         .startOf('day')
                         .add(startSeconds, 'seconds')
@@ -122,10 +120,12 @@ class ExploreSpaceDaily extends React.Component<any, any> {
                         .add(endSeconds, 'seconds')
                     )})`,
                   };
+                } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                  return { id: label, label: 'Whole Day (12:00 - 11:59p)' }
                 } else {
                   return {
-                    id: ts.id,
-                    label: `${ts.name} (Mixed hours)`
+                    id: label,
+                    label: `${label} (Mixed hours)`
                   };
                 }
               })}
@@ -148,7 +148,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <FootTrafficCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={selectedTimeSegmentGroup}
+                timeSegmentGroup={{name: selectedTimeSegmentLabel}}
                 timeSegments={applicableTimeSegments}
                 chartWidth={this.state.width}
               />
@@ -157,7 +157,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <RawEventsCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={selectedTimeSegmentGroup}
+                timeSegmentGroup={{name: selectedTimeSegmentLabel}}
               />
             </div>
           </div>

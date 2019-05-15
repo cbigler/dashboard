@@ -24,7 +24,7 @@ import {
   formatInISOTimeAtSpace,
 } from '../../helpers/space-time-utilities/index';
 
-import { DEFAULT_TIME_SEGMENT_GROUP } from '../../helpers/time-segments/index';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
@@ -87,7 +87,7 @@ export function calculateFootTraffic(space) {
 
     const {
       date,
-      timeSegmentGroupId,
+      timeSegmentLabel,
     } = getState().spaces.filters
 
     const day = parseISOTimeAtSpace(date, space);
@@ -97,7 +97,7 @@ export function calculateFootTraffic(space) {
       data = (await fetchAllPages(async page => (
         (await core().get(`/spaces/${space.id}/counts`, { params: {
           interval: '5m',
-          time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+          time_segment_groups: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
           order: 'asc',
 
           start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
@@ -110,6 +110,7 @@ export function calculateFootTraffic(space) {
       ))).map(objectSnakeToCamel).reverse();
     } catch (err) {
       dispatch(exploreDataCalculateDataError('footTraffic', `Error fetching count data: ${err}`));
+      return;
     }
 
     if (data.length > 0) {
@@ -130,7 +131,7 @@ export function calculateDailyRawEvents(space) {
     const {
       date,
       dailyRawEventsPage,
-      timeSegmentGroupId,
+      timeSegmentLabel,
     } = getState().spaces.filters;
 
     // Add timezone offset to both start and end times prior to querying for the count.
@@ -141,7 +142,7 @@ export function calculateDailyRawEvents(space) {
       preResponse = await core().get(`/spaces/${space.id}/events`, {params: {
         start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
         end_time: formatInISOTimeAtSpace(day.clone().startOf('day').add(1, 'day'), space),
-        time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+        time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
         page: dailyRawEventsPage,
         page_size: DAILY_RAW_EVENTS_PAGE_SIZE,
         order: 'desc',

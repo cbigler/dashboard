@@ -31,8 +31,10 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
+  DEFAULT_TIME_SEGMENT_LABEL,
   findTimeSegmentsInTimeSegmentGroupForSpace,
+  getAllTimeSegmentLabelsForSpace,
+  findTimeSegmentsForTimeSegmentLabel,
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
@@ -135,7 +137,7 @@ export function calculateDailyMetrics(space) {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
 
     const {
-      timeSegmentGroupId,
+      timeSegmentLabel,
       metricToDisplay,
       startDate,
       endDate,
@@ -143,18 +145,15 @@ export function calculateDailyMetrics(space) {
 
     const allTimeSegmentGroups = getState().timeSegmentGroups.data;
 
-    const spaceTimeSegmentGroups = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...allTimeSegmentGroups.filter(x => space.timeSegmentGroups.find(y => x.id === y.id))
+    const spaceTimeSegmentLabelsArray = [
+      DEFAULT_TIME_SEGMENT_LABEL,
+      ...getAllTimeSegmentLabelsForSpace(space),
     ];
 
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
-
     // And, with the knowlege of the selected space, which time segment within that time segment
-    // group is applicable to this space?
-    const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-      selectedTimeSegmentGroup,
+    // label is applicable to this space?
+    const applicableTimeSegments = findTimeSegmentsForTimeSegmentLabel(
+      timeSegmentLabel,
       space,
     );
 
@@ -174,7 +173,7 @@ export function calculateDailyMetrics(space) {
           interval: '1d',
           order: 'asc',
           page_size: 5000,
-          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
         },
       );
     } catch (error) {
@@ -225,16 +224,8 @@ export function calculateUtilization(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('utilization', null));
 
-    const { startDate, endDate, timeSegmentGroupId } = getState().spaces.filters;
+    const { startDate, endDate, timeSegmentLabel } = getState().spaces.filters;
     const allTimeSegmentGroups = getState().timeSegmentGroups.data;
-
-    const spaceTimeSegmentGroups = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...allTimeSegmentGroups.filter(x => space.timeSegmentGroups.find(y => x.id === y.id))
-    ];
-
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
 
     if (!space.capacity) {
       dispatch(exploreDataCalculateDataComplete('utilization', { requiresCapacity: true }));
@@ -252,7 +243,7 @@ export function calculateUtilization(space) {
 
           start_time: startDate,
           end_time: endDate,
-          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id,
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
 
           interval: '10m',
 

@@ -23,6 +23,7 @@ export const DEFAULT_TIME_SEGMENT_GROUP = {
   ],
 };
 export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+export const DEFAULT_TIME_SEGMENT_LABEL = DEFAULT_TIME_SEGMENT_GROUP.name;
 
 // Calculate which "time segments" within the "time segment group" this space belongs to.
 export function findTimeSegmentsInTimeSegmentGroupForSpace(timeSegmentGroup, space) {
@@ -43,6 +44,19 @@ export function findTimeSegmentsInTimeSegmentGroupForSpace(timeSegmentGroup, spa
   } else {
     throw new Error(`This space doesn't have an applicable time segment within the selected time segment group.`);
   }
+}
+
+export function findTimeSegmentsForTimeSegmentLabel(timeSegmentLabel, space) {
+  if (timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL) {
+    return space.timeSegments;
+  } else {
+    return space.timeSegments.filter(ts => ts.label === timeSegmentLabel);
+  }
+}
+
+export function getAllTimeSegmentLabelsForSpace(space) {
+  const allLabels = space.timeSegments.map(t => t.label);
+  return Array.from(new Set(allLabels));
 }
 
 // Moment only supports parsing dates. So, in order to support handling time ranges, we need to
