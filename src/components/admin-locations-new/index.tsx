@@ -12,9 +12,7 @@ import {
   AdminLocationsFloorForm,
   AdminLocationsSpaceForm,
 } from '../admin-locations-edit/index';
-import {
-  AdminLocationsFormState,
-} from '../../reducers/space-management';
+import { AdminLocationsFormState } from '../../reducers/space-management';
 import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';

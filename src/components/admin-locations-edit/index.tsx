@@ -33,95 +33,7 @@ import {
 
 import updateTimeSegments from '../../actions/space-management/time-segments';
 import { OperatingHoursItem, OperatingHoursLabelItem } from '../../actions/space-management/time-segments';
-
-export function calculateOperatingHoursFromSpace(
-  space: DensitySpace,
-  timeSegmentGroups: Array<DensityTimeSegmentGroup>,
-): Array<OperatingHoursItem> {
-  if (!space.timeSegments) {
-    return [];
-  }
-
-  return space.timeSegments.map(tsm => {
-    const parentTimeSegmentGroup = timeSegmentGroups.find(timeSegmentGroup => {
-      const matchingTimeSegmentGroup = timeSegmentGroup.timeSegments.find(t => t.timeSegmentId === tsm.id);
-      return Boolean(matchingTimeSegmentGroup);
-    });
-
-    const resetTimeSeconds = moment.duration(space.dailyReset).as('seconds');
-    let startTimeSeconds = moment.duration(tsm.start).as('seconds');
-    let endTimeSeconds = moment.duration(tsm.end).as('seconds');
-
-    // Time segments where the start time or end time is before the reset time go overnight, so add
-    // 24 hours (don't have to worryabout DST here) to the start or end time.
-    if (startTimeSeconds < resetTimeSeconds) {
-      startTimeSeconds += moment.duration('24:00:00').as('seconds');
-    }
-    if (endTimeSeconds <= resetTimeSeconds) {
-      endTimeSeconds += moment.duration('24:00:00').as('seconds');
-    }
-
-    return {
-      id: tsm.id,
-      labelId: parentTimeSegmentGroup ? parentTimeSegmentGroup.id : null,
-      startTimeSeconds,
-      endTimeSeconds,
-      daysAffected: tsm.days,
-    };
-  }).sort((a, b) => {
-    return a.startTimeSeconds - b.startTimeSeconds;
-  });
-}
-
-// Given a space and the currently logged in user, return the initial state of eitehr the edit or
-// new form.
-export function calculateInitialFormState(space, user, timeSegmentGroups, spaces): AdminLocationsFormState {
-  /* const spaceAncestryIds = space.ancestry.map(i => i.id); */
-  /* const highestLevelSpaceWithOperatingHoursOverrideDefaultEnabled = spaces.find( */
-  /*   s => spaceAncestryIds.includes(s.id) && space.timeSegments.length === 0 */
-  /* ); */
-  return {
-    loaded: true,
-
-    // General information module
-    name: space.name || '',
-    spaceType: space.spaceType,
-    'function': space['function'] || null,
-    parentId: space.parentId,
-    imageUrl: space.imageUrl,
-
-
-    // Metadata module
-    annualRent: space.annualRent || '',
-    sizeArea: space.sizeArea || '',
-    sizeAreaUnit: space.sizeAreaUnit || user.data.sizeAreaDisplayUnit || SQUARE_FEET,
-    currencyUnit: space.currencyUnit || 'USD',
-    capacity: space.capacity || '',
-    targetCapacity: space.targetCapacity || '',
-    floorLevel: space.floorLevel || '',
-
-
-    // Address module
-    address: space.address || '',
-    coordinates: space.latitude && space.longitude ? (
-      [space.latitude, space.longitude]
-    ) : null,
-
-
-    // Operating hours module
-    timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
-    dailyReset: space.dailyReset || '04:00',
-
-    // Override default is always on and the control is hidden if this is the top level space in the
-    // tree. Otherwise, it's enabled if the space has some of its own time segments
-    overrideDefault: space.parentId === null ? true : space.timeSegments.length > 0,
-    overrideDefaultControlHidden: space.parentId === null,
-
-    operatingHours: calculateOperatingHoursFromSpace(space, timeSegmentGroups),
-    operatingHoursLabels: timeSegmentGroups,
-    operatingHoursLog: [],
-  };
-}
+import { AdminLocationsFormState } from '../../reducers/space-management';
 
 // Given the state of the form, convert that state back into fields that can be sent in the body of
 // a PUT to the space.
@@ -164,35 +76,6 @@ type AdminLocationsEditProps = {
   selectedSpace: DensitySpace,
   onChangeField: (string, any) => any,
   onSave: (spaceId: string, spaceFieldUpdate: any) => any,
-};
-
-export type AdminLocationsFormState = {
-  loaded: boolean,
-
-  name?: string,
-  spaceType?: string,
-  'function'?: string,
-  annualRent?: any,
-  sizeArea?: any,
-  sizeAreaUnit?: 'feet' | 'meters',
-  currencyUnit?: 'USD',
-  capacity?: string,
-  targetCapacity?: string,
-  floorLevel?: string,
-  address?: string,
-  coordinates?: [number, number] | null,
-  timeZone?: string,
-  dailyReset?: string | null,
-  parentId?: string | null,
-  startTime?: number,
-  endTime?: number,
-  operatingHours?: Array<OperatingHoursItem>,
-  operatingHoursLabels?: Array<OperatingHoursLabelItem>,
-  operatingHoursLog?: Array<{ action: string, [key: string]: any }>,
-  overrideDefault?: boolean,
-  overrideDefaultControlHidden?: boolean,
-  imageUrl?: string,
-  newImageFile?: any,
 };
 
 const SPACE_TYPE_TO_NAME = {
