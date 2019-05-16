@@ -246,5 +246,6 @@ export type DensitySpaceHierarchyItem = {
   id: string,
   name: string,
   spaceType: string,
+  hasPerview: boolean,
   children?: Array<DensitySpaceHierarchyItem>,
 };
