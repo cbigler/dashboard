@@ -161,7 +161,7 @@ function formatDuration(duration, format) {
 
 const HOURGLASS_ICON = (
   <svg width="78" height="88" viewBox="0 0 78 88" xmlns="http://www.w3.org/2000/svg">
-      <g id="⌞-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
+      <g id="-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
           <g id="org.locations.level.edit" transform="translate(-459 -1670)">
               <g id="operating-hours" transform="translate(297 1484)">
                   <g id="empty" transform="translate(163 187)">

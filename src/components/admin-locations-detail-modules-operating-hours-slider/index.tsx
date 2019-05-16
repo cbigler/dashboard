@@ -15,6 +15,10 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
   trackWidthInPx: number = 0;
   trackLeftPositionInPx: number = 0;
 
+  start = React.createRef<HTMLDivElement>();
+  end = React.createRef<HTMLDivElement>();
+  track = React.createRef<HTMLDivElement>();
+
   constructor(props) {
     super(props);
 
@@ -36,21 +40,21 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
     if (this.props.disabled) { return; }
 
     // Dragging must be done on the slider control heads
-    if (event.target.id.indexOf('start') === -1 && event.target.id.indexOf('end') === -1) {
+    if (event.target !== this.start.current && event.target !== this.end.current) {
       return;
     }
-    if (event.target.id.indexOf('track') >= 0) {
+    if (event.target.id === this.track.current) {
       return;
     }
 
     // Find the track div that is a parent of the handle
     let track = event.target;
-    while (track && track.id.indexOf('track') === -1) {
+    while (track && track !== this.track.current) {
       track = track.parentElement;
     }
 
     if (track) {
-      this.pressedButton = event.target.id.indexOf('start') >= 0 ? 'start' : 'end';
+      this.pressedButton = event.target === this.start.current ? 'start' : 'end';
 
       const trackBbox = track.getBoundingClientRect();
       this.trackWidthInPx = trackBbox.width;
@@ -91,7 +95,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
       if (timeValueInSec < dayStartTimeSeconds) {
         timeValueInSec = dayStartTimeSeconds;
       }
-      // Limit on the right hand side to (the daily reset time + 24 hours)
+      // Limit on the right hand side to the daily reset time + 24 hours
       if (timeValueInSec > (UTC_DAY_LENGTH_IN_SECONDS + dayStartTimeSeconds)) {
         timeValueInSec = UTC_DAY_LENGTH_IN_SECONDS + dayStartTimeSeconds;
       }
@@ -182,7 +186,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
         onTouchMove={this.onTouchMove}
         onTouchEnd={this.onMouseUp}
       >
-        <div className={styles.operatingHoursSliderTrack} id="track">
+        <div className={styles.operatingHoursSliderTrack} ref={this.track}>
           <div
             className={styles.operatingHoursSliderTrackFilledSection}
             style={{
@@ -192,12 +196,12 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
           />
           <div
             className={styles.operatingHoursSliderHead}
-            id="start"
+            ref={this.start}
             style={{left: `calc(${sliderStartTimePercentage}% - 8px)`}}
           />
           <div
             className={styles.operatingHoursSliderHead}
-            id="end"
+            ref={this.end}
             style={{left: `calc(${sliderEndTimePercentage}% - 8px)`}}
           />
         </div>
