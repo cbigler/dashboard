@@ -53,6 +53,7 @@ const SPACE_FUNCTION_CHOICES = [
 export default function AdminLocationsDetailModule({
   title,
   error=false,
+  includePadding=true,
   actions=null,
   children,
 }) {
@@ -66,15 +67,9 @@ export default function AdminLocationsDetailModule({
           </AppBar>
         </AppBarContext.Provider>
       </div>
-      {children}
-    </div>
-  );
-}
-
-export function AdminLocationsDetailModuleBody({includePadding=true, children}) {
-  return (
-    <div className={classnames(styles.moduleBody, {[styles.padding]: includePadding})}>
-      {children}
+      <div className={classnames(styles.moduleBody, {[styles.padding]: includePadding})}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -294,31 +289,29 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
 
   return (
     <AdminLocationsDetailModule title="General Info">
-      <AdminLocationsDetailModuleBody>
-        <div className={styles.spaceFieldRenderer}>
-          <div className={styles.spaceFieldRendererRow}>
-            <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
-              {inputs}
-            </div>
-            <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
-              <AdminLocationsImageUpload
-                label="Photo"
-                value={formState.newImageData || formState.imageUrl}
-                onChange={async file => {
-                  if (file) {
-                    const result = await fileToDataURI(file);
-                    onChangeField('newImageData', result);
-                    onChangeField('newImageFile', file);
-                  } else {
-                    onChangeField('newImageData', null);
-                    onChangeField('newImageFile', null);
-                  }
-                }}
-              />
-            </div>
+      <div className={styles.spaceFieldRenderer}>
+        <div className={styles.spaceFieldRendererRow}>
+          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
+            {inputs}
+          </div>
+          <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
+            <AdminLocationsImageUpload
+              label="Photo"
+              value={formState.newImageData || formState.imageUrl}
+              onChange={async file => {
+                if (file) {
+                  const result = await fileToDataURI(file);
+                  onChangeField('newImageData', result);
+                  onChangeField('newImageFile', file);
+                } else {
+                  onChangeField('newImageData', null);
+                  onChangeField('newImageFile', null);
+                }
+              }}
+            />
           </div>
         </div>
-      </AdminLocationsDetailModuleBody>
+      </div>
     </AdminLocationsDetailModule>
   );
 }
@@ -632,9 +625,7 @@ export function AdminLocationsDetailModulesMetadata({spaceType, formState, onCha
 
   return (
     <AdminLocationsDetailModule title="Meta" actions={controls}>
-      <AdminLocationsDetailModuleBody>
-        {content}
-      </AdminLocationsDetailModuleBody>
+      {content}
     </AdminLocationsDetailModule>
   );
 }
@@ -648,15 +639,13 @@ export function AdminLocationsDetailModulesAddress({
 }) {
   return (
     <AdminLocationsDetailModule title="Address">
-      <AdminLocationsDetailModuleBody>
-        <AdminLocationsSpaceMap
-          spaceType={spaceType}
-          address={address}
-          onChangeAddress={onChangeAddress}
-          coordinates={coordinates}
-          onChangeCoordinates={onChangeCoordinates}
-        />
-      </AdminLocationsDetailModuleBody>
+      <AdminLocationsSpaceMap
+        spaceType={spaceType}
+        address={address}
+        onChangeAddress={onChangeAddress}
+        coordinates={coordinates}
+        onChangeCoordinates={onChangeCoordinates}
+      />
     </AdminLocationsDetailModule>
   );
 }
@@ -664,19 +653,17 @@ export function AdminLocationsDetailModulesAddress({
 function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
   return (
     <AdminLocationsDetailModule error title="Danger Zone">
-      <AdminLocationsDetailModuleBody>
-        <div className={styles.dangerZoneWrapper}>
-          <div className={styles.dangerZoneLeft}>
-            <h4>Delete this space</h4>
-            <span>Once deleted, it will be gone forever. Please be certain.</span>
-          </div>
-          <div className={styles.dangerZoneRight}>
-            <ButtonContext.Provider value="DELETE_BUTTON">
-              <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
-            </ButtonContext.Provider>
-          </div>
+      <div className={styles.dangerZoneWrapper}>
+        <div className={styles.dangerZoneLeft}>
+          <h4>Delete this space</h4>
+          <span>Once deleted, it will be gone forever. Please be certain.</span>
         </div>
-      </AdminLocationsDetailModuleBody>
+        <div className={styles.dangerZoneRight}>
+          <ButtonContext.Provider value="DELETE_BUTTON">
+            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
+          </ButtonContext.Provider>
+        </div>
+      </div>
     </AdminLocationsDetailModule>
   );
 }
