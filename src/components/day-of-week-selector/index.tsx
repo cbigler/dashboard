@@ -36,6 +36,7 @@ export default function DayOfWeekSelector({ daysOfWeek, disabled=false, onChange
                 onChange(daysOfWeek.filter(day => day !== dayName));
               }
             }}
+            tabIndex={0}
           >
             {dayName[0].toUpperCase()}
           </div>

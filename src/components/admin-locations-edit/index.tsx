@@ -32,8 +32,6 @@ import {
   Icons,
 } from '@density/ui';
 
-import updateTimeSegments from '../../actions/space-management/time-segments';
-import { OperatingHoursItem, OperatingHoursLabelItem } from '../../actions/space-management/time-segments';
 import { AdminLocationsFormState } from '../../reducers/space-management';
 
 // Given the state of the form, convert that state back into fields that can be sent in the body of
@@ -69,6 +67,9 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
     timeZone: formState.timeZone,
 
     newImageFile: formState.newImageFile,
+    operatingHours: formState.operatingHours,
+
+    inheritsTimeSegments: !formState.overrideDefault,
   };
 }
 
@@ -109,7 +110,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
 
       // Operating hours module valid
       formState.timeZone && formState.dailyReset && formState.operatingHours &&
-      formState.operatingHours.filter(i => i.labelId === null).length === 0
+      formState.operatingHours.filter(i => i.label === null).length === 0
     );
   }
 

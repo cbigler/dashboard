@@ -17,7 +17,7 @@ import { DensityUser, DensitySpace } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
-import updateTimeSegments from '../../actions/space-management/time-segments';
+import spaceManagementUpdateFormState from '../../actions/space-management/update-form-state';
 
 import {
   AppFrame,
@@ -179,7 +179,7 @@ export default connect((state: any) => {
       window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
     },
     onChangeField(key, value) {
-      dispatch({ type: 'SPACE_MANAGEMENT_UPDATE_FORM_STATE', key, value });
+      dispatch(spaceManagementUpdateFormState(key, value));
     },
   };
 })(AdminLocationsNewUnconnected);

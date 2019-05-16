@@ -39,6 +39,7 @@ export type DensitySpace = {
     name: string,
   }>,
   sensorsTotal: number,
+  inheritsTimeSegments: boolean,
 };
 
 export type DensitySpaceAncestryItem = {

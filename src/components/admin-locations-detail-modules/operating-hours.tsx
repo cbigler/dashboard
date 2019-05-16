@@ -395,17 +395,17 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     <AppBarSection>
                       <InputBox
                         type="select"
-                        value={operatingHoursItem.labelId}
+                        value={operatingHoursItem.label}
                         disabled={!formState.overrideDefault}
                         onChange={async item => {
                           // When adding a new label, display a prompt to get the user's
                           // information.
                           if (item.id === 'ADD_A_LABEL') {
-                            item = await onClickAddLabel();
+                            const itemName = await onClickAddLabel();
 
                             const existingItemThatMatchesCaseInsensitively = (
                               formState.operatingHoursLabels.find(
-                                i => i.name.toLowerCase() === item.name.toLowerCase()
+                                i => i.name.toLowerCase() === itemName.toLowerCase()
                               )
                             );
                             if (existingItemThatMatchesCaseInsensitively) {
@@ -415,6 +415,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                             } else {
                               // There are no similar labels that have the came content, so make a
                               // new label
+                              item = {id: itemName, name: itemName };
                               onChangeField('operatingHoursLabels', [
                                 ...formState.operatingHoursLabels,
                                 item,
@@ -425,7 +426,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           const operatingHoursCopy = formState.operatingHours.slice();
                           operatingHoursCopy[index] = {
                             ...operatingHoursCopy[index],
-                            labelId: item.id,
+                            label: item.id,
                             operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
                           };
                           onChangeField('operatingHours', operatingHoursCopy);
@@ -443,7 +444,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
                         ]}
                         placeholder="Select a label"
-                        invalid={operatingHoursItem.labelId === null}
+                        invalid={operatingHoursItem.label === null}
                         width={350}
                       />
                     </AppBarSection>
@@ -550,7 +551,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
 
                 const operatingHoursItem = {
-                  labelId: null,
+                  label: null,
                   startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
                   endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
                   daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
@@ -593,10 +594,7 @@ export default connect(
         }));
       }));
 
-      return {
-        id: 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4(),
-        name: newLabelName,
-      };
+      return newLabelName;
     },
     async onConfirmSegmentCanBeDeleted(callback) {
       dispatch<any>(showModal('MODAL_CONFIRM', {

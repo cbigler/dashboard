@@ -32,7 +32,7 @@ const initialState = {
 
 export type OperatingHoursItem = {
   id: string,
-  labelId: string | null,
+  label: string | null,
   startTimeSeconds: number,
   endTimeSeconds: number,
   daysAffected: Array<string>,
@@ -88,7 +88,7 @@ export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<Ope
 
     return {
       id: tsm.id,
-      labelId: null,
+      label: null,
       startTimeSeconds,
       endTimeSeconds,
       daysAffected: tsm.days,
