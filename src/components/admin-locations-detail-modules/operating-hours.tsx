@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode, Component } from 'react';
+import React, { Fragment } from 'react';
 import uuid from 'uuid';
 import moment from 'moment';
 import { connect } from 'react-redux';
