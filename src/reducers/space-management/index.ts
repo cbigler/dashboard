@@ -114,6 +114,7 @@ function calculateInitialFormState({
     spaceType: formSpaceType,
     timeSegments: [],
   };
+  const parentSpace = spaces.data.find(s => s.id === space.parentId);
 
   return {
     // General information module
@@ -142,12 +143,12 @@ function calculateInitialFormState({
 
 
     // Operating hours module
-    timeZone: space.timeZone || moment.tz.guess(), // Guess the time zone
-    dailyReset: space.dailyReset || '04:00',
+    timeZone: space.timeZone || parentSpace.timeZone || moment.tz.guess(), // Guess the time zone
+    dailyReset: space.dailyReset || parentSpace.dailyReset || '04:00',
 
     // Override default is always on and the control is hidden if this is the top level space in the
     // tree. Otherwise, it's enabled if the space has some of its own time segments
-    overrideDefault: space.parentId === null ? true : space.timeSegments.length > 0,
+    overrideDefault: space.parentId === null ? true : (space.inheritsTimeSegments || false),
     overrideDefaultControlHidden: space.parentId === null,
 
     operatingHours: calculateOperatingHoursFromSpace(space),

@@ -161,9 +161,9 @@ export default connect((state: any) => {
     spaceManagement: state.spaceManagement,
 
     // Figure out the type of the new space, and its parent
-    newSpaceType: state.miscellaneous.adminLocationsNewSpaceType,
+    newSpaceType: state.spaceManagement.formSpaceType,
     newSpaceParent: state.spaceManagement.spaces.data.find(
-      space => space.id === state.miscellaneous.adminLocationsNewSpaceParentId
+      space => space.id === state.spaceManagement.formParentSpaceId
     ),
   };
 }, (dispatch: any) => {
