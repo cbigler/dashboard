@@ -43,6 +43,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   activeModal,
   spaceHierarchy,
   spaces,
+  spaceManagement,
   selectedSpaceId,
   user,
 
@@ -85,7 +86,8 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
         <div className={styles.operatingHoursCopyFromSpaceModalContainer}>
           {formattedHierarchy.map(item => {
             const space = spaces.data.find(s => s.id === item.space.id);
-            const spaceDisabled = space ? space.timeSegments.length === 0 : true;
+            const spaceHasNoTimeSegments = space ? space.timeSegments.length === 0 : false;
+            const spaceDisabled = !item.space.hasPurview || spaceHasNoTimeSegments;
             return (
               <div
                 key={item.space.id}
@@ -232,6 +234,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         spaceHierarchy={spaceManagement.spaceHierarchy}
         user={user}
         spaces={spaces}
+        spaceManagement={spaceManagement}
 
         onSubmitModal={spaceId => {
           const space = spaceManagement.spaces.data.find(s => s.id === spaceId);
@@ -253,8 +256,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
           // Only add operating hours labels that aren't alraedy assigned to the space
           getAllTimeSegmentLabelsForSpace(space).forEach(label => {
-            if (!newOperatingHoursLabels.find(l => l.name === label)) {
-              newOperatingHoursLabels.push({ id: label, name: label });
+            if (!newOperatingHoursLabels.includes(label)) {
+              newOperatingHoursLabels.push(label);
             }
           });
 
