@@ -36,18 +36,18 @@ import AdminLocationsDetailModulesOperatingHoursLocal from './operating-hours';
 import { fileToDataURI } from '../../helpers/media-files';
 
 const SPACE_FUNCTION_CHOICES = [
-  {id: null, label: 'No function'},
-	{id: 'breakout', label: 'Breakout'},
-	{id: 'cafe', label: 'Cafe'},
-	{id: 'conference_room', label: 'Conference Room'},
-	{id: 'event_space', label: 'Event Space'},
-	{id: 'gym', label: 'Gym'},
-	{id: 'kitchen', label: 'Kitchen'},
-	{id: 'lounge', label: 'Lounge'},
-	{id: 'meeting_room', label: 'Meeting Room'},
-	{id: 'office', label: 'Office'},
-	{id: 'restroom', label: 'Restroom'},
-	{id: 'theater', label: 'Theater'},
+  {id: null, label: 'No function assigned'},
+  {id: 'breakout', label: 'Breakout'},
+  {id: 'cafe', label: 'Cafe'},
+  {id: 'conference_room', label: 'Conference Room'},
+  {id: 'event_space', label: 'Event Space'},
+  {id: 'gym', label: 'Gym'},
+  {id: 'kitchen', label: 'Kitchen'},
+  {id: 'lounge', label: 'Lounge'},
+  {id: 'meeting_room', label: 'Meeting Room'},
+  {id: 'office', label: 'Office'},
+  {id: 'restroom', label: 'Restroom'},
+  {id: 'theater', label: 'Theater'},
 ];
 
 export default function AdminLocationsDetailModule({
@@ -160,7 +160,7 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
             <InputBox
               type="select"
               id="admin-locations-detail-modules-general-function"
-              placeholder="No function"
+              placeholder="No function assigned"
               value={formState['function']}
               menuMaxHeight={300}
               choices={SPACE_FUNCTION_CHOICES}
@@ -228,7 +228,7 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
               type="select"
               id="admin-locations-detail-modules-general-function"
               menuMaxHeight={300}
-              placeholder="No function"
+              placeholder="No function assigned"
               value={formState['function']}
               choices={SPACE_FUNCTION_CHOICES}
               onChange={e => onChangeField('function', e.id)}
@@ -275,7 +275,7 @@ export function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, on
             <InputBox
               type="select"
               id="admin-locations-detail-modules-general-function"
-              placeholder="No function"
+              placeholder="No function assigned"
               menuMaxHeight={300}
               value={formState['function']}
               choices={SPACE_FUNCTION_CHOICES}
