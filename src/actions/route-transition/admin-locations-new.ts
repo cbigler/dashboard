@@ -1,6 +1,6 @@
 import moment from 'moment';
 import core from '../../client/core';
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
@@ -12,8 +12,27 @@ import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/se
 import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 
 import spaceManagementSetData from '../space-management/set-data';
+import spaceManagementError from '../space-management/error';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW';
+
+async function getHierarchy() {
+  return (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+}
+
+async function getSpaces() {
+  const spacesRaw = await fetchAllPages(async page => (
+    await core().get('/spaces', {params: {page_size: 5000, page}})
+  ).data)
+  return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
+}
+
+async function getLabels() {
+  const labelsRaw = await fetchAllPages(async page => (
+    await core().get('/time_segments/labels', {params: {page_size: 5000, page}})
+  ).data)
+  return labelsRaw.map(i => objectSnakeToCamel<DensityTimeSegmentLabel>(i));
+}
 
 export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpaceType) {
   return async (dispatch, getState) => {
@@ -25,39 +44,19 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       spaceType: newSpaceType,
     });
 
-    // Load a list of all time segment groups, which is required in order to render in the time
-    // segment list.
-    let response;
+    let spaces, hierarchy, labels;
     try {
-      response = await core().get('/time_segment_groups', {params: {page_size: 5000}});
+      [spaces, hierarchy, labels] = await Promise.all([
+        getSpaces(),
+        getHierarchy(),
+        getLabels(),
+      ]);
     } catch (err) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${err.message}`));
-      return;
-    }
-    dispatch(collectionTimeSegmentGroupsSet(response.data.results));
-
-    let hierarchy;
-    try {
-      hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
+      console.error(err);
+      dispatch(spaceManagementError(err));
       return false;
     }
-    dispatch(collectionSpaceHierarchySet(hierarchy));
 
-    let spaces;
-    try {
-      const spacesRaw = await fetchAllPages(async page => (
-        await core().get('/spaces', {params: {page_size: 5000, page}})
-      ).data)
-      spaces = spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
-      return false;
-    }
-    dispatch(collectionSpacesSet(spaces));
-
-    const labels = [];
     dispatch(spaceManagementSetData(spaces, hierarchy, labels));
   };
 }

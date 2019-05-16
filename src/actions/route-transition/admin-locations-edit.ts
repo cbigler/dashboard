@@ -1,10 +1,11 @@
 import moment from 'moment';
 import core from '../../client/core';
-import { DensitySpace, DensityTimeSegmentGroup } from '../../types';
+import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import spaceManagementSetData from '../../actions/space-management/set-data';
+import spaceManagementError from '../../actions/space-management/error';
 
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSet from '../collection/spaces/set';
@@ -14,6 +15,24 @@ import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
 
+async function getHierarchy() {
+  return (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+}
+
+async function getSpaces() {
+  const spacesRaw = await fetchAllPages(async page => (
+    await core().get('/spaces', {params: {page_size: 5000, page}})
+  ).data)
+  return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
+}
+
+async function getLabels() {
+  const labelsRaw = await fetchAllPages(async page => (
+    await core().get('/time_segments/labels', {params: {page_size: 5000, page}})
+  ).data)
+  return labelsRaw.map(i => objectSnakeToCamel<DensityTimeSegmentLabel>(i));
+}
+
 export default function routeTransitionAdminLocationsEdit(spaceId) {
   return async (dispatch, getState) => {
     dispatch({
@@ -22,41 +41,19 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
       setLoading: true,
     });
 
-    let hierarchy;
+    let spaces, hierarchy, labels;
     try {
-      hierarchy = (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
-      return false;
-    }
-    dispatch(collectionSpaceHierarchySet(hierarchy));
-
-    let timeSegmentGroups;
-    try {
-      const timeSegmentGroupsRaw = await fetchAllPages(async page => (
-        await core().get('/time_segment_groups', {params: {page_size: 5000, page}})
-      ).data)
-      timeSegmentGroups = timeSegmentGroupsRaw.map(i => objectSnakeToCamel<DensityTimeSegmentGroup>(i));
+      [spaces, hierarchy, labels] = await Promise.all([
+        getSpaces(),
+        getHierarchy(),
+        getLabels(),
+      ]);
     } catch (err) {
       console.error(err);
-      dispatch(collectionTimeSegmentGroupsError(err));
+      dispatch(spaceManagementError(err));
       return false;
     }
-    dispatch(collectionTimeSegmentGroupsSet(timeSegmentGroups));
 
-    let spaces;
-    try {
-      const spacesRaw = await fetchAllPages(async page => (
-        await core().get('/spaces', {params: {page_size: 5000, page}})
-      ).data)
-      spaces = spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
-    } catch (err) {
-      dispatch(collectionSpacesError(err));
-      return false;
-    }
-    dispatch(collectionSpacesSet(spaces));
-
-    const labels = [];
     dispatch(spaceManagementSetData(spaces, hierarchy, labels));
   };
 }

@@ -17,6 +17,7 @@ import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
 
 import { calculateOperatingHoursFromSpace } from '../../reducers/space-management';
+import { getAllTimeSegmentLabelsForSpace } from '../../helpers/time-segments';
 
 import {
   AppBar,
@@ -251,12 +252,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           const operatingHoursLabels = space.timeSegmentGroups;
           const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
           // Only add operating hours labels that aren't alraedy assigned to the space
-          space.timeSegmentGroups.forEach(tsg => {
-            if (!newOperatingHoursLabels.find(l => l.id === tsg.id)) {
-              newOperatingHoursLabels.push({
-                id: tsg.id,
-                name: tsg.name,
-              });
+          getAllTimeSegmentLabelsForSpace(space).forEach(label => {
+            if (!newOperatingHoursLabels.find(l => l.name === label)) {
+              newOperatingHoursLabels.push({ id: label, name: label });
             }
           });
 
@@ -441,7 +439,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               </span>
                             ),
                           },
-                          ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
+                          ...formState.operatingHoursLabels.map(i => ({ id: i, label: i })),
                         ]}
                         placeholder="Select a label"
                         invalid={operatingHoursItem.label === null}

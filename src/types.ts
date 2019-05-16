@@ -81,6 +81,8 @@ export type DensityTimeSegment = {
   days: Array<string>,
 };
 
+export type DensityTimeSegmentLabel = string;
+
 export type DensityTimeSegmentGroup = {
   id: string,
   name: string,
