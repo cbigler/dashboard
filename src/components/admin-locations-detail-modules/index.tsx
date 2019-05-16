@@ -1,4 +1,4 @@
-import React, { Fragment, ReactNode, Component } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label/index';
@@ -6,17 +6,12 @@ import classnames from 'classnames';
 
 import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
-import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
-
 import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
-import { DensitySpace } from '../../types';
 
 import {
   AppBar,
@@ -26,11 +21,7 @@ import {
   Button,
   ButtonContext,
   InputBox,
-  Icons,
-  Modal,
 } from '@density/ui';
-import colorVariables from '@density/ui/variables/colors.json';
-import ListView, { ListViewColumn } from '../list-view/index';
 
 import AdminLocationsDetailModulesOperatingHoursLocal from './operating-hours';
 import { fileToDataURI } from '../../helpers/media-files';

@@ -1,6 +1,5 @@
-import React, { ReactNode, Fragment, Component } from 'react';
+import React, { Fragment, Component } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
@@ -8,11 +7,8 @@ import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
 import spaceManagementUpdateFormState from '../../actions/space-management/update-form-state';
 
-import { DensitySpace, DensityTimeSegmentGroup } from '../../types';
+import { DensitySpace } from '../../types';
 
-import { SQUARE_FEET } from '../../helpers/convert-unit/index';
-
-import Toaster from '../toaster';
 import {
   AdminLocationsDetailModulesGeneralInfo,
   AdminLocationsDetailModulesMetadata,
