@@ -1,6 +1,6 @@
 import moment from 'moment';
 import core from '../../client/core';
-import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
+import { DensitySpace, DensityTimeSegmentLabel, DensitySpaceHierarchyItem } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
@@ -16,7 +16,9 @@ import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
 
 async function getHierarchy() {
-  return (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+  return (await core().get('/spaces/hierarchy/')).data.map(i => (
+    objectSnakeToCamel<DensitySpaceHierarchyItem>(i)
+  ));
 }
 
 async function getSpaces() {

@@ -64,9 +64,9 @@ describe('spaceManagement', () => {
         id: 'spc_xxx',
         name: 'My Campus',
         spaceType: 'campus',
-        hasPerview: true,
+        hasPurview: true,
         children: [
-          {id: 'spc_xxy', name: 'My Building', hasPerview: true, children: []},
+          {id: 'spc_xxy', name: 'My Building', hasPurview: true, children: []},
         ],
       },
     ];
