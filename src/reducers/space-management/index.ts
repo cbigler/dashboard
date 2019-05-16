@@ -114,7 +114,7 @@ function calculateInitialFormState({
     spaceType: formSpaceType,
     timeSegments: [],
   };
-  const parentSpace = spaces.data.find(s => s.id === space.parentId);
+  const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
   return {
     // General information module
