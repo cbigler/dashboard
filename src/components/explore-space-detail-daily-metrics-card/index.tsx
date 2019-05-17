@@ -59,7 +59,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
       space,
       startDate,
       endDate,
-      timeSegmentGroup,
+      timeSegmentLabel,
 
       onRefresh,
       onChangeMetricToDisplay,
@@ -75,7 +75,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
               Daily Metrics
               <InfoPopup horizontalIconOffset={8}>
                 <p className={styles.exploreSpaceDetailDailyMetricsCardPopupP}>
-                  Visitation metrics for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+                  Visitation metrics for time segment <strong>{timeSegmentLabel}</strong> from{' '}
                   <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
                   <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
                   grouped by day.

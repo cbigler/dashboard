@@ -8,7 +8,10 @@ import 'moment-timezone';
 
 import { ExploreSpaceDetailUtilizationCard } from './index';
 
-import { DEFAULT_TIME_SEGMENT_GROUP, DEFAULT_TIME_SEGMENT } from '../../helpers/time-segments/index';
+import {
+  DEFAULT_TIME_SEGMENT_LABEL,
+  DEFAULT_TIME_SEGMENT,
+} from '../../helpers/time-segments/index';
 
 describe('space utilization card', function() {
 
@@ -24,7 +27,7 @@ describe('space utilization card', function() {
       }}
       startDate="2016-12-25T00:00:00-05:00"
       endDate="2017-01-01T00:00:00-05:00"
-      timeSegmentGroup={DEFAULT_TIME_SEGMENT_GROUP}
+      timeSegmentLabel={DEFAULT_TIME_SEGMENT_LABEL}
       timeSegment={DEFAULT_TIME_SEGMENT}
       chartWidth={900}
       calculatedData={{
@@ -51,7 +54,7 @@ describe('space utilization card', function() {
       }}
       startDate="2016-12-25T00:00:00-05:00"
       endDate="2017-01-01T00:00:00-05:00"
-      timeSegmentGroup={DEFAULT_TIME_SEGMENT_GROUP}
+      timeSegmentLabel={DEFAULT_TIME_SEGMENT_LABEL}
       timeSegment={DEFAULT_TIME_SEGMENT}
       chartWidth={900}
       calculatedData={{

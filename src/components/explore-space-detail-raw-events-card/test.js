@@ -20,7 +20,7 @@ describe('daily raw events card', function() {
         },
       }}
       date="2018-01-01T00:00:00-05:00"
-      timeSegmentGroup={{name: 'My Time segment group'}}
+      timeSegmentLabel={'My Time segment label'}
       calculatedData={{
         state: 'COMPLETE',
         data: {

@@ -69,7 +69,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       space,
       activeModal,
       onChangeSpaceFilter,
-      onChangeTimeSegmentGroup,
+      onChangeTimeSegmentLabel,
       onChangeDateRange,
       resizeCounter,
     } = this.props;
@@ -127,7 +127,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   }
                 })}
                 width={300}
-                onChange={value => onChangeTimeSegmentGroup(space, value.id, spaces.filters)}
+                onChange={value => onChangeTimeSegmentLabel(space, value.id, spaces.filters)}
               />
             </ExploreFilterBarItem>
             <ExploreFilterBarItem label="Date Range">
@@ -209,7 +209,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={{name: selectedTimeSegmentLabel}}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   chartWidth={this.state.width}
                 />
               </div>
@@ -238,7 +238,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={{name: selectedTimeSegmentLabel}}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   timeSegments={applicableTimeSegments}
                   chartWidth={this.state.width}
                 />
@@ -265,7 +265,7 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value, spaceFilters) {
+    onChangeTimeSegmentLabel(space, value, spaceFilters) {
       dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },

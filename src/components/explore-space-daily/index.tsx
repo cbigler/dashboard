@@ -147,7 +147,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <FootTrafficCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={{name: selectedTimeSegmentLabel}}
+                timeSegmentLabel={selectedTimeSegmentLabel}
                 timeSegments={applicableTimeSegments}
                 chartWidth={this.state.width}
               />
@@ -156,7 +156,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <RawEventsCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={{name: selectedTimeSegmentLabel}}
+                timeSegmentLabel={selectedTimeSegmentLabel}
               />
             </div>
           </div>
