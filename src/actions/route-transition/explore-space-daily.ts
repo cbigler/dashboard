@@ -3,8 +3,6 @@ import moment from 'moment';
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesFilter from '../collection/spaces/filter';
-import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
-import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -35,17 +33,6 @@ export default function routeTransitionExploreSpaceDaily(id) {
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_DAILY, id });
-
-    // Load a list of all time segment groups, which is required in order to render in the time
-    // segment list.
-    let response;
-    try {
-      response = await core().get('/time_segment_groups', {params: {page_size: 5000}});
-    } catch (err) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${err.message}`));
-      return;
-    }
-    dispatch(collectionTimeSegmentGroupsSet(response.data.results));
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on

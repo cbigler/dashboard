@@ -25,27 +25,6 @@ export const DEFAULT_TIME_SEGMENT_GROUP = {
 export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
 export const DEFAULT_TIME_SEGMENT_LABEL = DEFAULT_TIME_SEGMENT_GROUP.name;
 
-// Calculate which "time segments" within the "time segment group" this space belongs to.
-export function findTimeSegmentsInTimeSegmentGroupForSpace(timeSegmentGroup, space) {
-  timeSegmentGroup = timeSegmentGroup || DEFAULT_TIME_SEGMENT_GROUP;
-
-  // Calculate a list of time segment ids found in the time segment group
-  const timeSegmentIdsWithinGroup = timeSegmentGroup.timeSegments.map(i => i.timeSegmentId || i.id);
-
-  // Figure out all time segment ids that are both in the time segment group and also in the
-  // space. All spaces belong to the DEFAULT_TIME_SEGMENT_GROUP, which is why it's added manually.
-  const spaceTimeSegments = [...space.timeSegments, DEFAULT_TIME_SEGMENT];
-  const intersection = spaceTimeSegments.filter(
-    i => timeSegmentIdsWithinGroup.indexOf(i.id) !== -1
-  );
-
-  if (intersection.length > 0) {
-    return intersection;
-  } else {
-    throw new Error(`This space doesn't have an applicable time segment within the selected time segment group.`);
-  }
-}
-
 export function findTimeSegmentsForTimeSegmentLabel(timeSegmentLabel, space) {
   if (timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL) {
     return space.timeSegments;

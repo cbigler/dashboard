@@ -87,7 +87,7 @@ function getTimeSegmentLabelForRouteChange(currentSelectedSpace, currentTimeSegm
   let timeSegmentLabel = currentTimeSegmentLabel;
   if (!currentSelectedSpace) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
-  } else if (!(currentSelectedSpace.timeSegmentGroups.map(ts => ts.id).includes(currentTimeSegmentLabel))) {
+  } else if (!(currentSelectedSpace.timeSegments.map(ts => ts.label).includes(currentTimeSegmentLabel))) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
   } else if (currentTimeSegmentLabel == null) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;

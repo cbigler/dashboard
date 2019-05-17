@@ -34,7 +34,7 @@ export type DensitySpace = {
   latitude: number | null,
   longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
-  timeSegmentGroups: Array<{
+  timeSegmentGroups?: Array<{
     id: string,
     name: string,
   }>,

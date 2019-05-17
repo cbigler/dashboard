@@ -21,7 +21,6 @@ const initialState = {
     selected: null,
   },
   spaceHierarchy: {},
-  timeSegmentGroups: [],
   operatingHoursLabels: [],
 
   formParentSpaceId: null,

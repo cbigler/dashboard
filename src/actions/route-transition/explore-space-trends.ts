@@ -3,8 +3,6 @@ import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
-import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
-import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 import collectionSpacesFilter from '../collection/spaces/filter';
 
@@ -31,7 +29,6 @@ import {
 
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
-  getAllTimeSegmentLabelsForSpace,
   findTimeSegmentsForTimeSegmentLabel,
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
@@ -49,23 +46,6 @@ export default function routeTransitionExploreSpaceTrends(id) {
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
-
-    // Load a list of all time segment groups, which is required in order to render in the time
-    // segment list.
-
-    let errorThrown: any = false
-    let response;
-    try {
-      response = await core().get('/time_segment_groups');
-    } catch (err) {
-      errorThrown = err;
-    }
-
-    if (errorThrown) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${errorThrown.message}`));
-    } else {
-      dispatch(collectionTimeSegmentGroupsSet(response.data.results));
-    }
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
