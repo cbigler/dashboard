@@ -97,7 +97,7 @@ export function calculateFootTraffic(space) {
       data = (await fetchAllPages(async page => (
         (await core().get(`/spaces/${space.id}/counts`, { params: {
           interval: '5m',
-          time_segment_groups: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
           order: 'asc',
 
           start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),

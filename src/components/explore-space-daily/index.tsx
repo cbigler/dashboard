@@ -56,7 +56,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
       resizeCounter,
       onChangeSpaceFilter,
       onChangeDate,
-      onChangeTimeSegmentGroup,
+      onChangeTimeSegmentLabel,
     } = this.props;
 
     if (space) {
@@ -130,7 +130,8 @@ class ExploreSpaceDaily extends React.Component<any, any> {
                 }
               })}
               width={300}
-              onChange={value => onChangeTimeSegmentGroup(space, value.id)}
+
+              onChange={value => onChangeTimeSegmentLabel(space, value.id)}
             />
           </ExploreFilterBarItem>
         </ExploreFilterBar>
@@ -183,8 +184,8 @@ export default connect((state: any) => {
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value) {
-      dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
+    onChangeTimeSegmentLabel(space, value) {
+      dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch<any>(calculateDailyModules(space));
     },
