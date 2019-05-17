@@ -27,11 +27,11 @@ async function getSpaces() {
   return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
 }
 
-async function getLabels() {
-  const labelsRaw = await fetchAllPages(async page => (
+async function getLabels(): Promise<Array<DensityTimeSegmentLabel>> {
+  // NOTE: DensityTimeSegmentLabel's aren't objects, so I didn't use objectSnakeToCamel here.
+  return fetchAllPages(async page => (
     await core().get('/time_segments/labels', {params: {page_size: 5000, page}})
-  ).data)
-  return labelsRaw.map(i => objectSnakeToCamel<DensityTimeSegmentLabel>(i));
+  ).data);
 }
 
 export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpaceType) {

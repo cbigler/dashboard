@@ -71,7 +71,7 @@ export type DensityLink = {
 
 export type DensityTimeSegment = {
   id: string,
-  name: string,
+  label: string,
   start: string,
   end: string,
   spaces: Array<{

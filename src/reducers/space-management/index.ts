@@ -88,7 +88,7 @@ export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<Ope
 
     return {
       id: tsm.id,
-      label: null,
+      label: tsm.label,
       startTimeSeconds,
       endTimeSeconds,
       daysAffected: tsm.days,
@@ -152,7 +152,7 @@ function calculateInitialFormState({
     overrideDefaultControlHidden: space.parentId === null,
 
     operatingHours: calculateOperatingHoursFromSpace(space),
-    operatingHoursLabels,
+    operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
   };
 }
 

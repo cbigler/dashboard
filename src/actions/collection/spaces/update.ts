@@ -102,7 +102,7 @@ export default function collectionSpacesUpdate(item) {
       });
       const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
       dispatch(collectionSpacesSet(spaces));
-      return response.data;
+      return spaces;
 
     } catch (err) {
       console.error(err);

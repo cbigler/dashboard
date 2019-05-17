@@ -353,7 +353,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 onChange={choice => {
                   function changeResetTime() {
                     onChangeField('dailyReset', choice.id);
-                    onChangeField('operatingHours', []);
+                    onChangeField(
+                      'operatingHours',
+                      formState.operatingHours.map(i => ({ ...i, operationToPerform: 'DELETE' })),
+                    );
                   }
 
                   // Only propmpt if operating hours entries need to change
@@ -443,7 +446,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               </span>
                             ),
                           },
-                          ...formState.operatingHoursLabels.map(i => ({ id: i, label: i })),
+                          ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
                         ]}
                         placeholder="Select a label"
                         invalid={operatingHoursItem.label === null}
