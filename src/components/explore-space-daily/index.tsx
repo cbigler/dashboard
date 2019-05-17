@@ -30,7 +30,6 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
   parseStartAndEndTimesInTimeSegment,
   getAllTimeSegmentLabelsForSpace,
   findTimeSegmentsForTimeSegmentLabel,
@@ -51,7 +50,6 @@ class ExploreSpaceDaily extends React.Component<any, any> {
     const {
       spaces,
       space,
-      timeSegmentGroups,
       activeModal,
       resizeCounter,
       onChangeSpaceFilter,
@@ -137,7 +135,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
         </ExploreFilterBar>
 
         <ErrorBar
-          message={spaces.error || timeSegmentGroups.error}
+          message={spaces.error}
           modalOpen={activeModal.name !== null}
         />
 
@@ -174,7 +172,6 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    timeSegmentGroups: state.timeSegmentGroups,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };

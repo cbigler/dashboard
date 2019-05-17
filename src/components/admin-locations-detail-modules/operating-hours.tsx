@@ -201,7 +201,6 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
   activeModal,
   selectedSpaceParentId,
-  timeSegmentGroups,
   user,
   spaceManagement,
   spaces,
@@ -252,7 +251,6 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
           // And each set of operating hours has a label that is determined from the associated time
           // segment.
-          const operatingHoursLabels = space.timeSegmentGroups;
           const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
           // Only add operating hours labels that aren't alraedy assigned to the space
           getAllTimeSegmentLabelsForSpace(space).forEach(label => {
@@ -585,7 +583,6 @@ export default connect(
     selectedSpaceParentId: state.spaceManagement.spaces.selected ? (
       state.spaceManagement.spaces.data.find(s => s.id === state.spaceManagement.spaces.selected).parentId
     ) : state.spaceManagement.formParentSpaceId,
-    timeSegmentGroups: state.timeSegmentGroups,
     user: state.user,
   }),
   (dispatch) => ({

@@ -79,7 +79,6 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
       space,
       startDate,
       endDate,
-      timeSegments,
       timeSegmentGroup,
 
       onRefresh,

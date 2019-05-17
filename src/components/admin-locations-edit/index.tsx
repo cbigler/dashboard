@@ -196,7 +196,6 @@ export default connect((state: any) => {
       const ok = await dispatch(collectionSpacesUpdate({
         ...spaceFieldUpdate,
         id: spaceId,
-        timeSegmentGroups: [],
       }));
       if (!ok) {
         dispatch(showToast({ type: 'error', text: 'Error updating space' }));

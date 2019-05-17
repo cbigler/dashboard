@@ -39,7 +39,6 @@ import getCommonRangesForSpace from '../../helpers/common-ranges';
 import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
   parseStartAndEndTimesInTimeSegment,
   getAllTimeSegmentLabelsForSpace,
   findTimeSegmentsForTimeSegmentLabel,
@@ -69,7 +68,6 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       spaces,
       space,
       activeModal,
-      timeSegmentGroups,
       onChangeSpaceFilter,
       onChangeTimeSegmentGroup,
       onChangeDateRange,
@@ -197,7 +195,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         ) : null}
 
         <ErrorBar
-          message={spaces.error || timeSegmentGroups.error}
+          message={spaces.error}
           modalOpen={activeModal.name !== null}
         />
 
@@ -260,7 +258,6 @@ export default connect((state: any) => {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
-    timeSegmentGroups: state.timeSegmentGroups,
     resizeCounter: state.resizeCounter,
   };
 }, dispatch => {

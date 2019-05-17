@@ -24,7 +24,6 @@ import { getGoSlow } from '../../components/environment-switcher';
 import { REPORTS } from '@density/reports';
 
 import {
-  getCurrentLocalTimeAtSpace,
   parseISOTimeAtSpace,
   formatInISOTimeAtSpace,
   requestCountsForLocalRange
@@ -32,7 +31,6 @@ import {
 
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
   getAllTimeSegmentLabelsForSpace,
   findTimeSegmentsForTimeSegmentLabel,
 } from '../../helpers/time-segments/index';
@@ -143,13 +141,6 @@ export function calculateDailyMetrics(space) {
       endDate,
     } = getState().spaces.filters;
 
-    const allTimeSegmentGroups = getState().timeSegmentGroups.data;
-
-    const spaceTimeSegmentLabelsArray = [
-      DEFAULT_TIME_SEGMENT_LABEL,
-      ...getAllTimeSegmentLabelsForSpace(space),
-    ];
-
     // And, with the knowlege of the selected space, which time segment within that time segment
     // label is applicable to this space?
     const applicableTimeSegments = findTimeSegmentsForTimeSegmentLabel(
@@ -225,7 +216,6 @@ export function calculateUtilization(space) {
     dispatch(exploreDataCalculateDataLoading('utilization', null));
 
     const { startDate, endDate, timeSegmentLabel } = getState().spaces.filters;
-    const allTimeSegmentGroups = getState().timeSegmentGroups.data;
 
     if (!space.capacity) {
       dispatch(exploreDataCalculateDataComplete('utilization', { requiresCapacity: true }));

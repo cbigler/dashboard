@@ -19,7 +19,6 @@ import exploreDataCalculateDataComplete from '../../actions/explore-data/calcula
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
 import {
-  getCurrentLocalTimeAtSpace,
   parseISOTimeAtSpace,
   formatInISOTimeAtSpace,
 } from '../../helpers/space-time-utilities/index';

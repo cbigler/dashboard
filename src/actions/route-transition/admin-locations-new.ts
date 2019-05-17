@@ -1,15 +1,8 @@
-import moment from 'moment';
 import core from '../../client/core';
 import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
-
-import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesSet from '../collection/spaces/set';
-import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
-import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 
 import spaceManagementSetData from '../space-management/set-data';
 import spaceManagementError from '../space-management/error';
