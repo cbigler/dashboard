@@ -273,7 +273,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
               }
             />
           </div>
-          <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
+          <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
               label="Target Capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
