@@ -71,6 +71,19 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     );
   }
 
+  isFormComplete = () => {
+    const formState = this.props.spaceManagement.formState;
+    return (
+      formState &&
+      formState.name &&
+
+      // Operating hours module valid
+      formState.timeZone && formState.dailyReset && formState.operatingHours &&
+      formState.operatingHours.filter(i => i.label === null).length === 0
+    );
+  }
+
+
   render() {
     const { spaceManagement, newSpaceType, newSpaceParent } = this.props;
 
@@ -81,77 +94,85 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       space: AdminLocationsSpaceForm,
     }[newSpaceType];
 
-    if (spaceManagement.view === 'ERROR') {
-      return (
-        <div className={styles.centered}>
-          <GenericLoadingState />
-        </div>
-      );
-
-    } else if (spaceManagement.view === 'LOADING_INITIAL') {
-      return (
-        <div className={styles.centered}>
-          <GenericLoadingState />
-        </div>
-      );
-
-    } else {
-      if (!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType)) {
-        return (
-          <AdminLocationsDetailEmptyState
-            text={`
-            A new ${SPACE_TYPE_TO_NAME[newSpaceType].toLowerCase()} cannot be placed within the
-            ${newSpaceParent ?
-              `${SPACE_TYPE_TO_NAME[newSpaceParent.spaceType].toLowerCase()} ${newSpaceParent.name}` :
-              'root'}.`}
-          />
-        );
-      }
-
-      return (
-        <AppFrame>
-          <AppPane>
-            <div className={styles.appBarWrapper}>
-              <AppBar>
-                <AppBarTitle>
-                  <a
-                    role="button"
-                    className={styles.arrow}
-                    href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
-                  >
-                    <Icons.ArrowLeft />
-                  </a>
-                  New {SPACE_TYPE_TO_NAME[newSpaceType]}
-                </AppBarTitle>
-                <AppBarSection>
-                  <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button
-                      disabled={spaceManagement.view.startsWith('LOADING')}
-                      onClick={() => {
-                        window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
-                      }}
-                    >Cancel</Button>
-                  </ButtonContext.Provider>
-                  <Button
-                    type="primary"
-                    onClick={this.onSave}
-                    disabled={spaceManagement.view === 'LOADING'}
-                  >Save</Button>
-                </AppBarSection>
-              </AppBar>
+    return (
+      <AppFrame>
+        <AppPane>
+          {spaceManagement.view === 'ERROR' ? (
+            <div className={styles.centered}>
+              <GenericErrorState />
             </div>
+          ) : null}
 
-            {/* All the space type components take the same props */}
-            <FormComponent
-              spaceType={newSpaceType}
-              formState={this.props.spaceManagement.formState}
-              operationType="CREATE"
-              onChangeField={this.props.onChangeField}
-            />
-          </AppPane>
-        </AppFrame>
-      );
-    }
+          {spaceManagement.view === 'LOADING_INITIAL' ? (
+            <div className={styles.centered}>
+              <GenericLoadingState />
+            </div>
+          ) : null}
+
+          {/* Show when: */}
+          {/* 1. Space and time segment groups have both loaded */}
+          {/* 2. Space is in the process of being updated */}
+          {spaceManagement.view === 'VISIBLE' || spaceManagement.view === 'LOADING_SEND_TO_SERVER' ? (
+            <Fragment>
+              {!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType) ? (
+                <AdminLocationsDetailEmptyState
+                  text={`
+                  A new ${SPACE_TYPE_TO_NAME[newSpaceType].toLowerCase()} cannot be placed within the
+                  ${newSpaceParent ?
+                    `${SPACE_TYPE_TO_NAME[newSpaceParent.spaceType].toLowerCase()} ${newSpaceParent.name}` :
+                    'root'}.`}
+                />
+              ) : null}
+
+              <div className={styles.appBarWrapper}>
+                <AppBar>
+                  <AppBarTitle>
+                    <a
+                      role="button"
+                      className={styles.arrow}
+                      href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
+                    >
+                      <Icons.ArrowLeft />
+                    </a>
+                    New {SPACE_TYPE_TO_NAME[newSpaceType]}
+                  </AppBarTitle>
+                  <AppBarSection>
+                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                      <Button
+                        disabled={spaceManagement.view.startsWith('LOADING')}
+                        onClick={() => {
+                          window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
+                        }}
+                      >Cancel</Button>
+                    </ButtonContext.Provider>
+                    <Button
+                      type="primary"
+                      onClick={this.onSave}
+                      disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
+                    >Save</Button>
+                  </AppBarSection>
+                </AppBar>
+              </div>
+
+              {/* All the space type components take the same props */}
+              {spaceManagement.view === 'VISIBLE' ? (
+                <FormComponent
+                  spaceType={newSpaceType}
+                  formState={this.props.spaceManagement.formState}
+                  operationType="CREATE"
+                  onChangeField={this.props.onChangeField}
+                />
+              ) : (
+                // When loading
+                <div className={styles.centered}>
+                  <GenericLoadingState />
+                </div>
+              )}
+            </Fragment>
+          ) : null}
+        </AppPane>
+      </AppFrame>
+    );
   }
 };
 

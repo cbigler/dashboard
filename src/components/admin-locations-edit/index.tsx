@@ -139,7 +139,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
           {/* Show when: */}
           {/* 1. Space and time segment groups have both loaded */}
           {/* 2. Space is in the process of being updated */}
-          {spaceManagement.view === 'VISIBLE' ? (
+          {spaceManagement.view === 'VISIBLE' || spaceManagement.view === 'LOADING_SEND_TO_SERVER' ? (
             <Fragment>
               <div className={styles.appBarWrapper}>
                 <AppBar>
@@ -171,12 +171,19 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
               </div>
 
               {/* All the space type components take the same props */}
-              <FormComponent
-                spaceType={selectedSpace.spaceType}
-                formState={spaceManagement.formState}
-                operationType="UPDATE"
-                onChangeField={onChangeField}
-              />
+              {spaceManagement.view === 'VISIBLE' ? (
+                <FormComponent
+                  spaceType={selectedSpace.spaceType}
+                  formState={spaceManagement.formState}
+                  operationType="UPDATE"
+                  onChangeField={onChangeField}
+                />
+              ) : (
+                // When loading
+                <div className={styles.centered}>
+                  <GenericLoadingState />
+                </div>
+              )}
             </Fragment>
           ) : null}
         </AppPane>
@@ -186,9 +193,10 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
 }
 
 export default connect((state: any) => {
+  const selectedSpace = state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id);
   return {
     spaceManagement: state.spaceManagement,
-    selectedSpace: state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id),
+    selectedSpace,
   };
 }, (dispatch: any) => {
   return {
