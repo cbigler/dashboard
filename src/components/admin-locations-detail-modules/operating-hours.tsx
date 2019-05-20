@@ -254,8 +254,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
           // Only add operating hours labels that aren't alraedy assigned to the space
           getAllTimeSegmentLabelsForSpace(space).forEach(label => {
-            if (!newOperatingHoursLabels.includes(label)) {
-              newOperatingHoursLabels.push(label);
+            if (!newOperatingHoursLabels.find(i => i.name === label)) {
+              newOperatingHoursLabels.push({id: label, name: label});
             }
           });
 
@@ -416,7 +416,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               // that matches.
                               item = existingItemThatMatchesCaseInsensitively;
                             } else {
-                              // There are no similar labels that have the came content, so make a
+                              // There are no similar labels that have the same content, so make a
                               // new label
                               item = {id: itemName, name: itemName };
                               onChangeField('operatingHoursLabels', [
