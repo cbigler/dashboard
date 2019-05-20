@@ -14,14 +14,14 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
   controls = (
     <AppBarSection>
       Units:
-      <span className={styles.modulesMetadataDropdowns}>
+      <span className={styles.modulesMetadataDropdowns} style={{width: 129}}>
         <InputBox
           type="select"
           choices={[
             {id: SQUARE_FEET, label: 'feet'},
             {id: SQUARE_METERS, label: 'meters'},
           ]}
-          width={138}
+          width={128}
           value={formState.sizeAreaUnit}
           disabled={spaceType === 'floor' || spaceType === 'space'}
           onChange={choice => onChangeField('sizeAreaUnit', choice.id)}
