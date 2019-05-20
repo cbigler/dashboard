@@ -30,7 +30,7 @@ function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShow
 
 export default connect(
   (state: any) => ({
-    selectedSpace: state.spaces.data.find(s => s.id === state.spaces.selected),
+    selectedSpace: state.spaceManagement.spaces.data.find(s => s.id === state.spaces.selected),
   }),
   (dispatch) => ({
     onShowConfirm(space) {
