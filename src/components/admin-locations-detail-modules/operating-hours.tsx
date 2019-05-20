@@ -489,85 +489,89 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   }}
                 />
               </div>
-              <AppBar>
-                <AppBarSection>
-                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
-                    [styles.disabled]: !formState.overrideDefault,
-                  })}>
-                    {formatDuration(
-                      moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
-                      'h:mma',
-                    ).slice(0, -1)}
-                  </div>
-                  <div className={classnames(
-                    styles.operatingHoursTimeRangeBubbleBridge,
-                    { [styles.disabled]: !formState.overrideDefault }
-                  )} />
-                  <div className={classnames(styles.operatingHoursTimeRangeBubble, {
-                    [styles.disabled]: !formState.overrideDefault,
-                  })}>
-                    {formatDuration(
-                      moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
-                      'h:mma',
-                    ).slice(0, -1)}
-                  </div>
-                </AppBarSection>
-                {formState.overrideDefault ? (
+              <AppBarContext.Provider value={formState.overrideDefault ? 'DEFAULT' : 'TRANSPARENT'}>
+                <AppBar>
                   <AppBarSection>
-                    <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
-                      <Button
-                        onClick={async () => {
-                          onConfirmSegmentCanBeDeleted(() => {
-                            const operatingHoursCopy = formState.operatingHours.slice();
-                            if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
-                              // The server has not received the operating hours item yet, so just
-                              // remove it
-                              operatingHoursCopy.splice(index, 1);
-                            } else {
-                              // The server has a copy of the operating hours item, so it must be
-                              // explicitly deleted
-                              operatingHoursCopy[index].operationToPerform = 'DELETE';
-                            }
-                            onChangeField('operatingHours', operatingHoursCopy);
-                          });
-                        }}
-                      >Delete Segment</Button>
-                    </ButtonContext.Provider>
+                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                      [styles.disabled]: !formState.overrideDefault,
+                    })}>
+                      {formatDuration(
+                        moment.duration(operatingHoursItem.startTimeSeconds, 'seconds'),
+                        'h:mma',
+                      ).slice(0, -1)}
+                    </div>
+                    <div className={classnames(
+                      styles.operatingHoursTimeRangeBubbleBridge,
+                      { [styles.disabled]: !formState.overrideDefault }
+                    )} />
+                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                      [styles.disabled]: !formState.overrideDefault,
+                    })}>
+                      {formatDuration(
+                        moment.duration(operatingHoursItem.endTimeSeconds, 'seconds'),
+                        'h:mma',
+                      ).slice(0, -1)}
+                    </div>
                   </AppBarSection>
-                ) : null}
-              </AppBar>
+                  {formState.overrideDefault ? (
+                    <AppBarSection>
+                      <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
+                        <Button
+                          onClick={async () => {
+                            onConfirmSegmentCanBeDeleted(() => {
+                              const operatingHoursCopy = formState.operatingHours.slice();
+                              if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
+                                // The server has not received the operating hours item yet, so just
+                                // remove it
+                                operatingHoursCopy.splice(index, 1);
+                              } else {
+                                // The server has a copy of the operating hours item, so it must be
+                                // explicitly deleted
+                                operatingHoursCopy[index].operationToPerform = 'DELETE';
+                              }
+                              onChangeField('operatingHours', operatingHoursCopy);
+                            });
+                          }}
+                        >Delete Segment</Button>
+                      </ButtonContext.Provider>
+                    </AppBarSection>
+                  ) : null}
+                </AppBar>
+              </AppBarContext.Provider>
             </div>
           );
         })}
 
         {formState.overrideDefault ? (
-          <AppBar>
-            <AppBarSection />
-            <AppBarSection>
-              <div className={styles.operatingHoursCopyFromSpaceButton}>
-                <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
-              </div>
-              <Button type="primary" onClick={() => {
-                // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
-                // the server yet have a unique identifier. This uuid will be discarded after the
-                // time segment is sent to the server and has a real id.
-                const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
+          <AppBarContext.Provider value="TRANSPARENT">
+            <AppBar>
+              <AppBarSection />
+              <AppBarSection>
+                <div className={styles.operatingHoursCopyFromSpaceButton}>
+                  <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
+                </div>
+                <Button type="primary" onClick={() => {
+                  // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
+                  // the server yet have a unique identifier. This uuid will be discarded after the
+                  // time segment is sent to the server and has a real id.
+                  const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
 
-                const operatingHoursItem = {
-                  label: null,
-                  startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
-                  endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
-                  daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                  operationToPerform: 'CREATE',
-                };
+                  const operatingHoursItem = {
+                    label: null,
+                    startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
+                    endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
+                    daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                    operationToPerform: 'CREATE',
+                  };
 
-                onChangeField('operatingHours', [
-                  ...formState.operatingHours,
-                  { ...operatingHoursItem, id },
-                ]);
-              }}>Add a Segment</Button>
-            </AppBarSection>
-          </AppBar>
+                  onChangeField('operatingHours', [
+                    ...formState.operatingHours,
+                    { ...operatingHoursItem, id },
+                  ]);
+                }}>Add a Segment</Button>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
         ) : null}
       </AdminLocationsDetailModule>
     </Fragment>

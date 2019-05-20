@@ -77,7 +77,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
   >
     <div style={{marginTop: -64}}>
       <AppBarContext.Provider value="TRANSPARENT">
-        <AppBar>
+        <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
             <Button onClick={onCloseModal}>Close</Button>

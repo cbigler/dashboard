@@ -14,7 +14,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
   controls = (
     <AppBarSection>
       Units:
-      <span className={styles.modulesMetadataDropdowns} style={{width: 129}}>
+      <span className={styles.modulesMetadataDropdowns} style={{width: 130}}>
         <InputBox
           type="select"
           choices={[
