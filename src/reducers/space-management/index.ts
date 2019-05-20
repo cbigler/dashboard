@@ -4,6 +4,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
 import { DensityUser, DensitySpace } from '../../types';
 
+import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-transition/admin-locations-edit';
 import { USER_SET } from '../../actions/user/set';
@@ -11,6 +12,8 @@ import { USER_PUSH } from '../../actions/user/push';
 import { SPACE_MANAGEMENT_UPDATE_FORM_STATE } from '../../actions/space-management/update-form-state';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
+import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
+import { COLLECTION_SPACES_UPDATE } from '../../actions/collection/spaces/update';
 
 const initialState = {
   view: 'LOADING_INITIAL',
@@ -115,6 +118,13 @@ function calculateInitialFormState({
   };
   const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
+  let overrideDefault = false;
+  if (space.parentId === null) {
+    overrideDefault = true;
+  } else if (typeof space.inheritsTimeSegments === 'boolean') {
+    overrideDefault = !space.inheritsTimeSegments;
+  }
+
   return {
     // General information module
     name: space.name || '',
@@ -147,7 +157,7 @@ function calculateInitialFormState({
 
     // Override default is always on and the control is hidden if this is the top level space in the
     // tree. Otherwise, it's enabled if the space has some of its own time segments
-    overrideDefault: space.parentId === null ? true : (space.inheritsTimeSegments || false),
+    overrideDefault,
     overrideDefaultControlHidden: space.parentId === null,
 
     operatingHours: calculateOperatingHoursFromSpace(space),
@@ -158,20 +168,43 @@ function calculateInitialFormState({
 export default function spaceManagement(state=initialState, action) {
   switch (action.type) {
 
+  case ROUTE_TRANSITION_ADMIN_LOCATIONS:
+    return {
+      ...state,
+      view: 'LOADING_INITIAL',
+      error: null,
+      spaces: { ...state.spaces, selected: null },
+    };
+
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return {
       ...state,
+      view: 'LOADING_INITIAL',
+      error: null,
       formParentSpaceId: action.parentSpaceId,
       formSpaceType: action.spaceType,
+      spaces: { ...state.spaces, selected: null },
     };
 
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT:
     return {
       ...state,
+      view: 'LOADING_INITIAL',
+      error: null,
       spaces: {
         ...state.spaces,
         selected: action.spaceId,
       },
+      formParentSpaceId: null,
+      formSpaceType: null,
+    };
+
+  case COLLECTION_SPACES_CREATE:
+  case COLLECTION_SPACES_UPDATE:
+    return {
+      ...state,
+      view: 'LOADING_SEND_TO_SERVER',
+      error: null,
     };
 
   // Keep a copy of `sizeAreaDisplayUnit` in this reducer as it is needed when calculating the

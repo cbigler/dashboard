@@ -22,6 +22,8 @@ describe('spaceManagement', () => {
     });
     assert.deepStrictEqual(result, {
       ...INITIAL_STATE,
+      view: 'LOADING_INITIAL',
+      error: null,
       formParentSpaceId: 'spc_xxx',
       formSpaceType: 'building',
     });
