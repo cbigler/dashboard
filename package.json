@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@babel/polyfill": "^7.2.5",
+    "@babel/polyfill": "^7.4.4",
     "@density/chart-daily-metrics": "^0.6.0",
     "@density/chart-historical-counts": "^2.0.4",
     "@density/chart-line-chart": "^0.5.2",
