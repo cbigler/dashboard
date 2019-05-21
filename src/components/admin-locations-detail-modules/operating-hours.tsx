@@ -392,84 +392,82 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           if (operatingHoursItem.operationToPerform === 'DELETE') { return; }
           return (
             <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
-              <div className={styles.operatingHoursTimeSegmentItemSection}>
-                <AppBarContext.Provider value="TRANSPARENT">
-                  <AppBar>
-                    <AppBarSection>
-                      <InputBox
-                        type="select"
-                        value={operatingHoursItem.label}
-                        disabled={!formState.overrideDefault}
-                        onChange={async item => {
-                          // When adding a new label, display a prompt to get the user's
-                          // information.
-                          if (item.id === 'ADD_A_LABEL') {
-                            const itemName = await onClickAddLabel();
+              <AppBarContext.Provider value="TRANSPARENT">
+                <AppBar>
+                  <AppBarSection>
+                    <InputBox
+                      type="select"
+                      value={operatingHoursItem.label}
+                      disabled={!formState.overrideDefault}
+                      onChange={async item => {
+                        // When adding a new label, display a prompt to get the user's
+                        // information.
+                        if (item.id === 'ADD_A_LABEL') {
+                          const itemName = await onClickAddLabel();
 
-                            const existingItemThatMatchesCaseInsensitively = (
-                              formState.operatingHoursLabels.find(
-                                i => i.name.toLowerCase() === itemName.toLowerCase()
-                              )
-                            );
-                            if (existingItemThatMatchesCaseInsensitively) {
-                              // Label matches casing, don't add a new label and instead use the one
-                              // that matches.
-                              item = existingItemThatMatchesCaseInsensitively;
-                            } else {
-                              // There are no similar labels that have the same content, so make a
-                              // new label
-                              item = {id: itemName, name: itemName };
-                              onChangeField('operatingHoursLabels', [
-                                ...formState.operatingHoursLabels,
-                                item,
-                              ]);
-                            }
+                          const existingItemThatMatchesCaseInsensitively = (
+                            formState.operatingHoursLabels.find(
+                              i => i.name.toLowerCase() === itemName.toLowerCase()
+                            )
+                          );
+                          if (existingItemThatMatchesCaseInsensitively) {
+                            // Label matches casing, don't add a new label and instead use the one
+                            // that matches.
+                            item = existingItemThatMatchesCaseInsensitively;
+                          } else {
+                            // There are no similar labels that have the same content, so make a
+                            // new label
+                            item = {id: itemName, name: itemName };
+                            onChangeField('operatingHoursLabels', [
+                              ...formState.operatingHoursLabels,
+                              item,
+                            ]);
                           }
+                        }
 
-                          const operatingHoursCopy = formState.operatingHours.slice();
-                          operatingHoursCopy[index] = {
-                            ...operatingHoursCopy[index],
-                            label: item.id,
-                            operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
-                          };
-                          onChangeField('operatingHours', operatingHoursCopy);
-                        }}
-                        choices={[
-                          {
-                            id: 'ADD_A_LABEL',
-                            label: (
-                              <span className={styles.operatingHoursAddLabel}>
-                                <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
-                                <span>Add a label</span>
-                              </span>
-                            ),
-                          },
-                          ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
-                        ]}
-                        placeholder="Select a label"
-                        invalid={operatingHoursItem.label === null}
-                        width={350}
-                      />
-                    </AppBarSection>
-                    <AppBarSection>
-                      <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
-                      <DayOfWeekSelector
-                        daysOfWeek={operatingHoursItem.daysAffected}
-                        disabled={!formState.overrideDefault}
-                        onChange={daysAffected => {
-                          const operatingHoursCopy = formState.operatingHours.slice();
-                          operatingHoursCopy[index] = {
-                            ...operatingHoursCopy[index],
-                            daysAffected,
-                            operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
-                          };
-                          onChangeField('operatingHours', operatingHoursCopy);
-                        }}
-                      />
-                    </AppBarSection>
-                  </AppBar>
-                </AppBarContext.Provider>
-              </div>
+                        const operatingHoursCopy = formState.operatingHours.slice();
+                        operatingHoursCopy[index] = {
+                          ...operatingHoursCopy[index],
+                          label: item.id,
+                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                        };
+                        onChangeField('operatingHours', operatingHoursCopy);
+                      }}
+                      choices={[
+                        {
+                          id: 'ADD_A_LABEL',
+                          label: (
+                            <span className={styles.operatingHoursAddLabel}>
+                              <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
+                              <span>Add a label</span>
+                            </span>
+                          ),
+                        },
+                        ...formState.operatingHoursLabels.map(i => ({ id: i.id, label: i.name })),
+                      ]}
+                      placeholder="Select a label"
+                      invalid={operatingHoursItem.label === null}
+                      width={350}
+                    />
+                  </AppBarSection>
+                  <AppBarSection>
+                    <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
+                    <DayOfWeekSelector
+                      daysOfWeek={operatingHoursItem.daysAffected}
+                      disabled={!formState.overrideDefault}
+                      onChange={daysAffected => {
+                        const operatingHoursCopy = formState.operatingHours.slice();
+                        operatingHoursCopy[index] = {
+                          ...operatingHoursCopy[index],
+                          daysAffected,
+                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                        };
+                        onChangeField('operatingHours', operatingHoursCopy);
+                      }}
+                    />
+                  </AppBarSection>
+                </AppBar>
+              </AppBarContext.Provider>
               <div className={styles.operatingHoursTimeSegmentItemSection}>
                 <AdminLocationsDetailModulesOperatingHoursSlider
                   timeZone={formState.timeZone}
