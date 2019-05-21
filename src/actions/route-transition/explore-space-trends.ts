@@ -29,7 +29,6 @@ import {
 
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
-  findTimeSegmentsForTimeSegmentLabel,
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
@@ -120,13 +119,6 @@ export function calculateDailyMetrics(space) {
       startDate,
       endDate,
     } = getState().spaces.filters;
-
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // label is applicable to this space?
-    const applicableTimeSegments = findTimeSegmentsForTimeSegmentLabel(
-      timeSegmentLabel,
-      space,
-    );
 
     // Add timezone offset to both start and end times prior to querying for the count. Add a day
     // to the end of the range to return a final bar of the data for the uncompleted current day.

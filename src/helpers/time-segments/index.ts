@@ -1,4 +1,5 @@
 import moment from 'moment';
+import spaceHierarchyFormatter from '../space-hierarchy-formatter/index';
 
 // If no time segment group is selected or defined, default to using this one.
 export const DEFAULT_TIME_SEGMENT_GROUP = {
@@ -24,14 +25,6 @@ export const DEFAULT_TIME_SEGMENT_GROUP = {
 };
 export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
 export const DEFAULT_TIME_SEGMENT_LABEL = DEFAULT_TIME_SEGMENT_GROUP.name;
-
-export function findTimeSegmentsForTimeSegmentLabel(timeSegmentLabel, space) {
-  if (timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL) {
-    return space.timeSegments;
-  } else {
-    return space.timeSegments.filter(ts => ts.label === timeSegmentLabel);
-  }
-}
 
 export function getAllTimeSegmentLabelsForSpace(space) {
   const allLabels = space.timeSegments.map(t => t.label);
@@ -67,4 +60,28 @@ export function parseStartAndEndTimesInTimeSegment(timeSegment) {
     throw Error('Utilization time segment must exist!')
   }
   return { startSeconds, endSeconds };
+}
+
+
+export function getShownTimeSegmentsForSpace(space, spaceHierarchy) {
+    if (space.inheritsTimeSegments) {
+    return getParentTimeSegmentsForSpace(space.parentId, spaceHierarchy);
+  } else {
+    return space.timeSegments;
+  }
+}
+
+// Given the parent space id of a space, return an array of all time segments of spaces above it in
+// the hierarchy.
+export function getParentTimeSegmentsForSpace(parentId, spaceHierarchy) {
+  const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
+  const parentOfSpaceInHierarchy = formattedHierarchy.find(i => i.space.id === parentId);
+  if (!parentOfSpaceInHierarchy) {
+    return []; // Parent pace id could not be found
+  }
+  const allSpaces = [
+    parentOfSpaceInHierarchy.space, // Parent space
+    ...parentOfSpaceInHierarchy.ancestry, // Any parents of the parent space
+  ];
+  return allSpaces.flatMap(hierarchyItem => hierarchyItem.timeSegments);
 }

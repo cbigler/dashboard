@@ -32,7 +32,7 @@ import {
   DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
   getAllTimeSegmentLabelsForSpace,
-  findTimeSegmentsForTimeSegmentLabel,
+  getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
 class ExploreSpaceDaily extends React.Component<any, any> {
@@ -50,6 +50,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
     const {
       spaces,
       space,
+      spaceHierarchy,
       activeModal,
       resizeCounter,
       onChangeSpaceFilter,
@@ -58,9 +59,10 @@ class ExploreSpaceDaily extends React.Component<any, any> {
     } = this.props;
 
     if (space) {
+      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
       const spaceTimeSegmentLabelsArray = [
         DEFAULT_TIME_SEGMENT_LABEL,
-        ...getAllTimeSegmentLabelsForSpace(space),
+        ...shownTimeSegments.map(i => i.label),
       ];
 
       // Which time segment label was selected?
@@ -68,10 +70,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
 
       // And, with the knowlege of the selected space, which time segment within that time segment
       // label is applicable to this space?
-      const applicableTimeSegments = findTimeSegmentsForTimeSegmentLabel(
-        selectedTimeSegmentLabel,
-        space,
-      );
+      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
       return <div className={styles.exploreSpaceDailyPage} ref={r => { this.container = r; }}>
         <ExploreFilterBar>
@@ -99,12 +98,8 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               className={styles.exploreSpaceDailyTimeSegmentBox}
               value={selectedTimeSegmentLabel}
               choices={spaceTimeSegmentLabelsArray.map(label => {
-                const applicableTimeSegmentsForGroup = findTimeSegmentsForTimeSegmentLabel(
-                  label,
-                  space,
-                );
-                if (applicableTimeSegmentsForGroup.length === 1) {
-                  const timeSegment = applicableTimeSegmentsForGroup[0];
+                if (applicableTimeSegments.length === 1) {
+                  const timeSegment = applicableTimeSegments[0];
                   const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
                   return {
                     id: label,
@@ -172,6 +167,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
+    spaceHierarchy: state.spaceHierarchy,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };

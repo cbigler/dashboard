@@ -17,7 +17,10 @@ import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
 
 import { calculateOperatingHoursFromSpace } from '../../reducers/space-management';
-import { getAllTimeSegmentLabelsForSpace } from '../../helpers/time-segments';
+import {
+  getParentTimeSegmentsForSpace,
+  getAllTimeSegmentLabelsForSpace,
+} from '../../helpers/time-segments';
 
 import {
   AppBar,
@@ -216,15 +219,15 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 }) {
   const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
 
-  // Get all operating hours for all spaces above this one in the hierarchy
-  const parentSpace = spaceManagement.spaces.data.find(space => space.id === selectedSpaceParentId);
-  const spaceAncestryIds = parentSpace ? [ parentSpace.id, ...parentSpace.ancestry.map(i => i.id) ] : [];
-  const spaceAncestrySpaces = spaceAncestryIds.map(id => spaceManagement.spaces.data.find(s => s.id === id));
-  const parentOperatingHours = spaceAncestrySpaces.flatMap(s => calculateOperatingHoursFromSpace(s));
-
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
-  const shownOperatingHours = (formState.overrideDefault ? formState.operatingHours : parentOperatingHours);
+  const parentOperatingHours = getParentTimeSegmentsForSpace(
+    formState.parentId,
+    spaceManagement.spaceHierarchy,
+  );
+  const shownOperatingHours = formState.overrideDefault ? (
+    formState.operatingHours
+  ) : parentOperatingHours;
 
   return (
     <Fragment>
