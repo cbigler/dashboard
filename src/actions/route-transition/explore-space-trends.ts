@@ -157,13 +157,7 @@ export function calculateDailyMetrics(space) {
       dispatch(exploreDataCalculateDataComplete('dailyMetrics', {
         dataSpaceId: space.id,
         // Return the metric requested within the range of time.
-        metrics: data.filter(i => {
-          // Remove days from the dataset that are not in the time segment
-          const dayOfWeek = parseISOTimeAtSpace(i.timestamp, space).day();
-          return applicableTimeSegments.reduce((acc, ts) => {
-            return [...acc, ...ts.days.map(i => DAY_TO_INDEX[i])];
-          }, []).indexOf(dayOfWeek) !== -1;
-        }).map(i => ({
+        metrics: data.map(i => ({
           timestamp: i.timestamp,
           value: (function(i, metric) {
             switch (metric) {
