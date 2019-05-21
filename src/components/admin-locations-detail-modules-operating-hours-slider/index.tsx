@@ -107,20 +107,23 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
       return secondsBetweenStartAndEndTime < ONE_HOUR_IN_SECONDS;
     }
 
+    let valuesChanged;
     switch (this.pressedButton) {
     case 'start':
       let newStartTime = clampValue(seconds);
       if (testIfValuesOverlap(newStartTime, endTime)) {
         newStartTime = endTime - ONE_HOUR_IN_SECONDS;
       }
-      this.setState({startTime: newStartTime, endTime});
+      valuesChanged = newStartTime !== this.state.startTime || endTime !== this.state.endTime;
+      this.setState({startTime: newStartTime, endTime}, () => valuesChanged && this.callOnChange());
       return;
     case 'end':
       let newEndTime = clampValue(seconds);
       if (testIfValuesOverlap(startTime, newEndTime)) {
         newEndTime = startTime + ONE_HOUR_IN_SECONDS;
       }
-      this.setState({startTime, endTime: newEndTime});
+      valuesChanged = startTime !== this.state.startTime || newEndTime !== this.state.endTime;
+      this.setState({startTime, endTime: newEndTime}, () => valuesChanged && this.callOnChange());
       return;
     default:
       return;
@@ -138,8 +141,11 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
     window.removeEventListener('mouseup', this.onMouseUp);
 
     this.pressedButton = null;
-    this.props.onChange(this.state.startTime, this.state.endTime);
   }
+
+  callOnChange = () => {
+    this.props.onChange(this.state.startTime, this.state.endTime);
+  };
 
   shouldRenderHourMark(value) {
     const valueHour = parseInt(value.hourOnlyDisplay.split(':')[0], 10);
