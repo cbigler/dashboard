@@ -248,5 +248,6 @@ export type DensitySpaceHierarchyItem = {
   spaceType: string,
   hasPurview: boolean,
   timeSegments: Array<DensityTimeSegment>,
+  dailyReset: string,
   children?: Array<DensitySpaceHierarchyItem>,
 };

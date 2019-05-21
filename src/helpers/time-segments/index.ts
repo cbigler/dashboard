@@ -1,5 +1,6 @@
 import moment from 'moment';
 import spaceHierarchyFormatter from '../space-hierarchy-formatter/index';
+import { DensityTimeSegment } from '../../types';
 
 // If no time segment group is selected or defined, default to using this one.
 export const DEFAULT_TIME_SEGMENT_GROUP = {
@@ -26,7 +27,7 @@ export const DEFAULT_TIME_SEGMENT_GROUP = {
 export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
 export const DEFAULT_TIME_SEGMENT_LABEL = DEFAULT_TIME_SEGMENT_GROUP.name;
 
-export function getAllTimeSegmentLabelsForSpace(space) {
+export function getAllTimeSegmentLabelsForSpace(space: {timeSegments: Array<DensityTimeSegment>}) {
   const allLabels = space.timeSegments.map(t => t.label);
   return Array.from(new Set(allLabels));
 }

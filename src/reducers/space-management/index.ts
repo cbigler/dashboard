@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
-import { DensityUser, DensitySpace } from '../../types';
+import { DensityUser, DensityTimeSegment, DensitySpace } from '../../types';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
@@ -68,7 +68,9 @@ export type AdminLocationsFormState = {
   newImageFile?: any,
 };
 
-export function calculateOperatingHoursFromSpace(space: DensitySpace): Array<OperatingHoursItem> {
+export function calculateOperatingHoursFromSpace(
+  space: {dailyReset: string, timeSegments: Array<DensityTimeSegment>},
+): Array<OperatingHoursItem> {
   if (!space.timeSegments) {
     return [];
   }

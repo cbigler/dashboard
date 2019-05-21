@@ -221,10 +221,13 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
-  const parentOperatingHours = getParentTimeSegmentsForSpace(
-    formState.parentId,
-    spaceManagement.spaceHierarchy,
-  );
+  const parentOperatingHours = calculateOperatingHoursFromSpace({
+    dailyReset: formState.dailyReset,
+    timeSegments: getParentTimeSegmentsForSpace(
+      formState.parentId,
+      spaceManagement.spaceHierarchy,
+    ),
+  });
   const shownOperatingHours = formState.overrideDefault ? (
     formState.operatingHours
   ) : parentOperatingHours;
@@ -239,14 +242,16 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         spaceManagement={spaceManagement}
 
         onSubmitModal={spaceId => {
-          const space = spaceManagement.spaces.data.find(s => s.id === spaceId);
+          const hierarchyEntry = spaceHierarchyFormatter(spaceManagement.spaceHierarchy)
+            .find(s => s.space.id === spaceId);
+          if (!hierarchyEntry) { return; }
 
           // Each time segment on the space becomes an entry in the operating hours structure
           const newOperatingHours = [
             ...formState.operatingHours.slice(),
             ...(
               // Ensure that there aren't duplicate segments
-              calculateOperatingHoursFromSpace(space)
+              calculateOperatingHoursFromSpace(hierarchyEntry.space)
                 .filter(oh => !formState.operatingHours.find(i => i.id === oh.id))
                 .map(oh => ({ ...oh, operationToPerform: 'CREATE' }))
             ),
@@ -256,7 +261,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           // segment.
           const newOperatingHoursLabels = formState.operatingHoursLabels.slice();
           // Only add operating hours labels that aren't alraedy assigned to the space
-          getAllTimeSegmentLabelsForSpace(space).forEach(label => {
+          getAllTimeSegmentLabelsForSpace(hierarchyEntry.space).forEach(label => {
             if (!newOperatingHoursLabels.find(i => i.name === label)) {
               newOperatingHoursLabels.push({id: label, name: label});
             }
