@@ -42,7 +42,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
 
       date,
       timeSegments,
-      timeSegmentGroup,
+      timeSegmentLabel,
       calculatedData,
       chartWidth,
 
@@ -137,7 +137,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
             <InfoPopup horizontalIconOffset={8}>
               <p className={styles.exploreSpaceDetailFootTrafficCardPopupP}>
                 Count over time on <strong>{moment.utc(date).tz(space.timeZone).format('MMMM D, YYYY')}</strong>{' '}
-                during the time segment <strong>{timeSegmentGroup.name}</strong>,{' '}
+                during the time segment <strong>{timeSegmentLabel}</strong>,{' '}
                 queried in 5 minute intervals.
               </p>
 

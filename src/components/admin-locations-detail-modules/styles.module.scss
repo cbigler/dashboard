@@ -9,11 +9,11 @@
   border: 1px solid $grayLight;
   border-radius: $borderRadiusBase;
 }
-.moduleBody {
+.moduleError { border-color: $brandDanger; }
+.moduleBody.padding {
   padding: 24px;
   padding-top: 18px;
 }
-.moduleError { border-color: $brandDanger; }
 
 .moduleFormFieldHalfWidth {
   width: 171px;
@@ -74,11 +74,6 @@
 
 
 
-
-.operatingHoursWrapper {
-  display: flex;
-  justify-content: space-between;
-}
 .operatingHoursLeft {
   display: flex;
   align-items: center;
@@ -89,3 +84,160 @@
   align-items: center;
 }
 .operatingHoursRight label { margin-right: 8px; }
+
+
+.operatingHoursOverrideDefaultLabel {
+  margin-right: 16px;
+  font-size: $fontSizeBase;
+  transform: translate(0px, -2px);
+}
+
+
+.operatingHoursTimeSegmentItem {
+  background-color: $grayLightest;
+  position: relative;
+}
+.operatingHoursTimeSegmentsItemInvalid {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: $brandDanger;
+  font-weight: bold;
+}
+
+.operatingHoursTimeSegmentItemSection {
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.operatingHoursTimeRangeBubble {
+  height: 24px;
+  width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $brandPrimary;
+  border-radius: $borderRadiusBase;
+  font-size: 14px;
+  color: #fff;
+}
+.operatingHoursTimeRangeBubble.disabled { background-color: $grayDarker; }
+.operatingHoursTimeRangeBubbleBridge {
+  height: 4px;
+  width: 10px;
+  background-color: $brandPrimary;
+}
+.operatingHoursTimeRangeBubbleBridge.disabled { background-color: $grayDarker; }
+
+
+.operatingHoursAddLabel {
+  display: flex;
+  align-items: center;
+  color: $brandPrimary;
+  font-weight: bold;
+  font-size: 14px;
+}
+.operatingHoursAddLabel > span { margin-left: 8px; }
+
+.operatingHoursDayOfWeekLabel {
+  margin-right: 16px;
+  color: $grayDarkest;
+}
+
+.operatingHoursCopyFromSpaceButton {
+  margin-right: 8px;
+}
+
+.operatingHoursCopyFromSpaceModalSearchBar {
+  background-color: $grayLightest;
+}
+.operatingHoursCopyFromSpaceModalContainer {
+  overflow-y: auto;
+  height: calc(100% - 64px - 64px - 64px);
+  background-color: #FEFEFE;
+}
+.operatingHoursCopyFromSpaceModalItem {
+  display: flex;
+  align-items: center;
+  font-size: $fontSizeBase;
+  height: 40px;
+  padding-left: 24px;
+  padding-right: 24px;
+  cursor: pointer;
+  user-select: none;
+}
+.operatingHoursCopyFromSpaceModalItem.depth0 { border-top: 1px solid $gray; }
+.operatingHoursCopyFromSpaceModalItem.depth0:first-child { border-top-width: 0px; }
+.operatingHoursCopyFromSpaceModalItem.disabled { cursor: default; }
+
+.operatingHoursCopyFromSpaceModalItemIcon { margin-left: 8px; }
+
+.operatingHoursCopyFromSpaceModalItemName {
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.operatingHoursCopyFromSpaceModalItemName.bold { font-weight: bold; }
+.operatingHoursCopyFromSpaceModalItemName.disabled {
+  color: $grayDark;
+}
+
+.operatingHoursResetTimeChoiceWrapper {
+  display: flex;
+  align-items: center;
+}
+.operatingHoursResetTimeIconWrapper {
+  margin-right: 16px;
+  transform: translate(0, 1px);
+}
+
+.operatingHoursEmptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 200px;
+  border-bottom: 1px solid $gray;
+}
+.operatingHoursEmptyStateInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.operatingHoursEmptyStateInnerLeft {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 76px;
+  margin-right: 42px;
+  height: 100px;
+}
+.operatingHoursEmptyStateInnerRight {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100px;
+}
+.operatingHoursEmptyStateInnerRight h3 {
+  font-weight: normal;
+  font-size: 18px;
+  color: $grayDarkest;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}
+.operatingHoursEmptyStateInnerRight p {
+  font-size: 14px;
+  color: $grayDarker;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}

@@ -1,41 +1,55 @@
-import moment from 'moment';
 import core from '../../client/core';
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
-import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesPush from '../collection/spaces/push';
-import setNewSpaceType from '../miscellaneous/set-new-space-type';
-import setNewSpaceParentId from '../miscellaneous/set-new-space-parent-id';
+import spaceManagementSetData from '../space-management/set-data';
+import spaceManagementError from '../space-management/error';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW';
 
+async function getHierarchy() {
+  return (await core().get('/spaces/hierarchy/')).data.map(objectSnakeToCamel);
+}
+
+async function getSpaces() {
+  const spacesRaw = await fetchAllPages(async page => (
+    await core().get('/spaces', {params: {page_size: 5000, page}})
+  ).data)
+  return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
+}
+
+async function getLabels(): Promise<Array<DensityTimeSegmentLabel>> {
+  // NOTE: DensityTimeSegmentLabel's aren't objects, so I didn't use objectSnakeToCamel here.
+  return fetchAllPages(async page => (
+    await core().get('/time_segments/labels', {params: {page_size: 5000, page}})
+  ).data);
+}
+
 export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpaceType) {
   return async (dispatch, getState) => {
-    const space = parentSpaceId && getState().spaces.data.find(space => space.id === parentSpaceId);
-
-    // Store the new space type and space parent somewhere so we can access it in the component later.
-    dispatch(setNewSpaceType(newSpaceType));
-    dispatch(setNewSpaceParentId(parentSpaceId));
-
     dispatch({
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW,
       spaceId: parentSpaceId,
-      setLoading: parentSpaceId && !space,
+      setLoading: true,
+      parentSpaceId,
+      spaceType: newSpaceType,
     });
 
-    if (!space && parentSpaceId) {
-      let space;
-      try {
-        const response = await core().get(`/spaces/${parentSpaceId}`);
-        space = objectSnakeToCamel<DensitySpace>(response.data);
-      } catch (err) {
-        dispatch(collectionSpacesError(err));
-        return false;
-      }
-
-      dispatch(collectionSpacesPush(space));
+    let spaces, hierarchy, labels;
+    try {
+      [spaces, hierarchy, labels] = await Promise.all([
+        getSpaces(),
+        getHierarchy(),
+        getLabels(),
+      ]);
+    } catch (err) {
+      console.error(err);
+      dispatch(spaceManagementError(err));
+      return false;
     }
+
+    dispatch(spaceManagementSetData(spaces, hierarchy, labels));
   };
 }

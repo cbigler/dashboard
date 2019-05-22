@@ -1,9 +1,14 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
 
 .dashboardModalConfirm {
   display: flex;
   flex-direction: column;
 }
-.dashboardModalConfirmContent {
-  padding: 32px;
+.dashboardModalConfirmContent { padding: 32px; }
+
+.dashboardModalPromptContent { padding: 32px; }
+.dashboardModalPromptLabel {
+  padding-bottom: 16px;
+  font-size: $fontSizeBase;
 }

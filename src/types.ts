@@ -34,11 +34,12 @@ export type DensitySpace = {
   latitude: number | null,
   longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
-  timeSegmentGroups: Array<{
+  timeSegmentGroups?: Array<{
     id: string,
     name: string,
   }>,
   sensorsTotal: number,
+  inheritsTimeSegments: boolean,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -70,7 +71,7 @@ export type DensityLink = {
 
 export type DensityTimeSegment = {
   id: string,
-  name: string,
+  label: string,
   start: string,
   end: string,
   spaces: Array<{
@@ -79,6 +80,8 @@ export type DensityTimeSegment = {
   }>,
   days: Array<string>,
 };
+
+export type DensityTimeSegmentLabel = string;
 
 export type DensityTimeSegmentGroup = {
   id: string,
@@ -238,3 +241,13 @@ export type DensityReportOptions = {
   slow: boolean; // A flag representing if the report calculations should run specifying the "?slow=true" flag, which bypasses the new reporting database.
 }
 export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;
+
+export type DensitySpaceHierarchyItem = {
+  id: string,
+  name: string,
+  spaceType: string,
+  hasPurview: boolean,
+  timeSegments: Array<DensityTimeSegment>,
+  dailyReset: string,
+  children?: Array<DensitySpaceHierarchyItem>,
+};

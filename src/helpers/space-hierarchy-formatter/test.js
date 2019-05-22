@@ -1,84 +1,57 @@
 import assert from 'assert';
-import { spaceHierarchyFormatter } from './index';
+import spaceHierarchyFormatter from './index';
 
 describe('space-hierarchy-formatter', function() {
-  it('should come up with a hierarchy given a list of spaces', function() {
-    const spaces = [
-      {name: 'Food', id: 0, parentId: null, spaceType: 'building'},
-        {name: 'Pickled things', id: 1, parentId: 0, spaceType: 'floor'},
-          {name: 'Pickles', id: 2, parentId: 1, spaceType: 'space'},
-          {name: 'Sauerkraut', id: 3, parentId: 1, spaceType: 'space'},
-          {name: 'Relish', id: 4, parentId: 1, spaceType: 'space'},
-        {name: 'Fruits', id: 5, parentId: 0, spaceType: 'floor'},
-          {name: 'Apples', id: 6, parentId: 5, spaceType: 'space'},
-            {name: 'Macintosh', id: 7, parentId: 6, spaceType: 'space'},
-            {name: 'Granny Smith', id: 8, parentId: 6, spaceType: 'space'},
-            {name: 'Gala', id: 9, parentId: 6, spaceType: 'space'},
-          {name: 'Bananas', id: 10, parentId: 5, spaceType: 'space'},
-          {name: 'Peaches', id: 11, parentId: 5, spaceType: 'space'},
-        {name: 'Calamari', id: 12, parentId: 0, spaceType: 'floor'},
+  it('should come up with a hierarchy with depths given the response from the hierarchy endpoint', function() {
+    const hierarchy = [
+      {
+        name: 'Food',
+        id: 0,
+        spaceType: 'building',
+        children: [
+          {
+            name: 'Pickled things',
+            id: 1,
+            spaceType: 'floor',
+            children: [
+              {name: 'Pickles', id: 2, spaceType: 'space'},
+              {name: 'Sauerkraut', id: 3, spaceType: 'space'},
+              {name: 'Relish', id: 4, spaceType: 'space'},
+            ],
+          },
+          {
+            name: 'Fruits',
+            id: 5,
+            spaceType: 'floor',
+            children: [
+              {
+                name: 'Apples',
+                id: 6,
+                spaceType: 'space',
+                children: [
+                  {name: 'Macintosh', id: 7, spaceType: 'space'},
+                  {name: 'Granny Smith', id: 8, spaceType: 'space'},
+                  {name: 'Gala', id: 9, spaceType: 'space'},
+                ],
+              },
+              {name: 'Bananas', id: 10, spaceType: 'space'},
+              {name: 'Peaches', id: 11, spaceType: 'space'},
+            ],
+          },
+          {name: 'Calamari', id: 12, spaceType: 'floor'},
+        ],
+      },
     ];
+    const items = spaceHierarchyFormatter(hierarchy);
 
-    const items = spaceHierarchyFormatter(spaces);
+    assert.equal(items[0].depth, 0);
+    assert.equal(items[0].space.name, 'Food');
+    assert.equal(items[0].children.length, 12);
+    assert.equal(items[0].ancestry.length, 0);
 
-    // Ensure the return value of `calculateItemRenderOrder` is what is expected
-    assert.deepEqual(items, [
-      {
-        depth: 0,
-        space: {
-          id: 'zerocampuses',
-          disabled: true,
-          name: 'Campus',
-          spaceType: 'campus',
-        },
-      },
-
-      { depth: 0, space: { name: 'Food', spaceType: 'building', id: 0, parentId: null } },
-      { depth: 1, space: { name: 'Pickled things', spaceType: 'floor', id: 1, parentId: 0 } },
-      { depth: 2, space: { name: 'Pickles', spaceType: 'space', id: 2, parentId: 1 } },
-      { depth: 2, space: { name: 'Sauerkraut', spaceType: 'space', id: 3, parentId: 1 } },
-      { depth: 2, space: { name: 'Relish', id: 4, spaceType: 'space', parentId: 1 } },
-      { depth: 1, space: { name: 'Fruits', id: 5, spaceType: 'floor', parentId: 0 } },
-      { depth: 2, space: { name: 'Apples', id: 6, spaceType: 'space', parentId: 5 } },
-      { depth: 3, space: { name: 'Macintosh', id: 7, spaceType: 'space', parentId: 6 } },
-      { depth: 3, space: { name: 'Granny Smith', id: 8, spaceType: 'space', parentId: 6 } },
-      { depth: 3, space: { name: 'Gala', id: 9, spaceType: 'space', parentId: 6 } },
-      { depth: 2, space: { name: 'Bananas', id: 10, spaceType: 'space', parentId: 5 } },
-      { depth: 2, space: { name: 'Peaches', id: 11, spaceType: 'space', parentId: 5 } },
-      { depth: 1, space: { name: 'Calamari', id: 12, spaceType: 'floor', parentId: 0 } },
-    ]);
-  });
-  it('should render the zero items when there are no campuses, buildings, or floors', function() {
-    // Ensure the return value of `calculateItemRenderOrder` is what is expected
-    const items = spaceHierarchyFormatter([]);
-    assert.deepEqual(items, [
-      {
-        depth: 0,
-        space: {
-          id: 'zerocampuses',
-          disabled: true,
-          name: 'Campus',
-          spaceType: 'campus',
-        },
-      },
-      {
-        depth: 0,
-        space: {
-          id: 'zerobuildings',
-          disabled: true,
-          name: 'Building',
-          spaceType: 'building',
-        },
-      },
-      {
-        depth: 0,
-        space: {
-          id: 'zerofloors',
-          disabled: true,
-          name: 'Floor',
-          spaceType: 'floor',
-        },
-      },
-    ]);
+    assert.equal(items[3].depth, 2);
+    assert.equal(items[3].space.name, 'Sauerkraut');
+    assert.equal(items[3].children.length, 0);
+    assert.equal(items[3].ancestry.length, 2);
   });
 });

@@ -22,7 +22,6 @@ import {
   Icons,
   Modal,
 } from '@density/ui';
-import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
@@ -78,7 +77,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
   >
     <div style={{marginTop: -64}}>
       <AppBarContext.Provider value="TRANSPARENT">
-        <AppBar>
+        <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
             <Button onClick={onCloseModal}>Close</Button>
@@ -223,8 +222,6 @@ export function Dashboard({
           onCloseModal={onCloseModal}
         />
       ) : null}
-
-      <Toaster />
 
       {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
         <DashboardDigestManagementModal

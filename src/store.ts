@@ -19,7 +19,6 @@ import impersonate from './reducers/impersonate/index';
 import sensors from './reducers/sensors/index';
 import webhooks from './reducers/webhooks/index';
 import eventPusherStatus from './reducers/event-pusher-status/index';
-import timeSegmentGroups from './reducers/time-segment-groups/index';
 import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
@@ -27,6 +26,7 @@ import users from './reducers/users/index';
 import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
 import integrations from './reducers/integrations/index';
+import spaceManagement from './reducers/space-management/index';
 const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
@@ -44,7 +44,6 @@ const reducer = combineReducers({
   impersonate,
   webhooks,
   eventPusherStatus,
-  timeSegmentGroups,
   dashboards,
   exploreData,
   resizeCounter,
@@ -52,6 +51,7 @@ const reducer = combineReducers({
   digestSchedules,
   miscellaneous,
   integrations,
+  spaceManagement,
 });
 
 // Create our redux store for storing the application state.

@@ -3,8 +3,6 @@ import moment from 'moment';
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesFilter from '../collection/spaces/filter';
-import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
-import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -19,12 +17,11 @@ import exploreDataCalculateDataComplete from '../../actions/explore-data/calcula
 import exploreDataCalculateDataError from '../../actions/explore-data/calculate-data-error';
 
 import {
-  getCurrentLocalTimeAtSpace,
   parseISOTimeAtSpace,
   formatInISOTimeAtSpace,
 } from '../../helpers/space-time-utilities/index';
 
-import { DEFAULT_TIME_SEGMENT_GROUP } from '../../helpers/time-segments/index';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
@@ -36,17 +33,6 @@ export default function routeTransitionExploreSpaceDaily(id) {
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_DAILY, id });
-
-    // Load a list of all time segment groups, which is required in order to render in the time
-    // segment list.
-    let response;
-    try {
-      response = await core().get('/time_segment_groups', {params: {page_size: 5000}});
-    } catch (err) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${err.message}`));
-      return;
-    }
-    dispatch(collectionTimeSegmentGroupsSet(response.data.results));
 
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
@@ -87,7 +73,7 @@ export function calculateFootTraffic(space) {
 
     const {
       date,
-      timeSegmentGroupId,
+      timeSegmentLabel,
     } = getState().spaces.filters
 
     const day = parseISOTimeAtSpace(date, space);
@@ -97,7 +83,7 @@ export function calculateFootTraffic(space) {
       data = (await fetchAllPages(async page => (
         (await core().get(`/spaces/${space.id}/counts`, { params: {
           interval: '5m',
-          time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
           order: 'asc',
 
           start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
@@ -110,6 +96,7 @@ export function calculateFootTraffic(space) {
       ))).map(objectSnakeToCamel).reverse();
     } catch (err) {
       dispatch(exploreDataCalculateDataError('footTraffic', `Error fetching count data: ${err}`));
+      return;
     }
 
     if (data.length > 0) {
@@ -130,7 +117,7 @@ export function calculateDailyRawEvents(space) {
     const {
       date,
       dailyRawEventsPage,
-      timeSegmentGroupId,
+      timeSegmentLabel,
     } = getState().spaces.filters;
 
     // Add timezone offset to both start and end times prior to querying for the count.
@@ -141,7 +128,7 @@ export function calculateDailyRawEvents(space) {
       preResponse = await core().get(`/spaces/${space.id}/events`, {params: {
         start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
         end_time: formatInISOTimeAtSpace(day.clone().startOf('day').add(1, 'day'), space),
-        time_segment_groups: timeSegmentGroupId === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : timeSegmentGroupId,
+        time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
         page: dailyRawEventsPage,
         page_size: DAILY_RAW_EVENTS_PAGE_SIZE,
         order: 'desc',

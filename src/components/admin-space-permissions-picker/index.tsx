@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
-import spaceHierarchyFormatterNew from '../../helpers/space-hierarchy-formatter/index';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -15,35 +15,9 @@ import {
   Skeleton,
 } from '@density/ui';
 
-import { getChildrenOfSpace, getParentsOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
+import { getChildrenOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
+import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 import deduplicate from '../../helpers/deduplicate';
-import fuzzy from 'fuzzy';
-
-function searchHierarchy(hierarchy, spaces: Array<{id: string, name: string}>, searchQuery: string) {
-  let ids: Array<string> = [];
-  hierarchy.forEach(({space}) => {
-    const parentIds = getParentsOfSpace(spaces, space);
-
-    // It can either match the name of the space
-    const result = fuzzy.match(searchQuery, space.name);
-    if (result) {
-      ids.push(space.id);
-      ids = [...ids, ...parentIds];
-      return;
-    }
-
-    // Or the name of a parent higher up in the hierarchy.
-    const parentNames = parentIds.map(id => (spaces as any).find(s => s.id === id).name);
-    const parentMatches = fuzzy.filter(searchQuery, parentNames);
-    if (parentMatches.length > 0) {
-      ids.push(space.id);
-      ids = [...ids, ...parentIds];
-      return;
-    }
-  });
-
-  return hierarchy.filter(h => ids.includes(h.space.id));
-}
 
 type AdminSpacePermissionsPickerProps = {
   height?: number,
@@ -80,9 +54,9 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
     } = this.props;
     const { searchQuery } = this.state;
 
-    let hierarchy = spaceHierarchyFormatterNew(spaceHierarchy.data);
+    let hierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
     if (searchQuery.length > 0) {
-      hierarchy = searchHierarchy(hierarchy, spaces.data, searchQuery);
+      hierarchy = spaceHierarchySearcher(hierarchy, searchQuery);
     }
 
     const selectedIdsWithChildren = deduplicate(

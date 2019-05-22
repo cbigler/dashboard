@@ -88,7 +88,18 @@ function SpaceList({ user, spaces, renderedSpaces }) {
 }
 
 export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }) {
-  const visibleSpaces = spaces.data.filter(space => space.ancestry.length === 0);
+  // Users that have a purview-limited space scope won't have top level spaces have a parent
+  // id of null, instead it will be a space that is not in the user's purview
+  const topLevelSpaceIds = [
+    null,
+    ...spaces.data.filter(space => (
+      space.parentId === null || // parent id is null, or
+      !spaces.data.find(s => s.id === space.parentId) // parent id is a space that's unknown
+    )).map(s => s.id),
+  ];
+  const visibleSpaces = spaces.data.filter(
+    s => selectedSpace ? (s.parentId === selectedSpace.id) : topLevelSpaceIds.includes(s.id)
+  );
   const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
   const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
   const buildingsNotInCampus = visibleSpaces.filter(space => space.spaceType === 'building');

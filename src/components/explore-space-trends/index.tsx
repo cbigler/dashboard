@@ -38,9 +38,10 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
+  DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
+  getAllTimeSegmentLabelsForSpace,
+  getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
 import isOutsideRange, {
@@ -66,33 +67,27 @@ class ExploreSpaceTrends extends React.Component<any, any> {
     const {
       spaces,
       space,
+      spaceHierarchy,
       activeModal,
-      timeSegmentGroups,
       onChangeSpaceFilter,
-      onChangeTimeSegmentGroup,
+      onChangeTimeSegmentLabel,
       onChangeDateRange,
       resizeCounter,
     } = this.props;
 
     if (space) {
-      const spaceTimeSegmentGroupArray = [
-        DEFAULT_TIME_SEGMENT_GROUP,
-        ...timeSegmentGroups.data.filter(tsg => {
-          return space.timeSegmentGroups.find(i => i.id === tsg.id);
-        })
+      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+      const spaceTimeSegmentLabelsArray = [
+        DEFAULT_TIME_SEGMENT_LABEL,
+        ...shownTimeSegments.map(i => i.label),
       ];
 
-      // Which time segment group was selected?
-      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-        return i.id === spaces.filters.timeSegmentGroupId;
-      });
+      // Which time segment label was selected?
+      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
       // And, with the knowlege of the selected space, which time segment within that time segment
-      // group is applicable to this space?
-      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-        selectedTimeSegmentGroup,
-        space,
-      );
+      // label is applicable to this space?
+      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
       const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
@@ -103,18 +98,14 @@ class ExploreSpaceTrends extends React.Component<any, any> {
               <InputBox
                 type="select"
                 className={styles.exploreSpaceTrendsTimeSegmentBox}
-                value={selectedTimeSegmentGroup.id}
-                choices={spaceTimeSegmentGroupArray.map(ts => {
-                  const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
-                    ts,
-                    space,
-                  );
-                  if (applicableTimeSegmentsForGroup.length === 1) {
-                    const timeSegment = applicableTimeSegmentsForGroup[0];
+                value={selectedTimeSegmentLabel}
+                choices={spaceTimeSegmentLabelsArray.map(label => {
+                  if (applicableTimeSegments.length === 1) {
+                    const timeSegment = applicableTimeSegments[0];
                     const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
                     return {
-                      id: ts.id,
-                      label: `${ts.name} (${prettyPrintHoursMinutes(
+                      id: label,
+                      label: `${label} (${prettyPrintHoursMinutes(
                         getCurrentLocalTimeAtSpace(space)
                           .startOf('day')
                           .add(startSeconds, 'seconds')
@@ -124,15 +115,17 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                           .add(endSeconds, 'seconds')
                       )})`,
                     };
+                  } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                    return { id: label, label: 'Whole Day (12:00 - 11:59p)' }
                   } else {
                     return {
-                      id: ts.id,
-                      label: `${ts.name} (Mixed hours)`
+                      id: label,
+                      label: `${label} (Mixed hours)`
                     };
                   }
                 })}
                 width={300}
-                onChange={value => onChangeTimeSegmentGroup(space, value.id, spaces.filters)}
+                onChange={value => onChangeTimeSegmentLabel(space, value.id, spaces.filters)}
               />
             </ExploreFilterBarItem>
             <ExploreFilterBarItem label="Date Range">
@@ -200,7 +193,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         ) : null}
 
         <ErrorBar
-          message={spaces.error || timeSegmentGroups.error}
+          message={spaces.error}
           modalOpen={activeModal.name !== null}
         />
 
@@ -214,7 +207,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   chartWidth={this.state.width}
                 />
               </div>
@@ -243,7 +236,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   timeSegments={applicableTimeSegments}
                   chartWidth={this.state.width}
                 />
@@ -262,8 +255,8 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
+    spaceHierarchy: state.spaceHierarchy,
     activeModal: state.activeModal,
-    timeSegmentGroups: state.timeSegmentGroups,
     resizeCounter: state.resizeCounter,
   };
 }, dispatch => {
@@ -271,8 +264,8 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value, spaceFilters) {
-      dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
+    onChangeTimeSegmentLabel(space, value, spaceFilters) {
+      dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
     onChangeDateRange(space, startDate, endDate, spaceFilters) {

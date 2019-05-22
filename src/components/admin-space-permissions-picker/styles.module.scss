@@ -76,6 +76,8 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
 }
 .adminSpacePermissionsPickerListItemCheckbox + label:before {
   content: ' ';
+  flex-shrink: 0;
+  flex-grow: 0;
   display: block;
   width: 18px;
   height: 18px;

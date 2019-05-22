@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import fetchAllPages from '../../../helpers/fetch-all-pages/index';
 import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
 import { DensitySpace } from '../../../types';
@@ -10,6 +11,17 @@ import uploadMedia from '../../../helpers/media-files';
 import showToast, { hideToast } from '../../toasts';
 
 export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
+
+const ONE_UTC_DAY_IN_SECONDS = moment.duration('24:00:00').as('seconds');
+function convertSecondsIntoTime(seconds) {
+  // normalize start / end times on the next day onto the current day.
+  const secondsIntoDay = seconds % ONE_UTC_DAY_IN_SECONDS;
+
+  return moment.utc()
+    .startOf('day')
+    .add(seconds, 'seconds')
+    .format('HH:mm:ss');
+}
 
 export default function collectionSpacesUpdate(item) {
   return async dispatch => {
@@ -37,12 +49,41 @@ export default function collectionSpacesUpdate(item) {
         longitude: item.longitude,
         time_zone: item.timeZone,
         daily_reset: item.dailyReset,
+
+        inherits_time_segments: item.inheritsTimeSegments,
       });
+
+      if (item.operatingHours) {
+        await Promise.all(item.operatingHours.map(operatingHoursItem => {
+          switch (operatingHoursItem.operationToPerform) {
+          case 'CREATE':
+            return core().post('/time_segments', {
+              label: operatingHoursItem.label,
+              start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
+              end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
+              days: operatingHoursItem.daysAffected,
+              spaces: [ item.id ],
+            });
+          case 'UPDATE':
+            return core().put(`/time_segments/${operatingHoursItem.id}`, {
+              label: operatingHoursItem.label,
+              start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
+              end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
+              days: operatingHoursItem.daysAffected,
+              spaces: [ item.id ],
+            });
+          case 'DELETE':
+            return core().delete(`/time_segments/${operatingHoursItem.id}`);
+          default:
+            return;
+          }
+        }));
+      }
 
       // Upload any new image data for this space
       // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
       if (item.newImageFile) {
-        const id = uuid();
+        const id = uuid.v4();
         dispatch(showToast({text: 'Processing...', timeout: 10000, id}));
         await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
         dispatch(hideToast(id));
@@ -61,9 +102,10 @@ export default function collectionSpacesUpdate(item) {
       });
       const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
       dispatch(collectionSpacesSet(spaces));
-      return response.data;
+      return spaces;
 
     } catch (err) {
+      console.error(err);
       dispatch(collectionSpacesError(err));
       return false;
     }

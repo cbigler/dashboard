@@ -20,6 +20,8 @@ import AccountForgotPassword from '../account-forgot-password/index';
 import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
+import Dialogger from '../dialogger';
+import Toaster from '../toaster';
 
 import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
@@ -48,6 +50,10 @@ function App({
     <div className={styles.app}>
       {/* Impersonation modal */}
       {activeModal.name === 'MODAL_IMPERSONATE' ? <ImpersonateModal /> : null}
+
+      {/* Show dialogs and toasts */}
+      <Dialogger />
+      <Toaster />
 
       {/* Render the navbar */}
       {(function(activePage) {

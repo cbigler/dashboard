@@ -29,7 +29,6 @@ import {
 import RobinImage from '../../assets/images/icon-robin.svg';
 import TeemImage from '../../assets/images/icon-teem.svg';
 import GoogleCalendarImage from '../../assets/images/icon-google-calendar.svg';
-import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
 import { integrationsRoomBookingSpacesSelect } from '../../actions/integrations/room-booking';
@@ -80,8 +79,6 @@ function ExploreSpaceMeetings({
 
     return (
       <Fragment>
-        <Toaster />
-
         {spaces.filters.startDate && spaces.filters.endDate && roomBookingDefaultService ? (
           <AppBar>
             <AppBarSection>

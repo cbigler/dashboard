@@ -30,7 +30,7 @@ import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
 
-import { DEFAULT_TIME_SEGMENT_GROUP } from '../../helpers/time-segments/index';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 
 import {
   getCurrentLocalTimeAtSpace,
@@ -61,7 +61,7 @@ const initialState = {
     sort: SORT_A_Z,
     parent: null,
 
-    timeSegmentGroupId: DEFAULT_TIME_SEGMENT_GROUP.id,
+    timeSegmentLabel: DEFAULT_TIME_SEGMENT_LABEL,
     dataDuration: DATA_DURATION_WEEK,
 
     metricToDisplay: 'entrances',
@@ -83,16 +83,16 @@ const initialState = {
   },
 };
 
-function getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, currentTimeSegmentGroupId) {
-  let timeSegmentGroupId = currentTimeSegmentGroupId;
+function getTimeSegmentLabelForRouteChange(currentSelectedSpace, currentTimeSegmentLabel) {
+  let timeSegmentLabel = currentTimeSegmentLabel;
   if (!currentSelectedSpace) {
-    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
-  } else if (!(currentSelectedSpace.timeSegmentGroups.map(ts => ts.id).includes(currentTimeSegmentGroupId))) {
-    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
-  } else if (currentTimeSegmentGroupId == null) {
-    timeSegmentGroupId = DEFAULT_TIME_SEGMENT_GROUP.id;
+    timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
+  } else if (!(currentSelectedSpace.timeSegments.map(ts => ts.label).includes(currentTimeSegmentLabel))) {
+    timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
+  } else if (currentTimeSegmentLabel == null) {
+    timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
   }
-  return timeSegmentGroupId;
+  return timeSegmentLabel;
 }
 
 export default function spaces(state=initialState, action) {
@@ -168,8 +168,8 @@ export default function spaces(state=initialState, action) {
   // When the user changes the active space, update it in the store.
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
-    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
+    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
@@ -177,13 +177,13 @@ export default function spaces(state=initialState, action) {
       selected: currentSelectedSpace.id,
       filters: {
         ...state.filters,
-        timeSegmentGroupId: newTimeSegmentGroupId
+        timeSegmentLabel: newTimeSegmentLabel
       }
     };
   case ROUTE_TRANSITION_EXPLORE:
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
-    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
+    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
@@ -191,7 +191,7 @@ export default function spaces(state=initialState, action) {
       selected: null,
       filters: {
         ...state.filters,
-        timeSegmentGroupId: newTimeSegmentGroupId
+        timeSegmentLabel: newTimeSegmentLabel
       }
     };
   case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
@@ -199,8 +199,8 @@ export default function spaces(state=initialState, action) {
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
   case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
     var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentGroupId: any = state.filters.timeSegmentGroupId;
-    var newTimeSegmentGroupId: any = getTimeSegmentGroupIdForRouteChange(currentSelectedSpace, timeSegmentGroupId);
+    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
+    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
@@ -208,7 +208,7 @@ export default function spaces(state=initialState, action) {
       selected: action.id,
       filters: {
         ...state.filters,
-        timeSegmentGroupId: newTimeSegmentGroupId
+        timeSegmentLabel: newTimeSegmentLabel
       }
     };
   case ROUTE_TRANSITION_LIVE_SPACE_LIST:
@@ -227,6 +227,7 @@ export default function spaces(state=initialState, action) {
       view: action.setLoading ? 'LOADING' : 'VISIBLE',
       loading: action.setLoading,
       selected: action.spaceId,
+      data: [],
     };
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:

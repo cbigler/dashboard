@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import { Icons } from '@density/ui';
 import styles from './styles.module.scss';
 
-import { spaceHierarchyFormatter } from '../../helpers/space-hierarchy-formatter/index';
+import spaceHierarchyFormatterDeprecated from '../../helpers/space-hierarchy-formatter-deprecated/index';
 
 export default class SpaceHierarchySelectBox extends React.Component<any, any> {
   selectBoxValueRef: any;
@@ -37,7 +37,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
     const { choices, value, disabled, id } = this.props;
     const { opened } = this.state;
 
-    const spaceHierarchy = spaceHierarchyFormatter(choices).map(n => ({
+    const spaceHierarchy = spaceHierarchyFormatterDeprecated(choices).map(n => ({
       depth: n.depth,
       choice: n.space,
     }));

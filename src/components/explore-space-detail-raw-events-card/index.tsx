@@ -28,7 +28,7 @@ export function ExploreSpaceDetailRawEventsCard({
   space,
   spaces,
   date,
-  timeSegmentGroup,
+  timeSegmentLabel,
   calculatedData,
 
   onRefresh,
@@ -44,7 +44,7 @@ export function ExploreSpaceDetailRawEventsCard({
             <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
               All events at this space on{' '}
               <strong>{parseISOTimeAtSpace(date, space).format('MMMM D, YYYY')}</strong> during{' '}
-              the time segment <strong>{timeSegmentGroup.name}</strong>.
+              the time segment <strong>{timeSegmentLabel}</strong>.
             </p>
 
             <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
