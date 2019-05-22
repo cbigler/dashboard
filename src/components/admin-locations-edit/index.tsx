@@ -15,6 +15,7 @@ import {
   AdminLocationsDetailModulesAddress,
   AdminLocationsDetailModulesDangerZone,
   AdminLocationsDetailModulesOperatingHours,
+  AdminLocationsDetailModulesDoorways,
 } from '../admin-locations-detail-modules/index';
 
 import {
@@ -310,6 +311,9 @@ export function AdminLocationsBuildingForm({
             onChangeAddress={address => onChangeField('address', address)}
             onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
           />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesDoorways />
         </div>
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesOperatingHours
