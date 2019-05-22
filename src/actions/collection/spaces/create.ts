@@ -44,6 +44,8 @@ export default function collectionSpacesCreate(item) {
         longitude: item.longitude,
         time_zone: item.timeZone,
         daily_reset: item.dailyReset,
+
+        inherits_time_segments: item.inheritsTimeSegments,
       });
 
       if (item.operatingHours) {

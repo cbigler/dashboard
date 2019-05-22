@@ -65,7 +65,7 @@ export function parseStartAndEndTimesInTimeSegment(timeSegment) {
 
 
 export function getShownTimeSegmentsForSpace(space, spaceHierarchy) {
-    if (space.inheritsTimeSegments) {
+  if (space.inheritsTimeSegments) {
     return getParentTimeSegmentsForSpace(space.parentId, spaceHierarchy);
   } else {
     return space.timeSegments;
