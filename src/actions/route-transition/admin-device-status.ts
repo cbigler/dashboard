@@ -12,7 +12,7 @@ export default function routeTransitionAdminDeviceStatus() {
 
     return Promise.all([
       // Fetch a list of all sensors.
-      core().get('/sensors'),
+      core().get('/sensors?page_size=1000'),
       // Fetch a list of all spaces.
       core().get('/spaces'),
       // Fetch a list of all doorways.
