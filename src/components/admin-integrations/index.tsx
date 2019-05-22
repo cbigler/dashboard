@@ -158,7 +158,7 @@ export function AdminIntegrations({
             onClick={item => handleActivateEditClick(item, onOpenModal)}
           />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id === null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => handleDeleteClick(item, onOpenModal)}
            />
 
@@ -178,14 +178,14 @@ export function AdminIntegrations({
           } />
           <ListViewColumn flexGrow={1} flexShrink={1} />
           <ListViewColumn
-          template={item => item.serviceAuthorization.id === null ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+          template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
           onClick={item => {
-            if (item.serviceAuthorization.id === null) {
+            if (!item.serviceAuthorization.id) {
               window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
             }}}
           />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id === null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})} />
         </ListView>
       </div>
