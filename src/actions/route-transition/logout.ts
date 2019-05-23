@@ -1,7 +1,6 @@
 import sessionTokenUnset from '../session-token/unset';
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-import collectionDoorwaysSet from '../collection/doorways/set';
 import collectionUsersSet from '../collection/users/set';
 import collectionTokensSet from '../collection/tokens/set';
 import collectionWebhooksSet from '../collection/webhooks/set';
@@ -15,7 +14,6 @@ export default function routeTransitionLogout() {
     dispatch(sessionTokenUnset());
     dispatch(collectionSpacesSet([]));
     dispatch(collectionSpaceHierarchySet([]));
-    dispatch(collectionDoorwaysSet([]));
     dispatch(collectionUsersSet([]));
     dispatch(collectionTokensSet([]));
     dispatch(collectionWebhooksSet([]));

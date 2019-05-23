@@ -2,7 +2,6 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
-import collectionDoorwaysSet from '../collection/doorways/set';
 import { collectionSpacesBatchSetEvents } from '../collection/spaces/set-events';
 
 import {
@@ -18,14 +17,8 @@ export default function routeTransitionLiveSpaceList() {
   return dispatch => {
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_LIST });
 
-    return Promise.all([
-      // Fetch a list of all spaces.
-      core().get('/spaces'),
-      // Fetch a list of all doorways.
-      core().get('/doorways', {params: {environment: true}}),
-    ]).then(([spaces, doorways]) => {
+    return core().get('/spaces').then(spaces => {
       dispatch(collectionSpacesSet(spaces.data.results));
-      dispatch(collectionDoorwaysSet(doorways.data.results));
 
       // Then, fetch all initial events for each space.
       // This is used to populate each space's events collection with all the events from the last

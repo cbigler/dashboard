@@ -1,5 +1,4 @@
 import collectionSpacesSet from '../collection/spaces/set';
-import collectionDoorwaysSet from '../collection/doorways/set';
 import collectionSensorsSet from '../collection/sensors/set';
 import core from '../../client/core';
 
@@ -14,12 +13,9 @@ export default function routeTransitionAdminDeviceStatus() {
       core().get('/sensors?page_size=1000'),
       // Fetch a list of all spaces.
       core().get('/spaces'),
-      // Fetch a list of all doorways.
-      core().get('/doorways', { params: { environment: true } }),
-    ]).then(([sensors, spaces, doorways]) => {
+    ]).then(([sensors, spaces]) => {
       dispatch(collectionSensorsSet(sensors.data.results));
       dispatch(collectionSpacesSet(spaces.data.results));
-      dispatch(collectionDoorwaysSet(doorways.data.results));
     });
   };
 }
