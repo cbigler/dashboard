@@ -3,7 +3,6 @@ import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionDoorwaysSet from '../collection/doorways/set';
-import collectionLinksSet from '../collection/links/set';
 import { collectionSpacesBatchSetEvents } from '../collection/spaces/set-events';
 
 import {
@@ -24,12 +23,9 @@ export default function routeTransitionLiveSpaceList() {
       core().get('/spaces'),
       // Fetch a list of all doorways.
       core().get('/doorways', {params: {environment: true}}),
-      // Fetch a list of all links.
-      core().get('/links'),
-    ]).then(([spaces, doorways, links]) => {
+    ]).then(([spaces, doorways]) => {
       dispatch(collectionSpacesSet(spaces.data.results));
       dispatch(collectionDoorwaysSet(doorways.data.results));
-      dispatch(collectionLinksSet(links.data.results));
 
       // Then, fetch all initial events for each space.
       // This is used to populate each space's events collection with all the events from the last

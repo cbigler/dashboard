@@ -1,6 +1,5 @@
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionDoorwaysSet from '../collection/doorways/set';
-import collectionLinksSet from '../collection/links/set';
 import collectionSensorsSet from '../collection/sensors/set';
 import core from '../../client/core';
 
@@ -17,13 +16,10 @@ export default function routeTransitionAdminDeviceStatus() {
       core().get('/spaces'),
       // Fetch a list of all doorways.
       core().get('/doorways', { params: { environment: true } }),
-      // Fetch a list of all links.
-      core().get('/links'),
-    ]).then(([sensors, spaces, doorways, links]) => {
+    ]).then(([sensors, spaces, doorways]) => {
       dispatch(collectionSensorsSet(sensors.data.results));
       dispatch(collectionSpacesSet(spaces.data.results));
       dispatch(collectionDoorwaysSet(doorways.data.results));
-      dispatch(collectionLinksSet(links.data.results));
     });
   };
 }
