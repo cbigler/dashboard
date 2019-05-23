@@ -8,7 +8,6 @@ import { COLLECTION_DOORWAYS_CREATE } from '../../actions/collection/doorways/cr
 import { COLLECTION_DOORWAYS_UPDATE } from '../../actions/collection/doorways/update';
 import { COLLECTION_DOORWAYS_DESTROY } from '../../actions/collection/doorways/destroy';
 
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL } from '../../actions/route-transition/account-setup-doorway-detail';
 import { SORT_A_Z } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../actions/modal/show';
 import { HIDE_MODAL } from '../../actions/modal/hide';
@@ -92,11 +91,6 @@ export default function doorways(state=initialState, action) {
       error: null,
       data: state.data.filter((item: any) => action.item.id !== item.id),
     };
-
-  // When the user visits the doorway setup page in the provisioning process, store the selected
-  // doorway in the store.
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL:
-    return {...state, selected: action.id};
 
   // Also, when a modal is shown or hidden, clear the error from the state.
   case SHOW_MODAL:

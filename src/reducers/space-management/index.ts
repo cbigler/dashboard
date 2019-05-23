@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
-import { DensityUser, DensityTimeSegment, DensitySpace } from '../../types';
+import { DensityUser, DensityTimeSegment, DensitySpace, DensityDoorway } from '../../types';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
@@ -23,6 +23,7 @@ const initialState = {
     data: [],
     selected: null,
   },
+  doorways: [],
   spaceHierarchy: {},
   operatingHoursLabels: [],
 
@@ -60,6 +61,8 @@ export type AdminLocationsFormState = {
   timeZone: string,
   dailyReset: string | null,
   parentId: string | null,
+  topDoorways: Array<DensityDoorway>,
+  bottomDoorways: Array<DensityDoorway>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
@@ -106,6 +109,7 @@ export function calculateOperatingHoursFromSpace(
 // new form.
 function calculateInitialFormState({
   spaces,
+  doorways,
   operatingHoursLabels,
   userDataSizeAreaDisplayUnit,
 
@@ -113,6 +117,8 @@ function calculateInitialFormState({
   formParentSpaceId,
   formSpaceType,
 }): AdminLocationsFormState {
+
+  // Find the current space
   const space = spaces.data.find(s => s.id === spaces.selected) || {
     parentId: formParentSpaceId,
     spaceType: formSpaceType,
@@ -120,6 +126,17 @@ function calculateInitialFormState({
   };
   const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
+  // Sort doorways into "top" and "bottom" lists based on which are currently attached
+  const [ topDoorways, bottomDoorways ] = doorways.reduce(([top, bottom], next) => {
+    if (next.spaces.find(x => x.id === space.id)) {
+      top.push(next);
+    } else {
+      bottom.push(next);
+    }
+    return [top, bottom];
+  }, [[],[]])
+
+  // Whether the time segments editor should be enabled, or the space should inherit
   let overrideDefault = false;
   if (space.parentId === null) {
     overrideDefault = true;
@@ -157,10 +174,14 @@ function calculateInitialFormState({
     timeZone: space.timeZone || parentSpace.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || parentSpace.dailyReset || '04:00',
 
+  
     // Override default is always on and the control is hidden if this is the top level space in the
     // tree. Otherwise, it's enabled if the space has some of its own time segments
     overrideDefault,
     overrideDefaultControlHidden: space.parentId === null,
+
+    topDoorways,
+    bottomDoorways,
 
     operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
@@ -232,6 +253,7 @@ export default function spaceManagement(state=initialState, action) {
         ...state.spaces,
         data: action.spaces.map(s => objectSnakeToCamel<DensitySpace>(s)),
       },
+      doorways: action.doorways,
       spaceHierarchy: action.hierarchy,
       operatingHoursLabels: action.labels,
     };

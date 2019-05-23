@@ -161,13 +161,6 @@ export default function AppNavbar({
             icon={<Icons.StopWatch />}
             text="Live"
           />
-          {stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
-            selected={['ACCOUNT_SETUP_OVERVIEW', 'ACCOUNT_SETUP_DOORWAY_LIST', 'ACCOUNT_SETUP_DOORWAY_DETAIL'].includes(page)}
-            showOnMobile={true}
-            path="#/onboarding"
-            icon={<Icons.Copy />}
-            text="Onboarding"
-          /> : null}
         </ul>
         <ul className={styles.appNavbarRight}>
 

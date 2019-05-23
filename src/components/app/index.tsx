@@ -28,10 +28,6 @@ import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
 
-import AccountSetupOverview from '../account-setup-overview';
-import AccountSetupDoorwayList from '../account-setup-doorway-list';
-import AccountSetupDoorwayDetail from '../account-setup-doorway-detail';
-
 import Dashboard from '../dashboard';
 import AppNavbar from '../app-navbar';
 import UnknownPage from '../unknown-page';
@@ -121,12 +117,6 @@ function ActivePage({activePage, user, settings}) {
     return <AccountRegistration />;
   case "ACCOUNT_FORGOT_PASSWORD":
     return <AccountForgotPassword />;
-  case "ACCOUNT_SETUP_OVERVIEW":
-    return <AccountSetupOverview />;
-  case "ACCOUNT_SETUP_DOORWAY_LIST":
-    return <AccountSetupDoorwayList />;
-  case "ACCOUNT_SETUP_DOORWAY_DETAIL":
-    return <AccountSetupDoorwayDetail />;
   case "DASHBOARD_LIST":
     return <DashboardsList />;
   case "DASHBOARD_DETAIL":

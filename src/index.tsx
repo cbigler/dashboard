@@ -54,9 +54,6 @@ import routeTransitionLiveSpaceDetail from './actions/route-transition/live-spac
 import routeTransitionAccount from './actions/route-transition/account';
 import routeTransitionAccountRegister from './actions/route-transition/account-register';
 import routeTransitionAccountForgotPassword from './actions/route-transition/account-forgot-password';
-import routeTransitionAccountSetupOverview from './actions/route-transition/account-setup-overview';
-import routeTransitionAccountSetupDoorwayList from './actions/route-transition/account-setup-doorway-list';
-import routeTransitionAccountSetupDoorwayDetail from './actions/route-transition/account-setup-doorway-detail';
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
@@ -211,13 +208,6 @@ router.addRoute('admin/locations/create/:spaceType', (spaceType) => routeTransit
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(id));
 router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => routeTransitionAdminLocationsNew(id, spaceType));
-
-// Onboarding flow
-// Redirect #/onboarding => #/onboarding/overview
-router.addRoute('onboarding', redirect('onboarding/overview'));
-router.addRoute('onboarding/overview', () => routeTransitionAccountSetupOverview());
-router.addRoute('onboarding/doorways', () => routeTransitionAccountSetupDoorwayList());
-router.addRoute('onboarding/doorways/:id', id => routeTransitionAccountSetupDoorwayDetail(id));
 
 // Add a helper into the global namespace to allow changing of settings flags on the fly.
 (window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);

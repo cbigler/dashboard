@@ -10,10 +10,6 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transi
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
 
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_OVERVIEW } from '../../actions/route-transition/account-setup-overview';
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_LIST } from '../../actions/route-transition/account-setup-doorway-list';
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL } from '../../actions/route-transition/account-setup-doorway-detail';
-
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 
@@ -56,14 +52,6 @@ export default function activePage(state=initialState, action) {
     return "ACCOUNT_REGISTRATION";
   case ROUTE_TRANSITION_ACCOUNT_FORGOT_PASSWORD:
     return "ACCOUNT_FORGOT_PASSWORD";
-
-  // Onboarding pages
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_OVERVIEW:
-    return "ACCOUNT_SETUP_OVERVIEW";
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_LIST:
-    return "ACCOUNT_SETUP_DOORWAY_LIST";
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL:
-    return "ACCOUNT_SETUP_DOORWAY_DETAIL";
 
   case ROUTE_TRANSITION_DASHBOARD_LIST:
     return "DASHBOARD_LIST";

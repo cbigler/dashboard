@@ -1,5 +1,5 @@
 import core from '../../client/core';
-import { DensitySpace, DensityTimeSegmentLabel } from '../../types';
+import { DensitySpace, DensityTimeSegmentLabel, DensityDoorway } from '../../types';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import fetchAllPages from '../../helpers/fetch-all-pages/index';
@@ -20,6 +20,13 @@ async function getSpaces() {
   return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
 }
 
+async function getDoorways() {
+  const doorwaysRaw = await fetchAllPages(async page => (
+    await core().get('/doorways', {params: {page_size: 5000, page}})
+  ).data)
+  return doorwaysRaw.map(i => objectSnakeToCamel<DensityDoorway>(i));
+}
+
 async function getLabels(): Promise<Array<DensityTimeSegmentLabel>> {
   // NOTE: DensityTimeSegmentLabel's aren't objects, so I didn't use objectSnakeToCamel here.
   return fetchAllPages(async page => (
@@ -37,11 +44,12 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       spaceType: newSpaceType,
     });
 
-    let spaces, hierarchy, labels;
+    let spaces, hierarchy, doorways, labels;
     try {
-      [spaces, hierarchy, labels] = await Promise.all([
+      [spaces, hierarchy, doorways, labels] = await Promise.all([
         getSpaces(),
         getHierarchy(),
+        getDoorways(),
         getLabels(),
       ]);
     } catch (err) {
@@ -50,6 +58,6 @@ export default function routeTransitionAdminLocationsNew(parentSpaceId, newSpace
       return false;
     }
 
-    dispatch(spaceManagementSetData(spaces, hierarchy, labels));
+    dispatch(spaceManagementSetData(spaces, hierarchy, doorways, labels));
   };
 }
