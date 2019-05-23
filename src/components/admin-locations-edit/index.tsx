@@ -313,7 +313,9 @@ export function AdminLocationsBuildingForm({
           />
         </div>
         <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDoorways />
+          <AdminLocationsDetailModulesDoorways
+            formState={formState}
+          />
         </div>
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesOperatingHours
