@@ -231,19 +231,6 @@ export default connect((state: any) => {
   };
 })(AdminLocationsEdit);
 
-
-
-// This datastructure contains all space types that can be created if a specified space type is
-// selected. This ensures that we are not giving the user the ability to create a space type that
-// would make the hierarchy invalid.
-const ALLOWED_SUB_SPACE_TYPES = {
-  root: ['campus', 'building'],
-  campus: ['building'],
-  building: ['floor', 'space'],
-  floor: ['space'],
-  space: ['space'],
-};
-
 // Props that all the below forms take
 type AdminLocationsFormSpaceTypeProps = {
   spaceType: DensitySpace["spaceType"],
@@ -325,13 +312,13 @@ export function AdminLocationsBuildingForm({
             onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
           />
         </div>
-        <div className={styles.moduleWrapper}>
+        {/* <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDoorways
             formState={formState}
             onToggleDoorway={item => onSetDoorwaySelected && onSetDoorwaySelected(item.id, !item._formState.selected)}
             onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
-        </div>
+        </div> */}
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesOperatingHours
             formState={formState}
