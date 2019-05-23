@@ -1,0 +1,30 @@
+@import "@density/ui/variables/colors.scss";
+
+.adminIntegrationsList {
+  padding: 24px;
+  padding-bottom: 64px;
+}
+
+.adminIntegrationsSectionHeader {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray;
+  font-size: 24px;
+  font-weight: 400;
+  color: $grayCinder;
+  margin-bottom: 32px;
+}
+
+.adminIntegrationsListviewValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminIntegrationsListviewImage {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}

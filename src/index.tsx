@@ -57,6 +57,7 @@ import routeTransitionAccountForgotPassword from './actions/route-transition/acc
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
 
+import routeTransitionAdminSpaceMappings from './actions/route-transition/admin-space-mappings';
 import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
 import routeTransitionAdminIntegrationsTeem from './actions/route-transition/admin-integrations-teem';
 import routeTransitionAdminIntegrationsServiceFailure from './actions/route-transition/admin-integrations-service-failure';
@@ -181,7 +182,8 @@ router.addRoute('spaces/explore', () => routeTransitionExplore());
 router.addRoute('spaces/explore/:id/trends', id => routeTransitionExploreSpaceTrends(id));
 router.addRoute('spaces/explore/:id/daily', id => routeTransitionExploreSpaceDaily(id));
 router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
-router.addRoute('spaces/explore/:id/meetings', id => routeTransitionExploreSpaceMeetings(id));
+router.addRoute('spaces/explore/:id/meetings', id => routeTransitionExploreSpaceMeetings(id, null));
+router.addRoute('spaces/explore/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(id, service));
 
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList());
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(id));
@@ -193,6 +195,7 @@ router.addRoute('account/register/:slug', slug => routeTransitionAccountRegister
 router.addRoute('account/forgot-password/:token', token => routeTransitionAccountForgotPassword(token));
 
 // Advanced account management (Administration)
+router.addRoute('admin/integrations/:service/space-mappings', (service) => routeTransitionAdminSpaceMappings(service));
 router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
 router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess());

@@ -224,22 +224,6 @@ export type DensitySpaceMapping = {
   serviceSpaceId: string,
 };
 
-export type DensityRobinSpace = {
-  id: string,
-  name: string,
-  spaces: Array<DensityRobinSpace>,
-};
-
-export type DensityTeemSpace = {
-  id: string,
-  name: string,
-};
-
-export type DensityGoogleCalendarSpace = {
-  id: string,
-  name: string,
-};
-
 export type DensityReportOptions = {
   date: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
   weekStart: string; // A weekday for the report week to start on. Default is "Sunday".
@@ -248,6 +232,13 @@ export type DensityReportOptions = {
 }
 export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;
 
+export type DensityServiceSpace = {
+    service: string,
+    serviceSpaceId: string,
+    name: string,
+    spaceType: string,
+    parent: string,
+};
 export type DensitySpaceHierarchyItem = {
   id: string,
   name: string,

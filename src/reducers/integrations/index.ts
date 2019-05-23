@@ -1,18 +1,20 @@
+import { DensityService, DensityServiceSpace } from '../../types';
 
-import { COLLECTION_INTEGRATIONS_SERVICES_SET } from '../../actions/collection/services/set';
+import { COLLECTION_SERVICES_SET } from '../../actions/collection/services/set';
 import { COLLECTION_SERVICES_ERROR } from '../../actions/collection/services/error';
 
 import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../actions/collection/service-authorizations/create';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../actions/collection/service-authorizations/update';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../actions/collection/service-authorizations/destroy';
 
+import { COLLECTION_SERVICE_SPACES_SET } from '../../actions/collection/service-spaces/set';
+import { COLLECTION_SERVICE_SPACES_ERROR } from '../../actions/collection/service-spaces/error';
+
 import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
+import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../actions/route-transition/admin-space-mappings';
 
 import {
-  INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE,
-  INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING,
-  INTEGRATIONS_ROOM_BOOKING_SPACES_SET,
-  INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR,
+  INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../actions/integrations/room-booking';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -25,32 +27,22 @@ const initialState = {
 
   roomBooking: {
     view: 'LOADING',
-    defaultService: null,
-    spaceMappingForActiveSpace: null,
+    service: null,
   },
 
-  robinSpaces: {
-    view: ('LOADING' as any),
-    data: ([] as Array<any>),
-    error: (null as any),
+  spaceMappingsPage: {
+    view: 'LOADING',
+    error: false,
+    loading: true,
+    service: null,
+    serviceSpaces: [] as Array<DensityServiceSpace>,
   },
 
-  teemSpaces: {
-    view: ('LOADING' as any),
-    data: ([] as Array<any>),
-    error: (null as any),
-  },
-
-  googleCalendarSpaces: {
-    view: ('LOADING' as any),
-    data: ([] as Array<any>),
-    error: (null as any),
-  },
 };
 
 export default function integrations(state=initialState, action) {
   switch (action.type) {
-  case COLLECTION_INTEGRATIONS_SERVICES_SET:
+  case COLLECTION_SERVICES_SET:
     return {
       ...state,
       loading: false,
@@ -68,113 +60,54 @@ export default function integrations(state=initialState, action) {
   case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
     return {
       ...state,
-      robinSpaces: {
-        ...state.robinSpaces,
-        view: 'LOADING',
-        data: [],
-        error: null,
-      },
-      teemSpaces: {
-        ...state.teemSpaces,
-        view: 'LOADING',
-        data: [],
-        error: null,
-      },
-      googleCalendarSpaces: {
-        ...state.googleCalendarSpaces,
-        view: 'LOADING',
-        data: [],
-        error: null,
-      },
       roomBooking: {
         ...state.roomBooking,
         view: 'LOADING',
-        defaultService: null,
+        service: null,
+      },
+    };
+  
+  case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
+    return {
+      ...state,
+      spaceMappingsPage: {
+        view: 'LOADING',
+        error: false,
+        loading: true,
+        service: null,
+        serviceSpaces: [],
       },
     };
 
-  case INTEGRATIONS_ROOM_BOOKING_SET_DEFAULT_SERVICE:
+  case INTEGRATIONS_ROOM_BOOKING_SET_SERVICE:
     return {
       ...state,
       roomBooking: {
         ...state.roomBooking,
         view: 'VISIBLE',
-        defaultService: action.service,
+        service: action.service,
       },
     };
 
-  case INTEGRATIONS_ROOM_BOOKING_SELECT_SPACE_MAPPING:
+  case COLLECTION_SERVICE_SPACES_SET:
     return {
       ...state,
-      roomBooking: {
-        ...state.roomBooking,
-        spaceMappingForActiveSpace: action.data,
-      },
-    };
+      spaceMappingsPage: {
+        ...state.spaceMappingsPage,
+        view: 'COMPLETE',
+        service: action.service,
+        serviceSpaces: action.data,
+      }
+    }; 
 
-  case INTEGRATIONS_ROOM_BOOKING_SPACES_SET:
-    if (action.service == "robin") {
-      return {
-        ...state,
-        robinSpaces: {
-          ...state.robinSpaces,
-          view: 'VISIBLE',
-          data: action.data,
-          error: null,
-        }
-      }
-    } else if (action.service == "teem") {
-      return {
-        ...state,
-        teemSpaces: {
-          ...state.teemSpaces,
-          view: 'VISIBLE',
-          data: action.data,
-          error: null,
-        }
-      }
-    } else if (action.service == "google_calendar") {
-      return {
-        ...state,
-        googleCalendarSpaces: {
-          ...state.googleCalendarSpaces,
-          view: 'VISIBLE',
-          data: action.data,
-          error: null,
-        }
-      }
-    } else {
-      return {
-        ...state
-      }
-    }
-    
-  case INTEGRATIONS_ROOM_BOOKING_SPACES_ERROR:
-    let newSpacesErrorKey;
-    if (action.service == "robin") {
-      newSpacesErrorKey = { robinSpaces: {
-        ...state.robinSpaces,
-        view: 'ERROR',
-        error: action.error,
-      }};
-    } else if (action.service == "teem") {
-      newSpacesErrorKey = { teemSpaces: {
-        ...state.teemSpaces,
-        view: 'ERROR',
-        error: action.error,
-      }};
-    } else if (action.service == "google_calendar") {
-      newSpacesErrorKey = { googleCalendarSpaces: {
-        ...state.googleCalendarSpaces,
-        view: 'ERROR',
-        error: action.error,
-      }};
-    }
-    return {
-      ...state,
-      newSpacesErrorKey
-    };
-
+  case COLLECTION_SERVICE_SPACES_ERROR:
+     return {
+       ...state, 
+       spaceMappingsPage: {
+         ...state.spaceMappingsPage,
+         view: 'ERROR',
+       } 
+     };
 
   default:
     return state;

@@ -21,12 +21,7 @@ import {
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import {
-  integrationsRoomBookingSpacesSet,
-  integrationsRoomBookingSpacesError,
-} from '../../actions/integrations/room-booking';
-import {
-  integrationsRoomBookingSetDefaultService,
-  integrationsRoomBookingSelectSpaceMapping,
+  integrationsRoomBookingSetService,
 } from '../../actions/integrations/room-booking';
 import { calculateDashboardDate } from './dashboard-detail';
 
@@ -39,11 +34,11 @@ import {
   requestCountsForLocalRange
 } from '../../helpers/space-time-utilities/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-
+import collectionServicesError from '../collection/services/error';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS = 'ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS';
 
-export default function routeTransitionExploreSpaceMeeting(id) {
+export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
   return async (dispatch, getState) => {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('meetings', null));
@@ -71,70 +66,31 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
     // Determine if a room booking integration is active
-    const roomBookingDefaultService: DensityService | null = await (async function() {
+    const services: Array<DensityService> = await (async function() {
       let servicesResponse;
       try {
         servicesResponse = await core().get('/integrations/services/', {});
       } catch (err) {
-        dispatch(integrationsRoomBookingSpacesError(`Error loading integrations list: ${err.message}`, 'robin'));
+        dispatch(collectionServicesError(`Error loading integrations list: ${err.message}`));
         return null;
       }
 
-      const services = servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
-      const defaultAuthorizedRoomBookingService = services
+      return servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
+    })();
+
+    let roomBookingService;
+    if (serviceName) {
+      roomBookingService = services.find(service => service.name === serviceName);
+    } else {
+      roomBookingService = services
         .filter(service => service.category === 'Room Booking')
         .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
         .find(service => service.serviceAuthorization.default);
-      return defaultAuthorizedRoomBookingService;
-    })();
-    dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
-
-    // Attempt to find a space mapping for this space
-    const spaceMappingExists = await (async function() {
-      let spaceMappingResponse;
-      try {
-        spaceMappingResponse = await fetchAllPages(async page => (
-          (await core().get(`/integrations/space_mappings/`, {params: {page, page_size: 5000}})).data
-        ));
-      } catch (err) {
-        if (err.indexOf('404') >= 0) {
-          // Space mapping was not found
-          dispatch(integrationsRoomBookingSelectSpaceMapping(null));
-          return false;
-        } else {
-          dispatch(integrationsRoomBookingSpacesError(`Error loading space mapping: ${err.message}`, 'robin'));
-          return false;
-        }
-      }
-
-      // Space mapping exists
-      const spaceMappings = spaceMappingResponse.map(sm => objectSnakeToCamel<DensitySpaceMapping>(sm));
-      const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
-      if (activeSpaceMapping) {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
-        return true;
-      } else {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(null));
-        return false;
-      }
-    })();
-
-    // Load room booking spaces if room booking service is active
-    let roomBookingProvider;
-    if (roomBookingDefaultService && ['robin', 'teem', 'google_calendar'].includes(roomBookingDefaultService.name)) {
-      roomBookingProvider = roomBookingDefaultService.name;
     }
 
-    if (roomBookingProvider) {
-      let spaces;
-      try {
-        spaces = objectSnakeToCamel(await core().get(`/integrations/${roomBookingProvider}/spaces/`, {})).data
-      } catch (err) {
-        dispatch(integrationsRoomBookingSpacesError(`Error loading ${roomBookingProvider} spaces: ${err.message}`, roomBookingProvider));
-        return;
-      }
-      dispatch(integrationsRoomBookingSpacesSet(spaces, roomBookingProvider));
-    }
+    dispatch(integrationsRoomBookingSetService(roomBookingService));
+
+    const spaceMappingExists = selectedSpace.spaceMappings.length > 0;
 
     if (spaceMappingExists) {
       dispatch(calculate(id));

@@ -1,6 +1,6 @@
 import core from '../../client/core';
 
-import collectionIntegrationsServicesSet from '../collection/services/set';
+import collectionServicesSet from '../collection/services/set';
 import collectionServicesError from '../collection/services/error';
 
 export default function integrationServicesList() {
@@ -13,6 +13,6 @@ export default function integrationServicesList() {
       return false;
     }
 
-    dispatch(collectionIntegrationsServicesSet(response.data));
+    dispatch(collectionServicesSet(response.data));
   }
 }

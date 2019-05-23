@@ -15,6 +15,7 @@ import AdminDeveloper from '../admin-developer';
 import AdminDeviceStatus from '../admin-device-status';
 import AdminIntegrations from '../admin-integrations';
 import AdminLocations from '../admin-locations';
+import AdminSpaceMappings from '../admin-space-mappings';
 
 
 export default function Admin({
@@ -67,6 +68,7 @@ export default function Admin({
           </AppBarSection>
         </AppBar>
         {activePage === 'ADMIN_INTEGRATIONS' ? <AdminIntegrations /> : null}
+        {activePage === 'ADMIN_SPACE_MAPPINGS' ? <AdminSpaceMappings /> : null}
         {activePage === 'ADMIN_USER_MANAGEMENT' ? <AdminUserManagement /> : null}
         {activePage === 'ADMIN_DEVELOPER' ? <AdminDeveloper /> : null}
         {activePage === 'ADMIN_DEVICE_STATUS' ? <AdminDeviceStatus /> : null}

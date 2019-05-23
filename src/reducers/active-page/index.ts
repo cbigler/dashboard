@@ -13,6 +13,7 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-tra
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 
+import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../actions/route-transition/admin-space-mappings';
 import { ROUTE_TRANSITION_ADMIN_INTEGRATIONS } from '../../actions/route-transition/admin-integrations';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../actions/route-transition/admin-user-management';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
@@ -66,6 +67,8 @@ export default function activePage(state=initialState, action) {
     return "ADMIN_DEVELOPER";
   case ROUTE_TRANSITION_ADMIN_DEVICE_STATUS:
     return "ADMIN_DEVICE_STATUS";
+  case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
+    return "ADMIN_SPACE_MAPPINGS";
   case ROUTE_TRANSITION_ADMIN_INTEGRATIONS:
     return "ADMIN_INTEGRATIONS";
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:

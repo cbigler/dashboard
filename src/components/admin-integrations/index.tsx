@@ -154,6 +154,10 @@ export function AdminIntegrations({
           />          
           <ListViewColumn flexGrow={1} flexShrink={1} />
           <ListViewColumn
+            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space Mappings</ListViewClickableLink>}
+            onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
+          />
+          <ListViewColumn
             template={item => activateEditLink(item)}
             onClick={item => handleActivateEditClick(item, onOpenModal)}
           />
@@ -208,7 +212,7 @@ export default connect((state: any) => {
       dispatch<any>(hideModal());
     },
     onCreateServiceAuthorizationRobin(serviceAuthorization) {
-       dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
+      dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());
         }
