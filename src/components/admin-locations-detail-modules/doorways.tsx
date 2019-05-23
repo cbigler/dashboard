@@ -16,6 +16,7 @@ import ListView, { ListViewColumn } from '../list-view';
 import Checkbox from '../checkbox';
 
 import AdminLocationsDetailModule from './index';
+import filterCollection from '../../helpers/filter-collection';
 
 function DoorwayList({doorways, onSelectDoorway, shaded=false}) {
   return (
@@ -61,8 +62,13 @@ function DoorwayList({doorways, onSelectDoorway, shaded=false}) {
 }
 
 export default function AdminLocationsDetailModulesDoorways({
-  formState
+  formState,
+  onChangeDoorwaysFilter,
 }) {
+
+  const doorwaysFilter = filterCollection({fields: ['name']});
+  const filteredDoorways = doorwaysFilter(formState.doorways, formState.doorwaysFilter);
+
   return (
     <AdminLocationsDetailModule title="Doorways" includePadding={false}>
       <AppBar>
@@ -71,6 +77,7 @@ export default function AdminLocationsDetailModulesDoorways({
             leftIcon={<Icons.Search />}
             placeholder={'ex: "Doorway A", "Stairwell B"'}
             width={344}
+            onChange={e => onChangeDoorwaysFilter(e.target.value)}
           />
         </AppBarSection>
         <AppBarSection>
@@ -81,11 +88,11 @@ export default function AdminLocationsDetailModulesDoorways({
       </AppBar>
       <div className={styles.doorwayLists}>
         <DoorwayList
-          doorways={formState.doorways.filter(x => x._formState.list === 'top')}
+          doorways={filteredDoorways.filter(x => x._formState.list === 'top')}
           onSelectDoorway={i => alert(i.name)}
         />
         <DoorwayList
-          doorways={formState.doorways.filter(x => x._formState.list === 'bottom')}
+          doorways={filteredDoorways.filter(x => x._formState.list === 'bottom')}
           onSelectDoorway={i => alert(i.name)}
           shaded
         />

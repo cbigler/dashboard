@@ -63,6 +63,7 @@ export type AdminLocationsFormState = {
   timeZone: string,
   dailyReset: string | null,
   parentId: string | null,
+  doorwaysFilter: string,
   doorways: Array<DensityDoorway>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
@@ -162,6 +163,7 @@ function calculateInitialFormState({
 
 
     // Doorway module (hydrate with extra form state for each doorway)
+    doorwaysFilter: '',
     doorways: doorways.map(doorway => {
       const linkedSpace = doorway.spaces.find(x => x.id === space.id);
       return {

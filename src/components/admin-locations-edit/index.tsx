@@ -315,6 +315,7 @@ export function AdminLocationsBuildingForm({
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDoorways
             formState={formState}
+            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>
         <div className={styles.moduleWrapper}>
