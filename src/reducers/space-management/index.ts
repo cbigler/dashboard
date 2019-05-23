@@ -10,6 +10,8 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-trans
 import { USER_SET } from '../../actions/user/set';
 import { USER_PUSH } from '../../actions/user/push';
 import { SPACE_MANAGEMENT_FORM_UPDATE } from '../../actions/space-management/form-update';
+import { SPACE_MANAGEMENT_FORM_DOORWAY_PUSH } from '../../actions/space-management/form-doorway-push';
+import { SPACE_MANAGEMENT_FORM_DOORWAY_SET_SENSOR_PLACEMENT } from '../../actions/space-management/form-doorway-set-sensor-placement';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
@@ -164,10 +166,12 @@ function calculateInitialFormState({
       const linkedSpace = doorway.spaces.find(x => x.id === space.id);
       return {
         ...doorway,
-        _formList: linkedSpace ? 'top' : 'bottom',
-        _formSelected: linkedSpace ? true : false,
-        _formSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null,
-        _formInitialSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null
+        _formState: {
+          list: linkedSpace ? 'top' : 'bottom',
+          selected: linkedSpace ? true : false,
+          sensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null,
+          initialSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null
+        }
       };
     }),
 
@@ -270,14 +274,45 @@ export default function spaceManagement(state=initialState, action) {
       formState: { ...state.formState, [action.key]: action.value },
     };
 
-  // case SPACE_MANAGEMENT_FORM_DOORWAY_PUSH:
-  //   state.formState.bottomDoorways.push({ ...action.doorway, _selected: true });
-  //   return state;
+  case SPACE_MANAGEMENT_FORM_DOORWAY_PUSH:
+    return {
+      ...state,
+      formState: {
+        ...state.formState,
+        doorways: [
+          ...state.formState.doorways,
+          {
+            ...action.doorway,
+            _formState: {
+              list: 'bottom',
+              selected: true,
+              sensorPlacement: action.sensorPlacement,
+              initialSensorPlacement: null
+            }
+          }
+        ]
+      }
+    };
 
-  // case SPACE_MANAGEMENT_FORM_DOORWAY_SET_PLACEMENT:
-  //   const doorway = state.formState.
-  //   state.formState.bottomDoorways.push({ ...action.doorway, _selected: true });
-  //   return state;
+  case SPACE_MANAGEMENT_FORM_DOORWAY_SET_SENSOR_PLACEMENT:
+    const index = state.formState.doorways.findIndex(x => x.id === action.id);
+    const doorway = state.formState.doorways[index];
+    return {
+      ...state,
+      formState: {
+        ...state.formState,
+        doorways: [
+          ...state.formState.doorways.slice(0, index),
+          {
+            ...doorway, 
+            _formState: {
+              ...doorway._formState,
+              sensorPlacement: action.sensorPlacement
+            }
+          }
+        ]
+      }
+    };
 
   default:
     return state;

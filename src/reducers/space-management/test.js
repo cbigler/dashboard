@@ -72,12 +72,17 @@ describe('spaceManagement', () => {
         ],
       },
     ];
+    const DOORWAYS = [
+      {id: 'drw_xxx', name: 'My Door', spaces: []},
+      {id: 'drw_xxy', name: 'My Door 2', spaces: []},
+    ];
     const LABELS = ['foo', 'bar', 'baz'];
-    const action = spaceManagementSetData(SPACES, HIERARCHY, LABELS);
+    const action = spaceManagementSetData(SPACES, HIERARCHY, DOORWAYS, LABELS);
     const result = spaceManagement(INITIAL_STATE, action);
     assert.strictEqual(result.view, 'VISIBLE');
     assert.deepStrictEqual(result.spaces.data, SPACES);
     assert.deepStrictEqual(result.spaceHierarchy, HIERARCHY);
+    assert.deepStrictEqual(result.doorways, DOORWAYS);
     assert.deepStrictEqual(result.operatingHoursLabels, LABELS);
   });
   it('should put reducer into an error state when SPACE_MANAGEMENT_ERROR is sent', () => {
