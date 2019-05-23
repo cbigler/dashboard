@@ -9,7 +9,7 @@ import { USER_PUSH } from '../../actions/user/push';
 
 import spaceManagementSetData from '../../actions/space-management/set-data';
 import spaceManagementError from '../../actions/space-management/error';
-import spaceManagementUpdateFormState from '../../actions/space-management/update-form-state';
+import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 
 const INITIAL_STATE = spaceManagement(undefined, {});
 
@@ -85,8 +85,8 @@ describe('spaceManagement', () => {
     assert.strictEqual(result.view, 'ERROR');
     assert.strictEqual(result.error, 'My error');
   });
-  it('should update form state when SPACE_MANAGEMENT_UPDATE_FORM_STATE is sent', () => {
-    const result = spaceManagement(INITIAL_STATE, spaceManagementUpdateFormState('foo', 'bar'));
+  it('should update form state when SPACE_MANAGEMENT_FORM_UPDATE is sent', () => {
+    const result = spaceManagement(INITIAL_STATE, spaceManagementFormUpdate('foo', 'bar'));
     assert.strictEqual(result.formState.foo, 'bar');
   });
 });

@@ -9,7 +9,7 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transi
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../actions/route-transition/admin-locations-edit';
 import { USER_SET } from '../../actions/user/set';
 import { USER_PUSH } from '../../actions/user/push';
-import { SPACE_MANAGEMENT_UPDATE_FORM_STATE } from '../../actions/space-management/update-form-state';
+import { SPACE_MANAGEMENT_FORM_UPDATE } from '../../actions/space-management/form-update';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
@@ -29,7 +29,7 @@ const initialState = {
 
   formParentSpaceId: null,
   formSpaceType: null,
-  formState: {},
+  formState: {} as AdminLocationsFormState,
   userDataSizeAreaDisplayUnit: null,
 };
 
@@ -61,8 +61,7 @@ export type AdminLocationsFormState = {
   timeZone: string,
   dailyReset: string | null,
   parentId: string | null,
-  topDoorways: Array<DensityDoorway>,
-  bottomDoorways: Array<DensityDoorway>,
+  doorways: Array<DensityDoorway>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
@@ -126,16 +125,6 @@ function calculateInitialFormState({
   };
   const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
-  // Sort doorways into "top" and "bottom" lists based on which are currently attached
-  const [ topDoorways, bottomDoorways ] = doorways.reduce(([top, bottom], next) => {
-    if (next.spaces.find(x => x.id === space.id)) {
-      top.push(next);
-    } else {
-      bottom.push(next);
-    }
-    return [top, bottom];
-  }, [[],[]])
-
   // Whether the time segments editor should be enabled, or the space should inherit
   let overrideDefault = false;
   if (space.parentId === null) {
@@ -170,19 +159,27 @@ function calculateInitialFormState({
     ) : null,
 
 
+    // Doorway module (hydrate with extra form state for each doorway)
+    doorways: doorways.map(doorway => {
+      const linkedSpace = doorway.spaces.find(x => x.id === space.id);
+      return {
+        ...doorway,
+        _formList: linkedSpace ? 'top' : 'bottom',
+        _formSelected: linkedSpace ? true : false,
+        _formSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null,
+        _formInitialSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null
+      };
+    }),
+
+
     // Operating hours module
     timeZone: space.timeZone || parentSpace.timeZone || moment.tz.guess(), // Guess the time zone
     dailyReset: space.dailyReset || parentSpace.dailyReset || '04:00',
 
-  
     // Override default is always on and the control is hidden if this is the top level space in the
     // tree. Otherwise, it's enabled if the space has some of its own time segments
     overrideDefault,
     overrideDefaultControlHidden: space.parentId === null,
-
-    topDoorways,
-    bottomDoorways,
-
     operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
   };
@@ -267,11 +264,20 @@ export default function spaceManagement(state=initialState, action) {
       error: action.error.message || action.error,
     };
 
-  case SPACE_MANAGEMENT_UPDATE_FORM_STATE:
+  case SPACE_MANAGEMENT_FORM_UPDATE:
     return {
       ...state,
       formState: { ...state.formState, [action.key]: action.value },
     };
+
+  // case SPACE_MANAGEMENT_FORM_DOORWAY_PUSH:
+  //   state.formState.bottomDoorways.push({ ...action.doorway, _selected: true });
+  //   return state;
+
+  // case SPACE_MANAGEMENT_FORM_DOORWAY_SET_PLACEMENT:
+  //   const doorway = state.formState.
+  //   state.formState.bottomDoorways.push({ ...action.doorway, _selected: true });
+  //   return state;
 
   default:
     return state;
