@@ -11,7 +11,7 @@ import { USER_SET } from '../../actions/user/set';
 import { USER_PUSH } from '../../actions/user/push';
 import { SPACE_MANAGEMENT_FORM_UPDATE } from '../../actions/space-management/form-update';
 import { SPACE_MANAGEMENT_FORM_DOORWAY_PUSH } from '../../actions/space-management/form-doorway-push';
-import { SPACE_MANAGEMENT_FORM_DOORWAY_SET_SENSOR_PLACEMENT } from '../../actions/space-management/form-doorway-set-sensor-placement';
+import { SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE } from '../../actions/space-management/form-doorway-update';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
@@ -296,23 +296,23 @@ export default function spaceManagement(state=initialState, action) {
       }
     };
 
-  case SPACE_MANAGEMENT_FORM_DOORWAY_SET_SENSOR_PLACEMENT:
-    const index = state.formState.doorways.findIndex(x => x.id === action.id);
-    const doorway = state.formState.doorways[index];
+  case SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE:
     return {
       ...state,
       formState: {
         ...state.formState,
-        doorways: [
-          ...state.formState.doorways.slice(0, index),
-          {
-            ...doorway, 
+        doorways: state.formState.doorways.map(doorway => {
+          if (doorway.id !== action.id) {
+            return doorway;
+          }
+          return {
+            ...doorway,
             _formState: {
               ...doorway._formState,
-              sensorPlacement: action.sensorPlacement
+              [action.key]: action.value
             }
-          }
-        ]
+          };
+        })
       }
     };
 

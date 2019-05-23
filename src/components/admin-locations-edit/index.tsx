@@ -6,6 +6,7 @@ import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
+import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
 import { DensitySpace } from '../../types';
 
@@ -74,6 +75,7 @@ type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
   onChangeField: (string, any) => any,
+  onSetDoorwaySelected: (string, boolean) => any,
   onSave: (spaceId: string, spaceFieldUpdate: any) => any,
 };
 
@@ -112,7 +114,12 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
   }
 
   render() {
-    const { spaceManagement, selectedSpace, onChangeField } = this.props;
+    const {
+      spaceManagement,
+      selectedSpace,
+      onChangeField,
+      onSetDoorwaySelected
+    } = this.props;
 
     const FormComponent = {
       campus: AdminLocationsCampusForm,
@@ -178,6 +185,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                   formState={spaceManagement.formState}
                   operationType="UPDATE"
                   onChangeField={onChangeField}
+                  onSetDoorwaySelected={onSetDoorwaySelected}
                 />
               ) : (
                 // When loading
@@ -217,6 +225,9 @@ export default connect((state: any) => {
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
     },
+    onSetDoorwaySelected(doorwayId, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, 'selected', value));
+    },
   };
 })(AdminLocationsEdit);
 
@@ -238,6 +249,7 @@ type AdminLocationsFormSpaceTypeProps = {
   spaceType: DensitySpace["spaceType"],
   formState: { [key: string]: any },
   onChangeField: (string, any) => any,
+  onSetDoorwaySelected?: (string, boolean) => any,
   operationType: 'CREATE' | 'UPDATE',
 };
 
@@ -291,6 +303,7 @@ export function AdminLocationsBuildingForm({
   spaceType,
   formState,
   onChangeField,
+  onSetDoorwaySelected,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -315,6 +328,7 @@ export function AdminLocationsBuildingForm({
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDoorways
             formState={formState}
+            onToggleDoorway={item => onSetDoorwaySelected && onSetDoorwaySelected(item.id, !item._formState.selected)}
             onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>

@@ -18,7 +18,7 @@ import Checkbox from '../checkbox';
 import AdminLocationsDetailModule from './index';
 import filterCollection from '../../helpers/filter-collection';
 
-function DoorwayList({doorways, onSelectDoorway, shaded=false}) {
+function DoorwayList({doorways, onToggleDoorway, shaded=false}) {
   return (
     <div className={classnames(styles.doorwayList, {[styles.shaded]: shaded})}>
       <ListView data={doorways}>
@@ -31,7 +31,7 @@ function DoorwayList({doorways, onSelectDoorway, shaded=false}) {
               <span className={styles.doorwayName}>{i.name}</span>
             </Fragment>
           )}
-          onClick={onSelectDoorway}
+          onClick={onToggleDoorway}
           flexGrow={1}
         />
         <ListViewColumn
@@ -64,6 +64,7 @@ function DoorwayList({doorways, onSelectDoorway, shaded=false}) {
 export default function AdminLocationsDetailModulesDoorways({
   formState,
   onChangeDoorwaysFilter,
+  onToggleDoorway,
 }) {
 
   const doorwaysFilter = filterCollection({fields: ['name']});
@@ -89,11 +90,11 @@ export default function AdminLocationsDetailModulesDoorways({
       <div className={styles.doorwayLists}>
         <DoorwayList
           doorways={filteredDoorways.filter(x => x._formState.list === 'top')}
-          onSelectDoorway={i => alert(i.name)}
+          onToggleDoorway={onToggleDoorway}
         />
         <DoorwayList
           doorways={filteredDoorways.filter(x => x._formState.list === 'bottom')}
-          onSelectDoorway={i => alert(i.name)}
+          onToggleDoorway={onToggleDoorway}
           shaded
         />
       </div>
