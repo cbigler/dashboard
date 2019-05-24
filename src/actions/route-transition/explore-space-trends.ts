@@ -55,9 +55,14 @@ export default function routeTransitionExploreSpaceTrends(id) {
       spaces = (await fetchAllPages(
         async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
       )).map(s => objectSnakeToCamel<DensitySpace>(s));
-      selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
+      return;
+    }
+
+    selectedSpace = spaces.find(s => s.id === id);
+    if (!selectedSpace) {
+      dispatch(collectionSpacesError(`Space with id ${id} not found`));
       return;
     }
 
