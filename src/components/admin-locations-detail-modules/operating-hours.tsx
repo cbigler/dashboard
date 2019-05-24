@@ -299,12 +299,38 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     const switchEnabled = e.target.checked;
                     onChangeField('overrideDefault', switchEnabled);
 
+                    const operatingHoursToBeDeleted = formState.operatingHours.map(i => ({
+                      ...i,
+                      operationToPerform: 'DELETE',
+                    }));
+
                     if (switchEnabled) {
                       // Copy operating hours from parent into this space
-                      onChangeField('operatingHours', parentOperatingHours);
+
+                      // Get all existing operating hours that are attached to this space on the
+                      // server and mark them to be removed.
+                      const exitingOperatingHoursToRemove = formState.operatingHours.filter(i => {
+                        return [null, 'UPDATE', 'DELETE'].includes(i.operationToPerform);
+                      }).map(i => ({ ...i, operationToPerform: 'DELETE' }));
+
+                      const parentOperatingHoursToCreate = parentOperatingHours.map(i => ({
+                        ...i,
+                        operationToPerform: 'CREATE',
+                      }));
+
+                      onChangeField(
+                        'operatingHours',
+                        [ ...exitingOperatingHoursToRemove, ...parentOperatingHoursToCreate ],
+                      );
                     } else {
                       // Remove all operating hour segments when the switch is disabled
-                      onChangeField('operatingHours', []);
+                      onChangeField(
+                        'operatingHours',
+                        formState.operatingHours.filter(o => ({
+                          ...o,
+                          operationToPerform: 'DELETE',
+                        })),
+                      );
                     }
                   }}
                 />
