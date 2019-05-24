@@ -313,10 +313,15 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         return [null, 'UPDATE', 'DELETE'].includes(i.operationToPerform);
                       }).map(i => ({ ...i, operationToPerform: 'DELETE' }));
 
-                      const parentOperatingHoursToCreate = parentOperatingHours.map(i => ({
-                        ...i,
-                        operationToPerform: 'CREATE',
-                      }));
+                      const parentOperatingHoursToCreate = parentOperatingHours.map(i => {
+                        const newOperatingHoursItem = {
+                          ...i,
+                          operationToPerform: 'CREATE',
+                        };
+                        // Remove the id just to be 100% sure that the time segment
+                        delete newOperatingHoursItem.id;
+                        return newOperatingHoursItem;
+                      });
 
                       onChangeField(
                         'operatingHours',
