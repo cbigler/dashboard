@@ -124,7 +124,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
           </CardHeader>
 
           <CardBody className={styles.exploreSpaceDetailDailyMetricsCardBody}>
-            {calculatedData.state === 'COMPLETE' ? (() => {
+            {calculatedData.state === 'COMPLETE' && Array.isArray(calculatedData.data.metrics) ? (() => {
               if (calculatedData.data.metrics.length > GRAPH_TYPE_TRANSITION_POINT_IN_DAYS) {
                 const data: any[] = calculatedData.data.metrics.slice().sort(
                   (a, b) => moment.utc(a.timestamp).valueOf() - moment.utc(b.timestamp).valueOf()
