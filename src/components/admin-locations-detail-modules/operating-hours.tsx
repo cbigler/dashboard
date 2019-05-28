@@ -299,43 +299,20 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     const switchEnabled = e.target.checked;
                     onChangeField('overrideDefault', switchEnabled);
 
-                    const operatingHoursToBeDeleted = formState.operatingHours.map(i => ({
-                      ...i,
-                      operationToPerform: 'DELETE',
-                    }));
-
                     if (switchEnabled) {
                       // Copy operating hours from parent into this space
+                      const newOperatingHours = parentOperatingHours.map(i => ({
+                        ...i,
+                        operationToPerform: 'CREATE',
+                        id: uuid.v4(),
+                      }));
 
-                      // Get all existing operating hours that are attached to this space on the
-                      // server and mark them to be removed.
-                      const exitingOperatingHoursToRemove = formState.operatingHours.filter(i => {
-                        return [null, 'UPDATE', 'DELETE'].includes(i.operationToPerform);
-                      }).map(i => ({ ...i, operationToPerform: 'DELETE' }));
-
-                      const parentOperatingHoursToCreate = parentOperatingHours.map(i => {
-                        const newOperatingHoursItem = {
-                          ...i,
-                          operationToPerform: 'CREATE',
-                        };
-                        // Remove the id just to be 100% sure that the time segment
-                        delete newOperatingHoursItem.id;
-                        return newOperatingHoursItem;
-                      });
-
-                      onChangeField(
-                        'operatingHours',
-                        [ ...exitingOperatingHoursToRemove, ...parentOperatingHoursToCreate ],
-                      );
+                      onChangeField('operatingHours', newOperatingHours);
                     } else {
-                      // Remove all operating hour segments when the switch is disabled
-                      onChangeField(
-                        'operatingHours',
-                        formState.operatingHours.filter(o => ({
-                          ...o,
-                          operationToPerform: 'DELETE',
-                        })),
-                      );
+                      // Clear array of operating hours.
+                      onChangeField('operatingHours', []);
+                      // NB: The server will remove all the time segments that were previously
+                      // associated with the space when the form is saved.
                     }
                   }}
                 />
