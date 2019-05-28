@@ -75,7 +75,7 @@ type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
   onChangeField: (string, any) => any,
-  onSetDoorwaySelected: (string, boolean) => any,
+  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
   onSave: (spaceId: string, spaceFieldUpdate: any) => any,
 };
 
@@ -118,7 +118,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       spaceManagement,
       selectedSpace,
       onChangeField,
-      onSetDoorwaySelected
+      onSetDoorwayField,
     } = this.props;
 
     const FormComponent = {
@@ -185,7 +185,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                   formState={spaceManagement.formState}
                   operationType="UPDATE"
                   onChangeField={onChangeField}
-                  onSetDoorwaySelected={onSetDoorwaySelected}
+                  onSetDoorwayField={onSetDoorwayField}
                 />
               ) : (
                 // When loading
@@ -225,8 +225,8 @@ export default connect((state: any) => {
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
     },
-    onSetDoorwaySelected(doorwayId, value) {
-      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, 'selected', value));
+    onSetDoorwayField(doorwayId, field, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
     },
   };
 })(AdminLocationsEdit);
@@ -236,7 +236,7 @@ type AdminLocationsFormSpaceTypeProps = {
   spaceType: DensitySpace["spaceType"],
   formState: { [key: string]: any },
   onChangeField: (string, any) => any,
-  onSetDoorwaySelected?: (string, boolean) => any,
+  onSetDoorwayField?: (doorwayId: string, key: string, value: any) => any,
   operationType: 'CREATE' | 'UPDATE',
 };
 
@@ -290,7 +290,7 @@ export function AdminLocationsBuildingForm({
   spaceType,
   formState,
   onChangeField,
-  onSetDoorwaySelected,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -312,13 +312,14 @@ export function AdminLocationsBuildingForm({
             onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
           />
         </div>
-        {/* <div className={styles.moduleWrapper}>
+        <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDoorways
             formState={formState}
-            onToggleDoorway={item => onSetDoorwaySelected && onSetDoorwaySelected(item.id, !item._formState.selected)}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
             onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
-        </div> */}
+        </div>
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesOperatingHours
             formState={formState}
@@ -346,6 +347,7 @@ export function AdminLocationsFloorForm({
   spaceType,
   formState,
   onChangeField,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -356,6 +358,14 @@ export function AdminLocationsFloorForm({
             spaceType={spaceType}
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesDoorways
+            formState={formState}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
+            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>
         <div className={styles.moduleWrapper}>
@@ -385,6 +395,7 @@ export function AdminLocationsSpaceForm({
   spaceType,
   formState,
   onChangeField,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -402,6 +413,14 @@ export function AdminLocationsSpaceForm({
             spaceType={spaceType}
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesDoorways
+            formState={formState}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
+            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>
         <div className={styles.moduleWrapper}>
