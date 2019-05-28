@@ -100,8 +100,9 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                 className={styles.exploreSpaceTrendsTimeSegmentBox}
                 value={selectedTimeSegmentLabel}
                 choices={spaceTimeSegmentLabelsArray.map(label => {
-                  if (applicableTimeSegments.length === 1) {
-                    const timeSegment = applicableTimeSegments[0];
+                  const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+                  if (applicableTimeSegmentsForLabel.length === 1) {
+                    const timeSegment = applicableTimeSegmentsForLabel[0];
                     const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
                     return {
                       id: label,
