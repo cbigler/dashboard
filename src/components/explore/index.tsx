@@ -154,6 +154,9 @@ export function Explore({
   activePage,
   onSpaceSearch,
 }) {
+  const rootDiv: any = document.getElementById("root");
+  const sidebarWidth = rootDiv.clientWidth <= 980 ? 280 : 415;
+
   let filteredSpaces = spaceHierarchy.data;
   if (spaces.filters.search) {
     const matchedSpaceIds = fuzzy.filter(
@@ -170,7 +173,7 @@ export function Explore({
     <Fragment>
       {/* Main application */}
       <AppFrame>
-        <AppSidebar visible={true}>
+        <AppSidebar visible={true} width={sidebarWidth}>
           <AppBar>
             <InputBox
               type="text"

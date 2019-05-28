@@ -142,14 +142,14 @@ export default function AppNavbar({
           </div>
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
             selected={['EXPLORE', 'EXPLORE_SPACE_DETAIL', 'EXPLORE_SPACE_TRENDS', 'EXPLORE_SPACE_DAILY', 'EXPLORE_SPACE_DATA_EXPORT'].includes(page)}
-            showOnMobile={false}
+            showOnMobile={true}
             path="#/spaces/explore"
             icon={<Icons.Building />}
             text="Spaces"
           /> : null}
           {stringToBoolean(settings.dashboardEnabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
-            showOnMobile={false}
+            showOnMobile={true}
             path="#/dashboards"
             icon={<Icons.Dashboards />}
             text="Dashboards"
@@ -205,7 +205,7 @@ export default function AppNavbar({
           {/* Mobile logout button */}
           <AppNavbarItem
             selected={false}
-            showOnMobile={true}
+            showOnMobile={false}
             hideOnDesktop={true}
             path="#/logout"
             style={{ marginRight: -8, marginTop: 2 }}
@@ -218,7 +218,7 @@ export default function AppNavbar({
             <AppNavbarMenu
               header={<AppNavbarItem
                 selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_LOCATIONS', 'ADMIN_DEVICE_STATUS'].includes(page)}
-                showOnMobile={false}
+                showOnMobile={true}
                 icon={<Icons.Cog />}
                 text="Admin"
               />}
@@ -261,7 +261,7 @@ export default function AppNavbar({
           <AppNavbarMenu
             header={<AppNavbarItem
               selected={['ACCOUNT'].includes(page)}
-              showOnMobile={false}
+              showOnMobile={true}
               icon={<Icons.Person />}
               text="Account"
             />}

@@ -161,6 +161,7 @@
 }
 .operatingHoursCopyFromSpaceModalContainer {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   height: calc(100% - 64px - 64px - 64px);
   background-color: #FEFEFE;
 }
@@ -243,6 +244,7 @@
 }
 
 .doorwayLists {
+  -webkit-overflow-scrolling: touch;
   overflow-y: auto;
   max-height: 400px;
 }

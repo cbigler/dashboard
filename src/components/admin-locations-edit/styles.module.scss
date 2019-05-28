@@ -6,6 +6,7 @@
   flex-direction: column;
   align-items: center;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: $grayLightest;
   height: 100%;
 }

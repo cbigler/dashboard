@@ -211,6 +211,10 @@ export function Dashboard({
   onCloseModal,
   onShowModal,
 }) {
+
+  const rootDiv: any = document.getElementById("root");
+  const sidebarWidth = rootDiv.clientWidth <= 980 ? 280 : 415;
+
   return (
     <Fragment>
       {/* If an expanded report modal is visible, then render it above the view */}
@@ -234,7 +238,7 @@ export function Dashboard({
 
       {/* Main application */}
       <AppFrame>
-        <AppSidebar visible={sidebarVisible}>
+        <AppSidebar visible={sidebarVisible} width={sidebarWidth}>
           <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
           <AppScrollView>
             <nav className={styles.dashboardAppFrameSidebarList}>

@@ -72,6 +72,7 @@ $exploreSpaceDetailCardHeaderBreakpoint: 930px;
 .exploreSpaceDetailUtilizationCardDailyBreakdownChart {
   overflow-x: auto;
   overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
   text-align: center;
 }
 
