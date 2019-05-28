@@ -97,32 +97,36 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               type="select"
               className={styles.exploreSpaceDailyTimeSegmentBox}
               value={selectedTimeSegmentLabel}
-              choices={spaceTimeSegmentLabelsArray.map(label => {
-                const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
-                if (applicableTimeSegmentsForLabel.length === 1) {
-                  const timeSegment = applicableTimeSegmentsForLabel[0];
-                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-                  return {
-                    id: label,
-                    label: `${label} (${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(startSeconds, 'seconds')
-                    )} - ${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(endSeconds, 'seconds')
-                    )})`,
-                  };
-                } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
-                  return { id: label, label: 'Whole Day (12:00 - 11:59p)' }
-                } else {
-                  return {
-                    id: label,
-                    label: `${label} (Mixed hours)`
-                  };
-                }
-              })}
+              choices={spaceTimeSegmentLabelsArray
+                // Remove multiple entries from the list if a time segment shows up multiple times
+                .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
+                .map(label => {
+                  const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+                  if (applicableTimeSegmentsForLabel.length === 1) {
+                    const timeSegment = applicableTimeSegmentsForLabel[0];
+                    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                    return {
+                      id: label,
+                      label: `${label} (${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(startSeconds, 'seconds')
+                      )} - ${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(endSeconds, 'seconds')
+                      )})`,
+                    };
+                  } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                    return { id: label, label: 'Whole Day (12:00a - 11:59p)' }
+                  } else {
+                    return {
+                      id: label,
+                      label: `${label} (Mixed hours)`
+                    };
+                  }
+                })
+              }
               width={300}
 
               onChange={value => onChangeTimeSegmentLabel(space, value.id)}
