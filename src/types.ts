@@ -58,12 +58,6 @@ export type DensityDoorway = {
     sensorPlacement: string,
   }>,
   tags: Array<string>,
-  _formState?: {
-    list: string,
-    selected: boolean,
-    sensorPlacement: number | null,
-    initialSensorPlacement: number | null
-  }
 };
 
 export type DensityLink = {

@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '../../helpers/convert-unit/index';
-import { DensityUser, DensityTimeSegment, DensitySpace, DensityDoorway } from '../../types';
+import { DensityUser, DensityTimeSegment, DensitySpace } from '../../types';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transition/admin-locations-new';
@@ -64,7 +64,7 @@ export type AdminLocationsFormState = {
   dailyReset: string | null,
   parentId: string | null,
   doorwaysFilter: string,
-  doorways: Array<DensityDoorway>,
+  doorways: Array<DoorwayItem>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
@@ -72,6 +72,20 @@ export type AdminLocationsFormState = {
   imageUrl: string,
   newImageFile?: any,
 };
+
+export type DoorwayItem = {
+  id: string,
+  name: string,
+  spaces: Array<{
+    id: string,
+    name: string,
+    sensorPlacement: string,
+  }>,
+  list: 'TOP' | 'BOTTOM',
+  selected: boolean,
+  sensorPlacement: number | null,
+  initialSensorPlacement: number | null
+}
 
 export function calculateOperatingHoursFromSpace(
   space: {dailyReset: string, timeSegments: Array<DensityTimeSegment>},
@@ -125,6 +139,7 @@ function calculateInitialFormState({
     parentId: formParentSpaceId,
     spaceType: formSpaceType,
     timeSegments: [],
+    doorways: [],
   };
   const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
@@ -165,17 +180,17 @@ function calculateInitialFormState({
     // Doorway module (hydrate with extra form state for each doorway)
     doorwaysFilter: '',
     doorways: doorways.map(doorway => {
-      const linkedSpace = doorway.spaces.find(x => x.id === space.id);
+      const linkedToSpace = doorway.spaces.find(x => x.id === space.id);
       return {
-        ...doorway,
-        _formState: {
-          list: linkedSpace ? 'top' : 'bottom',
-          selected: linkedSpace ? true : false,
-          sensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null,
-          initialSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null
-        }
+        id: doorway.id,
+        name: doorway.name,
+        spaces: doorway.spaces,
+        list: linkedToSpace ? 'TOP' : 'BOTTOM',
+        selected: linkedToSpace ? true : false,
+        sensorPlacement: linkedToSpace ? linkedToSpace.sensorPlacement : null,
+        initialSensorPlacement: linkedToSpace ? linkedToSpace.sensorPlacement : null,
       };
-    }),
+    }) as Array<DoorwayItem>,
 
 
     // Operating hours module
@@ -285,12 +300,10 @@ export default function spaceManagement(state=initialState, action) {
           ...state.formState.doorways,
           {
             ...action.doorway,
-            _formState: {
-              list: 'bottom',
-              selected: true,
-              sensorPlacement: action.sensorPlacement,
-              initialSensorPlacement: null
-            }
+            list: 'BOTTOM',
+            selected: true,
+            sensorPlacement: action.sensorPlacement,
+            initialSensorPlacement: null
           }
         ]
       }
@@ -307,10 +320,7 @@ export default function spaceManagement(state=initialState, action) {
           }
           return {
             ...doorway,
-            _formState: {
-              ...doorway._formState,
-              [action.key]: action.value
-            }
+            [action.key]: action.value,
           };
         })
       }
