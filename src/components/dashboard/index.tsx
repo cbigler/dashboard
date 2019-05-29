@@ -208,6 +208,7 @@ export class Dashboard extends React.Component<any, any> {
 
   componentDidMount() {
     window.addEventListener('resize', this.onResize);
+    this.onResize();
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
@@ -264,7 +265,7 @@ export class Dashboard extends React.Component<any, any> {
         ) : null}
 
         {/* Main application */}
-        <div ref={this.pageContainerRef}>
+        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
             <AppSidebar visible={sidebarVisible} width={sidebarWidth}>
               <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>

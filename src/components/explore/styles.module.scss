@@ -1,5 +1,13 @@
 @import "@density/ui/variables/colors.scss";
 
+.appFrameWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  overflow: hidden;
+}
+
 .exploreAppFrameSidebarList {
   flex-grow: 1;
   flex-shrink: 1;

@@ -2,6 +2,14 @@
 @import "@density/ui/variables/grid.scss";
 @import "@density/ui/variables/fonts.scss";
 
+.appFrameWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  overflow: hidden;
+}
+
 .dashboardAppFrameScrollBodySpacer {
   height: 150px;
 }
