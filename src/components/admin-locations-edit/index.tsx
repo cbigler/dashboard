@@ -67,6 +67,13 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
     newImageFile: formState.newImageFile,
     operatingHours: formState.operatingHours,
 
+    links: formState.doorways.map(i => ({
+      id: i.linkId,
+      doorwayId: i.id,
+      sensorPlacement: i.sensorPlacement,
+      operationToPerform: i.operationToPerform,
+    })),
+
     inheritsTimeSegments: !formState.overrideDefault,
   };
 }

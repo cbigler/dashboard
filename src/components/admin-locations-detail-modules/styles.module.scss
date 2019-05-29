@@ -304,3 +304,43 @@
   cursor: pointer;
   user-select: none;
 }
+
+.doorwaysEmptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+.doorwaysEmptyStateInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.doorwaysEmptyStateInnerLeft {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 76px;
+  margin-right: 42px;
+  height: 108px;
+}
+.doorwaysEmptyStateInnerRight {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 108px;
+}
+.doorwaysEmptyStateInnerRight h3 {
+  font-weight: normal;
+  font-size: 18px;
+  color: $grayDarkest;
+  margin-top: 32px;
+  margin-bottom: 7px;
+}
+.doorwaysEmptyStateInnerRight p {
+  font-size: 14px;
+  color: $grayDarker;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}

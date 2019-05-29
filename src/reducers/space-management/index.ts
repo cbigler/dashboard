@@ -85,6 +85,9 @@ export type DoorwayItem = {
   selected: boolean,
   sensorPlacement: number | null,
   initialSensorPlacement: number | null
+  linkId: string,
+  operationToPerform: 'CREATE' | 'UPDATE' | 'DELETE' | null,
+  linkExistsOnServer: boolean,
 }
 
 export function calculateOperatingHoursFromSpace(
@@ -181,14 +184,18 @@ function calculateInitialFormState({
     doorwaysFilter: '',
     doorways: doorways.map(doorway => {
       const linkedToSpace = doorway.spaces.find(x => x.id === space.id);
+      const sensorPlacement = linkedToSpace ? linkedToSpace.sensorPlacement : null;
       return {
         id: doorway.id,
         name: doorway.name,
         spaces: doorway.spaces,
         list: linkedToSpace ? 'TOP' : 'BOTTOM',
         selected: linkedToSpace ? true : false,
-        sensorPlacement: linkedToSpace ? linkedToSpace.sensorPlacement : null,
-        initialSensorPlacement: linkedToSpace ? linkedToSpace.sensorPlacement : null,
+        sensorPlacement,
+        initialSensorPlacement: sensorPlacement,
+        linkId: linkedToSpace ? linkedToSpace.linkId : null,
+        operationToPerform: null,
+        linkExistsOnServer: linkedToSpace ? true : false,
       };
     }) as Array<DoorwayItem>,
 
