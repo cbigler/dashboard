@@ -160,6 +160,7 @@ export class Explore extends React.Component<any, any> {
 
   componentDidMount() {
     window.addEventListener('resize', this.onResize);
+    this.onResize();
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.onResize);
@@ -200,7 +201,7 @@ export class Explore extends React.Component<any, any> {
     return (
       <Fragment>
         {/* Main application */}
-        <div ref={this.pageContainerRef}>
+        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
             <AppSidebar visible={true} width={sidebarWidth}>
               <AppBar>
