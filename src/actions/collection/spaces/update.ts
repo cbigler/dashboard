@@ -54,8 +54,9 @@ export default function collectionSpacesUpdate(item) {
       });
 
       if (item.operatingHours) {
-        await Promise.all(item.operatingHours.map(operatingHoursItem => {
+        await Promise.all(item.operatingHours.map(async operatingHoursItem => {
           switch (operatingHoursItem.operationToPerform) {
+
           case 'CREATE':
             return core().post('/time_segments', {
               label: operatingHoursItem.label,
@@ -64,16 +65,20 @@ export default function collectionSpacesUpdate(item) {
               days: operatingHoursItem.daysAffected,
               spaces: [ item.id ],
             });
+
           case 'UPDATE':
             return core().put(`/time_segments/${operatingHoursItem.id}`, {
               label: operatingHoursItem.label,
               start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
               end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
               days: operatingHoursItem.daysAffected,
-              spaces: [ item.id ],
+              // don't update `spaces`: if a time segment is linked to multiple spaces, we want to
+              // maintain those links even if it is just being updated on one space.
             });
+
           case 'DELETE':
             return core().delete(`/time_segments/${operatingHoursItem.id}`);
+
           default:
             return;
           }

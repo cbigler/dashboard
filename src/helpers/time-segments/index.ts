@@ -78,11 +78,19 @@ export function getParentTimeSegmentsForSpace(parentId, spaceHierarchy) {
   const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
   const parentOfSpaceInHierarchy = formattedHierarchy.find(i => i.space.id === parentId);
   if (!parentOfSpaceInHierarchy) {
-    return []; // Parent pace id could not be found
+    return []; // Parent space id could not be found
   }
   const allSpaces = [
     parentOfSpaceInHierarchy.space, // Parent space
     ...parentOfSpaceInHierarchy.ancestry, // Any parents of the parent space
   ];
-  return allSpaces.flatMap(hierarchyItem => hierarchyItem.timeSegments);
+
+  // Loop through each space, finding the first space that has time segments of its own.
+  for (let index = 0; index < allSpaces.length; index += 1) {
+    const hierarchyItem = allSpaces[index];
+    if (!hierarchyItem.inheritsTimeSegments) {
+      return hierarchyItem.timeSegments;
+    }
+  }
+  return [];
 }

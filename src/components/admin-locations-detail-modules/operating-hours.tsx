@@ -221,12 +221,13 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
+  const parentTimeSegments = getParentTimeSegmentsForSpace(
+    formState.parentId,
+    spaceManagement.spaceHierarchy,
+  );
   const parentOperatingHours = calculateOperatingHoursFromSpace({
     dailyReset: formState.dailyReset,
-    timeSegments: getParentTimeSegmentsForSpace(
-      formState.parentId,
-      spaceManagement.spaceHierarchy,
-    ),
+    timeSegments: parentTimeSegments,
   });
   const shownOperatingHours = formState.overrideDefault ? (
     formState.operatingHours
@@ -301,10 +302,18 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
                     if (switchEnabled) {
                       // Copy operating hours from parent into this space
-                      onChangeField('operatingHours', parentOperatingHours);
+                      const newOperatingHours = parentOperatingHours.map(i => ({
+                        ...i,
+                        operationToPerform: 'CREATE',
+                        id: uuid.v4(),
+                      }));
+
+                      onChangeField('operatingHours', newOperatingHours);
                     } else {
-                      // Remove all operating hour segments when the switch is disabled
+                      // Clear array of operating hours.
                       onChangeField('operatingHours', []);
+                      // NB: The server will remove all the time segments that were previously
+                      // associated with the space when the form is saved.
                     }
                   }}
                 />
@@ -437,7 +446,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           label: item.id,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -468,7 +477,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           daysAffected,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -489,7 +498,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ...operatingHoursCopy[index],
                       startTimeSeconds,
                       endTimeSeconds,
-                      operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                      operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                     };
                     onChangeField('operatingHours', operatingHoursCopy);
                   }}
