@@ -15,6 +15,7 @@ import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
 import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
+import outlookIcon from '../../assets/images/icon-outlook.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
@@ -33,14 +34,17 @@ import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMak
 import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
 
 import doGoogleCalendarAuthRedirect from '../../actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../actions/integrations/outlook';
 
 
 function iconForIntegration(serviceName: string) {
   switch(serviceName) {
-    case "robin":
-      return robinIcon;
     case "google_calendar":
       return googleCalendarIcon;
+    case "outlook":
+      return outlookIcon;
+    case "robin":
+      return robinIcon;
     case "slack":
       return slackIcon;
     case "teem":
@@ -65,13 +69,15 @@ function handleActivateEditClick(item, onOpenModal) {
      window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
   } else if (item.name === "google_calendar" && !item.serviceAuthorization.id) {
     return doGoogleCalendarAuthRedirect();
+  } else if (item.name === "outlook" && !item.serviceAuthorization.id) {
+    return doOutlookAuthRedirect();
   } else {
     onOpenModal(!item.serviceAuthorization.id ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
   }
 }
 
 function handleDeleteClick(item, onOpenModal) {
-  if (item.name === "teem" || item.name === "google_calendar") {
+  if (item.name === "teem" || item.name === "google_calendar" || item.name === 'outlook') {
     onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
   } else {
     onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});
