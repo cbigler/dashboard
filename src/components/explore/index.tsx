@@ -147,93 +147,124 @@ function pruneHierarchy(spaceTree, matchedSpaceIds) {
   }
 }
 
-export function Explore({
-  spaces,
-  spaceHierarchy,
-  selectedSpace,
-  activePage,
-  onSpaceSearch,
-}) {
-  const rootDiv: any = document.getElementById("root");
-  const sidebarWidth = rootDiv.clientWidth <= 980 ? 280 : 415;
+export class Explore extends React.Component<any, any> {
+  private pageContainerRef: React.RefObject<HTMLInputElement>;
 
-  let filteredSpaces = spaceHierarchy.data;
-  if (spaces.filters.search) {
-    const matchedSpaceIds = fuzzy.filter(
-      spaces.filters.search,
-      spaces.data,
-      { pre: '<', post: '>', extract: x => x['name'] }
-    ).map(x => x.original['id']);
-    const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
-    filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
+  constructor(props) {
+    super(props);
+    this.pageContainerRef = React.createRef();
+    this.state = {
+      pageSize: 0,
+    };
   }
 
-  const spaceList = sortSpaceTree(filteredSpaces);
-  return (
-    <Fragment>
-      {/* Main application */}
-      <AppFrame>
-        <AppSidebar visible={true} width={sidebarWidth}>
-          <AppBar>
-            <InputBox
-              type="text"
-              width="100%"
-              placeholder="Filter Spaces ..."
-              disabled={false}
-              leftIcon={<Icons.Search />}
-              value={spaces.filters.search}
-              onChange={e => onSpaceSearch(e.target.value)}
-            />
-          </AppBar>
-          <AppScrollView>
-            <nav className={styles.exploreAppFrameSidebarList}>
-                <Fragment>
-                  {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading Spaces...</div> : null}
-                  {spaceList.map(space => (
-                    RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
-                  ))}
-                </Fragment>
-            </nav>
-          </AppScrollView>
-        </AppSidebar>
-        <AppPane>
-          <AppBar>
-            <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
-            { selectedSpace ?
-            <AppBarSubnav>
-              <AppBarSubnavLink
-                href={`#/spaces/explore/${spaces.selected}/trends`}
-                active={activePage === "EXPLORE_SPACE_TRENDS"}
-              >
-                Trends
-              </AppBarSubnavLink>
-              <AppBarSubnavLink
-                href={`#/spaces/explore/${spaces.selected}/daily`}
-                active={activePage === "EXPLORE_SPACE_DAILY"}
-              >
-                Daily
-              </AppBarSubnavLink>
-              { ["conference_room", "meeting_room"].includes(selectedSpace['function']) ? <AppBarSubnavLink
-                href={`#/spaces/explore/${spaces.selected}/meetings`}
-                active={activePage === "EXPLORE_SPACE_MEETINGS"}
-              >
-                Meetings
-              </AppBarSubnavLink> : null }
-              <AppBarSubnavLink
-                href={`#/spaces/explore/${spaces.selected}/data-export`}
-                active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
-              >
-                Data Export
-              </AppBarSubnavLink>
-            </AppBarSubnav> : null}
-          </AppBar>
-          <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
-            <ExploreSpacePage activePage={activePage} />
-          </AppScrollView>
-        </AppPane>
-      </AppFrame>
-    </Fragment>
-  );
+  componentDidMount() {
+    window.addEventListener('resize', this.onResize.bind(this));
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize.bind(this));
+  }
+
+  onResize() {
+    if (this.pageContainerRef) {
+      const div: any = this.pageContainerRef.current;
+      this.setState({
+        pageSize: div.clientWidth,
+      });
+    }
+  }
+
+  render() {
+    const {
+      spaces,
+      spaceHierarchy,
+      selectedSpace,
+      activePage,
+      onSpaceSearch,
+    } = this.props;
+
+    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
+
+    let filteredSpaces = spaceHierarchy.data;
+    if (spaces.filters.search) {
+      const matchedSpaceIds = fuzzy.filter(
+        spaces.filters.search,
+        spaces.data,
+        { pre: '<', post: '>', extract: x => x['name'] }
+      ).map(x => x.original['id']);
+      const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
+      filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
+    }
+
+    const spaceList = sortSpaceTree(filteredSpaces);
+    return (
+      <Fragment>
+        {/* Main application */}
+        <div ref={this.pageContainerRef}>
+          <AppFrame>
+            <AppSidebar visible={true} width={sidebarWidth}>
+              <AppBar>
+                <InputBox
+                  type="text"
+                  width="100%"
+                  placeholder="Filter Spaces ..."
+                  disabled={false}
+                  leftIcon={<Icons.Search />}
+                  value={spaces.filters.search}
+                  onChange={e => onSpaceSearch(e.target.value)}
+                />
+              </AppBar>
+              <AppScrollView>
+                <nav className={styles.exploreAppFrameSidebarList}>
+                    <Fragment>
+                      {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading Spaces...</div> : null}
+                      {spaceList.map(space => (
+                        RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
+                      ))}
+                    </Fragment>
+                </nav>
+              </AppScrollView>
+            </AppSidebar>
+            <AppPane>
+              <AppBar>
+                <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
+                { selectedSpace ?
+                <AppBarSubnav>
+                  <AppBarSubnavLink
+                    href={`#/spaces/explore/${spaces.selected}/trends`}
+                    active={activePage === "EXPLORE_SPACE_TRENDS"}
+                  >
+                    Trends
+                  </AppBarSubnavLink>
+                  <AppBarSubnavLink
+                    href={`#/spaces/explore/${spaces.selected}/daily`}
+                    active={activePage === "EXPLORE_SPACE_DAILY"}
+                  >
+                    Daily
+                  </AppBarSubnavLink>
+                  { ["conference_room", "meeting_room"].includes(selectedSpace['function']) ? <AppBarSubnavLink
+                    href={`#/spaces/explore/${spaces.selected}/meetings`}
+                    active={activePage === "EXPLORE_SPACE_MEETINGS"}
+                  >
+                    Meetings
+                  </AppBarSubnavLink> : null }
+                  <AppBarSubnavLink
+                    href={`#/spaces/explore/${spaces.selected}/data-export`}
+                    active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
+                  >
+                    Data Export
+                  </AppBarSubnavLink>
+                </AppBarSubnav> : null}
+              </AppBar>
+              <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
+                <ExploreSpacePage activePage={activePage} />
+              </AppScrollView>
+            </AppPane>
+          </AppFrame>
+        </div>
+      </Fragment>
+    );
+  }
 }
 
 export default connect((state: any) => {
