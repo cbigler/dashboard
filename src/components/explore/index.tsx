@@ -159,13 +159,13 @@ export class Explore extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    window.addEventListener('resize', this.onResize.bind(this));
+    window.addEventListener('resize', this.onResize);
   }
   componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize.bind(this));
+    window.removeEventListener('resize', this.onResize);
   }
 
-  onResize() {
+  onResize = () => {
     if (this.pageContainerRef) {
       const div: any = this.pageContainerRef.current;
       this.setState({
