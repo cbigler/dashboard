@@ -115,7 +115,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
           {currentService && currentService.serviceAuthorization.lastSync === null ? (
             <div className={styles.centeredMessage}>
               <div className={styles.integrationNotice}>
-                We are syncing your {currentService.displayName} spaces with Density. This page will automatically refresh when the sync is complete.
+                We are syncing your {currentService.displayName} spaces with Density for the first time. This will take between 2-5 minutes.
               </div>
             </div>
           ) : null}
