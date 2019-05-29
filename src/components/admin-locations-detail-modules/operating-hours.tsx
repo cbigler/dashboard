@@ -221,12 +221,13 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
+  const parentTimeSegments = getParentTimeSegmentsForSpace(
+    formState.parentId,
+    spaceManagement.spaceHierarchy,
+  );
   const parentOperatingHours = calculateOperatingHoursFromSpace({
     dailyReset: formState.dailyReset,
-    timeSegments: getParentTimeSegmentsForSpace(
-      formState.parentId,
-      spaceManagement.spaceHierarchy,
-    ),
+    timeSegments: parentTimeSegments,
   });
   const shownOperatingHours = formState.overrideDefault ? (
     formState.operatingHours
@@ -445,7 +446,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           label: item.id,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -476,7 +477,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           daysAffected,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -497,7 +498,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ...operatingHoursCopy[index],
                       startTimeSeconds,
                       endTimeSeconds,
-                      operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                      operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                     };
                     onChangeField('operatingHours', operatingHoursCopy);
                   }}

@@ -78,7 +78,7 @@ export function getParentTimeSegmentsForSpace(parentId, spaceHierarchy) {
   const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
   const parentOfSpaceInHierarchy = formattedHierarchy.find(i => i.space.id === parentId);
   if (!parentOfSpaceInHierarchy) {
-    return []; // Parent pace id could not be found
+    return []; // Parent space id could not be found
   }
   const allSpaces = [
     parentOfSpaceInHierarchy.space, // Parent space
