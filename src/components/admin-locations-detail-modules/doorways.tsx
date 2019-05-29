@@ -28,7 +28,7 @@ const DOORWAY_ICON = (
 													<circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="73" cy="31" r="3"></circle>
 													<g id="chat" transform="translate(64.000000, 0.000000)">
 															<path d="M0,18 L4,14 L4,2 C4,0.8954305 4.8954305,2.02906125e-16 6,0 L25,0 C26.1045695,-2.02906125e-16 27,0.8954305 27,2 L27,16 C27,17.1045695 26.1045695,18 25,18 L6,18 L0,18 Z" id="Path" stroke="#D7D7D7" strokeWidth="2" strokeLinejoin="round"></path>
-															<text id="+1" font-family="Aeonik-Medium, Aeonik" font-size="12" font-weight="400" fill="#BFBFBF">
+															<text id="+1" fontFamily="Aeonik-Medium, Aeonik" fontSize="12" fontWeight="400" fill="#BFBFBF">
 																	<tspan x="8" y="13">+1</tspan>
 															</text>
 													</g>
@@ -155,7 +155,6 @@ export default function AdminLocationsDetailModulesDoorways({
   onChangeField,
   onSetDoorwayField,
 }) {
-
   const doorwaysFilter = filterCollection({fields: ['name']});
   const filteredDoorways = doorwaysFilter(formState.doorways, formState.doorwaysFilter);
 
