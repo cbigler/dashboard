@@ -62,7 +62,7 @@ export default class AdminLocationsImageUpload extends React.Component<any, any>
     return <FormLabel
       label={
         <span className={styles.adminLocationsImageUploadLabel}>
-          <span>Photo</span>
+          <span>{this.props.label || 'Photo'}</span>
           {this.state.view === UPLOADED ? <span
             className={styles.adminLocationsImageUploadHeaderEdit}
             onClick={() => this.fileinput.click()}

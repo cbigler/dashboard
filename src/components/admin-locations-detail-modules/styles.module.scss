@@ -344,3 +344,43 @@
   margin-top: 0px;
   margin-bottom: 7px;
 }
+
+
+.doorwayModalFirstSection {
+  padding-top: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid $gray;
+}
+.doorwayModalSection {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid $gray;
+}
+.doorwayModalSectionHorizontalForm {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+.doorwayFormMeasurementUnit { color: $brandPrimary; }
+.doorwayFormMountingSpaceRadioButtonGroup {
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+}
+
+.doorwayModalDangerZoneWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+}
+.doorwayModalDangerZoneText {
+  width: 240px;
+}
+.doorwayModalDangerZoneText h4 {
+  margin-bottom: 8px;
+  font-size: $fontSizeBase;
+}
