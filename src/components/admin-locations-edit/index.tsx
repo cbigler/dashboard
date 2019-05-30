@@ -5,13 +5,15 @@ import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
+import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
+  AdminLocationsDetailModulesTags,
   AdminLocationsDetailModulesMetadata,
   AdminLocationsDetailModulesAddress,
   AdminLocationsDetailModulesDangerZone,
@@ -50,6 +52,9 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
     parentId: formState.parentId,
     floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
 
+    newTags: formState.tags,
+    newAssignedTeams: formState.assignedTeams,
+
     annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
     sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
     sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
@@ -74,9 +79,43 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
 type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
-  onChangeField: (string, any) => any,
+  tagsCollection: Array<DensityTag>,
+  assignedTeamsCollection: Array<DensityAssignedTeam>,
+
+  onSave: (id: string, spaceFieldUpdate: any) => any,
+  onChangeField: (key: string, value: string) => any,
   onSetDoorwaySelected: (string, boolean) => any,
-  onSave: (spaceId: string, spaceFieldUpdate: any) => any,
+};
+
+export type AdminLocationsFormState = {
+  loaded: boolean,
+
+  name?: string,
+  spaceType?: string,
+  'function'?: string,
+  tags?: Array<{
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
+  assignedTeams?: Array<{
+    id: string,
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
+  annualRent?: any,
+  sizeArea?: any,
+  sizeAreaUnit?: 'feet' | 'meters',
+  currencyUnit?: 'USD',
+  capacity?: string,
+  targetCapacity?: string,
+  floorLevel?: string,
+  address?: string,
+  coordinates?: [number, number] | null,
+  timeZone?: string,
+  dailyReset?: string | null,
+  parentId?: string | null,
+  imageUrl?: string,
+  newImageFile?: any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -117,6 +156,8 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     const {
       spaceManagement,
       selectedSpace,
+      tagsCollection,
+      assignedTeamsCollection,
       onChangeField,
       onSetDoorwaySelected
     } = this.props;
@@ -183,6 +224,8 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                 <FormComponent
                   spaceType={selectedSpace.spaceType}
                   formState={spaceManagement.formState}
+                  tagsCollection={tagsCollection}
+                  assignedTeamsCollection={assignedTeamsCollection}
                   operationType="UPDATE"
                   onChangeField={onChangeField}
                   onSetDoorwaySelected={onSetDoorwaySelected}
@@ -205,6 +248,8 @@ export default connect((state: any) => {
   const selectedSpace = state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id);
   return {
     spaceManagement: state.spaceManagement,
+    tagsCollection: state.tags,
+    assignedTeamsCollection: state.assignedTeams,
     selectedSpace,
   };
 }, (dispatch: any) => {
@@ -216,6 +261,7 @@ export default connect((state: any) => {
       }));
       if (!ok) {
         dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+        dispatch(spaceManagementReset());
         return false;
       }
 
@@ -235,6 +281,8 @@ export default connect((state: any) => {
 type AdminLocationsFormSpaceTypeProps = {
   spaceType: DensitySpace["spaceType"],
   formState: { [key: string]: any },
+  tagsCollection: { [key: string]: any },
+  assignedTeamsCollection: { [key: string]: any },
   onChangeField: (string, any) => any,
   onSetDoorwaySelected?: (string, boolean) => any,
   operationType: 'CREATE' | 'UPDATE',
@@ -248,6 +296,8 @@ export function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) 
 export function AdminLocationsCampusForm({
   spaceType,
   formState,
+  tagsCollection,
+  assignedTeamsCollection,
   onChangeField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
@@ -276,6 +326,28 @@ export function AdminLocationsCampusForm({
             onChangeField={onChangeField}
           />
         </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Tags"
+            placeholder="Start typing to add a tag"
+            processIntoSlug={true}
+            emptyTagsPlaceholder="No tags have been added to this space yet"
+            tags={formState.tags}
+            tagsCollection={tagsCollection}
+            onChangeTags={tags => onChangeField('tags', tags)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Teams"
+            placeholder="Start typing to assign a team"
+            processIntoSlug={false}
+            emptyTagsPlaceholder="No teams have been assigned to this space yet"
+            tags={formState.assignedTeams}
+            tagsCollection={assignedTeamsCollection}
+            onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
+          />
+        </div>
         {operationType === 'UPDATE' ? (
           <div className={styles.moduleWrapper}>
             <AdminLocationsDetailModulesDangerZone />
@@ -289,6 +361,8 @@ export function AdminLocationsCampusForm({
 export function AdminLocationsBuildingForm({
   spaceType,
   formState,
+  tagsCollection,
+  assignedTeamsCollection,
   onChangeField,
   onSetDoorwaySelected,
   operationType,
@@ -332,6 +406,28 @@ export function AdminLocationsBuildingForm({
             onChangeField={onChangeField}
           />
         </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Tags"
+            placeholder="Start typing to add a tag"
+            processIntoSlug={true}
+            emptyTagsPlaceholder="No tags have been added to this space yet"
+            tags={formState.tags}
+            tagsCollection={tagsCollection}
+            onChangeTags={tags => onChangeField('tags', tags)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Teams"
+            placeholder="Start typing to assign a team"
+            processIntoSlug={false}
+            emptyTagsPlaceholder="No teams have been assigned to this space yet"
+            tags={formState.assignedTeams}
+            tagsCollection={assignedTeamsCollection}
+            onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
+          />
+        </div>
         {operationType === 'UPDATE' ? (
           <div className={styles.moduleWrapper}>
             <AdminLocationsDetailModulesDangerZone />
@@ -345,6 +441,8 @@ export function AdminLocationsBuildingForm({
 export function AdminLocationsFloorForm({
   spaceType,
   formState,
+  tagsCollection,
+  assignedTeamsCollection,
   onChangeField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
@@ -369,6 +467,28 @@ export function AdminLocationsFloorForm({
             spaceType={spaceType}
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Tags"
+            placeholder="Start typing to add a tag"
+            processIntoSlug={true}
+            emptyTagsPlaceholder="No tags have been added to this space yet"
+            tags={formState.tags}
+            tagsCollection={tagsCollection}
+            onChangeTags={tags => onChangeField('tags', tags)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Teams"
+            placeholder="Start typing to assign a team"
+            processIntoSlug={false}
+            emptyTagsPlaceholder="No teams have been assigned to this space yet"
+            tags={formState.assignedTeams}
+            tagsCollection={assignedTeamsCollection}
+            onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
           />
         </div>
         {operationType === 'UPDATE' ? (
@@ -384,6 +504,8 @@ export function AdminLocationsFloorForm({
 export function AdminLocationsSpaceForm({
   spaceType,
   formState,
+  tagsCollection,
+  assignedTeamsCollection,
   onChangeField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
@@ -408,6 +530,28 @@ export function AdminLocationsSpaceForm({
           <AdminLocationsDetailModulesOperatingHours
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Tags"
+            placeholder="Start typing to add a tag"
+            processIntoSlug={true}
+            emptyTagsPlaceholder="No tags have been added to this space yet"
+            tags={formState.tags}
+            tagsCollection={tagsCollection}
+            onChangeTags={tags => onChangeField('tags', tags)}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesTags
+            title="Teams"
+            placeholder="Start typing to assign a team"
+            processIntoSlug={false}
+            emptyTagsPlaceholder="No teams have been assigned to this space yet"
+            tags={formState.assignedTeams}
+            tagsCollection={assignedTeamsCollection}
+            onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
           />
         </div>
         {operationType === 'UPDATE' ? (

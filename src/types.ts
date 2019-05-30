@@ -198,6 +198,14 @@ export type DensityUser = {
   sizeAreaDisplayUnit: 'square_feet' | 'square_meters',
 };
 
+export type DensityTag = {
+  name: string,
+};
+
+export type DensityAssignedTeam = {
+  name: string,
+};
+
 // Counts
 
 // Service
