@@ -57,9 +57,17 @@ export type DensityDoorway = {
     id: string,
     linkId: string,
     name: string,
-    sensorPlacement: string,
+    sensorPlacement: 1 | -1,
   }>,
   tags: Array<string>,
+  environment?: {
+    height: number,
+    width: number,
+    clearance: boolean,
+    powerType: 'POWER_OVER_ETHERNET' | 'AC_OUTLET',
+    insideImageUrl: string,
+    outsideImageUrl: string,
+  },
 };
 
 export type DensityLink = {
