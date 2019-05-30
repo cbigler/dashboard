@@ -137,7 +137,28 @@ function AdminLocationsDetailModulesDoorwayModal({
                   {id: CENTIMETERS, label: 'Metric'},
                   {id: INCHES, label: 'Imperial'},
                 ]}
-                onChange={item => onChangeField('measurementUnit', item.id)}
+                onChange={item => {
+                  const updatedModalState = {
+                    ...modalState,
+                    data: {
+                      ...modalState.data,
+                      measurementUnit: item.id,
+                    },
+                  };
+
+                  // Convert width / height when management unit is changed
+                  if (item.id !== modalState.data.measurementUnit) {
+                    (['width', 'height']).forEach(fieldName => {
+                      const parsedValue = parseFloat(modalState.data[fieldName]);
+                      if (!isNaN(parsedValue)) {
+                        const converted = convertUnit(parsedValue, modalState.data.measurementUnit, item.id);
+                        updatedModalState.data[fieldName] = converted;
+                      }
+                    });
+                  }
+
+                  onUpdateModalState(updatedModalState);
+                }}
                 width={130}
               />
             }
