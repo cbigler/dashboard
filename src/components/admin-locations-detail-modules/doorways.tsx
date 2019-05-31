@@ -381,11 +381,13 @@ function AdminLocationsDetailModulesDoorwayModal({
 }
 
 function DoorwayList({
+  selectedSpaceId,
   doorways,
   shaded=false,
   onSelectDoorway,
   onChangeDoorwaySensorPlacement,
   onEditDoorway,
+  onShowModal,
 }) {
   return (
     <div className={classnames(styles.doorwayList, {[styles.shaded]: shaded})}>
@@ -417,18 +419,19 @@ function DoorwayList({
         <ListViewColumn
           title="Linked Spaces"
           template={i => {
-            if (i.spaces.length > 1) {
+            const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
+            if (spacesOtherThanSelectedSpace.length > 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
                   <Icons.Link />
-                  <span>{i.spaces.length} Linked Spaces</span>
+                  <span>{spacesOtherThanSelectedSpace.length} Linked Spaces</span>
                 </div>
               );
-            } else if (i.spaces.length === 1) {
+            } else if (spacesOtherThanSelectedSpace.length === 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
                   <Icons.Link />
-                  <span>{i.spaces[0].name}</span>
+                  <span>{spacesOtherThanSelectedSpace[0].name}</span>
                 </div>
               );
             } else {
@@ -450,10 +453,15 @@ function DoorwayList({
                       size="small"
                       width={40}
                       height={40}
-                      onClick={() => onChangeDoorwaySensorPlacement(
-                        i,
-                        i.sensorPlacement === 1 ? -1 : 1,
-                      )}
+                      onClick={() => {
+                        // Prompt the user for the dpu position in a modal
+                        onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
+                          sensorPlacement: i.sensorPlacement, /* initial value */
+                          onComplete: (sensorPlacement) => {
+                            onChangeDoorwaySensorPlacement(i, sensorPlacement);
+                          },
+                        });
+                      }}
                     >
                       <Icons.Switch color={colorVariables.brandPrimary} />
                     </Button>
@@ -489,6 +497,7 @@ function DoorwayList({
 function AdminLocationsDetailModulesDoorways({
   formState,
   activeModal,
+  selectedSpaceIdOrNull,
 
   onChangeDoorwaysFilter,
   onChangeField,
@@ -614,10 +623,12 @@ function AdminLocationsDetailModulesDoorways({
         <div className={styles.doorwayLists}>
           {topDoorways.length > 0 ? (
             <DoorwayList
+              selectedSpaceId={selectedSpaceIdOrNull}
               doorways={topDoorways}
               onSelectDoorway={onSelectDoorway}
               onChangeDoorwaySensorPlacement={onChangeDoorwaySensorPlacement}
               onEditDoorway={onEditDoorway}
+              onShowModal={onShowModal}
             />
           ): (
             <div className={styles.doorwaysEmptyState}>
@@ -662,10 +673,12 @@ function AdminLocationsDetailModulesDoorways({
             </Fragment>
           ): (
             <DoorwayList
+              selectedSpaceId={selectedSpaceIdOrNull}
               doorways={filteredDoorways.filter(x => x.list === 'BOTTOM')}
               onSelectDoorway={onSelectDoorway}
               onChangeDoorwaySensorPlacement={onChangeDoorwaySensorPlacement}
               onEditDoorway={onEditDoorway}
+              onShowModal={onShowModal}
               shaded
             />
           )}
@@ -677,6 +690,7 @@ function AdminLocationsDetailModulesDoorways({
 
 export default connect((state: any) => ({
   activeModal: state.activeModal,
+  selectedSpaceIdOrNull: state.spaceManagement.spaces.selected,
 }), dispatch => ({
   onHideModal() {
     dispatch<any>(hideModal());
