@@ -3,6 +3,7 @@ import moment from 'moment';
 import fetchAllPages from '../../../helpers/fetch-all-pages/index';
 import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
 import { DensitySpace } from '../../../types';
+import formatTagName from '../../../helpers/format-tag-name/index';
 
 import collectionSpacesSet from './set';
 import collectionSpacesError from './error';
@@ -54,8 +55,9 @@ export default function collectionSpacesUpdate(item) {
       });
 
       if (item.operatingHours) {
-        await Promise.all(item.operatingHours.map(operatingHoursItem => {
+        await Promise.all(item.operatingHours.map(async operatingHoursItem => {
           switch (operatingHoursItem.operationToPerform) {
+
           case 'CREATE':
             return core().post('/time_segments', {
               label: operatingHoursItem.label,
@@ -64,16 +66,20 @@ export default function collectionSpacesUpdate(item) {
               days: operatingHoursItem.daysAffected,
               spaces: [ item.id ],
             });
+
           case 'UPDATE':
             return core().put(`/time_segments/${operatingHoursItem.id}`, {
               label: operatingHoursItem.label,
               start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
               end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
               days: operatingHoursItem.daysAffected,
-              spaces: [ item.id ],
+              // don't update `spaces`: if a time segment is linked to multiple spaces, we want to
+              // maintain those links even if it is just being updated on one space.
             });
+
           case 'DELETE':
             return core().delete(`/time_segments/${operatingHoursItem.id}`);
+
           default:
             return;
           }
@@ -87,6 +93,27 @@ export default function collectionSpacesUpdate(item) {
         dispatch(showToast({text: 'Processing...', timeout: 10000, id}));
         await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
         dispatch(hideToast(id));
+      }
+
+      if (item.newTags) {
+        await Promise.all(item.newTags.map(async tag => {
+          const tagName = formatTagName(tag.name);
+          if (tag.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${item.id}/tags`, { tag_name: tagName });
+          } else if (tag.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${item.id}/tags/${tagName}`);
+          }
+        }));
+      }
+
+      if (item.newAssignedTeams) {
+        await Promise.all(item.newAssignedTeams.map(async assignedTeam => {
+          if (assignedTeam.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${item.id}/assigned_teams`, { team_name: assignedTeam.name });
+          } else if (assignedTeam.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${item.id}/assigned_teams/${assignedTeam.id}`);
+          }
+        }));
       }
 
       // When saving the space, update any links that were configured or changed in the doorways

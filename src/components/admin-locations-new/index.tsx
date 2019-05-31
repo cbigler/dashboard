@@ -13,10 +13,11 @@ import {
   AdminLocationsSpaceForm,
 } from '../admin-locations-edit/index';
 import { AdminLocationsFormState } from '../../reducers/space-management';
-import { DensityUser, DensitySpace } from '../../types';
+import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
+import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
@@ -35,6 +36,8 @@ import {
 type AdminLocationsNewProps = {
   user: any,
   spaceManagement: any,
+  tagsCollection: Array<DensityTag>,
+  assignedTeamsCollection: Array<DensityAssignedTeam>,
   newSpaceParent: DensitySpace,
   newSpaceType: DensitySpace["spaceType"],
   onChangeField: (string, any) => any,
@@ -161,6 +164,8 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                 <FormComponent
                   spaceType={newSpaceType}
                   formState={this.props.spaceManagement.formState}
+                  tagsCollection={this.props.tagsCollection}
+                  assignedTeamsCollection={this.props.assignedTeamsCollection}
                   operationType="CREATE"
                   onChangeField={this.props.onChangeField}
                   onSetDoorwayField={onSetDoorwayField}
@@ -183,6 +188,8 @@ export default connect((state: any) => {
   return {
     user: state.user,
     spaceManagement: state.spaceManagement,
+    tagsCollection: state.tags,
+    assignedTeamsCollection: state.assignedTeams,
 
     // Figure out the type of the new space, and its parent
     newSpaceType: state.spaceManagement.formSpaceType,
@@ -196,6 +203,7 @@ export default connect((state: any) => {
       const newSpace = await dispatch(collectionSpacesCreate(space));
       if (!newSpace) {
         dispatch(showToast({ type: 'error', text: 'Error creating space' }));
+        dispatch(spaceManagementReset());
         return false;
       }
 

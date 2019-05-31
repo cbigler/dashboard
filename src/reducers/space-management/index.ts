@@ -14,6 +14,7 @@ import { SPACE_MANAGEMENT_FORM_DOORWAY_PUSH } from '../../actions/space-manageme
 import { SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE } from '../../actions/space-management/form-doorway-update';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
+import { SPACE_MANAGEMENT_RESET } from '../../actions/space-management/reset';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
 import { COLLECTION_SPACES_UPDATE } from '../../actions/collection/spaces/update';
 import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../actions/space-management/push-doorway';
@@ -73,6 +74,15 @@ export type AdminLocationsFormState = {
   overrideDefaultControlHidden: boolean,
   imageUrl: string,
   newImageFile?: any,
+  tags?: Array<{
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
+  assignedTeams?: Array<{
+    id: string,
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
 };
 
 export type DoorwayItem = {
@@ -147,6 +157,7 @@ export function calculateOperatingHoursFromSpace(
       startTimeSeconds,
       endTimeSeconds,
       daysAffected: tsm.days,
+      operationToPerform: null,
     };
   }).sort((a, b) => {
     return a.startTimeSeconds - b.startTimeSeconds;
@@ -207,6 +218,17 @@ function calculateInitialFormState({
       [space.latitude, space.longitude]
     ) : null,
 
+
+    // Tags module
+    tags: (space.tags || []).map(name => ({name, operationToPerform: null})),
+
+
+    // Team assignments module
+    assignedTeams: (space.assignedTeams || []).map(t => ({
+      id: t.id,
+      name: t.name,
+      operationToPerform: null,
+    })),
 
     // Doorway module (hydrate with extra form state for each doorway)
     doorwaysFilter: '',
@@ -351,6 +373,13 @@ export default function spaceManagement(state=initialState, action) {
       ...state,
       view: 'ERROR',
       error: action.error.message || action.error,
+    };
+
+  case SPACE_MANAGEMENT_RESET:
+    return {
+      ...state,
+      view: 'VISIBLE',
+      error: null,
     };
 
   case SPACE_MANAGEMENT_FORM_UPDATE:

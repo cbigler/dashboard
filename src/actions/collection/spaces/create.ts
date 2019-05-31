@@ -5,6 +5,7 @@ import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
 import showToast, { hideToast } from '../../toasts';
+import formatTagName from '../../../helpers/format-tag-name/index';
 
 export const COLLECTION_SPACES_CREATE = 'COLLECTION_SPACES_CREATE';
 
@@ -101,6 +102,27 @@ export default function collectionSpacesCreate(item) {
             });
           default:
             return;
+          }
+        }));
+      }
+
+      if (item.newTags) {
+        await Promise.all(item.newTags.map(async tag => {
+          const tagName = formatTagName(tag.name);
+          if (tag.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${response.data.id}/tags`, { tag_name: tagName });
+          } else if (tag.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${response.data.id}/tags/${tagName}`);
+          }
+        }));
+      }
+
+      if (item.newAssignedTeams) {
+        await Promise.all(item.newAssignedTeams.map(async assignedTeam => {
+          if (assignedTeam.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${response.data.id}/assigned_teams`, { team_name: assignedTeam.name });
+          } else if (assignedTeam.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${response.data.id}/assigned_teams/${assignedTeam.id}`);
           }
         }));
       }
