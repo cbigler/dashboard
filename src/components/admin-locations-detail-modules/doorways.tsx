@@ -48,18 +48,41 @@ function processModalData(data) {
   };
 }
 
-function DpuPosition({value, onChange}) {
+function DpuPosition({spaceName, value, onChange}) {
   return (
-    <Fragment>
-      Value: {value}
-      <Button onClick={() => onChange(1)}>Inside</Button>
-      <Button onClick={() => onChange(-1)}>Outside</Button>
-    </Fragment>
+    <div className={styles.dpuPositionWrapper}>
+      <p>Is the DPU inside or outside of <strong>{spaceName}</strong>?</p>
+      <div className={styles.dpuPositionButtonWrapper}>
+        <div
+          className={classnames(styles.dpuPositionButton, {[styles.active]: value === 1})}
+          onClick={() => onChange(1)}
+        >
+          {INSIDE_THE_SPACE_GLYPH}
+          <RadioButton
+            checked={value === 1}
+            onChange={() => onChange(1)}
+            text="Inside the Space"
+          />
+        </div>
+        <div
+          className={classnames(styles.dpuPositionButton, {[styles.active]: value === -1})}
+          onClick={() => onChange(-1)}
+        >
+          {OUTSIDE_THE_SPACE_GLYPH}
+          <RadioButton
+            checked={value === -1}
+            onChange={() => onChange(-1)}
+            text="Outside the Space"
+          />
+        </div>
+      </div>
+    </div>
   );
 }
 
 function AdminLocationsDetailModulesDoorwayDpuPositionModal({
   visible,
+  spaceName,
   sensorPlacement,
   onUpdateSensorPlacement,
   onCloseModal,
@@ -78,6 +101,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
 
       <div className={styles.doorwayModalSection}>
         <DpuPosition
+          spaceName={spaceName}
           value={sensorPlacement}
           onChange={onUpdateSensorPlacement}
         />
@@ -104,6 +128,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
 function AdminLocationsDetailModulesDoorwayModal({
   visible,
   modalState,
+  spaceName,
   onUpdateModalState,
   onCloseModal,
   onSubmitModal,
@@ -172,6 +197,7 @@ function AdminLocationsDetailModulesDoorwayModal({
       <div className={styles.doorwayModalSection}>
         <DpuPosition
           value={modalState.data.sensorPlacement}
+          spaceName={spaceName}
           onChange={sensorPlacement => onChangeField('sensorPlacement', sensorPlacement)}
         />
       </div>
@@ -526,6 +552,7 @@ function AdminLocationsDetailModulesDoorways({
         <AdminLocationsDetailModulesDoorwayModal
           visible={activeModal.visible}
           modalState={activeModal.data}
+          spaceName={formState.name}
           onUpdateModalState={onUpdateModalData}
           onCloseModal={onHideModal}
           onSubmitModal={activeModalData => {
@@ -543,6 +570,7 @@ function AdminLocationsDetailModulesDoorways({
       {activeModal.name === 'MODAL_SPACE_MANAGEMENT_DPU_POSITION' ? (
         <AdminLocationsDetailModulesDoorwayDpuPositionModal
           visible={activeModal.visible}
+          spaceName={formState.name}
           sensorPlacement={activeModal.data.sensorPlacement}
           onUpdateSensorPlacement={sensorPlacement => onUpdateModalData({...activeModal, sensorPlacement})}
           onCloseModal={onHideModal}
@@ -716,4 +744,57 @@ const MOUNTING_SPACE_GLYPH = (
       </text>
     </g>
   </svg>
+);
+
+const INSIDE_THE_SPACE_GLYPH = (
+  <svg width="102" height="78" viewBox="0 0 102 78" xmlns="http://www.w3.org/2000/svg">
+      <g id="-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
+          <g id="org.locations.building.edit.doorway" transform="translate(-555 -374)">
+              <g id="Group-4-Copy" transform="translate(555.54 375)">
+                  <g id="Group-2" transform="translate(0 74.333)" fill="#FFF" stroke="#BFBFBF"
+                  strokeWidth="2">
+                      <rect id="Rectangle-Copy-10" transform="matrix(-1 0 0 1 53.333 0)" x="1"
+                      y="1" width="51.333" height="1" />
+                  </g>
+                  <path d="M54.2595976,15.6944916 C54.258254,15.6948464 54.258254,15.6948464 54.2569131,15.6952111 C54.1237492,15.7316944 54.0453741,15.8692207 54.0818575,16.0023845 L54.8232974,18.7086339 C54.8594943,18.8407522 54.9952738,18.9191348 55.1277864,18.8844089 L64.2518179,16.4933872 C64.2531615,16.4930324 64.2531615,16.4930324 64.2545024,16.4926677 C64.3876663,16.4561844 64.4660414,16.3186581 64.429558,16.1854942 L63.6881181,13.4792449 C63.6519213,13.3471266 63.5161417,13.268744 63.3836292,13.3034699 L54.2595976,15.6944916 Z"
+                  id="Rectangle" stroke="#2E51B6" strokeWidth="1.5" fill="#FFF" />
+                  <path d="M100,75.3333333 L54,75.3333333 C51.790861,75.3333333 50,73.5424723 50,71.3333333 L50,4 C50,1.790861 51.790861,4.05812251e-16 54,0 L100,0 L100,24.330303"
+                  id="Path" stroke="#BFBFBF" strokeWidth="2" transform="matrix(-1 0 0 1 150 0)"
+                  />
+                  <rect id="Rectangle-Copy-11" stroke="#EDEDED" strokeWidth="2" fill="#F0F0F0"
+                  transform="matrix(0 -1 -1 0 99.29 99.29)" x="25.96" y="49.33" width="48"
+                  height="1" />
+                  <path d="M53.7762557,17.8060606 L52.4207152,18.1194524 C51.7864149,18.2074997 51.3731014,18.7248068 51.1807747,19.6713737 C50.988448,20.6179407 50.988448,21.3658666 51.1807747,21.9151515"
+                  id="Path-4" stroke="#2E51B6" />
+              </g>
+          </g>
+      </g>
+  </svg>
+);
+
+const OUTSIDE_THE_SPACE_GLYPH = (
+	<svg width="101" height="78" viewBox="0 0 101 78" xmlns="http://www.w3.org/2000/svg">
+			<g id="-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
+					<g id="org.locations.building.edit.doorway" transform="translate(-786 -374)">
+							<g id="Group-4-Copy-2" transform="translate(786 375)">
+									<g id="Group-2" transform="translate(0 74.333)" fill="#FFF" stroke="#BFBFBF"
+									strokeWidth="2">
+											<rect id="Rectangle-Copy-12" transform="matrix(-1 0 0 1 53.333 0)" x="1"
+											y="1" width="51.333" height="1" />
+									</g>
+									<path d="M35.8212414,15.6944916 C35.8198978,15.6948464 35.8198978,15.6948464 35.8185569,15.6952111 C35.685393,15.7316944 35.607018,15.8692207 35.6435013,16.0023845 L36.3849412,18.7086339 C36.4211381,18.8407522 36.5569177,18.9191348 36.6894302,18.8844089 L45.8134618,16.4933872 C45.8148054,16.4930324 45.8148054,16.4930324 45.8161463,16.4926677 C45.9493102,16.4561844 46.0276852,16.3186581 45.9912019,16.1854942 L45.249762,13.4792449 C45.2135651,13.3471266 45.0777855,13.268744 44.945273,13.3034699 L35.8212414,15.6944916 Z"
+									id="Rectangle" stroke="#2E51B6" strokeWidth="1.5" fill="#FFF" transform="matrix(-1 0 0 1 81.635 0)"
+									/>
+									<path d="M100,75.3333333 L54,75.3333333 C51.790861,75.3333333 50,73.5424723 50,71.3333333 L50,4 C50,1.790861 51.790861,4.05812251e-16 54,0 L100,0 L100,24.330303"
+									id="Path" stroke="#BFBFBF" strokeWidth="2" transform="matrix(-1 0 0 1 150 0)"
+									/>
+									<rect id="Rectangle-Copy-13" stroke="#EDEDED" strokeWidth="2" fill="#F0F0F0"
+									transform="matrix(0 -1 -1 0 99.29 99.29)" x="25.96" y="49.33" width="48"
+									height="1" />
+									<path d="M49.0365297,17.8060606 L47.6809892,18.1194524 C47.0466889,18.2074997 46.6333754,18.7248068 46.4410487,19.6713737 C46.248722,20.6179407 46.248722,21.3658666 46.4410487,21.9151515"
+									id="Path-4" stroke="#2E51B6" transform="matrix(-1 0 0 1 95.333 0)" />
+							</g>
+					</g>
+			</g>
+	</svg>
 );

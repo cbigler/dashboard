@@ -385,3 +385,25 @@
   margin-bottom: 8px;
   font-size: $fontSizeBase;
 }
+
+.dpuPositionWrapper { padding-top: 24px; }
+.dpuPositionButtonWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+}
+.dpuPositionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 160px;
+  cursor: pointer;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+}
+.dpuPositionButton:hover { opacity: 0.8; }
+.dpuPositionButton:active { opacity: 1; }
+.dpuPositionButton.active { border-color: $brandPrimary; }
+.dpuPositionButton svg { margin-bottom: 24px; }
