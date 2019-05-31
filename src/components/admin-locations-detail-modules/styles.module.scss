@@ -310,7 +310,10 @@
   align-items: center;
   justify-content: center;
   height: 200px;
+  border-top: 1px solid $grayLight;
 }
+.doorwaysEmptyState:first-of-type { border-top: 0px; }
+.doorwaysEmptyState.shaded { background-color: $grayLightest; }
 .doorwaysEmptyStateInner {
   display: flex;
   align-items: center;
@@ -377,9 +380,7 @@
   align-items: center;
   padding: 24px;
 }
-.doorwayModalDangerZoneText {
-  width: 240px;
-}
+.doorwayModalDangerZoneText { width: 240px; }
 .doorwayModalDangerZoneText h4 {
   margin-bottom: 8px;
   font-size: $fontSizeBase;

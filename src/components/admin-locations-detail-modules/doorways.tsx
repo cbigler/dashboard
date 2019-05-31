@@ -482,6 +482,7 @@ function AdminLocationsDetailModulesDoorways({
               leftIcon={<Icons.Search />}
               placeholder={'ex: "Doorway A", "Stairwell B"'}
               width={344}
+              value={formState.doorwaysFilter}
               onChange={e => onChangeDoorwaysFilter(e.target.value)}
             />
           </AppBarSection>
@@ -513,30 +514,53 @@ function AdminLocationsDetailModulesDoorways({
           ): (
             <div className={styles.doorwaysEmptyState}>
               <div className={styles.doorwaysEmptyStateInner}>
-                {bottomDoorways.find(i => i.selected) ? (
+                {formState.doorwaysFilter.length > 0 ? (
                   <div className={styles.doorwaysEmptyStateInnerRight}>
-                    <h3>Great, now save this space!</h3>
-                    <p>Save a doorway, save a space</p>
+                    <h3>Whoops</h3>
+                    <p>We couldn't find any linked doorways that matched "{formState.doorwaysFilter}"</p>
                   </div>
                 ) : (
                   <Fragment>
-                    <div className={styles.doorwaysEmptyStateInnerLeft}>{DOORWAY_ICON}</div>
-                    <div className={styles.doorwaysEmptyStateInnerRight}>
-                      <h3>You haven't assigned any doorways to this space yet</h3>
-                      <p>Start assigning and start counting</p>
-                    </div>
+                    {bottomDoorways.find(i => i.selected) ? (
+                      <div className={styles.doorwaysEmptyStateInnerRight}>
+                        <h3>Great, now save this space!</h3>
+                        <p>Save a doorway, save a space</p>
+                      </div>
+                    ) : (
+                      <Fragment>
+                        <div className={styles.doorwaysEmptyStateInnerLeft}>{DOORWAY_ICON}</div>
+                        <div className={styles.doorwaysEmptyStateInnerRight}>
+                          <h3>You haven't assigned any linked doorways to this space yet</h3>
+                          <p>Start assigning and start counting</p>
+                        </div>
+                      </Fragment>
+                    )}
                   </Fragment>
                 )}
               </div>
             </div>
           )}
-          <DoorwayList
-            doorways={filteredDoorways.filter(x => x.list === 'BOTTOM')}
-            onSelectDoorway={onSelectDoorway}
-            onChangeDoorwaySensorPlacement={onChangeDoorwaySensorPlacement}
-            onEditDoorway={onEditDoorway}
-            shaded
-          />
+
+          {bottomDoorways.length === 0 && formState.doorwaysFilter.length > 0 ? (
+            <Fragment>
+              <div className={classnames(styles.doorwaysEmptyState, styles.shaded)}>
+                <div className={styles.doorwaysEmptyStateInner}>
+                  <div className={styles.doorwaysEmptyStateInnerRight}>
+                    <h3>Whoops</h3>
+                    <p>We couldn't find any unlinked doorways that matched "{formState.doorwaysFilter}"</p>
+                  </div>
+                </div>
+              </div>
+            </Fragment>
+          ): (
+            <DoorwayList
+              doorways={filteredDoorways.filter(x => x.list === 'BOTTOM')}
+              onSelectDoorway={onSelectDoorway}
+              onChangeDoorwaySensorPlacement={onChangeDoorwaySensorPlacement}
+              onEditDoorway={onEditDoorway}
+              shaded
+            />
+          )}
         </div>
       </AdminLocationsDetailModule>
     </Fragment>
