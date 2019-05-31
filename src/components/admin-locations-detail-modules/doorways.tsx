@@ -48,6 +48,59 @@ function processModalData(data) {
   };
 }
 
+function DpuPosition({value, onChange}) {
+  return (
+    <Fragment>
+      Value: {value}
+      <Button onClick={() => onChange(1)}>Inside</Button>
+      <Button onClick={() => onChange(-1)}>Outside</Button>
+    </Fragment>
+  );
+}
+
+function AdminLocationsDetailModulesDoorwayDpuPositionModal({
+  visible,
+  sensorPlacement,
+  onUpdateSensorPlacement,
+  onCloseModal,
+  onSubmitModal,
+}) {
+  return (
+    <Modal
+      visible={visible}
+      width={486}
+      onBlur={onCloseModal}
+      onEscape={onCloseModal}
+    >
+      <AppBar>
+        <AppBarTitle>DPU Position</AppBarTitle>
+      </AppBar>
+
+      <div className={styles.doorwayModalSection}>
+        <DpuPosition
+          value={sensorPlacement}
+          onChange={onUpdateSensorPlacement}
+        />
+      </div>
+
+      <AppBarContext.Provider value="BOTTOM_ACTIONS">
+        <AppBar>
+          <AppBarSection />
+          <AppBarSection>
+            <ButtonContext.Provider value="CANCEL_BUTTON">
+              <Button onClick={onCloseModal}>Cancel</Button>
+            </ButtonContext.Provider>
+            <Button
+              type="primary"
+              onClick={() => onSubmitModal(sensorPlacement)}
+            >Save Link</Button>
+          </AppBarSection>
+        </AppBar>
+      </AppBarContext.Provider>
+    </Modal>
+  );
+}
+
 function AdminLocationsDetailModulesDoorwayModal({
   visible,
   modalState,
@@ -117,7 +170,10 @@ function AdminLocationsDetailModulesDoorwayModal({
         </AppBar>
       </AppBarContext.Provider>
       <div className={styles.doorwayModalSection}>
-        TODO
+        <DpuPosition
+          value={modalState.data.sensorPlacement}
+          onChange={sensorPlacement => onChangeField('sensorPlacement', sensorPlacement)}
+        />
       </div>
 
       <AppBarContext.Provider value="TRANSPARENT">
@@ -412,7 +468,7 @@ function AdminLocationsDetailModulesDoorways({
   onChangeField,
   onSetDoorwayField,
 
-  onShowDoorwaysModal,
+  onShowModal,
   onHideModal,
   onUpdateModalData,
   onUpdateDoorway,
@@ -426,15 +482,24 @@ function AdminLocationsDetailModulesDoorways({
 	const bottomDoorways = filteredDoorways.filter(x => x.list === 'BOTTOM');
 
   function onSelectDoorway(doorway, state) {
-    onSetDoorwayField(doorway.id, 'selected', state);
     if (state) {
-      onSetDoorwayField(doorway.id, 'sensorPlacement', 1);
-      onSetDoorwayField(
-        doorway.id,
-        'operationToPerform',
-        doorway.linkExistsOnServer ? 'UPDATE' : 'CREATE',
-      );
+      // Prompt the user for the dpu position in a modal
+      onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
+        sensorPlacement: 1 /* initial value */,
+        onComplete: (sensorPlacement) => {
+          // And then move the doorway to the top section
+          onSetDoorwayField(doorway.id, 'selected', true);
+          onSetDoorwayField(doorway.id, 'sensorPlacement', sensorPlacement);
+          onSetDoorwayField(
+            doorway.id,
+            'operationToPerform',
+            doorway.linkExistsOnServer ? 'UPDATE' : 'CREATE',
+          );
+        },
+      });
     } else {
+      // Otherwise move the doorway back down to the bottom section
+      onSetDoorwayField(doorway.id, 'selected', false);
       onSetDoorwayField(doorway.id, 'sensorPlacement', null);
       onSetDoorwayField(
         doorway.id,
@@ -452,7 +517,7 @@ function AdminLocationsDetailModulesDoorways({
     );
   }
   function onEditDoorway(doorway) {
-    onShowDoorwaysModal({ type: 'EDIT', data: doorway });
+    onShowModal('MODAL_SPACE_MANAGEMENT_DOORWAY', { type: 'EDIT', data: doorway });
   }
 
   return (
@@ -475,6 +540,21 @@ function AdminLocationsDetailModulesDoorways({
         />
       ) : null}
 
+      {activeModal.name === 'MODAL_SPACE_MANAGEMENT_DPU_POSITION' ? (
+        <AdminLocationsDetailModulesDoorwayDpuPositionModal
+          visible={activeModal.visible}
+          sensorPlacement={activeModal.data.sensorPlacement}
+          onUpdateSensorPlacement={sensorPlacement => onUpdateModalData({...activeModal, sensorPlacement})}
+          onCloseModal={onHideModal}
+          // Call a function within the modal data, this lets all the code for the modal submitting
+          // be in the onSelectDoorway function above
+          onSubmitModal={() => {
+            onHideModal();
+            activeModal.data.onComplete(activeModal.data.sensorPlacement);
+          }}
+        />
+      ) : null}
+
       <AdminLocationsDetailModule title="Doorways" includePadding={false}>
         <AppBar>
           <AppBarSection>
@@ -487,7 +567,7 @@ function AdminLocationsDetailModulesDoorways({
             />
           </AppBarSection>
           <AppBarSection>
-            <Button onClick={() => onShowDoorwaysModal({
+            <Button onClick={() => onShowModal('MODAL_SPACE_MANAGEMENT_DOORWAY', {
               type: 'CREATE',
               data: {
                 spaceName: formState.name,
@@ -573,8 +653,8 @@ export default connect((state: any) => ({
   onHideModal() {
     dispatch<any>(hideModal());
   },
-  onShowDoorwaysModal(data={}) {
-    dispatch<any>(showModal('MODAL_SPACE_MANAGEMENT_DOORWAY', data))
+  onShowModal(modalName, data={}) {
+    dispatch<any>(showModal(modalName, data))
   },
   onUpdateModalData(data) {
     dispatch<any>(updateModal(data));
