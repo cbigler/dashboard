@@ -33,15 +33,18 @@ import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
 import spaceManagementCreateDoorway from '../../actions/space-management/create-doorway';
 import spaceManagementUpdateDoorway from '../../actions/space-management/update-doorway';
+import spaceManagementDeleteDoorway from '../../actions/space-management/delete-doorway';
 
 const AC_OUTLET = 'AC_OUTLET',
       POWER_OVER_ETHERNET = 'POWER_OVER_ETHERNET';
 
 function processModalData(data) {
+  const width = parseFloat(data.width);
+  const height = parseFloat(data.height);
   return {
     ...data,
-    width: parseFloat(data.width),
-    height: parseFloat(data.height),
+    width: isNaN(width) ? null : width,
+    height: isNaN(height) ? null : height,
   };
 }
 
@@ -51,6 +54,7 @@ function AdminLocationsDetailModulesDoorwayModal({
   onUpdateModalState,
   onCloseModal,
   onSubmitModal,
+  onDeleteDoorway,
 }) {
   function onChangeField(key, value) {
     onUpdateModalState({
@@ -147,7 +151,7 @@ function AdminLocationsDetailModulesDoorwayModal({
                   };
 
                   // Convert width / height when management unit is changed
-                  if (item.id !== modalState.data.measurementUnit) {
+                  if (modalState.data.measurementUnit && item.id !== modalState.data.measurementUnit) {
                     (['width', 'height']).forEach(fieldName => {
                       const parsedValue = parseFloat(modalState.data[fieldName]);
                       if (!isNaN(parsedValue)) {
@@ -269,7 +273,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           </div>
           <div>
             <ButtonContext.Provider value="DELETE_BUTTON">
-              <Button>Delete this Doorway</Button>
+              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this Doorway</Button>
             </ButtonContext.Provider>
           </div>
         </div>
@@ -413,6 +417,7 @@ function AdminLocationsDetailModulesDoorways({
   onUpdateModalData,
   onUpdateDoorway,
   onCreateDoorway,
+  onDeleteDoorway,
 }) {
   const doorwaysFilter = filterCollection({fields: ['name']});
   const filteredDoorways = doorwaysFilter(formState.doorways, formState.doorwaysFilter);
@@ -466,6 +471,7 @@ function AdminLocationsDetailModulesDoorways({
               onUpdateDoorway(data);
             }
           }}
+          onDeleteDoorway={onDeleteDoorway}
         />
       ) : null}
 
@@ -555,6 +561,9 @@ export default connect((state: any) => ({
   },
   onUpdateDoorway(data) {
     dispatch<any>(spaceManagementUpdateDoorway(data));
+  },
+  onDeleteDoorway(doorwayId) {
+    dispatch<any>(spaceManagementDeleteDoorway(doorwayId));
   },
 }))(AdminLocationsDetailModulesDoorways);
 

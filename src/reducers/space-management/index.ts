@@ -17,6 +17,7 @@ import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
 import { COLLECTION_SPACES_UPDATE } from '../../actions/collection/spaces/update';
 import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../actions/space-management/push-doorway';
+import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../actions/space-management/delete-doorway';
 
 const initialState = {
   view: 'LOADING_INITIAL',
@@ -101,8 +102,8 @@ function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: Dens
     name: doorway.name,
     spaces: doorway.spaces,
 
-    height: doorway.environment ? `${doorway.environment.height}` : null,
-    width: doorway.environment ? `${doorway.environment.width}` : null,
+    height: doorway.environment && doorway.environment.height ? `${doorway.environment.height}` : null,
+    width: doorway.environment && doorway.environment.width ? `${doorway.environment.width}` : null,
     clearance: doorway.environment ? doorway.environment.clearance : null,
     powerType: doorway.environment ? doorway.environment.powerType : null,
     insideImageUrl: doorway.environment ? doorway.environment.insideImageUrl : null,
@@ -330,6 +331,18 @@ export default function spaceManagement(state=initialState, action) {
           ...state.formState.doorways,
           newDoorwayItem,
         ] as Array<DoorwayItem>,
+      },
+    };
+
+  // Called when the doorway modal deletes a doorway, removing it from both the doorways list and
+  // the formState
+  case SPACE_MANAGEMENT_DELETE_DOORWAY:
+    return {
+      ...state,
+      doorways: state.doorways.filter((item: DensityDoorway) => action.doorwayId !== item.id),
+      formState: {
+        ...state.formState,
+        doorways: state.formState.doorways.filter(item => action.doorwayId !== item.id),
       },
     };
 

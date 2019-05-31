@@ -2,6 +2,7 @@ import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
 import hideModal from '../../actions/modal/hide';
 import pushDoorway from './push-doorway';
+import formDoorwayUpdate from './form-doorway-update';
 
 import core from '../../client/core';
 
@@ -25,8 +26,9 @@ export default function spaceManagementCreateDoorway(item) {
       return;
     }
 
-    console.log(response.data)
     dispatch(pushDoorway(response.data));
+    dispatch(formDoorwayUpdate(response.data.id, 'sensorPlacement', item.sensorPlacement));
+
     dispatch(showToast({text: 'Doorway created!'}));
     dispatch(hideModal());
   };
