@@ -13,18 +13,18 @@ import { DensityDoorway } from '../../types';
 
 export const SPACE_MANAGEMENT_UPDATE_DOORWAY = 'SPACE_MANAGEMENT_UPDATE_DOORWAY';
 
-export function uploadDoorwayImages(spaceId, item) {
+export function uploadDoorwayImages(doorwayId, item) {
   return async dispatch => {
     // Check inside and outside image url, upload them to the doorway if they are newly added
     const uploadPromises: Array<Promise<any>> = [];
     if (item.newInsideImageFile) {
       uploadPromises.push(
-        uploadMedia(`/uploads/doorway_image/${spaceId}/inside`, item.newInsideImageFile),
+        uploadMedia(`/uploads/doorway_image/${doorwayId}/inside`, item.newInsideImageFile),
       );
     }
     if (item.newOutsideImageFile) {
       uploadPromises.push(
-        uploadMedia(`/uploads/doorway_image/${spaceId}/outside`, item.newOutsideImageFile),
+        uploadMedia(`/uploads/doorway_image/${doorwayId}/outside`, item.newOutsideImageFile),
       );
     }
 
@@ -65,7 +65,7 @@ export function uploadDoorwayImages(spaceId, item) {
       // inside.
       let doorwayResponse;
       try {
-        doorwayResponse = await core().get(`/doorways/${item.id}`, { params: { environment: true } });
+        doorwayResponse = await core().get(`/doorways/${doorwayId}`, { params: { environment: true } });
       } catch (err) {
         dispatch(showToast({type: 'error', text: 'Error fetching updated doorway'}));
         return false;

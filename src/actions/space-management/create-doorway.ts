@@ -33,11 +33,13 @@ export default function spaceManagementCreateDoorway(item) {
       return;
     }
 
-    dispatch(pushDoorway(response.data));
+    dispatch(pushDoorway(
+      response.data,
 
-    // Seperately update the sensor placement as even though it can be set in the doorway modal,
-    // it's not a value that is stored on a doorway.
-    dispatch(formDoorwayUpdate(item.id, 'sensorPlacement', item.sensorPlacement));
+      // Seperately specify the sensor placement as even though it can be set in the doorway modal,
+      // it's not a value that is stored on a doorway.
+      item.sensorPlacement,
+    ));
 
     await dispatch(uploadDoorwayImages(response.data.id, item));
 

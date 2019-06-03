@@ -104,9 +104,9 @@ export type DoorwayItem = {
   outsideImageUrl: string | null,
 }
 
-function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: DensityDoorway): DoorwayItem {
-  const linkedToSpace = doorway.spaces.find(x => x.id === spaceId);
-  const sensorPlacement = linkedToSpace ? linkedToSpace.sensorPlacement : null;
+function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: DensityDoorway, initialSensorPlacement=null): DoorwayItem {
+  const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === spaceId) : null;
+  const sensorPlacement = linkedToSpace ? linkedToSpace.sensorPlacement : initialSensorPlacement;
   return {
     id: doorway.id,
     name: doorway.name,
@@ -325,7 +325,11 @@ export default function spaceManagement(state=initialState, action) {
   // formState.
   case SPACE_MANAGEMENT_PUSH_DOORWAY:
     const newDoorwayItem = {
-      ...makeDoorwayItemFromDensityDoorway(state.spaces.selected, action.item),
+      ...makeDoorwayItemFromDensityDoorway(
+        state.spaces.selected,
+        action.item,
+        action.initialSensorPlacement,
+      ),
       selected: true,
       list: 'TOP',
       operationToPerform: 'CREATE',

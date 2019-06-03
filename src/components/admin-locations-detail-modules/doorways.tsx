@@ -647,7 +647,7 @@ function AdminLocationsDetailModulesDoorways({
                 powerType: POWER_OVER_ETHERNET,
               },
             })}>
-              Add a doorway
+              Add a new doorway
             </Button>
           </AppBarSection>
         </AppBar>
