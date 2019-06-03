@@ -264,7 +264,6 @@ export class Login extends React.Component<any, any> {
                 icon={<Icons.No color="white" />}
                 onDismiss={() => this.setState({error: null})}
               >
-                {console.log(this.state.error)}
                 <span>{this.state.error.message || this.state.error}</span>
               </Toast>
             </ToastContext.Provider>

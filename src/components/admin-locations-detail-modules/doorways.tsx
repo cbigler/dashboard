@@ -327,9 +327,23 @@ function AdminLocationsDetailModulesDoorwayModal({
           onChange={async file => {
             if (file) {
               const result = await fileToDataURI(file);
-              onChangeField('newInsideImageData', result);
+              onUpdateModalState({
+                ...modalState,
+                data: {
+                  ...modalState.data,
+                  newInsideImageData: result,
+                  newInsideImageFile: file,
+                },
+              });
             } else {
-              onChangeField('newInsideImageData', null);
+              onUpdateModalState({
+                ...modalState,
+                data: {
+                  ...modalState.data,
+                  newInsideImageData: null,
+                  newInsideImageFile: null,
+                },
+              });
             }
           }}
         />
@@ -339,9 +353,23 @@ function AdminLocationsDetailModulesDoorwayModal({
           onChange={async file => {
             if (file) {
               const result = await fileToDataURI(file);
-              onChangeField('newOutsideImageData', result);
+              onUpdateModalState({
+                ...modalState,
+                data: {
+                  ...modalState.data,
+                  newOutsideImageData: result,
+                  newOutsideImageFile: file,
+                },
+              });
             } else {
-              onChangeField('newOutsideImageData', null);
+              onUpdateModalState({
+                ...modalState,
+                data: {
+                  ...modalState.data,
+                  newOutsideImageData: null,
+                  newOutsideImageFile: null,
+                },
+              });
             }
           }}
         />

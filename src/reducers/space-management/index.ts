@@ -320,7 +320,9 @@ export default function spaceManagement(state=initialState, action) {
     newState.formState = calculateInitialFormState(newState);
     return newState;
 
-  // Called when the doorway modal is used to add a new doorway or update an existing doorway
+  // Called when the doorway modal is used to add a new doorway or update an existing doorway, this
+  // adds the doorway both to the doroways collection as well as to the doorway item list in the
+  // formState.
   case SPACE_MANAGEMENT_PUSH_DOORWAY:
     const newDoorwayItem = {
       ...makeDoorwayItemFromDensityDoorway(state.spaces.selected, action.item),
@@ -334,7 +336,7 @@ export default function spaceManagement(state=initialState, action) {
         // Update existing items
         ...state.doorways.map((item: any) => {
           if (action.item.id === item.id) {
-          return {...item, ...objectSnakeToCamel<DensityDoorway>(action.item)};
+            return {...item, ...objectSnakeToCamel<DensityDoorway>(action.item)};
           } else {
             return item;
           }
@@ -350,8 +352,21 @@ export default function spaceManagement(state=initialState, action) {
       formState: {
         ...state.formState,
         doorways: [
-          ...state.formState.doorways,
-          newDoorwayItem,
+          // Update existing items
+          ...state.formState.doorways.map((item: any) => {
+            if (action.item.id === item.id) {
+              return newDoorwayItem;
+            } else {
+              return item;
+            }
+          }),
+
+          // Add new items
+          ...(
+            state.formState.doorways.find((i: any) => i.id === action.item.id) === undefined ?
+              [newDoorwayItem] :
+              []
+          ),
         ] as Array<DoorwayItem>,
       },
     };
