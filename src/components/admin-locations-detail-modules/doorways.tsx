@@ -51,7 +51,10 @@ function processModalData(data) {
 function DpuPosition({spaceName, value, onChange}) {
   return (
     <div className={styles.dpuPositionWrapper}>
-      <p>Is the DPU inside or outside of <strong>{spaceName}</strong>?</p>
+      <p>
+        Is the DPU inside or outside of{' '}
+        <strong>{spaceName && spaceName.length > 0 ? spaceName : 'this space'}</strong>?
+      </p>
       <div className={styles.dpuPositionButtonWrapper}>
         <div
           className={classnames(styles.dpuPositionButton, {[styles.active]: value === 1})}
@@ -189,7 +192,7 @@ function AdminLocationsDetailModulesDoorwayModal({
         />
       </div>
 
-      <AppBarContext.Provider value="TRANSPARENT">
+      <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
           <AppBarTitle>DPU Position</AppBarTitle>
         </AppBar>
@@ -202,7 +205,7 @@ function AdminLocationsDetailModulesDoorwayModal({
         />
       </div>
 
-      <AppBarContext.Provider value="TRANSPARENT">
+      <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
           <AppBarTitle>Installation Details</AppBarTitle>
         </AppBar>
@@ -315,7 +318,7 @@ function AdminLocationsDetailModulesDoorwayModal({
         />
       </div>
 
-      <AppBarContext.Provider value="TRANSPARENT">
+      <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
           <AppBarTitle>Photos</AppBarTitle>
         </AppBar>
