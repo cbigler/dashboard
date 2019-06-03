@@ -11,6 +11,8 @@ import uploadMedia from '../../helpers/media-files';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityDoorway } from '../../types';
 
+import { uploadDoorwayImages } from './update-doorway';
+
 export default function spaceManagementCreateDoorway(item) {
   return async dispatch => {
     let response;
@@ -37,55 +39,8 @@ export default function spaceManagementCreateDoorway(item) {
     // it's not a value that is stored on a doorway.
     dispatch(formDoorwayUpdate(item.id, 'sensorPlacement', item.sensorPlacement));
 
-    // Check inside and outside image url, upload them to the doorway if they are newly added
-    const uploadPromises: Array<Promise<any>> = [];
-    if (item.newInsideImageFile) {
-      uploadPromises.push(
-        uploadMedia(`/uploads/doorway_image/${response.data.id}/inside`, item.newInsideImageFile),
-      );
-    }
-    if (item.newOutsideImageFile) {
-      uploadPromises.push(
-        uploadMedia(`/uploads/doorway_image/${response.data.id}/outside`, item.newOutsideImageFile),
-      );
-    }
+    await dispatch(uploadDoorwayImages(response.data.id, item));
 
-    dispatch(hideModal());
-
-    if (uploadPromises.length > 0) {
-      const id = uuid.v4();
-      dispatch(showToast({
-        id,
-        text: `Processing doorway ${uploadPromises.length === 1 ? 'image' : 'images'}...`,
-        timeout: null,
-      }));
-
-      try {
-        await Promise.all(uploadPromises);
-      } catch (e) {
-        await dispatch(hideToast(id));
-        dispatch(showToast({
-          type: 'error',
-          text: 'Processing image failed',
-        }));
-        return;
-      }
-
-      await dispatch(hideToast(id));
-
-      // After uploading, refetch the doorway to get the latest doorway information with the iamges
-      // inside.
-      let doorwayResponse;
-      try {
-        doorwayResponse = await core().get(`/doorways/${item.id}`, { params: { environment: true } });
-      } catch (err) {
-        dispatch(showToast({type: 'error', text: 'Error fetching updated doorway'}));
-        return;
-      }
-
-      dispatch(pushDoorway(objectSnakeToCamel<DensityDoorway>(doorwayResponse.data)));
-    }
-
-    dispatch(showToast({text: 'Doorway updated!'}));
+    dispatch(showToast({text: 'Doorway created!'}));
   };
 }
