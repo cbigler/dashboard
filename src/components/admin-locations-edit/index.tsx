@@ -72,6 +72,13 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
     newImageFile: formState.newImageFile,
     operatingHours: formState.operatingHours,
 
+    links: formState.doorways.map(i => ({
+      id: i.linkId,
+      doorwayId: i.id,
+      sensorPlacement: i.sensorPlacement,
+      operationToPerform: i.operationToPerform,
+    })),
+
     inheritsTimeSegments: !formState.overrideDefault,
   };
 }
@@ -79,43 +86,13 @@ export function convertFormStateToSpaceFields(formState: AdminLocationsFormState
 type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
+
   tagsCollection: Array<DensityTag>,
   assignedTeamsCollection: Array<DensityAssignedTeam>,
 
-  onSave: (id: string, spaceFieldUpdate: any) => any,
-  onChangeField: (key: string, value: string) => any,
-  onSetDoorwaySelected: (string, boolean) => any,
-};
-
-export type AdminLocationsFormState = {
-  loaded: boolean,
-
-  name?: string,
-  spaceType?: string,
-  'function'?: string,
-  tags?: Array<{
-    name: string,
-    operationToPerform: 'CREATE' | 'DELETE' | null,
-  }>,
-  assignedTeams?: Array<{
-    id: string,
-    name: string,
-    operationToPerform: 'CREATE' | 'DELETE' | null,
-  }>,
-  annualRent?: any,
-  sizeArea?: any,
-  sizeAreaUnit?: 'feet' | 'meters',
-  currencyUnit?: 'USD',
-  capacity?: string,
-  targetCapacity?: string,
-  floorLevel?: string,
-  address?: string,
-  coordinates?: [number, number] | null,
-  timeZone?: string,
-  dailyReset?: string | null,
-  parentId?: string | null,
-  imageUrl?: string,
-  newImageFile?: any,
+  onChangeField: (string, any) => any,
+  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
+  onSave: (spaceId: string, spaceFieldUpdate: any) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -159,7 +136,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       tagsCollection,
       assignedTeamsCollection,
       onChangeField,
-      onSetDoorwaySelected
+      onSetDoorwayField,
     } = this.props;
 
     const FormComponent = {
@@ -228,7 +205,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                   assignedTeamsCollection={assignedTeamsCollection}
                   operationType="UPDATE"
                   onChangeField={onChangeField}
-                  onSetDoorwaySelected={onSetDoorwaySelected}
+                  onSetDoorwayField={onSetDoorwayField}
                 />
               ) : (
                 // When loading
@@ -271,8 +248,8 @@ export default connect((state: any) => {
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
     },
-    onSetDoorwaySelected(doorwayId, value) {
-      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, 'selected', value));
+    onSetDoorwayField(doorwayId, field, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
     },
   };
 })(AdminLocationsEdit);
@@ -284,7 +261,7 @@ type AdminLocationsFormSpaceTypeProps = {
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
   onChangeField: (string, any) => any,
-  onSetDoorwaySelected?: (string, boolean) => any,
+  onSetDoorwayField?: (doorwayId: string, key: string, value: any) => any,
   operationType: 'CREATE' | 'UPDATE',
 };
 
@@ -364,7 +341,7 @@ export function AdminLocationsBuildingForm({
   tagsCollection,
   assignedTeamsCollection,
   onChangeField,
-  onSetDoorwaySelected,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -386,13 +363,14 @@ export function AdminLocationsBuildingForm({
             onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
           />
         </div>
-        {/* <div className={styles.moduleWrapper}>
+        <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesDoorways
             formState={formState}
-            onToggleDoorway={item => onSetDoorwaySelected && onSetDoorwaySelected(item.id, !item._formState.selected)}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
             onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
-        </div> */}
+        </div>
         <div className={styles.moduleWrapper}>
           <AdminLocationsDetailModulesOperatingHours
             formState={formState}
@@ -444,6 +422,7 @@ export function AdminLocationsFloorForm({
   tagsCollection,
   assignedTeamsCollection,
   onChangeField,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -454,6 +433,14 @@ export function AdminLocationsFloorForm({
             spaceType={spaceType}
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesDoorways
+            formState={formState}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
+            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>
         <div className={styles.moduleWrapper}>
@@ -507,6 +494,7 @@ export function AdminLocationsSpaceForm({
   tagsCollection,
   assignedTeamsCollection,
   onChangeField,
+  onSetDoorwayField,
   operationType,
 }: AdminLocationsFormSpaceTypeProps) {
   return (
@@ -524,6 +512,14 @@ export function AdminLocationsSpaceForm({
             spaceType={spaceType}
             formState={formState}
             onChangeField={onChangeField}
+          />
+        </div>
+        <div className={styles.moduleWrapper}>
+          <AdminLocationsDetailModulesDoorways
+            formState={formState}
+            onChangeField={onChangeField}
+            onSetDoorwayField={onSetDoorwayField}
+            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
           />
         </div>
         <div className={styles.moduleWrapper}>

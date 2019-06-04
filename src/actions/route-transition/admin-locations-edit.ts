@@ -32,7 +32,7 @@ async function getSpaces() {
 
 async function getDoorways() {
   const doorwaysRaw = await fetchAllPages(async page => (
-    await core().get('/doorways', {params: {page_size: 5000, page}})
+    await core().get('/doorways', {params: {page_size: 5000, page, environment: 'true'}})
   ).data)
   return doorwaysRaw.map(i => objectSnakeToCamel<DensityDoorway>(i));
 }
@@ -58,14 +58,8 @@ async function getAssignedTeams() {
   return assignedTeamsRaw.map(i => objectSnakeToCamel<DensityAssignedTeam>(i));
 }
 
-export default function routeTransitionAdminLocationsEdit(spaceId) {
-  return async (dispatch, getState) => {
-    dispatch({
-      type: ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT,
-      spaceId,
-      setLoading: true,
-    });
-
+export function loadData() {
+  return async dispatch => {
     let spaces, hierarchy, doorways, labels, tags, assignedTeams;
     try {
       [spaces, hierarchy, doorways, labels, tags, assignedTeams] = await Promise.all([
@@ -85,5 +79,17 @@ export default function routeTransitionAdminLocationsEdit(spaceId) {
     dispatch(collectionTagsSet(tags));
     dispatch(collectionAssignedTeamsSet(assignedTeams));
     dispatch(spaceManagementSetData(spaces, hierarchy, doorways, labels));
+  };
+}
+
+export default function routeTransitionAdminLocationsEdit(spaceId) {
+  return async (dispatch, getState) => {
+    dispatch({
+      type: ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT,
+      spaceId,
+      setLoading: true,
+    });
+
+    dispatch(loadData());
   };
 }

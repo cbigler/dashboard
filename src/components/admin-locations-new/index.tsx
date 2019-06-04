@@ -19,6 +19,7 @@ import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
 import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
+import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
 import {
   AppFrame,
@@ -40,6 +41,7 @@ type AdminLocationsNewProps = {
   newSpaceParent: DensitySpace,
   newSpaceType: DensitySpace["spaceType"],
   onChangeField: (string, any) => any,
+  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
   onSave: (spaceFields: any, spaceParentId: string | null) => any,
 };
 
@@ -88,7 +90,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 
 
   render() {
-    const { spaceManagement, newSpaceType, newSpaceParent } = this.props;
+    const { spaceManagement, newSpaceType, newSpaceParent, onSetDoorwayField } = this.props;
 
     const FormComponent = {
       campus: AdminLocationsCampusForm,
@@ -166,6 +168,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                   assignedTeamsCollection={this.props.assignedTeamsCollection}
                   operationType="CREATE"
                   onChangeField={this.props.onChangeField}
+                  onSetDoorwayField={onSetDoorwayField}
                 />
               ) : (
                 // When loading
@@ -209,6 +212,9 @@ export default connect((state: any) => {
     },
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
+    },
+    onSetDoorwayField(doorwayId, field, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
     },
   };
 })(AdminLocationsNewUnconnected);

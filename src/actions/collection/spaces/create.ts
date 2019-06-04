@@ -88,6 +88,24 @@ export default function collectionSpacesCreate(item) {
         response.data.imageUrl = item.newImageData;
       }
 
+      // When saving the space, create any links that were configured or changed in the doorways
+      // module. Note that the only thing that can happen is that new links can be created -
+      // "updating" or "deleting" isn't really relevant if the space didn't exist yet!
+      if (item.links) {
+        await Promise.all(item.links.map(async linkItem => {
+          switch (linkItem.operationToPerform) {
+          case 'CREATE':
+            return core().post('/links', {
+              space_id: response.data.id,
+              doorway_id: linkItem.doorwayId,
+              sensor_placement: linkItem.sensorPlacement,
+            });
+          default:
+            return;
+          }
+        }));
+      }
+
       if (item.newTags) {
         await Promise.all(item.newTags.map(async tag => {
           const tagName = formatTagName(tag.name);

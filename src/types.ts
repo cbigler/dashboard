@@ -21,6 +21,7 @@ export type DensitySpace = {
   ancestry: Array<DensitySpaceAncestryItem>,
   doorways: Array<{
     id: string,
+    linkId: string,
     name: string,
     sensorPlacement: 1 | -1,
   }>,
@@ -54,16 +55,19 @@ export type DensityDoorway = {
   description: string,
   spaces: Array<{
     id: string,
+    linkId: string,
     name: string,
-    sensorPlacement: string,
+    sensorPlacement: 1 | -1,
   }>,
   tags: Array<string>,
-  _formState?: {
-    list: string,
-    selected: boolean,
-    sensorPlacement: number | null,
-    initialSensorPlacement: number | null
-  }
+  environment?: {
+    height: number,
+    width: number,
+    clearance: boolean,
+    powerType: 'POWER_OVER_ETHERNET' | 'AC_OUTLET',
+    insideImageUrl: string,
+    outsideImageUrl: string,
+  },
 };
 
 export type DensityLink = {

@@ -116,6 +116,37 @@ export default function collectionSpacesUpdate(item) {
         }));
       }
 
+      // When saving the space, update any links that were configured or changed in the doorways
+      // module.
+      if (item.links) {
+        await Promise.all(item.links.map(async linkItem => {
+          switch (linkItem.operationToPerform) {
+          case 'CREATE':
+            return core().post('/links', {
+              space_id: item.id,
+              doorway_id: linkItem.doorwayId,
+              sensor_placement: linkItem.sensorPlacement,
+            });
+          case 'UPDATE':
+            // Links are immutable, delete and re-create a link to "update" it
+            // Note these cannot happen in parallel because we want the old link to be deleted and
+            // then the new link added, if we did them in parallel there's no garuntee of that.
+            // TODO: Is there a concern about a slight "unlinked period" between the delete and
+            // create and if an event comes in during that period it might get lost?
+            await core().delete(`/links/${linkItem.id}`);
+            return core().post(`/links`, {
+              space_id: item.id,
+              doorway_id: linkItem.doorwayId,
+              sensor_placement: linkItem.sensorPlacement,
+            });
+          case 'DELETE':
+            return core().delete(`/links/${linkItem.id}`);
+          default:
+            return;
+          }
+        }));
+      }
+
       // Fetch all spaces after updating this space. If we changed this space's size area unit, then
       // the size area unit of child spaces will update too.
       const rawSpaces = await fetchAllPages(async page => {
