@@ -1,6 +1,8 @@
 import '@babel/polyfill'; // Polyfills for IE
 import 'react-app-polyfill/ie11'; // For IE 11 support
 
+import './helpers/fetch-all-objects';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
