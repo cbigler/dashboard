@@ -1,8 +1,8 @@
-import styles from './styles.module.scss';
-
 import React, { Fragment } from 'react';
 import { InputBox } from '@density/ui';
 import classnames from 'classnames';
+
+import styles from './general-info.module.scss';
 
 import FormLabel from '../form-label/index';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
@@ -11,7 +11,6 @@ import { fileToDataURI } from '../../helpers/media-files';
 import AdminLocationsDetailModule from './index';
 
 const SPACE_FUNCTION_CHOICES = [
-  {id: null, label: 'No function assigned'},
   {id: 'breakout', label: 'Breakout'},
   {id: 'cafe', label: 'Cafe'},
   {id: 'conference_room', label: 'Conference Room'},
@@ -23,6 +22,7 @@ const SPACE_FUNCTION_CHOICES = [
   {id: 'office', label: 'Office'},
   {id: 'restroom', label: 'Restroom'},
   {id: 'theater', label: 'Theater'},
+  {id: null, label: 'Other'},
 ];
 
 export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, onChangeField}) {

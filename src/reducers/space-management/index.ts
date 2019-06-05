@@ -53,7 +53,7 @@ export type OperatingHoursLabelItem = {
 export type AdminLocationsFormState = {
   name: string,
   spaceType: string,
-  'function': string,
+  'function': string | null | undefined,
   annualRent: any,
   sizeArea: any,
   sizeAreaUnit: 'feet' | 'meters',
@@ -164,8 +164,8 @@ export function calculateOperatingHoursFromSpace(
   });
 }
 
-// Given a space and the currently logged in user, return the initial state of eitehr the edit or
-// new form.
+// Given a bunch of values fetched in the route transition, determine the initial state of the edit
+// or new form.
 function calculateInitialFormState({
   spaces,
   doorways,
@@ -197,7 +197,7 @@ function calculateInitialFormState({
     // General information module
     name: space.name || '',
     spaceType: space.spaceType,
-    'function': space['function'] || null,
+    'function': space['function'],
     parentId: space.parentId,
     imageUrl: space.imageUrl,
 
@@ -245,6 +245,58 @@ function calculateInitialFormState({
     overrideDefaultControlHidden: space.parentId === null,
     operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
+  };
+}
+
+// Given the state of the form, convert that state back into fields that can be sent in the body of
+// a PUT to the space.
+export function convertFormStateToSpaceFields(
+  formState: AdminLocationsFormState,
+  spaceType: DensitySpace["spaceType"],
+): object {
+  function parseIntOrNull(string) {
+    const result = parseInt(string, 10);
+    if (isNaN(result)) {
+      return null;
+    } else {
+      return result;
+    }
+  }
+  return {
+    name: formState.name,
+    spaceType: formState.spaceType,
+    'function': formState['function'] || null,
+    parentId: formState.parentId,
+    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
+
+    newTags: formState.tags,
+    newAssignedTeams: formState.assignedTeams,
+
+    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
+    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
+    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
+    currencyUnit: formState.currencyUnit,
+    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
+    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
+
+    address: formState.address && formState.address.length > 0 ? formState.address : null,
+    latitude: formState.coordinates ? formState.coordinates[0] : null,
+    longitude: formState.coordinates ? formState.coordinates[1] : null,
+
+    dailyReset: formState.dailyReset,
+    timeZone: formState.timeZone,
+
+    newImageFile: formState.newImageFile,
+    operatingHours: formState.operatingHours,
+
+    links: formState.doorways.map(i => ({
+      id: i.linkId,
+      doorwayId: i.id,
+      sensorPlacement: i.sensorPlacement,
+      operationToPerform: i.operationToPerform,
+    })),
+
+    inheritsTimeSegments: !formState.overrideDefault,
   };
 }
 

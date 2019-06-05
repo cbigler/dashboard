@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import styles from './styles.module.scss';
+import styles from './doorways.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 import convertUnit, { INCHES, CENTIMETERS } from '../../helpers/convert-unit/index';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
@@ -102,7 +102,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
         <AppBarTitle>DPU Position</AppBarTitle>
       </AppBar>
 
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <DpuPosition
           spaceName={spaceName}
           value={sensorPlacement}
@@ -145,7 +145,7 @@ function AdminLocationsDetailModulesDoorwayModal({
   }
 
   const shortMeasurementUnit = (
-    <span className={styles.doorwayFormMeasurementUnit}>
+    <span className={styles.formMeasurementUnit}>
       {
         ({
           [CENTIMETERS]: '(cm)',
@@ -175,7 +175,7 @@ function AdminLocationsDetailModulesDoorwayModal({
         </AppBarTitle>
       </AppBar>
 
-      <div className={styles.doorwayModalFirstSection}>
+      <div className={styles.modalFirstSection}>
         <FormLabel
           label="Name"
           htmlFor="admin-locations-detail-modules-doorways-name"
@@ -197,7 +197,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           <AppBarTitle>DPU Position</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <DpuPosition
           value={modalState.data.sensorPlacement}
           spaceName={spaceName}
@@ -211,8 +211,8 @@ function AdminLocationsDetailModulesDoorwayModal({
         </AppBar>
       </AppBarContext.Provider>
 
-      <div className={styles.doorwayModalSection}>
-        <div className={styles.doorwayModalSectionHorizontalForm}>
+      <div className={styles.modalSection}>
+        <div className={styles.modalSectionHorizontalForm}>
           <FormLabel
             label="Units"
             htmlFor="admin-locations-detail-modules-doorways-units"
@@ -281,10 +281,10 @@ function AdminLocationsDetailModulesDoorwayModal({
             }
           />
         </div>
-        <div className={styles.doorwayModalSectionMountingSpace}>
+        <div className={styles.modalSectionMountingSpace}>
           <p>Is there enough mounting space above this doorway?</p>
-          <div className={styles.doorwayModalSectionHorizontalForm}>
-            <div className={styles.doorwayFormMountingSpaceRadioButtonGroup}>
+          <div className={styles.modalSectionHorizontalForm}>
+            <div className={styles.formMountingSpaceRadioButtonGroup}>
               <RadioButton
                 text="Yes"
                 checked={modalState.data.clearance === true}
@@ -323,7 +323,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           <AppBarTitle>Photos</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <AdminLocationsImageUpload
           label="Photo from inside the space"
           value={modalState.data.newInsideImageData || modalState.data.insideImageUrl}
@@ -379,8 +379,8 @@ function AdminLocationsDetailModulesDoorwayModal({
       </div>
 
       {modalState.type !== 'CREATE' ? (
-        <div className={styles.doorwayModalDangerZoneWrapper}>
-          <div className={styles.doorwayModalDangerZoneText}>
+        <div className={styles.modalDangerZoneWrapper}>
+          <div className={styles.modalDangerZoneText}>
             <h4>Delete this doorway</h4>
             <p>Once deleted, it will be gone forever. Please be certain.</p>
           </div>
@@ -421,7 +421,7 @@ function DoorwayList({
   onShowModal,
 }) {
   return (
-    <div className={classnames(styles.doorwayList, {[styles.shaded]: shaded})}>
+    <div className={classnames(styles.list, {[styles.shaded]: shaded})}>
       <ListView data={doorways}>
         <ListViewColumn
           title="Doorways"
@@ -434,11 +434,11 @@ function DoorwayList({
                   onChange={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 />
                 <div
-                  className={styles.doorwayItemContainer}
+                  className={styles.itemContainer}
                   onClick={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 >
                   <Icons.Doorway color={colorVariables.grayDarkest} />
-                  <span className={styles.doorwayName}>{item.name}</span>
+                  <span className={styles.name}>{item.name}</span>
                 </div>
               </Fragment>
             );
@@ -496,7 +496,7 @@ function DoorwayList({
                     >
                       <Icons.Switch color={colorVariables.brandPrimary} />
                     </Button>
-                    <span className={styles.doorwaysDpuPosition}>
+                    <span className={styles.dpuPosition}>
                       {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>
@@ -512,7 +512,7 @@ function DoorwayList({
           title={null}
           template={i => i.selected ? (
             <div
-              className={styles.doorwaysEditLink}
+              className={styles.editLink}
               onClick={() => onEditDoorway(i)}
             >
               Edit
@@ -651,7 +651,7 @@ function AdminLocationsDetailModulesDoorways({
             </Button>
           </AppBarSection>
         </AppBar>
-        <div className={styles.doorwayLists}>
+        <div className={styles.lists}>
           {topDoorways.length > 0 ? (
             <DoorwayList
               selectedSpaceId={selectedSpaceIdOrNull}
@@ -662,24 +662,24 @@ function AdminLocationsDetailModulesDoorways({
               onShowModal={onShowModal}
             />
           ): (
-            <div className={styles.doorwaysEmptyState}>
-              <div className={styles.doorwaysEmptyStateInner}>
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateInner}>
                 {formState.doorwaysFilter.length > 0 ? (
-                  <div className={styles.doorwaysEmptyStateInnerRight}>
+                  <div className={styles.emptyStateInnerRight}>
                     <h3>Whoops</h3>
                     <p>We couldn't find any linked doorways that matched "{formState.doorwaysFilter}"</p>
                   </div>
                 ) : (
                   <Fragment>
                     {bottomDoorways.find(i => i.selected) ? (
-                      <div className={styles.doorwaysEmptyStateInnerRight}>
+                      <div className={styles.emptyStateInnerRight}>
                         <h3>Great, now save this space!</h3>
                         <p>Save a doorway, save a space</p>
                       </div>
                     ) : (
                       <Fragment>
-                        <div className={styles.doorwaysEmptyStateInnerLeft}>{DOORWAY_ICON}</div>
-                        <div className={styles.doorwaysEmptyStateInnerRight}>
+                        <div className={styles.emptyStateInnerLeft}>{DOORWAY_ICON}</div>
+                        <div className={styles.emptyStateInnerRight}>
                           <h3>You haven't assigned any linked doorways to this space yet</h3>
                           <p>Start assigning and start counting</p>
                         </div>
@@ -693,9 +693,9 @@ function AdminLocationsDetailModulesDoorways({
 
           {bottomDoorways.length === 0 && formState.doorwaysFilter.length > 0 ? (
             <Fragment>
-              <div className={classnames(styles.doorwaysEmptyState, styles.shaded)}>
-                <div className={styles.doorwaysEmptyStateInner}>
-                  <div className={styles.doorwaysEmptyStateInnerRight}>
+              <div className={classnames(styles.emptyState, styles.shaded)}>
+                <div className={styles.emptyStateInner}>
+                  <div className={styles.emptyStateInnerRight}>
                     <h3>Whoops</h3>
                     <p>We couldn't find any unlinked doorways that matched "{formState.doorwaysFilter}"</p>
                   </div>
