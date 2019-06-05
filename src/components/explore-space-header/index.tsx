@@ -52,7 +52,7 @@ export function ExploreSpaceHeader({
                   onClick={() => {
                     return onOpenModal('set-capacity', {space});
                   }}
-                >Set Capacity</span>
+                >Set capacity</span>
               </span>}
             </div>
             <div className={styles.exploreSpaceHeaderTimeZone}>

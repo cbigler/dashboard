@@ -31,7 +31,7 @@ export default class ExploreSetCapacityModal extends React.Component<any, any> {
         onEscape={onDismiss}
       >
         <AppBar>
-          <AppBarTitle>Set Capacity: {space.name}</AppBarTitle>
+          <AppBarTitle>Set capacity: {space.name}</AppBarTitle>
         </AppBar>
         <div className={styles.exploreSetCapacityModalCapacityInput}>
           <InputBox
