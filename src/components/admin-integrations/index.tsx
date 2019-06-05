@@ -187,12 +187,19 @@ export function AdminIntegrations({
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
           <ListViewColumn flexGrow={1} flexShrink={1} />
+          {/*
           <ListViewColumn
-          template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
-          onClick={item => {
-            if (!item.serviceAuthorization.id) {
-              window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
-            }}}
+            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            onClick={item => {
+              if (!item.serviceAuthorization.id) {
+                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
+              }
+            }}
+          />
+          */}
+          <ListViewColumn
+            template={item => !item.serviceAuthorization.id ? <span
+            className={styles.disabledIntegrationsLink}>Coming Soon</span> : null }
           />
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
