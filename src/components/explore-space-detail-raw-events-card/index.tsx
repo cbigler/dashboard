@@ -39,7 +39,7 @@ export function ExploreSpaceDetailRawEventsCard({
       <Card className={styles.exploreSpaceDetailRawEventsCard}>
         {calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null}
         <CardHeader>
-          Daily raw events
+          Daily Raw Events
           <InfoPopup horizontalIconOffset={8}>
             <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
               All events at this space on{' '}

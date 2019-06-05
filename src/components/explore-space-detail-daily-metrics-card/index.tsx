@@ -72,7 +72,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
 
           <CardHeader className={styles.exploreSpaceDetailDailyMetricsCardHeader}>
             <div className={styles.exploreSpaceDetailDailyMetricsCardTitle}>
-              Daily metrics
+              Daily Metrics
               <InfoPopup horizontalIconOffset={8}>
                 <p className={styles.exploreSpaceDetailDailyMetricsCardPopupP}>
                   Visitation metrics for time segment <strong>{timeSegmentLabel}</strong> from{' '}

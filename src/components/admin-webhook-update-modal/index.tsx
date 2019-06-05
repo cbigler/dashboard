@@ -30,7 +30,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
       <Fragment>
         <AppBar>
           <AppBarSection>
-            <AppBarTitle>Edit webhook</AppBarTitle>
+            <AppBarTitle>Edit Webhook</AppBarTitle>
           </AppBarSection>
         </AppBar>
         <div className={styles.webhookUpdateModalBody}>
@@ -81,7 +81,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
   renderDestroy = () => {
     return (
       <Fragment>
-        <AppBar><AppBarSection><AppBarTitle>Destroy webhook</AppBarTitle></AppBarSection></AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Destroy Webhook</AppBarTitle></AppBarSection></AppBar>
 
         <div className={styles.webhookUpdateModalBody}>
           <p>

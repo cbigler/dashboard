@@ -239,7 +239,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
   }
 
   return (
-    <AdminLocationsDetailModule title="General info">
+    <AdminLocationsDetailModule title="General Info">
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>

@@ -82,7 +82,7 @@ export function calculate(space, spaceFilters) {
   return (dispatch, getState) => {
     const multiWeekSelection = isMultiWeekSelection(spaceFilters.startDate, spaceFilters.endDate);
 
-    const peakTitle = multiWeekSelection ? "Hourly breakdown: Average peak occupancy" : "Hourly breakdown: Peak occupancy"
+    const peakTitle = multiWeekSelection ? "Hourly Breakdown: Average Peak Occupancy" : "Hourly Breakdown: Peak Occupancy"
 
     // Don't perform calculations if user hasn't selected an end date yet in the date picker.
     const { startDate, endDate } = getState().spaces.filters;
@@ -101,7 +101,7 @@ export function calculate(space, spaceFilters) {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
     dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', peakTitle, "AVERAGE"));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly breakdown: Visits', "NONE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown: Visits', "NONE"));
   };
 }
 

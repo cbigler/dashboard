@@ -70,7 +70,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
         onEscape={onCloseModal}
       >
         <AppBar>
-          <AppBarTitle>Copy operating hours</AppBarTitle>
+          <AppBarTitle>Copy Operating Hours</AppBarTitle>
         </AppBar>
 
         <div className={styles.copyFromSpaceModalSearchBar}>
@@ -146,7 +146,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
                 type="primary"
                 disabled={selectedSpaceId === null}
                 onClick={() => onSubmitModal(selectedSpaceId)}
-              >Copy Hours</Button>
+              >Copy hours</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -281,7 +281,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       />
 
       <AdminLocationsDetailModule
-        title="Operating hours"
+        title="Operating Hours"
         includePadding={false}
         actions={
           <AppBarSection>
@@ -468,7 +468,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     />
                   </AppBarSection>
                   <AppBarSection>
-                    <span className={styles.dayOfWeekLabel}>Days Affected:</span>
+                    <span className={styles.dayOfWeekLabel}>Days affected:</span>
                     <DayOfWeekSelector
                       daysOfWeek={operatingHoursItem.daysAffected}
                       disabled={!formState.overrideDefault}
@@ -547,7 +547,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                               onChangeField('operatingHours', operatingHoursCopy);
                             });
                           }}
-                        >Delete Segment</Button>
+                        >Delete segment</Button>
                       </ButtonContext.Provider>
                     </AppBarSection>
                   ) : null}

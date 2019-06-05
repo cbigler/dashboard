@@ -33,7 +33,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
         onEscape={onDismiss}
       >
         <AppBar>
-          <AppBarTitle>Create webhook</AppBarTitle>
+          <AppBarTitle>Create Webhook</AppBarTitle>
         </AppBar>
         <div className={styles.webhookCreateColumns}>
           <div className={`${styles.webhookCreateColumn} ${styles.left}`}>

@@ -241,7 +241,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
               <div className={styles.adminUserManagementDetailSection}>
                 <div className={classnames(styles.adminUserManagementDetailCard, styles.adminUserManagementDetailCardDanger)}>
                   <AppBar>
-                    <AppBarTitle>Danger zone</AppBarTitle>
+                    <AppBarTitle>Danger Zone</AppBarTitle>
                   </AppBar>
                   <div className={styles.adminUserManagementDetailCardBody}>
                     <div className={styles.adminUserManagementDetailActionDetail}>

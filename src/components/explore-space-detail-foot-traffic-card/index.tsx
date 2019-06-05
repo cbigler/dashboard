@@ -133,7 +133,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
         <Card className={styles.exploreSpaceDetailCard}>
           { calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
           <CardHeader className={styles.exploreSpaceDetailFootTrafficCardHeader}>
-            Foot traffic
+            Foot Traffic
             <InfoPopup horizontalIconOffset={8}>
               <p className={styles.exploreSpaceDetailFootTrafficCardPopupP}>
                 Count over time on <strong>{moment.utc(date).tz(space.timeZone).format('MMMM D, YYYY')}</strong>{' '}

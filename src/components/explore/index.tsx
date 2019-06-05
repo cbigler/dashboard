@@ -253,7 +253,7 @@ export class Explore extends React.Component<any, any> {
                     href={`#/spaces/explore/${spaces.selected}/data-export`}
                     active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
                   >
-                    Data export
+                    Data Export
                   </AppBarSubnavLink>
                 </AppBarSubnav> : null}
               </AppBar>

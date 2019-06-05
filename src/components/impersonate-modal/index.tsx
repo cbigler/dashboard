@@ -64,7 +64,7 @@ export function ImpersonateModal({
   >
     <AppBar>
       <AppBarSection>
-        <AppBarTitle>User impersonation</AppBarTitle>
+        <AppBarTitle>User Impersonation</AppBarTitle>
       </AppBarSection>
       <AppBarSection>
         <Switch

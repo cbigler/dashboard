@@ -12,7 +12,7 @@ import AdminLocationsDetailModule from './index';
 
 function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
   return (
-    <AdminLocationsDetailModule error title="Danger zone">
+    <AdminLocationsDetailModule error title="Danger Zone">
       <div className={styles.wrapper}>
         <div className={styles.left}>
           <h4>Delete this space</h4>

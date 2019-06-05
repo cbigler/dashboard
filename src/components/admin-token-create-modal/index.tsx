@@ -39,7 +39,7 @@ export default class TokenCreate extends React.Component<any, any> {
         onEscape={onDismiss}
       >
         <AppBar>
-          <AppBarTitle>Create token</AppBarTitle>
+          <AppBarTitle>Create Token</AppBarTitle>
         </AppBar>
         <div className={styles.tokenCreate}>
           <FormLabel

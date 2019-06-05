@@ -136,7 +136,7 @@ export function AdminIntegrations({
 
     <AppScrollView backgroundColor={colorVariables.grayLightest}>
       <div className={styles.adminIntegrationsRoomBookingList}>
-        <div className={styles.adminIntegrationsSectionHeader}>Room booking</div>
+        <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
             <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />

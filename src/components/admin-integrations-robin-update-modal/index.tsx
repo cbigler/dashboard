@@ -30,7 +30,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
   renderEdit = () => {
     return (
       <div>
-        <AppBar><AppBarSection><AppBarTitle>Edit Robin integration</AppBarTitle></AppBarSection></AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Edit Robin Integration</AppBarTitle></AppBarSection></AppBar>
 
         <div className={styles.integrationsUpdate}>
           <FormLabel
