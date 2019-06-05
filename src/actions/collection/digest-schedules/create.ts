@@ -32,7 +32,7 @@ export default function collectionDispatchSchedulesCreate({
         time_zone: timeZone,
       });
 
-      mixpanelTrack('Email digest created', {
+      mixpanelTrack('Email Digest Created', {
         name: name,
         dashboard_id: dashboardId,
       });
