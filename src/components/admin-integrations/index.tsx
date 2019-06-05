@@ -199,7 +199,7 @@ export function AdminIntegrations({
           */}
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? <span
-            className={styles.disabledIntegrationsLink}>Coming Soon</span> : null }
+            className={styles.disabledIntegrationsLink}>Coming soon</span> : null }
           />
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
