@@ -99,7 +99,7 @@ export function LiveSpaceList({
             type="text"
             width={250}
             className={styles.liveSpaceListSearchBox}
-            placeholder="Filter Spaces ..."
+            placeholder="Filter spaces ..."
             value={spaces.filters.search}
             onChange={e => onSpaceSearch(e.target.value)}
           />

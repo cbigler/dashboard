@@ -12,7 +12,7 @@ import AdminLocationsDetailModule from './index';
 
 function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
   return (
-    <AdminLocationsDetailModule error title="Danger Zone">
+    <AdminLocationsDetailModule error title="Danger zone">
       <div className={styles.wrapper}>
         <div className={styles.left}>
           <h4>Delete this space</h4>
@@ -20,7 +20,7 @@ function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShow
         </div>
         <div className={styles.right}>
           <ButtonContext.Provider value="DELETE_BUTTON">
-            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this Space</Button>
+            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this space</Button>
           </ButtonContext.Provider>
         </div>
       </div>

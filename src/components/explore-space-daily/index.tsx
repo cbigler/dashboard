@@ -92,7 +92,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               )}
             />
           </ExploreFilterBarItem>
-          <ExploreFilterBarItem label="Time Segment">
+          <ExploreFilterBarItem label="Time segment">
             <InputBox
               type="select"
               className={styles.exploreSpaceDailyTimeSegmentBox}
@@ -118,11 +118,11 @@ class ExploreSpaceDaily extends React.Component<any, any> {
                       )})`,
                     };
                   } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
-                    return { id: label, label: 'Whole Day (12:00a - 11:59p)' }
+                    return { id: label, label: 'Whole day (12:00a - 11:59p)' }
                   } else {
                     return {
                       id: label,
-                      label: `${label} (Mixed hours)`
+                      label: `${label} (mixed hours)`
                     };
                   }
                 })

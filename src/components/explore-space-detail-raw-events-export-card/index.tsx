@@ -163,7 +163,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
       <Card className="exploreSpaceDetailRawEventsExportCard">
         {view === LOADING_INITIAL || view === LOADING_PREVIEW || view === LOADING_CSV ? <CardLoading indeterminate /> : null}
         <CardHeader>
-          CSV Event Export
+          CSV event export
           <InfoPopup horizontalIconOffset={8}>
             <p className="exploreSpaceDetailRawEventsExportCardDescription">
               Download all events from <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
@@ -219,7 +219,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
             <span>Generating CSV ...</span>
           ) : (
             <span>
-              Download All Events{' '}
+              Download all events{' '}
               ({parseISOTimeAtSpace(startDate, space).format('MM/DD/YYYY')} - {parseISOTimeAtSpace(endDate, space).format('MM/DD/YYYY')})
             </span>
           )}

@@ -5,7 +5,7 @@ import {
 
 const TIME_SEGMENT_IN_GROUP = {
   id: 'tsm_ingroup',
-  name: 'Whole Day',
+  name: 'Whole day',
   start: '00:00:00',
   end: '23:59:59',
   days: [

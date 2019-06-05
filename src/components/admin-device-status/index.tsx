@@ -36,7 +36,7 @@ export function AdminDeviceStatus({
     <div className={styles.adminDeviceList}>
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
-          title="Serial Number"
+          title="Serial number"
           template={item => <strong>{item.serialNumber}</strong>} />
         <ListViewColumn
           title="Status"
@@ -44,7 +44,7 @@ export function AdminDeviceStatus({
             color: getStatusColor(item.status)
           }}>{item.status}</span>} />
         <ListViewColumn
-          title="Last Heartbeat"
+          title="Last heartbeat"
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
         <ListViewColumn flexGrow={1} />
         <ListViewColumn

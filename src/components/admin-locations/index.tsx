@@ -52,13 +52,13 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
           <Button
             type="primary"
             onClick={() => { window.location.href = generateCreateRoute(spaceId, 'campus'); }}
-          >Add a Campus</Button>
+          >Add a campus</Button>
         </span>
         <span className={styles.rightButton}>
           <Button
             type="primary"
             onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-          >Add a Building</Button>
+          >Add a building</Button>
         </span>
       </Fragment>
     );
@@ -68,7 +68,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         <Button
           type="primary"
           onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-        >Add a Building</Button>
+        >Add a building</Button>
       </Fragment>
     );
   case 'building':
@@ -78,13 +78,13 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
           <Button
             type="primary"
             onClick={() => { window.location.href = generateCreateRoute(spaceId, 'floor'); }}
-          >Add a Level</Button>
+          >Add a level</Button>
         </span>
         <span className={styles.rightButton}>
           <Button
             type="primary"
             onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a Room</Button>
+          >Add a room</Button>
         </span>
       </Fragment>
     );
@@ -94,7 +94,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         <Button
           type="primary"
           onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a Room</Button>
+        >Add a room</Button>
       </Fragment>
     );
   case 'space':
@@ -106,7 +106,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
           <Button
             type="primary"
             onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a Room</Button>
+          >Add a room</Button>
         ) : null}
       </Fragment>
     );
@@ -202,14 +202,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="rent"
-                  label="Annual Rent (per square unit):"
+                  label="Annual rent (per square unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
               </AdminLocationsLeftPaneDataRow>
               <AdminLocationsLeftPaneDataRow>
                 <AdminLocationsLeftPaneDataRowItem
                   id="target-capacity"
-                  label="Target Capacity:"
+                  label="Target capacity:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem

@@ -55,7 +55,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -87,7 +87,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -100,7 +100,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox
@@ -136,7 +136,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
         />
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <FormLabel
-            label="Space Type"
+            label="Space type"
             htmlFor="admin-locations-detail-modules-general-info-space-type"
             className={styles.moduleFormFieldHalfWidth}
             input={
@@ -150,7 +150,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
             }
           />
           <FormLabel
-            label="Level Number"
+            label="Level number"
             htmlFor="admin-locations-detail-modules-general-level-number"
             className={styles.moduleFormFieldHalfWidth}
             input={
@@ -167,7 +167,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           />
         </div>
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox
@@ -202,7 +202,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -215,7 +215,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox
@@ -239,7 +239,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
   }
 
   return (
-    <AdminLocationsDetailModule title="General Info">
+    <AdminLocationsDetailModule title="General info">
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>

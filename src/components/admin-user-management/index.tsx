@@ -166,7 +166,7 @@ export function AdminUserManagement({
                   )}
                   onClick={() => onSaveNewUser(activeModal.data)}
                 >
-                  Save User
+                  Save user
                 </Button>
               </AppBarSection>
             </AppBar>
@@ -187,7 +187,7 @@ export function AdminUserManagement({
           />
         </AppBarSection>
         <AppBarSection>
-          <Button type="primary" onClick={onClickAddUser}>Add User</Button>
+          <Button type="primary" onClick={onClickAddUser}>Add user</Button>
         </AppBarSection>
       </AppBar>
 
@@ -206,7 +206,7 @@ export function AdminUserManagement({
               <ListViewColumn title="Activity" template={() => <Skeleton width={80} />} />
               <ListViewColumn title="Invitation" template={() => <Skeleton width={100} />} />
               <ListViewColumn />
-              <ListViewColumn title="Space Access" template={() => <Skeleton />} />
+              <ListViewColumn title="Space access" template={() => <Skeleton />} />
               <ListViewColumn title="Actions" template={() => <Skeleton />} />
             </ListView>
           </div>
@@ -234,7 +234,7 @@ export function AdminUserManagement({
                         <ul className={styles.adminUserManagementInfoUl}>
                           <li><strong>Owner</strong>: Full access and all permissions within an organization</li>
                           <li><strong>Admin</strong>: Edit spaces and users. Cannot make changes to the organization.</li>
-                          <li><strong>Read-Only</strong>: Cannot make changes to the organization or team.</li>
+                          <li><strong>Read-only</strong>: Cannot make changes to the organization or team.</li>
                         </ul>
                       </AdminUserManagementInfo>
                     </Fragment>
@@ -269,11 +269,11 @@ export function AdminUserManagement({
                 />
                 <ListViewColumn
                   title={(
-                    <span style={{paddingRight: 8}}>Space Access</span>
+                    <span style={{paddingRight: 8}}>Space access</span>
                   )}
                   template={item => {
                     if (!item.isEditable) {
-                      return <span>Some Spaces</span>;
+                      return <span>Some spaces</span>;
                     } else {
                       const userSpaces = (item.spaces || []).reduce((acc, next) => {
                         const space = spaces.data.find(s => s.id === next);
@@ -281,7 +281,7 @@ export function AdminUserManagement({
                       }, []);
                       return <span>
                         {userSpaces.length || 'All'}
-                        {' Space'}
+                        {' space'}
                         {userSpaces.length === 1 ? '' : 's'}
                       </span>;
                     }

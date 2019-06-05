@@ -86,7 +86,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
     const averageWeekHeader = (
       <CardHeader>
-        An Average Week
+        An average week
         <InfoPopup horizontalIconOffset={8}>
           <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             Utilization for time segment <strong>{timeSegmentLabel}</strong> from{' '}
@@ -118,7 +118,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
     const averageDayHeader = (
       <CardHeader>
-        An Average Day
+        An average day
         <InfoPopup horizontalIconOffset={8}>
           <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             An average daily breakdown of utilization for

@@ -66,7 +66,7 @@ export default class ExploreSetCapacityModal extends React.Component<any, any> {
                 width="100%"
                 disabled={this.state.capacity === null}
                 onClick={() => this.props.onSubmit(this.state.capacity)}
-              >Save Changes</Button>
+              >Save changes</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

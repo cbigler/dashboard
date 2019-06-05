@@ -45,7 +45,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
       />
       <AdminLocationsLeftPaneDataRowItem
         id="target-capacity"
-        label="Target Capacity:"
+        label="Target capacity:"
         value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
       />
       <AdminLocationsLeftPaneDataRowItem
@@ -142,7 +142,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
                     href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title="Target Capacity"
+                    title="Target capacity"
                     template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
                     href={item => `#/admin/locations/${item.id}`}
                   />

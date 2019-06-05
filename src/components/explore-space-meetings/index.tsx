@@ -203,10 +203,10 @@ function ExploreSpaceMeetings({
                 ) : null}
                 {/* There is nothing that sets this data into an error state, so that case is omitted */}
                 {exploreDataMeetings.state === 'COMPLETE' ? (() => {
-                  const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
-                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
-                  const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
-                  const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
+                  const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting attendance');
+                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker behavior');
+                  const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting size');
+                  const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-day');
                   return (
                     <div className={styles.reportGrid}>
                       <div className={classnames(styles.reportColumn, styles.left)}>

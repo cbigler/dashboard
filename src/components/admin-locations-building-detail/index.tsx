@@ -58,7 +58,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
           href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Target Capacity"
+          title="Target capacity"
           template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
           href={item => `#/admin/locations/${item.id}`}
         />
@@ -128,7 +128,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             />
             <AdminLocationsLeftPaneDataRowItem
               id="rent"
-              label={`Annual Rent (per ${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
+              label={`Annual rent (per ${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):`}
               value={sizeAreaConverted && selectedSpace.annualRent ? (
                 `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
               ) : <Fragment>&mdash;</Fragment>}
@@ -137,7 +137,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <AdminLocationsLeftPaneDataRow>
             <AdminLocationsLeftPaneDataRowItem
               id="target-capacity"
-              label="Target Capacity:"
+              label="Target capacity:"
               value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
             />
             <AdminLocationsLeftPaneDataRowItem

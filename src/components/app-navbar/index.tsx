@@ -231,7 +231,7 @@ export default function AppNavbar({
               />
               <AppNavbarMenuItem
                 path="#/admin/user-management"
-                text="User Management"
+                text="User management"
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
@@ -252,7 +252,7 @@ export default function AppNavbar({
               {can(user, PERMISSION_CODES.sensorsList) ?
                 <AppNavbarMenuItem
                   path="#/admin/device-status"
-                  text="DPU Status"
+                  text="DPU status"
                   icon={<Icons.Heartbeat />}
                   selected={['ADMIN_DEVICE_STATUS'].includes(page)}
                 /> : null}
@@ -268,7 +268,7 @@ export default function AppNavbar({
           >
             <AppNavbarMenuItem
               path="#/account"
-              text="Your Account"
+              text="Your account"
               icon={<Icons.Person />}
               selected={['ACCOUNT'].includes(page)}
             />

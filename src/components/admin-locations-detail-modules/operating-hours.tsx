@@ -70,7 +70,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
         onEscape={onCloseModal}
       >
         <AppBar>
-          <AppBarTitle>Copy Operating Hours</AppBarTitle>
+          <AppBarTitle>Copy operating hours</AppBarTitle>
         </AppBar>
 
         <div className={styles.copyFromSpaceModalSearchBar}>
@@ -281,7 +281,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       />
 
       <AdminLocationsDetailModule
-        title="Operating Hours"
+        title="Operating hours"
         includePadding={false}
         actions={
           <AppBarSection>
@@ -291,7 +291,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   className={styles.overrideDefaultLabel}
                   htmlFor="admin-locations-detail-module-operating-hours-override-default"
                 >
-                  Override Default:
+                  Override default:
                 </label>
                 <Switch
                   id="admin-locations-detail-module-operating-hours-override-default"
@@ -326,7 +326,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           <AppBarSection>
             <div className={styles.left}>
               <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
-                Time Zone:
+                Time zone:
               </label>
               <InputBox
                 id="admin-locations-detail-modules-operating-hours-time-zone"

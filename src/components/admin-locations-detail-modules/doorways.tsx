@@ -64,7 +64,7 @@ function DpuPosition({spaceName, value, onChange}) {
           <RadioButton
             checked={value === 1}
             onChange={() => onChange(1)}
-            text="Inside the Space"
+            text="Inside the space"
           />
         </div>
         <div
@@ -75,7 +75,7 @@ function DpuPosition({spaceName, value, onChange}) {
           <RadioButton
             checked={value === -1}
             onChange={() => onChange(-1)}
-            text="Outside the Space"
+            text="Outside the space"
           />
         </div>
       </div>
@@ -99,7 +99,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
       onEscape={onCloseModal}
     >
       <AppBar>
-        <AppBarTitle>DPU Position</AppBarTitle>
+        <AppBarTitle>DPU position</AppBarTitle>
       </AppBar>
 
       <div className={styles.modalSection}>
@@ -171,7 +171,7 @@ function AdminLocationsDetailModulesDoorwayModal({
     >
       <AppBar>
         <AppBarTitle>
-          {modalState.type === 'CREATE' ? 'New Doorway' : 'Edit Doorway'}
+          {modalState.type === 'CREATE' ? 'New doorway' : 'Edit doorway'}
         </AppBarTitle>
       </AppBar>
 
@@ -194,7 +194,7 @@ function AdminLocationsDetailModulesDoorwayModal({
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
-          <AppBarTitle>DPU Position</AppBarTitle>
+          <AppBarTitle>DPU position</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
       <div className={styles.modalSection}>
@@ -207,7 +207,7 @@ function AdminLocationsDetailModulesDoorwayModal({
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
-          <AppBarTitle>Installation Details</AppBarTitle>
+          <AppBarTitle>Installation details</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
 
@@ -221,7 +221,7 @@ function AdminLocationsDetailModulesDoorwayModal({
                 type="select"
                 id="admin-locations-detail-modules-doorways-units"
                 value={modalState.data.measurementUnit}
-                placeholder="Pick Units"
+                placeholder="Pick units"
                 choices={[
                   {id: CENTIMETERS, label: 'Metric'},
                   {id: INCHES, label: 'Imperial'},
@@ -300,7 +300,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           </div>
         </div>
         <FormLabel
-          label="Power Option"
+          label="Power option"
           htmlFor="admin-locations-detail-modules-doorways-power"
           input={
             <InputBox
@@ -386,7 +386,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           </div>
           <div>
             <ButtonContext.Provider value="DELETE_BUTTON">
-              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this Doorway</Button>
+              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this doorway</Button>
             </ButtonContext.Provider>
           </div>
         </div>
@@ -403,7 +403,7 @@ function AdminLocationsDetailModulesDoorwayModal({
               type="primary"
               disabled={!formValid}
               onClick={() => onSubmitModal(modalState)}
-            >Save Doorway</Button>
+            >Save doorway</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -448,14 +448,14 @@ function DoorwayList({
           width={320}
         />
         <ListViewColumn
-          title="Linked Spaces"
+          title="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
             if (spacesOtherThanSelectedSpace.length > 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
                   <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace.length} Linked Spaces</span>
+                  <span>{spacesOtherThanSelectedSpace.length} Linked spaces</span>
                 </div>
               );
             } else if (spacesOtherThanSelectedSpace.length === 1) {
@@ -474,7 +474,7 @@ function DoorwayList({
           width={240}
         />
         <ListViewColumn
-          title="DPU Position"
+          title="DPU position"
           template={i => {
             return (
               <Fragment>

@@ -101,7 +101,7 @@ export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
 const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   {
     id: 'rpt_ephemeral_meeting_attendance',
-    name: 'Meeting Attendance',
+    name: 'Meeting attendance',
     type: 'MEETING_ATTENDANCE',
     settings: {
       spaceId,
@@ -111,7 +111,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_meeting_size',
-    name: 'Meeting Size',
+    name: 'Meeting size',
     type: 'MEETING_SIZE',
     settings: {
       spaceId,
@@ -121,7 +121,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_booking_behavior',
-    name: 'Booker Behavior',
+    name: 'Booker behavior',
     type: 'BOOKING_BEHAVIOR',
     settings: {
       spaceId,
@@ -131,7 +131,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_busiest_meeting',
-    name: 'Meetings: Day-to-Day',
+    name: 'Meetings: Day-to-day',
     type: 'DAY_TO_DAY_MEETINGS',
     settings: {
       spaceId,

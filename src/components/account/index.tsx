@@ -167,7 +167,7 @@ export class Account extends React.Component<any, any> {
                 label="Password"
                 htmlFor="account-change-password"
                 input={ <div id="account-change-password" className={styles.accountChangePasswordValue}>
-                  <span onClick={() => this.setState({mode: PASSWORD_RESET})}>Change Password</span>
+                  <span onClick={() => this.setState({mode: PASSWORD_RESET})}>Change password</span>
                 </div>}
               /> : null}
 
@@ -219,7 +219,7 @@ export class Account extends React.Component<any, any> {
                     }
                   }}
                   disabled={this.state.password.length < 8}
-                >Change Password</Button>
+                >Change password</Button>
               </div> : null}
 
               {this.state.mode === NORMAL ? <div className={styles.accountDeactivateContainer}>
@@ -236,7 +236,7 @@ export class Account extends React.Component<any, any> {
                         this.setState({error});
                       });
                   }}
-                >Save Changes</Button> : null}
+                >Save changes</Button> : null}
               </div>
             </CardBody>
           </Card>

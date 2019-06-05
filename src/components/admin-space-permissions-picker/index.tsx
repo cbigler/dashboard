@@ -72,7 +72,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
     return (
       <div className={styles.adminSpacePermissionsPicker} style={{height}}>
         <AppBar>
-          <AppBarTitle>Space Permissions</AppBarTitle>
+          <AppBarTitle>Space permissions</AppBarTitle>
           <AppBarSection>
             <Switch
               value={active}
@@ -114,7 +114,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
               </Fragment>
             ) : (
               <AppBarSection>
-                Has access to&nbsp;<strong>All Spaces</strong>
+                Has access to&nbsp;<strong>All spaces</strong>
               </AppBarSection>
             )}
           </AppBar>

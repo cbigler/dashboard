@@ -33,7 +33,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
         onEscape={onDismiss}
       >
         <AppBar>
-          <AppBarTitle>Create Webhook</AppBarTitle>
+          <AppBarTitle>Create webhook</AppBarTitle>
         </AppBar>
         <div className={styles.webhookCreateColumns}>
           <div className={`${styles.webhookCreateColumn} ${styles.left}`}>
@@ -112,7 +112,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
                   description: this.state.description,
                   endpoint: this.state.endpoint,
                 })}
-              >Save Webhook</Button>
+              >Save webhook</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

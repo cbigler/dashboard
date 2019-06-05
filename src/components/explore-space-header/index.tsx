@@ -56,7 +56,7 @@ export function ExploreSpaceHeader({
               </span>}
             </div>
             <div className={styles.exploreSpaceHeaderTimeZone}>
-              Time Zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
+              Time zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
                 {({
                   'America/New_York': 'US Eastern',
                   'America/Chicago': 'US Central',

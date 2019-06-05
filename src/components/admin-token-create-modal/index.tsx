@@ -39,7 +39,7 @@ export default class TokenCreate extends React.Component<any, any> {
         onEscape={onDismiss}
       >
         <AppBar>
-          <AppBarTitle>Create Token</AppBarTitle>
+          <AppBarTitle>Create token</AppBarTitle>
         </AppBar>
         <div className={styles.tokenCreate}>
           <FormLabel
@@ -65,7 +65,7 @@ export default class TokenCreate extends React.Component<any, any> {
             />}
           />
           <FormLabel
-            label="Token Type"
+            label="Token type"
             htmlFor=""
             editable={false}
             input={<div className={styles.tokenCreateTokenTypeRadioGroup}>
@@ -74,7 +74,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READONLY})}
                   checked={this.state.tokenType === READONLY}
-                  text="Read-Only"
+                  text="Read-only"
                 />
               </div>
               <div className={styles.tokenCreateTokenTypeRadioItem}>
@@ -82,7 +82,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   name="token-create-token-type"
                   onChange={() => this.setState({tokenType: READWRITE})}
                   checked={this.state.tokenType === READWRITE}
-                  text="Read-Write"
+                  text="Read-write"
                 />
               </div>
             </div>}
@@ -105,7 +105,7 @@ export default class TokenCreate extends React.Component<any, any> {
                   tokenType: this.state.tokenType,
                   description: this.state.description || undefined,
                 })}
-              >Save Token</Button>
+              >Save token</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

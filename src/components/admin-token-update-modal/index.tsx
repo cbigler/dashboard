@@ -30,11 +30,11 @@ export default class TokenUpdateModal extends React.Component<any, any> {
   renderEdit = () => {
     return (
       <Fragment>
-        <AppBar><AppBarSection><AppBarTitle>Edit Token</AppBarTitle></AppBarSection></AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Edit token</AppBarTitle></AppBarSection></AppBar>
 
         <div className={styles.tokenUpdateModalBody}>
           <FormLabel
-            label="Token Name"
+            label="Token name"
             htmlFor="token-update-name"
             input={<InputBox
               type="text"
@@ -78,7 +78,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                   name: this.state.name,
                   description: this.state.description || undefined,
                 })}
-              >Save Changes</Button>
+              >Save changes</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -88,7 +88,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
   renderDestroy = () => {
     return (
       <Fragment>
-        <AppBar><AppBarSection><AppBarTitle>Destroy Token</AppBarTitle></AppBarSection></AppBar>
+        <AppBar><AppBarSection><AppBarTitle>Destroy token</AppBarTitle></AppBarSection></AppBar>
 
         <div className={styles.tokenUpdateModalBody}>
           <h2 className={styles.tokenUpdateDestroyWarning}>Are you ABSOLUTELY sure?</h2>

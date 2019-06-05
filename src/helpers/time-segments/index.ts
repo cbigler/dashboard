@@ -5,11 +5,11 @@ import { DensityTimeSegment } from '../../types';
 // If no time segment group is selected or defined, default to using this one.
 export const DEFAULT_TIME_SEGMENT_GROUP = {
   id: 'tsg_default',
-  name: 'Whole Day',
+  name: 'Whole day',
   timeSegments: [
     {
       id: 'tsm_default',
-      name: 'Whole Day',
+      name: 'Whole day',
       start: '00:00:00',
       end: '23:59:59',
       days: [

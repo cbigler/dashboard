@@ -5,14 +5,14 @@
 .exploreEditCountModal .cardHeader { font-weight: normal; }
 
 .exploreEditCountModalResetCount {
-  font-size: $fontSizeBase;
-  font-weight: $fontWeightBase;
-
   color: $brandPrimary;
   text-decoration: underline;
   cursor: pointer;
+}
 
-  margin-left: 10px;
+.exploreEditCountModalBody {
+  padding: 24px;
+  padding-top: 48px;
 }
 
 .exploreEditCountModalCountPicker {

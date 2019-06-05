@@ -41,7 +41,7 @@ export default function Admin({
                 href="#/admin/user-management"
                 active={activePage === 'ADMIN_USER_MANAGEMENT'}
               >
-                User Management
+                User management
               </AppBarSubnavLink>
               {can(user, PERMISSION_CODES.developerToolsManage) ? 
                 <AppBarSubnavLink
@@ -62,7 +62,7 @@ export default function Admin({
                   href="#/admin/device-status"
                   active={activePage === 'ADMIN_DEVICE_STATUS'}
                 >
-                  DPU Status
+                  DPU status
                 </AppBarSubnavLink> : null}
             </AppBarSubnav>
           </AppBarSection>
