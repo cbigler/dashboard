@@ -81,6 +81,7 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
+import handleVisibilityChange from './helpers/visibility-change';
 const store = storeFactory();
 
 
@@ -365,13 +366,13 @@ setInterval(async () => {
 
 // When the page transitions visibility, connect or disconnect the event source
 // This prevents pushed events from piling up and crashing the page when not rendered
-window.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') {
-    eventSource.connect();
-  } else {
+handleVisibilityChange(hidden => {
+  if (hidden) {
     eventSource.disconnect();
+  } else {
+    eventSource.connect();
   }
-});
+})
 
 ReactDOM.render(
   <Provider store={store}>

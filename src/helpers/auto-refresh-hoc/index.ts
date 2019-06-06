@@ -1,9 +1,11 @@
 import * as React from 'react';
+import handleVisibilityChange from '../visibility-change';
 
 export default function autoRefresh({shouldComponentUpdate}) {
   return Component => {
     class RealtimeComponent extends React.Component<any, any> {
       animationFrame: any;
+      cancelHandleVisibilityChange: any;
 
       constructor(props) {
         super(props);
@@ -13,8 +15,13 @@ export default function autoRefresh({shouldComponentUpdate}) {
       }
       componentDidMount() {
         this.animationFrame = window.requestAnimationFrame(this.tick);
+        this.cancelHandleVisibilityChange = handleVisibilityChange(hidden => hidden ? 
+          this.animationFrame = window.requestAnimationFrame(this.tick) :
+          window.cancelAnimationFrame(this.animationFrame)
+        );
       }
       componentWillUnmount() {
+        this.cancelHandleVisibilityChange();
         window.cancelAnimationFrame(this.animationFrame);
       }
       tick() {
