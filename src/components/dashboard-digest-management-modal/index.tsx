@@ -187,7 +187,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
         <div className={styles.dashboardDigestManagementModal}>
           <AppBar>
             <AppBarTitle>
-              {initialDigestSchedule ? 'Edit email digest' : 'New email digest'}
+              {initialDigestSchedule ? 'Edit Email Digest' : 'New Email Digest'}
             </AppBarTitle>
           </AppBar>
           <div className={styles.dashboardDigestManagementModalSplitContainer}>

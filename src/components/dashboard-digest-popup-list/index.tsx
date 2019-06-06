@@ -85,7 +85,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>
           <AppBar>
             <AppBarSection>
-              <AppBarTitle>Email digests</AppBarTitle>
+              <AppBarTitle>Email Digests</AppBarTitle>
             </AppBarSection>
             <AppBarSection>
               <span
