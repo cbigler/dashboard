@@ -12,8 +12,8 @@ import styles from './styles.module.scss';
 
 import RealTimeCountFn from '@density/chart-real-time-count';
 const RealTimeCountChart = autoRefreshHoc({
-  interval: 50,
   shouldComponentUpdate: function (nextProps) {
+    if (document.visibilityState !== 'visible') { return false; }
     return (this as any).props.events.length || nextProps.events.length;
   }
 })(chartAsReactComponent(RealTimeCountFn));
