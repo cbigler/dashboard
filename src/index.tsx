@@ -363,6 +363,16 @@ setInterval(async () => {
   }
 },  5 * 60 * 1000);
 
+// When the page transitions visibility, connect or disconnect the event source
+// This prevents pushed events from piling up and crashing the page when not rendered
+window.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    eventSource.connect();
+  } else {
+    eventSource.disconnect();
+  }
+});
+
 ReactDOM.render(
   <Provider store={store}>
     <div>
