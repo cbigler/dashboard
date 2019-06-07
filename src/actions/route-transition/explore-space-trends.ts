@@ -6,12 +6,11 @@ import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 import collectionSpacesFilter from '../collection/spaces/filter';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -51,7 +50,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));

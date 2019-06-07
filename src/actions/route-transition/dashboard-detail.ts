@@ -5,7 +5,6 @@ import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
-import core from '../../client/core';
 
 import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
 import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
@@ -14,7 +13,7 @@ import setDashboardDate from '../miscellaneous/set-dashboard-date';
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
 import { DensityDashboard, DensityDigestSchedule } from '../../types';
-import fetchAllObjects from '../../helpers/fetch-all-objects';
+import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
@@ -111,7 +110,7 @@ function loadDashboardAndReports(id) {
         );
       } else {
         try {
-        selectedDashboard = objectSnakeToCamel<DensityDashboard>((await core().get(`/dashboards/${id}`)).data);
+          selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`);
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;

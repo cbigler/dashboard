@@ -1,7 +1,6 @@
-import core from '../../client/core';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
@@ -38,7 +37,7 @@ export default function routeTransitionExplore() {
     errorThrown = false;
     let spaces, spaceHierarchy;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       errorThrown = true;

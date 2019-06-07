@@ -9,7 +9,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher/index';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem, DensityDoorway } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -22,7 +22,7 @@ import {
 
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-import fetchAllObjects from '../../helpers/fetch-all-objects';
+import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
 
@@ -39,7 +39,7 @@ export default function routeTransitionExploreSpaceDaily(id) {
     // this view unfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
@@ -119,6 +119,7 @@ export function calculateDailyRawEvents(space) {
 
     let preResponse;
     try {
+      // Fetch a single page here, so don't use the helper
       preResponse = await core().get(`/spaces/${space.id}/events`, {params: {
         start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
         end_time: formatInISOTimeAtSpace(day.clone().startOf('day').add(1, 'day'), space),
@@ -157,7 +158,7 @@ export function calculateDailyRawEvents(space) {
     // already known.
     const doorwayRequests = uniqueArrayOfDoorways.map(async doorwayId => {
       try {
-        return (await core().get(`/doorways/${doorwayId}`)).data;
+        return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`);
       } catch (error) {
         dispatch(exploreDataCalculateDataError('dailyRawEvents', error));
         return;

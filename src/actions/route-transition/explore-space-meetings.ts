@@ -13,6 +13,7 @@ import {
   DensityReportCalculatationFunction,
   DensitySpace,
   DensityService,
+  DensitySpaceHierarchyItem,
 } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
@@ -42,7 +43,7 @@ export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {

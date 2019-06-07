@@ -9,14 +9,17 @@ function generateCacheKey(url, params, body) {
 }
 
 type FetchAllObjectsOptions = {
-  params: object,
-  body: object,
+  params?: object,
+  body?: object,
 
-  cache: boolean,
-  cacheExpiryTimeMs: number,
+  cache?: boolean,
+  cacheExpiryTimeMs?: number,
 }
 
-export default async function fetchAllObjects<T = any>(url, options={}): Promise<Array<T>> {
+export default async function fetchAllObjects<T = any>(
+  url,
+  options: FetchAllObjectsOptions = {}
+): Promise<Array<T>> {
   const opts: FetchAllObjectsOptions = {
     cache: true,
     cacheExpiryTimeMs: 5000,
@@ -52,7 +55,10 @@ export default async function fetchAllObjects<T = any>(url, options={}): Promise
   return responseData.map(i => typeof i === 'object' ? objectSnakeToCamel<T>(i) : i);
 }
 
-export async function fetchObject<T = any>(url, options={}): Promise<T>  {
+export async function fetchObject<T = any>(
+  url,
+  options: FetchAllObjectsOptions = {}
+): Promise<T>  {
   const opts: FetchAllObjectsOptions = {
     cache: true,
     cacheExpiryTimeMs: 5000,

@@ -1,4 +1,3 @@
-import core from '../../client/core';
 import {
   DensitySpace,
   DensityTimeSegmentLabel,
@@ -9,7 +8,6 @@ import {
 } from '../../types';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import spaceManagementSetData from '../../actions/space-management/set-data';
 import spaceManagementError from '../../actions/space-management/error';
 import collectionTagsSet from '../collection/tags/set';
@@ -18,9 +16,7 @@ import collectionAssignedTeamsSet from '../collection/assigned-teams/set';
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
 
 async function getHierarchy() {
-  return (await core().get('/spaces/hierarchy/')).data.map(i => (
-    objectSnakeToCamel<DensitySpaceHierarchyItem>(i)
-  ));
+  return await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
 }
 
 export function loadData() {
