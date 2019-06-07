@@ -144,7 +144,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
                 this.setState({open: false});
                 window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
                 window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
-                this.props.onChange(this.state.values, this.state.goSlow);
+                this.props.onChange();
               }}
             >OK</Button>
           </div>
