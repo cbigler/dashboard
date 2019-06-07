@@ -80,7 +80,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
         <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
-            <Button onClick={onCloseModal}>Close</Button>
+            <Button type="primary" variant="filled" onClick={onCloseModal}>Close</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -306,7 +306,7 @@ export class Dashboard extends React.Component<any, any> {
                   <div style={{width: 50}}>
                     <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
                     <div style={{paddingTop: 4}}>
-                      <Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
+                      <Icons.ChevronLeft color={colorVariables.brandPrimary} />
                     </div>
                     </Button>
                   </div>
@@ -323,7 +323,7 @@ export class Dashboard extends React.Component<any, any> {
                         <Icons.ChevronRight
                           color={moment(date).add(1, 'week') > moment() ?
                             colorVariables.gray :
-                            colorVariables.brandPrimaryNew}
+                            colorVariables.brandPrimary}
                         />
                       </div>
                     </Button>

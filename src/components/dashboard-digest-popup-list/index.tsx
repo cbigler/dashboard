@@ -77,9 +77,9 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           className={classnames(styles.dashboardDigestListButton, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: !visible})}
         >
-          <Icons.Mail color={colorVariables.brandPrimaryNew} />
+          <Icons.Mail color={colorVariables.brandPrimary} />
           <span className={styles.dashboardDigestListButtonText}>Email digest</span>
-          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
+          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimary} />
         </button>
 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>

@@ -203,6 +203,7 @@ export class Account extends React.Component<any, any> {
                 </div>
                 <Button
                   type="primary"
+                  variant="filled"
                   width="100%"
                   onClick={() => {
                     if (this.state.password === this.state.passwordConfirmation) {
@@ -228,6 +229,7 @@ export class Account extends React.Component<any, any> {
 
               <div className={styles.accountSubmitUserDetails}>
                 {this.state.mode === EDIT ? <Button
+                  variant="filled"
                   onClick={() => {
                     onSubmitUserUpdate(this.state.fullName, this.state.marketingConsent)
                       .then(() => {

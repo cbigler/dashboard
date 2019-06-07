@@ -4,7 +4,7 @@ import React from 'react';
 
 import {
   Button,
-  ButtonContext,
+  ButtonGroup,
   InputBox,
   AppBar,
   AppBarTitle,
@@ -101,18 +101,19 @@ export default class WebhookCreateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.endpoint.length === 0}
-                onClick={() => this.props.onSubmit({
-                  name: this.state.name,
-                  description: this.state.description,
-                  endpoint: this.state.endpoint,
-                })}
-              >Save webhook</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={onDismiss}>Cancel</Button>
+                <Button
+                  type="primary"
+                  variant="filled"
+                  disabled={this.state.endpoint.length === 0}
+                  onClick={() => this.props.onSubmit({
+                    name: this.state.name,
+                    description: this.state.description,
+                    endpoint: this.state.endpoint,
+                  })}
+                >Save webhook</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

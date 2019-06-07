@@ -9,7 +9,7 @@ import {
   AppBarSection,
   AppBarTitle,
   Button,
-  ButtonContext,
+  ButtonGroup,
   Modal,
   InputBox,
 } from '@density/ui';
@@ -53,15 +53,16 @@ export function Dialogger({
               <AppBar>
                 <AppBarSection></AppBarSection>
                 <AppBarSection>
-                  <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button onClick={onCancel}>Cancel</Button>
-                  </ButtonContext.Provider>
-                  <Button
-                    type="primary"
-                    onClick={() => onConfirm(activeModal.data.callback)}
-                  >
-                    {activeModal.data.confirmText || 'Confirm'}
-                  </Button>
+                  <ButtonGroup>
+                    <Button variant="underline" onClick={onCancel}>Cancel</Button>
+                    <Button
+                      variant="filled"
+                      type="primary"
+                      onClick={() => onConfirm(activeModal.data.callback)}
+                    >
+                      {activeModal.data.confirmText || 'Confirm'}
+                    </Button>
+                  </ButtonGroup>
                 </AppBarSection>
               </AppBar>
             </AppBarContext.Provider>
@@ -101,15 +102,16 @@ export function Dialogger({
               <AppBar>
                 <AppBarSection></AppBarSection>
                 <AppBarSection>
-                  <ButtonContext.Provider value="CANCEL_BUTTON">
-                    <Button onClick={onCancel}>Cancel</Button>
-                  </ButtonContext.Provider>
-                  <Button
-                    type="primary"
-                    onClick={() => onSubmit(activeModal.data.callback, activeModal.data.text)}
-                  >
-                    {activeModal.data.confirmText || 'Submit'}
-                  </Button>
+                  <ButtonGroup>
+                    <Button variant="underline" onClick={onCancel}>Cancel</Button>
+                    <Button
+                      variant="filled"
+                      type="primary"
+                      onClick={() => onSubmit(activeModal.data.callback, activeModal.data.text)}
+                    >
+                      {activeModal.data.confirmText || 'Submit'}
+                    </Button>
+                  </ButtonGroup>
                 </AppBarSection>
               </AppBar>
             </AppBarContext.Provider>

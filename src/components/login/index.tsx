@@ -116,6 +116,7 @@ export class Login extends React.Component<any, any> {
       {/* Input stack used to enter login info */}
       <div className={classnames(styles.loginSubmitButton, styles.google, {[styles.loading]: this.state.loading})}>
         <Button
+          variant="filled"
           width="100%"
           onClick={() => {
             // Store the orginating origin in localStorage from the oauth request. This is used so
@@ -161,6 +162,7 @@ export class Login extends React.Component<any, any> {
         <Button
           width="100%"
           type="primary"
+          variant="filled"
           onClick={this.onLogin}
           disabled={!this.isLoginFormValid()}
         >Login</Button>
@@ -193,6 +195,7 @@ export class Login extends React.Component<any, any> {
         <Button
           onClick={this.onForgotPassword}
           disabled={!this.isForgotPasswordFormValid()}
+          variant="filled"
         >Send Request</Button>
       </div>
 

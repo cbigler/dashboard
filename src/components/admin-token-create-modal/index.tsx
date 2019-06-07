@@ -3,13 +3,13 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarTitle,
   AppBarContext,
+  Button,
+  ButtonGroup,
+  InputBox,
   RadioButton,
   Modal,
 } from '@density/ui';
@@ -92,20 +92,21 @@ export default class TokenCreate extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.name.length === 0}
-                id="admin-token-create-modal-submit"
-                width="100%"
-                onClick={() => this.props.onSubmit({
-                  name: this.state.name,
-                  tokenType: this.state.tokenType,
-                  description: this.state.description || undefined,
-                })}
-              >Save token</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={this.state.name.length === 0}
+                  id="admin-token-create-modal-submit"
+                  width="100%"
+                  onClick={() => this.props.onSubmit({
+                    name: this.state.name,
+                    tokenType: this.state.tokenType,
+                    description: this.state.description || undefined,
+                  })}
+                >Save token</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

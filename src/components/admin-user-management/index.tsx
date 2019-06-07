@@ -15,7 +15,7 @@ import {
   AppBarTitle,
   AppScrollView,
   Button,
-  ButtonContext,
+  ButtonGroup,
   Icons,
   InputBox,
   InputBoxContext,
@@ -153,21 +153,22 @@ export function AdminUserManagement({
             <AppBar>
               <AppBarSection></AppBarSection>
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={onCancelAddUser}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  disabled={!(
-                    activeModal.data.email &&
-                    activeModal.data.role && (
-                      !activeModal.data.spaceFilteringActive || 
-                      activeModal.data.spaceIds.length > 0)
-                  )}
-                  onClick={() => onSaveNewUser(activeModal.data)}
-                >
-                  Save user
-                </Button>
+                <ButtonGroup>
+                  <Button variant="underline" onClick={onCancelAddUser}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    disabled={!(
+                      activeModal.data.email &&
+                      activeModal.data.role && (
+                        !activeModal.data.spaceFilteringActive || 
+                        activeModal.data.spaceIds.length > 0)
+                    )}
+                    onClick={() => onSaveNewUser(activeModal.data)}
+                  >
+                    Save user
+                  </Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>
@@ -187,7 +188,7 @@ export function AdminUserManagement({
           />
         </AppBarSection>
         <AppBarSection>
-          <Button type="primary" onClick={onClickAddUser}>Add user</Button>
+          <Button type="primary" variant="filled" onClick={onClickAddUser}>Add user</Button>
         </AppBarSection>
       </AppBar>
 

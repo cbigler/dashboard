@@ -50,6 +50,7 @@ export function TokenKeyHider ({value, onCopyToken}) {
     <Button
       size="small"
       type="primary"
+      variant="filled"
       width={60}
       onClick={() => setHidden(!hidden)}
     >{hidden ? 'Show' : 'Hide'}</Button>
@@ -121,9 +122,9 @@ export function AdminDeveloper({
        <a href="http://docs.density.io" target="_blank">API Docs</a>
       </AppBarSection>
       <AppBarSection>
-        <Button type="primary" onClick={() => onOpenModal('token-create')}>Add token</Button>
+        <Button variant="filled" type="primary" onClick={() => onOpenModal('token-create')}>Add token</Button>
         &nbsp;&nbsp;
-        <Button type="primary" onClick={() => onOpenModal('webhook-create')}>Add webhook</Button>
+        <Button variant="filled" type="primary" onClick={() => onOpenModal('webhook-create')}>Add webhook</Button>
       </AppBarSection>
     </AppBar>
 
