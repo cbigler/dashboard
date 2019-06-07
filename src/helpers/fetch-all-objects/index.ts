@@ -1,7 +1,6 @@
 import fetchAllPages from '../fetch-all-pages/index';
 import objectSnakeToCamel from '../object-snake-to-camel/index';
 import core from '../../client/core';
-import { DensityDoorway } from '../../types';
 
 const CACHE = {};
 
@@ -18,7 +17,7 @@ type FetchAllObjectsOptions = {
   cacheExpiryTimeMs: number,
 }
 
-export default async function fetchAllObjects<T = any>(url, options={}) {
+export default async function fetchAllObjects<T = any>(url, options={}): Promise<Array<T>> {
   const opts: FetchAllObjectsOptions = {
     cache: true,
     cacheExpiryTimeMs: 5000,
@@ -54,10 +53,10 @@ export default async function fetchAllObjects<T = any>(url, options={}) {
     }
   }
 
-  return responseData.map(i => objectSnakeToCamel<T>(i));
+  return responseData.map(i => typeof i === 'object' ? objectSnakeToCamel<T>(i) : i);
 }
 
-export async function fetchObject<T = any>(url, options={}) {
+export async function fetchObject<T = any>(url, options={}): Promise<T>  {
   const opts: FetchAllObjectsOptions = {
     cache: true,
     cacheExpiryTimeMs: 5000,
@@ -86,5 +85,5 @@ export async function fetchObject<T = any>(url, options={}) {
     }
   }
 
-  return objectSnakeToCamel<T>(response.data);
+  return typeof response.data === 'object' ? objectSnakeToCamel<T>(response.data) : response.data;
 }

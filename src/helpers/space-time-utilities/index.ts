@@ -1,10 +1,8 @@
 import moment from 'moment';
 import 'moment-timezone';
 
-import fetchAllPages from '../fetch-all-pages/index';
-import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import fetchAllObjects from '../fetch-all-objects';
 
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
@@ -202,18 +200,13 @@ export function splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, par
 export async function requestCountsForLocalRange(space, start, end, params={}) {
   const subranges = splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, params);
   return await subranges.map(subrange => {
-    return fetchAllPages(async page => {
-      const response = await core().get(`/spaces/${space.id}/counts`, {
-        params: {
-          start_time: formatInISOTime(subrange.start),
-          end_time: formatInISOTime(subrange.end),
-          page,
-          page_size: 5000,
-          slow: getGoSlow(),
-          ...params,
-        },
-      });
-      return objectSnakeToCamel(response.data);
+    return fetchAllObjects(`/spaces/${space.id}/counts`, {
+      params: {
+        start_time: formatInISOTime(subrange.start),
+        end_time: formatInISOTime(subrange.end),
+        slow: getGoSlow(),
+        ...params,
+      }
     });
   }).reduce((promise, request, index) => {
     return promise.then(async results => {

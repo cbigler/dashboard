@@ -6,7 +6,6 @@ import collectionSpacesFilter from '../collection/spaces/filter';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher/index';
 
@@ -23,6 +22,7 @@ import {
 
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
 
@@ -40,9 +40,7 @@ export default function routeTransitionExploreSpaceDaily(id) {
     let spaces, spaceHierarchy, selectedSpace;
     try {
       spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
@@ -80,20 +78,16 @@ export function calculateFootTraffic(space) {
 
     let data;
     try {
-      data = (await fetchAllPages(async page => (
-        (await core().get(`/spaces/${space.id}/counts`, { params: {
+      data = (await fetchAllObjects(`/spaces/${space.id}/counts`, {
+        params: {
           interval: '5m',
           time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
           order: 'asc',
-
           start_time: formatInISOTimeAtSpace(day.clone().startOf('day'), space),
           end_time: formatInISOTimeAtSpace(day.clone().startOf('day').add(1, 'day'), space),
-
-          page,
-          page_size: 5000,
           slow: getGoSlow(),
-        }})).data
-      ))).map(objectSnakeToCamel).reverse();
+        }
+      })).reverse();
     } catch (err) {
       dispatch(exploreDataCalculateDataError('footTraffic', `Error fetching count data: ${err}`));
       return;

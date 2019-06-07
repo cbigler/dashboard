@@ -1,12 +1,8 @@
-import moment from 'moment';
-import core from '../../client/core';
 import { DensitySpace } from '../../types';
-
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSet from '../collection/spaces/set';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS = 'ROUTE_TRANSITION_ADMIN_LOCATIONS';
 
@@ -23,16 +19,7 @@ export default function routeTransitionAdminLocations(parentSpaceId) {
     if (shouldLoadSpaces) {
       let spaces;
       try {
-        const rawSpaces = await fetchAllPages(async page => {
-          const response = await core().get(`/spaces`, {
-            params: {
-              page,
-              page_size: 5000,
-            },
-          });
-          return response.data;
-        });
-        spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+        spaces = await fetchAllObjects<DensitySpace>('/spaces');
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return false;

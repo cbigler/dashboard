@@ -7,7 +7,7 @@ import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-defaul
 import collectionSpacesFilter from '../collection/spaces/filter';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import fetchAllPages from '../../helpers/fetch-all-pages';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
@@ -52,9 +52,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     let spaces, spaceHierarchy, selectedSpace;
     try {
       spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
       return;
@@ -194,12 +192,12 @@ export function calculateUtilization(space) {
     }
 
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
-    // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
-    // logic required to fetch all pages of data from the server.
+    // selected on the DateRangePicker. Uses the `fetchAllObjects` helper, which encapsulates the
+    // logic required to fetch all pages of objects from the server.
     let errorThrown, counts;
     try {
-      counts = (await fetchAllPages(async page => (
-        (await core().get(`/spaces/${space.id}/counts`, { params: {
+      counts = await fetchAllObjects(`/spaces/${space.id}/counts`, {
+        params: {
           id: space.id,
 
           start_time: startDate,
@@ -208,15 +206,10 @@ export function calculateUtilization(space) {
 
           interval: '10m',
 
-          // Fetch with a large page size to try to minimize the number of requests that will be
-          // required.
-          page,
-          page_size: 5000,
-
           // Legacy "slow" queries
           slow: getGoSlow(),
-        }})).data
-      ))).map(objectSnakeToCamel);
+        }
+      });
     } catch (err) {
       errorThrown = err;
     }

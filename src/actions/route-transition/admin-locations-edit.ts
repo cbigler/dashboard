@@ -8,8 +8,8 @@ import {
   DensityAssignedTeam,
 } from '../../types';
 
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import spaceManagementSetData from '../../actions/space-management/set-data';
 import spaceManagementError from '../../actions/space-management/error';
 import collectionTagsSet from '../collection/tags/set';
@@ -23,52 +23,22 @@ async function getHierarchy() {
   ));
 }
 
-async function getSpaces() {
-  const spacesRaw = await fetchAllPages(async page => (
-    await core().get('/spaces', {params: {page_size: 5000, page}})
-  ).data)
-  return spacesRaw.map(i => objectSnakeToCamel<DensitySpace>(i));
-}
-
-async function getDoorways() {
-  const doorwaysRaw = await fetchAllPages(async page => (
-    await core().get('/doorways', {params: {page_size: 5000, page, environment: 'true'}})
-  ).data)
-  return doorwaysRaw.map(i => objectSnakeToCamel<DensityDoorway>(i));
-}
-
-async function getTimeSegmentLabels(): Promise<Array<DensityTimeSegmentLabel>> {
-  // NOTE: DensityTimeSegmentLabel's aren't objects, so I didn't use objectSnakeToCamel here.
-  return fetchAllPages(async page => (
-    await core().get('/time_segments/labels', {params: {page_size: 5000, page}})
-  ).data);
-}
-
-async function getTags() {
-  const tagsRaw = await fetchAllPages(async page => (
-    await core().get('/tags', {params: {page_size: 5000, page}})
-  ).data)
-  return tagsRaw.map(i => objectSnakeToCamel<DensityTag>(i));
-}
-
-async function getAssignedTeams() {
-  const assignedTeamsRaw = await fetchAllPages(async page => (
-    await core().get('/assigned_teams', {params: {page_size: 5000, page}})
-  ).data)
-  return assignedTeamsRaw.map(i => objectSnakeToCamel<DensityAssignedTeam>(i));
-}
-
 export function loadData() {
   return async dispatch => {
-    let spaces, hierarchy, doorways, labels, tags, assignedTeams;
+    let hierarchy: Array<DensitySpaceHierarchyItem>,
+      spaces: Array<DensitySpace>,
+      doorways: Array<DensityDoorway>,
+      labels: Array<DensityTimeSegmentLabel>,
+      tags: Array<DensityTag>,
+      assignedTeams: Array<DensityAssignedTeam>;
     try {
-      [spaces, hierarchy, doorways, labels, tags, assignedTeams] = await Promise.all([
-        getSpaces(),
+      [hierarchy, spaces, doorways, labels, tags, assignedTeams] = await Promise.all([
         getHierarchy(),
-        getDoorways(),
-        getTimeSegmentLabels(),
-        getTags(),
-        getAssignedTeams(),
+        await fetchAllObjects<DensitySpace>('/spaces'),
+        await fetchAllObjects<DensityDoorway>('/doorways'),
+        await fetchAllObjects<DensityTimeSegmentLabel>('/time_segments/labels'),
+        await fetchAllObjects<DensityTag>('/tags'),
+        await fetchAllObjects<DensityAssignedTeam>('/assigned_teams'),
       ]);
     } catch (err) {
       console.error(err);
@@ -78,7 +48,7 @@ export function loadData() {
 
     dispatch(collectionTagsSet(tags));
     dispatch(collectionAssignedTeamsSet(assignedTeams));
-    dispatch(spaceManagementSetData(spaces, hierarchy, doorways, labels));
+    dispatch(spaceManagementSetData(hierarchy, spaces, doorways, labels));
   };
 }
 

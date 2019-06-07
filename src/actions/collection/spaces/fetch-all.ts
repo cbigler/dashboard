@@ -1,8 +1,5 @@
-import core from '../../../client/core';
 import { DensitySpace } from '../../../types';
-
-import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../../helpers/fetch-all-pages/index';
+import fetchAllObjects from '../../../helpers/fetch-all-objects';
 
 import collectionSpacesError from './error';
 import collectionSpacesSet from './set';
@@ -17,16 +14,7 @@ export default function collectionSpacesFetchAll(opts={force: false}) {
       dispatch({ type: COLLECTION_SPACES_FETCH_ALL_START });
       let spaces;
       try {
-        const rawSpaces = await fetchAllPages(async page => {
-          const response = await core().get(`/spaces`, {
-            params: {
-              page,
-              page_size: 5000,
-            },
-          });
-          return response.data;
-        });
-        spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+        spaces = await fetchAllObjects<DensitySpace>('/spaces');
       } catch (err) {
         dispatch(collectionSpacesError(err));
         return null;

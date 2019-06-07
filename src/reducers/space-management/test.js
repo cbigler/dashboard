@@ -57,10 +57,6 @@ describe('spaceManagement', () => {
 
 
   it('should update all data collections inside when SPACE_MANAGEMENT_SET_DATA is sent', () => {
-    const SPACES = [
-      {id: 'spc_xxx', name: 'My Campus', parentId: null },
-      {id: 'spc_xxy', name: 'My Building', parentId: 'spc_xxx' },
-    ];
     const HIERARCHY = [
       {
         id: 'spc_xxx',
@@ -72,12 +68,16 @@ describe('spaceManagement', () => {
         ],
       },
     ];
+    const SPACES = [
+      {id: 'spc_xxx', name: 'My Campus', parentId: null },
+      {id: 'spc_xxy', name: 'My Building', parentId: 'spc_xxx' },
+    ];
     const DOORWAYS = [
       {id: 'drw_xxx', name: 'My Door', spaces: []},
       {id: 'drw_xxy', name: 'My Door 2', spaces: []},
     ];
     const LABELS = ['foo', 'bar', 'baz'];
-    const action = spaceManagementSetData(SPACES, HIERARCHY, DOORWAYS, LABELS);
+    const action = spaceManagementSetData(HIERARCHY, SPACES, DOORWAYS, LABELS);
     const result = spaceManagement(INITIAL_STATE, action);
     assert.strictEqual(result.view, 'VISIBLE');
     assert.deepStrictEqual(result.spaces.data, SPACES);

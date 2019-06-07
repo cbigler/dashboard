@@ -1,12 +1,11 @@
 export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL';
 
-import fetchAllPages from '../../helpers/fetch-all-pages';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import collectionUsersError from '../collection/users/error';
 import collectionUsersPush from '../collection/users/push';
 import collectionSpacesSet from '../collection/spaces/set';
 import accounts from '../../client/accounts';
-import core from '../../client/core';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
+import { DensitySpace } from '../../types';
 
 export default function routeTransitionAdminUserManagementDetail(id) {
   return async dispatch => {
@@ -19,9 +18,7 @@ export default function routeTransitionAdminUserManagementDetail(id) {
     let user, spaces, errorThrown = null;
     try {
       user = await accounts().get(`/users/${id}`);
-      spaces = (await fetchAllPages(async page => (
-        (await core().get('/spaces/', { params: { page, page_size: 5000 }})).data
-      ))).map(objectSnakeToCamel);
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (e) {
       errorThrown = e;
     }

@@ -1,14 +1,3 @@
-import core from '../../client/core';
-import { DensitySpace, DensityTimeSegmentLabel, DensityDoorway, DensityTag, DensityAssignedTeam } from '../../types';
-
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
-
-import spaceManagementSetData from '../space-management/set-data';
-import spaceManagementError from '../space-management/error';
-import collectionTagsSet from '../collection/tags/set';
-import collectionAssignedTeamsSet from '../collection/assigned-teams/set';
-
 import { loadData } from './admin-locations-edit';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW';

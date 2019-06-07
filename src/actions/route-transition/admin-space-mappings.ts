@@ -1,14 +1,13 @@
 import showToast from '../toasts/index';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 
 import { DensityService, DensityServiceSpace } from '../../types';
 import core from '../../client/core';
 
-import integrationServicesList from '../integrations/services';
 import collectionServiceSpacesSet from '../collection/service-spaces/set';
 import collectionServicesError from '../collection/services/error';
 import collectionServicesSet from '../collection/services/set';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS = 'ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS';
 
@@ -46,16 +45,7 @@ function fetchAllServiceSpaces(service) {
   return async (dispatch) => {
     let serviceSpaces, errorThrown;
     try {
-      const rawServiceSpaces = await fetchAllPages(async page => {
-        const response = await core().get(`/integrations/${service.name}/spaces`, {
-          params: {
-            page,
-            page_size: 5000,
-          },
-        });
-        return response.data;
-      });
-      serviceSpaces = rawServiceSpaces.map(d => objectSnakeToCamel<DensityServiceSpace>(d));
+      serviceSpaces = await fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces`);
     } catch (err) {
       errorThrown = err;
     }
