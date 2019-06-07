@@ -12,7 +12,7 @@ import ReactGA from 'react-ga';
 import moment from 'moment';
 import queryString from 'qs';
 
-import { DensityUser } from './types';
+import { DensityUser, DensitySpace } from './types';
 
 // Import @density/ui package for font
 import '@density/ui';
@@ -82,6 +82,8 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
 import handleVisibilityChange from './helpers/visibility-change';
+import fetchAllObjects from './helpers/fetch-all-objects';
+import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
 const store = storeFactory();
 
 
@@ -324,18 +326,20 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = (await core().get('/spaces')).data;
-  store.dispatch(collectionSpacesSet(spaces.results));
+  const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+  store.dispatch(collectionSpacesSet(spaces));
 
-  const spaceEventSets: any = await Promise.all(spaces.results.map(space => {
-    return core().get(`/spaces/${space.id}/events`, { params: {
-      start_time: moment.utc().subtract(1, 'minute').format(),
-      end_time: moment.utc().format(),
-    }});
+  const spaceEventSets: any = await Promise.all(spaces.map(space => {
+    return fetchAllObjects(`/spaces/${space.id}/events`, {
+      params: {
+        start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
+        end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
+      }
+    });
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces.results[index].id] = next.data.results.map(i => ({ 
+    acc[spaces[index].id] = next.map(i => ({ 
       countChange: i.direction,
       timestamp: i.timestamp
     }));
@@ -362,8 +366,8 @@ setInterval(async () => {
   const loggedIn = (store.getState() as any).sessionToken !== null;
 
   if (loggedIn) {
-    const spaces = (await core().get('/spaces')).data;
-    store.dispatch(collectionSpacesSet(spaces.results));
+    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    store.dispatch(collectionSpacesSet(spaces));
   }
 },  5 * 60 * 1000);
 

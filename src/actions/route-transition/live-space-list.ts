@@ -10,36 +10,34 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import { DensitySpace } from '../../types';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_LIVE_SPACE_LIST = 'ROUTE_TRANSITION_LIVE_SPACE_LIST';
 
 export default function routeTransitionLiveSpaceList() {
-  return dispatch => {
+  return async dispatch => {
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_LIST });
 
-    return core().get('/spaces').then(spaces => {
-      dispatch(collectionSpacesSet(spaces.data.results));
+    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    dispatch(collectionSpacesSet(spaces));
 
-      // Then, fetch all initial events for each space.
-      // This is used to populate each space's events collection with all the events from the last
-      // minute so that the real time event charts all display as "full" when the page reloads.
-      return Promise.all(spaces.data.results.map(s => {
-      const space = objectSnakeToCamel<DensitySpace>(s);
-        return core().get(`/spaces/${space.id}/events`, { params: {
-          id: space.id,
+    const spaceEventSets: any = await Promise.all(spaces.map(space => {
+      return fetchAllObjects(`/spaces/${space.id}/events`, {
+        params: {
           start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
           end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
-        }});
-      })).then((spaceEventSets: any) => {
-        const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-          acc[spaces.data.results[index].id] = next.data.results.map(i => ({ 
-            countChange: i.direction,
-            timestamp: i.timestamp
-          }));
-          return acc;
-        }, {});
-        dispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
+        }
       });
-    });
+    }));
+  
+    const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
+      acc[spaces[index].id] = next.map(i => ({ 
+        countChange: i.direction,
+        timestamp: i.timestamp
+      }));
+      return acc;
+    }, {});
+
+    dispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
   };
 }
