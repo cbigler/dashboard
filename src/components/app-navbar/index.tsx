@@ -217,7 +217,13 @@ export default function AppNavbar({
           {showAdminMenu ?
             <AppNavbarMenu
               header={<AppNavbarItem
-                selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_LOCATIONS', 'ADMIN_DEVICE_STATUS'].includes(page)}
+                selected={[
+                  'ADMIN_USER_MANAGEMENT',
+                  'ADMIN_DEVELOPER',
+                  'ADMIN_LOCATIONS',
+                  'ADMIN_SPACE_MAPPINGS',
+                  'ADMIN_DEVICE_STATUS',
+                ].includes(page)}
                 showOnMobile={true}
                 icon={<Icons.Cog />}
                 text="Admin"
@@ -235,13 +241,12 @@ export default function AppNavbar({
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {can(user, PERMISSION_CODES.developerToolsManage) ?
-                <AppNavbarMenuItem
-                  path="#/admin/integrations"
-                  text="Integrations"
-                  icon={<Icons.Filters />}
-                  selected={['ADMIN_INTEGRATIONS'].includes(page)}
-                /> : null}
+              {can(user, PERMISSION_CODES.developerToolsManage) ? <AppNavbarMenuItem
+                path="#/admin/integrations"
+                text="Integrations"
+                icon={<Icons.Filters />}
+                selected={['ADMIN_INTEGRATIONS', 'ADMIN_SPACE_MAPPINGS'].includes(page)}
+              /> : null}
               {can(user, PERMISSION_CODES.developerToolsManage) ?
                 <AppNavbarMenuItem
                   path="#/admin/developer"
