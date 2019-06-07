@@ -80,7 +80,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
         <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
-            <Button onClick={onCloseModal}>Close</Button>
+            <Button type="primary" variant="filled" onClick={onCloseModal}>Close</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>

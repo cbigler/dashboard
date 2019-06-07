@@ -22,9 +22,10 @@ import {
   AppBarTitle,
   AppBarSection,
   AppBarContext,
-  Icons,
   Button,
   ButtonContext,
+  ButtonGroup,
+  Icons,
 } from '@density/ui';
 
 import { DensitySpace, DensityUser } from '../../types';
@@ -136,22 +137,23 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
               </AppBarTitle>
 
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  disabled={!formValid}
-                  onClick={() => {
-                    onSaveUser({
-                      id: selectedUser.id,
-                      role: this.state.role,
+                <ButtonGroup>
+                  <Button variant="underline" onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    disabled={!formValid}
+                    onClick={() => {
+                      onSaveUser({
+                        id: selectedUser.id,
+                        role: this.state.role,
 
-                      spaceFilteringActive: this.state.spaceFilteringActive,
-                      spaceIds: this.state.spaceIds,
-                    });
-                  }}
-                >Save user</Button>
+                        spaceFilteringActive: this.state.spaceFilteringActive,
+                        spaceIds: this.state.spaceIds,
+                      });
+                    }}
+                  >Save user</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </div>
@@ -249,11 +251,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                         <h4 className={styles.adminUserManagementDetailActionDetailHeader}>Delete this user</h4>
                         <p className={styles.adminUserManagementDetailActionDetailLead}>Once deleted, they will be gone forever. Please be certain.</p>
                       </div>
-                      <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
-                        <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                          Delete this user
-                        </Button>
-                      </ButtonContext.Provider>
+                      <Button variant="underline" type="danger" onClick={() => onStartDeleteUser(selectedUser)}>
+                        Delete this user
+                      </Button>
                     </div>
                   </div>
                 </div>

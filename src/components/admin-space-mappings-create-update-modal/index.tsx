@@ -3,15 +3,16 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarTitle,
   AppBarContext,
+  Button,
+  ButtonContext,
+  ButtonGroup,
   RadioButton,
   Modal,
+  InputBox,
 } from '@density/ui';
 
 import FormLabel from '../form-label';
@@ -53,19 +54,19 @@ export default class SpaceMappingsCreateUpdateModal extends React.Component<any,
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.serviceSpaceId === null}
-                width="100%"
-                onClick={() => this.props.onSubmit({
-                  serviceSpaceId: this.state.serviceSpaceId,
-                  spaceId: this.props.space.id,
-                  serviceId: this.props.service.id,
-                })}
-              >Save</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={this.state.serviceSpaceId === null}
+                  onClick={() => this.props.onSubmit({
+                    serviceSpaceId: this.state.serviceSpaceId,
+                    spaceId: this.props.space.id,
+                    serviceId: this.props.service.id,
+                  })}
+                >Save</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

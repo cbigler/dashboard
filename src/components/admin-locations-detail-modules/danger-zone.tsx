@@ -19,9 +19,11 @@ function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShow
           <span>Once deleted, it will be gone forever. Please be certain.</span>
         </div>
         <div className={styles.right}>
-          <ButtonContext.Provider value="DELETE_BUTTON">
-            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this space</Button>
-          </ButtonContext.Provider>
+          <Button
+            variant="underline"
+            type="danger"
+            onClick={() => onShowConfirm(selectedSpace)}
+          >Delete this space</Button>
         </div>
       </div>
     </AdminLocationsDetailModule>

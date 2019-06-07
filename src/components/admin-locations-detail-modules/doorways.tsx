@@ -14,6 +14,7 @@ import {
   AppBarContext,
   Button,
   ButtonContext,
+  ButtonGroup,
   Icons,
   InputBox,
   Modal,
@@ -114,13 +115,14 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
         <AppBar>
           <AppBarSection />
           <AppBarSection>
-            <ButtonContext.Provider value="CANCEL_BUTTON">
-              <Button onClick={onCloseModal}>Cancel</Button>
-            </ButtonContext.Provider>
-            <Button
-              type="primary"
-              onClick={() => onSubmitModal(sensorPlacement)}
-            >Save Link</Button>
+            <ButtonGroup>
+              <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+              <Button
+                type="primary"
+                variant="filled"
+                onClick={() => onSubmitModal(sensorPlacement)}
+              >Save Link</Button>
+            </ButtonGroup>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -385,9 +387,11 @@ function AdminLocationsDetailModulesDoorwayModal({
             <p>Once deleted, it will be gone forever. Please be certain.</p>
           </div>
           <div>
-            <ButtonContext.Provider value="DELETE_BUTTON">
-              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this doorway</Button>
-            </ButtonContext.Provider>
+            <Button
+              variant="underline"
+              type="danger"
+              onClick={() => onDeleteDoorway(modalState.data.id)}
+            >Delete this doorway</Button>
           </div>
         </div>
       ) : null}
@@ -396,14 +400,15 @@ function AdminLocationsDetailModulesDoorwayModal({
         <AppBar>
           <AppBarSection />
           <AppBarSection>
-            <ButtonContext.Provider value="CANCEL_BUTTON">
-              <Button onClick={onCloseModal}>Cancel</Button>
-            </ButtonContext.Provider>
-            <Button
-              type="primary"
-              disabled={!formValid}
-              onClick={() => onSubmitModal(modalState)}
-            >Save doorway</Button>
+            <ButtonGroup>
+              <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+              <Button
+                variant="filled"
+                type="primary"
+                disabled={!formValid}
+                onClick={() => onSubmitModal(modalState)}
+              >Save doorway</Button>
+            </ButtonGroup>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>

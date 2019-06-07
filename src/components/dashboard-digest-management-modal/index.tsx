@@ -6,14 +6,15 @@ import classnames from 'classnames';
 import moment from 'moment';
 
 import {
-  Button,
-  ButtonContext,
-  Icons,
-  InputBox,
   AppBar,
   AppBarContext,
   AppBarSection,
   AppBarTitle,
+  Button,
+  ButtonContext,
+  ButtonGroup,
+  Icons,
+  InputBox,
   Modal,
 } from '@density/ui';
 import DayOfWeekSelector from '../day-of-week-selector/index';
@@ -250,34 +251,32 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <span
-                  role="button"
-                  className={styles.dashboardDigestManagementModalFooterCancel}
-                  onClick={onCloseModal}
-                >Cancel</span>
-                <Button
-                  disabled={!this.isFormValid()}
-                  type="primary"
-                  onClick={() => {
-                    let digest: any = {
-                      name: name || this.calculateDefaultDigestName() || 'Digest Name',
-                      recipients: recipients,
-                      dashboardId: selectedDashboard.id,
-                      frequency,
-                      daysOfWeek: daysOfWeek,
-                      dayNumber: 1, /* What is this value for? */
-                      time,
-                      timeZone,
-                    };
+                <ButtonGroup>
+                  <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+                  <Button
+                    disabled={!this.isFormValid()}
+                    variant="filled"
+                    onClick={() => {
+                      let digest: any = {
+                        name: name || this.calculateDefaultDigestName() || 'Digest Name',
+                        recipients: recipients,
+                        dashboardId: selectedDashboard.id,
+                        frequency,
+                        daysOfWeek: daysOfWeek,
+                        dayNumber: 1, /* What is this value for? */
+                        time,
+                        timeZone,
+                      };
 
-                    if (this.props.initialDigestSchedule) {
-                      digest.id = this.props.initialDigestSchedule.id;
-                      onUpdateDigest(digest as DensityDigestSchedule);
-                    } else {
-                      onCreateDigest(digest as DensityDigestSchedule);
-                    }
-                  }}
-                >Save email digest</Button>
+                      if (this.props.initialDigestSchedule) {
+                        digest.id = this.props.initialDigestSchedule.id;
+                        onUpdateDigest(digest as DensityDigestSchedule);
+                      } else {
+                        onCreateDigest(digest as DensityDigestSchedule);
+                      }
+                    }}
+                  >Save email digest</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>
@@ -424,9 +423,7 @@ function DigestManagementForm({
       </div>
       {showDeleteDigest ? (
         <div className={styles.digestManagementFormGroup}>
-          <ButtonContext.Provider value="DIGEST_DELETE_BUTTON">
-            <Button onClick={onDeleteDigest}>Delete this digest</Button>
-          </ButtonContext.Provider>
+          <Button variant="underline" type="danger" onClick={onDeleteDigest}>Delete this digest</Button>
         </div>
       ) : null}
     </div>

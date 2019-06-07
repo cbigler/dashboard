@@ -177,7 +177,7 @@ function ExploreSpaceMeetings({
                   </div>
 
                   <Button
-                    type="primary"
+                    variant="filled"
                     onClick={e => { window.location.href = '#/admin/integrations'; }}
                   >Integrate</Button>
                 </div>

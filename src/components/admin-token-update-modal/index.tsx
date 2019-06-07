@@ -3,13 +3,14 @@ import styles from './styles.module.scss';
 import React, { Fragment } from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Button,
+  ButtonContext,
+  ButtonGroup,
+  InputBox,
   Modal,
 } from '@density/ui';
 
@@ -66,19 +67,20 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.name.length === 0}
-                width="100%"
-                onClick={() => this.props.onSubmit({
-                  key: this.state.key,
-                  name: this.state.name,
-                  description: this.state.description || undefined,
-                })}
-              >Save changes</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={this.state.name.length === 0}
+                  width="100%"
+                  onClick={() => this.props.onSubmit({
+                    key: this.state.key,
+                    name: this.state.name,
+                    description: this.state.description || undefined,
+                  })}
+                >Save changes</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -113,15 +115,16 @@ export default class TokenUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                width="100%"
-                disabled={this.state.name !== this.state.destroyNameConfirmation}
-                onClick={() => this.props.onDestroyToken(this.props.initialToken)}
-              >I understand the consequences. Delete.</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  width="100%"
+                  disabled={this.state.name !== this.state.destroyNameConfirmation}
+                  onClick={() => this.props.onDestroyToken(this.props.initialToken)}
+                >I understand the consequences. Delete.</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

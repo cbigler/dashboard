@@ -5,6 +5,7 @@ import React from 'react';
 import {
   Button,
   ButtonContext,
+  ButtonGroup,
   InputBox,
   AppBar,
   AppBarSection,
@@ -40,14 +41,15 @@ export default class SpaceMappingsDestroyModal extends React.Component<any, any>
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={this.props.onDismiss}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  width="100%"
-                  onClick={() => this.props.onDestroy(this.props.spaceMappingId)}
-                >I understand the consequences. Delete.</Button>
+                <ButtonGroup>
+                  <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    width="100%"
+                    onClick={() => this.props.onDestroy(this.props.spaceMappingId)}
+                  >I understand the consequences. Delete.</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>

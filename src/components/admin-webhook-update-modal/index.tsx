@@ -3,13 +3,14 @@ import styles from './styles.module.scss';
 import React, { Fragment } from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Button,
+  ButtonContext,
+  ButtonGroup,
+  InputBox,
   Modal,
 } from '@density/ui';
 
@@ -59,19 +60,20 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                width="100%"
-                disabled={this.state.name.length === 0}
-                onClick={() => this.props.onSubmit({
-                  id: this.state.id,
-                  name: this.state.name,
-                  description: this.state.description,
-                })}
-              >Save webhook</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  width="100%"
+                  disabled={this.state.name.length === 0}
+                  onClick={() => this.props.onSubmit({
+                    id: this.state.id,
+                    name: this.state.name,
+                    description: this.state.description,
+                  })}
+                >Save webhook</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -93,13 +95,14 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                onClick={() => this.props.onDestroyWebhook(this.props.initialWebhook)}
-              >Destroy webhook</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  onClick={() => this.props.onDestroyWebhook(this.props.initialWebhook)}
+                >Destroy webhook</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

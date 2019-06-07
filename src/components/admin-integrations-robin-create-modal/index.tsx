@@ -3,13 +3,14 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarTitle,
   AppBarContext,
+  Button,
+  ButtonContext,
+  ButtonGroup,
+  InputBox,
   RadioButton,
   Modal,
 } from '@density/ui';
@@ -63,20 +64,20 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.robinAccessToken.length === 0 && this.state.robinOrganizationId.length === 0}
-                width="100%"
-                onClick={() => this.props.onSubmit({
-                  credentials: {
-                    robinAccessToken: this.state.robinAccessToken,
-                    robinOrganizationId: this.state.robinOrganizationId,
-                  }
-                })}
-              >Save</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={this.state.robinAccessToken.length === 0 && this.state.robinOrganizationId.length === 0}
+                  onClick={() => this.props.onSubmit({
+                    credentials: {
+                      robinAccessToken: this.state.robinAccessToken,
+                      robinOrganizationId: this.state.robinOrganizationId,
+                    }
+                  })}
+                >Save</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

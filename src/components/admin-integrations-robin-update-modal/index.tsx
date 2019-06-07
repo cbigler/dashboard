@@ -5,6 +5,7 @@ import React from 'react';
 import {
   Button,
   ButtonContext,
+  ButtonGroup,
   InputBox,
   AppBar,
   AppBarSection,
@@ -61,22 +62,22 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={this.state.robinOrganizationId === 0}
-                width="100%"
-                onClick={() => this.props.onSubmit({
-                  id: this.props.initialServiceAuthorization.id,
-                  credentials: {
-                    robinAccessToken: this.state.robinAccessToken,
-                    robinOrganizationId: this.state.robinOrganizationId,  
-                  },
-                  default: this.state.default,
-                })}
-              >Save changes</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={this.state.robinOrganizationId === 0}
+                  onClick={() => this.props.onSubmit({
+                    id: this.props.initialServiceAuthorization.id,
+                    credentials: {
+                      robinAccessToken: this.state.robinAccessToken,
+                      robinOrganizationId: this.state.robinOrganizationId,  
+                    },
+                    default: this.state.default,
+                  })}
+                >Save changes</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -111,15 +112,15 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={this.props.onDismiss}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                width="100%"
-                disabled={this.state.robinOrganizationId !== this.state.destroyRobinOrganizationIdConfirmation}
-                onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
-              >I understand the consequences. Delete.</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                <Button
+                  type="primary"
+                  variant="filled"
+                  disabled={this.state.robinOrganizationId !== this.state.destroyRobinOrganizationIdConfirmation}
+                  onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
+                >I understand the consequences. Delete.</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

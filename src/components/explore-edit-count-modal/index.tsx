@@ -38,10 +38,10 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
               <AppBarTitle>Update count</AppBarTitle>
             </AppBarSection>
             <AppBarSection>
-              <span
-                className={styles.exploreEditCountModalResetCount}
+              <Button
+                variant="underline"
                 onClick={() => this.setState({count: 0})}
-              >Reset to zero</span>
+              >Reset to zero</Button>
             </AppBarSection>
           </AppBar>
           <div className={styles.exploreEditCountModalBody}>
@@ -86,6 +86,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
             <div className={styles.exploreEditCountModalSubmit}>
               <Button
                 type="primary"
+                variant="filled"
                 width="100%"
                 onClick={() => this.props.onSubmit(this.state.count)}
               >Save changes</Button>

@@ -130,6 +130,7 @@ export class AccountRegistration extends React.Component<any, any> {
 
             <Button
               type="primary"
+              variant="filled"
               width="100%"
               className={styles.accountRegistrationSubmitButton}
               size="large"
