@@ -4,7 +4,7 @@ import fetchAllObjects from './index';
 
 describe('fetch-all-objects', function() {
   it('should work', function() {
-    assert.equal(fetchAllObjects(), true);
+    assert.equal(fetchAllObjects(), Promise.resolve({}).foo);
   });
 });
 

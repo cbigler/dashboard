@@ -48,7 +48,7 @@ export default async function fetchAllObjects<T = any>(url, options={}) {
       CACHE[cacheKey] = responseData;
 
       // After the specified amount of time, remove this entry from the cache
-      const cacheExpiryTimeout = setTimeout(() => {
+      setTimeout(() => {
         delete CACHE[cacheKey];
       }, opts.cacheExpiryTimeMs);
     }
@@ -80,7 +80,7 @@ export async function fetchObject<T = any>(url, options={}) {
       CACHE[cacheKey] = response;
 
       // After the specified amount of time, remove this entry from the cache
-      const cacheExpiryTimeout = setTimeout(() => {
+      setTimeout(() => {
         delete CACHE[cacheKey];
       }, opts.cacheExpiryTimeMs);
     }
@@ -88,16 +88,3 @@ export async function fetchObject<T = any>(url, options={}) {
 
   return objectSnakeToCamel<T>(response.data);
 }
-
-setTimeout(() => {
-  fetchAllObjects<DensityDoorway>('/doorways', {params: {environment: true}}).then(console.log);
-
-  setTimeout(() => {
-    fetchObject<DensityDoorway>('/doorways/drw_660485688138925027', {params: {environment: true}}).then(console.log);
-  }, 2000);
-
-  setTimeout(() => {
-    fetchAllObjects<DensityDoorway>('/doorways', {params: {environment: true}}).then(console.log);
-  }, 6000);
-
-}, 2000);
