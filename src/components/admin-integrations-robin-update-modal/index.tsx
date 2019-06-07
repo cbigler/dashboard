@@ -34,7 +34,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
 
         <div className={styles.integrationsUpdate}>
           <FormLabel
-            label="Robin API Token"
+            label="Robin API token"
             htmlFor="integrations-update-token"
             input={<InputBox
               type="text"
@@ -45,7 +45,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
             />}
           />
           <FormLabel
-            label="Robin Organization ID"
+            label="Robin organization ID"
             htmlFor="integrations-update-organization-id"
             input={<InputBox
               type="text"
@@ -76,7 +76,7 @@ export default class IntegrationsRobinUpdateModal extends React.Component<any, a
                   },
                   default: this.state.default,
                 })}
-              >Save Changes</Button>
+              >Save changes</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

@@ -78,7 +78,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           onClick={() => this.setState({visible: !visible})}
         >
           <Icons.Mail color={colorVariables.brandPrimaryNew} />
-          <span className={styles.dashboardDigestListButtonText}>Email Digest</span>
+          <span className={styles.dashboardDigestListButtonText}>Email digest</span>
           <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
         </button>
 
@@ -100,7 +100,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
               >
                 <Icons.PlusCircle color={colorVariables.brandPrimary} />
                 <span className={styles.dashboardDigestListDropdownCreateButtonText}>
-                  Create New Digest
+                  Create new digest
                 </span>
               </span>
             </AppBarSection>

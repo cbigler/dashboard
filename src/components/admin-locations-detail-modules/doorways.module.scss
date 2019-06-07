@@ -1,0 +1,169 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.lists {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+  max-height: 400px;
+}
+.list {
+  min-height: 144px;
+  padding-top: 24px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 32px;
+}
+.list.shaded {
+  margin-bottom: -1px;
+  background-color: $grayLightest;
+  border-top: 1px solid $grayLight;
+}
+.name {
+  width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 10px;
+}
+.itemContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 56px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.linkedSpacesTag {
+  background-color: $grayLight;
+  line-height: 28px;
+  padding-left: 8px;
+  padding-right: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: $borderRadiusBase;
+
+  max-width: 200px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.linkedSpacesTag span { margin-left: 8px; }
+
+
+.dpuPosition {
+  margin-left: 16px;
+  color: $brandPrimary;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.editLink {
+  color: $brandPrimary;
+  font-weight: 500;
+  text-decoration: underline;
+  cursor: pointer;
+  user-select: none;
+}
+
+.emptyState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  border-top: 1px solid $grayLight;
+}
+.emptyState:first-of-type { border-top: 0px; }
+.emptyState.shaded { background-color: $grayLightest; }
+.emptyStateInner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.emptyStateInnerLeft {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 76px;
+  margin-right: 42px;
+  height: 108px;
+}
+.emptyStateInnerRight {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 108px;
+}
+.emptyStateInnerRight h3 {
+  font-weight: normal;
+  font-size: 18px;
+  color: $grayDarkest;
+  margin-top: 32px;
+  margin-bottom: 7px;
+}
+.emptyStateInnerRight p {
+  font-size: 14px;
+  color: $grayDarker;
+  margin-top: 0px;
+  margin-bottom: 7px;
+}
+
+
+.modalFirstSection {
+  padding-top: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 2px;
+}
+.modalSection {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 24px;
+  padding-top: 4px;
+}
+.modalSectionHorizontalForm {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 12px;
+}
+.formMeasurementUnit { color: $brandPrimary; }
+.formMountingSpaceRadioButtonGroup {
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+}
+
+.modalDangerZoneWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+}
+.modalDangerZoneText { width: 240px; }
+.modalDangerZoneText h4 {
+  margin-bottom: 8px;
+  font-size: $fontSizeBase;
+}
+
+.dpuPositionButtonWrapper {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 24px;
+}
+.dpuPositionButton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  height: 160px;
+  cursor: pointer;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+}
+.dpuPositionButton:hover { opacity: 0.8; }
+.dpuPositionButton:active { opacity: 1; }
+.dpuPositionButton.active { border-color: $brandPrimary; }
+.dpuPositionButton svg { margin-bottom: 24px; }

@@ -144,14 +144,14 @@ export function AdminIntegrations({
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
-          <ListViewColumn title="Default Service" template={item => {
+          <ListViewColumn title="Default service" template={item => {
             if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
               return <span className={styles.adminIntegrationsListviewValue}>Default</span>
             } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
-              return <ListViewClickableLink>Make Default</ListViewClickableLink>
+              return <ListViewClickableLink>Make default</ListViewClickableLink>
             } else {
               return null;
             }
@@ -160,7 +160,7 @@ export function AdminIntegrations({
           />          
           <ListViewColumn flexGrow={1} flexShrink={1} />
           <ListViewColumn
-            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space Mappings</ListViewClickableLink>}
+            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
             onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
           />
           <ListViewColumn
@@ -183,16 +183,23 @@ export function AdminIntegrations({
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
           <ListViewColumn flexGrow={1} flexShrink={1} />
+          {/*
           <ListViewColumn
-          template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
-          onClick={item => {
-            if (!item.serviceAuthorization.id) {
-              window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
-            }}}
+            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            onClick={item => {
+              if (!item.serviceAuthorization.id) {
+                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
+              }
+            }}
+          />
+          */}
+          <ListViewColumn
+            template={item => !item.serviceAuthorization.id ? <span
+            className={styles.disabledIntegrationsLink}>Coming soon</span> : null }
           />
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import styles from './styles.module.scss';
+import styles from './doorways.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 import convertUnit, { INCHES, CENTIMETERS } from '../../helpers/convert-unit/index';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
@@ -64,7 +64,7 @@ function DpuPosition({spaceName, value, onChange}) {
           <RadioButton
             checked={value === 1}
             onChange={() => onChange(1)}
-            text="Inside the Space"
+            text="Inside the space"
           />
         </div>
         <div
@@ -75,7 +75,7 @@ function DpuPosition({spaceName, value, onChange}) {
           <RadioButton
             checked={value === -1}
             onChange={() => onChange(-1)}
-            text="Outside the Space"
+            text="Outside the space"
           />
         </div>
       </div>
@@ -99,10 +99,10 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
       onEscape={onCloseModal}
     >
       <AppBar>
-        <AppBarTitle>DPU Position</AppBarTitle>
+        <AppBarTitle>DPU position</AppBarTitle>
       </AppBar>
 
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <DpuPosition
           spaceName={spaceName}
           value={sensorPlacement}
@@ -145,7 +145,7 @@ function AdminLocationsDetailModulesDoorwayModal({
   }
 
   const shortMeasurementUnit = (
-    <span className={styles.doorwayFormMeasurementUnit}>
+    <span className={styles.formMeasurementUnit}>
       {
         ({
           [CENTIMETERS]: '(cm)',
@@ -171,11 +171,11 @@ function AdminLocationsDetailModulesDoorwayModal({
     >
       <AppBar>
         <AppBarTitle>
-          {modalState.type === 'CREATE' ? 'New Doorway' : 'Edit Doorway'}
+          {modalState.type === 'CREATE' ? 'New doorway' : 'Edit doorway'}
         </AppBarTitle>
       </AppBar>
 
-      <div className={styles.doorwayModalFirstSection}>
+      <div className={styles.modalFirstSection}>
         <FormLabel
           label="Name"
           htmlFor="admin-locations-detail-modules-doorways-name"
@@ -194,10 +194,10 @@ function AdminLocationsDetailModulesDoorwayModal({
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
-          <AppBarTitle>DPU Position</AppBarTitle>
+          <AppBarTitle>DPU position</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <DpuPosition
           value={modalState.data.sensorPlacement}
           spaceName={spaceName}
@@ -207,12 +207,12 @@ function AdminLocationsDetailModulesDoorwayModal({
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
-          <AppBarTitle>Installation Details</AppBarTitle>
+          <AppBarTitle>Installation details</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
 
-      <div className={styles.doorwayModalSection}>
-        <div className={styles.doorwayModalSectionHorizontalForm}>
+      <div className={styles.modalSection}>
+        <div className={styles.modalSectionHorizontalForm}>
           <FormLabel
             label="Units"
             htmlFor="admin-locations-detail-modules-doorways-units"
@@ -221,7 +221,7 @@ function AdminLocationsDetailModulesDoorwayModal({
                 type="select"
                 id="admin-locations-detail-modules-doorways-units"
                 value={modalState.data.measurementUnit}
-                placeholder="Pick Units"
+                placeholder="Pick units"
                 choices={[
                   {id: CENTIMETERS, label: 'Metric'},
                   {id: INCHES, label: 'Imperial'},
@@ -281,10 +281,10 @@ function AdminLocationsDetailModulesDoorwayModal({
             }
           />
         </div>
-        <div className={styles.doorwayModalSectionMountingSpace}>
+        <div className={styles.modalSectionMountingSpace}>
           <p>Is there enough mounting space above this doorway?</p>
-          <div className={styles.doorwayModalSectionHorizontalForm}>
-            <div className={styles.doorwayFormMountingSpaceRadioButtonGroup}>
+          <div className={styles.modalSectionHorizontalForm}>
+            <div className={styles.formMountingSpaceRadioButtonGroup}>
               <RadioButton
                 text="Yes"
                 checked={modalState.data.clearance === true}
@@ -300,7 +300,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           </div>
         </div>
         <FormLabel
-          label="Power Option"
+          label="Power option"
           htmlFor="admin-locations-detail-modules-doorways-power"
           input={
             <InputBox
@@ -323,7 +323,7 @@ function AdminLocationsDetailModulesDoorwayModal({
           <AppBarTitle>Photos</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
-      <div className={styles.doorwayModalSection}>
+      <div className={styles.modalSection}>
         <AdminLocationsImageUpload
           label="Photo from inside the space"
           value={modalState.data.newInsideImageData || modalState.data.insideImageUrl}
@@ -379,14 +379,14 @@ function AdminLocationsDetailModulesDoorwayModal({
       </div>
 
       {modalState.type !== 'CREATE' ? (
-        <div className={styles.doorwayModalDangerZoneWrapper}>
-          <div className={styles.doorwayModalDangerZoneText}>
+        <div className={styles.modalDangerZoneWrapper}>
+          <div className={styles.modalDangerZoneText}>
             <h4>Delete this doorway</h4>
             <p>Once deleted, it will be gone forever. Please be certain.</p>
           </div>
           <div>
             <ButtonContext.Provider value="DELETE_BUTTON">
-              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this Doorway</Button>
+              <Button onClick={() => onDeleteDoorway(modalState.data.id)}>Delete this doorway</Button>
             </ButtonContext.Provider>
           </div>
         </div>
@@ -403,7 +403,7 @@ function AdminLocationsDetailModulesDoorwayModal({
               type="primary"
               disabled={!formValid}
               onClick={() => onSubmitModal(modalState)}
-            >Save Doorway</Button>
+            >Save doorway</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -421,7 +421,7 @@ function DoorwayList({
   onShowModal,
 }) {
   return (
-    <div className={classnames(styles.doorwayList, {[styles.shaded]: shaded})}>
+    <div className={classnames(styles.list, {[styles.shaded]: shaded})}>
       <ListView data={doorways}>
         <ListViewColumn
           title="Doorways"
@@ -434,11 +434,11 @@ function DoorwayList({
                   onChange={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 />
                 <div
-                  className={styles.doorwayItemContainer}
+                  className={styles.itemContainer}
                   onClick={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 >
                   <Icons.Doorway color={colorVariables.grayDarkest} />
-                  <span className={styles.doorwayName}>{item.name}</span>
+                  <span className={styles.name}>{item.name}</span>
                 </div>
               </Fragment>
             );
@@ -448,14 +448,14 @@ function DoorwayList({
           width={320}
         />
         <ListViewColumn
-          title="Linked Spaces"
+          title="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
             if (spacesOtherThanSelectedSpace.length > 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
                   <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace.length} Linked Spaces</span>
+                  <span>{spacesOtherThanSelectedSpace.length} Linked spaces</span>
                 </div>
               );
             } else if (spacesOtherThanSelectedSpace.length === 1) {
@@ -474,7 +474,7 @@ function DoorwayList({
           width={240}
         />
         <ListViewColumn
-          title="DPU Position"
+          title="DPU position"
           template={i => {
             return (
               <Fragment>
@@ -496,7 +496,7 @@ function DoorwayList({
                     >
                       <Icons.Switch color={colorVariables.brandPrimary} />
                     </Button>
-                    <span className={styles.doorwaysDpuPosition}>
+                    <span className={styles.dpuPosition}>
                       {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>
@@ -512,7 +512,7 @@ function DoorwayList({
           title={null}
           template={i => i.selected ? (
             <div
-              className={styles.doorwaysEditLink}
+              className={styles.editLink}
               onClick={() => onEditDoorway(i)}
             >
               Edit
@@ -651,7 +651,7 @@ function AdminLocationsDetailModulesDoorways({
             </Button>
           </AppBarSection>
         </AppBar>
-        <div className={styles.doorwayLists}>
+        <div className={styles.lists}>
           {topDoorways.length > 0 ? (
             <DoorwayList
               selectedSpaceId={selectedSpaceIdOrNull}
@@ -662,24 +662,24 @@ function AdminLocationsDetailModulesDoorways({
               onShowModal={onShowModal}
             />
           ): (
-            <div className={styles.doorwaysEmptyState}>
-              <div className={styles.doorwaysEmptyStateInner}>
+            <div className={styles.emptyState}>
+              <div className={styles.emptyStateInner}>
                 {formState.doorwaysFilter.length > 0 ? (
-                  <div className={styles.doorwaysEmptyStateInnerRight}>
+                  <div className={styles.emptyStateInnerRight}>
                     <h3>Whoops</h3>
                     <p>We couldn't find any linked doorways that matched "{formState.doorwaysFilter}"</p>
                   </div>
                 ) : (
                   <Fragment>
                     {bottomDoorways.find(i => i.selected) ? (
-                      <div className={styles.doorwaysEmptyStateInnerRight}>
+                      <div className={styles.emptyStateInnerRight}>
                         <h3>Great, now save this space!</h3>
                         <p>Save a doorway, save a space</p>
                       </div>
                     ) : (
                       <Fragment>
-                        <div className={styles.doorwaysEmptyStateInnerLeft}>{DOORWAY_ICON}</div>
-                        <div className={styles.doorwaysEmptyStateInnerRight}>
+                        <div className={styles.emptyStateInnerLeft}>{DOORWAY_ICON}</div>
+                        <div className={styles.emptyStateInnerRight}>
                           <h3>You haven't assigned any linked doorways to this space yet</h3>
                           <p>Start assigning and start counting</p>
                         </div>
@@ -693,9 +693,9 @@ function AdminLocationsDetailModulesDoorways({
 
           {bottomDoorways.length === 0 && formState.doorwaysFilter.length > 0 ? (
             <Fragment>
-              <div className={classnames(styles.doorwaysEmptyState, styles.shaded)}>
-                <div className={styles.doorwaysEmptyStateInner}>
-                  <div className={styles.doorwaysEmptyStateInnerRight}>
+              <div className={classnames(styles.emptyState, styles.shaded)}>
+                <div className={styles.emptyStateInner}>
+                  <div className={styles.emptyStateInnerRight}>
                     <h3>Whoops</h3>
                     <p>We couldn't find any unlinked doorways that matched "{formState.doorwaysFilter}"</p>
                   </div>

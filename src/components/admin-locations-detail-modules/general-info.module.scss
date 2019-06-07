@@ -1,0 +1,39 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+
+.generalInfo {
+  display: flex;
+  flex-direction: row;
+}
+.column { width: 50%; }
+.column.left { margin-right: 20px; }
+.column.right { margin-left: 20px; }
+
+
+.moduleFormFieldHalfWidth { width: 171px; }
+
+
+
+
+.spaceFieldRendererRow {
+  display: flex;
+  flex-direction: row;
+  margin-top: 16px;
+}
+.spaceFieldRendererRow:first-child { margin-top: 0px; }
+.spaceFieldRendererCell {
+  width: 50%;
+  flex-grow: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.spaceFieldRendererCell.left {
+  padding-left: 0px;
+  padding-right: 20px;
+}
+.spaceFieldRendererCell.right {
+  padding-left: 20px;
+  padding-right: 0px;
+}

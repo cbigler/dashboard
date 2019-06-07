@@ -151,7 +151,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                       spaceIds: this.state.spaceIds,
                     });
                   }}
-                >Save User</Button>
+                >Save user</Button>
               </AppBarSection>
             </AppBar>
           </div>
@@ -251,7 +251,7 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                       </div>
                       <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
                         <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                          Delete this User
+                          Delete this user
                         </Button>
                       </ButtonContext.Provider>
                     </div>

@@ -1,5 +1,4 @@
 @import "@density/ui/variables/colors.scss";
-@import "@density/ui/variables/spacing.scss";
 
 .spaceList {
   padding-left: 24px;
@@ -28,3 +27,9 @@
 
 .leftPaneMap { padding: 24px; }
 
+.sidebar {
+  height: 100%;
+  margin-bottom: -1px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

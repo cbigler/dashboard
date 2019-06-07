@@ -191,7 +191,7 @@ export function ImpersonateModal({
             type="primary"
             disabled={loading || (enabled && !activeModal.data.selectedUser)}
             onClick={() => onSaveImpersonate(activeModal.data)}
-          >Save Settings</Button>
+          >Save settings</Button>
         </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>

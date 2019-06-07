@@ -34,7 +34,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
 
         <div className={styles.tokenUpdateModalBody}>
           <FormLabel
-            label="Token Name"
+            label="Token name"
             htmlFor="token-update-name"
             input={<InputBox
               type="text"
@@ -78,7 +78,7 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                   name: this.state.name,
                   description: this.state.description || undefined,
                 })}
-              >Save Changes</Button>
+              >Save changes</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

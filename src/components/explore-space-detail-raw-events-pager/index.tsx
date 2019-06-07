@@ -23,7 +23,7 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
     } = this.props;
     return <div className={classnames(styles.visualizationSpaceDetailRawEventsPager, {[styles.disabled]: disabled})}>
       <div className={styles.visualizationSpaceDetailRawEventsPagerTotal}>
-        {totalEvents || 0} Events...
+        {totalEvents || 0} events...
       </div>
       <div className={styles.visualizationSpaceDetailRawEventsPagerPicker}>
         <span>Page</span>

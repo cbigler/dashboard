@@ -6,7 +6,7 @@
     "@babel/polyfill": "^7.4.4",
     "@density/chart-daily-metrics": "^0.6.0",
     "@density/chart-historical-counts": "^2.0.4",
-    "@density/chart-line-chart": "^0.5.2",
+    "@density/chart-line-chart": "^0.5.3",
     "@density/chart-linear-progress": "^0.1.0",
     "@density/chart-real-time-count": "1.6.2",
     "@density/charts": "^1.0.1",

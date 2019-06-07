@@ -277,7 +277,7 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
                       onCreateDigest(digest as DensityDigestSchedule);
                     }
                   }}
-                >Save Email Digest</Button>
+                >Save email digest</Button>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>
@@ -425,7 +425,7 @@ function DigestManagementForm({
       {showDeleteDigest ? (
         <div className={styles.digestManagementFormGroup}>
           <ButtonContext.Provider value="DIGEST_DELETE_BUTTON">
-            <Button onClick={onDeleteDigest}>Delete this Digest</Button>
+            <Button onClick={onDeleteDigest}>Delete this digest</Button>
           </ButtonContext.Provider>
         </div>
       ) : null}
@@ -595,7 +595,7 @@ function DigestAddedNotAddedBox({id, checked, onChange}) {
       />
 
       <label htmlFor={id}>
-        <span className={styles.textLabel}>{checked ? 'Added' : 'Not Added'}</span>
+        <span className={styles.textLabel}>{checked ? 'Added' : 'Not added'}</span>
         <div className={styles.checkboxWell}>
           <Icons.Check width={14} height={14} color="#fff" />
         </div>

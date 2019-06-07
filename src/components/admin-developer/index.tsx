@@ -32,8 +32,8 @@ import collectionWebhooksUpdate from '../../actions/collection/webhooks/update';
 import collectionWebhooksDestroy from '../../actions/collection/webhooks/destroy';
 
 const PERMISSION_TEXT = {
-  'readonly': 'Read-Only',
-  'readwrite': 'Read-Write'
+  'readonly': 'Read-only',
+  'readwrite': 'Read-write'
 }
 
 export function TokenKeyHider ({value, onCopyToken}) {
@@ -121,9 +121,9 @@ export function AdminDeveloper({
        <a href="http://docs.density.io" target="_blank">API Docs</a>
       </AppBarSection>
       <AppBarSection>
-        <Button type="primary" onClick={() => onOpenModal('token-create')}>Add Token</Button>
+        <Button type="primary" onClick={() => onOpenModal('token-create')}>Add token</Button>
         &nbsp;&nbsp;
-        <Button type="primary" onClick={() => onOpenModal('webhook-create')}>Add Webhook</Button>
+        <Button type="primary" onClick={() => onOpenModal('webhook-create')}>Add webhook</Button>
       </AppBarSection>
     </AppBar>
 

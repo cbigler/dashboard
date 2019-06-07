@@ -3,16 +3,8 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
-import {
-  convertFormStateToSpaceFields,
-
-  AdminLocationsNoopForm,
-  AdminLocationsCampusForm,
-  AdminLocationsBuildingForm,
-  AdminLocationsFloorForm,
-  AdminLocationsSpaceForm,
-} from '../admin-locations-edit/index';
-import { AdminLocationsFormState } from '../../reducers/space-management';
+import { SpaceTypeForm } from '../admin-locations-edit/index';
+import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
 import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
@@ -88,16 +80,8 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     );
   }
 
-
   render() {
     const { spaceManagement, newSpaceType, newSpaceParent, onSetDoorwayField } = this.props;
-
-    const FormComponent = {
-      campus: AdminLocationsCampusForm,
-      building: AdminLocationsBuildingForm,
-      floor: AdminLocationsFloorForm,
-      space: AdminLocationsSpaceForm,
-    }[newSpaceType];
 
     return (
       <AppFrame>
@@ -161,7 +145,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 
               {/* All the space type components take the same props */}
               {spaceManagement.view === 'VISIBLE' ? (
-                <FormComponent
+                <SpaceTypeForm
                   spaceType={newSpaceType}
                   formState={this.props.spaceManagement.formState}
                   tagsCollection={this.props.tagsCollection}

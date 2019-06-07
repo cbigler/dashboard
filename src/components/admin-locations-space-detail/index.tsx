@@ -4,7 +4,7 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
-import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
+import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import {
   AdminLocationsLeftPaneDataRow,
@@ -45,7 +45,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
       />
       <AdminLocationsLeftPaneDataRowItem
         id="target-capacity"
-        label="Target Capacity:"
+        label="Target capacity:"
         value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
       />
       <AdminLocationsLeftPaneDataRowItem
@@ -105,9 +105,11 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
               ) : null}
             </AppBarSection>
           </AppBar>
-          <AdminLocationsLeftPaneDataRow includeTopBorder={false}>
-            {leftPaneDataItemContents}
-          </AdminLocationsLeftPaneDataRow>
+          <div className={styles.sidebar}>
+            <AdminLocationsLeftPaneDataRow includeTopBorder={false}>
+              {leftPaneDataItemContents}
+            </AdminLocationsLeftPaneDataRow>
+          </div>
         </AppSidebar>
         <AppPane>
           {visibleSpaces.length > 0 ? (
@@ -140,7 +142,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
                     href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title="Target Capacity"
+                    title="Target capacity"
                     template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
                     href={item => `#/admin/locations/${item.id}`}
                   />

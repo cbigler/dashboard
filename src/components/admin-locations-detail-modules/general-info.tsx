@@ -1,8 +1,8 @@
-import styles from './styles.module.scss';
-
 import React, { Fragment } from 'react';
 import { InputBox } from '@density/ui';
 import classnames from 'classnames';
+
+import styles from './general-info.module.scss';
 
 import FormLabel from '../form-label/index';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
@@ -11,7 +11,6 @@ import { fileToDataURI } from '../../helpers/media-files';
 import AdminLocationsDetailModule from './index';
 
 const SPACE_FUNCTION_CHOICES = [
-  {id: null, label: 'No function assigned'},
   {id: 'breakout', label: 'Breakout'},
   {id: 'cafe', label: 'Cafe'},
   {id: 'conference_room', label: 'Conference Room'},
@@ -23,6 +22,7 @@ const SPACE_FUNCTION_CHOICES = [
   {id: 'office', label: 'Office'},
   {id: 'restroom', label: 'Restroom'},
   {id: 'theater', label: 'Theater'},
+  {id: null, label: 'Other'},
 ];
 
 export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, onChangeField}) {
@@ -55,7 +55,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -87,7 +87,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -100,7 +100,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox
@@ -136,7 +136,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
         />
         <div style={{display: 'flex', justifyContent: 'space-between'}}>
           <FormLabel
-            label="Space Type"
+            label="Space type"
             htmlFor="admin-locations-detail-modules-general-info-space-type"
             className={styles.moduleFormFieldHalfWidth}
             input={
@@ -150,7 +150,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
             }
           />
           <FormLabel
-            label="Level Number"
+            label="Level number"
             htmlFor="admin-locations-detail-modules-general-level-number"
             className={styles.moduleFormFieldHalfWidth}
             input={
@@ -167,7 +167,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           />
         </div>
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox
@@ -202,7 +202,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Type"
+          label="Space type"
           htmlFor="admin-locations-detail-modules-general-info-space-type"
           input={
             <InputBox
@@ -215,7 +215,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
           }
         />
         <FormLabel
-          label="Space Function"
+          label="Space function"
           htmlFor="admin-locations-detail-modules-general-function"
           input={
             <InputBox

@@ -108,8 +108,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 choices={[
                   {id: "entrances", label: "Entrances"},
                   {id: "exits", label: "Exits"},
-                  {id: "total-events", label: "Total Events"},
-                  {id: "peak-occupancy", label: "Peak Occupancy"},
+                  {id: "total-events", label: "Total events"},
+                  {id: "peak-occupancy", label: "Peak occupancy"},
                 ]}
               />
             </div>
@@ -155,7 +155,9 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                       formatter: n => parseISOTimeAtSpace(n, space).format(`MM/DD`),
                     })}
 
-                    yAxis={yAxisMinMax({})}
+                    yAxis={yAxisMinMax({
+                      verticalBaselineOffset: 10,
+                    })}
                     yAxisStart={0}
 
                     overlays={[
@@ -165,8 +167,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                             switch (metric) {
                               case 'entrances': return 'Entrances';
                               case 'exits': return 'Exits';
-                              case 'total-events': return 'Total Events';
-                              case 'peak-occupancy': return 'Peak Occupancy';
+                              case 'total-events': return 'Total events';
+                              case 'peak-occupancy': return 'Peak occupancy';
                               default: return 'People';
                             }
                           })(spaces.filters.metricToDisplay);

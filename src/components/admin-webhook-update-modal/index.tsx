@@ -36,7 +36,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
         <div className={styles.webhookUpdateModalBody}>
           <FormLabel
             htmlFor="webhook-update-name"
-            label="Webhook Name"
+            label="Webhook name"
             input={<InputBox
               type="text"
               id="webhook-update-name"
@@ -71,7 +71,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
                   name: this.state.name,
                   description: this.state.description,
                 })}
-              >Save Webhook</Button>
+              >Save webhook</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -99,7 +99,7 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
               <Button
                 type="primary"
                 onClick={() => this.props.onDestroyWebhook(this.props.initialWebhook)}
-              >Destroy Webhook</Button>
+              >Destroy webhook</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>

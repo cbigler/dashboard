@@ -1,8 +1,8 @@
-import styles from './styles.module.scss';
-
 import React from 'react';
 import classnames from 'classnames';
 import { AppBarSection, InputBox } from '@density/ui';
+
+import styles from './metadata.module.scss';
 
 import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
 
@@ -14,20 +14,20 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
   controls = (
     <AppBarSection>
       Units:
-      <span className={styles.modulesMetadataDropdowns} style={{width: 130}}>
+      <span className={styles.dropdowns}>
         <InputBox
           type="select"
           choices={[
             {id: SQUARE_FEET, label: 'feet'},
             {id: SQUARE_METERS, label: 'meters'},
           ]}
-          width={128}
+          width={130}
           value={formState.sizeAreaUnit}
           disabled={spaceType === 'floor' || spaceType === 'space'}
           onChange={choice => onChangeField('sizeAreaUnit', choice.id)}
         />
       </span>
-      <span className={styles.modulesMetadataDropdowns}>
+      <span className={styles.dropdowns}>
         <InputBox
           type="select"
           choices={[
@@ -50,7 +50,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Annual Rent"
+              label="Annual rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox
@@ -67,7 +67,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Target Capacity (people)"
+              label="Target capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
@@ -85,7 +85,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Legal Capacity (people)"
+              label="Legal capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -109,7 +109,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Annual Rent"
+              label="Annual rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox
@@ -144,7 +144,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Target Capacity (people)"
+              label="Target capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
@@ -160,7 +160,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Legal Capacity (people)"
+              label="Legal capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -184,7 +184,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Annual Rent"
+              label="Annual rent"
               htmlFor="admin-locations-detail-modules-general-info-rent-annual"
               input={
                 <InputBox
@@ -219,7 +219,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Target Capacity"
+              label="Target capacity (people)"
               htmlFor="admin-locations-detail-modules-general-target-capacity"
               input={
                 <InputBox
@@ -235,7 +235,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Legal Capacity"
+              label="Legal capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox
@@ -275,7 +275,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <FormLabel
-              label="Target Capacity (people)"
+              label="Target capacity (people)"
               htmlFor="admin-locations-detail-modules-general-seat-assignments"
               input={
                 <InputBox
@@ -293,7 +293,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
             <FormLabel
-              label="Legal Capacity (people)"
+              label="Legal capacity (people)"
               htmlFor="admin-locations-detail-modules-general-info-capacity"
               input={
                 <InputBox

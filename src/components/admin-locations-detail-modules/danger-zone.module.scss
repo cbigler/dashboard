@@ -1,0 +1,13 @@
+.wrapper { display: flex; }
+.left {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.left h4 {
+  margin-top: 0px;
+  margin-bottom: 8px;
+}
+.right {
+  display: flex;
+  align-items: center;
+}

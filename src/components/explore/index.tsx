@@ -208,7 +208,7 @@ export class Explore extends React.Component<any, any> {
                 <InputBox
                   type="text"
                   width="100%"
-                  placeholder="Filter Spaces ..."
+                  placeholder="Filter spaces ..."
                   disabled={false}
                   leftIcon={<Icons.Search />}
                   value={spaces.filters.search}
@@ -218,7 +218,7 @@ export class Explore extends React.Component<any, any> {
               <AppScrollView>
                 <nav className={styles.exploreAppFrameSidebarList}>
                     <Fragment>
-                      {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading Spaces...</div> : null}
+                      {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
                       {spaceList.map(space => (
                         RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
                       ))}

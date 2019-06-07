@@ -83,6 +83,7 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
+import handleVisibilityChange from './helpers/visibility-change';
 const store = storeFactory();
 
 
@@ -100,13 +101,15 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-function configureClients(environments, goSlow) {
+function configureClients() {
+  const goSlow = getGoSlow();
+  const environments: any = getActiveEnvironments(fields);
   const impersonateUser = localStorage.impersonate ?
-    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : undefined;
+    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
   configCore({host: environments.core, impersonateUser, goSlow, store});
   configAccounts({host: environments.accounts, impersonateUser, store});
 }
-configureClients(getActiveEnvironments(fields), getGoSlow());
+configureClients();
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -252,10 +255,11 @@ async function preRouteAuthentication() {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
     }).then(response => {
       store.dispatch(impersonateUnset());
+      configureClients();
       store.dispatch<any>(sessionTokenSet(response.data)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
-      })
+      });
     }).catch(err => {
       window.localStorage.auth0LoginError = err.toString();
       router.navigate('login');
@@ -364,6 +368,16 @@ setInterval(async () => {
     store.dispatch(collectionSpacesSet(spaces.results));
   }
 },  5 * 60 * 1000);
+
+// When the page transitions visibility, connect or disconnect the event source
+// This prevents pushed events from piling up and crashing the page when not rendered
+handleVisibilityChange(hidden => {
+  if (hidden) {
+    eventSource.disconnect();
+  } else {
+    eventSource.connect();
+  }
+})
 
 ReactDOM.render(
   <Provider store={store}>

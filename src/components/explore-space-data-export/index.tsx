@@ -44,7 +44,7 @@ function ExploreSpaceDataExport({
     return <div className={styles.exploreSpaceDataExportPage}>
       {spaces.filters.startDate && spaces.filters.endDate ? (
         <ExploreFilterBar>
-          <ExploreFilterBarItem label="Date Range">
+          <ExploreFilterBarItem label="Date range">
             <DateRangePicker
               startDate={formatForReactDates(
                 parseISOTimeAtSpace(spaces.filters.startDate, space),

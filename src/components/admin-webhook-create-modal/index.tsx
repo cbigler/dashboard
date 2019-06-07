@@ -112,7 +112,7 @@ export default class WebhookCreateModal extends React.Component<any, any> {
                   description: this.state.description,
                   endpoint: this.state.endpoint,
                 })}
-              >Save Webhook</Button>
+              >Save webhook</Button>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
