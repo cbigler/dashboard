@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styles from './danger-zone.module.scss';
 
-import { Button, ButtonContext } from '@density/ui';
+import { Button } from '@density/ui';
 
 import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
 import showModal from '../../actions/modal/show';
