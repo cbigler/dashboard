@@ -74,7 +74,7 @@ function AppNavbarMenuItem({path, text, icon, selected}) {
     onClick={context.onMenuBlur}
   >
     <span className={styles.appNavbarMenuItemIcon}>
-      {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
+      {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
     </span>
     {text}
   </a>}</AppNavbarMenuContext.Consumer>;
@@ -102,7 +102,7 @@ function AppNavbarItem({
     >
       <a href={path} onClick={onClick}>
         {icon ? <span className={styles.appNavbarIcon}>
-          {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
+          {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
         </span> : null}
         {text}
       </a>
