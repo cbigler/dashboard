@@ -155,7 +155,9 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                       formatter: n => parseISOTimeAtSpace(n, space).format(`MM/DD`),
                     })}
 
-                    yAxis={yAxisMinMax({})}
+                    yAxis={yAxisMinMax({
+                      verticalBaselineOffset: 10,
+                    })}
                     yAxisStart={0}
 
                     overlays={[

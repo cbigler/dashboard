@@ -192,6 +192,7 @@ export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any>
               yAxisEnd={space.capacity !== null ?  Math.max(space.capacity, largestCount.count) : undefined}
               yAxis={yAxisMinMax({
                 leftOffset: 20,
+                verticalBaselineOffset: 10,
                 points: yAxisPoints,
                 showMaximumPoint: false,
               })}

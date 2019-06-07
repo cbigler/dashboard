@@ -336,6 +336,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
                   yAxis={yAxisMinMax({
                     leftOffset: 10,
+                    verticalBaselineOffset: 10,
                     points: [
                       {value: 100, hasRule: true},
                     ],
