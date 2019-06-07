@@ -10,8 +10,12 @@ if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and 
   visibilityChange = "webkitvisibilitychange";
 }
 
+export function isDocumentHidden(): boolean {
+  return document[hidden];
+}
+
 export default function handleVisibilityChange(callback: (hidden: boolean) => any): () => any {
-  const wrappedCallback = () => callback(document[hidden]);
+  const wrappedCallback = () => callback(isDocumentHidden());
   const cancelListener = () => window.removeEventListener(visibilityChange, wrappedCallback, true);
   window.addEventListener(visibilityChange, wrappedCallback, true);
   return cancelListener;
