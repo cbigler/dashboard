@@ -103,13 +103,15 @@ const store = storeFactory();
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-function configureClients() {
+export function configureClients() {
   const goSlow = getGoSlow();
   const environments: any = getActiveEnvironments(fields);
+  const token = localStorage.sessionToken !== undefined ?
+    JSON.parse(localStorage.sessionToken) : null;
   const impersonateUser = localStorage.impersonate ?
     (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({host: environments.core, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, impersonateUser, store});
+  configCore({host: environments.core, token, impersonateUser, goSlow, store});
+  configAccounts({host: environments.accounts, token, impersonateUser, store});
 }
 configureClients();
 
