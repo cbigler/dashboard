@@ -119,7 +119,7 @@ export function AdminDeveloper({
     <AppBar>
       <AppBarSection>
        Looking for more information on our API? Read our&nbsp;
-       <a href="http://docs.density.io" target="_blank">API Docs</a>
+       <a href="http://docs.density.io" target="_blank" rel="noopener noreferrer">API Docs</a>
       </AppBarSection>
       <AppBarSection>
         <Button variant="filled" type="primary" onClick={() => onOpenModal('token-create')}>Add token</Button>

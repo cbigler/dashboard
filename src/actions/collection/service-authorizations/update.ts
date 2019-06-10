@@ -9,7 +9,7 @@ export function collectionServiceAuthorizationUpdate(serviceName, serviceAuthori
     dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE });
 
     let requestBody = {};
-    if (serviceName == "robin") {
+    if (serviceName === "robin") {
       requestBody = {
         "credentials": {
           "robin_access_token": serviceAuthorization.credentials.robinAccessToken,

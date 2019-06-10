@@ -122,9 +122,6 @@ export function Dialogger({
   );
 }
 
-function Prompt({activeModal, onCancel, onSubmit}) {
-}
-
 export default connect((state: any) => {
   return {
     activeModal: state.activeModal,

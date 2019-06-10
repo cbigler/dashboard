@@ -9,7 +9,6 @@ import {
   AppBarTitle,
   Button,
   ButtonGroup,
-  InputBox,
   Modal,
 } from '@density/ui';
 
@@ -17,7 +16,7 @@ import {
 export default class SpaceMappingsDestroyModal extends React.Component<any, any> {
 
   render() {
-    const { visible, onDismiss, onDestroy } = this.props;
+    const { visible, onDismiss } = this.props;
     
     return (
       <Modal
