@@ -16,7 +16,7 @@ function convertSecondsIntoTime(seconds) {
 
   return moment.utc()
     .startOf('day')
-    .add(seconds, 'seconds')
+    .add(secondsIntoDay, 'seconds')
     .format('HH:mm:ss');
 }
 

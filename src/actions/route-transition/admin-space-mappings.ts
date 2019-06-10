@@ -16,7 +16,7 @@ export default function routeTransitionAdminSpaceMappings(serviceName) {
   return async (dispatch, getState) => {
     dispatch({ type: ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS })
 
-    let service = getState().integrations.services.find(service => service.name == serviceName)
+    let service = getState().integrations.services.find(service => service.name === serviceName)
     if (service) {
       dispatch(fetchAllServiceSpaces(service));
     } else {

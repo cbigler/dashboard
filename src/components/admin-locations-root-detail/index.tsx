@@ -1,21 +1,12 @@
-import React, { Fragment, useState } from 'react';
-import classnames from 'classnames';
+import React, { Fragment } from 'react';
 import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
-import colorVariables from '@density/ui/variables/colors.json';
 import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import styles from './styles.module.scss';
 
-import {
-  AppFrame,
-  AppPane,
-  AppSidebar,
-  AppBar,
-  AppBarSection,
-  Icons,
-} from '@density/ui';
+import { Icons } from '@density/ui';
 
 
 function SpaceList({ user, spaces, renderedSpaces }) {

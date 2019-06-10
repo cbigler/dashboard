@@ -13,18 +13,15 @@ import AdminLocationsBuildingDetail from '../admin-locations-building-detail/ind
 import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 import AdminLocationsSpaceDetail from '../admin-locations-space-detail/index';
 
-import { DensitySpace } from '../../types';
 import {
   AppFrame,
   AppPane,
   AppSidebar,
   AppBar,
   AppBarSection,
-  AppBarTitle,
   Button,
   ButtonGroup,
   Skeleton,
-  Icons,
 } from '@density/ui';
 
 import {
@@ -105,9 +102,6 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
 }
 
 function AdminLocations({user, selectedSpace, spaces}) {
-  const visibleSpaces = spaces.data
-  .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
-
   let selectedSpaceParentSpaceType = null;
   if (selectedSpace) {
     const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);

@@ -150,8 +150,6 @@ export function calculate(id) {
     const meetingReportResults = await Promise.all(
       meetingEphemeralReportGenerators.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
-
-        let errorThrown;
         try {
           const data = await reportDataCalculationFunction(report, {
             date,

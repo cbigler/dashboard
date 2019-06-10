@@ -1,13 +1,5 @@
-import React, { ReactNode, Component, Fragment } from 'react';
+import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
-import uuid from 'uuid';
-
-import FormLabel from '../form-label/index';
-import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
-import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
-import { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
-
 import styles from './styles.module.scss';
 
 import {

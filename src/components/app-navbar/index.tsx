@@ -171,7 +171,7 @@ export default function AppNavbar({
                 className={classnames(styles.appNavbarItem, { [styles.showOnMobile]: true })}
                 style={{cursor: 'pointer', opacity: 1}}
               >
-                <a onClick={onClickImpersonate}>
+                <span onClick={onClickImpersonate}>
                   <span className={styles.appNavbarIcon}>{
                     <svg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
                       <g id='Symbols' fill='none' fillRule='evenodd'>
@@ -190,7 +190,7 @@ export default function AppNavbar({
                     </svg>
                   }</span>
                   {getUserLabel(impersonate.selectedUser)}
-                </a>
+                </span>
               </li>
               : <AppNavbarItem
                 selected={false}
