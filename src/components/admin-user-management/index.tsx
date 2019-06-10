@@ -18,14 +18,13 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
-  InputBoxContext,
   Modal,
   Skeleton,
 } from '@density/ui';
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
+import { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
 import { getChildrenOfSpace } from '../../helpers/filter-hierarchy';
 import filterCollection from '../../helpers/filter-collection';
 import deduplicate from '../../helpers/deduplicate';

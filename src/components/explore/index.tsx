@@ -18,7 +18,6 @@ import {
 
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 
-import filterCollection from '../../helpers/filter-collection/index';
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreSpaceTrends from '../explore-space-trends/index';
@@ -27,7 +26,6 @@ import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
-const spaceFilter = filterCollection({fields: ['name']});
 
 
 function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}) {
@@ -188,7 +186,7 @@ export class Explore extends React.Component<any, any> {
 
     let filteredSpaces = spaceHierarchy.data;
     if (spaces.filters.search) {
-      const matchedSpaceIds = fuzzy.filter(
+      const matchedSpaceIds = fuzzy.filter<any>(
         spaces.filters.search,
         spaces.data,
         { pre: '<', post: '>', extract: x => x['name'] }
@@ -218,7 +216,7 @@ export class Explore extends React.Component<any, any> {
               <AppScrollView>
                 <nav className={styles.exploreAppFrameSidebarList}>
                     <Fragment>
-                      {spaceList.length == 0 && spaces.filters.search.length == 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
+                      {spaceList.length === 0 && spaces.filters.search.length === 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
                       {spaceList.map(space => (
                         RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
                       ))}

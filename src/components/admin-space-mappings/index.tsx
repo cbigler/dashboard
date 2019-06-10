@@ -1,23 +1,18 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import {
   AppBar,
   AppBarSection,
   AppScrollView,
-  Button,
   Icons
 } from '@density/ui';
 
-import robinIcon from '../../assets/images/icon-robin.svg';
-import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
-import slackIcon from '../../assets/images/icon-slack.svg';
-import teemIcon from '../../assets/images/icon-teem.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { DensitySpaceMapping, DensityServiceSpace, DensitySpace } from '../../types';
+import { DensitySpace } from '../../types';
 import Toaster from '../toaster/index';
 
 import integrationServicesList from '../../actions/integrations/services';
@@ -56,7 +51,6 @@ export class AdminSpaceMappings extends React.Component<any, any> {
       spaceMappingsPage,
       currentService,
 
-      onCheckForIntegrationLastSync,
       onOpenModal,
       onCloseModal,
       onSaveSpaceMapping,
@@ -67,7 +61,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
 
     const serviceSpaceForService = (spaceMappings, service) => {
       if (service) {
-        const spaceMappingsForService = spaceMappings.filter(spm => spm.serviceId == service.id);
+        const spaceMappingsForService = spaceMappings.filter(spm => spm.serviceId === service.id);
         if (spaceMappingsForService) {
           return spaceMappingsForService[0];
         }
@@ -104,7 +98,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
       <AppBar>
         <AppBarSection>
          Looking for a different integration? Contact us&nbsp;
-         <a href="mailto:contact@density.io" target="_blank">contact@density.io</a>
+         <a href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">contact@density.io</a>
         </AppBarSection>
       </AppBar>
 

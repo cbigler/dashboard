@@ -83,7 +83,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
   onTouchStart = event => this.onStart(event, event.touches[0].clientX);
 
   onDrag = (event, clientX) => {
-    const { dayStartTime, onChange } = this.props;
+    const { dayStartTime } = this.props;
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 

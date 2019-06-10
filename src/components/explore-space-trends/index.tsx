@@ -1,15 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import moment from 'moment';
-
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import gridVariables from '@density/ui/variables/grid.json'
 import {
   DateRangePicker,
   InputBox,
-  AppBar,
-  AppBarSection,
 } from '@density/ui';
 
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
@@ -40,7 +35,6 @@ import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
-  getAllTimeSegmentLabelsForSpace,
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
@@ -72,7 +66,6 @@ class ExploreSpaceTrends extends React.Component<any, any> {
       onChangeSpaceFilter,
       onChangeTimeSegmentLabel,
       onChangeDateRange,
-      resizeCounter,
     } = this.props;
 
     if (space) {

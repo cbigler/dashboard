@@ -1,18 +1,15 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import Report, { ReportLoading } from '@density/reports';
+import Report from '@density/reports';
 
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import colorVariables from '@density/ui/variables/colors.json'
 import gridVariables from '@density/ui/variables/grid.json'
 import {
   Button,
   DateRangePicker,
-  InputBox,
   AppBar,
   AppBarSection,
   DensityMark,
@@ -27,17 +24,13 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import RobinImage from '../../assets/images/icon-robin.svg';
-import TeemImage from '../../assets/images/icon-teem.svg';
-import GoogleCalendarImage from '../../assets/images/icon-google-calendar.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
-import { integrationsSpaceMappingUpdate } from '../../actions/integrations/room-booking';
 import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { DensitySpaceMapping, DensityServiceSpace } from '../../types';
 
 import isOutsideRange, {
   MAXIMUM_DAY_LENGTH,
@@ -170,6 +163,7 @@ function ExploreSpaceMeetings({
                       <img
                         className={styles.robinImage}
                         src={RobinImage}
+                        alt="Robin Image"
                       />
                     </div>
 
