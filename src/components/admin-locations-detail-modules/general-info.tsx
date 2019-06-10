@@ -37,213 +37,55 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
     }[spaceType] || 'Unknown';
   }
 
-  switch (spaceType) {
-  case 'campus':
-    inputs = (
-      <Fragment>
-        <FormLabel
-          label="Name"
-          htmlFor="admin-locations-detail-modules-general-info-name"
-          input={
-            <InputBox
-              type="text"
-              id="admin-locations-detail-modules-general-info-name"
-              value={formState.name}
-              onChange={e => onChangeField('name', e.target.value)}
-              width="100%"
-            />
-          }
-        />
-        <FormLabel
-          label="Space type"
-          htmlFor="admin-locations-detail-modules-general-info-space-type"
-          input={
-            <InputBox
-              type="text"
-              disabled
-              id="admin-locations-detail-modules-general-info-space-type"
-              value={getSpaceTypeLabel(formState.spaceType)}
-              width="100%"
-            />
-          }
-        />
-      </Fragment>
-    );
-    break;
-  case 'building':
-    inputs = (
-      <Fragment>
-        <FormLabel
-          label="Name"
-          htmlFor="admin-locations-detail-modules-general-info-name"
-          input={
-            <InputBox
-              type="text"
-              id="admin-locations-detail-modules-general-info-name"
-              value={formState.name}
-              onChange={e => onChangeField('name', e.target.value)}
-              width="100%"
-            />
-          }
-        />
-        <FormLabel
-          label="Space type"
-          htmlFor="admin-locations-detail-modules-general-info-space-type"
-          input={
-            <InputBox
-              type="text"
-              disabled
-              id="admin-locations-detail-modules-general-info-space-type"
-              value={getSpaceTypeLabel(formState.spaceType)}
-              width="100%"
-            />
-          }
-        />
-        <FormLabel
-          label="Space function"
-          htmlFor="admin-locations-detail-modules-general-function"
-          input={
-            <InputBox
-              type="select"
-              id="admin-locations-detail-modules-general-function"
-              placeholder="No function assigned"
-              value={formState['function']}
-              menuMaxHeight={300}
-              choices={SPACE_FUNCTION_CHOICES}
-              onChange={e => onChangeField('function', e.id)}
-              width="100%"
-            />
-          }
-        />
-      </Fragment>
-    );
-    break;
-  case 'floor':
-    inputs = (
-      <Fragment>
-        <FormLabel
-          label="Name"
-          htmlFor="admin-locations-detail-modules-general-info-name"
-          input={
-            <InputBox
-              type="text"
-              id="admin-locations-detail-modules-general-info-name"
-              value={formState.name}
-              onChange={e => onChangeField('name', e.target.value)}
-              width="100%"
-            />
-          }
-        />
-        <div style={{display: 'flex', justifyContent: 'space-between'}}>
-          <FormLabel
-            label="Space type"
-            htmlFor="admin-locations-detail-modules-general-info-space-type"
-            className={styles.moduleFormFieldHalfWidth}
-            input={
-              <InputBox
-                type="text"
-                disabled
-                id="admin-locations-detail-modules-general-info-space-type"
-                value={getSpaceTypeLabel(formState.spaceType)}
-                width="100%"
-              />
-            }
-          />
-          <FormLabel
-            label="Level number"
-            htmlFor="admin-locations-detail-modules-general-level-number"
-            className={styles.moduleFormFieldHalfWidth}
-            input={
-              <InputBox
-                type="text"
-                id="admin-locations-detail-modules-general-level-number"
-                value={formState.floorLevel}
-                leftIcon={<span>Level</span>}
-                placeholder="01"
-                onChange={e => onChangeField('floorLevel', e.target.value)}
-                width="100%"
-              />
-            }
-          />
-        </div>
-        <FormLabel
-          label="Space function"
-          htmlFor="admin-locations-detail-modules-general-function"
-          input={
-            <InputBox
-              type="select"
-              id="admin-locations-detail-modules-general-function"
-              menuMaxHeight={300}
-              placeholder="No function assigned"
-              value={formState['function']}
-              choices={SPACE_FUNCTION_CHOICES}
-              onChange={e => onChangeField('function', e.id)}
-              width="100%"
-            />
-          }
-        />
-      </Fragment>
-    );
-    break;
-  case 'space':
-    inputs = (
-      <Fragment>
-        <FormLabel
-          label="Name"
-          htmlFor="admin-locations-detail-modules-general-info-name"
-          input={
-            <InputBox
-              type="text"
-              id="admin-locations-detail-modules-general-info-name"
-              value={formState.name}
-              onChange={e => onChangeField('name', e.target.value)}
-              width="100%"
-            />
-          }
-        />
-        <FormLabel
-          label="Space type"
-          htmlFor="admin-locations-detail-modules-general-info-space-type"
-          input={
-            <InputBox
-              type="text"
-              disabled
-              id="admin-locations-detail-modules-general-info-space-type"
-              value={getSpaceTypeLabel(formState.spaceType)}
-              width="100%"
-            />
-          }
-        />
-        <FormLabel
-          label="Space function"
-          htmlFor="admin-locations-detail-modules-general-function"
-          input={
-            <InputBox
-              type="select"
-              id="admin-locations-detail-modules-general-function"
-              placeholder="No function assigned"
-              menuMaxHeight={300}
-              value={formState['function']}
-              choices={SPACE_FUNCTION_CHOICES}
-              onChange={e => onChangeField('function', e.id)}
-              width="100%"
-            />
-          }
-        />
-      </Fragment>
-    );
-    break;
-  default:
-    inputs = null;
-    break;
-  }
-
   return (
     <AdminLocationsDetailModule title="General Info">
       <div className={styles.spaceFieldRenderer}>
         <div className={styles.spaceFieldRendererRow}>
           <div className={classnames(styles.spaceFieldRendererCell, styles.left)}>
-            {inputs}
+            <FormLabel
+              label="Name"
+              htmlFor="admin-locations-detail-modules-general-info-name"
+              input={
+                <InputBox
+                  type="text"
+                  id="admin-locations-detail-modules-general-info-name"
+                  value={formState.name}
+                  onChange={e => onChangeField('name', e.target.value)}
+                  width="100%"
+                />
+              }
+            />
+            <FormLabel
+              label="Space type"
+              htmlFor="admin-locations-detail-modules-general-info-space-type"
+              input={
+                <InputBox
+                  type="text"
+                  disabled
+                  id="admin-locations-detail-modules-general-info-space-type"
+                  value={getSpaceTypeLabel(formState.spaceType)}
+                  width="100%"
+                />
+              }
+            />
+            {spaceType !== 'campus' ? (
+              <FormLabel
+                label="Space function"
+                htmlFor="admin-locations-detail-modules-general-function"
+                input={
+                  <InputBox
+                    type="select"
+                    id="admin-locations-detail-modules-general-function"
+                    placeholder="No function assigned"
+                    value={formState['function']}
+                    menuMaxHeight={300}
+                    choices={SPACE_FUNCTION_CHOICES}
+                    onChange={e => onChangeField('function', e.id)}
+                    width="100%"
+                  />
+                }
+              />
+            ) : null}
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <AdminLocationsImageUpload
