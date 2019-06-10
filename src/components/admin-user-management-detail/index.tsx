@@ -21,7 +21,6 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  AppBarContext,
   Button,
   ButtonGroup,
   Icons,

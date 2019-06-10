@@ -19,7 +19,6 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  InputBox,
   Button,
   ButtonGroup,
   Icons,

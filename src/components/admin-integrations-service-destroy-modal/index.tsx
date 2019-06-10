@@ -23,7 +23,7 @@ export default class IntegrationsServiceDestroyModal extends React.Component<any
   };
 
   render() {
-    const { visible, onDismiss, onDestroyServiceAuthorization } = this.props;
+    const { visible, onDismiss } = this.props;
       
     return (
       <Modal

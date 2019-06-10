@@ -407,7 +407,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         ) : null}
 
         {shownOperatingHours.map((operatingHoursItem, index) => {
-          if (operatingHoursItem.operationToPerform === 'DELETE') { return; }
+          if (operatingHoursItem.operationToPerform === 'DELETE') { return undefined; }
           return (
             <div key={operatingHoursItem.id} className={styles.timeSegmentItem}>
               <AppBarContext.Provider value="TRANSPARENT">

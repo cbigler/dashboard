@@ -163,7 +163,7 @@ function ExploreSpaceMeetings({
                       <img
                         className={styles.robinImage}
                         src={RobinImage}
-                        alt="Robin Image"
+                        alt="Robin"
                       />
                     </div>
 

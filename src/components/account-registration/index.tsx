@@ -56,7 +56,7 @@ export class AccountRegistration extends React.Component<any, any> {
         <ErrorBar message={this.state.error} showRefresh />
 
         <div className={styles.accountRegistrationDensityLogo}>
-          <img src={logoDensityBlack} />
+          <img src={logoDensityBlack} alt="Density Logo" />
         </div>
         <p className={styles.accountRegistrationLead}>
           Let's create your Density account!

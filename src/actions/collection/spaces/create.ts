@@ -71,7 +71,7 @@ export default function collectionSpacesCreate(item) {
           case 'DELETE':
             return core().delete(`/time_segments/${operatingHoursItem.id}`);
           default:
-            return;
+            return undefined;
           }
         }));
       }

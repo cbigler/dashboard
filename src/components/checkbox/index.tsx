@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import uuid from 'uuid';
-import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 export default function Checkbox({ id=null, checked, disabled=false, onChange }) {
-  const [idProp, _] = useState(id || `checkbox-${uuid.v4()}`);
+  const [idProp] = useState(id || `checkbox-${uuid.v4()}`);
   return (
     <div>
       <input

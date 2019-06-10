@@ -1,6 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import core from '../../client/core';
-
 import collectionSpacesSet from '../collection/spaces/set';
 import { collectionSpacesBatchSetEvents } from '../collection/spaces/set-events';
 

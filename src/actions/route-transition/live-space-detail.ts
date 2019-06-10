@@ -1,6 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import core from '../../client/core';
-
 import { DensitySpace } from '../../types';
 
 import collectionSpacesPush from '../collection/spaces/push';

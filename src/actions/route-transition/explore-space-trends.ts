@@ -90,7 +90,7 @@ export function calculate(space, spaceFilters) {
       const error = "End time must be before start time.";
       const reportNames = ['dailyMetrics', 'hourlyBreakdownPeaks', 'hourlyBreakdownVisits', 'utilization'];
       reportNames.map(reportName => {
-        dispatch(exploreDataCalculateDataError(reportName, error));  
+        return dispatch(exploreDataCalculateDataError(reportName, error));
       });
       return;
     }
@@ -102,15 +102,6 @@ export function calculate(space, spaceFilters) {
   };
 }
 
-const DAY_TO_INDEX = {
-  'Monday': 1,
-  'Tuesday': 2,
-  'Wednesday': 3,
-  'Thursday': 4,
-  'Friday': 5,
-  'Saturday': 6,
-  'Sunday': 0,
-};
 export function calculateDailyMetrics(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));

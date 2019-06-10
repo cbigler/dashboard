@@ -2,8 +2,6 @@ import React from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-import { Button } from '@density/ui';
-
 const DAYS_OF_WEEK = [
   'Monday',
   'Tuesday',

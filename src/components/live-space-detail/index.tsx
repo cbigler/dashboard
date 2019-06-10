@@ -4,8 +4,6 @@ import { connect } from 'react-redux';
 
 import { DensityMark } from '@density/ui';
 
-import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
-
 import { chartAsReactComponent } from '@density/charts';
 
 import styles from './styles.module.scss';

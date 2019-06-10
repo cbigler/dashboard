@@ -5,8 +5,6 @@ import moment from 'moment';
 import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
-
 import styles from './styles.module.scss';
 
 import { DensityDashboard, DensityDigestSchedule } from '../../types';

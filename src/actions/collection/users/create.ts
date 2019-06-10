@@ -1,5 +1,4 @@
 import collectionUsersPush from './push';
-import collectionUsersError from './error';
 import showToast from '../../toasts';
 import mixpanelTrack from '../../../helpers/mixpanel-track/index';
 import accounts from '../../../client/accounts';

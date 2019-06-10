@@ -1,6 +1,5 @@
 import uuid from 'uuid';
 
-import showModal from '../../actions/modal/show';
 import showToast, { hideToast } from '../../actions/toasts';
 import hideModal from '../../actions/modal/hide';
 import pushDoorway from './push-doorway';

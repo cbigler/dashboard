@@ -27,9 +27,8 @@ export default function collectionSpacesUpdate(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_SPACES_UPDATE, item });
 
-    let response;
     try {
-      response = await core().put(`/spaces/${item.id}`, {
+      await core().put(`/spaces/${item.id}`, {
         name: item.name,
         description: item.description,
         parent_id: item.parentId,

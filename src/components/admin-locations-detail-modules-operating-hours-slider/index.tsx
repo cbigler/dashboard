@@ -162,9 +162,6 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
-    const startTimeDuration = moment.duration(startTime, 'seconds');
-    const endTimeDuration = moment.duration(endTime, 'seconds');
-
     const sliderStartTimePercentage = (startTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;
     const sliderEndTimePercentage = (endTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;
 

@@ -40,17 +40,6 @@ import { chartAsReactComponent } from '@density/charts';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const AVERAGE_WEEKLY_BREAKDOWN_PERCENTAGE_BAR_BREAK_WIDTH_IN_PX = 320;
-
-const DAY_TO_INDEX_IN_UTILIZAITIONS_BY_DAY = {
-  'Sunday': 0,
-  'Monday': 1,
-  'Tuesday': 2,
-  'Wednesday': 3,
-  'Thursday': 4,
-  'Friday': 5,
-  'Saturday': 6,
-};
-
 const CHART_HEIGHT = 350;
 
 export const LOADING = 'LOADING',

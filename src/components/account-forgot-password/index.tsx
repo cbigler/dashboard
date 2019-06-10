@@ -41,7 +41,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
         <ErrorBar message={this.state.error} showRefresh />
 
         <div className={styles.accountForgotPasswordDensityLogo}>
-          <img src={logoDensityBlack} />
+          <img src={logoDensityBlack} alt="Density Logo" />
         </div>
         <p className={styles.accountForgotPasswordLead}>
           Please set your new password.
