@@ -1,10 +1,9 @@
-export const COLLECTION_DISPATCH_SCHEDULES_CREATE = 'COLLECTION_DISPATCH_SCHEDULES_CREATE';
-
 import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
 import mixpanelTrack from '../../../helpers/mixpanel-track/index';
 
+export const COLLECTION_DISPATCH_SCHEDULES_CREATE = 'COLLECTION_DISPATCH_SCHEDULES_CREATE';
 
 export default function collectionDispatchSchedulesCreate({
   name,

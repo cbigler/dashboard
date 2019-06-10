@@ -1,8 +1,8 @@
-export const COLLECTION_DISPATCH_SCHEDULES_UPDATE = 'COLLECTION_DISPATCH_SCHEDULES_UPDATE';
-
 import core from '../../../client/core';
 import collectionDispatchSchedulesError from './error';
 import collectionDispatchSchedulesPush from './push';
+
+export const COLLECTION_DISPATCH_SCHEDULES_UPDATE = 'COLLECTION_DISPATCH_SCHEDULES_UPDATE';
 
 export default function collectionDispatchSchedulesUpdate({
   id,

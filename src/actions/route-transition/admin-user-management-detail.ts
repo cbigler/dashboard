@@ -1,5 +1,3 @@
-export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL';
-
 import collectionUsersError from '../collection/users/error';
 import collectionUsersPush from '../collection/users/push';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
@@ -7,6 +5,9 @@ import collectionSpacesSet from '../collection/spaces/set';
 import accounts from '../../client/accounts';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+
+export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL';
+
 
 export default function routeTransitionAdminUserManagementDetail(id) {
   return async dispatch => {

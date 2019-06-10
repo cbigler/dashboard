@@ -1,9 +1,9 @@
-export const COLLECTION_DIGEST_SCHEDULES_LOAD = 'COLLECTION_DIGEST_SCHEDULES_LOAD';
-
 import collectionDigestSchedulesError from './error';
 import collectionDigestSchedulesSet from './set';
 import fetchAllObjects from '../../../helpers/fetch-all-objects';
 import { DensityDigestSchedule } from '../../../types';
+
+export const COLLECTION_DIGEST_SCHEDULES_LOAD = 'COLLECTION_DIGEST_SCHEDULES_LOAD';
 
 export default function collectionDigestSchedulesLoad() {
   return async dispatch => {

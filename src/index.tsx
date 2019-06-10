@@ -1,15 +1,17 @@
-import '@babel/polyfill'; // Polyfills for IE
-import 'react-app-polyfill/ie11'; // For IE 11 support
+// Polyfills for IE
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 
-import core, { config as configCore } from './client/core';
+import { config as configCore } from './client/core';
 import accounts, { config as configAccounts } from './client/accounts';
 
 import ReactGA from 'react-ga';
-import moment from 'moment';
 import queryString from 'qs';
 
 import { DensityUser, DensitySpace } from './types';
