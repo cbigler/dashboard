@@ -1,7 +1,7 @@
 import localStorageReducerEnhancer from '../../helpers/localstorage-reducer-enhancer/index';
 import { SESSION_TOKEN_SET } from '../../actions/session-token/set';
 import { SESSION_TOKEN_UNSET } from '../../actions/session-token/unset';
-import { configureClients } from '../..';
+import { configureClients } from '../../helpers/unsafe-configure-app';
 
 const localStorage = window.localStorage || (global as any).localStorage || {};
 

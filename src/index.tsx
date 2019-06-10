@@ -8,8 +8,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 
-import { config as configCore } from './client/core';
-import accounts, { config as configAccounts } from './client/accounts';
+import accounts from './client/accounts';
 
 import ReactGA from 'react-ga';
 import queryString from 'qs';
@@ -36,7 +35,7 @@ import IntercomDensity from './components/intercom/index';
 
 // The Environment switcher, used to switch between sets of servers that should be communicated
 // with.
-import EnvironmentSwitcher, { getActiveEnvironments, getGoSlow } from './components/environment-switcher/index';
+import EnvironmentSwitcher from './components/environment-switcher/index';
 
 // Redux is used to manage state.
 import { Provider } from 'react-redux';
@@ -86,34 +85,11 @@ import storeFactory from './store';
 import handleVisibilityChange from './helpers/visibility-change';
 import fetchAllObjects from './helpers/fetch-all-objects';
 import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
+import { configureClients } from './helpers/unsafe-configure-app';
+
 const store = storeFactory();
 
-
-// ----------------------------------------------------------------------------
-// Set the location of all microservices.
-// Here's how it works:
-// ----------------------------------------------------------------------------
-//
-// 1. All microservice names and cofigurations are defined in `fields`. `setServiceLocations` is
-// called, passing the active environment names. By setting this initially before the react render
-// happens, calls that happen before the render are able to take advantage of the custom
-// environments that have been defined.
-//
-// 2. Developer opens the environment switcher modal, changes an environment variable, then clicks
-// "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
-// `setServiceLocations`. The locations of all the services update.
-//
-export function configureClients() {
-  const goSlow = getGoSlow();
-  const environments: any = getActiveEnvironments(fields);
-  const token = localStorage.sessionToken !== undefined ?
-    JSON.parse(localStorage.sessionToken) : null;
-  const impersonateUser = localStorage.impersonate ?
-    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({host: environments.core, token, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, token, impersonateUser, store});
-}
-configureClients();
+configureClients(store);
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.

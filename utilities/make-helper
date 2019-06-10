@@ -23,7 +23,7 @@ export default function $NAMECAMEL() {
 }
 EOF
 
-cat <<EOF > src/helpers/$NAMEDASH/test.js
+cat <<EOF > src/helpers/$NAMEDASH/index.test.js
 
 import assert from 'assert';
 import $NAMECAMEL from './index';
@@ -38,4 +38,4 @@ EOF
 
 echo "Created helper:"
 echo "Script is located here: src/helpers/$NAMEDASH/index.js"
-echo "Tests are located here: src/helpers/$NAMEDASH/test.js"
+echo "Tests are located here: src/helpers/$NAMEDASH/index.test.js"
