@@ -126,7 +126,7 @@ export function AdminDeveloper({
         <Button
           variant="filled"
           type="primary"
-          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', tokenType: 'readonly'}})}
+          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', tokenType: READONLY}})}
         >Add token</Button>
         &nbsp;&nbsp;
         <Button
