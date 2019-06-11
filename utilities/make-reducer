@@ -27,7 +27,7 @@ export default function $NAMECAMEL(state=initialState, action) {
 }
 EOF
 
-cat <<EOF > src/reducers/$NAMEDASH/test.js
+cat <<EOF > src/reducers/$NAMEDASH/index.test.js
 
 import assert from 'assert';
 import $NAMECAMEL from './index';
@@ -39,4 +39,4 @@ EOF
 
 echo "Created reducer:"
 echo "Script is located here: src/reducers/$NAMEDASH/index.js"
-echo "Tests are located here: src/reducers/$NAMEDASH/test.js"
+echo "Tests are located here: src/reducers/$NAMEDASH/index.test.js"

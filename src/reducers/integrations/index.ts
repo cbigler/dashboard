@@ -1,4 +1,4 @@
-import { DensityService, DensityServiceSpace } from '../../types';
+import { DensityServiceSpace } from '../../types';
 
 import { COLLECTION_SERVICES_SET } from '../../actions/collection/services/set';
 import { COLLECTION_SERVICES_ERROR } from '../../actions/collection/services/error';

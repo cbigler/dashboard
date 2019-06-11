@@ -16,7 +16,7 @@ function convertSecondsIntoTime(seconds) {
 
   return moment.utc()
     .startOf('day')
-    .add(seconds, 'seconds')
+    .add(secondsIntoDay, 'seconds')
     .format('HH:mm:ss');
 }
 
@@ -71,7 +71,7 @@ export default function collectionSpacesCreate(item) {
           case 'DELETE':
             return core().delete(`/time_segments/${operatingHoursItem.id}`);
           default:
-            return;
+            return undefined;
           }
         }));
       }

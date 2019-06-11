@@ -59,7 +59,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
     });
 
     // Emit an initial event.
-    this.props.onChange(getActiveEnvironments(this.props.fields));
+    this.props.onChange();
   }
   render() {
     const { fields } = this.props;
@@ -137,7 +137,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
 
           <div className={styles.environmentSwitcherFooter}>
             <Button
-              type="primary"
+              variant="filled"
               width="100%"
               className={styles.environmentSwitcherButton}
               onClick={() => {

@@ -30,10 +30,13 @@ import collectionWebhooksCreate from '../../actions/collection/webhooks/create';
 import collectionWebhooksFilter from '../../actions/collection/webhooks/filter';
 import collectionWebhooksUpdate from '../../actions/collection/webhooks/update';
 import collectionWebhooksDestroy from '../../actions/collection/webhooks/destroy';
+import updateModal from '../../actions/modal/update';
 
+
+const READONLY = 'readonly', READWRITE = 'readwrite';
 const PERMISSION_TEXT = {
-  'readonly': 'Read-only',
-  'readwrite': 'Read-write'
+  [READONLY]: 'Read-only',
+  [READWRITE]: 'Read-write'
 }
 
 export function TokenKeyHider ({value, onCopyToken}) {
@@ -50,6 +53,7 @@ export function TokenKeyHider ({value, onCopyToken}) {
     <Button
       size="small"
       type="primary"
+      variant="filled"
       width={60}
       onClick={() => setHidden(!hidden)}
     >{hidden ? 'Show' : 'Hide'}</Button>
@@ -63,12 +67,12 @@ export function AdminDeveloper({
   activeModal,
   onCreateToken,
   onUpdateToken,
+  onSaveToken,
   onDestroyToken,
-  onFilterTokenList,
   onCreateWebhook,
   onUpdateWebhook,
+  onSaveWebhook,
   onDestroyWebhook,
-  onFilterWebhookList,
   onOpenModal,
   onCloseModal,
   onCopyToken,
@@ -77,40 +81,38 @@ export function AdminDeveloper({
 
     {activeModal.name === 'token-create' ? <TokenCreateModal
       visible={activeModal.visible}
-      loading={tokens.loading}
-      error={tokens.error}
+      token={activeModal.data.token}
 
+      onUpdate={onUpdateToken}
       onSubmit={onCreateToken}
       onDismiss={onCloseModal}
     /> : null}
     {activeModal.name === 'token-update' ? <TokenUpdateModal
       visible={activeModal.visible}
-      initialToken={activeModal.data.token}
+      token={activeModal.data.token}
       isDestroying={activeModal.data.isDestroying}
-      loading={tokens.loading}
-      error={tokens.error}
 
-      onSubmit={onUpdateToken}
+      onUpdate={onUpdateToken}
+      onSubmit={onSaveToken}
       onDismiss={onCloseModal}
       onDestroyToken={onDestroyToken}
     /> : null}
 
     {activeModal.name === 'webhook-create' ? <WebhookCreateModal
       visible={activeModal.visible}
-      error={webhooks.error}
-      loading={webhooks.loading}
+      webhook={activeModal.data.webhook}
 
+      onUpdate={onUpdateWebhook}
       onSubmit={onCreateWebhook}
       onDismiss={onCloseModal}
     /> : null}
     {activeModal.name === 'webhook-update' ? <WebhookUpdateModal
       visible={activeModal.visible}
-      initialWebhook={activeModal.data.webhook}
+      webhook={activeModal.data.webhook}
       isDestroying={activeModal.data.isDestroying}
-      error={webhooks.error}
-      loading={webhooks.loading}
 
-      onSubmit={onUpdateWebhook}
+      onUpdate={onUpdateWebhook}
+      onSubmit={onSaveWebhook}
       onDismiss={onCloseModal}
       onDestroyWebhook={onDestroyWebhook}
     /> : null}
@@ -118,12 +120,20 @@ export function AdminDeveloper({
     <AppBar>
       <AppBarSection>
        Looking for more information on our API? Read our&nbsp;
-       <a href="http://docs.density.io" target="_blank">API Docs</a>
+       <a href="http://docs.density.io" target="_blank" rel="noopener noreferrer">API Docs</a>
       </AppBarSection>
       <AppBarSection>
-        <Button type="primary" onClick={() => onOpenModal('token-create')}>Add token</Button>
+        <Button
+          variant="filled"
+          type="primary"
+          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', tokenType: READONLY}})}
+        >Add token</Button>
         &nbsp;&nbsp;
-        <Button type="primary" onClick={() => onOpenModal('webhook-create')}>Add webhook</Button>
+        <Button
+          variant="filled"
+          type="primary"
+          onClick={() => onOpenModal('webhook-create', {webhook: {name: '', description: '', endpoint: ''}})}
+        >Add webhook</Button>
       </AppBarSection>
     </AppBar>
 
@@ -185,6 +195,9 @@ export default connect((state: any) => {
       });
     },
     onUpdateToken(token) {
+      dispatch<any>(updateModal({token}));
+    },
+    onSaveToken(token) {
       dispatch<any>(collectionTokensUpdate(token)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());
@@ -211,6 +224,9 @@ export default connect((state: any) => {
       });
     },
     onUpdateWebhook(webhook) {
+      dispatch<any>(updateModal({webhook}));
+    },
+    onSaveWebhook(webhook) {
       dispatch<any>(collectionWebhooksUpdate(webhook)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());

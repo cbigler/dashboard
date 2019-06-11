@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_DASHBOARDS_SET } from '../../actions/collection/dashboards/set';
 import { COLLECTION_DASHBOARDS_ERROR } from '../../actions/collection/dashboards/error';

@@ -5,17 +5,15 @@ import collectionDashboardsSet from '../collection/dashboards/set';
 import collectionDashboardsError from '../collection/dashboards/error';
 import collectionDashboardsSelect from '../collection/dashboards/select';
 import dashboardsError from '../collection/dashboards/error';
-import core from '../../client/core';
-import accounts from '../../client/accounts';
 
 import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
 import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
 import setDashboardDate from '../miscellaneous/set-dashboard-date';
 
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
 import { DensityDashboard, DensityDigestSchedule } from '../../types';
+import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
@@ -24,9 +22,7 @@ function loadDigestSchedules() {
   return async dispatch => {
     let schedules, errorThrown;
     try {
-      schedules = (await fetchAllPages(async page => {
-        return (await core().get(`/digest_schedules?page=${page}&page_size=5000`)).data;
-      })).map(d => objectSnakeToCamel<DensityDigestSchedule>(d));
+      schedules = await fetchAllObjects<DensityDigestSchedule>('/digest_schedules');
     } catch (err) {
       errorThrown = err;
     }
@@ -80,9 +76,7 @@ function loadDashboardAndReports(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(async page => (
-        (await core().get('/dashboards', {params: {page, page_size: 5000}})).data
-      ));
+      dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
     } catch (err) {
       dispatch(collectionDashboardsError(err));
       return;
@@ -116,7 +110,7 @@ function loadDashboardAndReports(id) {
         );
       } else {
         try {
-        selectedDashboard = objectSnakeToCamel<DensityDashboard>((await core().get(`/dashboards/${id}`)).data);
+          selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`);
         } catch (err) {
           dispatch(collectionDashboardsError(err));
           return;

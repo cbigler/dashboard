@@ -1,5 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-
 import core from '../../client/core';
 
 import integrationServicesList from '../integrations/services';
@@ -13,7 +11,7 @@ export default function routeTransitionAdminIntegrationsTeem(access_token, expir
     
 
     try {
-      const response = await core().post('/integrations/teem/confirm/', {
+      await core().post('/integrations/teem/confirm/', {
         access_token: access_token,
         expires_in: expires_in,
         refresh_token: refresh_token,

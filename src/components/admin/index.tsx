@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 
 import {
   AppBar,
@@ -46,7 +46,7 @@ export default function Admin({
               {can(user, PERMISSION_CODES.developerToolsManage) ? 
                 <AppBarSubnavLink
                   href="#/admin/integrations"
-                  active={activePage === 'ADMIN_INTEGRATIONS'}
+                  active={['ADMIN_INTEGRATIONS', 'ADMIN_SPACE_MAPPINGS'].includes(activePage)}
                 >
                   Integrations
                 </AppBarSubnavLink> : null}

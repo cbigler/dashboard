@@ -1,15 +1,6 @@
-import uuid from 'uuid';
-
-import showModal from '../../actions/modal/show';
-import showToast, { hideToast } from '../../actions/toasts';
-import hideModal from '../../actions/modal/hide';
+import showToast from '../../actions/toasts';
 import pushDoorway from './push-doorway';
-import formDoorwayUpdate from './form-doorway-update';
-
 import core from '../../client/core';
-import uploadMedia from '../../helpers/media-files';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { DensityDoorway } from '../../types';
 
 import { uploadDoorwayImages } from './update-doorway';
 

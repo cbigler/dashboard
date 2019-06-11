@@ -4,7 +4,7 @@ import lolex from 'lolex';
 
 import WebsocketEventPusher, { CONNECTION_STATES } from './index';
 
-import core, { config as configCore } from '../../client/core';
+import { config as configCore } from '../../client/core';
 
 const realSetTimeout = window.setTimeout;
 function timeout(delay) {

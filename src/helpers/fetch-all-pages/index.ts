@@ -12,10 +12,15 @@ export default function fetchAllPages(fetchSinglePage) {
   const getPage = async function(page) {
     const data = await fetchSinglePage(page);
 
+    // If endpoint just returns an array, don't try to paginate
+    if (data && typeof data.length !== 'undefined') {
+      return data;
+    }
+
+    // Check that the page exists and contains the necessary properties
     if (!data) {
       throw new Error(`Function did not return a page of data! (data=${data})`);
     }
-
     if (typeof data.next === 'undefined') {
       throw new Error(`Page of data did not contain .next key! (data=${JSON.stringify(data)})`);
     }
@@ -28,7 +33,7 @@ export default function fetchAllPages(fetchSinglePage) {
         // When an array, add items to the array.
         return [...data.results, ...await getPage(page+1)];
       } else {
-        // When an object, collect each item in each subarray into a centreal object.
+        // When an object, collect each item in each subarray into a central object.
         const all = {};
         const rest = await getPage(page+1);
         for (const key in data.results) {

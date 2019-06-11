@@ -1,8 +1,5 @@
-import React, { ReactNode, Component, Fragment } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { TagInput } from '@density/ui';
-
-import styles from './tags.module.scss';
 import formatTagName from '../../helpers/format-tag-name/index';
 import AdminLocationsDetailModule from './index';
 

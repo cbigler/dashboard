@@ -1,10 +1,6 @@
 import core from '../../client/core';
 import showToast from '../toasts/index';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-
-import { DensitySpaceMapping } from '../../types';
-
 export const INTEGRATIONS_ROOM_BOOKING_SET_SERVICE = 'INTEGRATIONS_ROOM_BOOKING_SET_SERVICE';
 
 export function integrationsRoomBookingSetService(service) {
@@ -32,16 +28,14 @@ export function integrationsSpaceMappingUpdate(service, spaceId, serviceSpaceId)
       });
     }
 
-    let spaceMappingResponse;
     try {
-      spaceMappingResponse = await request;
+      await request;
     } catch (err) {
       console.error(err);
       dispatch(showToast({type: 'error', text: 'Error mapping spaces'}));
       return;
     }
 
-    const spaceMapping = objectSnakeToCamel<DensitySpaceMapping>(spaceMappingResponse.data);
     dispatch(showToast({text: 'Space mapping complete'}));
   };
 }

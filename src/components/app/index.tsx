@@ -11,7 +11,6 @@ import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
-import AdminLocations from '../admin-locations/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
 import AdminLocationsNew from '../admin-locations-new/index';
 import Account from '../account/index';

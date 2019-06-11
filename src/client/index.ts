@@ -1,3 +1,4 @@
+import getBackendErrorDetail from '../helpers/get-backend-error-detail';
 import sessionTokenUnset from '../actions/session-token/unset';
 import userError from '../actions/user/error';
 import login from '../actions/route-transition/login';
@@ -9,7 +10,7 @@ export function errorHandler(error, store) {
   if (
     error.response &&
     error.response.status === 403 &&
-    error.response.data.detail === 'Incorrect authentication credentials.'
+    getBackendErrorDetail(error) === 'Incorrect authentication credentials.'
   ) {
     store.dispatch(userError(`Login session has expired or is invalid. Please login again.`));
     store.dispatch(sessionTokenUnset());

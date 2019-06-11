@@ -3,8 +3,6 @@ import React from 'react';
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import AdminLocationsDetailModule from './index';
 
-import styles from './address.module.scss';
-
 export default function AdminLocationsDetailModulesAddress({
   spaceType,
   address,

@@ -31,7 +31,6 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
-  getAllTimeSegmentLabelsForSpace,
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
@@ -52,7 +51,6 @@ class ExploreSpaceDaily extends React.Component<any, any> {
       space,
       spaceHierarchy,
       activeModal,
-      resizeCounter,
       onChangeSpaceFilter,
       onChangeDate,
       onChangeTimeSegmentLabel,

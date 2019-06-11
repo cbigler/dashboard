@@ -1,13 +1,12 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import {
   AppBar,
   AppBarSection,
   AppScrollView,
-  Button,
   Icons
 } from '@density/ui';
 
@@ -130,7 +129,7 @@ export function AdminIntegrations({
     <AppBar>
       <AppBarSection>
        Looking for a different integration? Contact us&nbsp;
-       <a href="mailto:contact@density.io" target="_blank">contact@density.io</a>
+       <a href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">contact@density.io</a>
       </AppBarSection>
     </AppBar>
 
@@ -139,7 +138,7 @@ export function AdminIntegrations({
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
+            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
@@ -178,7 +177,7 @@ export function AdminIntegrations({
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
+            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>

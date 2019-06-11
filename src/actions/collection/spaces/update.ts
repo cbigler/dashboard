@@ -1,7 +1,6 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import fetchAllPages from '../../../helpers/fetch-all-pages/index';
-import objectSnakeToCamel from '../../../helpers/object-snake-to-camel/index';
+import fetchAllObjects from '../../../helpers/fetch-all-objects';
 import { DensitySpace } from '../../../types';
 import formatTagName from '../../../helpers/format-tag-name/index';
 
@@ -20,7 +19,7 @@ function convertSecondsIntoTime(seconds) {
 
   return moment.utc()
     .startOf('day')
-    .add(seconds, 'seconds')
+    .add(secondsIntoDay, 'seconds')
     .format('HH:mm:ss');
 }
 
@@ -28,9 +27,8 @@ export default function collectionSpacesUpdate(item) {
   return async dispatch => {
     dispatch({ type: COLLECTION_SPACES_UPDATE, item });
 
-    let response;
     try {
-      response = await core().put(`/spaces/${item.id}`, {
+      await core().put(`/spaces/${item.id}`, {
         name: item.name,
         description: item.description,
         parent_id: item.parentId,
@@ -149,16 +147,7 @@ export default function collectionSpacesUpdate(item) {
 
       // Fetch all spaces after updating this space. If we changed this space's size area unit, then
       // the size area unit of child spaces will update too.
-      const rawSpaces = await fetchAllPages(async page => {
-        const response = await core().get(`/spaces`, {
-          params: {
-            page,
-            page_size: 5000,
-          },
-        });
-        return response.data;
-      });
-      const spaces = rawSpaces.map(d => objectSnakeToCamel<DensitySpace>(d));
+      const spaces = await fetchAllObjects<DensitySpace>('/spaces');
       dispatch(collectionSpacesSet(spaces));
       return spaces;
 

@@ -6,12 +6,11 @@ import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 import collectionSpacesFilter from '../collection/spaces/filter';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import fetchAllPages from '../../helpers/fetch-all-pages';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -51,10 +50,8 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
       return;
@@ -93,7 +90,7 @@ export function calculate(space, spaceFilters) {
       const error = "End time must be before start time.";
       const reportNames = ['dailyMetrics', 'hourlyBreakdownPeaks', 'hourlyBreakdownVisits', 'utilization'];
       reportNames.map(reportName => {
-        dispatch(exploreDataCalculateDataError(reportName, error));  
+        return dispatch(exploreDataCalculateDataError(reportName, error));
       });
       return;
     }
@@ -105,15 +102,6 @@ export function calculate(space, spaceFilters) {
   };
 }
 
-const DAY_TO_INDEX = {
-  'Monday': 1,
-  'Tuesday': 2,
-  'Wednesday': 3,
-  'Thursday': 4,
-  'Friday': 5,
-  'Saturday': 6,
-  'Sunday': 0,
-};
 export function calculateDailyMetrics(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
@@ -194,12 +182,12 @@ export function calculateUtilization(space) {
     }
 
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
-    // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
-    // logic required to fetch all pages of data from the server.
+    // selected on the DateRangePicker. Uses the `fetchAllObjects` helper, which encapsulates the
+    // logic required to fetch all pages of objects from the server.
     let errorThrown, counts;
     try {
-      counts = (await fetchAllPages(async page => (
-        (await core().get(`/spaces/${space.id}/counts`, { params: {
+      counts = await fetchAllObjects(`/spaces/${space.id}/counts`, {
+        params: {
           id: space.id,
 
           start_time: startDate,
@@ -208,15 +196,10 @@ export function calculateUtilization(space) {
 
           interval: '10m',
 
-          // Fetch with a large page size to try to minimize the number of requests that will be
-          // required.
-          page,
-          page_size: 5000,
-
           // Legacy "slow" queries
           slow: getGoSlow(),
-        }})).data
-      ))).map(objectSnakeToCamel);
+        }
+      });
     } catch (err) {
       errorThrown = err;
     }

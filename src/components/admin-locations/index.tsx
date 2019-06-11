@@ -13,17 +13,15 @@ import AdminLocationsBuildingDetail from '../admin-locations-building-detail/ind
 import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 import AdminLocationsSpaceDetail from '../admin-locations-space-detail/index';
 
-import { DensitySpace } from '../../types';
 import {
   AppFrame,
   AppPane,
   AppSidebar,
   AppBar,
   AppBarSection,
-  AppBarTitle,
   Button,
+  ButtonGroup,
   Skeleton,
-  Icons,
 } from '@density/ui';
 
 import {
@@ -47,55 +45,55 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
   switch (spaceType) {
   case null:
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'campus'); }}
-          >Add a campus</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-          >Add a building</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'campus');
+          }}
+        >Add a campus</Button>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'building');
+          }}
+        >Add a building</Button>
+      </ButtonGroup>
     );
   case 'campus':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-        >Add a building</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'building');
+        }}
+      >Add a building</Button>
     );
   case 'building':
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'floor'); }}
-          >Add a level</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a room</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'floor');
+          }}
+        >Add a level</Button>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'space');
+          }}
+        >Add a room</Button>
+      </ButtonGroup>
     );
   case 'floor':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a room</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'space');
+        }}
+      >Add a room</Button>
     );
   case 'space':
     return (
@@ -104,8 +102,10 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         {/* (rooms can only be two levels in depth) */}
         {parentSpaceType !== 'space' ? (
           <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
+            variant="filled"
+            onClick={() => {
+              window.location.href = generateCreateRoute(spaceId, 'space');
+            }}
           >Add a room</Button>
         ) : null}
       </Fragment>
@@ -116,9 +116,6 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
 }
 
 function AdminLocations({user, selectedSpace, spaces}) {
-  const visibleSpaces = spaces.data
-  .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
-
   let selectedSpaceParentSpaceType = null;
   if (selectedSpace) {
     const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
@@ -169,16 +166,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <Skeleton width={200} height={18} />
             </AppBarSection>
             <AppBarSection>
-              <span className={styles.leftButton}>
-                <Button type="primary">
+              <ButtonGroup>
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
-              <span className={styles.rightButton}>
-                <Button type="primary">
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
           <AppFrame>

@@ -10,8 +10,6 @@ import 'moment-timezone';
 import { calculateDailyMetrics } from '../../actions/route-transition/explore-space-trends';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-
 import {
   Card,
   CardBody,

@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_USERS_LOAD } from '../../actions/collection/users/load';
 import { COLLECTION_USERS_CREATE } from '../../actions/collection/users/create';
@@ -73,9 +71,6 @@ export default function users(state=initialState, action) {
         ),
       ],
     };
-
-  case COLLECTION_USERS_ERROR:
-    return {...state, view: 'ERROR', loading: false, error: action.error};
 
   // An async operation is starting.
   case COLLECTION_USERS_CREATE:

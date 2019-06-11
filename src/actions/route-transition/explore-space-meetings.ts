@@ -1,21 +1,19 @@
-import moment from 'moment';
 import { REPORTS } from '@density/reports';
 import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
-import collectionSpacesFilter from '../collection/spaces/filter';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import fetchAllPages from '../../helpers/fetch-all-pages';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import {
   DensityReport,
   DensityReportCalculatationFunction,
-  DensitySpaceMapping,
   DensitySpace,
   DensityService,
+  DensitySpaceHierarchyItem,
 } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
@@ -27,12 +25,6 @@ import { calculateDashboardDate } from './dashboard-detail';
 
 import { getGoSlow } from '../../components/environment-switcher';
 
-import {
-  getCurrentLocalTimeAtSpace,
-  parseISOTimeAtSpace,
-  formatInISOTimeAtSpace,
-  requestCountsForLocalRange
-} from '../../helpers/space-time-utilities/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionServicesError from '../collection/services/error';
 
@@ -51,10 +43,8 @@ export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
@@ -160,8 +150,6 @@ export function calculate(id) {
     const meetingReportResults = await Promise.all(
       meetingEphemeralReportGenerators.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
-
-        let errorThrown;
         try {
           const data = await reportDataCalculationFunction(report, {
             date,

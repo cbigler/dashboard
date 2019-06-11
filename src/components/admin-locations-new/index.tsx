@@ -19,9 +19,8 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  InputBox,
-  ButtonContext,
   Button,
+  ButtonGroup,
   Icons,
 } from '@density/ui';
 
@@ -126,19 +125,21 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                     New {SPACE_TYPE_TO_NAME[newSpaceType]}
                   </AppBarTitle>
                   <AppBarSection>
-                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                    <ButtonGroup>
                       <Button
+                        variant="underline"
                         disabled={spaceManagement.view.startsWith('LOADING')}
                         onClick={() => {
                           window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
                         }}
                       >Cancel</Button>
-                    </ButtonContext.Provider>
-                    <Button
-                      type="primary"
-                      onClick={this.onSave}
-                      disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
-                    >Save</Button>
+                      <Button
+                        variant="filled"
+                        type="primary"
+                        onClick={this.onSave}
+                        disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
+                      >Save</Button>
+                    </ButtonGroup>
                   </AppBarSection>
                 </AppBar>
               </div>

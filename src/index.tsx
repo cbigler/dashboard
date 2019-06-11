@@ -1,18 +1,19 @@
-import '@babel/polyfill'; // Polyfills for IE
-import 'react-app-polyfill/ie11'; // For IE 11 support
+// Polyfills for IE
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 
-import core, { config as configCore } from './client/core';
-import accounts, { config as configAccounts } from './client/accounts';
+import accounts from './client/accounts';
 
 import ReactGA from 'react-ga';
-import moment from 'moment';
 import queryString from 'qs';
 
-import { DensityUser } from './types';
+import { DensityUser, DensitySpace } from './types';
 
 // Import @density/ui package for font
 import '@density/ui';
@@ -34,7 +35,7 @@ import IntercomDensity from './components/intercom/index';
 
 // The Environment switcher, used to switch between sets of servers that should be communicated
 // with.
-import EnvironmentSwitcher, { getActiveEnvironments, getGoSlow } from './components/environment-switcher/index';
+import EnvironmentSwitcher from './components/environment-switcher/index';
 
 // Redux is used to manage state.
 import { Provider } from 'react-redux';
@@ -82,32 +83,13 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
 import handleVisibilityChange from './helpers/visibility-change';
+import fetchAllObjects from './helpers/fetch-all-objects';
+import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
+import { configureClients } from './helpers/unsafe-configure-app';
+
 const store = storeFactory();
 
-
-// ----------------------------------------------------------------------------
-// Set the location of all microservices.
-// Here's how it works:
-// ----------------------------------------------------------------------------
-//
-// 1. All microservice names and cofigurations are defined in `fields`. `setServiceLocations` is
-// called, passing the active environment names. By setting this initially before the react render
-// happens, calls that happen before the render are able to take advantage of the custom
-// environments that have been defined.
-//
-// 2. Developer opens the environment switcher modal, changes an environment variable, then clicks
-// "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
-// `setServiceLocations`. The locations of all the services update.
-//
-function configureClients() {
-  const goSlow = getGoSlow();
-  const environments: any = getActiveEnvironments(fields);
-  const impersonateUser = localStorage.impersonate ?
-    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({host: environments.core, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, impersonateUser, store});
-}
-configureClients();
+configureClients(store);
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -324,18 +306,20 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = (await core().get('/spaces')).data;
-  store.dispatch(collectionSpacesSet(spaces.results));
+  const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+  store.dispatch(collectionSpacesSet(spaces));
 
-  const spaceEventSets: any = await Promise.all(spaces.results.map(space => {
-    return core().get(`/spaces/${space.id}/events`, { params: {
-      start_time: moment.utc().subtract(1, 'minute').format(),
-      end_time: moment.utc().format(),
-    }});
+  const spaceEventSets: any = await Promise.all(spaces.map(space => {
+    return fetchAllObjects(`/spaces/${space.id}/events`, {
+      params: {
+        start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
+        end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
+      }
+    });
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces.results[index].id] = next.data.results.map(i => ({ 
+    acc[spaces[index].id] = next.map(i => ({ 
       countChange: i.direction,
       timestamp: i.timestamp
     }));
@@ -362,8 +346,8 @@ setInterval(async () => {
   const loggedIn = (store.getState() as any).sessionToken !== null;
 
   if (loggedIn) {
-    const spaces = (await core().get('/spaces')).data;
-    store.dispatch(collectionSpacesSet(spaces.results));
+    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    store.dispatch(collectionSpacesSet(spaces));
   }
 },  5 * 60 * 1000);
 

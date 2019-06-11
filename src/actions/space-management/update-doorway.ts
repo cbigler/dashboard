@@ -1,6 +1,5 @@
 import uuid from 'uuid';
 
-import showModal from '../../actions/modal/show';
 import showToast, { hideToast } from '../../actions/toasts';
 import hideModal from '../../actions/modal/hide';
 import pushDoorway from './push-doorway';
@@ -10,6 +9,7 @@ import core from '../../client/core';
 import uploadMedia from '../../helpers/media-files';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityDoorway } from '../../types';
+import { fetchObject } from '../../helpers/fetch-all-objects';
 
 export const SPACE_MANAGEMENT_UPDATE_DOORWAY = 'SPACE_MANAGEMENT_UPDATE_DOORWAY';
 
@@ -65,7 +65,9 @@ export function uploadDoorwayImages(doorwayId, item) {
       // inside.
       let doorwayResponse;
       try {
-        doorwayResponse = await core().get(`/doorways/${doorwayId}`, { params: { environment: true } });
+        doorwayResponse = await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, {
+          params: { environment: true }
+        });
       } catch (err) {
         dispatch(showToast({type: 'error', text: 'Error fetching updated doorway'}));
         return false;

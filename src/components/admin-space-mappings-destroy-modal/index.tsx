@@ -3,13 +3,12 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Button,
+  ButtonGroup,
   Modal,
 } from '@density/ui';
 
@@ -17,7 +16,7 @@ import {
 export default class SpaceMappingsDestroyModal extends React.Component<any, any> {
 
   render() {
-    const { visible, onDismiss, onDestroy } = this.props;
+    const { visible, onDismiss } = this.props;
     
     return (
       <Modal
@@ -40,14 +39,15 @@ export default class SpaceMappingsDestroyModal extends React.Component<any, any>
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={this.props.onDismiss}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  width="100%"
-                  onClick={() => this.props.onDestroy(this.props.spaceMappingId)}
-                >I understand the consequences. Delete.</Button>
+                <ButtonGroup>
+                  <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    width="100%"
+                    onClick={() => this.props.onDestroy(this.props.spaceMappingId)}
+                  >I understand the consequences. Delete.</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>

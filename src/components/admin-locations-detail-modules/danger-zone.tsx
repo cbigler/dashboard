@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styles from './danger-zone.module.scss';
 
-import { Button, ButtonContext } from '@density/ui';
+import { Button } from '@density/ui';
 
 import collectionSpacesDestroy from '../../actions/collection/spaces/destroy';
 import showModal from '../../actions/modal/show';
@@ -19,9 +19,11 @@ function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShow
           <span>Once deleted, it will be gone forever. Please be certain.</span>
         </div>
         <div className={styles.right}>
-          <ButtonContext.Provider value="DELETE_BUTTON">
-            <Button onClick={() => onShowConfirm(selectedSpace)}>Delete this space</Button>
-          </ButtonContext.Provider>
+          <Button
+            variant="underline"
+            type="danger"
+            onClick={() => onShowConfirm(selectedSpace)}
+          >Delete this space</Button>
         </div>
       </div>
     </AdminLocationsDetailModule>

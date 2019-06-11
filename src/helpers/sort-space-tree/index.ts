@@ -4,7 +4,7 @@ export default function sortSpaceTree(spaces) {
   let lonelySpaces: any = [];
   let hierarchySpaces: any = [];
   spaces.forEach(function(topLevelSpace, index){
-    if(topLevelSpace.spaceType == "space") {
+    if(topLevelSpace.spaceType === "space") {
       lonelySpaces.push(topLevelSpace);
     } else {
       hierarchySpaces.push(topLevelSpace);
