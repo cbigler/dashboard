@@ -27,6 +27,6 @@ export function configureClients(store?) {
     JSON.parse(localStorage.sessionToken) : null;
   const impersonateUser = localStorage.impersonate ?
     (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({host: environments.core, token, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, token, impersonateUser, store});
+  configCore({ host: environments.core, token, impersonateUser, goSlow, store });
+  configAccounts({ host: environments.accounts, token, impersonateUser, store });
 }

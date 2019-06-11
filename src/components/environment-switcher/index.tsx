@@ -59,7 +59,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
     });
 
     // Emit an initial event.
-    this.props.onChange(getActiveEnvironments(this.props.fields));
+    this.props.onChange();
   }
   render() {
     const { fields } = this.props;
