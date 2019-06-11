@@ -78,7 +78,9 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
             <AppBarTitle>{selectedSpace.name}</AppBarTitle>
             <AppBarSection>
               {user.data.permissions.includes('core_write') ? (
-                <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
+                <Button onClick={() => {
+                  window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+                }}>Edit</Button>
               ) : null}
             </AppBarSection>
           </AppBar>
@@ -97,7 +99,9 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
             <AppBarTitle>{selectedSpace.name}</AppBarTitle>
             <AppBarSection>
               {user.data.permissions.includes('core_write') ? (
-                <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
+                <Button onClick={() => {
+                  window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+                }}>Edit</Button>
               ) : null}
             </AppBarSection>
           </AppBar>

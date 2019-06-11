@@ -270,7 +270,9 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                       <Button
                         variant="underline"
                         disabled={spaceManagement.view.startsWith('LOADING')}
-                        href={`#/admin/locations/${selectedSpace.id}`}
+                        onClick={() => {
+                          window.location.href = `#/admin/locations/${selectedSpace.id}`;
+                        }}
                       >Cancel</Button>
                       <Button
                         type="primary"

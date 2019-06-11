@@ -48,11 +48,15 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
       <ButtonGroup>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'campus')}
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'campus');
+          }}
         >Add a campus</Button>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'building')}
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'building');
+          }}
         >Add a building</Button>
       </ButtonGroup>
     );
@@ -60,7 +64,9 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
     return (
       <Button
         variant="filled"
-        href={generateCreateRoute(spaceId, 'building')}
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'building');
+        }}
       >Add a building</Button>
     );
   case 'building':
@@ -68,11 +74,15 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
       <ButtonGroup>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'floor')}
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'floor');
+          }}
         >Add a level</Button>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'space')}
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'space');
+          }}
         >Add a room</Button>
       </ButtonGroup>
     );
@@ -80,7 +90,9 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
     return (
       <Button
         variant="filled"
-        href={generateCreateRoute(spaceId, 'space')}
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'space');
+        }}
       >Add a room</Button>
     );
   case 'space':
@@ -91,7 +103,9 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         {parentSpaceType !== 'space' ? (
           <Button
             variant="filled"
-            href={generateCreateRoute(spaceId, 'space')}
+            onClick={() => {
+              window.location.href = generateCreateRoute(spaceId, 'space');
+            }}
           >Add a room</Button>
         ) : null}
       </Fragment>

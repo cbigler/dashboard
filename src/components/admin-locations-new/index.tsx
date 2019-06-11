@@ -129,7 +129,9 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                       <Button
                         variant="underline"
                         disabled={spaceManagement.view.startsWith('LOADING')}
-                        href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
+                        onClick={() => {
+                          window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
+                        }}
                       >Cancel</Button>
                       <Button
                         variant="filled"
