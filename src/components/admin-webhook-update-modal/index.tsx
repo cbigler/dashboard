@@ -64,7 +64,6 @@ export default class WebhookUpdateModal extends React.Component<any, any> {
                 <Button
                   variant="filled"
                   type="primary"
-                  width="100%"
                   disabled={this.state.name.length === 0}
                   onClick={() => this.props.onSubmit({
                     id: this.state.id,

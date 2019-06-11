@@ -72,7 +72,6 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                   variant="filled"
                   type="primary"
                   disabled={this.state.name.length === 0}
-                  width="100%"
                   onClick={() => this.props.onSubmit({
                     key: this.state.key,
                     name: this.state.name,
@@ -119,7 +118,6 @@ export default class TokenUpdateModal extends React.Component<any, any> {
                 <Button
                   variant="filled"
                   type="primary"
-                  width="100%"
                   disabled={this.state.name !== this.state.destroyNameConfirmation}
                   onClick={() => this.props.onDestroyToken(this.props.initialToken)}
                 >I understand the consequences. Delete.</Button>

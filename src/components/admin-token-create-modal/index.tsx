@@ -99,7 +99,6 @@ export default class TokenCreate extends React.Component<any, any> {
                   type="primary"
                   disabled={this.state.name.length === 0}
                   id="admin-token-create-modal-submit"
-                  width="100%"
                   onClick={() => this.props.onSubmit({
                     name: this.state.name,
                     tokenType: this.state.tokenType,
