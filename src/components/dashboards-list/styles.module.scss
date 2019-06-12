@@ -1,17 +1,26 @@
-.dashboardsList {
-  width: 100%;
-  max-width: 800px;
-  margin: auto;
+@import "@density/ui/variables/fonts.scss";
 
-  padding-top: 24px;
-  padding-bottom: 24px;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: #fff;
-  border: 1px solid #e8e8ed;
-  border-radius: 4px;
-  box-shadow: 6px 6px 0 rgba(0,0,0,.06);
+.dashboardsList {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
 }
 
-.dashboardsList h1 { font-size: 24px; }
-.dashboardsList p { font-size: 14px; }
+.dashboardsList > div { width: 320px; }
+
+.dashboardsList h1 {
+  font-size: 18px;
+}
+.dashboardsList h1 img {
+  width: 24px;
+  margin-bottom: -5px;
+  margin-right: 6px;
+}
+.dashboardsList p {
+  font-size: $fontSizeBase;
+  margin-bottom: 18px;
+}

@@ -30,6 +30,7 @@ import DashboardDigestManagementModal from '../dashboard-digest-management-modal
 import stringToBoolean from '../../helpers/string-to-boolean';
 import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
 import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
+import createDashboard from '../../actions/dashboards/create-dashboard';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -64,19 +65,11 @@ function DashboardMainScrollViewContent({
   selectedDashboard,
   resizeCounter,
 }) {
-  if (dashboards.error) {
+  if (!dashboards.selected && !dashboards.loading) {
     return (
       <div className={styles.dashboardNonIdealState}>
-        <h1>Error loading dashboards</h1>
-        <span>{dashboards.error}</span>
-      </div>
-    );
-
-  } else if (!dashboards.selected && !dashboards.loading) {
-    return (
-      <div className={styles.dashboardNonIdealState}>
-        <h1>No dashboard selected</h1>
-        <span>To create a dashboard, please talk to your Density account manager.</span>
+        <h1>Dashboard not found</h1>
+        <span>This dashboard was not found - it may not exist, or was deleted.</span>
       </div>
     );
 
@@ -85,6 +78,14 @@ function DashboardMainScrollViewContent({
       <div className={styles.dashboardNonIdealState}>
         <h1>No reports in dashboard</h1>
         <span>To add reports to this dashboard, please talk to your Density account manager.</span>
+      </div>
+    );
+
+  } else if (dashboards.error) {
+    return (
+      <div className={styles.dashboardNonIdealState}>
+        <h1>Error loading dashboards</h1>
+        <span>{dashboards.error}</span>
       </div>
     );
 
@@ -183,7 +184,7 @@ function DashboardListItem({selected, id, name, reportSet, onClick}) {
   );
 }
 
-function DashboardDropdown({selectedDashboard, dashboards}) {
+function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
   const [opened, setOpened] = useState(false);
   return (
     <Fragment>
@@ -205,7 +206,12 @@ function DashboardDropdown({selectedDashboard, dashboards}) {
           <AppBar>
             <AppBarTitle>Dashboards</AppBarTitle>
             <AppBarSection>
-              <Button>Create new dashboard</Button>
+              <Button
+                onClick={() => {
+                  setOpened(false);
+                  onCreateDashboard();
+                }}
+              >Create new dashboard</Button>
             </AppBarSection>
           </AppBar>
           {dashboards.loading ? null : <div className={styles.dashboardDropdownPopupScroll}>
@@ -271,6 +277,7 @@ export class Dashboard extends React.Component<any, any> {
       onDashboardChangeWeek,
       onCloseModal,
       onShowModal,
+      onCreateDashboard,
     } = this.props;
 
     return (
@@ -298,57 +305,63 @@ export class Dashboard extends React.Component<any, any> {
         <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
             <AppPane>
-              <AppBar>
-                <AppBarSection>
-                  <DashboardDropdown
-                    selectedDashboard={selectedDashboard}
-                    dashboards={dashboards}
-                  />
-                </AppBarSection>
 
-                {/* TODO: Replace this with better report time navigation (like MixPanel) */}
-                {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
-                  <div style={{width: 50}}>
-                    <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
-                    <div style={{paddingTop: 4}}>
-                      <Icons.ChevronLeft color={colorVariables.brandPrimary} />
-                    </div>
-                    </Button>
-                  </div>
-                  <div style={{padding: 13}}>
-                    Reported on{' '}
-                    <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-                  </div>
-                  <div style={{width: 50}}>
-                    <Button
-                      onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-                      disabled={moment(date).add(1, 'week') > moment()}
-                    >
-                      <div style={{paddingTop: 4}}>
-                        <Icons.ChevronRight
-                          color={moment(date).add(1, 'week') > moment() ?
-                            colorVariables.gray :
-                            colorVariables.brandPrimary}
-                        />
+              {dashboards.selected || dashboards.loading ? (
+                <AppBarContext.Provider value="CARD_HEADER">
+                  <AppBar>
+                    <AppBarSection>
+                      <DashboardDropdown
+                        selectedDashboard={selectedDashboard}
+                        dashboards={dashboards}
+                        onCreateDashboard={onCreateDashboard}
+                      />
+                    </AppBarSection>
+
+                    {/* TODO: Replace this with better report time navigation (like MixPanel) */}
+                    {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
+                      <div style={{width: 50}}>
+                        <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                        <div style={{paddingTop: 4}}>
+                          <Icons.ChevronLeft color={colorVariables.brandPrimary} />
+                        </div>
+                        </Button>
                       </div>
-                    </Button>
-                  </div>
-                </AppBarSection> : null}
+                      <div style={{padding: 13}}>
+                        Reported on{' '}
+                        <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+                      </div>
+                      <div style={{width: 50}}>
+                        <Button
+                          onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                          disabled={moment(date).add(1, 'week') > moment()}
+                        >
+                          <div style={{paddingTop: 4}}>
+                            <Icons.ChevronRight
+                              color={moment(date).add(1, 'week') > moment() ?
+                                colorVariables.gray :
+                                colorVariables.brandPrimary}
+                            />
+                          </div>
+                        </Button>
+                      </div>
+                    </AppBarSection> : null}
 
-                <AppBarSection>
-                  {!isDemoUser ? (
-                    <DashboardDigestPopupList
-                      selectedDashboard={selectedDashboard}
-                      onEditDigest={digest => {
-                        onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
-                      }}
-                      onCreateDigest={() => {
-                        onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
-                      }}
-                    />
-                  ) : null}
-                </AppBarSection>
-              </AppBar>
+                    <AppBarSection>
+                      {!isDemoUser ? (
+                        <DashboardDigestPopupList
+                          selectedDashboard={selectedDashboard}
+                          onEditDigest={digest => {
+                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                          }}
+                          onCreateDigest={() => {
+                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                          }}
+                        />
+                      ) : null}
+                    </AppBarSection>
+                  </AppBar>
+                </AppBarContext.Provider>
+              ) : null}
               <AppScrollView backgroundColor={colorVariables.grayLightest}>
                 <DashboardMainScrollViewContent
                   dashboards={dashboards}
@@ -383,6 +396,9 @@ export default connect((state: any) => {
     onDashboardChangeWeek(dashboard, weeks) {
       dispatch(scrubDashboardDate(weeks));
       dispatch(routeTransitionDashboardDetail(dashboard.id));
+    },
+    onCreateDashboard() {
+      dispatch(createDashboard());
     },
 
     onCloseModal() {

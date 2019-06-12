@@ -86,7 +86,6 @@ function loadDashboardAndReports(id) {
     dispatch(collectionDashboardsSet(results));
 
     if (results.length === 0) {
-      dispatch(dashboardsError('No dashboards were found, please talk to your Density account representative to create one.'))
       return;
     }
 
