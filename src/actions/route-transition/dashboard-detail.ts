@@ -133,7 +133,7 @@ function loadDashboardAndReports(id) {
 
 export default function routeTransitionDashboardDetail(id) {
   return async dispatch => {
-    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL, dashboardId: id });
 
     await Promise.all([
       dispatch(loadDigestSchedules()),

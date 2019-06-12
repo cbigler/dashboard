@@ -306,16 +306,18 @@ export class Dashboard extends React.Component<any, any> {
           <AppFrame>
             <AppPane>
 
-              {dashboards.selected || dashboards.loading ? (
+              {selectedDashboard || dashboards.loading ? (
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
-                    <AppBarSection>
-                      <DashboardDropdown
-                        selectedDashboard={selectedDashboard}
-                        dashboards={dashboards}
-                        onCreateDashboard={onCreateDashboard}
-                      />
-                    </AppBarSection>
+                    {selectedDashboard ? (
+                      <AppBarSection>
+                        <DashboardDropdown
+                          selectedDashboard={selectedDashboard}
+                          dashboards={dashboards}
+                          onCreateDashboard={onCreateDashboard}
+                        />
+                      </AppBarSection>
+                    ) : null}
 
                     {/* TODO: Replace this with better report time navigation (like MixPanel) */}
                     {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>

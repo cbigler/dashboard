@@ -1,0 +1,17 @@
+@import "@density/ui/variables/colors.scss";
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.dashboardEdit {
+  background-color: $grayLightest;
+}
+
+.backArrow {
+  margin-right: 24px;
+  text-decoration: none;
+}

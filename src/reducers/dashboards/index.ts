@@ -1,8 +1,10 @@
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_DASHBOARDS_SET } from '../../actions/collection/dashboards/set';
+import { COLLECTION_DASHBOARDS_PUSH } from '../../actions/collection/dashboards/push';
 import { COLLECTION_DASHBOARDS_ERROR } from '../../actions/collection/dashboards/error';
 import { COLLECTION_DASHBOARDS_SELECT } from '../../actions/collection/dashboards/select';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
+import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
 import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
@@ -16,6 +18,7 @@ const initialState = {
   loading: true,
   selected: null,
   error: null,
+  view: 'LOADING',
   data: [],
   calculatedReportData: {
     /*
@@ -37,6 +40,7 @@ export default function dashboards(state=initialState, action) {
     const allReports = state.data.reduce((acc, dashboard: any) => [...acc, ...dashboard.reportSet], [] as any);
     return {
       ...state,
+      selected: action.dashboardId,
       calculatedReportData: {
         // All reports will be put into a loading state.
         ...(allReports.reduce((acc, report) => ({
@@ -50,6 +54,9 @@ export default function dashboards(state=initialState, action) {
     };
   }
 
+  case ROUTE_TRANSITION_DASHBOARD_EDIT:
+    return { ...state, selected: action.dashboardId };
+
   // Update the whole dashboard collection.
   case COLLECTION_DASHBOARDS_SET: {
     const allReports = action.data.reduce((acc, dashboard) => [...acc, ...dashboard.reportSet], []);
@@ -57,6 +64,7 @@ export default function dashboards(state=initialState, action) {
       ...state,
       loading: false,
       error: null,
+      view: 'VISIBLE',
       data: action.data.map(d => objectSnakeToCamel<DensityDashboard>(d)),
       calculatedReportData: {
         // Any reports that don't have data loaded yet will be put into a loading state.
@@ -72,6 +80,31 @@ export default function dashboards(state=initialState, action) {
         // for reports that already have had their data fetched.
         ...state.calculatedReportData,
       },
+    };
+  }
+
+  case COLLECTION_DASHBOARDS_PUSH: {
+    return {
+      ...state,
+      view: 'VISIBLE',
+      loading: false,
+      data: [
+        // Update existing items
+        ...state.data.map((item: any) => {
+          if (action.item.id === item.id) {
+          return {...item, ...objectSnakeToCamel<DensityDashboard>(action.item)};
+          } else {
+            return item;
+          }
+        }),
+
+        // Add new items
+        ...(
+          state.data.find((i: any) => i.id === action.item.id) === undefined ?
+            [objectSnakeToCamel<DensityDashboard>(action.item)] :
+            []
+        ),
+      ],
     };
   }
 

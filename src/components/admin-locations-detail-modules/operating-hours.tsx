@@ -8,7 +8,7 @@ import classnames from 'classnames';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
-import SpacePicker, { SpacePickerDropdown } from '../space-picker';
+import SpacePicker from '../space-picker';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
