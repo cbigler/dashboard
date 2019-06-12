@@ -346,19 +346,22 @@ export class Dashboard extends React.Component<any, any> {
                       </div>
                     </AppBarSection> : null}
 
-                    <AppBarSection>
-                      {!isDemoUser ? (
-                        <DashboardDigestPopupList
-                          selectedDashboard={selectedDashboard}
-                          onEditDigest={digest => {
-                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
-                          }}
-                          onCreateDigest={() => {
-                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
-                          }}
-                        />
-                      ) : null}
-                    </AppBarSection>
+                    {selectedDashboard ? (
+                      <AppBarSection>
+                        {!isDemoUser ? (
+                          <DashboardDigestPopupList
+                            selectedDashboard={selectedDashboard}
+                            onEditDigest={digest => {
+                              onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                            }}
+                            onCreateDigest={() => {
+                              onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                            }}
+                          />
+                        ) : null}
+                        <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+                      </AppBarSection>
+                    ) : null}
                   </AppBar>
                 </AppBarContext.Provider>
               ) : null}
