@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment } from 'react';
+import React, { useState, Fragment } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
 
@@ -15,7 +15,6 @@ import {
   AppBarTitle,
   AppFrame,
   AppPane,
-  AppSidebar,
   AppScrollView,
   Button,
   DashboardReportGrid,
@@ -30,43 +29,10 @@ import DashboardDigestManagementModal from '../dashboard-digest-management-modal
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
-import showDashboardSidebar from '../../actions/miscellaneous/show-dashboards-sidebar';
-import hideDashboardSidebar from '../../actions/miscellaneous/hide-dashboards-sidebar';
-import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
 import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
-
-function DashboardSidebarItem({selected, id, name, reportSet}) {
-  const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
-  return (
-    <a className={styles.dashboardAppFrameSidebarListItem} href={`#/dashboards/${id}`}>
-      <div className={classnames(styles.dashboardSidebarItem, {[styles.selected]: selected})}>
-        <span className={styles.dashboardSidebarItemName}>{name}</span>
-        <span className={styles.dashboardSidebarItemNumReports}>
-          {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
-        </span>
-        <Icons.ChevronRight
-          color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
-          width={8}
-          height={8}
-        />
-      </div>
-    </a>
-  );
-}
-
-function DashboardSidebarHideShowIcon({sidebarVisible, onChangeSidebarVisibility}) {
-  return (
-    <span
-      className={styles.dashboardSidebarHideShowIcon}
-      onClick={() => onChangeSidebarVisibility(!sidebarVisible)}
-    >
-      <Icons.Menu />
-    </span>
-  );
-}
 
 function DashboardExpandedReportModal({visible, report, reportData, onCloseModal}) {
   return <Modal
@@ -80,7 +46,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
         <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
-            <Button type="primary" variant="filled" onClick={onCloseModal}>Close</Button>
+            <Button onClick={onCloseModal}>Close</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -92,7 +58,6 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
     /> : null}
   </Modal>
 }
-
 
 function DashboardMainScrollViewContent({
   dashboards,
@@ -195,6 +160,75 @@ function DashboardMainScrollViewContent({
   }
 }
 
+function DashboardListItem({selected, id, name, reportSet, onClick}) {
+  const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
+  return (
+    <a
+      className={styles.dashboardListItemLink}
+      href={`#/dashboards/${id}`}
+      onClick={onClick}
+    >
+      <div className={classnames(styles.dashboardListItem, {[styles.selected]: selected})}>
+        <span className={styles.dashboardListItemName}>{name}</span>
+        <span className={styles.dashboardListItemNumReports}>
+          {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
+        </span>
+        <Icons.ChevronRight
+          color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
+          width={8}
+          height={8}
+        />
+      </div>
+    </a>
+  );
+}
+
+function DashboardDropdown({selectedDashboard, dashboards}) {
+  const [opened, setOpened] = useState(false);
+  return (
+    <Fragment>
+      <div
+        className={classnames(styles.dashboardDropdownBackdrop, {[styles.visible]: opened})}
+        onClick={() => setOpened(false)}
+      />
+      <div className={styles.dashboardDropdownWrapper}>
+        <div className={styles.dashboardDropdownValue} onClick={() => setOpened(!opened)}>
+          <AppBarTitle>
+            {selectedDashboard ? selectedDashboard.name : ""}
+            <span className={styles.dashboardDropdownChevron}>
+              <Icons.ChevronDown width={12} height={12} />
+            </span>
+          </AppBarTitle>
+        </div>
+
+        <div className={classnames(styles.dashboardDropdownPopup, {[styles.visible]: opened})}>
+          <AppBar>
+            <AppBarTitle>Dashboards</AppBarTitle>
+            <AppBarSection>
+              <Button>Create new dashboard</Button>
+            </AppBarSection>
+          </AppBar>
+          {dashboards.loading ? null : <div className={styles.dashboardDropdownPopupScroll}>
+            {dashboards.data.sort((a, b) => {
+              // Sort alphabetically by name
+              return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+            }).map(dashboard => (
+              <DashboardListItem
+                key={dashboard.id}
+                id={dashboard.id}
+                name={dashboard.name}
+                reportSet={dashboard.reportSet}
+                selected={selectedDashboard ? selectedDashboard.id === dashboard.id : false}
+                onClick={() => setOpened(false)}
+              />
+            ))}
+          </div>}
+        </div>
+      </div>
+    </Fragment>
+  )
+}
+
 export class Dashboard extends React.Component<any, any> {
   private pageContainerRef: React.RefObject<HTMLInputElement>;
 
@@ -230,18 +264,14 @@ export class Dashboard extends React.Component<any, any> {
       activeModal,
 
       date,
-      sidebarVisible,
       resizeCounter,
       settings,
       isDemoUser,
 
       onDashboardChangeWeek,
-      onChangeSidebarVisibility,
       onCloseModal,
       onShowModal,
     } = this.props;
-
-    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
 
     return (
       <Fragment>
@@ -267,38 +297,13 @@ export class Dashboard extends React.Component<any, any> {
         {/* Main application */}
         <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
-            <AppSidebar visible={sidebarVisible} width={sidebarWidth}>
-              <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
-              <AppScrollView>
-                <nav className={styles.dashboardAppFrameSidebarList}>
-                  {dashboards.loading ? null :
-                    <Fragment>
-                      {dashboards.data.sort((a, b) => {
-                        // Sort alphabetically by name
-                        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-                      }).map(dashboard => (
-                        <DashboardSidebarItem
-                          key={dashboard.id}
-                          id={dashboard.id}
-                          name={dashboard.name}
-                          reportSet={dashboard.reportSet}
-                          selected={selectedDashboard ? selectedDashboard.id === dashboard.id : false}
-                        />
-                      ))}
-                    </Fragment>}
-                </nav>
-              </AppScrollView>
-            </AppSidebar>
             <AppPane>
               <AppBar>
                 <AppBarSection>
-                  <DashboardSidebarHideShowIcon
-                    sidebarVisible={sidebarVisible}
-                    onChangeSidebarVisibility={onChangeSidebarVisibility}
+                  <DashboardDropdown
+                    selectedDashboard={selectedDashboard}
+                    dashboards={dashboards}
                   />
-                  <AppBarTitle>
-                    {selectedDashboard ? selectedDashboard.name : ""}
-                  </AppBarTitle>
                 </AppBarSection>
 
                 {/* TODO: Replace this with better report time navigation (like MixPanel) */}
@@ -378,18 +383,6 @@ export default connect((state: any) => {
     onDashboardChangeWeek(dashboard, weeks) {
       dispatch(scrubDashboardDate(weeks));
       dispatch(routeTransitionDashboardDetail(dashboard.id));
-    },
-    onChangeSidebarVisibility(visibleState) {
-      if (visibleState) {
-        dispatch(showDashboardSidebar());
-      } else {
-        dispatch(hideDashboardSidebar());
-      }
-
-      // Once the animation has completed, force a relayout
-      setTimeout(() => {
-        dispatch(incrementResizeCounter());
-      }, 300);
     },
 
     onCloseModal() {
