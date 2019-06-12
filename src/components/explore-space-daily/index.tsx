@@ -29,9 +29,9 @@ import ErrorBar from '../error-bar/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
+  DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
+  getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
 class ExploreSpaceDaily extends React.Component<any, any> {
@@ -49,33 +49,26 @@ class ExploreSpaceDaily extends React.Component<any, any> {
     const {
       spaces,
       space,
-      timeSegmentGroups,
+      spaceHierarchy,
       activeModal,
-      resizeCounter,
       onChangeSpaceFilter,
       onChangeDate,
-      onChangeTimeSegmentGroup,
+      onChangeTimeSegmentLabel,
     } = this.props;
 
     if (space) {
-      const spaceTimeSegmentGroupArray = [
-        DEFAULT_TIME_SEGMENT_GROUP,
-        ...timeSegmentGroups.data.filter(tsg => {
-          return space.timeSegmentGroups.find(i => i.id === tsg.id);
-        })
+      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+      const spaceTimeSegmentLabelsArray = [
+        DEFAULT_TIME_SEGMENT_LABEL,
+        ...shownTimeSegments.map(i => i.label),
       ];
 
-      // Which time segment group was selected?
-      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-        return i.id === spaces.filters.timeSegmentGroupId;
-      });
+      // Which time segment label was selected?
+      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
       // And, with the knowlege of the selected space, which time segment within that time segment
-      // group is applicable to this space?
-      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-        selectedTimeSegmentGroup,
-        space,
-      );
+      // label is applicable to this space?
+      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
       return <div className={styles.exploreSpaceDailyPage} ref={r => { this.container = r; }}>
         <ExploreFilterBar>
@@ -97,46 +90,50 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               )}
             />
           </ExploreFilterBarItem>
-          <ExploreFilterBarItem label="Time Segment">
+          <ExploreFilterBarItem label="Time segment">
             <InputBox
               type="select"
               className={styles.exploreSpaceDailyTimeSegmentBox}
-              value={selectedTimeSegmentGroup.id}
-              choices={spaceTimeSegmentGroupArray.map(ts => {
-                const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
-                  ts,
-                  space,
-                );
-                if (applicableTimeSegmentsForGroup.length === 1) {
-                  const timeSegment = applicableTimeSegmentsForGroup[0];
-                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-                  return {
-                    id: ts.id,
-                    label: `${ts.name} (${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(startSeconds, 'seconds')
-                    )} - ${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(space)
-                        .startOf('day')
-                        .add(endSeconds, 'seconds')
-                    )})`,
-                  };
-                } else {
-                  return {
-                    id: ts.id,
-                    label: `${ts.name} (Mixed hours)`
-                  };
-                }
-              })}
+              value={selectedTimeSegmentLabel}
+              choices={spaceTimeSegmentLabelsArray
+                // Remove multiple entries from the list if a time segment shows up multiple times
+                .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
+                .map(label => {
+                  const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+                  if (applicableTimeSegmentsForLabel.length === 1) {
+                    const timeSegment = applicableTimeSegmentsForLabel[0];
+                    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                    return {
+                      id: label,
+                      label: `${label} (${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(startSeconds, 'seconds')
+                      )} - ${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(space)
+                          .startOf('day')
+                          .add(endSeconds, 'seconds')
+                      )})`,
+                    };
+                  } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                    return { id: label, label: 'Whole day (12:00a - 11:59p)' }
+                  } else {
+                    return {
+                      id: label,
+                      label: `${label} (mixed hours)`
+                    };
+                  }
+                })
+              }
               width={300}
-              onChange={value => onChangeTimeSegmentGroup(space, value.id)}
+
+              onChange={value => onChangeTimeSegmentLabel(space, value.id)}
             />
           </ExploreFilterBarItem>
         </ExploreFilterBar>
 
         <ErrorBar
-          message={spaces.error || timeSegmentGroups.error}
+          message={spaces.error}
           modalOpen={activeModal.name !== null}
         />
 
@@ -148,7 +145,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <FootTrafficCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={selectedTimeSegmentGroup}
+                timeSegmentLabel={selectedTimeSegmentLabel}
                 timeSegments={applicableTimeSegments}
                 chartWidth={this.state.width}
               />
@@ -157,7 +154,7 @@ class ExploreSpaceDaily extends React.Component<any, any> {
               <RawEventsCard
                 space={space}
                 date={spaces.filters.date}
-                timeSegmentGroup={selectedTimeSegmentGroup}
+                timeSegmentLabel={selectedTimeSegmentLabel}
               />
             </div>
           </div>
@@ -173,7 +170,7 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    timeSegmentGroups: state.timeSegmentGroups,
+    spaceHierarchy: state.spaceHierarchy,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };
@@ -183,8 +180,8 @@ export default connect((state: any) => {
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value) {
-      dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
+    onChangeTimeSegmentLabel(space, value) {
+      dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
       dispatch<any>(calculateDailyModules(space));
     },

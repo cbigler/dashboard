@@ -1,11 +1,9 @@
-import React, { Fragment, Component } from 'react';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
 import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
-
-import collectionDigestSchedulesLoad from '../../actions/collection/digest-schedules/load';
 
 import styles from './styles.module.scss';
 
@@ -77,9 +75,9 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           className={classnames(styles.dashboardDigestListButton, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: !visible})}
         >
-          <Icons.Mail color={colorVariables.brandPrimaryNew} />
-          <span className={styles.dashboardDigestListButtonText}>Email Digest</span>
-          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimaryNew} />
+          <Icons.Mail color={colorVariables.brandPrimary} />
+          <span className={styles.dashboardDigestListButtonText}>Email digest</span>
+          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimary} />
         </button>
 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>
@@ -100,7 +98,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
               >
                 <Icons.PlusCircle color={colorVariables.brandPrimary} />
                 <span className={styles.dashboardDigestListDropdownCreateButtonText}>
-                  Create New Digest
+                  Create new digest
                 </span>
               </span>
             </AppBarSection>

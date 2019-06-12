@@ -1,9 +1,7 @@
 import localStorageReducerEnhancer from '../../helpers/localstorage-reducer-enhancer/index';
 import { SESSION_TOKEN_SET } from '../../actions/session-token/set';
 import { SESSION_TOKEN_UNSET } from '../../actions/session-token/unset';
-
-import { config as configCore } from '../../client/core';
-import { config as configAccounts } from '../../client/accounts';
+import { configureClients } from '../../helpers/unsafe-configure-app';
 
 const localStorage = window.localStorage || (global as any).localStorage || {};
 
@@ -26,18 +24,10 @@ export function sessionToken(state=initialState, action) {
 function updateTokenReducerEnhancer(reducer) {
   return (state, action) => {
     const token = reducer(state, action);
-    updateTokensOnApiClients(token);
+    configureClients();
     return token;
   };
 }
-
-// This function serves as a way of updating every service or concept in the application that
-// requires access to a token. This includes all the api clients and the websockets event source.
-function updateTokensOnApiClients(token) {
-  configCore({token});
-  configAccounts({token});
-}
-updateTokensOnApiClients(initialState);
 
 // Thinking "What's a reducer enhancer?" - here's a link to some redux docs:
 // https://github.com/reactjs/redux/blob/master/docs/recipes/ImplementingUndoHistory.md#meet-reducer-enhancers

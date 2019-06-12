@@ -1,5 +1,3 @@
-import moment from 'moment';
-
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_DIGEST_SCHEDULES_LOAD } from '../../actions/collection/digest-schedules/load';
 import { COLLECTION_DIGEST_SCHEDULES_SET } from '../../actions/collection/digest-schedules/set';

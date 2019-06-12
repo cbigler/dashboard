@@ -9,7 +9,7 @@ export default function collectionServiceAuthorizationCreate(serviceName, servic
     dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_CREATE });
 
     let requestBody = {}
-    if (serviceName == "robin") {
+    if (serviceName === "robin") {
       requestBody = {
         "robin_access_token": serviceAuthorization.credentials.robinAccessToken,
         "robin_organization_id": serviceAuthorization.credentials.robinOrganizationId,

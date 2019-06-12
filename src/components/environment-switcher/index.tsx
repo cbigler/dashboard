@@ -59,7 +59,7 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
     });
 
     // Emit an initial event.
-    this.props.onChange(getActiveEnvironments(this.props.fields));
+    this.props.onChange();
   }
   render() {
     const { fields } = this.props;
@@ -72,6 +72,20 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
           .filter(i => i.indexOf('staging') >= 0).length > 0
       ) ? <div className={styles.environmentSwitcherNonProductionRelease}>
         Staging
+      </div> : null}
+
+      {/* if the url of what the user is looking at is localhost, show a banner saying that */}
+      {(
+        Object.keys(this.state.values)
+          .map(i => this.state.values[i])
+          .filter(i => (
+            i.indexOf('localhost') >= 0 ||
+            i.indexOf('127.0.0.1') >= 0 ||
+            /192\.168\.[0-9]+\.[0-9]+/.test(i) ||
+            /10\.[0-9]\.[0-9]+\.[0-9]+/.test(i)
+          )).length > 0
+      ) ? <div className={styles.environmentSwitcherNonProductionRelease}>
+        Local
       </div> : null}
 
     {this.state.open ? <Modal
@@ -123,14 +137,14 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
 
           <div className={styles.environmentSwitcherFooter}>
             <Button
-              type="primary"
+              variant="filled"
               width="100%"
               className={styles.environmentSwitcherButton}
               onClick={() => {
                 this.setState({open: false});
                 window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);
                 window.localStorage.environmentGoSlow = JSON.stringify(this.state.goSlow);
-                this.props.onChange(this.state.values, this.state.goSlow);
+                this.props.onChange();
               }}
             >OK</Button>
           </div>

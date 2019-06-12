@@ -1,9 +1,18 @@
 @import "@density/ui/variables/colors.scss";
 
+.appFrameWrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background-color: white;
+  overflow: hidden;
+}
+
 .exploreAppFrameSidebarList {
   flex-grow: 1;
   flex-shrink: 1;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding-bottom: 60px;
 }
 
@@ -85,7 +94,7 @@
 .exploreAppFrameSidebarListItem.campus {
   font-weight: bold;
   font-size: 14px;
-  color: $grayDark;
+  color: $grayDarker;
   margin-top: 20px;
   border-top: 1px solid $grayLight;
 }

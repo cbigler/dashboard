@@ -1,49 +1,36 @@
-import moment from 'moment';
 import { REPORTS } from '@density/reports';
 import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
-import collectionSpacesFilter from '../collection/spaces/filter';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import fetchAllPages from '../../helpers/fetch-all-pages';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import {
   DensityReport,
   DensityReportCalculatationFunction,
-  DensitySpaceMapping,
   DensitySpace,
   DensityService,
+  DensitySpaceHierarchyItem,
 } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
 import {
-  integrationsRoomBookingSpacesSet,
-  integrationsRoomBookingSpacesError,
-} from '../../actions/integrations/room-booking';
-import {
-  integrationsRoomBookingSetDefaultService,
-  integrationsRoomBookingSelectSpaceMapping,
+  integrationsRoomBookingSetService,
 } from '../../actions/integrations/room-booking';
 import { calculateDashboardDate } from './dashboard-detail';
 
 import { getGoSlow } from '../../components/environment-switcher';
 
-import {
-  getCurrentLocalTimeAtSpace,
-  parseISOTimeAtSpace,
-  formatInISOTimeAtSpace,
-  requestCountsForLocalRange
-} from '../../helpers/space-time-utilities/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-
+import collectionServicesError from '../collection/services/error';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS = 'ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS';
 
-export default function routeTransitionExploreSpaceMeeting(id) {
+export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
   return async (dispatch, getState) => {
     // Prior to changing the active page, change the module state to be loading.
     dispatch(exploreDataCalculateDataLoading('meetings', null));
@@ -56,10 +43,8 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
       selectedSpace = spaces.find(s => s.id === id);
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
@@ -71,70 +56,31 @@ export default function routeTransitionExploreSpaceMeeting(id) {
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
     // Determine if a room booking integration is active
-    const roomBookingDefaultService: DensityService | null = await (async function() {
+    const services: Array<DensityService> = await (async function() {
       let servicesResponse;
       try {
         servicesResponse = await core().get('/integrations/services/', {});
       } catch (err) {
-        dispatch(integrationsRoomBookingSpacesError(`Error loading integrations list: ${err.message}`, 'robin'));
+        dispatch(collectionServicesError(`Error loading integrations list: ${err.message}`));
         return null;
       }
 
-      const services = servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
-      const defaultAuthorizedRoomBookingService = services
+      return servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
+    })();
+
+    let roomBookingService;
+    if (serviceName) {
+      roomBookingService = services.find(service => service.name === serviceName);
+    } else {
+      roomBookingService = services
         .filter(service => service.category === 'Room Booking')
         .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
         .find(service => service.serviceAuthorization.default);
-      return defaultAuthorizedRoomBookingService;
-    })();
-    dispatch(integrationsRoomBookingSetDefaultService(roomBookingDefaultService));
-
-    // Attempt to find a space mapping for this space
-    const spaceMappingExists = await (async function() {
-      let spaceMappingResponse;
-      try {
-        spaceMappingResponse = await fetchAllPages(async page => (
-          (await core().get(`/integrations/space_mappings/`, {params: {page, page_size: 5000}})).data
-        ));
-      } catch (err) {
-        if (err.indexOf('404') >= 0) {
-          // Space mapping was not found
-          dispatch(integrationsRoomBookingSelectSpaceMapping(null));
-          return false;
-        } else {
-          dispatch(integrationsRoomBookingSpacesError(`Error loading space mapping: ${err.message}`, 'robin'));
-          return false;
-        }
-      }
-
-      // Space mapping exists
-      const spaceMappings = spaceMappingResponse.map(sm => objectSnakeToCamel<DensitySpaceMapping>(sm));
-      const activeSpaceMapping = spaceMappings.find(sm => sm.spaceId === id);
-      if (activeSpaceMapping) {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(activeSpaceMapping));
-        return true;
-      } else {
-        dispatch(integrationsRoomBookingSelectSpaceMapping(null));
-        return false;
-      }
-    })();
-
-    // Load room booking spaces if room booking service is active
-    let roomBookingProvider;
-    if (roomBookingDefaultService && ['robin', 'teem'].includes(roomBookingDefaultService.name)) {
-      roomBookingProvider = roomBookingDefaultService.name;
     }
 
-    if (roomBookingProvider) {
-      let spaces;
-      try {
-        spaces = objectSnakeToCamel(await core().get(`/integrations/${roomBookingProvider}/spaces/`, {})).data
-      } catch (err) {
-        dispatch(integrationsRoomBookingSpacesError(`Error loading ${roomBookingProvider} spaces: ${err.message}`, roomBookingProvider));
-        return;
-      }
-      dispatch(integrationsRoomBookingSpacesSet(spaces, roomBookingProvider));
-    }
+    dispatch(integrationsRoomBookingSetService(roomBookingService));
+
+    const spaceMappingExists = selectedSpace.spaceMappings.length > 0;
 
     if (spaceMappingExists) {
       dispatch(calculate(id));
@@ -145,7 +91,7 @@ export default function routeTransitionExploreSpaceMeeting(id) {
 const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   {
     id: 'rpt_ephemeral_meeting_attendance',
-    name: 'Meeting Attendance',
+    name: 'Meeting attendance',
     type: 'MEETING_ATTENDANCE',
     settings: {
       spaceId,
@@ -155,7 +101,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_meeting_size',
-    name: 'Meeting Size',
+    name: 'Meeting size',
     type: 'MEETING_SIZE',
     settings: {
       spaceId,
@@ -165,7 +111,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_booking_behavior',
-    name: 'Booker Behavior',
+    name: 'Booker behavior',
     type: 'BOOKING_BEHAVIOR',
     settings: {
       spaceId,
@@ -175,7 +121,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
   },
   {
     id: 'rpt_ephemeral_busiest_meeting',
-    name: 'Meetings: Day-to-Day',
+    name: 'Meetings: Day-to-day',
     type: 'DAY_TO_DAY_MEETINGS',
     settings: {
       spaceId,
@@ -204,8 +150,6 @@ export function calculate(id) {
     const meetingReportResults = await Promise.all(
       meetingEphemeralReportGenerators.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
-
-        let errorThrown;
         try {
           const data = await reportDataCalculationFunction(report, {
             date,

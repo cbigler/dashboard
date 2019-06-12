@@ -1,0 +1,56 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/grid.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.centeredMessage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - 64px);
+  margin-bottom: 50px;
+}
+
+.integrationNotice {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
+  height: 72px;
+
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+.adminIntegrationsList {
+  padding: 24px;
+  padding-bottom: 64px;
+}
+
+.adminIntegrationsSectionHeader {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid $gray;
+  font-size: 24px;
+  font-weight: 400;
+  color: $grayCinder;
+  margin-bottom: 32px;
+}
+
+.adminIntegrationsListviewValue {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adminIntegrationsListviewImage {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+}

@@ -1,0 +1,93 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+// The header above the image uploader. This contains the label for the image uploader as well as an
+// edit button to change its contents when full.
+.adminLocationsImageUploadLabel {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.adminLocationsImageUploadHeaderEdit {
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+
+  margin-left: auto;
+  font-size: $fontSizeBase;
+}
+.adminLocationsImageUploadHeaderEdit:hover { opacity: 0.8; }
+.adminLocationsImageUploadHeaderEdit:active { opacity: 1; }
+
+// The main container for the image uploader.
+.adminLocationsImageUpload {
+  position: relative;
+  height: 208px;
+
+  background-color: $grayLight;
+  border-radius: 4px;
+  overflow: hidden;
+
+  cursor: pointer;
+  user-select: none;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  transition: all ease-in-out 500ms;
+}
+
+// The image uploader is powered by an input[type=form], but we don't want that to be visible.
+.adminLocationsImageUploadFormElement { display: none; }
+
+
+// Placeholder container for icon and link
+.adminLocationsImageUploadPlaceholder {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+// The first visible flex child (in the empty state) in the main container is a status icon.
+.adminLocationsImageUploadIcon {
+  font-family: 'Densicons';
+  font-size: 18px;
+  margin-right: 8px;
+  color: $grayCinder;
+}
+
+// The second visible flex child (in the empty state) is a upload link.
+.adminLocationsImageUploadLink {
+  color: $brandPrimary;
+  font-size: $fontSize5;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+
+// Once the user has uploaded an image, show it in the preview box.
+.adminLocationsImageUploadPreview {
+  max-height: 100%;  
+  max-width: 100%; 
+  width: auto;
+  height: auto;
+  position: absolute;  
+  top: 0;  
+  bottom: 0;  
+  left: 0;  
+  right: 0;  
+  margin: auto;
+}
+
+// // Change the opacity of the upload link and upload icon on hover and on active. This is hte same
+// // effect we do all over the application.
+// .adminLocationsImageUpload:hover .adminLocationsImageUploadIcon,
+// .adminLocationsImageUpload:hover .adminLocationsImageUploadLink {
+//   opacity: 0.8;
+// }
+// .adminLocationsImageUpload:active .adminLocationsImageUploadIcon,
+// .adminLocationsImageUpload:active .adminLocationsImageUploadLink {
+//   opacity: 1;
+// }

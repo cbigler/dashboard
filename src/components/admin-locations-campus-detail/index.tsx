@@ -4,10 +4,9 @@ import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader  from '../admin-locations-subheader/index';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
-import { getAreaUnit } from '../admin-locations-detail-modules/index';
 
 import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
-import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
+import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import {
   AdminLocationsLeftPaneDataRow,
@@ -29,97 +28,71 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
   const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
-  const sizeAreaConverted = selectedSpace.sizeArea ? convertUnit(
-    selectedSpace.sizeArea,
-    selectedSpace.sizeAreaUnit,
-    user.data.sizeAreaUnitDefault,
-  ) : null;
-
   return (
     <AppFrame>
       <AppSidebar visible width={550}>
         <AppBar>
           <AppBarTitle>{selectedSpace.name}</AppBarTitle>
           <AppBarSection>
-            <Button onClick={() => {
-              window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
-            }}>Edit</Button>
+            {user.data.permissions.includes('core_write') ? (
+              <Button variant="filled" onClick={() => {
+                window.location.href = `#/admin/locations/${selectedSpace.id}/edit`;
+              }}>Edit</Button>
+            ) : null}
           </AppBarSection>
         </AppBar>
-        {mapShown ? (
-          <div className={styles.leftPaneMap}>
-            <AdminLocationsSpaceMap
-              readonly={true}
-              space={selectedSpace}
-              address={selectedSpace.address}
-              coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+        <div className={styles.sidebar}>
+          {mapShown ? (
+            <div className={styles.leftPaneMap}>
+              <AdminLocationsSpaceMap
+                readonly={true}
+                spaceType={selectedSpace.spaceType}
+                address={selectedSpace.address}
+                coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+              />
+            </div>
+          ) : null}
+          <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
+            <AdminLocationsLeftPaneDataRowItem
+              id="buildings"
+              label="Buildings:"
+              value={
+                spaces.data
+                .filter(space =>
+                  space.spaceType === 'buildings' &&
+                  space.ancestry.map(a => a.id).includes(selectedSpace.id)
+                ).length
+              }
             />
-          </div>
-        ) : null}
-        <AdminLocationsLeftPaneDataRow includeTopBorder={mapShown}>
-          <AdminLocationsLeftPaneDataRowItem
-            id="size"
-            label={`Size (${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
-            value={sizeAreaConverted ? sizeAreaConverted : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="size"
-            label={`Rent (per ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}):`}
-            value={sizeAreaConverted && selectedSpace.annualRent ? (
-              `$${(Math.round(selectedSpace.annualRent / sizeAreaConverted * 2) / 2).toFixed(2)}`
-            ) : <Fragment>&mdash;</Fragment>}
-          />
-        </AdminLocationsLeftPaneDataRow>
-        <AdminLocationsLeftPaneDataRow>
-          <AdminLocationsLeftPaneDataRowItem
-            id="target-capacity"
-            label="Target Capacity:"
-            value={selectedSpace.targetCapacity ? selectedSpace.targetCapacity : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="capacity"
-            label="Capacity:"
-            value={selectedSpace.capacity ? selectedSpace.capacity : <Fragment>&mdash;</Fragment>}
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="buildings"
-            label="Buildings:"
-            value={
-              spaces.data
-              .filter(space =>
-                space.spaceType === 'buildings' &&
-                space.ancestry.map(a => a.id).includes(selectedSpace.id)
-              ).length
-            }
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="levels"
-            label="Levels:"
-            value={
-              spaces.data
-              .filter(space =>
-                space.spaceType === 'floor' &&
-                space.ancestry.map(a => a.id).includes(selectedSpace.id)
-              ).length
-            }
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="spaces"
-            label="Spaces:"
-            value={
-              spaces.data
-              .filter(space =>
-                space.spaceType === 'space' &&
-                space.ancestry.map(a => a.id).includes(selectedSpace.id)
-              ).length
-            }
-          />
-          <AdminLocationsLeftPaneDataRowItem
-            id="dpus"
-            label="DPUs:"
-            value={"HARDCODED"}
-          />
-        </AdminLocationsLeftPaneDataRow>
+            <AdminLocationsLeftPaneDataRowItem
+              id="levels"
+              label="Levels:"
+              value={
+                spaces.data
+                .filter(space =>
+                  space.spaceType === 'floor' &&
+                  space.ancestry.map(a => a.id).includes(selectedSpace.id)
+                ).length
+              }
+            />
+            <AdminLocationsLeftPaneDataRowItem
+              id="spaces"
+              label="Rooms:"
+              value={
+                spaces.data
+                .filter(space =>
+                  space.spaceType === 'space' &&
+                  space.ancestry.map(a => a.id).includes(selectedSpace.id)
+                ).length
+              }
+            />
+            <AdminLocationsLeftPaneDataRowItem
+              id="dpus"
+              label="DPUs:"
+              value={selectedSpace.sensorsTotal ? selectedSpace.sensorsTotal : <Fragment>&mdash;</Fragment>}
+            />
+          </AdminLocationsLeftPaneDataRow>
+        </div>
       </AppSidebar>
       <AppPane>
         {visibleSpaces.length > 0 ? (
@@ -144,26 +117,26 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title="Spaces"
+                  title="Rooms"
                   template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title={`Size ${UNIT_NAMES[user.data.sizeAreaUnitDefault]}`}
+                  title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
                   template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
                     item.sizeArea,
                     item.sizeAreaUnit,
-                    user.data.sizeAreaUnitDefault,
+                    user.data.sizeAreaDisplayUnit,
                   ) : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title="Rent"
-                  template={item => item.annualRent}
+                  title="Annual rent"
+                  template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn
-                  title="Target Capacity"
+                  title="Target capacity"
                   template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
@@ -174,7 +147,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                 />
                 <ListViewColumn
                   title="DPUs"
-                  template={item => 'HARDCODED'}
+                  template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
                   href={item => `#/admin/locations/${item.id}`}
                 />
                 <ListViewColumn

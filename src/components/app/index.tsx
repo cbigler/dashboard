@@ -11,7 +11,6 @@ import Explore from '../explore/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
-import AdminLocations from '../admin-locations/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
 import AdminLocationsNew from '../admin-locations-new/index';
 import Account from '../account/index';
@@ -20,15 +19,13 @@ import AccountForgotPassword from '../account-forgot-password/index';
 import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
+import Dialogger from '../dialogger';
+import Toaster from '../toaster';
 
 import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
 import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
-
-import AccountSetupOverview from '../account-setup-overview';
-import AccountSetupDoorwayList from '../account-setup-doorway-list';
-import AccountSetupDoorwayDetail from '../account-setup-doorway-detail';
 
 import Dashboard from '../dashboard';
 import AppNavbar from '../app-navbar';
@@ -48,6 +45,10 @@ function App({
     <div className={styles.app}>
       {/* Impersonation modal */}
       {activeModal.name === 'MODAL_IMPERSONATE' ? <ImpersonateModal /> : null}
+
+      {/* Show dialogs and toasts */}
+      <Dialogger />
+      <Toaster />
 
       {/* Render the navbar */}
       {(function(activePage) {
@@ -89,6 +90,7 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_USER_MANAGEMENT":
   case "ADMIN_DEVELOPER":
   case "ADMIN_INTEGRATIONS":
+  case "ADMIN_SPACE_MAPPINGS":
   case "ADMIN_DEVICE_STATUS":
   case "ADMIN_LOCATIONS":
     return <Admin user={user} activePage={activePage} />;
@@ -115,12 +117,6 @@ function ActivePage({activePage, user, settings}) {
     return <AccountRegistration />;
   case "ACCOUNT_FORGOT_PASSWORD":
     return <AccountForgotPassword />;
-  case "ACCOUNT_SETUP_OVERVIEW":
-    return <AccountSetupOverview />;
-  case "ACCOUNT_SETUP_DOORWAY_LIST":
-    return <AccountSetupDoorwayList />;
-  case "ACCOUNT_SETUP_DOORWAY_DETAIL":
-    return <AccountSetupDoorwayDetail />;
   case "DASHBOARD_LIST":
     return <DashboardsList />;
   case "DASHBOARD_DETAIL":

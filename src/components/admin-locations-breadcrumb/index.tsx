@@ -161,6 +161,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
                   <a
                     href={`#/admin/locations/${space.id}`}
                     onClick={this.onHide}
+                    onFocus={() => this.setState({activeItemIndex: index})}
                   >{space.name}</a>
                 </div>
               ))}

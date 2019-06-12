@@ -1,6 +1,5 @@
 import collectionUsersPush from './push';
 import collectionUsersError from './error';
-import showToast from '../../toasts';
 import accounts from '../../../client/accounts';
 
 export const COLLECTION_USERS_UPDATE = 'COLLECTION_USERS_UPDATE';

@@ -1,22 +1,42 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
 @import "@density/ui/variables/spacing.scss";
 
 .spaceList {
   padding-left: 24px;
   padding-right: 24px;
   padding-top: 16px;
+  padding-bottom: 32px;
+  overflow-x: auto;
 }
 
-.section { margin-bottom: 32px; }
+.section {
+  margin-bottom: 32px;
+}
+
+.infoWrapper {
+  display: flex;
+  flex-direction: column;
+}
 
 .name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 500;
+}
+.address {
+  margin-top: 4px;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 500px;
 }
 
 .wrapper {
   height: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background-color: $grayLightest;
 }

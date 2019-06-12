@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 
 import { Icons } from '@density/ui';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import { DensitySpace } from '../../types';
 
 import * as MapboxGL from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -20,7 +21,16 @@ const MAP_ZOOM_BY_SPACE_TYPE = {
   space: 14,
 };
 
-export default class AdminLocationsSpaceMap extends Component<any, any> {
+type AdminLocationsSpaceMapProps = {
+  readonly: boolean,
+  spaceType: DensitySpace["spaceType"],
+  address: string,
+  coordinates: [number, number] | null,
+  onChangeAddress?: any,
+  onChangeCoordinates?: any,
+};
+
+export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpaceMapProps, {}> {
   map?: MapboxGL.Map;
   geocoderInstance?: any;
   initialMarker?: any;
@@ -112,6 +122,14 @@ export default class AdminLocationsSpaceMap extends Component<any, any> {
         // Add geocoder to dom
         const geocoderDomElement = this.geocoderInstance.onAdd(this.map);
         this.geocoder.current.appendChild(geocoderDomElement);
+
+        // Set the contents of the geocoder to be the address if the geocoder is visible. This isn't
+        // supported officialyl by the geocoder and I'm using what look to be private instance
+        // values on the geocoder to "hack around" this.
+        if (coordinates) {
+          this.geocoderInstance._inputEl.value = address;
+          this.geocoderInstance._clearEl.style.display = 'block';
+        }
       }
     }
   }
@@ -128,7 +146,8 @@ export default class AdminLocationsSpaceMap extends Component<any, any> {
     const { onChangeCoordinates, onChangeAddress } = this.props;
     const object = objectSnakeToCamel(o);
 
-    onChangeCoordinates(object.result.geometry.coordinates);
+    const [lng, lat] = object.result.geometry.coordinates;
+    onChangeCoordinates([lat, lng]);
     onChangeAddress(object.result.placeName);
 
     this.geocoderInstance.mapMarker.on('dragend', this.onMapPointDragged);

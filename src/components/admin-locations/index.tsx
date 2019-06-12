@@ -13,17 +13,15 @@ import AdminLocationsBuildingDetail from '../admin-locations-building-detail/ind
 import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 import AdminLocationsSpaceDetail from '../admin-locations-space-detail/index';
 
-import { DensitySpace } from '../../types';
 import {
   AppFrame,
   AppPane,
   AppSidebar,
   AppBar,
   AppBarSection,
-  AppBarTitle,
   Button,
+  ButtonGroup,
   Skeleton,
-  Icons,
 } from '@density/ui';
 
 import {
@@ -43,68 +41,73 @@ function generateCreateRoute(parentId, type) {
   }
 }
 
-
-function ActionButtons({spaceId, spaceType}) {
+function ActionButtons({spaceId, spaceType, parentSpaceType}) {
   switch (spaceType) {
   case null:
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'campus'); }}
-          >Add a Campus</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-          >Add a Building</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'campus');
+          }}
+        >Add a campus</Button>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'building');
+          }}
+        >Add a building</Button>
+      </ButtonGroup>
     );
   case 'campus':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-        >Add a Building</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'building');
+        }}
+      >Add a building</Button>
     );
   case 'building':
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'floor'); }}
-          >Add a Level</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a Room</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'floor');
+          }}
+        >Add a level</Button>
+        <Button
+          variant="filled"
+          onClick={() => {
+            window.location.href = generateCreateRoute(spaceId, 'space');
+          }}
+        >Add a room</Button>
+      </ButtonGroup>
     );
   case 'floor':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a Room</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        onClick={() => {
+          window.location.href = generateCreateRoute(spaceId, 'space');
+        }}
+      >Add a room</Button>
     );
   case 'space':
     return (
       <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a Room</Button>
+        {/* Only show the add a room button when we are not in a room that is within a room */}
+        {/* (rooms can only be two levels in depth) */}
+        {parentSpaceType !== 'space' ? (
+          <Button
+            variant="filled"
+            onClick={() => {
+              window.location.href = generateCreateRoute(spaceId, 'space');
+            }}
+          >Add a room</Button>
+        ) : null}
       </Fragment>
     );
   default:
@@ -113,8 +116,13 @@ function ActionButtons({spaceId, spaceType}) {
 }
 
 function AdminLocations({user, selectedSpace, spaces}) {
-  const visibleSpaces = spaces.data
-  .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
+  let selectedSpaceParentSpaceType = null;
+  if (selectedSpace) {
+    const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
+    if (parentSpace) {
+      selectedSpaceParentSpaceType = parentSpace.spaceType;
+    }
+  }
 
   let content: ReactNode = null;
   switch (selectedSpace ? selectedSpace.spaceType : null) {
@@ -141,7 +149,7 @@ function AdminLocations({user, selectedSpace, spaces}) {
   case null:
   default:
     content = (
-      <AdminLocationsRootDetail spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsRootDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
     );
     break;
   }
@@ -158,16 +166,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <Skeleton width={200} height={18} />
             </AppBarSection>
             <AppBarSection>
-              <span className={styles.leftButton}>
-                <Button type="primary">
+              <ButtonGroup>
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
-              <span className={styles.rightButton}>
-                <Button type="primary">
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
           <AppFrame>
@@ -177,26 +183,28 @@ function AdminLocations({user, selectedSpace, spaces}) {
                   <Skeleton width={200} height={8} />
                 </AppBarSection>
                 <AppBarSection>
-                  <Button>Edit</Button>
+                  {user.data.permissions.includes('core_write') ? (
+                    <Button>Edit</Button>
+                  ) : null}
                 </AppBarSection>
               </AppBar>
               <div className={styles.loadingMapSkeleton} />
               <AdminLocationsLeftPaneDataRow>
                 <AdminLocationsLeftPaneDataRowItem
                   id="size"
-                  label="Size (sq ft):"
+                  label="Size (sq unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="rent"
-                  label="Rent (per sq ft):"
+                  label="Annual rent (per square unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
               </AdminLocationsLeftPaneDataRow>
               <AdminLocationsLeftPaneDataRow>
                 <AdminLocationsLeftPaneDataRowItem
                   id="target-capacity"
-                  label="Target Capacity:"
+                  label="Target capacity:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
@@ -261,10 +269,13 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 <Breadcrumb space={selectedSpace} spaces={spaces} />
               </AppBarSection>
               <AppBarSection>
-                <ActionButtons
-                  spaceId={selectedSpace ? selectedSpace.id : null}
-                  spaceType={selectedSpace ? selectedSpace.spaceType : null}
-                />
+                {user.data.permissions.includes('core_write') ? (
+                  <ActionButtons
+                    spaceId={selectedSpace ? selectedSpace.id : null}
+                    spaceType={selectedSpace ? selectedSpace.spaceType : null}
+                    parentSpaceType={selectedSpaceParentSpaceType}
+                  />
+                ) : null}
               </AppBarSection>
             </AppBar>
           </div>

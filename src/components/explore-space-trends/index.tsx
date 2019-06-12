@@ -1,15 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import moment from 'moment';
-
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import gridVariables from '@density/ui/variables/grid.json'
 import {
   DateRangePicker,
   InputBox,
-  AppBar,
-  AppBarSection,
 } from '@density/ui';
 
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
@@ -38,9 +33,9 @@ import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
+  DEFAULT_TIME_SEGMENT_LABEL,
   parseStartAndEndTimesInTimeSegment,
+  getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
 import isOutsideRange, {
@@ -66,76 +61,72 @@ class ExploreSpaceTrends extends React.Component<any, any> {
     const {
       spaces,
       space,
+      spaceHierarchy,
       activeModal,
-      timeSegmentGroups,
       onChangeSpaceFilter,
-      onChangeTimeSegmentGroup,
+      onChangeTimeSegmentLabel,
       onChangeDateRange,
-      resizeCounter,
     } = this.props;
 
     if (space) {
-      const spaceTimeSegmentGroupArray = [
-        DEFAULT_TIME_SEGMENT_GROUP,
-        ...timeSegmentGroups.data.filter(tsg => {
-          return space.timeSegmentGroups.find(i => i.id === tsg.id);
-        })
+      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+      const spaceTimeSegmentLabelsArray = [
+        DEFAULT_TIME_SEGMENT_LABEL,
+        ...shownTimeSegments.map(i => i.label),
       ];
 
-      // Which time segment group was selected?
-      const selectedTimeSegmentGroup = spaceTimeSegmentGroupArray.find(i => {
-        return i.id === spaces.filters.timeSegmentGroupId;
-      });
+      // Which time segment label was selected?
+      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
       // And, with the knowlege of the selected space, which time segment within that time segment
-      // group is applicable to this space?
-      const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-        selectedTimeSegmentGroup,
-        space,
-      );
+      // label is applicable to this space?
+      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
       const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
       return <div className={styles.exploreSpaceTrendsPage} ref={r => { this.container = r; }}>
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <ExploreFilterBar>
-            <ExploreFilterBarItem label="Time Segment">
+            <ExploreFilterBarItem label="Time segment">
               <InputBox
                 type="select"
                 className={styles.exploreSpaceTrendsTimeSegmentBox}
-                value={selectedTimeSegmentGroup.id}
-                choices={spaceTimeSegmentGroupArray.map(ts => {
-                  const applicableTimeSegmentsForGroup = findTimeSegmentsInTimeSegmentGroupForSpace(
-                    ts,
-                    space,
-                  );
-                  if (applicableTimeSegmentsForGroup.length === 1) {
-                    const timeSegment = applicableTimeSegmentsForGroup[0];
-                    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-                    return {
-                      id: ts.id,
-                      label: `${ts.name} (${prettyPrintHoursMinutes(
-                        getCurrentLocalTimeAtSpace(space)
-                          .startOf('day')
-                          .add(startSeconds, 'seconds')
-                      )} - ${prettyPrintHoursMinutes(
-                        getCurrentLocalTimeAtSpace(space)
-                          .startOf('day')
-                          .add(endSeconds, 'seconds')
-                      )})`,
-                    };
-                  } else {
-                    return {
-                      id: ts.id,
-                      label: `${ts.name} (Mixed hours)`
-                    };
-                  }
-                })}
+                value={selectedTimeSegmentLabel}
+                choices={spaceTimeSegmentLabelsArray
+                  // Remove multiple entries from the list if a time segment shows up multiple times
+                  .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
+                  .map(label => {
+                    const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+                    if (applicableTimeSegmentsForLabel.length === 1) {
+                      const timeSegment = applicableTimeSegmentsForLabel[0];
+                      const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                      return {
+                        id: label,
+                        label: `${label} (${prettyPrintHoursMinutes(
+                          getCurrentLocalTimeAtSpace(space)
+                            .startOf('day')
+                            .add(startSeconds, 'seconds')
+                        )} - ${prettyPrintHoursMinutes(
+                          getCurrentLocalTimeAtSpace(space)
+                            .startOf('day')
+                            .add(endSeconds, 'seconds')
+                        )})`,
+                      };
+                    } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                      return { id: label, label: 'Whole day (12:00a - 11:59p)' }
+                    } else {
+                      return {
+                        id: label,
+                        label: `${label} (mixed hours)`
+                      };
+                    }
+                  })
+                }
                 width={300}
-                onChange={value => onChangeTimeSegmentGroup(space, value.id, spaces.filters)}
+                onChange={value => onChangeTimeSegmentLabel(space, value.id, spaces.filters)}
               />
             </ExploreFilterBarItem>
-            <ExploreFilterBarItem label="Date Range">
+            <ExploreFilterBarItem label="Date range">
               <DateRangePicker
                 startDate={formatForReactDates(
                   parseISOTimeAtSpace(spaces.filters.startDate, space),
@@ -200,7 +191,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         ) : null}
 
         <ErrorBar
-          message={spaces.error || timeSegmentGroups.error}
+          message={spaces.error}
           modalOpen={activeModal.name !== null}
         />
 
@@ -214,7 +205,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   chartWidth={this.state.width}
                 />
               </div>
@@ -243,7 +234,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
-                  timeSegmentGroup={selectedTimeSegmentGroup}
+                  timeSegmentLabel={selectedTimeSegmentLabel}
                   timeSegments={applicableTimeSegments}
                   chartWidth={this.state.width}
                 />
@@ -262,8 +253,8 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
+    spaceHierarchy: state.spaceHierarchy,
     activeModal: state.activeModal,
-    timeSegmentGroups: state.timeSegmentGroups,
     resizeCounter: state.resizeCounter,
   };
 }, dispatch => {
@@ -271,8 +262,8 @@ export default connect((state: any) => {
     onChangeSpaceFilter(space, key, value) {
       dispatch(collectionSpacesFilter(key, value));
     },
-    onChangeTimeSegmentGroup(space, value, spaceFilters) {
-      dispatch(collectionSpacesFilter('timeSegmentGroupId', value));
+    onChangeTimeSegmentLabel(space, value, spaceFilters) {
+      dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch<any>(calculateTrendsModules(space, spaceFilters));
     },
     onChangeDateRange(space, startDate, endDate, spaceFilters) {

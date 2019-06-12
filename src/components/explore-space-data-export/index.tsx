@@ -3,11 +3,6 @@ import styles from './styles.module.scss';
 import React from 'react';
 import { connect } from 'react-redux';
 
-import moment from 'moment';
-import 'moment-timezone';
-
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-
 import gridVariables from '@density/ui/variables/grid.json';
 import { DateRangePicker } from '@density/ui';
 
@@ -44,7 +39,7 @@ function ExploreSpaceDataExport({
     return <div className={styles.exploreSpaceDataExportPage}>
       {spaces.filters.startDate && spaces.filters.endDate ? (
         <ExploreFilterBar>
-          <ExploreFilterBarItem label="Date Range">
+          <ExploreFilterBarItem label="Date range">
             <DateRangePicker
               startDate={formatForReactDates(
                 parseISOTimeAtSpace(spaces.filters.startDate, space),

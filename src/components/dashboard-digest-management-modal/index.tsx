@@ -6,16 +6,17 @@ import classnames from 'classnames';
 import moment from 'moment';
 
 import {
-  Button,
-  ButtonContext,
-  Icons,
-  InputBox,
   AppBar,
   AppBarContext,
   AppBarSection,
   AppBarTitle,
+  Button,
+  ButtonGroup,
+  Icons,
+  InputBox,
   Modal,
 } from '@density/ui';
+import DayOfWeekSelector from '../day-of-week-selector/index';
 import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';
 
@@ -249,34 +250,32 @@ class DashboardDigestManagementModal extends Component<DashboardDigestManagement
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <span
-                  role="button"
-                  className={styles.dashboardDigestManagementModalFooterCancel}
-                  onClick={onCloseModal}
-                >Cancel</span>
-                <Button
-                  disabled={!this.isFormValid()}
-                  type="primary"
-                  onClick={() => {
-                    let digest: any = {
-                      name: name || this.calculateDefaultDigestName() || 'Digest Name',
-                      recipients: recipients,
-                      dashboardId: selectedDashboard.id,
-                      frequency,
-                      daysOfWeek: daysOfWeek,
-                      dayNumber: 1, /* What is this value for? */
-                      time,
-                      timeZone,
-                    };
+                <ButtonGroup>
+                  <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+                  <Button
+                    disabled={!this.isFormValid()}
+                    variant="filled"
+                    onClick={() => {
+                      let digest: any = {
+                        name: name || this.calculateDefaultDigestName() || 'Digest Name',
+                        recipients: recipients,
+                        dashboardId: selectedDashboard.id,
+                        frequency,
+                        daysOfWeek: daysOfWeek,
+                        dayNumber: 1, /* What is this value for? */
+                        time,
+                        timeZone,
+                      };
 
-                    if (this.props.initialDigestSchedule) {
-                      digest.id = this.props.initialDigestSchedule.id;
-                      onUpdateDigest(digest as DensityDigestSchedule);
-                    } else {
-                      onCreateDigest(digest as DensityDigestSchedule);
-                    }
-                  }}
-                >Save Email Digest</Button>
+                      if (this.props.initialDigestSchedule) {
+                        digest.id = this.props.initialDigestSchedule.id;
+                        onUpdateDigest(digest as DensityDigestSchedule);
+                      } else {
+                        onCreateDigest(digest as DensityDigestSchedule);
+                      }
+                    }}
+                  >Save email digest</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>
@@ -385,30 +384,10 @@ function DigestManagementForm({
 
           {frequency === WEEKLY ? (
             <div className={styles.digestManagementFormGroupDayList}>
-              {DAYS_OF_WEEK.map(dayName => (
-                <div key={dayName} className={styles.digestManagementFormGroupDayItem}>
-                  <Button
-                    type={daysOfWeek.indexOf(dayName) >= 0 ? 'primary' : 'default'}
-                    size="small"
-                    width={24}
-                    height={24}
-                    onClick={() => {
-                      if (daysOfWeek.indexOf(dayName) === -1) {
-                        // Add day
-                        onChangeDaysOfWeek([...daysOfWeek, dayName]);
-                      } else {
-                        // Ensure the user doesn't deselect the last day
-                        if (daysOfWeek.length <= 1) { return; }
-
-                        // Remove day
-                        onChangeDaysOfWeek(daysOfWeek.filter(day => day !== dayName));
-                      }
-                    }}
-                  >
-                    {dayName[0].toUpperCase()}
-                  </Button>
-                </div>
-              ))}
+              <DayOfWeekSelector
+                daysOfWeek={daysOfWeek}
+                onChange={onChangeDaysOfWeek}
+              />
             </div>
           ) : null}
           {frequency === MONTHLY ? (
@@ -443,9 +422,7 @@ function DigestManagementForm({
       </div>
       {showDeleteDigest ? (
         <div className={styles.digestManagementFormGroup}>
-          <ButtonContext.Provider value="DIGEST_DELETE_BUTTON">
-            <Button onClick={onDeleteDigest}>Delete this Digest</Button>
-          </ButtonContext.Provider>
+          <Button variant="underline" type="danger" onClick={onDeleteDigest}>Delete this digest</Button>
         </div>
       ) : null}
     </div>
@@ -614,7 +591,7 @@ function DigestAddedNotAddedBox({id, checked, onChange}) {
       />
 
       <label htmlFor={id}>
-        <span className={styles.textLabel}>{checked ? 'Added' : 'Not Added'}</span>
+        <span className={styles.textLabel}>{checked ? 'Added' : 'Not added'}</span>
         <div className={styles.checkboxWell}>
           <Icons.Check width={14} height={14} color="#fff" />
         </div>

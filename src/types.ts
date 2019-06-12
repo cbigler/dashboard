@@ -21,6 +21,7 @@ export type DensitySpace = {
   ancestry: Array<DensitySpaceAncestryItem>,
   doorways: Array<{
     id: string,
+    linkId: string,
     name: string,
     sensorPlacement: 1 | -1,
   }>,
@@ -34,10 +35,12 @@ export type DensitySpace = {
   latitude: number | null,
   longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
-  timeSegmentGroups: Array<{
+  timeSegmentGroups?: Array<{
     id: string,
     name: string,
   }>,
+  sensorsTotal: number,
+  inheritsTimeSegments: boolean,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -52,10 +55,19 @@ export type DensityDoorway = {
   description: string,
   spaces: Array<{
     id: string,
+    linkId: string,
     name: string,
-    sensorPlacement: string,
+    sensorPlacement: 1 | -1,
   }>,
   tags: Array<string>,
+  environment?: {
+    height: number,
+    width: number,
+    clearance: boolean,
+    powerType: 'POWER_OVER_ETHERNET' | 'AC_OUTLET',
+    insideImageUrl: string,
+    outsideImageUrl: string,
+  },
 };
 
 export type DensityLink = {
@@ -69,7 +81,7 @@ export type DensityLink = {
 
 export type DensityTimeSegment = {
   id: string,
-  name: string,
+  label: string,
   start: string,
   end: string,
   spaces: Array<{
@@ -78,6 +90,8 @@ export type DensityTimeSegment = {
   }>,
   days: Array<string>,
 };
+
+export type DensityTimeSegmentLabel = string;
 
 export type DensityTimeSegmentGroup = {
   id: string,
@@ -185,7 +199,15 @@ export type DensityUser = {
   createdAt: string,
   permissions: Array<string>,
   spaces: Array<string>,
-  sizeAreaUnitDefault?: 'square_feet' | 'square_meters',
+  sizeAreaDisplayUnit: 'square_feet' | 'square_meters',
+};
+
+export type DensityTag = {
+  name: string,
+};
+
+export type DensityAssignedTeam = {
+  name: string,
 };
 
 // Counts
@@ -214,17 +236,6 @@ export type DensitySpaceMapping = {
   serviceSpaceId: string,
 };
 
-export type DensityRobinSpace = {
-  id: string,
-  name: string,
-  spaces: Array<DensityRobinSpace>,
-};
-
-export type DensityTeemSpace = {
-  id: string,
-  name: string,
-};
-
 export type DensityReportOptions = {
   date: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
   weekStart: string; // A weekday for the report week to start on. Default is "Sunday".
@@ -232,3 +243,21 @@ export type DensityReportOptions = {
   slow: boolean; // A flag representing if the report calculations should run specifying the "?slow=true" flag, which bypasses the new reporting database.
 }
 export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;
+
+export type DensityServiceSpace = {
+    service: string,
+    serviceSpaceId: string,
+    name: string,
+    spaceType: string,
+    parent: string,
+};
+export type DensitySpaceHierarchyItem = {
+  id: string,
+  name: string,
+  spaceType: string,
+  hasPurview: boolean,
+  timeSegments: Array<DensityTimeSegment>,
+  inheritsTimeSegments: boolean,
+  dailyReset: string,
+  children?: Array<DensitySpaceHierarchyItem>,
+};

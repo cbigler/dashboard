@@ -1,4 +1,5 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
 
 .subheader {
   display: block;
@@ -13,12 +14,21 @@
 .title {
   font-size: 20px;
   user-select: none;
+  white-space: nowrap;
 }
 .supportsHover .title { cursor: pointer; }
 .title.hover {
   color: $brandPrimary;
   text-decoration: underline;
 }
+
+.subtitle {
+  margin-left: 24px;
+  font-size: $fontSizeBase;
+  color: $grayDarker;
+  white-space: nowrap;
+}
+.subtitle.hover { text-decoration: none; }
 
 .manageLinkWrapper { margin-right: 24px; }
 .manageLink {

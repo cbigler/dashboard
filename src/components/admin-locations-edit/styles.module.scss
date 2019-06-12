@@ -1,15 +1,16 @@
-.adminLocationsEdit { height: 100%; }
-
+@import "@density/ui/variables/colors.scss";
 .appBarWrapper { background-color: #fff; }
 
 .moduleContainer {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 64px;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background-color: $grayLightest;
   height: 100%;
 }
+.moduleInner { padding-top: 64px; }
 .moduleWrapper {
   margin-bottom: 24px;
   padding-left: 16px;
@@ -30,5 +31,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: calc(100vh - 40px);
 }

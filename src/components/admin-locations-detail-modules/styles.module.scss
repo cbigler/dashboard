@@ -5,85 +5,12 @@
 .module {
   background-color: #fff;
 
-  width: 100%;
-  max-width: 818px;
+  width: 818px;
   border: 1px solid $grayLight;
   border-radius: $borderRadiusBase;
 }
-.moduleBody {
+.moduleError { border-color: $brandDanger; }
+.moduleBody.padding {
   padding: 24px;
   padding-top: 18px;
 }
-.moduleError { border-color: $brandDanger; }
-
-
-
-
-.generalInfo {
-  display: flex;
-  flex-direction: row;
-}
-.generalInfoColumn { width: 50%; }
-.generalInfoColumn.left { margin-right: 20px; }
-.generalInfoColumn.right { margin-left: 20px; }
-
-
-
-
-.spaceFieldRendererRow {
-  display: flex;
-  flex-direction: row;
-  margin-top: 16px;
-}
-.spaceFieldRendererRow:first-child { margin-top: 0px; }
-.spaceFieldRendererCell {
-  width: 50%;
-  flex-grow: 0;
-  flex-shrink: 0;
-  box-sizing: border-box;
-}
-.spaceFieldRendererCell.left {
-  padding-left: 0px;
-  padding-right: 20px;
-}
-.spaceFieldRendererCell.right {
-  padding-left: 20px;
-  padding-right: 0px;
-}
-
-
-.modulesMetadataDropdowns { margin-left: 8px; }
-
-
-
-.dangerZoneWrapper { display: flex; }
-.dangerZoneLeft {
-  flex-grow: 1;
-  flex-shrink: 1;
-}
-.dangerZoneLeft h4 {
-  margin-top: 0px;
-  margin-bottom: 8px;
-}
-.dangerZoneRight {
-  display: flex;
-  align-items: center;
-}
-
-
-
-
-.operatingHoursWrapper {
-  display: flex;
-  justify-content: space-between;
-}
-.operatingHoursLeft {
-  display: flex;
-  align-items: center;
-}
-.operatingHoursLeft label { margin-right: 8px; }
-.operatingHoursRight {
-  display: flex;
-  align-items: center;
-}
-.operatingHoursRight label { margin-right: 8px; }

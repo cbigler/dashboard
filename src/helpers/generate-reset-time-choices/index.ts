@@ -10,6 +10,7 @@ export default function generateResetTimeChoices(space) {
     return {
       value: time.format('HH:mm'),
       display: prettyPrintHoursMinutes(time),
+      hourOnlyDisplay: time.format('ha').slice(0, -1),
     };
   });
 }

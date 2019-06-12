@@ -10,7 +10,7 @@ import {
   AppBarSection,
   AppBarTitle,
   Button,
-  ButtonContext,
+  ButtonGroup,
   Icons,
   InputBox,
   RadioButton,
@@ -184,14 +184,15 @@ export function ImpersonateModal({
       <AppBar>
         <AppBarSection></AppBarSection>
         <AppBarSection>
-          <ButtonContext.Provider value="CANCEL_BUTTON">
-            <Button onClick={onCancelImpersonate}>Cancel</Button>
-          </ButtonContext.Provider>
-          <Button
-            type="primary"
-            disabled={loading || (enabled && !activeModal.data.selectedUser)}
-            onClick={() => onSaveImpersonate(activeModal.data)}
-          >Save Settings</Button>
+          <ButtonGroup>
+            <Button variant="underline" onClick={onCancelImpersonate}>Cancel</Button>
+            <Button
+              variant="filled"
+              type="primary"
+              disabled={loading || (enabled && !activeModal.data.selectedUser)}
+              onClick={() => onSaveImpersonate(activeModal.data)}
+            >Save settings</Button>
+          </ButtonGroup>
         </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>

@@ -10,67 +10,98 @@ import {
   CardHeader,
 } from '@density/ui';
 
-import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
 import formatCapacityPercentage from '../../helpers/format-capacity-percentage/index';
 
 import { chartAsReactComponent } from '@density/charts';
 import RealTimeCountFn from '@density/chart-real-time-count';
 import LinearProgressFn from '@density/chart-linear-progress';
 const LinearProgress = chartAsReactComponent(LinearProgressFn);
-const RealTimeCountChart = autoRefreshHoc({
-  interval: 50,
-  shouldComponentUpdate: function (nextProps) {
-    return (this as any).props.events.length || nextProps.events.length;
-  }
-})(chartAsReactComponent(RealTimeCountFn));
+const RealTimeCountChart = chartAsReactComponent(RealTimeCountFn);
 
-export default function SpaceCard({
+export default class SpaceCard extends React.Component<{
   space,
   events,
 
   onClickRealtimeChartFullScreen,
   onClickEditCount,
-}) {
-  if (space) {
-    const capacityPercent = space.capacity ? (space.currentCount / space.capacity) * 100 : null;
-    return <Card className={styles.spaceCard}>
-      <CardHeader className={styles.spaceCardHeader}>
-        <span className={styles.spaceCardHeaderName}>{space.name}</span>
-        <span className={styles.spaceCardHeaderCount}>{space.currentCount}</span>
-      </CardHeader>
-      <CardBody>
-        <div className={styles.spaceCardCapacityContainer}>
-          <div className={styles.spaceCardCapacityInformation}>
-            <div className={styles.spaceCardUtilizationPercentage}>
-              {
-                space.capacity ?
-                <span className={styles.spaceCardUtilizationPercentageLabel}>
-                  Utilization: 
-                  <span> {formatCapacityPercentage(space.currentCount, space.capacity)}%</span>
-                </span> :
-                'Max capacity not yet specified'
-              }
-            </div>
-            <div className={styles.spaceCardEditCountLink} onClick={onClickEditCount}>Edit count</div>
-          </div>
-          <div className={styles.spaceCardCapacityLinearProgress}>
-            <LinearProgress
-              percentFull={capacityPercent || 0}
-              transitionDuration={timings.timingBase}
-            />
-          </div>
-        </div>
-      </CardBody>
+}, {}> {
+  containerRef;
 
-      <div className={styles.spaceCardChart}>
-        <div
-          className={styles.spaceCardChartFullScreen}
-          onClick={onClickRealtimeChartFullScreen}
-        >&#xe919;</div>
-        <RealTimeCountChart events={events || []} />
-      </div>
-    </Card>;
-  } else {
-    return null;
+  constructor(props) {
+    super(props);
+    this.containerRef = React.createRef();
+  }
+
+  shouldComponentUpdate(nextProps) {
+    const hasEvents = this.props.events &&
+      (this.props.events.length > 0 || nextProps.events.length > 0);
+    if (!hasEvents) {
+      return false;
+    }
+
+    const bounding = this.containerRef.current && this.containerRef.current.getBoundingClientRect();
+    const isInViewport = !bounding || (bounding.bottom >= 0 && bounding.right >= 0 &&
+      bounding.left <= (window.innerWidth || document.documentElement.clientWidth) &&
+      bounding.top <= (window.innerHeight || document.documentElement.clientHeight));
+    if (!isInViewport) {
+      return false;
+    }
+
+    return true;
+  }
+
+  render() {
+    const {
+      space,
+      events,
+    
+      onClickRealtimeChartFullScreen,
+      onClickEditCount,
+    } = this.props;
+
+    if (space) {
+      const capacityPercent = space.capacity ? (space.currentCount / space.capacity) * 100 : null;
+      return <div ref={this.containerRef}>
+        <Card className={styles.spaceCard}>
+          <CardHeader className={styles.spaceCardHeader}>
+            <span className={styles.spaceCardHeaderName}>{space.name}</span>
+            <span className={styles.spaceCardHeaderCount}>{space.currentCount}</span>
+          </CardHeader>
+          <CardBody>
+            <div className={styles.spaceCardCapacityContainer}>
+              <div className={styles.spaceCardCapacityInformation}>
+                <div className={styles.spaceCardUtilizationPercentage}>
+                  {
+                    space.capacity ?
+                    <span className={styles.spaceCardUtilizationPercentageLabel}>
+                      Utilization: 
+                      <span> {formatCapacityPercentage(space.currentCount, space.capacity)}%</span>
+                    </span> :
+                    'Max capacity not yet specified'
+                  }
+                </div>
+                <div className={styles.spaceCardEditCountLink} onClick={onClickEditCount}>Edit count</div>
+              </div>
+              <div className={styles.spaceCardCapacityLinearProgress}>
+                <LinearProgress
+                  percentFull={capacityPercent || 0}
+                  transitionDuration={timings.timingBase}
+                />
+              </div>
+            </div>
+          </CardBody>
+    
+          <div className={styles.spaceCardChart}>
+            <div
+              className={styles.spaceCardChartFullScreen}
+              onClick={onClickRealtimeChartFullScreen}
+            >&#xe919;</div>
+            <RealTimeCountChart events={events || []} />
+          </div>
+        </Card>
+      </div>;
+    } else {
+      return null;
+    }
   }
 }

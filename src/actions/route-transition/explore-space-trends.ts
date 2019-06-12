@@ -3,17 +3,14 @@ import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
-import collectionTimeSegmentGroupsSet from '../collection/time-segment-groups/set';
-import collectionTimeSegmentGroupsError from '../collection/time-segment-groups/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 import collectionSpacesFilter from '../collection/spaces/filter';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import fetchAllPages from '../../helpers/fetch-all-pages';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -24,15 +21,13 @@ import { getGoSlow } from '../../components/environment-switcher';
 import { REPORTS } from '@density/reports';
 
 import {
-  getCurrentLocalTimeAtSpace,
   parseISOTimeAtSpace,
   formatInISOTimeAtSpace,
   requestCountsForLocalRange
 } from '../../helpers/space-time-utilities/index';
 
 import {
-  DEFAULT_TIME_SEGMENT_GROUP,
-  findTimeSegmentsInTimeSegmentGroupForSpace,
+  DEFAULT_TIME_SEGMENT_LABEL,
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 
@@ -50,35 +45,21 @@ export default function routeTransitionExploreSpaceTrends(id) {
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
 
-    // Load a list of all time segment groups, which is required in order to render in the time
-    // segment list.
-
-    let errorThrown: any = false
-    let response;
-    try {
-      response = await core().get('/time_segment_groups');
-    } catch (err) {
-      errorThrown = err;
-    }
-
-    if (errorThrown) {
-      dispatch(collectionTimeSegmentGroupsError(`Error loading time segments: ${errorThrown.message}`));
-    } else {
-      dispatch(collectionTimeSegmentGroupsSet(response.data.results));
-    }
-
     // Ideally, we'd load a single space (since the view only pertains to one space). But, we need
     // every space to traverse through the space hierarchy and render a list of parent spaces on
     // this view unrfortunately.
     let spaces, spaceHierarchy, selectedSpace;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
-      selectedSpace = spaces.find(s => s.id === id);
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
+      return;
+    }
+
+    selectedSpace = spaces.find(s => s.id === id);
+    if (!selectedSpace) {
+      dispatch(collectionSpacesError(`Space with id ${id} not found`));
       return;
     }
 
@@ -98,7 +79,7 @@ export function calculate(space, spaceFilters) {
   return (dispatch, getState) => {
     const multiWeekSelection = isMultiWeekSelection(spaceFilters.startDate, spaceFilters.endDate);
 
-    const peakTitle = multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"
+    const peakTitle = multiWeekSelection ? "Hourly Breakdown: Average Peak Occupancy" : "Hourly Breakdown: Peak Occupancy"
 
     // Don't perform calculations if user hasn't selected an end date yet in the date picker.
     const { startDate, endDate } = getState().spaces.filters;
@@ -109,7 +90,7 @@ export function calculate(space, spaceFilters) {
       const error = "End time must be before start time.";
       const reportNames = ['dailyMetrics', 'hourlyBreakdownPeaks', 'hourlyBreakdownVisits', 'utilization'];
       reportNames.map(reportName => {
-        dispatch(exploreDataCalculateDataError(reportName, error));  
+        return dispatch(exploreDataCalculateDataError(reportName, error));
       });
       return;
     }
@@ -117,46 +98,20 @@ export function calculate(space, spaceFilters) {
     dispatch(calculateDailyMetrics(space));
     dispatch(calculateUtilization(space));
     dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownPeaks', 'PEAKS', peakTitle, "AVERAGE"));
-    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown - Visits', "NONE"));
+    dispatch(calculateHourlyBreakdown(space, 'hourlyBreakdownVisits', 'VISITS', 'Hourly Breakdown: Visits', "NONE"));
   };
 }
 
-const DAY_TO_INDEX = {
-  'Monday': 1,
-  'Tuesday': 2,
-  'Wednesday': 3,
-  'Thursday': 4,
-  'Friday': 5,
-  'Saturday': 6,
-  'Sunday': 0,
-};
 export function calculateDailyMetrics(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
 
     const {
-      timeSegmentGroupId,
+      timeSegmentLabel,
       metricToDisplay,
       startDate,
       endDate,
     } = getState().spaces.filters;
-
-    const allTimeSegmentGroups = getState().timeSegmentGroups.data;
-
-    const spaceTimeSegmentGroups = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...allTimeSegmentGroups.filter(x => space.timeSegmentGroups.find(y => x.id === y.id))
-    ];
-
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
-
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // group is applicable to this space?
-    const applicableTimeSegments = findTimeSegmentsInTimeSegmentGroupForSpace(
-      selectedTimeSegmentGroup,
-      space,
-    );
 
     // Add timezone offset to both start and end times prior to querying for the count. Add a day
     // to the end of the range to return a final bar of the data for the uncompleted current day.
@@ -174,7 +129,7 @@ export function calculateDailyMetrics(space) {
           interval: '1d',
           order: 'asc',
           page_size: 5000,
-          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
         },
       );
     } catch (error) {
@@ -187,13 +142,7 @@ export function calculateDailyMetrics(space) {
       dispatch(exploreDataCalculateDataComplete('dailyMetrics', {
         dataSpaceId: space.id,
         // Return the metric requested within the range of time.
-        metrics: data.filter(i => {
-          // Remove days from the dataset that are not in the time segment
-          const dayOfWeek = parseISOTimeAtSpace(i.timestamp, space).day();
-          return applicableTimeSegments.reduce((acc, ts) => {
-            return [...acc, ...ts.days.map(i => DAY_TO_INDEX[i])];
-          }, []).indexOf(dayOfWeek) !== -1;
-        }).map(i => ({
+        metrics: data.map(i => ({
           timestamp: i.timestamp,
           value: (function(i, metric) {
             switch (metric) {
@@ -225,16 +174,7 @@ export function calculateUtilization(space) {
   return async (dispatch, getState) => {
     dispatch(exploreDataCalculateDataLoading('utilization', null));
 
-    const { startDate, endDate, timeSegmentGroupId } = getState().spaces.filters;
-    const allTimeSegmentGroups = getState().timeSegmentGroups.data;
-
-    const spaceTimeSegmentGroups = [
-      DEFAULT_TIME_SEGMENT_GROUP,
-      ...allTimeSegmentGroups.filter(x => space.timeSegmentGroups.find(y => x.id === y.id))
-    ];
-
-    // Which time segment group was selected?
-    const selectedTimeSegmentGroup = spaceTimeSegmentGroups.find(i => i.id === timeSegmentGroupId);
+    const { startDate, endDate, timeSegmentLabel } = getState().spaces.filters;
 
     if (!space.capacity) {
       dispatch(exploreDataCalculateDataComplete('utilization', { requiresCapacity: true }));
@@ -242,29 +182,24 @@ export function calculateUtilization(space) {
     }
 
     // Step 1: Fetch all counts--which means all pages--of data from the start date to the end data
-    // selected on the DateRangePicker. Uses the `fetchAllPages` helper, which encapsulates the
-    // logic required to fetch all pages of data from the server.
+    // selected on the DateRangePicker. Uses the `fetchAllObjects` helper, which encapsulates the
+    // logic required to fetch all pages of objects from the server.
     let errorThrown, counts;
     try {
-      counts = (await fetchAllPages(async page => (
-        (await core().get(`/spaces/${space.id}/counts`, { params: {
+      counts = await fetchAllObjects(`/spaces/${space.id}/counts`, {
+        params: {
           id: space.id,
 
           start_time: startDate,
           end_time: endDate,
-          time_segment_groups: selectedTimeSegmentGroup.id === DEFAULT_TIME_SEGMENT_GROUP.id ? undefined : selectedTimeSegmentGroup.id,
+          time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
 
           interval: '10m',
 
-          // Fetch with a large page size to try to minimize the number of requests that will be
-          // required.
-          page,
-          page_size: 5000,
-
           // Legacy "slow" queries
           slow: getGoSlow(),
-        }})).data
-      ))).map(objectSnakeToCamel);
+        }
+      });
     } catch (err) {
       errorThrown = err;
     }

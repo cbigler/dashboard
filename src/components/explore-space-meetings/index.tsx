@@ -1,18 +1,15 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import moment from 'moment';
-import Report, { ReportLoading } from '@density/reports';
+import Report from '@density/reports';
 
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
 import colorVariables from '@density/ui/variables/colors.json'
 import gridVariables from '@density/ui/variables/grid.json'
 import {
   Button,
   DateRangePicker,
-  InputBox,
   AppBar,
   AppBarSection,
   DensityMark,
@@ -27,17 +24,13 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import RobinImage from '../../assets/images/icon-robin.svg';
-import TeemImage from '../../assets/images/icon-teem.svg';
 import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
-import { integrationsRoomBookingSpacesSelect } from '../../actions/integrations/room-booking';
-import { integrationsSpaceMappingUpdate } from '../../actions/integrations/room-booking';
 import { calculate } from '../../actions/route-transition/explore-space-meetings';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { DensitySpaceMapping, DensityRobinSpace, DensityTeemSpace } from '../../types';
 
 import isOutsideRange, {
   MAXIMUM_DAY_LENGTH,
@@ -47,16 +40,6 @@ import isOutsideRange, {
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 
-function flattenRobinSpaces(robinSpaces) {
-  if (!robinSpaces) {
-    return [];
-  } else {
-    return [
-      ...robinSpaces,
-      ...robinSpaces.map(robinSpace => flattenRobinSpaces(robinSpace.children)).flat(),
-    ];
-  }
-}
 
 function ExploreSpaceMeetings({
   spaces,
@@ -64,24 +47,23 @@ function ExploreSpaceMeetings({
   integrations,
   exploreDataMeetings,
 
-  onChangeSpaceMapping,
   onChangeSpaceFilter,
   onChangeDateRange,
   onReload,
 }) {
   if (space) {
-    const roomBookingDefaultService = integrations.roomBooking.defaultService;
-    const roomBookingSpaceMapping = integrations.roomBooking.spaceMappingForActiveSpace;
+    const roomBookingService = integrations.roomBooking.service;
+    const roomBookingSpaceMapping = space.spaceMappings.length > 0 ? space.spaceMappings[0] : false;
     const isIntegrationSpaceSelected = (
-      roomBookingDefaultService && // A room booking service was defined
-      integrations.roomBooking.spaceMappingForActiveSpace
+      roomBookingService && // A room booking service was defined
+      roomBookingSpaceMapping
     );
 
     return (
       <Fragment>
         <Toaster />
 
-        {spaces.filters.startDate && spaces.filters.endDate && roomBookingDefaultService ? (
+        {spaces.filters.startDate && spaces.filters.endDate && roomBookingService ? (
           <AppBar>
             <AppBarSection>
               {isIntegrationSpaceSelected ? (
@@ -147,49 +129,7 @@ function ExploreSpaceMeetings({
               ) : null}
             </AppBarSection>
             <AppBarSection>
-              {integrations.robinSpaces.view === 'VISIBLE' ? (
-                <div className={styles.spaceMappingSelectorContainer}>
-                  <img
-                    className={styles.roomBookingImage}
-                    src={RobinImage}
-                  />
-                  <InputBox
-                    type="select"
-                    placeholder="Select a space from Robin"
-                    width={275}
-                    menuMaxHeight={500}
-                    value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
-                    choices={
-                      flattenRobinSpaces(integrations.robinSpaces.data as Array<DensityRobinSpace>)
-                        .map(robinSpace => ({
-                          id: robinSpace.id.toString(),
-                          label: robinSpace.name,
-                        }))
-                    }
-                    onChange={robinSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, robinSpaceChoice.id)}
-                  />
-                </div>
-              ) : null}
-              {integrations.teemSpaces.view === 'VISIBLE' ? (
-                <div className={styles.spaceMappingSelectorContainer}>
-                  <img
-                    className={styles.roomBookingImage}
-                    src={TeemImage}
-                  />
-                  <InputBox
-                    type="select"
-                    placeholder="Select a space from Teem"
-                    width={275}
-                    menuMaxHeight={500}
-                    value={roomBookingSpaceMapping ? roomBookingSpaceMapping.serviceSpaceId : null}
-                    choices={(integrations.teemSpaces.data as Array<DensityTeemSpace>).map(teemSpace => ({
-                      id: teemSpace.id.toString(),
-                      label: teemSpace.name,
-                    }))}
-                    onChange={teemSpaceChoice => onChangeSpaceMapping(roomBookingDefaultService, space.id, teemSpaceChoice.id)}
-                  />
-                </div>
-              ) : null}
+               {/* TODO: Show icon of the service that this space is mapped to */}
             </AppBarSection>
           </AppBar>
         ) : null}
@@ -202,7 +142,7 @@ function ExploreSpaceMeetings({
           </div>
         ) : null}
 
-        {integrations.robinSpaces.view === 'ERROR' || integrations.roomBooking.view === 'ERROR' ? (
+        {integrations.roomBooking.view === 'ERROR' ? (
           <div className={styles.centeredMessage}>
             <GenericErrorState />
           </div>
@@ -211,7 +151,7 @@ function ExploreSpaceMeetings({
         {integrations.roomBooking.view === 'VISIBLE' ? (
           <Fragment>
             {/* Room booking integration has not been configured */}
-            {!roomBookingDefaultService ? (
+            {!roomBookingService ? (
               <div className={styles.centeredMessage}>
                 <div className={styles.integrationCta}>
                   <div className={styles.integrationCtaLabel}>
@@ -223,43 +163,43 @@ function ExploreSpaceMeetings({
                       <img
                         className={styles.robinImage}
                         src={RobinImage}
+                        alt="Robin"
                       />
                     </div>
 
                     Setup an integration with Robin to get started.
                   </div>
 
-                  <Button
-                    type="primary"
-                    onClick={e => { window.location.href = '#/admin/integrations'; }}
-                  >Integrate</Button>
+                  <Button variant="filled" onClick={() => {
+                    window.location.href = '#/admin/integrations';
+                  }}>Integrate</Button>
                 </div>
               </div>
             ) : null}
             {/* Room booking integration has been configured, but aa space maaping has not been set up */}
-            {integrations.robinSpaces.view === 'VISIBLE' && roomBookingDefaultService && !roomBookingSpaceMapping ? (
+            {roomBookingService && !roomBookingSpaceMapping ? (
               <div className={styles.centeredMessage}>
                 <div className={styles.integrationCta}>
-                  Link a {roomBookingDefaultService.displayName} space to this Density space to display your reports.
+                  Link a {roomBookingService.displayName} space to this Density space to display your reports.
                 </div>
               </div>
             ) : null}
 
-            {roomBookingDefaultService && roomBookingSpaceMapping ? (
+            {roomBookingService && roomBookingSpaceMapping ? (
               <Fragment>
                 {exploreDataMeetings.state === 'LOADING' ? (
                   <div className={styles.centeredMessage}>
                     <div className={styles.integrationCta}>
-                      Loading {roomBookingDefaultService.displayName} data and rendering reports...
+                      Loading {roomBookingService.displayName} data and rendering reports...
                     </div>
                   </div>
                 ) : null}
                 {/* There is nothing that sets this data into an error state, so that case is omitted */}
                 {exploreDataMeetings.state === 'COMPLETE' ? (() => {
-                  const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Attendance');
-                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker Behavior');
-                  const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting Size');
-                  const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-Day');
+                  const meetingAttendanceReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting attendance');
+                  const bookingBehaviorReport = exploreDataMeetings.data.find(i => i.report.name === 'Booker behavior');
+                  const meetingSizeReport = exploreDataMeetings.data.find(i => i.report.name === 'Meeting size');
+                  const dayToDayMeetingsReport = exploreDataMeetings.data.find(i => i.report.name === 'Meetings: Day-to-day');
                   return (
                     <div className={styles.reportGrid}>
                       <div className={classnames(styles.reportColumn, styles.left)}>
@@ -336,13 +276,6 @@ export default connect((state: any) => {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
       dispatch<any>(calculate(space.id));
-    },
-    async onChangeSpaceMapping(defaultService, spaceId, robinSpaceId) {
-      if (!defaultService) {
-        throw new Error('Cannot create a space mapping without a default room booking service!');
-      }
-      await dispatch<any>(integrationsSpaceMappingUpdate(defaultService, spaceId, robinSpaceId));
-      dispatch<any>(calculate(spaceId));
     },
     onReload(id) {
       dispatch<any>(calculate(id));

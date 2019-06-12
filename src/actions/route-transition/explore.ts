@@ -1,9 +1,6 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
-import core from '../../client/core';
-
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
@@ -40,10 +37,8 @@ export default function routeTransitionExplore() {
     errorThrown = false;
     let spaces, spaceHierarchy;
     try {
-      spaceHierarchy = (await core().get('/spaces/hierarchy')).data;
-      spaces = (await fetchAllPages(
-        async page => (await core().get('/spaces', {params: {page, page_size: 5000}})).data
-      )).map(s => objectSnakeToCamel<DensitySpace>(s));
+      spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
+      spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
       errorThrown = true;
       dispatch(collectionSpacesError(`Error loading spaces: ${err}`));

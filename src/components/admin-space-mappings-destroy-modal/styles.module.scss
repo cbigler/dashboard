@@ -1,0 +1,23 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.spaceMappingsDestroyContainer { padding: 24px; }
+
+.spaceMappingsDestroyLink {
+  color: $brandDanger;
+}
+
+// Allow the user to type in the name of a integrations before removing.
+.spaceMappingsDestroyConfirmation {
+  display: flex;
+  margin-top: 40px;
+  margin-bottom: 20px;
+  input { flex: 1; }
+}
+
+// Label text on the destroy page of the update modal.
+.spaceMappingsDestroyWarning {
+  font-size: $fontSize3;
+  font-weight: $fontWeight3;
+  color: $brandDanger;
+}

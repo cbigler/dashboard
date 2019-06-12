@@ -116,6 +116,7 @@ export class Login extends React.Component<any, any> {
       {/* Input stack used to enter login info */}
       <div className={classnames(styles.loginSubmitButton, styles.google, {[styles.loading]: this.state.loading})}>
         <Button
+          variant="filled"
           width="100%"
           onClick={() => {
             // Store the orginating origin in localStorage from the oauth request. This is used so
@@ -131,7 +132,7 @@ export class Login extends React.Component<any, any> {
             });
           }}
         >
-          <img className={styles.iconGoogleLogin} src={logoGoogleG} />
+          <img className={styles.iconGoogleLogin} src={logoGoogleG} alt="Google Logo" />
           Log in with Google
         </Button>
       </div>
@@ -161,6 +162,7 @@ export class Login extends React.Component<any, any> {
         <Button
           width="100%"
           type="primary"
+          variant="filled"
           onClick={this.onLogin}
           disabled={!this.isLoginFormValid()}
         >Login</Button>
@@ -193,6 +195,7 @@ export class Login extends React.Component<any, any> {
         <Button
           onClick={this.onForgotPassword}
           disabled={!this.isForgotPasswordFormValid()}
+          variant="filled"
         >Send Request</Button>
       </div>
 
@@ -212,7 +215,7 @@ export class Login extends React.Component<any, any> {
       <div className={styles.loginSection}>
         {/* Render a toast if the password reset request worked */}
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
-          <ToastContext.Provider value="multiline">
+          <ToastContext.Provider value="MULTILINE">
             <Toast
               visible
               icon={<Icons.Check color="white" />}
@@ -226,7 +229,7 @@ export class Login extends React.Component<any, any> {
         {/* Render a toast if the password reset process was successful */}
         {this.state.referredFromForgotPassword ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 visible
                 icon={<Icons.No color="white" />}
@@ -240,7 +243,7 @@ export class Login extends React.Component<any, any> {
 
         {this.props.user && this.props.user.error ? (
           <div className={classnames(styles.loginToast, styles.loginToastForgotPassword)}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible
@@ -256,7 +259,7 @@ export class Login extends React.Component<any, any> {
         {/* Render any errors with previous login attempts */}
         {this.state.error ? (
           <div className={styles.loginToast}>
-            <ToastContext.Provider value="multiline">
+            <ToastContext.Provider value="MULTILINE">
               <Toast
                 type="error"
                 visible
@@ -264,7 +267,6 @@ export class Login extends React.Component<any, any> {
                 icon={<Icons.No color="white" />}
                 onDismiss={() => this.setState({error: null})}
               >
-                {console.log(this.state.error)}
                 <span>{this.state.error.message || this.state.error}</span>
               </Toast>
             </ToastContext.Provider>
@@ -272,7 +274,7 @@ export class Login extends React.Component<any, any> {
         ) : null}
 
         <div className={styles.loginDensityLogo}>
-          <img src={logoDensityBlack} />
+          <img src={logoDensityBlack} alt="Density Logo" />
         </div>
 
         <p className={styles.loginLead}>
@@ -282,8 +284,8 @@ export class Login extends React.Component<any, any> {
         {/* Login inputs */}
         {this.state.view === LOGIN ? this.renderLoginForm() : this.renderForgotPasswordForm()}
         <p className={styles.loginTermsAndPrivacy}>
-          <a href="https://www.density.io/privacy-policy/" target="_blank"> Privacy Policy</a>{' '}
-          and <a href="https://www.density.io/docs/msa.pdf" target="_blank">Terms of Service</a>.
+          <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
+          and <a href="https://www.density.io/docs/msa.pdf" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
         </p>
       </div>
     </div>;

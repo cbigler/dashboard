@@ -10,6 +10,7 @@ import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 import styles from './styles.module.scss';
+import cleanSpaceData from '../../helpers/clean-space-data';
 
 export function ExploreSpaceHeader({
   space,
@@ -51,11 +52,11 @@ export function ExploreSpaceHeader({
                   onClick={() => {
                     return onOpenModal('set-capacity', {space});
                   }}
-                >Set Capacity</span>
+                >Set capacity</span>
               </span>}
             </div>
             <div className={styles.exploreSpaceHeaderTimeZone}>
-              Time Zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
+              Time zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
                 {({
                   'America/New_York': 'US Eastern',
                   'America/Chicago': 'US Central',
@@ -88,7 +89,8 @@ export default connect((state: any) => {
       dispatch<any>(hideModal());
     },
     async onSetCapacity(space, capacity, spaceFilters) {
-      const ok = await dispatch<any>(collectionSpacesUpdate({...space, capacity}));
+      const spaceData = cleanSpaceData({...space, capacity});
+      const ok = await dispatch<any>(collectionSpacesUpdate(spaceData));
       if (ok) {
         dispatch<any>(hideModal());
         dispatch<any>(calculateTrendsModules(space, spaceFilters));

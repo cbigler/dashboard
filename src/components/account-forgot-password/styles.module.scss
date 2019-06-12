@@ -10,6 +10,7 @@ $accountForgotPasswordSectionWidth: 468px;
 .accountForgotPassword {
   height: 100%;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .accountForgotPasswordSection {

@@ -1,12 +1,16 @@
-import React from 'react';
 import styles from './styles.module.scss';
 
+import React from 'react';
+import { Icons } from '@density/ui';
 
 // Display modes
 const FALLBACK = 'FALLBACK';
 const LOADING = 'LOADING';
 const DONE = 'DONE';
 
+// Map orientation to width and height values
+const ORIENTATION_WIDTH = { 'portrait': '100%', 'landscape': 'auto' };
+const ORIENTATION_HEIGHT = { 'portrait': 'auto', 'landscape': '100%' };
 
 export default class ImageRetry extends React.Component<any, any> {
   constructor(props) {
@@ -47,15 +51,23 @@ export default class ImageRetry extends React.Component<any, any> {
       return <img
         src={this.props.src}
         alt={this.props.alt}
-        className={this.props.className + ' ' + this.state.orientation}
-        style={this.props.style}
+        className={styles.image}
+        style={{
+          width: ORIENTATION_WIDTH[this.state.orientation],
+          height: ORIENTATION_HEIGHT[this.state.orientation],
+          ...this.props.style
+        }}
         onError={this.scheduleRetry.bind(this)}
         onLoad={this.setProportions.bind(this)}
       />;
     } else if (this.state.mode === LOADING) {
-      return this.props.loadingContent || <div className={styles.imageRetryLoading}></div>;
+      return this.props.loadingContent || <div className={styles.imageLoading}>
+        <Icons.Image color="#fff" />
+      </div>;
     } else {
-      return this.props.fallbackContent || <div className={styles.imageRetryFallback}></div>;
+      return this.props.fallbackContent || <div className={styles.imageFallback}>
+        <Icons.Image color="#fff" />
+      </div>;
     }
   }
 }

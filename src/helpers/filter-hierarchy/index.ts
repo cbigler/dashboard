@@ -51,12 +51,3 @@ export function isParentSelected(spaces, spaceId, selectedIds) {
     return false;
   }
 }
-
-export default function filterHierarchy(spaces, parentId) {
-  return spaces.filter(space => {
-    return (
-      space.spaceType === 'space' && /* must be of type space */
-      getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
-    );
-  });
-}

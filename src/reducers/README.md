@@ -21,7 +21,7 @@ Collections are a central data storage concept in this project. Essentially, the
 storing an array of objects in a consistent fashion, and include baked in ways of doing common
 things, such as a loading interval, filters, paging, etc.
 
-A few examples of this reducer type include `spaces`, `links`, `tokens` and `doorways`.
+A few examples of this reducer type are `spaces` and `tokens`.
 
 ## General structure
 A collection has two parts - the actions and the reducer.

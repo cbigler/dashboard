@@ -40,17 +40,6 @@ import { chartAsReactComponent } from '@density/charts';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const AVERAGE_WEEKLY_BREAKDOWN_PERCENTAGE_BAR_BREAK_WIDTH_IN_PX = 320;
-
-const DAY_TO_INDEX_IN_UTILIZAITIONS_BY_DAY = {
-  'Sunday': 0,
-  'Monday': 1,
-  'Tuesday': 2,
-  'Wednesday': 3,
-  'Thursday': 4,
-  'Friday': 5,
-  'Saturday': 6,
-};
-
 const CHART_HEIGHT = 350;
 
 export const LOADING = 'LOADING',
@@ -79,8 +68,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
       space,
       startDate,
       endDate,
-      timeSegments,
-      timeSegmentGroup,
+      timeSegmentLabel,
 
       onRefresh,
     } = this.props;
@@ -90,7 +78,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         An Average Week
         <InfoPopup horizontalIconOffset={8}>
           <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
-            Utilization for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+            Utilization for time segment <strong>{timeSegmentLabel}</strong> from{' '}
             <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
             <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
             grouped and averaged by day of week.
@@ -123,7 +111,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         <InfoPopup horizontalIconOffset={8}>
           <p className={styles.exploreSpaceDetailUtilizationCardPopupP}>
             An average daily breakdown of utilization for
-            time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+            time segment <strong>{timeSegmentLabel}</strong> from{' '}
             <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
             <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>.
           </p>
@@ -260,7 +248,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                 Average utilization of <CardWellHighlight>
                   {Math.round(calculatedData.data.averageUtilizationPercentage)}%
                 </CardWellHighlight> during <CardWellHighlight>
-                  {timeSegmentGroup.name}
+                  {timeSegmentLabel}
                 </CardWellHighlight>
               </CardWell>
               <CardBody className={styles.exploreSpaceDetailUtilizationCardAverageWeeklyBreakdown}>
@@ -289,7 +277,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
                   <CardWellHighlight>
                     No peak utilization
                     </CardWellHighlight> during <CardWellHighlight>
-                    {timeSegmentGroup.name}
+                    {timeSegmentLabel}
                   </CardWellHighlight>
                   </span> : <span>
                   Most busy around <CardWellHighlight>
@@ -337,6 +325,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
                   yAxis={yAxisMinMax({
                     leftOffset: 10,
+                    verticalBaselineOffset: 10,
                     points: [
                       {value: 100, hasRule: true},
                     ],

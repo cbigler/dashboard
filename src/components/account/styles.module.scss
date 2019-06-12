@@ -6,6 +6,7 @@
 
 .accountPage {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   height: 100%;
   background-color: #f7f7f7;
   // each section has 24px margin, so +40 to get to 64px at the top and bottom

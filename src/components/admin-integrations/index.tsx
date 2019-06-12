@@ -1,13 +1,12 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import {
   AppBar,
   AppBarSection,
   AppScrollView,
-  Button,
   Icons
 } from '@density/ui';
 
@@ -15,11 +14,9 @@ import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
 import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
+import outlookIcon from '../../assets/images/icon-outlook.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import Toaster from '../toaster/index';
-
-import Dialogger from '../dialogger';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import showModal from '../../actions/modal/show';
@@ -35,6 +32,57 @@ import collectionServiceAuthorizationCreate from '../../actions/collection/servi
 import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../actions/collection/service-authorizations/update';
 import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
 
+import doGoogleCalendarAuthRedirect from '../../actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../actions/integrations/outlook';
+
+
+function iconForIntegration(serviceName: string) {
+  switch(serviceName) {
+    case "google_calendar":
+      return googleCalendarIcon;
+    case "outlook":
+      return outlookIcon;
+    case "robin":
+      return robinIcon;
+    case "slack":
+      return slackIcon;
+    case "teem":
+      return teemIcon;
+    default:
+      return "";
+  }
+}
+
+function activateEditLink(item) {
+  if (!item.serviceAuthorization.id) {
+    return <ListViewClickableLink>Activate</ListViewClickableLink>;
+  }
+
+  if (item.name === "robin") {
+    return <ListViewClickableLink>Edit</ListViewClickableLink>;
+  }
+}
+
+function handleActivateEditClick(item, onOpenModal) {
+  if (item.name === "teem" && !item.serviceAuthorization.id) {
+     window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
+  } else if (item.name === "google_calendar" && !item.serviceAuthorization.id) {
+    return doGoogleCalendarAuthRedirect();
+  } else if (item.name === "outlook" && !item.serviceAuthorization.id) {
+    return doOutlookAuthRedirect();
+  } else {
+    onOpenModal(!item.serviceAuthorization.id ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
+  }
+}
+
+function handleDeleteClick(item, onOpenModal) {
+  if (item.name === "teem" || item.name === "google_calendar" || item.name === 'outlook') {
+    onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
+  } else {
+    onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});
+  }
+}
+
 
 export function AdminIntegrations({
   activeModal,
@@ -46,22 +94,6 @@ export function AdminIntegrations({
   onDestroyServiceAuthorization,
   onCloseModal,
 }) {
-
-  function iconForIntegration(serviceName) {
-    switch(serviceName) {
-      case "robin":
-        return robinIcon;
-      case "google_calendar":
-        return googleCalendarIcon;
-      case "slack":
-        return slackIcon;
-      case "teem":
-        return teemIcon;
-      default:
-        return "";
-    }
-  }
-
   return <Fragment>
     {activeModal.name === 'integrations-robin-create' ? <IntegrationsRobinCreateModal
       visible={activeModal.visible}
@@ -94,12 +126,10 @@ export function AdminIntegrations({
       onDestroyServiceAuthorization={onDestroyServiceAuthorization}
     /> : null}
 
-    <Toaster />
-
     <AppBar>
       <AppBarSection>
        Looking for a different integration? Contact us&nbsp;
-       <a href="mailto:contact@density.io" target="_blank">contact@density.io</a>
+       <a href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">contact@density.io</a>
       </AppBarSection>
     </AppBar>
 
@@ -108,19 +138,19 @@ export function AdminIntegrations({
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
+            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
-          <ListViewColumn title="Default Service" template={item => {
+          <ListViewColumn title="Default service" template={item => {
             if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
               return <span className={styles.adminIntegrationsListviewValue}>Default</span>
             } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
-              return <ListViewClickableLink>Make Default</ListViewClickableLink>
+              return <ListViewClickableLink>Make default</ListViewClickableLink>
             } else {
               return null;
             }
@@ -129,26 +159,16 @@ export function AdminIntegrations({
           />          
           <ListViewColumn flexGrow={1} flexShrink={1} />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? 
-              <ListViewClickableLink>Activate</ListViewClickableLink> :
-              <ListViewClickableLink>Edit</ListViewClickableLink>}
-            onClick={item => {
-              if (item.name == "teem") {
-                item.serviceAuthorization.id == null ? window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations` : null;
-              } else {
-                onOpenModal(item.serviceAuthorization.id == null ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
-              }
-            }}
+            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
+            onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
           />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-            onClick={item => {
-              if (item.name == "teem") {
-                onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})
-              } else {
-                onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true})} 
-              }
-            }
+            template={item => activateEditLink(item)}
+            onClick={item => handleActivateEditClick(item, onOpenModal)}
+          />
+          <ListViewColumn
+            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            onClick={item => handleDeleteClick(item, onOpenModal)}
            />
 
         </ListView>
@@ -157,24 +177,31 @@ export function AdminIntegrations({
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
           <ListViewColumn title="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} />
+            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
           <ListViewColumn title="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added By" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
           <ListViewColumn flexGrow={1} flexShrink={1} />
+          {/*
           <ListViewColumn
-          template={item => item.serviceAuthorization.id == null ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
-          onClick={item => {
-            if (item.serviceAuthorization.id == null) {
-              window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
-            }}}
+            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            onClick={item => {
+              if (!item.serviceAuthorization.id) {
+                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
+              }
+            }}
+          />
+          */}
+          <ListViewColumn
+            template={item => !item.serviceAuthorization.id ? <span
+            className={styles.disabledIntegrationsLink}>Coming soon</span> : null }
           />
           <ListViewColumn
-            template={item => item.serviceAuthorization.id == null ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})} />
         </ListView>
       </div>
@@ -197,7 +224,7 @@ export default connect((state: any) => {
       dispatch<any>(hideModal());
     },
     onCreateServiceAuthorizationRobin(serviceAuthorization) {
-       dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
+      dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());
         }

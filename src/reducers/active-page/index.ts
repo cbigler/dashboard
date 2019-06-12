@@ -10,13 +10,10 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../actions/route-transi
 import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../actions/route-transition/explore-space-data-export';
 import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-transition/explore-space-meetings';
 
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_OVERVIEW } from '../../actions/route-transition/account-setup-overview';
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_LIST } from '../../actions/route-transition/account-setup-doorway-list';
-import { ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL } from '../../actions/route-transition/account-setup-doorway-detail';
-
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 
+import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../actions/route-transition/admin-space-mappings';
 import { ROUTE_TRANSITION_ADMIN_INTEGRATIONS } from '../../actions/route-transition/admin-integrations';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../actions/route-transition/admin-user-management';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../actions/route-transition/admin-user-management-detail';
@@ -57,14 +54,6 @@ export default function activePage(state=initialState, action) {
   case ROUTE_TRANSITION_ACCOUNT_FORGOT_PASSWORD:
     return "ACCOUNT_FORGOT_PASSWORD";
 
-  // Onboarding pages
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_OVERVIEW:
-    return "ACCOUNT_SETUP_OVERVIEW";
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_LIST:
-    return "ACCOUNT_SETUP_DOORWAY_LIST";
-  case ROUTE_TRANSITION_ACCOUNT_SETUP_DOORWAY_DETAIL:
-    return "ACCOUNT_SETUP_DOORWAY_DETAIL";
-
   case ROUTE_TRANSITION_DASHBOARD_LIST:
     return "DASHBOARD_LIST";
   case ROUTE_TRANSITION_DASHBOARD_DETAIL:
@@ -78,6 +67,8 @@ export default function activePage(state=initialState, action) {
     return "ADMIN_DEVELOPER";
   case ROUTE_TRANSITION_ADMIN_DEVICE_STATUS:
     return "ADMIN_DEVICE_STATUS";
+  case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
+    return "ADMIN_SPACE_MAPPINGS";
   case ROUTE_TRANSITION_ADMIN_INTEGRATIONS:
     return "ADMIN_INTEGRATIONS";
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:

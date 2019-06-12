@@ -41,7 +41,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
         <ErrorBar message={this.state.error} showRefresh />
 
         <div className={styles.accountForgotPasswordDensityLogo}>
-          <img src={logoDensityBlack} />
+          <img src={logoDensityBlack} alt="Density Logo" />
         </div>
         <p className={styles.accountForgotPasswordLead}>
           Please set your new password.
@@ -68,6 +68,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
 
           <div className={styles.accountForgotPasswordSubmitButton}>
             <Button
+              variant="filled"
               onClick={this.onSubmit.bind(this)}
               disabled={this.state.loading || !(this.state.password.length > 0 && this.state.password === this.state.passwordConfirmation)}
             >Update Password</Button>

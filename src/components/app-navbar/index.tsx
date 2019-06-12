@@ -74,7 +74,7 @@ function AppNavbarMenuItem({path, text, icon, selected}) {
     onClick={context.onMenuBlur}
   >
     <span className={styles.appNavbarMenuItemIcon}>
-      {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
+      {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
     </span>
     {text}
   </a>}</AppNavbarMenuContext.Consumer>;
@@ -102,7 +102,7 @@ function AppNavbarItem({
     >
       <a href={path} onClick={onClick}>
         {icon ? <span className={styles.appNavbarIcon}>
-          {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimaryNew}) : icon}
+          {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
         </span> : null}
         {text}
       </a>
@@ -142,14 +142,14 @@ export default function AppNavbar({
           </div>
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
             selected={['EXPLORE', 'EXPLORE_SPACE_DETAIL', 'EXPLORE_SPACE_TRENDS', 'EXPLORE_SPACE_DAILY', 'EXPLORE_SPACE_DATA_EXPORT'].includes(page)}
-            showOnMobile={false}
+            showOnMobile={true}
             path="#/spaces/explore"
             icon={<Icons.Building />}
             text="Spaces"
           /> : null}
           {stringToBoolean(settings.dashboardEnabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
-            showOnMobile={false}
+            showOnMobile={true}
             path="#/dashboards"
             icon={<Icons.Dashboards />}
             text="Dashboards"
@@ -161,13 +161,6 @@ export default function AppNavbar({
             icon={<Icons.StopWatch />}
             text="Live"
           />
-          {stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
-            selected={['ACCOUNT_SETUP_OVERVIEW', 'ACCOUNT_SETUP_DOORWAY_LIST', 'ACCOUNT_SETUP_DOORWAY_DETAIL'].includes(page)}
-            showOnMobile={true}
-            path="#/onboarding"
-            icon={<Icons.Copy />}
-            text="Onboarding"
-          /> : null}
         </ul>
         <ul className={styles.appNavbarRight}>
 
@@ -178,7 +171,7 @@ export default function AppNavbar({
                 className={classnames(styles.appNavbarItem, { [styles.showOnMobile]: true })}
                 style={{cursor: 'pointer', opacity: 1}}
               >
-                <a onClick={onClickImpersonate}>
+                <span onClick={onClickImpersonate}>
                   <span className={styles.appNavbarIcon}>{
                     <svg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
                       <g id='Symbols' fill='none' fillRule='evenodd'>
@@ -197,7 +190,7 @@ export default function AppNavbar({
                     </svg>
                   }</span>
                   {getUserLabel(impersonate.selectedUser)}
-                </a>
+                </span>
               </li>
               : <AppNavbarItem
                 selected={false}
@@ -212,7 +205,7 @@ export default function AppNavbar({
           {/* Mobile logout button */}
           <AppNavbarItem
             selected={false}
-            showOnMobile={true}
+            showOnMobile={false}
             hideOnDesktop={true}
             path="#/logout"
             style={{ marginRight: -8, marginTop: 2 }}
@@ -224,25 +217,36 @@ export default function AppNavbar({
           {showAdminMenu ?
             <AppNavbarMenu
               header={<AppNavbarItem
-                selected={['ADMIN_USER_MANAGEMENT', 'ADMIN_DEVELOPER', 'ADMIN_DEVICE_STATUS'].includes(page)}
-                showOnMobile={false}
+                selected={[
+                  'ADMIN_USER_MANAGEMENT',
+                  'ADMIN_DEVELOPER',
+                  'ADMIN_LOCATIONS',
+                  'ADMIN_SPACE_MAPPINGS',
+                  'ADMIN_DEVICE_STATUS',
+                ].includes(page)}
+                showOnMobile={true}
                 icon={<Icons.Cog />}
                 text="Admin"
               />}
             >
+              <AppNavbarMenuItem
+                path="#/admin/locations"
+                text="Locations"
+                icon={<Icons.Globe />}
+                selected={['ADMIN_LOCATIONS'].includes(page)}
+              />
               <AppNavbarMenuItem
                 path="#/admin/user-management"
                 text="User Management"
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {can(user, PERMISSION_CODES.developerToolsManage) ?
-                <AppNavbarMenuItem
-                  path="#/admin/integrations"
-                  text="Integrations"
-                  icon={<Icons.Filters />}
-                  selected={['ADMIN_INTEGRATIONS'].includes(page)}
-                /> : null}
+              {can(user, PERMISSION_CODES.developerToolsManage) ? <AppNavbarMenuItem
+                path="#/admin/integrations"
+                text="Integrations"
+                icon={<Icons.Filters />}
+                selected={['ADMIN_INTEGRATIONS', 'ADMIN_SPACE_MAPPINGS'].includes(page)}
+              /> : null}
               {can(user, PERMISSION_CODES.developerToolsManage) ?
                 <AppNavbarMenuItem
                   path="#/admin/developer"
@@ -262,7 +266,7 @@ export default function AppNavbar({
           <AppNavbarMenu
             header={<AppNavbarItem
               selected={['ACCOUNT'].includes(page)}
-              showOnMobile={false}
+              showOnMobile={true}
               icon={<Icons.Person />}
               text="Account"
             />}

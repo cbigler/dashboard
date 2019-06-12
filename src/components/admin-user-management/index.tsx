@@ -15,17 +15,16 @@ import {
   AppBarTitle,
   AppScrollView,
   Button,
-  ButtonContext,
+  ButtonGroup,
   Icons,
   InputBox,
-  InputBoxContext,
   Modal,
   Skeleton,
 } from '@density/ui';
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import can, { getManageableRoles, ROLE_INFO, PERMISSION_CODES } from '../../helpers/permissions';
+import { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
 import { getChildrenOfSpace } from '../../helpers/filter-hierarchy';
 import filterCollection from '../../helpers/filter-collection';
 import deduplicate from '../../helpers/deduplicate';
@@ -38,7 +37,6 @@ import collectionUsersCreate from '../../actions/collection/users/create';
 import collectionUsersUpdate from '../../actions/collection/users/update';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
-import Dialogger from '../dialogger';
 import FormLabel from '../form-label';
 import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
@@ -92,9 +90,6 @@ export function AdminUserManagement({
 
   return (
     <Fragment>
-      {/* Display user delete confirmation dialog */}
-      <Dialogger />
-
       {/* If the "add user" modal is visible, render it above the view */}
       {activeModal.name === 'MODAL_ADMIN_USER_ADD' ? (
         <Modal
@@ -157,21 +152,22 @@ export function AdminUserManagement({
             <AppBar>
               <AppBarSection></AppBarSection>
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={onCancelAddUser}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  disabled={!(
-                    activeModal.data.email &&
-                    activeModal.data.role && (
-                      !activeModal.data.spaceFilteringActive || 
-                      activeModal.data.spaceIds.length > 0)
-                  )}
-                  onClick={() => onSaveNewUser(activeModal.data)}
-                >
-                  Save User
-                </Button>
+                <ButtonGroup>
+                  <Button variant="underline" onClick={onCancelAddUser}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    disabled={!(
+                      activeModal.data.email &&
+                      activeModal.data.role && (
+                        !activeModal.data.spaceFilteringActive || 
+                        activeModal.data.spaceIds.length > 0)
+                    )}
+                    onClick={() => onSaveNewUser(activeModal.data)}
+                  >
+                    Save user
+                  </Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>
@@ -191,7 +187,7 @@ export function AdminUserManagement({
           />
         </AppBarSection>
         <AppBarSection>
-          <Button type="primary" onClick={onClickAddUser}>Add User</Button>
+          <Button type="primary" variant="filled" onClick={onClickAddUser}>Add user</Button>
         </AppBarSection>
       </AppBar>
 
@@ -210,7 +206,7 @@ export function AdminUserManagement({
               <ListViewColumn title="Activity" template={() => <Skeleton width={80} />} />
               <ListViewColumn title="Invitation" template={() => <Skeleton width={100} />} />
               <ListViewColumn />
-              <ListViewColumn title="Space Access" template={() => <Skeleton />} />
+              <ListViewColumn title="Space access" template={() => <Skeleton />} />
               <ListViewColumn title="Actions" template={() => <Skeleton />} />
             </ListView>
           </div>
@@ -238,7 +234,7 @@ export function AdminUserManagement({
                         <ul className={styles.adminUserManagementInfoUl}>
                           <li><strong>Owner</strong>: Full access and all permissions within an organization</li>
                           <li><strong>Admin</strong>: Edit spaces and users. Cannot make changes to the organization.</li>
-                          <li><strong>Read-Only</strong>: Cannot make changes to the organization or team.</li>
+                          <li><strong>Read-only</strong>: Cannot make changes to the organization or team.</li>
                         </ul>
                       </AdminUserManagementInfo>
                     </Fragment>
@@ -273,11 +269,11 @@ export function AdminUserManagement({
                 />
                 <ListViewColumn
                   title={(
-                    <span style={{paddingRight: 8}}>Space Access</span>
+                    <span style={{paddingRight: 8}}>Space access</span>
                   )}
                   template={item => {
                     if (!item.isEditable) {
-                      return <span>Some Spaces</span>;
+                      return <span>Some spaces</span>;
                     } else {
                       const userSpaces = (item.spaces || []).reduce((acc, next) => {
                         const space = spaces.data.find(s => s.id === next);
@@ -285,7 +281,7 @@ export function AdminUserManagement({
                       }, []);
                       return <span>
                         {userSpaces.length || 'All'}
-                        {' Space'}
+                        {' space'}
                         {userSpaces.length === 1 ? '' : 's'}
                       </span>;
                     }

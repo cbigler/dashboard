@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 
 import Intercom from 'react-intercom';

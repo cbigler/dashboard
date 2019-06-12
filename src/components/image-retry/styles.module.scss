@@ -1,24 +1,19 @@
 @import "@density/ui/variables/colors.scss";
-@import "@density/ui/variables/fonts.scss";
 
-.imageRetryLoading {
-  text-align: center;
-  background-color: $grayLighter;
-}
-.imageRetryLoading:before {
-  font-family: 'Densicons';
-  content: '\e91d';
-  color: $grayDark;
-  font-size: $fontSize3;
+.image {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  -webkit-transform: translate(-50%,-50%);
+      -ms-transform: translate(-50%,-50%);
+          transform: translate(-50%,-50%);
 }
 
-.imageRetryFallback {
-  text-align: center;
-  background-color: $grayLighter;
-}
-.imageRetryFallback:before {
-  font-family: 'Densicons';
-  content: '\e91d';
-  color: $grayDark;
-  font-size: $fontSize3;
+.imageLoading, .imageFallback {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: $grayCinder;
 }

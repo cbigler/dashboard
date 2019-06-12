@@ -22,7 +22,6 @@ import {
   Icons,
   Modal,
 } from '@density/ui';
-import Toaster from '../toaster/index';
 
 import { ReportLoading } from '@density/reports';
 import Report from '../report';
@@ -78,10 +77,10 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
   >
     <div style={{marginTop: -64}}>
       <AppBarContext.Provider value="TRANSPARENT">
-        <AppBar>
+        <AppBar padding="0">
           <AppBarSection></AppBarSection>
           <AppBarSection>
-            <Button onClick={onCloseModal}>Close</Button>
+            <Button type="primary" variant="filled" onClick={onCloseModal}>Close</Button>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
@@ -196,135 +195,168 @@ function DashboardMainScrollViewContent({
   }
 }
 
-export function Dashboard({
-  dashboards,
-  selectedDashboard,
-  activeModal,
+export class Dashboard extends React.Component<any, any> {
+  private pageContainerRef: React.RefObject<HTMLInputElement>;
 
-  date,
-  sidebarVisible,
-  resizeCounter,
-  settings,
-  isDemoUser,
+  constructor(props) {
+    super(props);
+    this.pageContainerRef = React.createRef();
+    this.state = {
+      pageSize: 0,
+    };
+  }
 
-  onDashboardChangeWeek,
-  onChangeSidebarVisibility,
-  onCloseModal,
-  onShowModal,
-}) {
-  return (
-    <Fragment>
-      {/* If an expanded report modal is visible, then render it above the view */}
-      {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
-        <DashboardExpandedReportModal
-          visible={activeModal.visible}
-          report={activeModal.data.report}
-          reportData={dashboards.calculatedReportData[activeModal.data.report.id]}
-          onCloseModal={onCloseModal}
-        />
-      ) : null}
+  componentDidMount() {
+    window.addEventListener('resize', this.onResize);
+    this.onResize();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+  }
 
-      <Toaster />
+  onResize = () => {
+    if (this.pageContainerRef) {
+      const div: any = this.pageContainerRef.current;
+      this.setState({
+        pageSize: div.clientWidth,
+      });
+    }
+  }
 
-      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
-        <DashboardDigestManagementModal
-          visible={activeModal.visible}
-          selectedDashboard={activeModal.data.selectedDashboard}
-          initialDigestSchedule={activeModal.data.digest}
-          onCloseModal={onCloseModal}
-        />
-      ) : null}
+  render() {
+    const {
+      dashboards,
+      selectedDashboard,
+      activeModal,
 
-      {/* Main application */}
-      <AppFrame>
-        <AppSidebar visible={sidebarVisible}>
-          <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
-          <AppScrollView>
-            <nav className={styles.dashboardAppFrameSidebarList}>
-              {dashboards.loading ? null :
-                <Fragment>
-                  {dashboards.data.sort((a, b) => {
-                    // Sort alphabetically by name
-                    return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
-                  }).map(dashboard => (
-                    <DashboardSidebarItem
-                      key={dashboard.id}
-                      id={dashboard.id}
-                      name={dashboard.name}
-                      reportSet={dashboard.reportSet}
-                      selected={selectedDashboard ? selectedDashboard.id === dashboard.id : false}
-                    />
-                  ))}
-                </Fragment>}
-            </nav>
-          </AppScrollView>
-        </AppSidebar>
-        <AppPane>
-          <AppBar>
-            <AppBarSection>
-              <DashboardSidebarHideShowIcon
-                sidebarVisible={sidebarVisible}
-                onChangeSidebarVisibility={onChangeSidebarVisibility}
-              />
-              <AppBarTitle>
-                {selectedDashboard ? selectedDashboard.name : ""}
-              </AppBarTitle>
-            </AppBarSection>
+      date,
+      sidebarVisible,
+      resizeCounter,
+      settings,
+      isDemoUser,
 
-            {/* TODO: Replace this with better report time navigation (like MixPanel) */}
-            {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
-              <div style={{width: 50}}>
-                <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
-                <div style={{paddingTop: 4}}>
-                  <Icons.ChevronLeft color={colorVariables.brandPrimaryNew} />
-                </div>
-                </Button>
-              </div>
-              <div style={{padding: 13}}>
-                Reported on{' '}
-                <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-              </div>
-              <div style={{width: 50}}>
-                <Button
-                  onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-                  disabled={moment(date).add(1, 'week') > moment()}
-                >
-                  <div style={{paddingTop: 4}}>
-                    <Icons.ChevronRight
-                      color={moment(date).add(1, 'week') > moment() ?
-                        colorVariables.gray :
-                        colorVariables.brandPrimaryNew}
-                    />
+      onDashboardChangeWeek,
+      onChangeSidebarVisibility,
+      onCloseModal,
+      onShowModal,
+    } = this.props;
+
+    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
+
+    return (
+      <Fragment>
+        {/* If an expanded report modal is visible, then render it above the view */}
+        {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
+          <DashboardExpandedReportModal
+            visible={activeModal.visible}
+            report={activeModal.data.report}
+            reportData={dashboards.calculatedReportData[activeModal.data.report.id]}
+            onCloseModal={onCloseModal}
+          />
+        ) : null}
+
+        {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
+          <DashboardDigestManagementModal
+            visible={activeModal.visible}
+            selectedDashboard={activeModal.data.selectedDashboard}
+            initialDigestSchedule={activeModal.data.digest}
+            onCloseModal={onCloseModal}
+          />
+        ) : null}
+
+        {/* Main application */}
+        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
+          <AppFrame>
+            <AppSidebar visible={sidebarVisible} width={sidebarWidth}>
+              <AppBar><AppBarTitle>Dashboards</AppBarTitle></AppBar>
+              <AppScrollView>
+                <nav className={styles.dashboardAppFrameSidebarList}>
+                  {dashboards.loading ? null :
+                    <Fragment>
+                      {dashboards.data.sort((a, b) => {
+                        // Sort alphabetically by name
+                        return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
+                      }).map(dashboard => (
+                        <DashboardSidebarItem
+                          key={dashboard.id}
+                          id={dashboard.id}
+                          name={dashboard.name}
+                          reportSet={dashboard.reportSet}
+                          selected={selectedDashboard ? selectedDashboard.id === dashboard.id : false}
+                        />
+                      ))}
+                    </Fragment>}
+                </nav>
+              </AppScrollView>
+            </AppSidebar>
+            <AppPane>
+              <AppBar>
+                <AppBarSection>
+                  <DashboardSidebarHideShowIcon
+                    sidebarVisible={sidebarVisible}
+                    onChangeSidebarVisibility={onChangeSidebarVisibility}
+                  />
+                  <AppBarTitle>
+                    {selectedDashboard ? selectedDashboard.name : ""}
+                  </AppBarTitle>
+                </AppBarSection>
+
+                {/* TODO: Replace this with better report time navigation (like MixPanel) */}
+                {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
+                  <div style={{width: 50}}>
+                    <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                    <div style={{paddingTop: 4}}>
+                      <Icons.ChevronLeft color={colorVariables.brandPrimary} />
+                    </div>
+                    </Button>
                   </div>
-                </Button>
-              </div>
-            </AppBarSection> : null}
+                  <div style={{padding: 13}}>
+                    Reported on{' '}
+                    <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+                  </div>
+                  <div style={{width: 50}}>
+                    <Button
+                      onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                      disabled={moment(date).add(1, 'week') > moment()}
+                    >
+                      <div style={{paddingTop: 4}}>
+                        <Icons.ChevronRight
+                          color={moment(date).add(1, 'week') > moment() ?
+                            colorVariables.gray :
+                            colorVariables.brandPrimary}
+                        />
+                      </div>
+                    </Button>
+                  </div>
+                </AppBarSection> : null}
 
-            <AppBarSection>
-              {!isDemoUser ? (
-                <DashboardDigestPopupList
+                <AppBarSection>
+                  {!isDemoUser ? (
+                    <DashboardDigestPopupList
+                      selectedDashboard={selectedDashboard}
+                      onEditDigest={digest => {
+                        onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                      }}
+                      onCreateDigest={() => {
+                        onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                      }}
+                    />
+                  ) : null}
+                </AppBarSection>
+              </AppBar>
+              <AppScrollView backgroundColor={colorVariables.grayLightest}>
+                <DashboardMainScrollViewContent
+                  dashboards={dashboards}
                   selectedDashboard={selectedDashboard}
-                  onEditDigest={digest => {
-                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
-                  }}
-                  onCreateDigest={() => {
-                    onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
-                  }}
+                  resizeCounter={resizeCounter}
                 />
-              ) : null}
-            </AppBarSection>
-          </AppBar>
-          <AppScrollView backgroundColor={colorVariables.grayLightest}>
-            <DashboardMainScrollViewContent
-              dashboards={dashboards}
-              selectedDashboard={selectedDashboard}
-              resizeCounter={resizeCounter}
-            />
-          </AppScrollView>
-        </AppPane>
-      </AppFrame>
-    </Fragment>
-  );
+              </AppScrollView>
+            </AppPane>
+          </AppFrame>
+        </div>
+      </Fragment>
+    );
+  }
 }
 
 export default connect((state: any) => {

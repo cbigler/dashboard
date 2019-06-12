@@ -7,13 +7,14 @@ export const TOAST_HIDE = 'TOAST_HIDE';
 
 export default function showToast({
   text,
+  id = undefined as string | undefined,
   title = undefined as string | undefined,
   icon = undefined as any | undefined,
   type = undefined as string | undefined,
-  timeout = 2000,
+  timeout = 2000 as (number | null),
 }) {
   return dispatch => {
-    const id = uuid();
+    id = id || uuid();
     dispatch({
       type: TRANSITION_TO_SHOW_TOAST,
       toast: { id, text, title, icon, type },
@@ -27,9 +28,12 @@ export default function showToast({
 
 export function hideToast(id) {
   return dispatch => {
-    dispatch({ type: TRANSITION_TO_HIDE_TOAST, id });
-    setTimeout(() => {
-      dispatch({ type: TOAST_HIDE, id });
-    }, 500);
+    return new Promise(resolve => {
+      dispatch({ type: TRANSITION_TO_HIDE_TOAST, id });
+      setTimeout(() => {
+        dispatch({ type: TOAST_HIDE, id });
+        resolve();
+      }, 500);
+    });
   }
 }

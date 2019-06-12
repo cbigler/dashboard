@@ -10,8 +10,6 @@ import 'moment-timezone';
 import { calculateDailyMetrics } from '../../actions/route-transition/explore-space-trends';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
-import { isInclusivelyBeforeDay, isInclusivelyAfterDay } from '@density/react-dates';
-
 import {
   Card,
   CardBody,
@@ -59,7 +57,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
       space,
       startDate,
       endDate,
-      timeSegmentGroup,
+      timeSegmentLabel,
 
       onRefresh,
       onChangeMetricToDisplay,
@@ -75,7 +73,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
               Daily Metrics
               <InfoPopup horizontalIconOffset={8}>
                 <p className={styles.exploreSpaceDetailDailyMetricsCardPopupP}>
-                  Visitation metrics for time segment <strong>{timeSegmentGroup.name}</strong> from{' '}
+                  Visitation metrics for time segment <strong>{timeSegmentLabel}</strong> from{' '}
                   <strong>{parseISOTimeAtSpace(startDate, space).format('MMMM D, YYYY')}</strong> to{' '}
                   <strong>{parseISOTimeAtSpace(endDate, space).format('MMMM D, YYYY')}</strong>{' '}
                   grouped by day.
@@ -108,8 +106,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 choices={[
                   {id: "entrances", label: "Entrances"},
                   {id: "exits", label: "Exits"},
-                  {id: "total-events", label: "Total Events"},
-                  {id: "peak-occupancy", label: "Peak Occupancy"},
+                  {id: "total-events", label: "Total events"},
+                  {id: "peak-occupancy", label: "Peak occupancy"},
                 ]}
               />
             </div>
@@ -124,7 +122,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
           </CardHeader>
 
           <CardBody className={styles.exploreSpaceDetailDailyMetricsCardBody}>
-            {calculatedData.state === 'COMPLETE' ? (() => {
+            {calculatedData.state === 'COMPLETE' && Array.isArray(calculatedData.data.metrics) ? (() => {
               if (calculatedData.data.metrics.length > GRAPH_TYPE_TRANSITION_POINT_IN_DAYS) {
                 const data: any[] = calculatedData.data.metrics.slice().sort(
                   (a, b) => moment.utc(a.timestamp).valueOf() - moment.utc(b.timestamp).valueOf()
@@ -155,7 +153,9 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                       formatter: n => parseISOTimeAtSpace(n, space).format(`MM/DD`),
                     })}
 
-                    yAxis={yAxisMinMax({})}
+                    yAxis={yAxisMinMax({
+                      verticalBaselineOffset: 10,
+                    })}
                     yAxisStart={0}
 
                     overlays={[
@@ -165,8 +165,8 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                             switch (metric) {
                               case 'entrances': return 'Entrances';
                               case 'exits': return 'Exits';
-                              case 'total-events': return 'Total Events';
-                              case 'peak-occupancy': return 'Peak Occupancy';
+                              case 'total-events': return 'Total events';
+                              case 'peak-occupancy': return 'Peak occupancy';
                               default: return 'People';
                             }
                           })(spaces.filters.metricToDisplay);
