@@ -8,8 +8,8 @@ import classnames from 'classnames';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
+import SpacePicker, { SpacePickerDropdown } from '../space-picker';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
-import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
@@ -32,7 +32,6 @@ import {
   InputBox,
   Icons,
   Modal,
-  RadioButton,
   Switch,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
@@ -56,10 +55,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   onChangeSelectedSpace,
 }) {
   if (activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE') {
-    let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
-    if (spaces.filters.search) {
-      formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, spaces.filters.search);
-    }
+    const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
 
     return (
       <Modal
@@ -73,67 +69,19 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
           <AppBarTitle>Copy Operating Hours</AppBarTitle>
         </AppBar>
 
-        <div className={styles.copyFromSpaceModalSearchBar}>
-          <AppBar>
-            <InputBox
-              type="text"
-              leftIcon={<Icons.Search />}
-              placeholder="Search for space name"
-              width="100%"
-              value={spaces.filters.search}
-              onChange={e => onChangeSearchText(e.target.value)}
-            />
-          </AppBar>
-        </div>
+        <SpacePicker
+          value={formattedHierarchy.find(h => h.space.id === selectedSpaceId) || null}
+          onChange={item => onChangeSelectedSpace(item.space.id)}
 
-        <div className={styles.copyFromSpaceModalContainer}>
-          {formattedHierarchy.map(item => {
+          formattedHierarchy={formattedHierarchy}
+          searchBoxPlaceholder="Search for space name"
+          height={444}
+          isItemDisabled={item => {
             const space = spaces.data.find(s => s.id === item.space.id);
             const spaceHasNoTimeSegments = space ? space.timeSegments.length === 0 : false;
-            const spaceDisabled = !item.space.hasPurview || spaceHasNoTimeSegments;
-            return (
-              <div
-                key={item.space.id}
-                className={classnames(styles.copyFromSpaceModalItem, {
-                  [styles.depth0]: item.depth === 0,
-                  [styles.disabled]: spaceDisabled,
-                })}
-                style={{marginLeft: item.depth * 24}}
-                onClick={() => {
-                  if (!spaceDisabled) {
-                    onChangeSelectedSpace(item.space.id)
-                  }
-                }}
-              >
-                <RadioButton
-                  disabled={spaceDisabled}
-                  checked={selectedSpaceId === item.space.id}
-                  onChange={() => onChangeSelectedSpace(item.space.id)}
-                />
-
-                {item.space.spaceType === 'building' ? (
-                  <span className={styles.copyFromSpaceModalItemIcon}>
-                    <Icons.Building color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                  </span>
-                ) : null}
-                {item.space.spaceType === 'floor' ? (
-                  <span className={styles.copyFromSpaceModalItemIcon}>
-                    <Icons.Folder color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                  </span>
-                ) : null}
-
-                <span
-                  className={classnames(styles.copyFromSpaceModalItemName, {
-                    [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
-                    [styles.disabled]: spaceDisabled,
-                  })}
-                >
-                  {item.space.name}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+            return spaceHasNoTimeSegments;
+          }}
+        />
 
         <AppBarContext.Provider value="BOTTOM_ACTIONS">
           <AppBar>
