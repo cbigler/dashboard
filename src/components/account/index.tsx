@@ -69,7 +69,11 @@ const GeneralInfoSection = props => {
         ) : null}
         {mode === EDIT ? ([
           <Button onClick={handleCancelButtonClick}>Cancel</Button>,
-          <Button type="primary" onClick={handleSaveButtonClick}>Save Changes</Button>
+          <Button
+            type="primary"
+            variant="filled"
+            onClick={handleSaveButtonClick}
+          >Save changes</Button>
         ]) : null}
       </div>
 
@@ -198,7 +202,7 @@ const PasswordSection = props => {
               <div
                 className={styles.accountPageSectionPopoutFormTrigger}
                 onClick={evt => setMode(EDIT)}
-              >Change Password</div>
+              >Change password</div>
             ) : null}
 
             {/* The form to change the password that is triggered. */}
@@ -208,7 +212,7 @@ const PasswordSection = props => {
                   <div className={styles.passwordFormFieldContainer}>
                     <FormLabel
                       htmlFor="account-password-current"
-                      label="Current Password"
+                      label="Current password"
                       input={<InputBox
                         id="account-password-current"
                         type="password"
@@ -226,7 +230,7 @@ const PasswordSection = props => {
                   <div className={styles.passwordFormFieldContainer}>
                     <FormLabel
                       htmlFor="account-password-new"
-                      label="New Password"
+                      label="New password"
                       input={<InputBox
                         id="account-password-new"
                         type="password"
@@ -246,7 +250,7 @@ const PasswordSection = props => {
                   <div className={styles.passwordFormFieldContainer}>
                     <FormLabel
                       htmlFor="account-password-new-confirm"
-                      label="Confirm New Password"
+                      label="Confirm new password"
                       input={<InputBox
                         id="account-password-new-confirm"
                         type="password"
@@ -269,9 +273,10 @@ const PasswordSection = props => {
                     <div className={styles.passwordFormAction}>
                     <Button
                       type="primary"
+                      variant="filled"
                       onClick={handleSaveButtonClick}
                       disabled={validationStatus !== VALID}
-                    >Change Password</Button>
+                    >Change password</Button>
                     </div>
                   </div>
                 </div>
