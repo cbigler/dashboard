@@ -1,5 +1,6 @@
 import dashboardsError from '../collection/dashboards/error';
 import dashboardsPush from '../collection/dashboards/push';
+import dashboardsSetFormState from '../dashboards/set-form-state';
 
 import { DensityDashboard } from '../../types';
 import { fetchObject } from '../../helpers/fetch-all-objects';
@@ -18,6 +19,7 @@ export default function routeTransitionDashboardEdit(dashboardId) {
       return;
     }
 
+    dispatch(dashboardsSetFormState(dashboard));
     dispatch(dashboardsPush(dashboard));
   };
 }

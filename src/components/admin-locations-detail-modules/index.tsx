@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
@@ -28,7 +28,7 @@ export default function AdminLocationsDetailModule({
   title,
   error=false,
   includePadding=true,
-  actions=null,
+  actions=null as ReactNode,
   children,
 }) {
   return (

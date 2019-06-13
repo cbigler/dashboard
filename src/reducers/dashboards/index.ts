@@ -12,6 +12,9 @@ import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
 } from '../../actions/collection/dashboards/calculate-report-data';
 
+import { DASHBOARDS_SET_FORM_STATE } from '../../actions/dashboards/set-form-state';
+import { DASHBOARDS_UPDATE_FORM_STATE } from '../../actions/dashboards/update-form-state';
+
 import { DensityDashboard } from '../../types';
 
 const initialState = {
@@ -28,6 +31,7 @@ const initialState = {
     }
     */
   },
+  formState: {},
 };
 
 
@@ -161,6 +165,18 @@ export default function dashboards(state=initialState, action) {
   // An error occurred.
   case COLLECTION_DASHBOARDS_ERROR:
     return {...state, loading: false, error: action.error};
+
+  // Utilized by the dashboard edit page as a place to store the state of the form
+  case DASHBOARDS_SET_FORM_STATE:
+    return { ...state, formState: action.formState };
+  case DASHBOARDS_UPDATE_FORM_STATE:
+    return {
+      ...state,
+      formState: {
+        ...state.formState,
+        [action.key]: action.value,
+      },
+    };
 
   default:
     return state;
