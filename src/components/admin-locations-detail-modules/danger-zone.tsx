@@ -47,6 +47,7 @@ export default connect(
             dispatch<any>(showToast({ type: 'error', text: 'Error deleting space' }));
           }
           window.location.href = `#/admin/locations/${space.parentId}`;
+          window.location.reload();
         }
       }));
     },
