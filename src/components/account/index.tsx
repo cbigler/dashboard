@@ -2,13 +2,10 @@ import styles from './styles.module.scss';
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import classNames from 'classnames';
 
 import {
-  Icons,
   InputBox,
   Button,
-  Toast,
   AppBar,
   AppBarSection,
   AppBarTitle,

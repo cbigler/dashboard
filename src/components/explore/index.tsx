@@ -7,6 +7,7 @@ import fuzzy from 'fuzzy';
 
 import {
   AppBar,
+  AppBarSection,
   AppBarTitle,
   AppFrame,
   AppPane,
@@ -16,14 +17,14 @@ import {
   InputBox,
 } from '@density/ui';
 
-import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
-
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
+import ExploreControlBar from '../explore-control-bar';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -226,35 +227,28 @@ export class Explore extends React.Component<any, any> {
             </AppSidebar>
             <AppPane>
               <AppBar>
-                <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
-                { selectedSpace ?
-                <AppBarSubnav>
-                  <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/trends`}
-                    active={activePage === "EXPLORE_SPACE_TRENDS"}
-                  >
-                    Trends
-                  </AppBarSubnavLink>
-                  <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/daily`}
-                    active={activePage === "EXPLORE_SPACE_DAILY"}
-                  >
-                    Daily
-                  </AppBarSubnavLink>
-                  { ["conference_room", "meeting_room"].includes(selectedSpace['function']) ? <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/meetings`}
-                    active={activePage === "EXPLORE_SPACE_MEETINGS"}
-                  >
-                    Meetings
-                  </AppBarSubnavLink> : null }
-                  <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/data-export`}
-                    active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
-                  >
-                    Data Export
-                  </AppBarSubnavLink>
-                </AppBarSubnav> : null}
+                <AppBarSection>
+                  <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
+                </AppBarSection>
+                <AppBarSection>
+                  <ExploreAlertPopupList
+                    selectedSpace={selectedSpace}
+                    onEditAlert={a => {
+                      console.log('edit alert')
+                      //onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: a });
+                    }}
+                    onCreateAlert={() => {
+                      //onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: null });
+                    }}
+                  />
+                </AppBarSection>
               </AppBar>
+              <ExploreControlBar
+                selectedSpace={selectedSpace}
+                spaceHierarchy={spaceHierarchy}
+                activePage={activePage}
+                filters={spaces.filters}
+              />
               <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
                 <ExploreSpacePage activePage={activePage} />
               </AppScrollView>
