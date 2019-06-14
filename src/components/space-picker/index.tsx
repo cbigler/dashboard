@@ -16,17 +16,54 @@ import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatt
 import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 
 type SpacePickerProps = {
-  value: Array<SpaceHierarchyDisplayItem> | SpaceHierarchyDisplayItem | null,
+  value: Array<SpaceHierarchyDisplayItem> | Array<string> | SpaceHierarchyDisplayItem | string | null,
   onChange: (SpaceHierarchyDisplayItem) => any,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
 
   searchBoxPlaceholder?: string,
   placeholder?: string,
-  width?: number,
+  width?: number | string,
   height?: number | string,
   canSelectMultiple?: boolean,
   isItemDisabled?: (SpaceHierarchyDisplayItem) => boolean,
 };
+
+function convertValueToSpaceIds(
+  value: Array<SpaceHierarchyDisplayItem> | Array<string> | SpaceHierarchyDisplayItem | string | null,
+  canSelectMultiple: boolean,
+): Array<string> {
+  // Extract the id out of value
+  if (canSelectMultiple) {
+    if (!Array.isArray(value)) {
+      throw new Error('Space Picker value prop is not an array, but `canSelectMultiple` is true! This is not a valid state.');
+    }
+    if (value.length === 0) {
+      return [];
+    } else if (typeof value[0] === 'string') {
+      // An array of ids: ['spc_xxx', 'spx_abc']
+      return value as Array<string>;
+    } else {
+      // An array of formatted hierarchy items:
+      // - [{space: {id: 'spc_xxx', ...}, ...}]
+      return (value as Array<SpaceHierarchyDisplayItem>).map(v => v.space.id);
+    }
+  } else {
+    if (Array.isArray(value)) {
+      throw new Error('Space Picker value prop is an array, but `canSelectMultiple` is false! This is not a valid state.');
+    }
+    if (!value) {
+      // No value is selected
+      return [];
+    } else if (typeof value === 'string') {
+      // A single id: 
+      return [value];
+    } else {
+      // An single formatted hierarchy item:
+      // - {space: {id: 'spc_xxx', ...}, ...}
+      return [value.space.id];
+    }
+  }
+}
 
 export default function SpacePicker({
   value,
@@ -40,8 +77,31 @@ export default function SpacePicker({
 }: SpacePickerProps) {
   const [searchText, setSearchText] = useState('');
 
+  const selectedSpaceIds = convertValueToSpaceIds(value, canSelectMultiple);
+
   if (searchText.length > 0) {
     formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, searchText);
+  }
+
+  // This function normalizes the difference between when `canSelectMultiple` is set or unset.
+  function callOnChange(item, isChecked) {
+    console.log('CALLONCHANGE', item, isChecked);
+    if (canSelectMultiple) {
+      if (isChecked) {
+        onChange(
+          [...selectedSpaceIds, item.space.id]
+          .map(id => formattedHierarchy.find(h => h.space.id === id))
+        );
+      } else {
+        onChange(
+          selectedSpaceIds
+          .filter(id => id !== item.space.id)
+          .map(id => formattedHierarchy.find(h => h.space.id === id))
+        );
+      }
+    } else {
+      onChange(item);
+    }
   }
 
   return (
@@ -62,15 +122,8 @@ export default function SpacePicker({
       <div className={styles.scrollContainer} style={{height}}>
         {formattedHierarchy.map(item => {
           const spaceDisabled = !item.space.hasPurview || isItemDisabled(item);
+          const isChecked = Boolean(selectedSpaceIds.find(id => id === item.space.id));
 
-          let isChecked: boolean = false;
-          if (value && canSelectMultiple) {
-            // Multi select mode, `value` is an array of space hiearchy items
-            isChecked = Boolean((value as Array<SpaceHierarchyDisplayItem>).find(v => v.space.id === item.space.id));
-          } else if (value && !canSelectMultiple) {
-            // Single select mode, `value` is a single space hiearchy item
-            isChecked = (value as SpaceHierarchyDisplayItem).space.id === item.space.id;
-          }
           return (
             <div
               key={item.space.id}
@@ -79,9 +132,9 @@ export default function SpacePicker({
                 [styles.disabled]: spaceDisabled,
               })}
               style={{marginLeft: item.depth * 24}}
-              onClick={() => {
+              onMouseUp={e => {
                 if (!spaceDisabled) {
-                  onChange(item);
+                  callOnChange(item, !isChecked);
                 }
               }}
             >
@@ -89,13 +142,13 @@ export default function SpacePicker({
                 <Checkbox
                   disabled={spaceDisabled}
                   checked={isChecked}
-                  onChange={() => onChange(item)}
+                  onChange={e => {}}
                 />
               ) : (
                 <RadioButton
                   disabled={spaceDisabled}
                   checked={isChecked}
-                  onChange={() => onChange(item)}
+                  onChange={e => {}}
                 />
               )}
 
@@ -130,7 +183,11 @@ export default function SpacePicker({
   )
 }
 
-export class SpacePickerDropdown extends Component<SpacePickerProps, {opened: boolean}> {
+type SpacePickerDropdownProps = SpacePickerProps & {
+  dropdownWidth?: number | string,
+};
+
+export class SpacePickerDropdown extends Component<SpacePickerDropdownProps, {opened: boolean}> {
   state = {
     opened: false,
   };
@@ -141,6 +198,7 @@ export class SpacePickerDropdown extends Component<SpacePickerProps, {opened: bo
       placeholder,
       width,
       height,
+      dropdownWidth,
       searchBoxPlaceholder,
       formattedHierarchy,
       canSelectMultiple,
@@ -153,6 +211,12 @@ export class SpacePickerDropdown extends Component<SpacePickerProps, {opened: bo
     height = typeof height === 'undefined' ? 256 : height;
 
     const { opened } = this.state;
+
+    // Calculate a list of space names for all spaces that this space picker has selected
+    const selectedSpaceNames = convertValueToSpaceIds(value, canSelectMultiple)
+      .map(id => formattedHierarchy.find(h => h.space.id === id))
+      .filter(hierarchyItem => typeof hierarchyItem !== 'undefined')
+      .map((hierarchyItem: any) => hierarchyItem.space.name);
 
     return (
       <Fragment>
@@ -174,8 +238,8 @@ export class SpacePickerDropdown extends Component<SpacePickerProps, {opened: bo
               this.setState({opened: !opened});
             }}
           >
-            {value ? (
-              <span>{Array.isArray(value) ? `${value.length} spaces selected` : value.space.name}</span>
+            {selectedSpaceNames.length > 0 ? (
+              <span>{selectedSpaceNames.length > 1 ? `${selectedSpaceNames.length} spaces selected` : selectedSpaceNames[0]}</span>
             ) : (
               <span className={styles.placeholder}>
                 {placeholder || `No ${canSelectMultiple ? 'spaces' : 'space'} selected`}
@@ -190,18 +254,18 @@ export class SpacePickerDropdown extends Component<SpacePickerProps, {opened: bo
             </span>
           </div>
 
-          <div className={classnames(styles.popup, {[styles.visible]: opened})}>
-            <SpacePicker
-              value={value}
-              onChange={onChange}
+            <div className={classnames(styles.popup, {[styles.visible]: opened})} style={{width: dropdownWidth}}>
+              <SpacePicker
+                value={value}
+                onChange={onChange}
 
-              searchBoxPlaceholder={searchBoxPlaceholder}
-              formattedHierarchy={formattedHierarchy}
-              canSelectMultiple={canSelectMultiple}
-              isItemDisabled={isItemDisabled}
-              height={height}
-            />
-          </div>
+                searchBoxPlaceholder={searchBoxPlaceholder}
+                formattedHierarchy={formattedHierarchy}
+                canSelectMultiple={canSelectMultiple}
+                isItemDisabled={isItemDisabled}
+                height={height}
+              />
+            </div>
         </div>
       </Fragment>
     );
