@@ -183,7 +183,7 @@ export class Explore extends React.Component<any, any> {
       onSpaceSearch,
     } = this.props;
 
-    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
+    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 280;
 
     let filteredSpaces = spaceHierarchy.data;
     if (spaces.filters.search) {

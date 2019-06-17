@@ -78,119 +78,125 @@ export function ExploreControlBar({
           </AppBarSubnavLink>
         </AppBarSubnav>
         <AppBarSection>
-          {activePage === 'EXPLORE_SPACE_DAILY' ? <DatePicker
-            date={formatForReactDates(parseISOTimeAtSpace(filters.date, selectedSpace), selectedSpace)}
-            onChange={date => onChangeDate(selectedSpace, formatInISOTime(parseFromReactDates(date, selectedSpace)))}
+          {activePage === 'EXPLORE_SPACE_DAILY' ? <div className={styles.exploreControlDatePicker}>
+            <DatePicker
+              date={formatForReactDates(parseISOTimeAtSpace(filters.date, selectedSpace), selectedSpace)}
+              onChange={date => onChangeDate(selectedSpace, formatInISOTime(parseFromReactDates(date, selectedSpace)))}
 
-            focused={filters.datePickerFocused}
-            onFocusChange={({focused}) => onChangeSpaceFilter('datePickerFocused', focused)}
-            arrowRightDisabled={
-              parseISOTimeAtSpace(filters.date, selectedSpace).format('MM/DD/YYYY') ===
-              getCurrentLocalTimeAtSpace(selectedSpace).format('MM/DD/YYYY')
-            }
-
-            isOutsideRange={day => !isInclusivelyBeforeDay(
-              day,
-              getCurrentLocalTimeAtSpace(selectedSpace).startOf('day'),
-            )}
-          /> : null}
-          {activePage !== 'EXPLORE_SPACE_DATA_EXPORT' ? <InputBox
-            type="select"
-            className={styles.exploreSpaceDailyTimeSegmentBox}
-            value={selectedTimeSegmentLabel}
-            choices={spaceTimeSegmentLabelsArray
-              // Remove multiple entries from the list if a time segment shows up multiple times
-              .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
-              .map(label => {
-                const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
-                if (applicableTimeSegmentsForLabel.length === 1) {
-                  const timeSegment = applicableTimeSegmentsForLabel[0];
-                  const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-                  return {
-                    id: label,
-                    label: `${label} (${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(selectedSpace)
-                        .startOf('day')
-                        .add(startSeconds, 'seconds')
-                    )} - ${prettyPrintHoursMinutes(
-                      getCurrentLocalTimeAtSpace(selectedSpace)
-                        .startOf('day')
-                        .add(endSeconds, 'seconds')
-                    )})`,
-                  };
-                } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
-                  return { id: label, label: 'Whole day (12:00a - 11:59p)' }
-                } else {
-                  return {
-                    id: label,
-                    label: `${label} (mixed hours)`
-                  };
-                }
-              })
-            }
-            width={280}
-
-            onChange={value => onChangeTimeSegmentLabel(selectedSpace, value.id)}
-          /> : null}
-          {activePage !== 'EXPLORE_SPACE_DAILY' ? <DateRangePicker
-            startDate={formatForReactDates(
-              parseISOTimeAtSpace(filters.startDate, selectedSpace),
-              selectedSpace,
-            )}
-            endDate={formatForReactDates(
-              parseISOTimeAtSpace(filters.endDate, selectedSpace),
-              selectedSpace,
-            )}
-            onChange={({startDate, endDate}) => {
-              if (startDate) {
-                startDate = parseFromReactDates(startDate, selectedSpace).startOf('day');
-              } else {
-                startDate = parseISOTimeAtSpace(filters.startDate, selectedSpace);
-              }
-              if (endDate) {
-                endDate = parseFromReactDates(endDate, selectedSpace).endOf('day');
-              } else {
-                endDate = parseISOTimeAtSpace(filters.endDate, selectedSpace);
+              focused={filters.datePickerFocused}
+              onFocusChange={({focused}) => onChangeSpaceFilter('datePickerFocused', focused)}
+              arrowRightDisabled={
+                parseISOTimeAtSpace(filters.date, selectedSpace).format('MM/DD/YYYY') ===
+                getCurrentLocalTimeAtSpace(selectedSpace).format('MM/DD/YYYY')
               }
 
-              // If the user selected over 14 days, then clamp them back to 14 days.
-              if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-                endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+              isOutsideRange={day => !isInclusivelyBeforeDay(
+                day,
+                getCurrentLocalTimeAtSpace(selectedSpace).startOf('day'),
+              )}
+            />
+          </div> : null}
+          {activePage !== 'EXPLORE_SPACE_DATA_EXPORT' ? <div className={styles.exploreControlTimeSegment}>
+              <InputBox
+              type="select"
+              className={styles.exploreSpaceDailyTimeSegmentBox}
+              value={selectedTimeSegmentLabel}
+              choices={spaceTimeSegmentLabelsArray
+                // Remove multiple entries from the list if a time segment shows up multiple times
+                .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
+                .map(label => {
+                  const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+                  if (applicableTimeSegmentsForLabel.length === 1) {
+                    const timeSegment = applicableTimeSegmentsForLabel[0];
+                    const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+                    return {
+                      id: label,
+                      label: `${label} (${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(selectedSpace)
+                          .startOf('day')
+                          .add(startSeconds, 'seconds')
+                      )} - ${prettyPrintHoursMinutes(
+                        getCurrentLocalTimeAtSpace(selectedSpace)
+                          .startOf('day')
+                          .add(endSeconds, 'seconds')
+                      )})`,
+                    };
+                  } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+                    return { id: label, label: 'Whole day (12:00a - 11:59p)' }
+                  } else {
+                    return {
+                      id: label,
+                      label: `${label} (mixed hours)`
+                    };
+                  }
+                })
               }
+              width={280}
 
-              // Only update the start and end data if one of them has changed from its previous
-              // value
-              if (
-                formatInISOTime(startDate) !== filters.startDate || 
-                formatInISOTime(endDate) !== filters.endDate
-              ) {
-                onChangeDateRange(selectedSpace, formatInISOTime(startDate), formatInISOTime(endDate), filters);
-              }
-            }}
-            // Within the component, store if the user has selected the start of end date picker
-            // input
-            focusedInput={filters.datePickerInput}
-            onFocusChange={(focused, a) => {
-              onChangeSpaceFilter(selectedSpace, 'datePickerInput', focused);
-            }}
-
-            // On mobile, make the calendar one month wide and left aligned.
-            // On desktop, the calendar is two months wide and right aligned.
-            numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
-
-            isOutsideRange={day => isOutsideRange(selectedSpace, day)}
-
-            // common ranges functionality
-            commonRanges={getCommonRangesForSpace(selectedSpace)}
-            onSelectCommonRange={({startDate, endDate}) => {
-              onChangeDateRange(
+              onChange={value => onChangeTimeSegmentLabel(selectedSpace, value.id)}
+            />
+          </div> : null}
+          {(activePage !== 'EXPLORE_SPACE_DAILY' && filters.startDate && filters.endDate) ? <div className={styles.exploreControlDateRangePicker}>
+            <DateRangePicker
+              startDate={formatForReactDates(
+                parseISOTimeAtSpace(filters.startDate, selectedSpace),
                 selectedSpace,
-                formatInISOTime(startDate),
-                formatInISOTime(endDate),
-                {...filters, startDate, endDate}
-              );
-            }}
-          /> : null}
+              )}
+              endDate={formatForReactDates(
+                parseISOTimeAtSpace(filters.endDate, selectedSpace),
+                selectedSpace,
+              )}
+              onChange={({startDate, endDate}) => {
+                if (startDate) {
+                  startDate = parseFromReactDates(startDate, selectedSpace).startOf('day');
+                } else {
+                  startDate = parseISOTimeAtSpace(filters.startDate, selectedSpace);
+                }
+                if (endDate) {
+                  endDate = parseFromReactDates(endDate, selectedSpace).endOf('day');
+                } else {
+                  endDate = parseISOTimeAtSpace(filters.endDate, selectedSpace);
+                }
+
+                // If the user selected over 14 days, then clamp them back to 14 days.
+                if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
+                  endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+                }
+
+                // Only update the start and end data if one of them has changed from its previous
+                // value
+                if (
+                  formatInISOTime(startDate) !== filters.startDate || 
+                  formatInISOTime(endDate) !== filters.endDate
+                ) {
+                  onChangeDateRange(selectedSpace, formatInISOTime(startDate), formatInISOTime(endDate), filters);
+                }
+              }}
+              // Within the component, store if the user has selected the start of end date picker
+              // input
+              focusedInput={filters.datePickerInput}
+              onFocusChange={(focused, a) => {
+                onChangeSpaceFilter('datePickerInput', focused);
+              }}
+
+              // On mobile, make the calendar one month wide and left aligned.
+              // On desktop, the calendar is two months wide and right aligned.
+              numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
+
+              isOutsideRange={day => isOutsideRange(selectedSpace, day)}
+
+              // common ranges functionality
+              commonRanges={getCommonRangesForSpace(selectedSpace)}
+              onSelectCommonRange={({startDate, endDate}) => {
+                onChangeDateRange(
+                  selectedSpace,
+                  formatInISOTime(startDate),
+                  formatInISOTime(endDate),
+                  {...filters, startDate, endDate}
+                );
+              }}
+            />
+          </div> : null}
 
         </AppBarSection>
       </AppBar>
