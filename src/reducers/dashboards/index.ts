@@ -1,19 +1,18 @@
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import { COLLECTION_DASHBOARDS_SET } from '../../actions/collection/dashboards/set';
-import { COLLECTION_DASHBOARDS_PUSH } from '../../actions/collection/dashboards/push';
-import { COLLECTION_DASHBOARDS_ERROR } from '../../actions/collection/dashboards/error';
-import { COLLECTION_DASHBOARDS_SELECT } from '../../actions/collection/dashboards/select';
-import { COLLECTION_DASHBOARDS_UPDATE } from '../../actions/collection/dashboards/update';
+import { DASHBOARDS_SET } from '../../actions/dashboards/set';
+import { DASHBOARDS_PUSH } from '../../actions/dashboards/push';
+import { DASHBOARDS_ERROR } from '../../actions/dashboards/error';
+import { DASHBOARDS_SELECT } from '../../actions/dashboards/select';
+import { DASHBOARDS_UPDATE } from '../../actions/dashboards/update';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
 import {
-  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
-  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
-  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
-  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR,
-} from '../../actions/collection/dashboards/calculate-report-data';
-
+  DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
+  DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+  DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+  DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR,
+} from '../../actions/dashboards/calculate-report-data';
 
 import { DASHBOARDS_SET_FORM_STATE } from '../../actions/dashboards/set-form-state';
 import { DASHBOARDS_UPDATE_FORM_STATE } from '../../actions/dashboards/update-form-state';
@@ -64,11 +63,11 @@ export default function dashboards(state=initialState, action) {
   case ROUTE_TRANSITION_DASHBOARD_EDIT:
     return { ...state, selected: action.dashboardId };
 
-  case COLLECTION_DASHBOARDS_UPDATE:
+  case DASHBOARDS_UPDATE:
     return { ...state, loading: true, view: 'LOADING' };
 
   // Update the whole dashboard collection.
-  case COLLECTION_DASHBOARDS_SET: {
+  case DASHBOARDS_SET: {
     const allReports = action.data.reduce((acc, dashboard) => [...acc, ...dashboard.reportSet], []);
     return {
       ...state,
@@ -93,7 +92,7 @@ export default function dashboards(state=initialState, action) {
     };
   }
 
-  case COLLECTION_DASHBOARDS_PUSH: {
+  case DASHBOARDS_PUSH: {
     return {
       ...state,
       view: 'VISIBLE',
@@ -119,7 +118,7 @@ export default function dashboards(state=initialState, action) {
   }
 
   // Select a new dashboard
-  case COLLECTION_DASHBOARDS_SELECT:
+  case DASHBOARDS_SELECT:
     return {
       ...state,
       selected: action.dashboard.id,
@@ -127,7 +126,7 @@ export default function dashboards(state=initialState, action) {
 
   // If report data calculation is successful, add the calculated data into the context for each
   // report.
-  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE:
+  case DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE:
     return {
       ...state,
       calculatedReportData: {
@@ -142,7 +141,7 @@ export default function dashboards(state=initialState, action) {
 
   // If report data calculation fails, add the error received during the calculation into the
   // context for each report.
-  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR:
+  case DASHBOARDS_CALCULATE_REPORT_DATA_ERROR:
     return {
       ...state,
       calculatedReportData: {
@@ -156,7 +155,7 @@ export default function dashboards(state=initialState, action) {
     };
 
   // If user is not authorized to view report, put it in 'UNAUTHORIZED' state
-  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED:
+  case DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED:
     return {
       ...state,
       calculatedReportData: {
@@ -169,7 +168,7 @@ export default function dashboards(state=initialState, action) {
     };
 
   // Reset the state for a report back to loading
-  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR:
+  case DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR:
     return {
       ...state,
       calculatedReportData: {
@@ -182,7 +181,7 @@ export default function dashboards(state=initialState, action) {
     };
 
   // An error occurred.
-  case COLLECTION_DASHBOARDS_ERROR:
+  case DASHBOARDS_ERROR:
     return {...state, loading: false, error: action.error};
 
   // Utilized by the dashboard edit page as a place to store the state of the form

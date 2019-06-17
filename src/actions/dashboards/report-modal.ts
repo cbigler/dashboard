@@ -1,7 +1,7 @@
 import moment from 'moment';
 import showModal from '../modal/show';
 import hideModal from '../modal/hide';
-import calculateReportData, { clearReportData } from '../../actions/collection/dashboards/calculate-report-data';
+import calculateReportData, { clearReportData } from '../../actions/dashboards/calculate-report-data';
 
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 

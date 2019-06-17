@@ -6,7 +6,7 @@ import Report, { REPORTS } from '@density/reports';
 
 import updateModal from '../../actions/modal/update';
 import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
-import collectionDashboardsUpdate from '../../actions/collection/dashboards/update';
+import collectionDashboardsUpdate from '../../actions/dashboards/update';
 import showToast from '../../actions/toasts'; 
 
 import GenericLoadingState from '../generic-loading-state';

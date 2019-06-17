@@ -4,8 +4,8 @@ import thunk from 'redux-thunk';
 import assert from 'assert';
 import dashboards from './index';
 
-import collectionDashboardsSet from '../../actions/collection/dashboards/set';
-import collectionDashboardsSelect from '../../actions/collection/dashboards/select';
+import collectionDashboardsSet from '../../actions/dashboards/set';
+import collectionDashboardsSelect from '../../actions/dashboards/select';
 
 const DASHBOARDS = {
   id: 'das_123',

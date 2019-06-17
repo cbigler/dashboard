@@ -1,5 +1,5 @@
-import dashboardsError from '../collection/dashboards/error';
-import dashboardsSet from '../collection/dashboards/set';
+import dashboardsError from '../dashboards/error';
+import dashboardsSet from '../dashboards/set';
 
 import { DensityDashboard } from '../../types';
 import fetchAllObjects from '../../helpers/fetch-all-objects';

@@ -1,5 +1,5 @@
-import dashboardsError from '../collection/dashboards/error';
-import dashboardsPush from '../collection/dashboards/push';
+import dashboardsError from '../dashboards/error';
+import dashboardsPush from '../dashboards/push';
 import dashboardsSetFormState from '../dashboards/set-form-state';
 import spaceHierarchySet from '../collection/space-hierarchy/set';
 
