@@ -9,8 +9,22 @@ import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 export const ROUTE_TRANSITION_DASHBOARD_EDIT = 'ROUTE_TRANSITION_DASHBOARD_EDIT';
 
 export default function routeTransitionDashboardEdit(dashboardId) {
-  return async dispatch => {
+  return async (dispatch, getState) => {
     dispatch({ type: ROUTE_TRANSITION_DASHBOARD_EDIT, dashboardId });
+
+    // If the dashboard has already been loaded, then don't fetch its data again
+    let dashboard = getState().dashboards.data.find(d => d.id === dashboardId);
+    if (!dashboard) {
+      try {
+        dashboard = await fetchObject<DensityDashboard>(`/dashboards/${dashboardId}`);
+      } catch (err) {
+        dispatch(dashboardsError(err));
+        return;
+      }
+      dispatch(dashboardsPush(dashboard));
+    }
+
+    dispatch(dashboardsSetFormState(dashboard));
 
     let spaceHierarchy;
     try {
@@ -20,16 +34,5 @@ export default function routeTransitionDashboardEdit(dashboardId) {
       return;
     }
     dispatch(spaceHierarchySet(spaceHierarchy));
-
-    let dashboard;
-    try {
-      dashboard = await fetchObject<DensityDashboard>(`/dashboards/${dashboardId}`);
-    } catch (err) {
-      dispatch(dashboardsError(err));
-      return;
-    }
-
-    dispatch(dashboardsSetFormState(dashboard));
-    dispatch(dashboardsPush(dashboard));
   };
 }

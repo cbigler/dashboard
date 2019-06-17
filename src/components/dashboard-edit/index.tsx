@@ -507,7 +507,7 @@ export function DashboardEdit({
                       type="text"
                       id="dashboards-name"
                       width="100%"
-                      value={dashboards.formState.name}
+                      value={dashboards.formState.name || ''}
                       onChange={e => onUpdateFormState('name', e.target.value)}
                     />}
                   />
