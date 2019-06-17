@@ -10,8 +10,10 @@ import dashboardsUpdateFormState from '../../actions/dashboards/update-form-stat
 import GenericLoadingState from '../generic-loading-state';
 import ListView, { ListViewColumn } from '../list-view';
 import { SpacePickerDropdown } from '../space-picker';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import spaceHierarchyFormatter, { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import debounce from 'lodash.debounce';
+
+import filterCollection from '../../helpers/filter-collection';
 
 import hourlyBreakdownScreenshot from '../../Screen Shot 2019-06-10 at 12.23.41 PM.png'
 
@@ -75,6 +77,10 @@ type DashboardReportModalProps = {
   onCloseModal: () => void,
   onUpdateModal: (key: string, value: any) => void,
   onReportSettingsUpdated: (DensityReport) => void, // Causes the report to rerun calculations and rerender
+  onReportModalMovedToReportConfigurationPage: (
+    report: DensityReport,
+    hierarchy: Array<SpaceHierarchyDisplayItem>,
+  ) => void,
 };
 
 function DashboardReportModal({
@@ -87,6 +93,7 @@ function DashboardReportModal({
   onAddExistingReportToDashboard,
   onAddNewReport,
   onReportSettingsUpdated,
+  onReportModalMovedToReportConfigurationPage,
 }: DashboardReportModalProps) {
   if (activeModal.name === 'REPORT_MODAL') {
     let selectedReportType = REPORTS[activeModal.data.report.type];
@@ -99,6 +106,10 @@ function DashboardReportModal({
         },
       };
     }
+
+    const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
+
+    const filterReportCollection = filterCollection({fields: ['displayName']});
 
     return (
       <Modal
@@ -171,9 +182,10 @@ function DashboardReportModal({
               </div>
               <div className={styles.reportTypeList}>
                 {
-                  Object.entries(REPORTS)
-                  .map(([key, value]) => ({...(value as any).metadata, id: key}))
-                  .map(metadata => (
+                  filterReportCollection(
+                    Object.entries(REPORTS).map(([key, value]) => ({ ...(value as any).metadata, id: key })),
+                    activeModal.data.newReportReportTypeSearchString,
+                  ).map(metadata => (
                     <div
                       key={metadata.id}
                       className={styles.reportTypeItem}
@@ -237,7 +249,13 @@ function DashboardReportModal({
                     width="100%"
                     placeholder={`ex: "Cafeteria Weekly Visits"`}
                     value={activeModal.data.report.name}
-                    onChange={e => onUpdateModal('report', {...activeModal.data.report, name: e.target.value})}
+                    onChange={e => {
+                      const report = {...activeModal.data.report, name: e.target.value};
+                      onUpdateModal('report', report);
+
+                      // Called so that the report calculations can be rerun
+                      onReportSettingsUpdated(report);
+                    }}
                   />}
                 />
                 {selectedReportType.metadata.controls.map(control => {
@@ -269,7 +287,7 @@ function DashboardReportModal({
                             value.space.id // Single space id
                           )
                         )}
-                        formattedHierarchy={spaceHierarchyFormatter(spaceHierarchy.data)}
+                        formattedHierarchy={formattedHierarchy}
                         width="100%"
                         canSelectMultiple={control.parameters.canSelectMultiple}
                         dropdownWidth="100%"
@@ -311,11 +329,7 @@ function DashboardReportModal({
                     input = (
                       <Switch
                         id={id}
-                        value={
-                          activeModal.data.report.settings[fieldName] ||
-                          control.parameters.defaultValue ||
-                          false
-                        }
+                        value={activeModal.data.report.settings[fieldName]}
                         onChange={e => {
                           updateReportSettings(fieldName, e.target.checked)
                         }}
@@ -330,9 +344,7 @@ function DashboardReportModal({
                         width="100%"
                         value={
                           activeModal.data.report.settings[`_${fieldName}String`] ||
-                          activeModal.data.report.settings[fieldName] ||
-                          control.parameters.defaultValue ||
-                          ''
+                          activeModal.data.report.settings[fieldName]
                         }
                         onChange={e => {
                           // Modify the string version of the field name and use taht as the "working copy"
@@ -350,7 +362,7 @@ function DashboardReportModal({
                         type={control.type.toLowerCase()} // text, number, etc
                         id={id}
                         width="100%"
-                        value={activeModal.data.report.settings[fieldName] || control.parameters.defaultValue || ''}
+                        value={activeModal.data.report.settings[fieldName]}
                         onChange={e => updateReportSettings(fieldName, e.target.value)}
                       />
                     );
@@ -423,12 +435,26 @@ function DashboardReportModal({
                 {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
                   <Button
                     variant="filled"
-                    onClick={() => onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION)}
+                    onClick={() => {
+                      // Run report calculations with the values specified
+                      onReportModalMovedToReportConfigurationPage(
+                        activeModal.data.report,
+                        formattedHierarchy,
+                      );
+                      onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION);
+                    }}
                     width={65}
                     disabled={activeModal.data.report.type === null}
                   >Next</Button>
                 ): (
-                  <Button variant="filled" width={65}>Save</Button>
+                  <Button
+                    variant="filled"
+                    width={65}
+                    disabled={
+                      activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
+                      activeModal.data.report.name.length === 0
+                    }
+                  >Save</Button>
                 )}
               </ButtonGroup>
             </AppBarSection>
@@ -455,6 +481,7 @@ export function DashboardEdit({
   onCloseModal,
   onUpdateModal,
   onReportSettingsUpdated,
+  onReportModalMovedToReportConfigurationPage,
 }) {
   return (
     <Fragment>
@@ -464,6 +491,7 @@ export function DashboardEdit({
         calculatedReportDataForPreviewedReport={calculatedReportDataForPreviewedReport}
         onUpdateModal={onUpdateModal}
         onReportSettingsUpdated={onReportSettingsUpdated}
+        onReportModalMovedToReportConfigurationPage={onReportModalMovedToReportConfigurationPage}
 
         onAddExistingReportToDashboard={report => {
           console.log('EXISTING REPORT', report)
@@ -567,7 +595,13 @@ export function DashboardEdit({
                       />
                       <ListViewColumn
                         title="Report Type"
-                        template={item => 'HARDCODED'}
+                        template={item => {
+                          if (item.type === 'HEADER') {
+                            return 'Header';
+                          } else {
+                            return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                          }
+                        }}
                         flexGrow={1}
                       />
                       <ListViewColumn
@@ -612,13 +646,11 @@ export default connect((state: any) => ({
     dispatch(dashboardsUpdateFormState('reportSet', reportSet));
   },
   onCreateReport() {
-    dispatch<any>(
-      openReportModal(
-        { name: '', type: '', settings: {}, creatorEmail: '' },
-        PAGE_PICK_EXISTING_REPORT,
-        OPERATION_CREATE,
-      )
-    );
+    dispatch<any>(openReportModal(
+      { name: '', type: '', settings: {}, creatorEmail: '' },
+      PAGE_PICK_EXISTING_REPORT,
+      OPERATION_CREATE,
+    ));
   },
   onEditReport(report) {
     dispatch<any>(openReportModal(
@@ -636,4 +668,66 @@ export default connect((state: any) => ({
   onReportSettingsUpdated: debounce(report => {
     dispatch<any>(rerenderReportInReportModal(report));
   }, 500),
+  onReportModalMovedToReportConfigurationPage(report, formattedHierarchy) {
+    // Set default parameters for a newly created report
+    const initialReportSettings = REPORTS[report.type].metadata.controls.reduce((acc, control) => {
+      const fieldName = camelcase(control.parameters.field);
+
+      let value;
+      switch (control.type) {
+      case 'SPACE_PICKER':
+        const firstSpaceInHierarchy = formattedHierarchy.find(i => i.space.spaceType === 'space');
+        value = (
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          (firstSpaceInHierarchy ? firstSpaceInHierarchy.space.id : false) ||
+          null
+        );
+        break;
+      case 'TIME_RANGE_PICKER':
+        value = (
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          'LAST_WEEK' // default fallback value
+        );
+        break;
+      case 'SELECT_BOX':
+        value = (
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          control.parameters.choices[0]
+        );
+        break;
+      case 'BOOLEAN':
+        value = (
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          false
+        );
+        break;
+      case 'NUMBER':
+        value = (
+          report.settings[`_${fieldName}String`] ||
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          ''
+        );
+        break;
+      default:
+        value = (
+          report.settings[fieldName] ||
+          control.parameters.defaultValue ||
+          ''
+        );
+        break;
+      }
+
+      return { ...acc, [fieldName]: value };
+    }, {});
+    const reportWithInitialSettings = { ...report, settings: initialReportSettings };
+    dispatch<any>(updateModal({ report: reportWithInitialSettings }));
+
+    // Then perform the initial rendering of the report
+    dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+  },
 }))(DashboardEdit);

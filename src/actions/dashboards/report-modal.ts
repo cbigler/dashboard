@@ -1,6 +1,9 @@
+import moment from 'moment';
 import showModal from '../modal/show';
 import hideModal from '../modal/hide';
 import calculateReportData, { clearReportData } from '../../actions/collection/dashboards/calculate-report-data';
+
+import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
 export const PAGE_PICK_EXISTING_REPORT = 'PAGE_PICK_EXISTING_REPORT',
              PAGE_NEW_REPORT_TYPE = 'PAGE_NEW_REPORT_TYPE',
@@ -23,8 +26,12 @@ export function openReportModal(
   operationType: ReportOperationType,
 ) {
   return async dispatch => {
-    // Start report calculation
-    dispatch(rerenderReportInReportModal(report));
+    dispatch(clearReportData(PREVIEW_REPORT_ID));
+
+    // Start report calculation if on the right page
+    if (page === PAGE_NEW_REPORT_CONFIGURATION) {
+      dispatch(rerenderReportInReportModal(report));
+    }
 
     // Open the modal
     dispatch(showModal('REPORT_MODAL', {
@@ -47,15 +54,26 @@ export function closeReportModal() {
 }
 
 export function rerenderReportInReportModal(report) {
-  return dispatch => {
+  return (dispatch, getState) => {
     dispatch(clearReportData(PREVIEW_REPORT_ID));
 
-    // Start report calculation
-    const currentDate = null; // FIXME: this is wrong!!!!
-    const dashboardWeekStart = 'Sunday';
+    const dashboardWeekStart = (
+      getState().user.data.organization.settings.dashboardWeekStart ||
+      'Sunday'
+    );
+
+    const currentDate = getStartOfWeek(
+      moment(getState().miscellaneous.dashboardDate || undefined),
+      dashboardWeekStart,
+    ).format('YYYY-MM-DD');
+
     dispatch(
       calculateReportData(
-        [{...report, id: PREVIEW_REPORT_ID}],
+        [{
+          ...report,
+          id: PREVIEW_REPORT_ID,
+          name: report.name || 'My Report', // Ensure that the report never renders without a name
+        }],
         currentDate,
         dashboardWeekStart,
       ),
