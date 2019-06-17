@@ -69,7 +69,7 @@ class ExploreAlertPopupList extends Component<ExploreAlertPopupListProps, Explor
               >
                 <Icons.PlusCircle color={colorVariables.brandPrimary} />
                 <span className={styles.dashboardAlertListDropdownCreateButtonText}>
-                  Create new alert
+                  Add an alert
                 </span>
               </span>
             </AppBarSection>
@@ -83,10 +83,19 @@ class ExploreAlertPopupList extends Component<ExploreAlertPopupListProps, Explor
               .map(alert => (
                 <li key={alert.id} className={styles.dashboardAlertListDropdownItem}>
                   <div className={styles.dashboardAlertListDropdownItemRow}>
-                    <Switch />
-                    <span className={styles.dashboardAlertListDropdownItemName}>
-                      {alert.name}
-                    </span>
+                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+                      <Switch />
+                      <div style={{display: 'flex', flexDirection: 'column', paddingLeft: 16}}>
+                        <div className={styles.dashboardAlertListDropdownItemFirstRow}>
+                          Text me when occupancy exceeds
+                        </div>
+                        <div className={styles.dashboardAlertListDropdownItemSecondRow}>
+                          <span className={styles.dashboardAlertListDropdownItemSecondRowText}>
+                            {alert.triggerValue} people
+                          </span>
+                        </div>
+                      </div>
+                    </div>
                     <span
                       role="button"
                       className={styles.dashboardAlertListDropdownItemEdit}
@@ -168,7 +177,10 @@ class ExploreAlertPopupList extends Component<ExploreAlertPopupListProps, Explor
 }
 
 export default connect(
-  state => ({ alerts: (state as any).alerts || { view: 'VISIBLE', error: null, data: [] } }),
+  state => ({ alerts: (state as any).alerts || { view: 'VISIBLE', error: null, data: [{
+    triggerValue: 50,
+    spaceId: 'spc_675480383147475622'
+  }] } }),
   dispatch => ({}),
 )(ExploreAlertPopupList);
 

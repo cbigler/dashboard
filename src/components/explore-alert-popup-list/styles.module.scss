@@ -35,7 +35,7 @@ $dashboardAlertBackdropZIndex: 99999;
   padding-top: 2px;
   padding-left: 16px;
   padding-right: 16px;
-  border: 1px solid $gray;
+  border: 1px solid $inputFieldBorderColor;
   border-radius: $borderRadiusBase;
   outline: none;
 }
@@ -107,13 +107,16 @@ $dashboardAlertBackdropZIndex: 99999;
 .dashboardAlertListDropdownItemRow {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 8px;
 }
 
-.dashboardAlertListDropdownItemName {
+.dashboardAlertListDropdownItemFirstRow {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  font-size: 16px;
+  padding-bottom: 8px;
 }
 
 .dashboardAlertListDropdownItemEdit {
@@ -129,19 +132,16 @@ $dashboardAlertBackdropZIndex: 99999;
 .dashboardAlertListDropdownItemEdit:hover { opacity: 0.9; }
 .dashboardAlertListDropdownItemEdit:active { opacity: 1; }
 
-.dashboardAlertListDropdownItemInterval {
+.dashboardAlertListDropdownItemSecondRow {
   display: flex;
   align-items: center;
 
   font-weight: bold;
   user-select: none;
   cursor: default;
-  color: $grayDarker;
+  color: $grayCinder;
 }
-.dashboardAlertListDropdownItemIntervalText {
-  margin-left: 8px;
-  font-size: 14px;
-
+.dashboardAlertListDropdownItemSecondRowText {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
