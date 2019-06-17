@@ -6,6 +6,8 @@ import Report, { REPORTS } from '@density/reports';
 
 import updateModal from '../../actions/modal/update';
 import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
+import collectionDashboardsUpdate from '../../actions/collection/dashboards/update';
+import showToast from '../../actions/toasts'; 
 
 import GenericLoadingState from '../generic-loading-state';
 import ListView, { ListViewColumn } from '../list-view';
@@ -476,6 +478,8 @@ export function DashboardEdit({
 
   onUpdateFormState,
   onRelativeReportMove,
+  onSaveDashboard,
+
   onCreateReport,
   onEditReport,
   onCloseModal,
@@ -516,12 +520,15 @@ export function DashboardEdit({
                 <a className={styles.backArrow} href={`#/dashboards/${selectedDashboard.id}`}>
                   <Icons.ArrowLeft />
                 </a>
-                Edit "{selectedDashboard.name}"
+                Edit {selectedDashboard.name}
               </AppBarTitle>
               <AppBarSection>
                 <ButtonGroup>
                   <Button variant="underline" href={`#/dashboards/${selectedDashboard.id}`}>Cancel</Button>
-                  <Button variant="filled">Save</Button>
+                  <Button
+                    variant="filled"
+                    onClick={() => onSaveDashboard(selectedDashboard)}
+                  >Save</Button>
                 </ButtonGroup>
               </AppBarSection>
             </AppBar>
@@ -552,68 +559,68 @@ export function DashboardEdit({
                   )}>
                     {dashboards.formState.reportSet.length === 0 ? (
                       <p>There are no reports in this dashboard.</p>
-                    ) : null}
-
-                    <ListView data={dashboards.formState.reportSet}>
-                      <ListViewColumn
-                        title="Name"
-                        template={item => (
-                          <Fragment>
-                            <Icons.Soup />
-                            <span className={styles.name}>
-                              {item.name}
-                            </span>
-                          </Fragment>
-                        )}
-                      />
-                      <ListViewColumn
-                        title=""
-                        template={item => (
-                          <ButtonGroup>
-                            <span style={{
-                              // Can not move first report further up in the list
-                              visibility: item.id === dashboards.formState.reportSet[0].id ? 'hidden' : 'visible',
-                            }}>
-                              <Button
-                                onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
-                                variant="underline"
-                              >
-                                <Icons.ArrowUp width={12} height={12} />
-                              </Button>
-                            </span>
-                            {item.id !== dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id ? (
-                              <Button
-                                onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
-                                variant="underline"
-                              >
-                                <Icons.ArrowDown width={12} height={12} />
-                              </Button>
-                            ) : null}
-                          </ButtonGroup>
-                        )}
-                        flexGrow={1}
-                      />
-                      <ListViewColumn
-                        title="Report Type"
-                        template={item => {
-                          if (item.type === 'HEADER') {
-                            return 'Header';
-                          } else {
-                            return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
-                          }
-                        }}
-                        flexGrow={1}
-                      />
-                      <ListViewColumn
-                        title=""
-                        template={item => (
-                          <Button
-                            variant="underline"
-                            onClick={() => onEditReport(item)}
-                          >Edit</Button>
-                        )}
-                      />
-                    </ListView>
+                    ) : (
+                      <ListView data={dashboards.formState.reportSet}>
+                        <ListViewColumn
+                          title="Name"
+                          template={item => (
+                            <Fragment>
+                              <Icons.Soup />
+                              <span className={styles.name}>
+                                {item.name}
+                              </span>
+                            </Fragment>
+                          )}
+                        />
+                        <ListViewColumn
+                          title=""
+                          template={item => (
+                            <ButtonGroup>
+                              <span style={{
+                                // Can not move first report further up in the list
+                                visibility: item.id === dashboards.formState.reportSet[0].id ? 'hidden' : 'visible',
+                              }}>
+                                <Button
+                                  onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
+                                  variant="underline"
+                                >
+                                  <Icons.ArrowUp width={12} height={12} />
+                                </Button>
+                              </span>
+                              {item.id !== dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id ? (
+                                <Button
+                                  onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
+                                  variant="underline"
+                                >
+                                  <Icons.ArrowDown width={12} height={12} />
+                                </Button>
+                              ) : null}
+                            </ButtonGroup>
+                          )}
+                          flexGrow={1}
+                        />
+                        <ListViewColumn
+                          title="Report Type"
+                          template={item => {
+                            if (item.type === 'HEADER') {
+                              return 'Header';
+                            } else {
+                              return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                            }
+                          }}
+                          flexGrow={1}
+                        />
+                        <ListViewColumn
+                          title=""
+                          template={item => (
+                            <Button
+                              variant="underline"
+                              onClick={() => onEditReport(item)}
+                            >Edit</Button>
+                          )}
+                        />
+                      </ListView>
+                    )}
                   </DetailModule>
                 </div>
               ) : null}
@@ -644,6 +651,15 @@ export default connect((state: any) => ({
     reportSet.splice(reportIndex, 1);
     reportSet.splice(reportIndex+relativeMove, 0, report);
     dispatch(dashboardsUpdateFormState('reportSet', reportSet));
+  },
+  async onSaveDashboard(dashboard) {
+    const ok = await dispatch<any>(collectionDashboardsUpdate(dashboard));
+    if (ok) {
+      dispatch<any>(showToast({text: 'Successfully saved dashboard.'}));
+      window.location.href = `#/dashboards/${dashboard.id}`;
+    } else {
+      dispatch<any>(showToast({text: 'Error saving dashboard.', type: 'error'}));
+    }
   },
   onCreateReport() {
     dispatch<any>(openReportModal(

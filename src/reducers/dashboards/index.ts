@@ -3,6 +3,7 @@ import { COLLECTION_DASHBOARDS_SET } from '../../actions/collection/dashboards/s
 import { COLLECTION_DASHBOARDS_PUSH } from '../../actions/collection/dashboards/push';
 import { COLLECTION_DASHBOARDS_ERROR } from '../../actions/collection/dashboards/error';
 import { COLLECTION_DASHBOARDS_SELECT } from '../../actions/collection/dashboards/select';
+import { COLLECTION_DASHBOARDS_UPDATE } from '../../actions/collection/dashboards/update';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
@@ -62,6 +63,9 @@ export default function dashboards(state=initialState, action) {
 
   case ROUTE_TRANSITION_DASHBOARD_EDIT:
     return { ...state, selected: action.dashboardId };
+
+  case COLLECTION_DASHBOARDS_UPDATE:
+    return { ...state, loading: true, view: 'LOADING' };
 
   // Update the whole dashboard collection.
   case COLLECTION_DASHBOARDS_SET: {
