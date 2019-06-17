@@ -10,7 +10,9 @@ import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR,
 } from '../../actions/collection/dashboards/calculate-report-data';
+
 
 import { DASHBOARDS_SET_FORM_STATE } from '../../actions/dashboards/set-form-state';
 import { DASHBOARDS_UPDATE_FORM_STATE } from '../../actions/dashboards/update-form-state';
@@ -26,7 +28,7 @@ const initialState = {
   calculatedReportData: {
     /*
     'rpt_456': {
-      'loading': false,
+      'state': 'LOADING',
       'data': null,
     }
     */
@@ -157,6 +159,19 @@ export default function dashboards(state=initialState, action) {
         ...state.calculatedReportData,
         [action.report.id]: {
           state: 'UNAUTHORIZED',
+          data: null,
+        },
+      },
+    };
+
+  // Reset the state for a report back to loading
+  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR:
+    return {
+      ...state,
+      calculatedReportData: {
+        ...state.calculatedReportData,
+        [action.reportId]: {
+          state: 'LOADING',
           data: null,
         },
       },

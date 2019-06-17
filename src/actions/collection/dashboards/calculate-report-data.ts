@@ -7,6 +7,7 @@ import { DensityReportCalculatationFunction } from '../../../types';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED';
+export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
 
 export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
   return async (dispatch, getState) => {
@@ -90,4 +91,8 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
       }
     }));
   };
+}
+
+export function clearReportData(reportId) {
+  return { type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR, reportId };
 }
