@@ -7,6 +7,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 import styles from './styles.module.scss';
 
 import { DensitySpace } from '../../types';
+import showModal from '../../actions/modal/show';
 
 type ExploreAlertPopupListProps = {
   alerts: {
@@ -177,10 +178,16 @@ class ExploreAlertPopupList extends Component<ExploreAlertPopupListProps, Explor
 }
 
 export default connect(
-  state => ({ alerts: (state as any).alerts || { view: 'VISIBLE', error: null, data: [{
-    triggerValue: 50,
-    spaceId: 'spc_675480383147475622'
-  }] } }),
+  state => ({ 
+    alerts: (state as any).alerts || { 
+      view: 'VISIBLE', 
+      error: null,
+      data: [{
+        triggerValue: 50,
+        spaceId: 'spc_675480383147475622'
+      }]
+    }
+  }),
   dispatch => ({}),
 )(ExploreAlertPopupList);
 

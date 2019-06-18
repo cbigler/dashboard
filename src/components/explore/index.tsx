@@ -15,6 +15,7 @@ import {
   AppScrollView,
   Icons,
   InputBox,
+  Modal,
 } from '@density/ui';
 
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
@@ -25,6 +26,9 @@ import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
 import ExploreControlBar from '../explore-control-bar';
+import hideModal from '../../actions/modal/hide';
+import showModal from '../../actions/modal/show';
+import ExploreAlertManagementModal from '../explore-alert-management-modal';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -180,7 +184,10 @@ export class Explore extends React.Component<any, any> {
       spaceHierarchy,
       selectedSpace,
       activePage,
+      activeModal,
       onSpaceSearch,
+      onShowModal,
+      onCloseModal,
     } = this.props;
 
     const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 280;
@@ -199,6 +206,17 @@ export class Explore extends React.Component<any, any> {
     const spaceList = sortSpaceTree(filteredSpaces);
     return (
       <Fragment>
+
+        {/* If an expanded report modal is visible, then render it above the view */}
+        {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
+          <ExploreAlertManagementModal
+            visible={activeModal.visible}
+            selectedSpace={activeModal.data.selectedSpace}
+            alert={activeModal.data.alert}
+            onCloseModal={onCloseModal}
+          />
+        ) : null}
+
         {/* Main application */}
         <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
@@ -233,12 +251,11 @@ export class Explore extends React.Component<any, any> {
                 <AppBarSection>
                   <ExploreAlertPopupList
                     selectedSpace={selectedSpace}
-                    onEditAlert={a => {
-                      console.log('edit alert')
-                      //onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: a });
-                    }}
                     onCreateAlert={() => {
-                      //onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: null });
+                      onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: null });
+                    }}
+                    onEditAlert={a => {
+                      onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: a });
                     }}
                   />
                 </AppBarSection>
@@ -261,16 +278,23 @@ export class Explore extends React.Component<any, any> {
 }
 
 export default connect((state: any) => {
-  const selectedSpace = state.spaces.data.find(d => d.id === state.spaces.selected);
   return {
     spaces: state.spaces,
     spaceHierarchy: state.spaceHierarchy,
-    selectedSpace
+    selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+    activePage: state.activePage,
+    activeModal: state.activeModal,
   };
-}, dispatch => {
+}, (dispatch: any) => {
   return {
     onSpaceSearch(searchQuery) {
       dispatch(collectionSpacesFilter('search', searchQuery));
+    },
+    onCloseModal() {
+      dispatch(hideModal());
+    },
+    onShowModal(name, data) {
+      dispatch(showModal(name, data));
     },
   };
 })(Explore);

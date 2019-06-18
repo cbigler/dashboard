@@ -1,0 +1,15 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+
+.exploreAlertManagementModalContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.exploreAlertManagementModalBody {
+  flex-grow: 1;
+}
