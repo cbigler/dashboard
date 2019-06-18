@@ -133,6 +133,7 @@ export type DensityReport = {
   type: string,
   settings: any,
   creatorEmail: string,
+  dashboardCount: number,
 };
 
 export type DensityDashboard = {

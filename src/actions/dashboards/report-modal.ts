@@ -92,8 +92,10 @@ export function extractCalculatedReportDataFromDashboardsReducer(dashboards) {
   return dashboards.calculatedReportData[PREVIEW_REPORT_ID];
 }
 
+export const DASHBOARDS_CREATE_REPORT = 'DASHBOARDS_CREATE_REPORT';
 export function createReport(report) {
   return async dispatch => {
+    dispatch({type: DASHBOARDS_CREATE_REPORT, report});
     let reportResponse;
     try {
       reportResponse = await core().post('/reports', {
@@ -122,5 +124,19 @@ export function updateReport(report) {
       return null;
     }
     return objectSnakeToCamel<DensityReport>(reportResponse.data);
+  };
+}
+
+export const DASHBOARDS_DELETE_REPORT = 'DASHBOARDS_DELETE_REPORT';
+export function deleteReport(report) {
+  return async dispatch => {
+    dispatch({ type: DASHBOARDS_DELETE_REPORT, reportId: report.id });
+
+    try {
+      await core().delete(`/reports/${report.id}`);
+    } catch (err) {
+      return null;
+    }
+    return true;
   };
 }

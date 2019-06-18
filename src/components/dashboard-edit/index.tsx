@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import Report, { REPORTS } from '@density/reports';
 
+import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
 import dashboardsUpdate from '../../actions/dashboards/update';
@@ -26,6 +27,7 @@ import {
 
   createReport,
   updateReport,
+  deleteReport,
 
   ReportModalPages,
   PAGE_PICK_EXISTING_REPORT,
@@ -89,6 +91,7 @@ type DashboardReportModalProps = {
     hierarchy: Array<SpaceHierarchyDisplayItem>,
   ) => void,
   onAddReportToDashboard: (DensityReport) => void,
+  onShowDeletePopup: (DensityReport) => void,
 };
 
 const HEADER_REPORT = {
@@ -114,6 +117,7 @@ function DashboardReportModal({
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
   onAddReportToDashboard,
+  onShowDeletePopup,
 }: DashboardReportModalProps) {
   if (activeModal.name === 'REPORT_MODAL') {
     let selectedReportType = REPORTS[activeModal.data.report.type];
@@ -126,11 +130,25 @@ function DashboardReportModal({
     const filterReportCollection = filterCollection({fields: ['name', 'displayType']});
     const filterReportTypeCollection = filterCollection({fields: ['displayName']});
 
+    let modalWidth = 1024,
+        modalHeight = 800;
+    if (activeModal.data.page === PAGE_PICK_EXISTING_REPORT) {
+      modalWidth = 580;
+    }
+    // When editing a header, there isn't a sidebar so make the modal smaller.
+    if (
+      activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
+      activeModal.data.report.type === 'HEADER'
+    ) {
+      modalWidth = 580;
+      modalHeight = 350;
+    }
+
     return (
       <Modal
         visible={activeModal.visible}
-        width={activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? 580 : 1024}
-        height={800}
+        width={modalWidth}
+        height={modalHeight}
         onBlur={onCloseModal}
         onEscape={onCloseModal}
       >
@@ -462,7 +480,11 @@ function DashboardReportModal({
           <AppBar>
             <AppBarSection>
               {activeModal.data.operationType === OPERATION_UPDATE ? (
-                <Button variant="underline" type="danger">Delete report</Button>
+                <Button
+                  variant="underline"
+                  type="danger"
+                  onClick={() => onShowDeletePopup(activeModal.data.report)}
+                >Delete report</Button>
               ) : null}
             </AppBarSection>
             <AppBarSection>
@@ -556,6 +578,7 @@ export function DashboardEdit({
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
   onSaveReportModal,
+  onShowDeletePopup,
 }) {
   return (
     <Fragment>
@@ -576,6 +599,7 @@ export function DashboardEdit({
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
         }}
+        onShowDeletePopup={report => onShowDeletePopup(selectedDashboard, report)}
 
         onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
         onCloseModal={onCloseModal}
@@ -845,5 +869,44 @@ export default connect((state: any) => ({
 
     // Then perform the initial rendering of the report
     dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+  },
+  async onShowDeletePopup(selectedDashboard, report) {
+    if (report.dashboardCount === 1) {
+      await dispatch<any>(closeReportModal());
+
+      // Show a popup to allow the user to pick if they want to delete the link or also the report if
+      // this is the last instance if this report in a dashboard.
+      dispatch<any>(showModal('MODAL_CONFIRM', {
+        prompt: 'Are you sure you want to delete this report? As this is the last dashboard containing the report, this will also delete the report too.',
+        confirmText: 'Delete',
+        callback: async () => {
+          // Delete the report from all dashboards. This also cascades to delete all report
+          // dashboard links too.
+          const ok = await dispatch<any>(deleteReport(report));
+
+          if (ok) {
+            // Remove report from dashboard locally
+            dispatch(dashboardsUpdateFormState(
+              'reportSet',
+              selectedDashboard.reportSet.filter(r => r.id !== report.id),
+            ));
+
+            dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
+          } else {
+            dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
+          }
+        },
+      }));
+    } else {
+      dispatch<any>(closeReportModal());
+
+      // This report is in multiple dashboards, so only allow deletion of the link.
+      dispatch(dashboardsUpdateFormState(
+        'reportSet',
+        selectedDashboard.reportSet.filter(r => r.id !== report.id),
+      ));
+
+      dispatch<any>(showToast({text: 'Deleted report from dashboard.'}));
+    }
   },
 }))(DashboardEdit);

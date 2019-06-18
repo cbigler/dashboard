@@ -98,6 +98,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
       timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
+    dashboardCount: 0,
   },
   {
     id: 'rpt_ephemeral_meeting_size',
@@ -108,6 +109,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
       timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
+    dashboardCount: 0,
   },
   {
     id: 'rpt_ephemeral_booking_behavior',
@@ -118,6 +120,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
       timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
+    dashboardCount: 0,
   },
   {
     id: 'rpt_ephemeral_busiest_meeting',
@@ -128,6 +131,7 @@ const MEETING_EPHEMERAL_REPORT_GENERATORS = (spaceId, startDate, endDate) => [
       timeRange: { type: 'CUSTOM_RANGE', startDate, endDate },
     },
     creatorEmail: 'engineering@density.io',
+    dashboardCount: 0,
   },
 ];
 

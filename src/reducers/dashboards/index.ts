@@ -8,6 +8,8 @@ import { DASHBOARDS_REPORT_LIST_SET } from '../../actions/dashboards/report-list
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
+import { DASHBOARDS_DELETE_REPORT, DASHBOARDS_CREATE_REPORT } from '../../actions/dashboards/report-modal';
+
 import {
   DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
   DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
@@ -207,6 +209,10 @@ export default function dashboards(state=initialState, action) {
 
   case DASHBOARDS_REPORT_LIST_SET:
     return { ...state, reportList: action.reportList };
+  case DASHBOARDS_DELETE_REPORT:
+    return { ...state, reportList: state.reportList.filter(r => r.id !== action.reportId)};
+  case DASHBOARDS_CREATE_REPORT:
+    return { ...state, reportList: [...state.reportList, action.report]};
 
   default:
     return state;
