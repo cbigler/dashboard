@@ -1,5 +1,6 @@
 import core from '../../client/core';
 import dashboardsError from './error';
+import dashboardsPush from './push';
 
 export const DASHBOARDS_UPDATE = 'DASHBOARDS_UPDATE';
 
@@ -7,8 +8,9 @@ export default function dashboardsUpdate(dashboard) {
   return async dispatch => {
     dispatch({type: DASHBOARDS_UPDATE});
 
+    let dashboardResponse;
     try {
-      await core().put(`/dashboards/${dashboard.id}`, {
+      dashboardResponse = await core().put(`/dashboards/${dashboard.id}`, {
         name: dashboard.name,
         report_set: dashboard.reportSet.map(report => report.id),
       });
@@ -16,6 +18,9 @@ export default function dashboardsUpdate(dashboard) {
       dispatch(dashboardsError(err));
       return false;
     }
+
+    // Update the dashboard in the collection
+    dispatch(dashboardsPush(dashboardResponse.data));
     return true;
   };
 }

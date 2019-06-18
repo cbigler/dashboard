@@ -91,6 +91,16 @@ type DashboardReportModalProps = {
   onAddReportToDashboard: (DensityReport) => void,
 };
 
+const HEADER_REPORT = {
+  component: null,
+  calculations: null,
+  metadata: {
+    displayName: 'Header',
+    description: 'A title that can be inserted above a set of reports.',
+    controls: [],
+  },
+};
+
 function DashboardReportModal({
   activeModal,
   spaceHierarchy,
@@ -108,13 +118,7 @@ function DashboardReportModal({
   if (activeModal.name === 'REPORT_MODAL') {
     let selectedReportType = REPORTS[activeModal.data.report.type];
     if (activeModal.data.report.type === 'HEADER') {
-      selectedReportType = {
-        metadata: {
-          displayName: 'Header',
-          description: 'Inserts a text label between two sections of reports',
-          controls: [],
-        },
-      };
+      selectedReportType = HEADER_REPORT;
     }
 
     const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
@@ -229,7 +233,10 @@ function DashboardReportModal({
               <div className={styles.reportTypeList}>
                 {
                   filterReportTypeCollection(
-                    Object.entries(REPORTS).map(([key, value]) => ({ ...(value as any).metadata, id: key })),
+                    [
+                      ['HEADER', HEADER_REPORT],
+                      ...(Object.entries(REPORTS)),
+                    ].map(([key, value]) => ({ ...(value as any).metadata, id: key })),
                     activeModal.data.newReportReportTypeSearchString,
                   ).map(metadata => (
                     <div
@@ -777,7 +784,8 @@ export default connect((state: any) => ({
   }, 500),
   onReportModalMovedToReportConfigurationPage(report, formattedHierarchy) {
     // Set default parameters for a newly created report
-    const initialReportSettings = REPORTS[report.type].metadata.controls.reduce((acc, control) => {
+    const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
+    const initialReportSettings = reportType.metadata.controls.reduce((acc, control) => {
       const fieldName = changeCase.camel(control.parameters.field);
 
       let value;
