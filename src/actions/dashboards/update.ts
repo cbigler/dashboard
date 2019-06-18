@@ -10,7 +10,7 @@ export default function dashboardsUpdate(dashboard) {
     try {
       await core().put(`/dashboards/${dashboard.id}`, {
         name: dashboard.name,
-        report_set: dashboard.reportSet,
+        report_set: dashboard.reportSet.map(report => report.id),
       });
     } catch (err) {
       dispatch(dashboardsError(err));

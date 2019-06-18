@@ -40,6 +40,7 @@ export function openReportModal(
       operationType,
       pickExistingReportSelectedReportId: null,
       newReportReportTypeSearchString: '',
+      reportListSearchString: '',
     }));
   };
 }

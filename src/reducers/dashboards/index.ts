@@ -4,6 +4,7 @@ import { DASHBOARDS_PUSH } from '../../actions/dashboards/push';
 import { DASHBOARDS_ERROR } from '../../actions/dashboards/error';
 import { DASHBOARDS_SELECT } from '../../actions/dashboards/select';
 import { DASHBOARDS_UPDATE } from '../../actions/dashboards/update';
+import { DASHBOARDS_REPORT_LIST_SET } from '../../actions/dashboards/report-list-set';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
@@ -34,6 +35,14 @@ const initialState = {
     */
   },
   formState: {},
+  reportList: [
+    {
+      id: 'rpt_xxx',
+      name: 'My Report',
+      type: 'HOURLY_BREAKDOWN',
+      settings: {},
+    },
+  ],
 };
 
 
@@ -195,6 +204,9 @@ export default function dashboards(state=initialState, action) {
         [action.key]: action.value,
       },
     };
+
+  case DASHBOARDS_REPORT_LIST_SET:
+    return { ...state, reportList: action.reportList };
 
   default:
     return state;

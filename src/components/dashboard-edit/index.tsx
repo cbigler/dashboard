@@ -6,7 +6,7 @@ import Report, { REPORTS } from '@density/reports';
 
 import updateModal from '../../actions/modal/update';
 import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
-import collectionDashboardsUpdate from '../../actions/dashboards/update';
+import dashboardsUpdate from '../../actions/dashboards/update';
 import showToast from '../../actions/toasts'; 
 
 import GenericLoadingState from '../generic-loading-state';
@@ -65,11 +65,14 @@ type DashboardReportModalProps = {
       report: DensityReport,
       pickExistingReportSelectedReportId: string | null,
       newReportReportTypeSearchString: string,
+      reportListSearchString: string,
     },
   },
   spaceHierarchy: {
     data: Array<DensitySpaceHierarchyItem>,
   },
+  reportList: Array<DensityReport>,
+  reportsInSelectedDashboard: Array<DensityReport>,
   calculatedReportDataForPreviewedReport: {
     state: string,
     data: any,
@@ -83,11 +86,14 @@ type DashboardReportModalProps = {
     report: DensityReport,
     hierarchy: Array<SpaceHierarchyDisplayItem>,
   ) => void,
+  onAddReportToDashboard: (DensityReport) => void,
 };
 
 function DashboardReportModal({
   activeModal,
   spaceHierarchy,
+  reportList,
+  reportsInSelectedDashboard,
   calculatedReportDataForPreviewedReport,
 
   onUpdateModal,
@@ -96,6 +102,7 @@ function DashboardReportModal({
   onAddNewReport,
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
+  onAddReportToDashboard,
 }: DashboardReportModalProps) {
   if (activeModal.name === 'REPORT_MODAL') {
     let selectedReportType = REPORTS[activeModal.data.report.type];
@@ -111,7 +118,8 @@ function DashboardReportModal({
 
     const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
-    const filterReportCollection = filterCollection({fields: ['displayName']});
+    const filterReportCollection = filterCollection({fields: ['name', 'displayType']});
+    const filterReportTypeCollection = filterCollection({fields: ['displayName']});
 
     return (
       <Modal
@@ -140,31 +148,66 @@ function DashboardReportModal({
         </AppBar>
 
         {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
-          <div className={styles.reportModalReportList}>
-            <ListView data={[{id: 1, name: 'My cool report'}]}>
-              <ListViewColumn
-                title=""
-                template={item => <RadioButton
-                  checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
-                  onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
-                />}
-                flexGrow={0}
-                flexShrink={0}
-              />
-              <ListViewColumn
-                title="Name"
-                template={item => 'HARDCODED'}
-                flexGrow={1}
-                onClick={item => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
-              />
-              <ListViewColumn
-                title="Report Type"
-                template={item => 'HARDCODED'}
-                onClick={item => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
-                flexGrow={1}
-              />
-            </ListView>
-          </div>
+          <Fragment>
+            <div className={styles.reportModalSearchBar}>
+              <AppBar>
+                <InputBox
+                  type="text"
+                  placeholder={'ex: "Cafeteria Traffic"'}
+                  leftIcon={<Icons.Search />}
+                  value={activeModal.data.reportListSearchString}
+                  onChange={e => onUpdateModal('reportListSearchString', e.target.value)}
+                  width="100%"
+                />
+              </AppBar>
+            </div>
+            <div className={styles.reportModalReportList}>
+              {reportList.length === 0 ? (
+                <p>No reports exist in your organization.</p>
+              ) : (
+                <ListView data={filterReportCollection(reportList, activeModal.data.reportListSearchString)}>
+                  <ListViewColumn
+                    title=""
+                    template={item => <RadioButton
+                      checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
+                      onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
+                      // Cannot select reports that are already in the dashboard
+                      disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
+                    />}
+                    flexGrow={0}
+                    flexShrink={0}
+                    width={50}
+                  />
+                  <ListViewColumn
+                    title="Name"
+                    template={item => item.name}
+                    flexGrow={1}
+                    onClick={item => {
+                      if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                        onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                      }
+                    }}
+                  />
+                  <ListViewColumn
+                    title="Report Type"
+                    template={item => {
+                      if (item.type === 'HEADER') {
+                        return 'Header';
+                      } else {
+                        return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                      }
+                    }}
+                    onClick={item => {
+                      if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                        onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                      }
+                    }}
+                    flexGrow={1}
+                  />
+                </ListView>
+              )}
+            </div>
+          </Fragment>
         ) : null}
 
         {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
@@ -184,7 +227,7 @@ function DashboardReportModal({
               </div>
               <div className={styles.reportTypeList}>
                 {
-                  filterReportCollection(
+                  filterReportTypeCollection(
                     Object.entries(REPORTS).map(([key, value]) => ({ ...(value as any).metadata, id: key })),
                     activeModal.data.newReportReportTypeSearchString,
                   ).map(metadata => (
@@ -434,6 +477,22 @@ function DashboardReportModal({
                     }
                   }}>Back</Button>
                 ) : null}
+                {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+                  <Button
+                    variant="filled"
+                    width={65}
+                    disabled={
+                      activeModal.data.page === PAGE_PICK_EXISTING_REPORT &&
+                      !activeModal.data.pickExistingReportSelectedReportId
+                    }
+                    onClick={() => {
+                      const report = reportList.find(
+                        r => r.id === activeModal.data.pickExistingReportSelectedReportId
+                      );
+                      onAddReportToDashboard(report);
+                    }}
+                  >Save</Button>
+                ) : null}
                 {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
                   <Button
                     variant="filled"
@@ -446,18 +505,23 @@ function DashboardReportModal({
                       onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION);
                     }}
                     width={65}
-                    disabled={activeModal.data.report.type === null}
+                    disabled={!activeModal.data.report.type}
                   >Next</Button>
-                ): (
+                ) : null}
+                {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION ? (
                   <Button
                     variant="filled"
+                    onClick={() => {
+                      // TODO: write saving logic
+                      console.log('TODO: write saving logic');
+                    }}
                     width={65}
                     disabled={
                       activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
                       activeModal.data.report.name.length === 0
                     }
                   >Save</Button>
-                )}
+                ) : null}
               </ButtonGroup>
             </AppBarSection>
           </AppBar>
@@ -493,9 +557,19 @@ export function DashboardEdit({
         activeModal={activeModal}
         spaceHierarchy={spaceHierarchy}
         calculatedReportDataForPreviewedReport={calculatedReportDataForPreviewedReport}
+        // List of all reports from the server (ie, the response of GET /v2/reports)
+        reportList={dashboards.reportList}
+        // List of all reports in the working copy of the selected dashboard
+        // (ie, `report_set` from GET /v2/dashboards/:id)
+        reportsInSelectedDashboard={dashboards.formState ? dashboards.formState.reportSet : []}
+
         onUpdateModal={onUpdateModal}
         onReportSettingsUpdated={onReportSettingsUpdated}
         onReportModalMovedToReportConfigurationPage={onReportModalMovedToReportConfigurationPage}
+        onAddReportToDashboard={report => {
+          onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
+          onCloseModal();
+        }}
 
         onAddExistingReportToDashboard={report => {
           console.log('EXISTING REPORT', report)
@@ -527,7 +601,7 @@ export function DashboardEdit({
                   <Button variant="underline" href={`#/dashboards/${selectedDashboard.id}`}>Cancel</Button>
                   <Button
                     variant="filled"
-                    onClick={() => onSaveDashboard(selectedDashboard)}
+                    onClick={() => onSaveDashboard(dashboards.formState)}
                   >Save</Button>
                 </ButtonGroup>
               </AppBarSection>
@@ -629,7 +703,7 @@ export function DashboardEdit({
         </AppFrame>
       ) : null}
     </Fragment>
-  )
+  );
 }
 
 export default connect((state: any) => ({
@@ -653,7 +727,7 @@ export default connect((state: any) => ({
     dispatch(dashboardsUpdateFormState('reportSet', reportSet));
   },
   async onSaveDashboard(dashboard) {
-    const ok = await dispatch<any>(collectionDashboardsUpdate(dashboard));
+    const ok = await dispatch<any>(dashboardsUpdate(dashboard));
     if (ok) {
       dispatch<any>(showToast({text: 'Successfully saved dashboard.'}));
       window.location.href = `#/dashboards/${dashboard.id}`;
@@ -711,7 +785,8 @@ export default connect((state: any) => ({
         value = (
           report.settings[fieldName] ||
           control.parameters.defaultValue ||
-          control.parameters.choices[0]
+          (control.parameters.choices.length > 0 ? control.parameters.choices[0].id : false) ||
+          null
         );
         break;
       case 'BOOLEAN':
