@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import {
   AppBar,
@@ -7,9 +7,12 @@ import {
   AppBarContext,
   Button,
   ButtonGroup,
-  Modal
+  InputBox,
+  Modal,
+  PhoneInputBox,
 } from '@density/ui';
 import styles from './styles.module.scss';
+import FormLabel from '../form-label';
 
 export default function ExploreAlertManagementModal({
   visible,
@@ -19,7 +22,7 @@ export default function ExploreAlertManagementModal({
 }) {
   return <Modal
     visible={visible}
-    width={720}
+    width={480}
     height={480}
     onBlur={onCloseModal}
     onEscape={onCloseModal}
@@ -29,7 +32,50 @@ export default function ExploreAlertManagementModal({
         <AppBarTitle>{alert ? 'Edit Alert' : 'New Alert'}</AppBarTitle>
       </AppBar>
       
-      <div className={styles.exploreAlertManagementModalBody}>ASDF</div>
+      <div className={styles.exploreAlertManagementModalBody}>
+        <div className={styles.exploreAlertManagementModalFormRow}>
+          <FormLabel
+            label="Phone number"
+            htmlFor="update-alert-phone-number"
+            input={<PhoneInputBox
+              id="update-alert-phone-number"
+              width="100%"
+              value={'123'}
+              onChange={e => undefined //onUpdate({...token, name: e.target.value})
+                        }
+            />}
+          />
+          <div style={{ paddingTop: 12 }}>
+            <Button
+              id="update-alert-phone-number-link"
+              variant="underline"
+              value={'123'}
+            >Use my number</Button>
+          </div>
+        </div>
+        <div className={styles.exploreAlertManagementModalFormRow}>
+          <FormLabel
+            label="Notify me when the occupancy is"
+            htmlFor="update-alert-metric-quantity"
+            input={<div style={{display: 'flex', alignItems: 'center'}}>
+              <InputBox type="select" />
+              <div style={{width: 8}}></div>
+              <InputBox type="text" width="80px" />
+              <div style={{width: 8}}></div>
+              people
+            </div>}
+          />
+        </div>
+        <div className={styles.exploreAlertManagementModalFormRow}>
+          <FormLabel
+            label="Send a reminder every"
+            htmlFor="update-alert-cooldown"
+            input={<div style={{display: 'flex', alignItems: 'center'}}>
+              <InputBox type="select" />
+            </div>}
+          />
+        </div>
+      </div>
 
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
         <AppBar>
