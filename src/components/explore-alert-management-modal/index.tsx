@@ -23,13 +23,13 @@ export default function ExploreAlertManagementModal({
   return <Modal
     visible={visible}
     width={480}
-    height={480}
+    height={520}
     onBlur={onCloseModal}
     onEscape={onCloseModal}
   >
     <div className={styles.exploreAlertManagementModalContainer}>
       <AppBar>
-        <AppBarTitle>{alert ? 'Edit Alert' : 'New Alert'}</AppBarTitle>
+        <AppBarTitle>{alert ? 'Edit Text Alert' : 'New Text Alert'}</AppBarTitle>
       </AppBar>
       
       <div className={styles.exploreAlertManagementModalBody}>
@@ -69,9 +69,20 @@ export default function ExploreAlertManagementModal({
         <div className={styles.exploreAlertManagementModalFormRow}>
           <FormLabel
             label="Send a reminder every"
-            htmlFor="update-alert-cooldown"
+            htmlFor="update-alert-cooldown-period"
             input={<div style={{display: 'flex', alignItems: 'center'}}>
               <InputBox type="select" />
+            </div>}
+          />
+        </div>
+        <div className={styles.exploreAlertManagementModalFormRow}>
+          <FormLabel
+            label="Notify me again if it increases by"
+            htmlFor="update-alert-escalation-threshold"
+            input={<div style={{display: 'flex', alignItems: 'center'}}>
+              <InputBox type="text" width="80px" />
+              <div style={{width: 8}}></div>
+              people
             </div>}
           />
         </div>
@@ -79,10 +90,12 @@ export default function ExploreAlertManagementModal({
 
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
         <AppBar>
-          <AppBarSection />
+          <AppBarSection>
+            <Button type="muted" variant="underline">Delete alert</Button>
+          </AppBarSection>
           <AppBarSection>
             <ButtonGroup>
-              <Button>Cancel</Button>
+              <Button variant="underline">Cancel</Button>
               <Button variant="filled">Save</Button>
             </ButtonGroup>
           </AppBarSection>
