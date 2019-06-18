@@ -1,4 +1,4 @@
-import camelcase from 'camelcase';
+import changeCase from 'change-case';
 
 // Convert an object with snake case keys to camel case keys.
 export default function objectSnakeToCamel<T = any>(input): T {
@@ -7,12 +7,12 @@ export default function objectSnakeToCamel<T = any>(input): T {
   for (const key in input) {
     if (Array.isArray(input[key])) {
       // If the value is an array, convert keys deeply.
-      output[camelcase(key)] = input[key].map(i => objectSnakeToCamel<any>({temp: i}).temp);
+      output[changeCase.camel(key)] = input[key].map(i => objectSnakeToCamel<any>({temp: i}).temp);
     } else if (input[key] && input[key].toString() === '[object Object]') {
       // If the value is an object, convert keys deeply.
-      output[camelcase(key)] = objectSnakeToCamel<any>(input[key]);
+      output[changeCase.camel(key)] = objectSnakeToCamel<any>(input[key]);
     } else if (typeof key === 'string') {
-      output[camelcase(key)] = input[key];
+      output[changeCase.camel(key)] = input[key];
     } else {
       output[key] = input[key];
     }

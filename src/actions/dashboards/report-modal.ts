@@ -1,9 +1,15 @@
 import moment from 'moment';
+import changeCase from 'change-case';
+
 import showModal from '../modal/show';
 import hideModal from '../modal/hide';
+
 import calculateReportData, { clearReportData } from '../../actions/dashboards/calculate-report-data';
 
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import core from '../../client/core';
+import { DensityReport } from '../../types';
 
 export const PAGE_PICK_EXISTING_REPORT = 'PAGE_PICK_EXISTING_REPORT',
              PAGE_NEW_REPORT_TYPE = 'PAGE_NEW_REPORT_TYPE',
@@ -84,4 +90,37 @@ export function rerenderReportInReportModal(report) {
 
 export function extractCalculatedReportDataFromDashboardsReducer(dashboards) {
   return dashboards.calculatedReportData[PREVIEW_REPORT_ID];
+}
+
+export function createReport(report) {
+  return async dispatch => {
+    let reportResponse;
+    try {
+      reportResponse = await core().post('/reports', {
+        name: report.name,
+        type: report.type,
+        settings: Object.entries(report.settings)
+          .reduce((acc, [key, value]) => ({ ...acc, [changeCase.snake(key)]: value }), {})
+      });
+    } catch (err) {
+      return null;
+    }
+    return objectSnakeToCamel<DensityReport>(reportResponse.data);
+  };
+}
+export function updateReport(report) {
+  return async dispatch => {
+    let reportResponse;
+    try {
+      reportResponse = await core().put(`/reports/${report.id}`, {
+        name: report.name,
+        type: report.type,
+        settings: Object.entries(report.settings)
+          .reduce((acc, [key, value]) => ({ ...acc, [changeCase.snake(key)]: value }), {})
+      });
+    } catch (err) {
+      return null;
+    }
+    return objectSnakeToCamel<DensityReport>(reportResponse.data);
+  };
 }

@@ -1,5 +1,5 @@
 import React, { ReactNode, Fragment } from 'react';
-import camelcase from 'camelcase';
+import changeCase from 'change-case';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import Report, { REPORTS } from '@density/reports';
@@ -23,6 +23,9 @@ import {
   openReportModal,
   closeReportModal,
   rerenderReportInReportModal,
+
+  createReport,
+  updateReport,
 
   ReportModalPages,
   PAGE_PICK_EXISTING_REPORT,
@@ -77,8 +80,7 @@ type DashboardReportModalProps = {
     state: string,
     data: any,
   },
-  onAddExistingReportToDashboard: (DensityReport) => void,
-  onAddNewReport: (object) => void,
+  onSaveReportModal: (object) => void,
   onCloseModal: () => void,
   onUpdateModal: (key: string, value: any) => void,
   onReportSettingsUpdated: (DensityReport) => void, // Causes the report to rerun calculations and rerender
@@ -98,8 +100,7 @@ function DashboardReportModal({
 
   onUpdateModal,
   onCloseModal,
-  onAddExistingReportToDashboard,
-  onAddNewReport,
+  onSaveReportModal,
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
   onAddReportToDashboard,
@@ -305,7 +306,7 @@ function DashboardReportModal({
                 />
                 {selectedReportType.metadata.controls.map(control => {
                   const id = `reports-control-${control.label.replace(' ', '-')}`;
-                  const fieldName = camelcase(control.parameters.field);
+                  const fieldName = changeCase.camel(control.parameters.field);
                   let input: ReactNode = null;
 
                   function updateReportSettings(key, value) {
@@ -511,10 +512,7 @@ function DashboardReportModal({
                 {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION ? (
                   <Button
                     variant="filled"
-                    onClick={() => {
-                      // TODO: write saving logic
-                      console.log('TODO: write saving logic');
-                    }}
+                    onClick={() => onSaveReportModal(activeModal.data.report)}
                     width={65}
                     disabled={
                       activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
@@ -550,6 +548,7 @@ export function DashboardEdit({
   onUpdateModal,
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
+  onSaveReportModal,
 }) {
   return (
     <Fragment>
@@ -571,12 +570,7 @@ export function DashboardEdit({
           onCloseModal();
         }}
 
-        onAddExistingReportToDashboard={report => {
-          console.log('EXISTING REPORT', report)
-        }}
-        onAddNewReport={report => {
-          console.log('NEW REPORT', report)
-        }}
+        onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
         onCloseModal={onCloseModal}
       />
 
@@ -755,13 +749,36 @@ export default connect((state: any) => ({
   onUpdateModal(key, value) {
     dispatch<any>(updateModal({[key]: value}));
   },
+  async onSaveReportModal(dashboard, report) {
+    const shouldCreateReport = typeof report.id === 'undefined';
+    let result;
+    if (shouldCreateReport) {
+      result = await dispatch<any>(createReport(report));
+    } else {
+      result = await dispatch<any>(updateReport(report));
+    }
+
+    if (!result) {
+      dispatch<any>(showToast({ text: 'Error creating report.', type: 'error' }));
+      return;
+    } 
+
+    dispatch<any>(showToast({text: 'Saved report.'}));
+
+    // Add report to the dashboard if it's a newly created report
+    if (shouldCreateReport) {
+      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, report]));
+    }
+
+    dispatch<any>(closeReportModal());
+  },
   onReportSettingsUpdated: debounce(report => {
     dispatch<any>(rerenderReportInReportModal(report));
   }, 500),
   onReportModalMovedToReportConfigurationPage(report, formattedHierarchy) {
     // Set default parameters for a newly created report
     const initialReportSettings = REPORTS[report.type].metadata.controls.reduce((acc, control) => {
-      const fieldName = camelcase(control.parameters.field);
+      const fieldName = changeCase.camel(control.parameters.field);
 
       let value;
       switch (control.type) {

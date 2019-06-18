@@ -26,6 +26,7 @@ type SpacePickerProps = {
   height?: number | string,
   canSelectMultiple?: boolean,
   isItemDisabled?: (SpaceHierarchyDisplayItem) => boolean,
+  onCloseDropdown?: () => void,
 };
 
 function convertValueToSpaceIds(
@@ -74,6 +75,7 @@ export default function SpacePicker({
   isItemDisabled=(s) => false,
   height,
   searchBoxPlaceholder=`ex: "New York"`,
+  onCloseDropdown=() => {},
 }: SpacePickerProps) {
   const [searchText, setSearchText] = useState('');
 
@@ -85,7 +87,6 @@ export default function SpacePicker({
 
   // This function normalizes the difference between when `canSelectMultiple` is set or unset.
   function callOnChange(item, isChecked) {
-    console.log('CALLONCHANGE', item, isChecked);
     if (canSelectMultiple) {
       if (isChecked) {
         onChange(
@@ -135,6 +136,10 @@ export default function SpacePicker({
               onMouseUp={e => {
                 if (!spaceDisabled) {
                   callOnChange(item, !isChecked);
+                }
+                // If only one item can be selected, close the dropdown if this control is in a dropdown.
+                if (!canSelectMultiple) {
+                  onCloseDropdown();
                 }
               }}
             >
@@ -264,6 +269,7 @@ export class SpacePickerDropdown extends Component<SpacePickerDropdownProps, {op
                 canSelectMultiple={canSelectMultiple}
                 isItemDisabled={isItemDisabled}
                 height={height}
+                onCloseDropdown={() => this.setState({opened: false})}
               />
             </div>
         </div>
