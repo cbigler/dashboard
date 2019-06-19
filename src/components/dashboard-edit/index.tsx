@@ -798,7 +798,7 @@ export default connect((state: any) => ({
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, report]));
+      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, result]));
     }
 
     dispatch<any>(closeReportModal());
