@@ -8,6 +8,7 @@ import showModal from '../../actions/modal/show';
 import updateModal from '../../actions/modal/update';
 import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
 import dashboardsUpdate from '../../actions/dashboards/update';
+import dashboardsDestroy from '../../actions/dashboards/destroy';
 import showToast from '../../actions/toasts'; 
 
 import GenericLoadingState from '../generic-loading-state';
@@ -85,13 +86,14 @@ type DashboardReportModalProps = {
   onSaveReportModal: (object) => void,
   onCloseModal: () => void,
   onUpdateModal: (key: string, value: any) => void,
-  onReportSettingsUpdated: (DensityReport) => void, // Causes the report to rerun calculations and rerender
+  // Causes the report to rerun calculations and rerender
+  onReportSettingsUpdated: (DensityReport, invokeImmediately: boolean) => void,
   onReportModalMovedToReportConfigurationPage: (
     report: DensityReport,
     hierarchy: Array<SpaceHierarchyDisplayItem>,
   ) => void,
   onAddReportToDashboard: (DensityReport) => void,
-  onShowDeletePopup: (DensityReport) => void,
+  onReportShowDeletePopup: (DensityReport) => void,
 };
 
 const HEADER_REPORT = {
@@ -117,7 +119,7 @@ function DashboardReportModal({
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
   onAddReportToDashboard,
-  onShowDeletePopup,
+  onReportShowDeletePopup,
 }: DashboardReportModalProps) {
   if (activeModal.name === 'REPORT_MODAL') {
     let selectedReportType = REPORTS[activeModal.data.report.type];
@@ -326,7 +328,7 @@ function DashboardReportModal({
                         onUpdateModal('report', report);
 
                         // Called so that the report calculations can be rerun
-                        onReportSettingsUpdated(report);
+                        onReportSettingsUpdated(report, false);
                       }}
                     />}
                   />
@@ -343,7 +345,7 @@ function DashboardReportModal({
                       onUpdateModal('report', report);
 
                       // Called so that the report calculations can be rerun
-                      onReportSettingsUpdated(report);
+                      onReportSettingsUpdated(report, false);
                     }
 
                     switch (control.type) {
@@ -457,6 +459,13 @@ function DashboardReportModal({
                   <AppBarContext.Provider value="CARD_HEADER">
                     <AppBar>
                       <AppBarTitle>Preview</AppBarTitle>
+                      <AppBarSection>
+                        <Button
+                          variant="underline"
+                          type="muted"
+                          onClick={() => onReportSettingsUpdated(activeModal.data.report, true)}
+                        >Refresh Report</Button>
+                      </AppBarSection>
                     </AppBar>
                   </AppBarContext.Provider>
                   <div className={styles.reportBackdrop}>
@@ -484,7 +493,7 @@ function DashboardReportModal({
                   <Button
                     variant="underline"
                     type="danger"
-                    onClick={() => onShowDeletePopup(activeModal.data.report)}
+                    onClick={() => onReportShowDeletePopup(activeModal.data.report)}
                   >Delete report</Button>
                 ) : null}
               </AppBarSection>
@@ -572,6 +581,7 @@ export function DashboardEdit({
   onUpdateFormState,
   onRelativeReportMove,
   onSaveDashboard,
+  onShowDeleteConfirm,
 
   onCreateReport,
   onEditReport,
@@ -580,7 +590,7 @@ export function DashboardEdit({
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
   onSaveReportModal,
-  onShowDeletePopup,
+  onReportShowDeletePopup,
 }) {
   return (
     <Fragment>
@@ -601,7 +611,7 @@ export function DashboardEdit({
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
         }}
-        onShowDeletePopup={report => onShowDeletePopup(selectedDashboard, report)}
+        onReportShowDeletePopup={report => onReportShowDeletePopup(selectedDashboard, report)}
 
         onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
         onCloseModal={onCloseModal}
@@ -725,6 +735,23 @@ export function DashboardEdit({
                   </DetailModule>
                 </div>
               ) : null}
+              <div className={styles.dashboardEditModuleWrapper}>
+                <DetailModule title="Danger Zone" error>
+                  <div className={styles.dangerZoneWrapper}>
+                    <div className={styles.dangerZoneLeft}>
+                      <h4>Delete this dashboard</h4>
+                      <span>Once deleted, it will be gone forever. Please be certain.</span>
+                    </div>
+                    <div className={styles.dangerZoneRight}>
+                      <Button
+                        variant="underline"
+                        type="danger"
+                        onClick={() => onShowDeleteConfirm(selectedDashboard)}
+                      >Delete this dashboard</Button>
+                    </div>
+                  </div>
+                </DetailModule>
+              </div>
             </div>
           </AppPane>
         </AppFrame>
@@ -761,6 +788,22 @@ export default connect((state: any) => ({
     } else {
       dispatch<any>(showToast({text: 'Error saving dashboard.', type: 'error'}));
     }
+  },
+  async onShowDeleteConfirm(dashboard) {
+    dispatch<any>(showModal('MODAL_CONFIRM', {
+      prompt: 'Are you sure you want to delete this dashboard?',
+      confirmText: 'Delete',
+      callback: async () => {
+        const ok = await dispatch<any>(dashboardsDestroy(dashboard));
+        if (ok) {
+          dispatch<any>(showToast({ text: 'Dashboard deleted successfully' }));
+        } else {
+          dispatch<any>(showToast({ type: 'error', text: 'Error deleting dashboard' }));
+        }
+        // TODO: I am unsure exactly why this won't redirect without the timeout.
+        setTimeout(() => { window.location.href = `#/dashboards`; }, 500);
+      }
+    }));
   },
   onCreateReport() {
     dispatch<any>(openReportModal(
@@ -805,9 +848,19 @@ export default connect((state: any) => ({
 
     dispatch<any>(closeReportModal());
   },
-  onReportSettingsUpdated: debounce(report => {
-    dispatch<any>(rerenderReportInReportModal(report));
-  }, 500),
+  onReportSettingsUpdated: (() => {
+    const debouncedUpdate = debounce(report => {
+      dispatch<any>(rerenderReportInReportModal(report));
+    }, 500);
+
+    return (report, invokeImmediately?: boolean) => {
+      if (invokeImmediately) {
+        dispatch<any>(rerenderReportInReportModal(report));
+      } else {
+        debouncedUpdate(report);
+      }
+    };
+  })(),
   onReportModalMovedToReportConfigurationPage(report, formattedHierarchy) {
     // Set default parameters for a newly created report
     const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
@@ -872,7 +925,7 @@ export default connect((state: any) => ({
     // Then perform the initial rendering of the report
     dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
   },
-  async onShowDeletePopup(selectedDashboard, report) {
+  async onReportShowDeletePopup(selectedDashboard, report) {
     if (report.dashboardCount === 1) {
       await dispatch<any>(closeReportModal());
 
