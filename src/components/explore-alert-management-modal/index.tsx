@@ -62,12 +62,11 @@ export function ExploreAlertManagementModal({
               onChange={value => onUpdateAlertMeta(alert, 'toNum', value)}
             />}
           />
-          {user.phoneNumber ? <div style={{ paddingTop: 12 }}>
+          {user.data && user.data.phoneNumber ? <div style={{ paddingTop: 12 }}>
             <Button
               id="update-alert-phone-number-link"
               variant="underline"
-              value={'123'}
-              onClick={() => onUpdateAlertMeta(alert, 'toNum', user.phoneNumber)}
+              onClick={() => onUpdateAlertMeta(alert, 'toNum', user.data.phoneNumber)}
             >Use my number</Button>
           </div> : null}
         </div>
@@ -85,7 +84,7 @@ export function ExploreAlertManagementModal({
                   {id: LESS_THAN, label: 'Less than'},
                   {id: EQUAL_TO, label: 'Equal to'},
                 ]}
-                onChange={value => onUpdateAlert(alert, 'triggerType', value)}
+                onChange={value => onUpdateAlert(alert, 'triggerType', value.id)}
               />
               <div style={{width: 8}}></div>
               <InputBox
@@ -171,7 +170,9 @@ export function ExploreAlertManagementModal({
 
 export default connect(
   (state: any) => ({
-    user: state.user
+    visible: state.activeModal.visible,
+    alert: state.activeModal.data && state.activeModal.data.alert,
+    user: state.user,
   }),
   dispatch => ({
     onUpdateAlert: async (current, key, value) => {
@@ -194,6 +195,9 @@ export default connect(
       }));
     },
     onSaveAlert: async alert => {
+      if (alert.triggerType !== GREATER_THAN) {
+        delete alert.meta.escalationDelta;
+      }
       if (alert.id) {
         dispatch<any>(collectionAlertsUpdate(alert));
       } else {
@@ -203,6 +207,9 @@ export default connect(
     },
     onDeleteAlert: async alert => {
       dispatch<any>(collectionAlertsDestroy(alert));
+      dispatch<any>(hideModal());
+    },
+    onCloseModal: async alert => {
       dispatch<any>(hideModal());
     }
   }),

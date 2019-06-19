@@ -210,11 +210,7 @@ export class Explore extends React.Component<any, any> {
 
         {/* If an expanded report modal is visible, then render it above the view */}
         {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
-          <ExploreAlertManagementModal
-            visible={activeModal.visible}
-            alert={activeModal.data.alert}
-            onCloseModal={onCloseModal}
-          />
+          <ExploreAlertManagementModal />
         ) : null}
 
         {/* Main application */}

@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import {
   InputBox,
+  PhoneInputBox,
   Button,
   AppBar,
   AppBarSection,
@@ -39,6 +40,7 @@ const GeneralInfoSection = props => {
   
   // this state is only used for editing the user info, not for display (display is always pulled from props)
   const [userFullName, setUserFullName] = useState(user.data.fullName || '');
+  const [userPhoneNumber, setUserPhoneNumber] = useState(user.data.phoneNumber || '');
 
   const handleEditButtonClick = evt => {
     setMode(EDIT);
@@ -50,7 +52,7 @@ const GeneralInfoSection = props => {
   }
 
   const handleSaveButtonClick = evt => {
-    onSubmitUserUpdate(userFullName)
+    onSubmitUserUpdate(userFullName, userPhoneNumber)
       .then(setMode(DISPLAY))
       .catch(err => setErrorText(err))
   }
@@ -65,7 +67,10 @@ const GeneralInfoSection = props => {
           <Button onClick={handleEditButtonClick}>Edit</Button>
         ) : null}
         {mode === EDIT ? ([
-          <Button onClick={handleCancelButtonClick}>Cancel</Button>,
+          <Button
+            variant="underline"
+            onClick={handleCancelButtonClick}
+          >Cancel</Button>,
           <Button
             type="primary"
             variant="filled"
@@ -105,16 +110,18 @@ const GeneralInfoSection = props => {
               />}
             />
           </div>
-          <div className={styles.generalInfoFormFieldContainer}>  
+          <div className={styles.generalInfoFormFieldContainer}>
             <FormLabel
-              htmlFor="account-organization"
-              label="Organization"
-              input={<InputBox
+              htmlFor="account-phone-number"
+              label="Phone number"
+              input={<PhoneInputBox
                 type="text"
-                value={user.data && user.data.organization ? user.data.organization.name : '(unknown organization)'}
+                placeholder="+1 888 555 1234"
                 width="100%"
-                disabled={true}
-                id="account-organization"
+                value={mode === DISPLAY ? user.data.phoneNumber : userPhoneNumber}
+                onChange={value => setUserPhoneNumber(value)}
+                disabled={mode !== EDIT}
+                id="account-phone-number"
               />}
             />
           </div>
@@ -196,10 +203,12 @@ const PasswordSection = props => {
             
             {/* Trigger changing the password */}
             {mode === DISPLAY ? (
-              <div
-                className={styles.accountPageSectionPopoutFormTrigger}
+              <Button
+                variant="underline"
+                size="large"
+                width="200px"
                 onClick={evt => setMode(EDIT)}
-              >Change password</div>
+              >Change password</Button>
             ) : null}
 
             {/* The form to change the password that is triggered. */}
@@ -217,7 +226,7 @@ const PasswordSection = props => {
                         width="100%"
                         value={currentPassword}
                         leftIcon={validationStatus === CURRENT_PASSWORD_REQUIRED ? (
-                          <InputBoxInfo color={colors.brandWarning}>Field is required</InputBoxInfo>
+                          <InputBoxInfo color={colors.brandDanger}>Field is required</InputBoxInfo>
                         ) : null}
                         onChange={evt => setCurrentPassword(evt.target.value)}
                       />}
@@ -236,7 +245,7 @@ const PasswordSection = props => {
                         width="100%"
                         value={newPassword}
                         leftIcon={validationStatus === NEW_PASSWORD_TOO_SHORT ? (
-                          <InputBoxInfo color={colors.brandWarning}>Must be at least {PASSWORD_MIN_LENGTH} characters</InputBoxInfo>
+                          <InputBoxInfo color={colors.brandDanger}>Must be at least {PASSWORD_MIN_LENGTH} characters</InputBoxInfo>
                         ) : validationStatus === PASSWORD_UNCHANGED ? (
                           <InputBoxInfo color={colors.brandDanger}>Must be a new password</InputBoxInfo>
                         ) : null}
@@ -265,7 +274,10 @@ const PasswordSection = props => {
 
                   <div className={styles.passwordFormActions}>
                     <div className={styles.passwordFormAction}>
-                      <Button onClick={handleCancelButtonClick}>Cancel</Button>
+                      <Button
+                        variant="underline"
+                        onClick={handleCancelButtonClick}
+                      >Cancel</Button>
                     </div>
                     <div className={styles.passwordFormAction}>
                     <Button
@@ -354,8 +366,8 @@ export default connect((state: any) => {
         dispatch<any>(showModal('account-password-reset'));
       });
     },
-    onSubmitUserUpdate(fullName) {
-      return dispatch<any>(userUpdate(fullName));
+    onSubmitUserUpdate(fullName, phoneNumber) {
+      return dispatch<any>(userUpdate(fullName, phoneNumber));
     },
     onHideSuccessToast() {
       dispatch<any>(hideModal());
