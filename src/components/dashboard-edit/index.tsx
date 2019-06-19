@@ -290,19 +290,25 @@ function DashboardReportModal({
                 </div>
               </div>
               <div className={styles.right}>
-                <AppBarContext.Provider value="CARD_HEADER">
-                  <AppBar>
-                    <AppBarTitle>
-                      {selectedReportType ? selectedReportType.metadata.displayName : null}
-                    </AppBarTitle>
-                  </AppBar>
-                </AppBarContext.Provider>
-                <div className={styles.reportImageBackdrop}>
-                  REPORT IMAGE HERE
-                </div>
-                <p className={styles.reportFullDescription}>
-                  {selectedReportType ? selectedReportType.metadata.description : null}
-                </p>
+                {activeModal.data.report.type ? (
+                  <Fragment>
+                    <AppBarContext.Provider value="CARD_HEADER">
+                      <AppBar>
+                        <AppBarTitle>
+                          {selectedReportType ? selectedReportType.metadata.displayName : null}
+                        </AppBarTitle>
+                      </AppBar>
+                    </AppBarContext.Provider>
+                    <div className={styles.reportImageBackdrop}>
+                      REPORT IMAGE HERE
+                    </div>
+                    <p className={styles.reportFullDescription}>
+                      {selectedReportType ? selectedReportType.metadata.description : null}
+                    </p>
+                  </Fragment>
+                ) : (
+                  <p>No report selected</p>
+                )}
               </div>
             </div>
           ) : null}
