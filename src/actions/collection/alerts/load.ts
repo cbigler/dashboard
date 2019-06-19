@@ -27,7 +27,7 @@ export default function collectionAlertsLoad() {
       dispatch(collectionAlertsError(errorThrown));
     } else {
       // Only load SMS notifications right now
-      dispatch(collectionAlertsSet(alerts.filter(x => x.triggerType === 'sms')));
+      dispatch(collectionAlertsSet(alerts.filter(x => x.notificationType === 'sms')));
     }
   }
 }

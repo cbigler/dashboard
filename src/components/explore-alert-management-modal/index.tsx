@@ -15,6 +15,10 @@ import styles from './styles.module.scss';
 import FormLabel from '../form-label';
 import { connect } from 'react-redux';
 import updateModal from '../../actions/modal/update';
+import hideModal from '../../actions/modal/hide';
+import collectionAlertsCreate from '../../actions/collection/alerts/create';
+import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+import collectionAlertsDestroy from '../../actions/collection/alerts/destroy';
 
 const GREATER_THAN = 'greater_than',
       LESS_THAN = 'less_than',
@@ -26,6 +30,8 @@ export function ExploreAlertManagementModal({
   user,
   onUpdateAlert,
   onUpdateAlertMeta,
+  onSaveAlert,
+  onDeleteAlert,
   onCloseModal
 }) {
 
@@ -144,7 +150,7 @@ export function ExploreAlertManagementModal({
             {alert.id ? <Button
               type="muted"
               variant="underline"
-              
+              onClick={() => onDeleteAlert(alert)}
             >Delete alert</Button> : null}
           </AppBarSection>
           <AppBarSection>
@@ -153,6 +159,7 @@ export function ExploreAlertManagementModal({
               <Button
                 variant="filled"
                 disabled={!alert.meta.toNum || triggerValueInvalid || escalationDeltaInvalid}
+                onClick={() => onSaveAlert(alert)}
               >Save</Button>
             </ButtonGroup>
           </AppBarSection>
@@ -185,6 +192,18 @@ export default connect(
           }
         }
       }));
+    },
+    onSaveAlert: async alert => {
+      if (alert.id) {
+        dispatch<any>(collectionAlertsUpdate(alert));
+      } else {
+        dispatch<any>(collectionAlertsCreate(alert));
+      }
+      dispatch<any>(hideModal());
+    },
+    onDeleteAlert: async alert => {
+      dispatch<any>(collectionAlertsDestroy(alert));
+      dispatch<any>(hideModal());
     }
   }),
 )(ExploreAlertManagementModal);

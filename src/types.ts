@@ -163,6 +163,7 @@ export type DensityNotification = {
   id?: string,
   spaceId: string,
   enabled: boolean,
+  notificationType: "sms" | "push_notification",
   triggerType: "greater_than" | "less_than" | "equal_to",
   triggerValue: number,
   isOneShot: boolean,

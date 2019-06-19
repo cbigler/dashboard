@@ -32,7 +32,8 @@ export default function collectionAlertsCreate({
       });
 
       mixpanelTrack('SMS Alert Created', {
-        name: name,
+        trigger_type: triggerType,
+        trigger_value: triggerValue,
         space_id: spaceId,
       });
 
