@@ -152,407 +152,409 @@ function DashboardReportModal({
         onBlur={onCloseModal}
         onEscape={onCloseModal}
       >
-        <AppBar>
-          <AppBarTitle>
-            {
-              activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
-                'Add Report to Dashboard'
-              ) : `${activeModal.data.operationType === OPERATION_CREATE ? 'New' : 'Edit'} Report`
-            }
-          </AppBarTitle>
+        <div className={styles.reportModalWrapper}>
+          <AppBar>
+            <AppBarTitle>
+              {
+                activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+                  'Add Report to Dashboard'
+                ) : `${activeModal.data.operationType === OPERATION_CREATE ? 'New' : 'Edit'} Report`
+              }
+            </AppBarTitle>
+            {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+              <AppBarSection>
+                <Button
+                  variant="filled"
+                  onClick={() => onUpdateModal('page', PAGE_NEW_REPORT_TYPE)}
+                >Create new report</Button>
+              </AppBarSection>
+            ) : null}
+          </AppBar>
+
           {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
-            <AppBarSection>
-              <Button
-                variant="filled"
-                onClick={() => onUpdateModal('page', PAGE_NEW_REPORT_TYPE)}
-              >Create new report</Button>
-            </AppBarSection>
-          ) : null}
-        </AppBar>
-
-        {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
-          <Fragment>
-            <div className={styles.reportModalSearchBar}>
-              <AppBar>
-                <InputBox
-                  type="text"
-                  placeholder={'ex: "Cafeteria Traffic"'}
-                  leftIcon={<Icons.Search />}
-                  value={activeModal.data.reportListSearchString}
-                  onChange={e => onUpdateModal('reportListSearchString', e.target.value)}
-                  width="100%"
-                />
-              </AppBar>
-            </div>
-            <div className={styles.reportModalReportList}>
-              {reportList.length === 0 ? (
-                <p>No reports exist in your organization.</p>
-              ) : (
-                <ListView data={filterReportCollection(reportList, activeModal.data.reportListSearchString)}>
-                  <ListViewColumn
-                    title=""
-                    template={item => <RadioButton
-                      checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
-                      onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
-                      // Cannot select reports that are already in the dashboard
-                      disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
-                    />}
-                    flexGrow={0}
-                    flexShrink={0}
-                    width={50}
-                  />
-                  <ListViewColumn
-                    title="Name"
-                    template={item => item.name}
-                    flexGrow={1}
-                    onClick={item => {
-                      if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
-                        onUpdateModal('pickExistingReportSelectedReportId', item.id)
-                      }
-                    }}
-                  />
-                  <ListViewColumn
-                    title="Report Type"
-                    template={item => {
-                      if (item.type === 'HEADER') {
-                        return 'Header';
-                      } else {
-                        return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
-                      }
-                    }}
-                    onClick={item => {
-                      if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
-                        onUpdateModal('pickExistingReportSelectedReportId', item.id)
-                      }
-                    }}
-                    flexGrow={1}
-                  />
-                </ListView>
-              )}
-            </div>
-          </Fragment>
-        ) : null}
-
-        {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
-          <div className={styles.parent}>
-            <div className={styles.left}>
+            <Fragment>
               <div className={styles.searchBar}>
                 <AppBar>
                   <InputBox
                     type="text"
+                    placeholder={'ex: "Cafeteria Traffic"'}
                     leftIcon={<Icons.Search />}
-                    placeholder="Search for report type"
-                    value={activeModal.data.newReportReportTypeSearchString}
-                    onChange={e => onUpdateModal('newReportReportTypeSearchString', e.target.value)}
+                    value={activeModal.data.reportListSearchString}
+                    onChange={e => onUpdateModal('reportListSearchString', e.target.value)}
                     width="100%"
                   />
                 </AppBar>
               </div>
-              <div className={styles.reportTypeList}>
-                {
-                  filterReportTypeCollection(
-                    [
-                      ['HEADER', HEADER_REPORT],
-                      ...(Object.entries(REPORTS)),
-                    ].map(([key, value]) => ({ ...(value as any).metadata, id: key })),
-                    activeModal.data.newReportReportTypeSearchString,
-                  ).map(metadata => (
-                    <div
-                      key={metadata.id}
-                      className={styles.reportTypeItem}
-                      onClick={() => onUpdateModal('report', {...activeModal.data.report, type: metadata.id})}
-                    >
-                      <div>
-                        <div className={styles.nameRow}>
-                          <RadioButton
-                            checked={activeModal.data.report.type === metadata.id}
-                            onChange={() => onUpdateModal('report', {...activeModal.data.report, type: metadata.id})}
-                          />
-                          <span className={styles.name}>{metadata.displayName}</span>
-                        </div>
-                        <p className={styles.reportTypeItemDescription}>
-                          {metadata.description.slice(0, 80) + '...'}
-                        </p>
-                      </div>
-                      <img
-                        className={styles.reportTypeImage}
-                        src={hourlyBreakdownScreenshot}
-                        alt=""
-                      />
-                    </div>
-                  ))
-                }
+              <div className={styles.reportModalReportList}>
+                {reportList.length === 0 ? (
+                  <p>No reports exist in your organization.</p>
+                ) : (
+                  <ListView data={filterReportCollection(reportList, activeModal.data.reportListSearchString)}>
+                    <ListViewColumn
+                      title=""
+                      template={item => <RadioButton
+                        checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
+                        onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
+                        // Cannot select reports that are already in the dashboard
+                        disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
+                      />}
+                      flexGrow={0}
+                      flexShrink={0}
+                      width={50}
+                    />
+                    <ListViewColumn
+                      title="Name"
+                      template={item => item.name}
+                      flexGrow={1}
+                      onClick={item => {
+                        if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                          onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                        }
+                      }}
+                    />
+                    <ListViewColumn
+                      title="Report Type"
+                      template={item => {
+                        if (item.type === 'HEADER') {
+                          return 'Header';
+                        } else {
+                          return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                        }
+                      }}
+                      onClick={item => {
+                        if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                          onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                        }
+                      }}
+                      flexGrow={1}
+                    />
+                  </ListView>
+                )}
               </div>
-            </div>
-            <div className={styles.right}>
-              <AppBarContext.Provider value="CARD_HEADER">
-                <AppBar>
-                  <AppBarTitle>
-                    {selectedReportType ? selectedReportType.metadata.displayName : null}
-                  </AppBarTitle>
-                </AppBar>
-              </AppBarContext.Provider>
-              <div className={styles.reportImageBackdrop}>
-                REPORT IMAGE HERE
-              </div>
-              <p className={styles.reportFullDescription}>
-                {selectedReportType ? selectedReportType.metadata.description : null}
-              </p>
-            </div>
-          </div>
-        ) : null}
+            </Fragment>
+          ) : null}
 
-        {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION && selectedReportType ? (
-          <div className={styles.parent}>
-            <div className={styles.left}>
-              <AppBarContext.Provider value="CARD_HEADER">
-                <AppBar>
-                  <AppBarTitle>{selectedReportType.metadata.displayName}</AppBarTitle>
-                </AppBar>
-              </AppBarContext.Provider>
-              <div className={styles.reportConfigurationParent}>
-                <FormLabel
-                  label="Name"
-                  htmlFor="reports-name"
-                  input={<InputBox
-                    type="text"
-                    id="reports-name"
-                    width="100%"
-                    placeholder={`ex: "Cafeteria Weekly Visits"`}
-                    value={activeModal.data.report.name}
-                    onChange={e => {
-                      const report = {...activeModal.data.report, name: e.target.value};
+          {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
+            <div className={styles.parent}>
+              <div className={styles.left}>
+                <div className={styles.searchBar}>
+                  <AppBar>
+                    <InputBox
+                      type="text"
+                      leftIcon={<Icons.Search />}
+                      placeholder="Search for report type"
+                      value={activeModal.data.newReportReportTypeSearchString}
+                      onChange={e => onUpdateModal('newReportReportTypeSearchString', e.target.value)}
+                      width="100%"
+                    />
+                  </AppBar>
+                </div>
+                <div className={styles.reportTypeList}>
+                  {
+                    filterReportTypeCollection(
+                      [
+                        ['HEADER', HEADER_REPORT],
+                        ...(Object.entries(REPORTS)),
+                      ].map(([key, value]) => ({ ...(value as any).metadata, id: key })),
+                      activeModal.data.newReportReportTypeSearchString,
+                    ).map(metadata => (
+                      <div
+                        key={metadata.id}
+                        className={styles.reportTypeItem}
+                        onClick={() => onUpdateModal('report', {...activeModal.data.report, type: metadata.id})}
+                      >
+                        <div>
+                          <div className={styles.nameRow}>
+                            <RadioButton
+                              checked={activeModal.data.report.type === metadata.id}
+                              onChange={() => onUpdateModal('report', {...activeModal.data.report, type: metadata.id})}
+                            />
+                            <span className={styles.name}>{metadata.displayName}</span>
+                          </div>
+                          <p className={styles.reportTypeItemDescription}>
+                            {metadata.description.slice(0, 80) + '...'}
+                          </p>
+                        </div>
+                        <img
+                          className={styles.reportTypeImage}
+                          src={hourlyBreakdownScreenshot}
+                          alt=""
+                        />
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+              <div className={styles.right}>
+                <AppBarContext.Provider value="CARD_HEADER">
+                  <AppBar>
+                    <AppBarTitle>
+                      {selectedReportType ? selectedReportType.metadata.displayName : null}
+                    </AppBarTitle>
+                  </AppBar>
+                </AppBarContext.Provider>
+                <div className={styles.reportImageBackdrop}>
+                  REPORT IMAGE HERE
+                </div>
+                <p className={styles.reportFullDescription}>
+                  {selectedReportType ? selectedReportType.metadata.description : null}
+                </p>
+              </div>
+            </div>
+          ) : null}
+
+          {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION && selectedReportType ? (
+            <div className={styles.parent}>
+              <div className={styles.left}>
+                <AppBarContext.Provider value="CARD_HEADER">
+                  <AppBar>
+                    <AppBarTitle>{selectedReportType.metadata.displayName}</AppBarTitle>
+                  </AppBar>
+                </AppBarContext.Provider>
+                <div className={styles.reportConfigurationParent}>
+                  <FormLabel
+                    label="Name"
+                    htmlFor="reports-name"
+                    input={<InputBox
+                      type="text"
+                      id="reports-name"
+                      width="100%"
+                      placeholder={`ex: "Cafeteria Weekly Visits"`}
+                      value={activeModal.data.report.name}
+                      onChange={e => {
+                        const report = {...activeModal.data.report, name: e.target.value};
+                        onUpdateModal('report', report);
+
+                        // Called so that the report calculations can be rerun
+                        onReportSettingsUpdated(report);
+                      }}
+                    />}
+                  />
+                  {selectedReportType.metadata.controls.map(control => {
+                    const id = `reports-control-${control.label.replace(' ', '-')}`;
+                    const fieldName = changeCase.camel(control.parameters.field);
+                    let input: ReactNode = null;
+
+                    function reportUpdateSettings(key, value) {
+                      const report = {
+                        ...activeModal.data.report,
+                        settings: { ...activeModal.data.report.settings, [key]: value },
+                      };
                       onUpdateModal('report', report);
 
                       // Called so that the report calculations can be rerun
                       onReportSettingsUpdated(report);
-                    }}
-                  />}
-                />
-                {selectedReportType.metadata.controls.map(control => {
-                  const id = `reports-control-${control.label.replace(' ', '-')}`;
-                  const fieldName = changeCase.camel(control.parameters.field);
-                  let input: ReactNode = null;
+                    }
 
-                  function reportUpdateSettings(key, value) {
-                    const report = {
-                      ...activeModal.data.report,
-                      settings: { ...activeModal.data.report.settings, [key]: value },
-                    };
-                    onUpdateModal('report', report);
+                    switch (control.type) {
+                    case 'SPACE_PICKER':
+                      input = (
+                        <SpacePickerDropdown
+                          value={activeModal.data.report.settings[fieldName]}
+                          onChange={value => reportUpdateSettings(
+                            fieldName,
+                            control.parameters.canSelectMultiple ? (
+                              value.map(i => i.space.id) // Array of space ids
+                            ) : (
+                              value.space.id // Single space id
+                            )
+                          )}
+                          formattedHierarchy={formattedHierarchy}
+                          width="100%"
+                          canSelectMultiple={control.parameters.canSelectMultiple}
+                          dropdownWidth="100%"
+                        />
+                      );
+                      break;
+                    case 'TIME_RANGE_PICKER':
+                      input = (
+                        <InputBox
+                          type="select"
+                          id={id}
+                          width="100%"
+                          value={activeModal.data.report.settings[fieldName]}
+                          choices={[
+                            {id: 'LAST_WEEK', label: 'Last Week' },
+                            {id: 'LAST_4_WEEKS', label: 'Last 4 weeks' },
+                            {id: 'WEEK_TO_DATE', label: 'Week to date' },
+                            {id: 'LAST_7_DAYS', label: 'Last 7 days' },
+                            {id: 'LAST_28_DAYS', label: 'Last 28 days' },
+                            {id: 'CUSTOM_RANGE', label: 'Custom Range...' },
+                          ]}
+                          onChange={choice => reportUpdateSettings(fieldName, choice.id)}
+                        />
+                      );
+                      break;
+                    case 'SELECT_BOX':
+                      input = (
+                        <InputBox
+                          type="select"
+                          id={id}
+                          width="100%"
+                          value={activeModal.data.report.settings[fieldName]}
+                          choices={control.parameters.choices}
+                          onChange={choice => reportUpdateSettings(fieldName, choice.id)}
+                        />
+                      );
+                      break;
+                    case 'BOOLEAN':
+                      input = (
+                        <Switch
+                          id={id}
+                          value={activeModal.data.report.settings[fieldName]}
+                          onChange={e => {
+                            reportUpdateSettings(fieldName, e.target.checked)
+                          }}
+                        />
+                      );
+                      break;
+                    case 'NUMBER':
+                      input = (
+                        <InputBox
+                          type="number"
+                          id={id}
+                          width="100%"
+                          value={
+                            activeModal.data.report.settings[`_${fieldName}String`] ||
+                            activeModal.data.report.settings[fieldName]
+                          }
+                          onChange={e => {
+                            // Modify the string version of the field name and use taht as the "working copy"
+                            reportUpdateSettings(`_${fieldName}String`, e.target.value);
+                            // But also create a numberical version of the field from the string
+                            // version, and this is what is actually used by the report when rendering
+                            reportUpdateSettings(fieldName, parseInt(e.target.value, 10));
+                          }}
+                        />
+                      );
+                      break;
+                    default:
+                      input = (
+                        <InputBox
+                          type={control.type.toLowerCase()} // text, number, etc
+                          id={id}
+                          width="100%"
+                          value={activeModal.data.report.settings[fieldName]}
+                          onChange={e => reportUpdateSettings(fieldName, e.target.value)}
+                        />
+                      );
+                      break;
+                    }
 
-                    // Called so that the report calculations can be rerun
-                    onReportSettingsUpdated(report);
-                  }
-
-                  switch (control.type) {
-                  case 'SPACE_PICKER':
-                    input = (
-                      <SpacePickerDropdown
-                        value={activeModal.data.report.settings[fieldName]}
-                        onChange={value => reportUpdateSettings(
-                          fieldName,
-                          control.parameters.canSelectMultiple ? (
-                            value.map(i => i.space.id) // Array of space ids
-                          ) : (
-                            value.space.id // Single space id
-                          )
-                        )}
-                        formattedHierarchy={formattedHierarchy}
-                        width="100%"
-                        canSelectMultiple={control.parameters.canSelectMultiple}
-                        dropdownWidth="100%"
+                    return (
+                      <FormLabel
+                        label={control.label}
+                        key={control.label}
+                        htmlFor={id}
+                        input={input}
                       />
                     );
-                    break;
-                  case 'TIME_RANGE_PICKER':
-                    input = (
-                      <InputBox
-                        type="select"
-                        id={id}
-                        width="100%"
-                        value={activeModal.data.report.settings[fieldName]}
-                        choices={[
-													{id: 'LAST_WEEK', label: 'Last Week' },
-													{id: 'LAST_4_WEEKS', label: 'Last 4 weeks' },
-													{id: 'WEEK_TO_DATE', label: 'Week to date' },
-													{id: 'LAST_7_DAYS', label: 'Last 7 days' },
-													{id: 'LAST_28_DAYS', label: 'Last 28 days' },
-													{id: 'CUSTOM_RANGE', label: 'Custom Range...' },
-                        ]}
-                        onChange={choice => reportUpdateSettings(fieldName, choice.id)}
-                      />
-                    );
-                    break;
-                  case 'SELECT_BOX':
-                    input = (
-                      <InputBox
-                        type="select"
-                        id={id}
-                        width="100%"
-                        value={activeModal.data.report.settings[fieldName]}
-                        choices={control.parameters.choices}
-                        onChange={choice => reportUpdateSettings(fieldName, choice.id)}
-                      />
-                    );
-                    break;
-                  case 'BOOLEAN':
-                    input = (
-                      <Switch
-                        id={id}
-                        value={activeModal.data.report.settings[fieldName]}
-                        onChange={e => {
-                          reportUpdateSettings(fieldName, e.target.checked)
-                        }}
-                      />
-                    );
-                    break;
-                  case 'NUMBER':
-                    input = (
-                      <InputBox
-                        type="number"
-                        id={id}
-                        width="100%"
-                        value={
-                          activeModal.data.report.settings[`_${fieldName}String`] ||
-                          activeModal.data.report.settings[fieldName]
-                        }
-                        onChange={e => {
-                          // Modify the string version of the field name and use taht as the "working copy"
-                          reportUpdateSettings(`_${fieldName}String`, e.target.value);
-                          // But also create a numberical version of the field from the string
-                          // version, and this is what is actually used by the report when rendering
-                          reportUpdateSettings(fieldName, parseInt(e.target.value, 10));
-                        }}
-                      />
-                    );
-                    break;
-                  default:
-                    input = (
-                      <InputBox
-                        type={control.type.toLowerCase()} // text, number, etc
-                        id={id}
-                        width="100%"
-                        value={activeModal.data.report.settings[fieldName]}
-                        onChange={e => reportUpdateSettings(fieldName, e.target.value)}
-                      />
-                    );
-                    break;
-                  }
-
-                  return (
-                    <FormLabel
-                      label={control.label}
-                      key={control.label}
-                      htmlFor={id}
-                      input={input}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-            {activeModal.data.report && activeModal.data.report.type !== 'HEADER' ? (
-              <div className={styles.right}>
-                <AppBarContext.Provider value="CARD_HEADER">
-                  <AppBar>
-                    <AppBarTitle>Preview</AppBarTitle>
-                  </AppBar>
-                </AppBarContext.Provider>
-                <div className={styles.reportBackdrop}>
-                  {calculatedReportDataForPreviewedReport.state === 'LOADING' ? (
-                    <div className={styles.centered}>
-                      <GenericLoadingState />
-                    </div>
-                  ) : (
-                    <Report
-                      report={activeModal.data.report}
-                      reportData={calculatedReportDataForPreviewedReport}
-                      expanded
-                    />
-                  )}
+                  })}
                 </div>
               </div>
-            ) : null}
-          </div>
-        ) : null}
-
-        <AppBarContext.Provider value="BOTTOM_ACTIONS">
-          <AppBar>
-            <AppBarSection>
-              {activeModal.data.operationType === OPERATION_UPDATE ? (
-                <Button
-                  variant="underline"
-                  type="danger"
-                  onClick={() => onShowDeletePopup(activeModal.data.report)}
-                >Delete report</Button>
+              {activeModal.data.report && activeModal.data.report.type !== 'HEADER' ? (
+                <div className={styles.right}>
+                  <AppBarContext.Provider value="CARD_HEADER">
+                    <AppBar>
+                      <AppBarTitle>Preview</AppBarTitle>
+                    </AppBar>
+                  </AppBarContext.Provider>
+                  <div className={styles.reportBackdrop}>
+                    {calculatedReportDataForPreviewedReport.state === 'LOADING' ? (
+                      <div className={styles.centered}>
+                        <GenericLoadingState />
+                      </div>
+                    ) : (
+                      <Report
+                        report={activeModal.data.report}
+                        reportData={calculatedReportDataForPreviewedReport}
+                        expanded
+                      />
+                    )}
+                  </div>
+                </div>
               ) : null}
-            </AppBarSection>
-            <AppBarSection>
-              <ButtonGroup>
-                <Button
-                  variant="underline"
-                  onClick={onCloseModal}
-                >Cancel</Button>
-                {activeModal.data.page !== PAGE_PICK_EXISTING_REPORT && activeModal.data.operationType === OPERATION_CREATE ? (
-                  <Button onClick={() => {
-                    switch (activeModal.data.page) {
-                    case PAGE_NEW_REPORT_TYPE:
-                      onUpdateModal('page', PAGE_PICK_EXISTING_REPORT);
-                      return;
-                    case PAGE_NEW_REPORT_CONFIGURATION:
-                      onUpdateModal('page', PAGE_NEW_REPORT_TYPE);
-                      return;
-                    default:
-                      return
-                    }
-                  }}>Back</Button>
-                ) : null}
-                {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+            </div>
+          ) : null}
+
+          <AppBarContext.Provider value="BOTTOM_ACTIONS">
+            <AppBar>
+              <AppBarSection>
+                {activeModal.data.operationType === OPERATION_UPDATE ? (
                   <Button
-                    variant="filled"
-                    width={65}
-                    disabled={
-                      activeModal.data.page === PAGE_PICK_EXISTING_REPORT &&
-                      !activeModal.data.pickExistingReportSelectedReportId
-                    }
-                    onClick={() => {
-                      const report = reportList.find(
-                        r => r.id === activeModal.data.pickExistingReportSelectedReportId
-                      );
-                      onAddReportToDashboard(report);
-                    }}
-                  >Save</Button>
+                    variant="underline"
+                    type="danger"
+                    onClick={() => onShowDeletePopup(activeModal.data.report)}
+                  >Delete report</Button>
                 ) : null}
-                {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
+              </AppBarSection>
+              <AppBarSection>
+                <ButtonGroup>
                   <Button
-                    variant="filled"
-                    onClick={() => {
-                      // Run report calculations with the values specified
-                      onReportModalMovedToReportConfigurationPage(
-                        activeModal.data.report,
-                        formattedHierarchy,
-                      );
-                      onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION);
-                    }}
-                    width={65}
-                    disabled={!activeModal.data.report.type}
-                  >Next</Button>
-                ) : null}
-                {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION ? (
-                  <Button
-                    variant="filled"
-                    onClick={() => onSaveReportModal(activeModal.data.report)}
-                    width={65}
-                    disabled={
-                      activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
-                      activeModal.data.report.name.length === 0
-                    }
-                  >Save</Button>
-                ) : null}
-              </ButtonGroup>
-            </AppBarSection>
-          </AppBar>
-        </AppBarContext.Provider>
+                    variant="underline"
+                    onClick={onCloseModal}
+                  >Cancel</Button>
+                  {activeModal.data.page !== PAGE_PICK_EXISTING_REPORT && activeModal.data.operationType === OPERATION_CREATE ? (
+                    <Button onClick={() => {
+                      switch (activeModal.data.page) {
+                      case PAGE_NEW_REPORT_TYPE:
+                        onUpdateModal('page', PAGE_PICK_EXISTING_REPORT);
+                        return;
+                      case PAGE_NEW_REPORT_CONFIGURATION:
+                        onUpdateModal('page', PAGE_NEW_REPORT_TYPE);
+                        return;
+                      default:
+                        return
+                      }
+                    }}>Back</Button>
+                  ) : null}
+                  {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+                    <Button
+                      variant="filled"
+                      width={65}
+                      disabled={
+                        activeModal.data.page === PAGE_PICK_EXISTING_REPORT &&
+                        !activeModal.data.pickExistingReportSelectedReportId
+                      }
+                      onClick={() => {
+                        const report = reportList.find(
+                          r => r.id === activeModal.data.pickExistingReportSelectedReportId
+                        );
+                        onAddReportToDashboard(report);
+                      }}
+                    >Save</Button>
+                  ) : null}
+                  {activeModal.data.page === PAGE_NEW_REPORT_TYPE ? (
+                    <Button
+                      variant="filled"
+                      onClick={() => {
+                        // Run report calculations with the values specified
+                        onReportModalMovedToReportConfigurationPage(
+                          activeModal.data.report,
+                          formattedHierarchy,
+                        );
+                        onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION);
+                      }}
+                      width={65}
+                      disabled={!activeModal.data.report.type}
+                    >Next</Button>
+                  ) : null}
+                  {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION ? (
+                    <Button
+                      variant="filled"
+                      onClick={() => onSaveReportModal(activeModal.data.report)}
+                      width={65}
+                      disabled={
+                        activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
+                        activeModal.data.report.name.length === 0
+                      }
+                    >Save</Button>
+                  ) : null}
+                </ButtonGroup>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
+        </div>
       </Modal>
     );
   } else {
