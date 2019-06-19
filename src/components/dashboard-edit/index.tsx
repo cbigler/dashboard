@@ -12,6 +12,7 @@ import dashboardsDestroy from '../../actions/dashboards/destroy';
 import showToast from '../../actions/toasts'; 
 
 import GenericLoadingState from '../generic-loading-state';
+import GenericErrorState from '../generic-error-state';
 import ListView, { ListViewColumn } from '../list-view';
 import { SpacePickerDropdown } from '../space-picker';
 import spaceHierarchyFormatter, { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
@@ -53,13 +54,14 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  TagInput,
   Modal,
   RadioButton,
   Switch,
 } from '@density/ui';
 import DetailModule from '../admin-locations-detail-modules';
 import FormLabel from '../form-label';
-import { DensityReport, DensitySpaceHierarchyItem } from '../../types';
+import { DensityReport, DensitySpaceHierarchyItem, DensityTimeSegmentLabel } from '../../types';
 
 type DashboardReportModalProps = {
   activeModal: {
@@ -83,6 +85,7 @@ type DashboardReportModalProps = {
     state: string,
     data: any,
   },
+  timeSegmentLabels: Array<DensityTimeSegmentLabel>,
   onSaveReportModal: (object) => void,
   onCloseModal: () => void,
   onUpdateModal: (key: string, value: any) => void,
@@ -113,6 +116,7 @@ function DashboardReportModal({
   reportList,
   reportsInSelectedDashboard,
   calculatedReportDataForPreviewedReport,
+  timeSegmentLabels,
 
   onUpdateModal,
   onCloseModal,
@@ -376,6 +380,30 @@ function DashboardReportModal({
                         />
                       );
                       break;
+                    case 'TIME_SEGMENT_LABEL_PICKER':
+                      input = (
+                        <TagInput
+                          choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                          tags={activeModal.data.report.settings[fieldName].map(label => ({id: label, label}))}
+                          placeholder={'eg. "Whole Day"'}
+                          emptyTagsPlaceholder="No time segments selected."
+                          id={id}
+                          width="100%"
+                          onCreateNewTag={name => reportUpdateSettings(fieldName, [
+                            ...activeModal.data.report.settings[fieldName],
+                            name,
+                          ])}
+                          onAddTag={tag => reportUpdateSettings(fieldName, [
+                            ...activeModal.data.report.settings[fieldName],
+                            tag.id,
+                          ])}
+                          onRemoveTag={tag => {
+                            const labels = activeModal.data.report.settings[fieldName].filter(t => t !== tag.id);
+                            reportUpdateSettings(fieldName, labels);
+                          }}
+                        />
+                      );
+                      break;
                     case 'TIME_RANGE_PICKER':
                       input = (
                         <InputBox
@@ -611,6 +639,7 @@ export function DashboardEdit({
         // List of all reports in the working copy of the selected dashboard
         // (ie, `report_set` from GET /v2/dashboards/:id)
         reportsInSelectedDashboard={dashboards.formState ? dashboards.formState.reportSet : []}
+        timeSegmentLabels={dashboards.timeSegmentLabels}
 
         onUpdateModal={onUpdateModal}
         onReportSettingsUpdated={onReportSettingsUpdated}
@@ -628,6 +657,12 @@ export function DashboardEdit({
       {dashboards.view === 'LOADING' ? (
         <div className={styles.centered}>
           <GenericLoadingState />
+        </div>
+      ) : null}
+
+      {dashboards.view === 'ERROR' ? (
+        <div className={styles.centered}>
+          <GenericErrorState />
         </div>
       ) : null}
 
@@ -888,26 +923,32 @@ export default connect((state: any) => ({
         }
 
         const defaultSpace = (
-          report.settings[fieldName] || // An existing value in a report
           control.parameters.defaultValue || // The defined default value in the control
           defaultValue || // A fallback value calculated above
           null
         );
 
         value = defaultSpace.space ? defaultSpace.space.id : defaultSpace;
+
+        if (control.parameters.canSelectMultiple) { value = [value]; }
         break;
 
       case 'TIME_RANGE_PICKER':
         value = (
-          report.settings[fieldName] ||
           control.parameters.defaultValue ||
           'LAST_WEEK' // default fallback value
         );
         break;
 
+      case 'TIME_SEGMENT_LABEL_PICKER':
+        value = (
+          control.parameters.defaultValue ||
+          [] // default fallback value
+        );
+        break;
+
       case 'SELECT_BOX':
         value = (
-          report.settings[fieldName] ||
           control.parameters.defaultValue ||
           (control.parameters.choices.length > 0 ? control.parameters.choices[0].id : false) ||
           null
@@ -916,7 +957,6 @@ export default connect((state: any) => ({
 
       case 'BOOLEAN':
         value = (
-          report.settings[fieldName] ||
           control.parameters.defaultValue ||
           false
         );
@@ -924,8 +964,6 @@ export default connect((state: any) => ({
 
       case 'NUMBER':
         value = (
-          report.settings[`_${fieldName}String`] ||
-          report.settings[fieldName] ||
           control.parameters.defaultValue ||
           ''
         );
