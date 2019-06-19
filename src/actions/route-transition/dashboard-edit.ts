@@ -21,9 +21,6 @@ function fetchDashboard(dashboardId) {
         return;
       }
 
-      // FIXME: remove the below, for testing out an edge case
-      dashboard.reportSet.forEach(report => { report.dashboardCount = 1; });
-
       dispatch(dashboardsPush(dashboard));
     }
     dispatch(dashboardsSetFormState(dashboard));
@@ -39,9 +36,6 @@ function fetchReportList() {
       dispatch(dashboardsError(err));
       return;
     }
-
-    // FIXME: remove the below, for testing out an edge case
-    reportList.forEach(report => { report.dashboardCount = 1; });
 
     dispatch(dashboardsReportListSet(reportList));
   };
