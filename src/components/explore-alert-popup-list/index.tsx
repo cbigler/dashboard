@@ -92,7 +92,7 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
                       />
                       <div style={{display: 'flex', flexDirection: 'column', paddingLeft: 16}}>
                         <div className={styles.dashboardAlertListDropdownItemFirstRow}>
-                          Text me when occupancy exceeds
+                          Text me when occupancy {alert.triggerType === 'greater_than' ? 'exceeds' : 'drops below'}
                         </div>
                         <div className={styles.dashboardAlertListDropdownItemSecondRow}>
                           <span className={styles.dashboardAlertListDropdownItemSecondRowText}>
