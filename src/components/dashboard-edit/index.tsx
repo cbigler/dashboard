@@ -103,6 +103,7 @@ const HEADER_REPORT = {
     displayName: 'Header',
     description: 'A title that can be inserted above a set of reports.',
     controls: [],
+    visible: true,
   },
 };
 
@@ -254,10 +255,11 @@ function DashboardReportModal({
                 <div className={styles.reportTypeList}>
                   {
                     filterReportTypeCollection(
-                      [
-                        ['HEADER', HEADER_REPORT],
-                        ...(Object.entries(REPORTS)),
-                      ].map(([key, value]) => ({ ...(value as any).metadata, id: key })),
+                      (
+                        [['HEADER', HEADER_REPORT], ...(Object.entries(REPORTS))]
+                        .filter(([key, value]) => (value as any).metadata.visible)
+                        .map(([key, value]) => ({ ...(value as any).metadata, id: key }))
+                      ),
                       activeModal.data.newReportReportTypeSearchString,
                     ).map(metadata => (
                       <div
@@ -879,12 +881,14 @@ export default connect((state: any) => ({
           defaultValue = formattedHierarchy.find(i => i.space.spaceType === 'space');
         }
 
-        value = (
-          report.settings[fieldName] ||
-          control.parameters.defaultValue ||
-          defaultValue ||
+        const defaultSpace = (
+          report.settings[fieldName] || // An existing value in a report
+          control.parameters.defaultValue || // The defined default value in the control
+          defaultValue || // A fallback value calculated above
           null
         );
+
+        value = defaultSpace.space ? defaultSpace.space.id : defaultSpace;
         break;
 
       case 'TIME_RANGE_PICKER':
