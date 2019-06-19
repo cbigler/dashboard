@@ -28,6 +28,7 @@ import ExploreControlBar from '../explore-control-bar';
 import hideModal from '../../actions/modal/hide';
 import showModal from '../../actions/modal/show';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
+import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -246,6 +247,34 @@ export class Explore extends React.Component<any, any> {
                 <AppBarSection>
                   <AppBarTitle>{(selectedSpace && selectedSpace.name) || ""}</AppBarTitle>
                 </AppBarSection>
+                {selectedSpace ? <AppBarSection>
+                  <AppBarSubnav>
+                    <AppBarSubnavLink
+                      href={`#/spaces/explore/${selectedSpace.id}/trends`}
+                      active={activePage === "EXPLORE_SPACE_TRENDS"}
+                    >
+                      Trends
+                    </AppBarSubnavLink>
+                    <AppBarSubnavLink
+                      href={`#/spaces/explore/${selectedSpace.id}/daily`}
+                      active={activePage === "EXPLORE_SPACE_DAILY"}
+                    >
+                      Daily
+                    </AppBarSubnavLink>
+                    { ["conference_room", "meeting_room"].includes(selectedSpace.function) ? <AppBarSubnavLink
+                      href={`#/spaces/explore/${selectedSpace.id}/meetings`}
+                      active={activePage === "EXPLORE_SPACE_MEETINGS"}
+                    >
+                      Meetings
+                    </AppBarSubnavLink> : null }
+                    <AppBarSubnavLink
+                      href={`#/spaces/explore/${selectedSpace.id}/data-export`}
+                      active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
+                    >
+                      Data Export
+                    </AppBarSubnavLink>
+                  </AppBarSubnav>
+                </AppBarSection> : null}
                 <AppBarSection>
                   <ExploreAlertPopupList
                     selectedSpace={selectedSpace}

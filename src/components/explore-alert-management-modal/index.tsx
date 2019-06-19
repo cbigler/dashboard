@@ -23,6 +23,7 @@ const GREATER_THAN = 'greater_than',
 export function ExploreAlertManagementModal({
   visible,
   alert,
+  user,
   onUpdateAlert,
   onUpdateAlertMeta,
   onCloseModal
@@ -36,7 +37,7 @@ export function ExploreAlertManagementModal({
   >
     <div className={styles.exploreAlertManagementModalContainer}>
       <AppBar>
-        <AppBarTitle>{alert ? 'Edit Text Alert' : 'New Text Alert'}</AppBarTitle>
+        <AppBarTitle>{alert.id ? 'Edit Text Alert' : 'New Text Alert'}</AppBarTitle>
       </AppBar>
       
       <div className={styles.exploreAlertManagementModalBody}>
@@ -51,13 +52,14 @@ export function ExploreAlertManagementModal({
               onChange={value => onUpdateAlertMeta(alert, 'toNum', value)}
             />}
           />
-          <div style={{ paddingTop: 12 }}>
+          {user.phoneNumber ? <div style={{ paddingTop: 12 }}>
             <Button
               id="update-alert-phone-number-link"
               variant="underline"
               value={'123'}
+              onClick={() => onUpdateAlertMeta(alert, 'toNum', user.phoneNumber)}
             >Use my number</Button>
-          </div>
+          </div> : null}
         </div>
         <div className={styles.exploreAlertManagementModalFormRow}>
           <FormLabel
@@ -111,29 +113,35 @@ export function ExploreAlertManagementModal({
             </div>}
           />
         </div>
-        <div className={styles.exploreAlertManagementModalFormRow}>
-          <FormLabel
-            label="Notify me again if it increases by"
-            htmlFor="update-alert-escalation-threshold"
-            input={<div style={{display: 'flex', alignItems: 'center'}}>
-              <InputBox
-                type="text"
-                width="80px"
-                value={alert.meta.escalationDelta}
-                invalid={!alert.meta.escalationDelta}
-                onChange={e => onUpdateAlertMeta(alert, 'escalationDelta', e.target.value)}
-              />
-              <div style={{width: 8}}></div>
-              people
-            </div>}
-          />
-        </div>
+        {alert.triggerType === GREATER_THAN ?
+          <div className={styles.exploreAlertManagementModalFormRow}>
+            <FormLabel
+              label="Notify me again if it increases by"
+              htmlFor="update-alert-escalation-threshold"
+              input={<div style={{display: 'flex', alignItems: 'center'}}>
+                <InputBox
+                  type="text"
+                  width="80px"
+                  value={alert.meta.escalationDelta}
+                  invalid={!alert.meta.escalationDelta}
+                  onChange={e => onUpdateAlertMeta(alert, 'escalationDelta', e.target.value)}
+                />
+                <div style={{width: 8}}></div>
+                people
+              </div>}
+            />
+          </div> : null
+        }
       </div>
 
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
         <AppBar>
           <AppBarSection>
-            <Button type="muted" variant="underline">Delete alert</Button>
+            {alert.id ? <Button
+              type="muted"
+              variant="underline"
+              
+            >Delete alert</Button> : null}
           </AppBarSection>
           <AppBarSection>
             <ButtonGroup>
@@ -148,7 +156,9 @@ export function ExploreAlertManagementModal({
 }
 
 export default connect(
-  state => ({}),
+  (state: any) => ({
+    user: state.user
+  }),
   dispatch => ({
     onUpdateAlert: async (current, key, value) => {
       dispatch<any>(updateModal({

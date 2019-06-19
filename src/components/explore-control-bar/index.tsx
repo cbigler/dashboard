@@ -15,7 +15,6 @@ import {
 
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 
-import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import { formatForReactDates, parseISOTimeAtSpace, formatInISOTime, parseFromReactDates, getCurrentLocalTimeAtSpace, prettyPrintHoursMinutes } from '../../helpers/space-time-utilities';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
@@ -51,32 +50,6 @@ export function ExploreControlBar({
 
     return (
       <AppBar>
-        <AppBarSubnav>
-          <AppBarSubnavLink
-            href={`#/spaces/explore/${selectedSpace.id}/trends`}
-            active={activePage === "EXPLORE_SPACE_TRENDS"}
-          >
-            Trends
-          </AppBarSubnavLink>
-          <AppBarSubnavLink
-            href={`#/spaces/explore/${selectedSpace.id}/daily`}
-            active={activePage === "EXPLORE_SPACE_DAILY"}
-          >
-            Daily
-          </AppBarSubnavLink>
-          { ["conference_room", "meeting_room"].includes(selectedSpace.function) ? <AppBarSubnavLink
-            href={`#/spaces/explore/${selectedSpace.id}/meetings`}
-            active={activePage === "EXPLORE_SPACE_MEETINGS"}
-          >
-            Meetings
-          </AppBarSubnavLink> : null }
-          <AppBarSubnavLink
-            href={`#/spaces/explore/${selectedSpace.id}/data-export`}
-            active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
-          >
-            Data Export
-          </AppBarSubnavLink>
-        </AppBarSubnav>
         <AppBarSection>
           {activePage === 'EXPLORE_SPACE_DAILY' ? <div className={styles.exploreControlDatePicker}>
             <DatePicker

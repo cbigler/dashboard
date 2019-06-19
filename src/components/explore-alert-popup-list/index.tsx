@@ -79,7 +79,7 @@ class ExploreAlertPopupList extends Component<ExploreAlertPopupListProps, Explor
           {alerts.view === 'VISIBLE' ? (
             <ul className={styles.dashboardAlertListDropdownList}>
               {alertsForSelectedSpace
-              .sort((a, b) => a.name.localeCompare(b.name))
+              .sort((a, b) => a.id > b.id ? 1 : -1)
               .map(alert => (
                 <li key={alert.id} className={styles.dashboardAlertListDropdownItem}>
                   <div className={styles.dashboardAlertListDropdownItemRow}>
@@ -183,6 +183,9 @@ export default connect(
       error: null,
       data: [{
         triggerValue: 50,
+        spaceId: 'spc_675480383147475622'
+      }, {
+        triggerValue: 100,
         spaceId: 'spc_675480383147475622'
       }]
     }
