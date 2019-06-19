@@ -30,7 +30,8 @@ export function openReportModal(
   return async dispatch => {
     dispatch(clearReportData(PREVIEW_REPORT_ID));
 
-    // Start report calculation if on the right page
+    // Run initial report calculation if the modal is being opened onto the page
+    // where that is needed
     if (page === PAGE_NEW_REPORT_CONFIGURATION) {
       dispatch(rerenderReportInReportModal(report));
     }
@@ -56,6 +57,8 @@ export function closeReportModal() {
   }
 }
 
+// Called when the user changes the values of the report controls and the report should rerender to
+// reflect the new control values.
 export function rerenderReportInReportModal(report) {
   return (dispatch, getState) => {
     dispatch(clearReportData(PREVIEW_REPORT_ID));

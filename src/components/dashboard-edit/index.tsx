@@ -870,14 +870,23 @@ export default connect((state: any) => ({
       let value;
       switch (control.type) {
       case 'SPACE_PICKER':
-        const firstSpaceInHierarchy = formattedHierarchy.find(i => i.space.spaceType === 'space');
+        let defaultValue;
+        if (control.parameters.calculateDefaultSelectedSpace) {
+          // The defualt value is determined by running `calculateDefaultSelectedSpace`
+          defaultValue = control.parameters.calculateDefaultSelectedSpace(formattedHierarchy);
+        } else {
+          // Otherwise, the default value is the first space with a space type of space
+          defaultValue = formattedHierarchy.find(i => i.space.spaceType === 'space');
+        }
+
         value = (
           report.settings[fieldName] ||
           control.parameters.defaultValue ||
-          (firstSpaceInHierarchy ? firstSpaceInHierarchy.space.id : false) ||
+          defaultValue ||
           null
         );
         break;
+
       case 'TIME_RANGE_PICKER':
         value = (
           report.settings[fieldName] ||
@@ -885,6 +894,7 @@ export default connect((state: any) => ({
           'LAST_WEEK' // default fallback value
         );
         break;
+
       case 'SELECT_BOX':
         value = (
           report.settings[fieldName] ||
@@ -893,6 +903,7 @@ export default connect((state: any) => ({
           null
         );
         break;
+
       case 'BOOLEAN':
         value = (
           report.settings[fieldName] ||
@@ -900,6 +911,7 @@ export default connect((state: any) => ({
           false
         );
         break;
+
       case 'NUMBER':
         value = (
           report.settings[`_${fieldName}String`] ||
@@ -908,6 +920,7 @@ export default connect((state: any) => ({
           ''
         );
         break;
+
       default:
         value = (
           report.settings[fieldName] ||
