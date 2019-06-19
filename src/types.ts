@@ -159,6 +159,17 @@ export type DensityDigestSchedule = {
   recipients: Array<string>,
 };
 
+export type DensityNotification = {
+  id?: string,
+  spaceId: string,
+  enabled: boolean,
+  triggerType: "greater_than" | "less_than" | "equal_to",
+  triggerValue: number,
+  isOneShot: boolean,
+  cooldown: number,
+  meta?: Object
+};
+
 export type DensityToken = {
   key: string,
   name: string,

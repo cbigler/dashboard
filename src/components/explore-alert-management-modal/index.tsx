@@ -28,6 +28,10 @@ export function ExploreAlertManagementModal({
   onUpdateAlertMeta,
   onCloseModal
 }) {
+
+  const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
+  const escalationDeltaInvalid = isNaN(parseInt(alert.meta.escalationDelta));
+
   return <Modal
     visible={visible}
     width={480}
@@ -82,7 +86,7 @@ export function ExploreAlertManagementModal({
                 type="text"
                 width="80px"
                 value={alert.triggerValue}
-                invalid={!alert.triggerValue}
+                invalid={triggerValueInvalid}
                 onChange={e => onUpdateAlert(alert, 'triggerValue', e.target.value)}
               />
               <div style={{width: 8}}></div>
@@ -123,7 +127,7 @@ export function ExploreAlertManagementModal({
                   type="text"
                   width="80px"
                   value={alert.meta.escalationDelta}
-                  invalid={!alert.meta.escalationDelta}
+                  invalid={escalationDeltaInvalid}
                   onChange={e => onUpdateAlertMeta(alert, 'escalationDelta', e.target.value)}
                 />
                 <div style={{width: 8}}></div>
@@ -145,8 +149,11 @@ export function ExploreAlertManagementModal({
           </AppBarSection>
           <AppBarSection>
             <ButtonGroup>
-              <Button variant="underline">Cancel</Button>
-              <Button variant="filled">Save</Button>
+              <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+              <Button
+                variant="filled"
+                disabled={!alert.meta.toNum || triggerValueInvalid || escalationDeltaInvalid}
+              >Save</Button>
             </ButtonGroup>
           </AppBarSection>
         </AppBar>

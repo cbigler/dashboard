@@ -183,6 +183,7 @@ export class Explore extends React.Component<any, any> {
       spaces,
       spaceHierarchy,
       selectedSpace,
+      alerts,
       activePage,
       activeModal,
       onSpaceSearch,
@@ -277,6 +278,7 @@ export class Explore extends React.Component<any, any> {
                 </AppBarSection> : null}
                 <AppBarSection>
                   <ExploreAlertPopupList
+                    alerts={alerts}
                     selectedSpace={selectedSpace}
                     onCreateAlert={() => {
                       onShowModal('MODAL_ALERT_MANAGEMENT', {
@@ -296,7 +298,7 @@ export class Explore extends React.Component<any, any> {
                       });
                     }}
                     onEditAlert={alert => {
-                      onShowModal('MODAL_ALERT_MANAGEMENT', { alert });
+                      onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } });
                     }}
                   />
                 </AppBarSection>
@@ -323,6 +325,7 @@ export default connect((state: any) => {
     spaces: state.spaces,
     spaceHierarchy: state.spaceHierarchy,
     selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+    alerts: state.alerts,
     activePage: state.activePage,
     activeModal: state.activeModal,
   };
