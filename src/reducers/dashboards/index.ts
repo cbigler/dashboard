@@ -1,11 +1,11 @@
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { DASHBOARDS_SET } from '../../actions/dashboards/set';
+import { DASHBOARDS_SET_DATA } from '../../actions/dashboards/set-data';
 import { DASHBOARDS_PUSH } from '../../actions/dashboards/push';
 import { DASHBOARDS_ERROR } from '../../actions/dashboards/error';
 import { DASHBOARDS_SELECT } from '../../actions/dashboards/select';
 import { DASHBOARDS_UPDATE } from '../../actions/dashboards/update';
 import { DASHBOARDS_DESTROY } from '../../actions/dashboards/destroy';
-import { DASHBOARDS_REPORT_LIST_SET } from '../../actions/dashboards/report-list-set';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
@@ -19,7 +19,6 @@ import {
   DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR,
 } from '../../actions/dashboards/calculate-report-data';
 
-import { DASHBOARDS_SET_FORM_STATE } from '../../actions/dashboards/set-form-state';
 import { DASHBOARDS_UPDATE_FORM_STATE } from '../../actions/dashboards/update-form-state';
 
 import { DensityDashboard } from '../../types';
@@ -29,7 +28,7 @@ const initialState = {
   selected: null,
   error: null,
   view: 'LOADING',
-  data: [],
+  data: [] as Array<DensityDashboard>,
   calculatedReportData: {
     /*
     'rpt_456': {
@@ -39,14 +38,8 @@ const initialState = {
     */
   },
   formState: {},
-  reportList: [
-    {
-      id: 'rpt_xxx',
-      name: 'My Report',
-      type: 'HOURLY_BREAKDOWN',
-      settings: {},
-    },
-  ],
+  reportList: [],
+  timeSegmentLabels: [],
 };
 
 
@@ -102,6 +95,33 @@ export default function dashboards(state=initialState, action) {
         // for reports that already have had their data fetched.
         ...state.calculatedReportData,
       },
+    };
+  }
+
+  case DASHBOARDS_SET_DATA: {
+    return {
+      ...state,
+      loading: false,
+      error: null,
+      view: 'VISIBLE',
+      data: [objectSnakeToCamel<DensityDashboard>(action.dashboard)],
+      calculatedReportData: {
+        // Any reports that don't have data loaded yet will be put into a loading state.
+        ...(action.dashboard.reportSet.reduce((acc, report) => ({
+          ...acc,
+          [report.id]: {
+            state: 'LOADING',
+            data: null,
+          },
+        }), {})),
+
+        // But if a report already has data loaded, have that override so that we don't refetch data
+        // for reports that already have had their data fetched.
+        ...state.calculatedReportData,
+      },
+      formState: action.dashboard,
+      reportList: action.reportList,
+      timeSegmentLabels: action.timeSegmentLabels,
     };
   }
 
@@ -204,11 +224,9 @@ export default function dashboards(state=initialState, action) {
 
   // An error occurred.
   case DASHBOARDS_ERROR:
-    return {...state, loading: false, error: action.error};
+    return { ...state, loading: false, error: action.error, view: 'ERROR' };
 
   // Utilized by the dashboard edit page as a place to store the state of the form
-  case DASHBOARDS_SET_FORM_STATE:
-    return { ...state, formState: action.formState };
   case DASHBOARDS_UPDATE_FORM_STATE:
     return {
       ...state,
@@ -218,10 +236,8 @@ export default function dashboards(state=initialState, action) {
       },
     };
 
-  case DASHBOARDS_REPORT_LIST_SET:
-    return { ...state, reportList: action.reportList };
   case DASHBOARDS_REPORT_DELETE:
-    return { ...state, reportList: state.reportList.filter(r => r.id !== action.reportId)};
+    return { ...state, reportList: state.reportList.filter((r: any) => r.id !== action.reportId)};
   case DASHBOARDS_REPORT_CREATE:
     return { ...state, reportList: [...state.reportList, action.report]};
 
