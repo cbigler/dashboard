@@ -21,8 +21,7 @@ import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import collectionAlertsDestroy from '../../actions/collection/alerts/destroy';
 
 const GREATER_THAN = 'greater_than',
-      LESS_THAN = 'less_than',
-      EQUAL_TO = 'equal_to';
+      LESS_THAN = 'less_than';
 
 export function ExploreAlertManagementModal({
   visible,
@@ -82,7 +81,6 @@ export function ExploreAlertManagementModal({
                 choices={[
                   {id: GREATER_THAN, label: 'Greater than'},
                   {id: LESS_THAN, label: 'Less than'},
-                  {id: EQUAL_TO, label: 'Equal to'},
                 ]}
                 onChange={value => onUpdateAlert(alert, 'triggerType', value.id)}
               />
@@ -91,7 +89,6 @@ export function ExploreAlertManagementModal({
                 type="text"
                 width="80px"
                 value={alert.triggerValue}
-                invalid={triggerValueInvalid}
                 onChange={e => onUpdateAlert(alert, 'triggerValue', e.target.value)}
               />
               <div style={{width: 8}}></div>
@@ -106,18 +103,18 @@ export function ExploreAlertManagementModal({
             input={<div style={{display: 'flex', alignItems: 'center'}}>
               <InputBox
                 type="select"
-                value={alert.cooldown}
+                value={alert.isOneShot ? -1 : alert.cooldown}
                 width={160}
                 choices={[
+                  {id: -1, label: 'Don\'t remind'},
                   {id: 30, label: '30 minutes'},
                   {id: 60, label: '60 minutes'},
                   {id: 120, label: '2 hours'},
                   {id: 240, label: '4 hours'},
-                  {id: 360, label: '6 hours'},
                   {id: 720, label: '12 hours'},
                   {id: 1440, label: '24 hours'},
                 ]}
-                onChange={value => onUpdateAlert(alert, 'cooldown', value)}
+                onChange={value => onUpdateAlert(alert, 'cooldown', value.id)}
               />
             </div>}
           />
@@ -132,7 +129,6 @@ export function ExploreAlertManagementModal({
                   type="text"
                   width="80px"
                   value={alert.meta.escalationDelta}
-                  invalid={escalationDeltaInvalid}
                   onChange={e => onUpdateAlertMeta(alert, 'escalationDelta', e.target.value)}
                 />
                 <div style={{width: 8}}></div>
@@ -147,7 +143,7 @@ export function ExploreAlertManagementModal({
         <AppBar>
           <AppBarSection>
             {alert.id ? <Button
-              type="muted"
+              type="danger"
               variant="underline"
               onClick={() => onDeleteAlert(alert)}
             >Delete alert</Button> : null}
@@ -197,6 +193,10 @@ export default connect(
     onSaveAlert: async alert => {
       if (alert.triggerType !== GREATER_THAN) {
         delete alert.meta.escalationDelta;
+      }
+      if (alert.cooldown === -1) {
+        alert.cooldown = 60;
+        alert.isOneShot = true;
       }
       if (alert.id) {
         dispatch<any>(collectionAlertsUpdate(alert));
