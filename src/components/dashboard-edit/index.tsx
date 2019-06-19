@@ -25,10 +25,6 @@ import {
   closeReportModal,
   rerenderReportInReportModal,
 
-  createReport,
-  updateReport,
-  deleteReport,
-
   ReportModalPages,
   PAGE_PICK_EXISTING_REPORT,
   PAGE_NEW_REPORT_TYPE,
@@ -40,6 +36,10 @@ import {
 
   extractCalculatedReportDataFromDashboardsReducer,
 } from '../../actions/dashboards/report-modal';
+import reportCreate from '../../actions/dashboards/report-create';
+import reportUpdate from '../../actions/dashboards/report-update';
+import reportDelete from '../../actions/dashboards/report-delete';
+
 
 import {
   AppFrame,
@@ -334,7 +334,7 @@ function DashboardReportModal({
                   const fieldName = changeCase.camel(control.parameters.field);
                   let input: ReactNode = null;
 
-                  function updateReportSettings(key, value) {
+                  function reportUpdateSettings(key, value) {
                     const report = {
                       ...activeModal.data.report,
                       settings: { ...activeModal.data.report.settings, [key]: value },
@@ -350,7 +350,7 @@ function DashboardReportModal({
                     input = (
                       <SpacePickerDropdown
                         value={activeModal.data.report.settings[fieldName]}
-                        onChange={value => updateReportSettings(
+                        onChange={value => reportUpdateSettings(
                           fieldName,
                           control.parameters.canSelectMultiple ? (
                             value.map(i => i.space.id) // Array of space ids
@@ -380,7 +380,7 @@ function DashboardReportModal({
 													{id: 'LAST_28_DAYS', label: 'Last 28 days' },
 													{id: 'CUSTOM_RANGE', label: 'Custom Range...' },
                         ]}
-                        onChange={choice => updateReportSettings(fieldName, choice.id)}
+                        onChange={choice => reportUpdateSettings(fieldName, choice.id)}
                       />
                     );
                     break;
@@ -392,7 +392,7 @@ function DashboardReportModal({
                         width="100%"
                         value={activeModal.data.report.settings[fieldName]}
                         choices={control.parameters.choices}
-                        onChange={choice => updateReportSettings(fieldName, choice.id)}
+                        onChange={choice => reportUpdateSettings(fieldName, choice.id)}
                       />
                     );
                     break;
@@ -402,7 +402,7 @@ function DashboardReportModal({
                         id={id}
                         value={activeModal.data.report.settings[fieldName]}
                         onChange={e => {
-                          updateReportSettings(fieldName, e.target.checked)
+                          reportUpdateSettings(fieldName, e.target.checked)
                         }}
                       />
                     );
@@ -419,10 +419,10 @@ function DashboardReportModal({
                         }
                         onChange={e => {
                           // Modify the string version of the field name and use taht as the "working copy"
-                          updateReportSettings(`_${fieldName}String`, e.target.value);
+                          reportUpdateSettings(`_${fieldName}String`, e.target.value);
                           // But also create a numberical version of the field from the string
                           // version, and this is what is actually used by the report when rendering
-                          updateReportSettings(fieldName, parseInt(e.target.value, 10));
+                          reportUpdateSettings(fieldName, parseInt(e.target.value, 10));
                         }}
                       />
                     );
@@ -434,7 +434,7 @@ function DashboardReportModal({
                         id={id}
                         width="100%"
                         value={activeModal.data.report.settings[fieldName]}
-                        onChange={e => updateReportSettings(fieldName, e.target.value)}
+                        onChange={e => reportUpdateSettings(fieldName, e.target.value)}
                       />
                     );
                     break;
@@ -784,9 +784,9 @@ export default connect((state: any) => ({
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
     if (shouldCreateReport) {
-      result = await dispatch<any>(createReport(report));
+      result = await dispatch<any>(reportCreate(report));
     } else {
-      result = await dispatch<any>(updateReport(report));
+      result = await dispatch<any>(reportUpdate(report));
     }
 
     if (!result) {
@@ -882,7 +882,7 @@ export default connect((state: any) => ({
         callback: async () => {
           // Delete the report from all dashboards. This also cascades to delete all report
           // dashboard links too.
-          const ok = await dispatch<any>(deleteReport(report));
+          const ok = await dispatch<any>(reportDelete(report));
 
           if (ok) {
             // Remove report from dashboard locally
