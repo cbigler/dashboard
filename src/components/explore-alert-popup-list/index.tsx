@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import { AppBar, AppBarSection, AppBarTitle, Icons, Switch } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';

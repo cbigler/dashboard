@@ -188,7 +188,6 @@ export class Explore extends React.Component<any, any> {
       activeModal,
       onSpaceSearch,
       onShowModal,
-      onCloseModal,
     } = this.props;
 
     const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 280;

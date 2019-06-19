@@ -27,6 +27,7 @@ import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 import colors from '@density/ui/variables/colors.json';
+import showToast from '../../actions/toasts';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -143,9 +144,6 @@ const PasswordSection = props => {
 
   const PASSWORD_MIN_LENGTH = 8;
 
-  const [errorText, setErrorText] = useState('');
-
-
   // possible values for password validation status
   const VALID = 0
   const CURRENT_PASSWORD_REQUIRED = 1
@@ -169,16 +167,10 @@ const PasswordSection = props => {
     validationStatus = PASSWORD_CONFIRMATION_MISMATCH;
   }
 
-  const handleSaveButtonClick = evt => {
-    if (newPassword === newPasswordConfirm) {
-      setErrorText('');
-      return onSubmitPassword(currentPassword, newPassword)
-        .then(() => setMode(DISPLAY))
-        .catch(error => setErrorText(error));
-
-    } else {
-      setErrorText('Passwords don\'t match.');
-    }
+  const handleSaveButtonClick = () => {
+    return onSubmitPassword(currentPassword, newPassword)
+      .then(() => setMode(DISPLAY))
+      .catch(error => showToast({ text: error, type: 'danger' }));
   }
 
   const handleCancelButtonClick = evt => {
@@ -205,7 +197,6 @@ const PasswordSection = props => {
             {mode === DISPLAY ? (
               <Button
                 variant="underline"
-                size="large"
                 width="200px"
                 onClick={evt => setMode(EDIT)}
               >Change password</Button>
@@ -283,8 +274,8 @@ const PasswordSection = props => {
                     <Button
                       type="primary"
                       variant="filled"
-                      onClick={handleSaveButtonClick}
                       disabled={validationStatus !== VALID}
+                      onClick={handleSaveButtonClick}
                     >Change password</Button>
                     </div>
                   </div>

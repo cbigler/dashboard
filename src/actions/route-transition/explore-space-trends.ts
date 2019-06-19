@@ -31,7 +31,6 @@ import {
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsLoad from '../collection/alerts/load';
-import collectionAlertsSet from '../collection/alerts/set';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
