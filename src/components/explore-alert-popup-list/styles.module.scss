@@ -146,6 +146,11 @@ $dashboardAlertBackdropZIndex: 99999;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.dashboardAlertListDropdownItemEscalationText {
+  padding-left: 24px;
+  font-size: 14px;
+  color: $brandWarning;
+}
 
 
 

@@ -16,6 +16,7 @@ type ExploreAlertPopupListProps = {
   selectedSpace: DensitySpace,
   onEditAlert: any,
   onCreateAlert: any,
+  onToggleAlert: any,
 };
 type ExploreAlertPopupListState = {
   visible: boolean,
@@ -27,7 +28,7 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
   }
 
   render() {
-    const { alerts, selectedSpace, onEditAlert, onCreateAlert } = this.props;
+    const { alerts, selectedSpace, onEditAlert, onCreateAlert, onToggleAlert } = this.props;
     const { visible } = this.state;
 
     const alertsForSelectedSpace = selectedSpace ? (
@@ -87,6 +88,7 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
                     <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
                       <Switch
                         value={alert.enabled}
+                        onChange={e => onToggleAlert(alert, e.target.checked)}
                       />
                       <div style={{display: 'flex', flexDirection: 'column', paddingLeft: 16}}>
                         <div className={styles.dashboardAlertListDropdownItemFirstRow}>
@@ -95,6 +97,9 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
                         <div className={styles.dashboardAlertListDropdownItemSecondRow}>
                           <span className={styles.dashboardAlertListDropdownItemSecondRowText}>
                             {alert.triggerValue} people
+                            <span className={styles.dashboardAlertListDropdownItemEscalationText}>
+                              {alert.meta.escalationDelta ? `+${alert.meta.escalationDelta}` : null}
+                            </span>
                           </span>
                         </div>
                       </div>

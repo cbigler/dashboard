@@ -29,6 +29,7 @@ import hideModal from '../../actions/modal/hide';
 import showModal from '../../actions/modal/show';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
+import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -186,6 +187,7 @@ export class Explore extends React.Component<any, any> {
       alerts,
       activePage,
       activeModal,
+      onUpdateAlert,
       onSpaceSearch,
       onShowModal,
     } = this.props;
@@ -295,6 +297,9 @@ export class Explore extends React.Component<any, any> {
                     onEditAlert={alert => {
                       onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } });
                     }}
+                    onToggleAlert={(alert, enabled) => {
+                      onUpdateAlert({...alert, enabled});
+                    }}
                   />
                 </AppBarSection>
               </AppBar>
@@ -328,6 +333,9 @@ export default connect((state: any) => {
   return {
     onSpaceSearch(searchQuery) {
       dispatch(collectionSpacesFilter('search', searchQuery));
+    },
+    onUpdateAlert(alert) {
+      dispatch(collectionAlertsUpdate(alert));
     },
     onCloseModal() {
       dispatch(hideModal());
