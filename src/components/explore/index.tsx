@@ -15,7 +15,6 @@ import {
   AppScrollView,
   Icons,
   InputBox,
-  Modal,
 } from '@density/ui';
 
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
@@ -211,7 +210,6 @@ export class Explore extends React.Component<any, any> {
         {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
           <ExploreAlertManagementModal
             visible={activeModal.visible}
-            selectedSpace={activeModal.data.selectedSpace}
             alert={activeModal.data.alert}
             onCloseModal={onCloseModal}
           />
@@ -246,16 +244,30 @@ export class Explore extends React.Component<any, any> {
             <AppPane>
               <AppBar>
                 <AppBarSection>
-                  <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
+                  <AppBarTitle>{(selectedSpace && selectedSpace.name) || ""}</AppBarTitle>
                 </AppBarSection>
                 <AppBarSection>
                   <ExploreAlertPopupList
                     selectedSpace={selectedSpace}
                     onCreateAlert={() => {
-                      onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: null });
+                      onShowModal('MODAL_ALERT_MANAGEMENT', {
+                        alert: {
+                          spaceId: selectedSpace.id,
+                          enabled: true,
+                          isOneShot: false,
+                          notificationType: 'sms',
+                          triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
+                          triggerType: 'greater_than',
+                          cooldown: 30,
+                          meta: {
+                            toNum: '',
+                            escalationDelta: 30
+                          }
+                        }
+                      });
                     }}
-                    onEditAlert={a => {
-                      onShowModal('MODAL_ALERT_MANAGEMENT', { selectedSpace, alert: a });
+                    onEditAlert={alert => {
+                      onShowModal('MODAL_ALERT_MANAGEMENT', { alert });
                     }}
                   />
                 </AppBarSection>

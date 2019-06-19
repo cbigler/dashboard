@@ -7,7 +7,6 @@ import colorVariables from '@density/ui/variables/colors.json';
 import styles from './styles.module.scss';
 
 import { DensitySpace } from '../../types';
-import showModal from '../../actions/modal/show';
 
 type ExploreAlertPopupListProps = {
   alerts: {
