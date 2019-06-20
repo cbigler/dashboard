@@ -52,7 +52,7 @@ export function ExploreAlertManagementModal({
 }) {
 
   const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
-  const escalationDeltaInvalid = isNaN(parseInt(alert.meta.escalationDelta));
+  const escalationDeltaInvalid = alert.meta.escalationDelta && isNaN(parseInt(alert.meta.escalationDelta));
 
   return <Modal
     visible={visible}
@@ -217,8 +217,13 @@ export default connect(
       }));
     },
     onSaveAlert: async alert => {
-      if (alert.triggerType !== GREATER_THAN) {
-        delete alert.meta.escalationDelta;
+      if (!alert.meta.escalationDelta || alert.triggerType !== GREATER_THAN) {
+        alert.meta.escalationDelta = null;
+      } else {
+        alert.meta.escalationDelta = parseInt(alert.meta.escalationDelta);
+      }
+      if (alert.cooldown) {
+        alert.cooldown = parseInt(alert.cooldown);
       }
       if (alert.id) {
         dispatch<any>(collectionAlertsUpdate(alert));
