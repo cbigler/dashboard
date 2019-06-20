@@ -125,7 +125,7 @@ function getEmptyRequiredFields(report) {
     });
 }
 
-function DashboardReportModal({
+function DashboardReportModalUnconnected({
   activeModal,
   spaceHierarchy,
   reportList,
@@ -704,6 +704,111 @@ function DashboardReportModal({
   }
 }
 
+const DashboardReportModal = connect((state: any) => ({
+  activeModal: state.activeModal,
+  spaceHierarchy: state.spaceHierarchy,
+  // List of all reports from the server (ie, the response of GET /v2/reports)
+  reportList: state.dashboards.reportList,
+  // List of all reports in the working copy of the selected dashboard
+  // (ie, `report_set` from GET /v2/dashboards/:id)
+  reportsInSelectedDashboard: state.dashboards.formState ? state.dashboards.formState.reportSet : [],
+  calculatedReportDataForPreviewedReport: extractCalculatedReportDataFromDashboardsReducer(state.dashboards),
+  timeSegmentLabels: state.dashboards.timeSegmentLabels,
+}), dispatch => ({
+  onUpdateModal(key, value) {
+    dispatch<any>(updateModal({[key]: value}));
+  },
+  onReportModalMovedToReportConfigurationPage: (report, formattedHierarchy) => {
+    // Set default parameters for a newly created report
+    const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
+    const initialReportSettings = reportType.metadata.controls.reduce((acc, control) => {
+      const fieldName = changeCase.camel(control.parameters.field);
+
+      let value;
+      switch (control.type) {
+      case 'SPACE_PICKER':
+        let defaultValue;
+        if (control.parameters.calculateDefaultSelectedSpace) {
+          // The defualt value is determined by running `calculateDefaultSelectedSpace`
+          defaultValue = control.parameters.calculateDefaultSelectedSpace(formattedHierarchy);
+        } else {
+          // Otherwise, the default value is the first space with a space type of space
+          defaultValue = formattedHierarchy.find(i => i.space.spaceType === 'space');
+        }
+
+        const defaultSpace = (
+          control.parameters.defaultValue || // The defined default value in the control
+          defaultValue || // A fallback value calculated above
+          null
+        );
+
+        value = defaultSpace.space ? defaultSpace.space.id : defaultSpace;
+
+        if (control.parameters.canSelectMultiple) { value = [value]; }
+        break;
+
+      case 'TIME_RANGE_PICKER':
+        value = control.parameters.defaultValue || 'LAST_WEEK'; // default fallback value
+        break;
+
+      case 'TIME_SEGMENT_LABEL_PICKER':
+      case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
+        value = (
+          control.parameters.defaultValue ||
+          (control.parameters.canSelectMultiple ? [] : null) // default fallback value
+        );
+        break;
+
+      case 'SELECT_BOX':
+        value = (
+          control.parameters.defaultValue ||
+          (control.parameters.choices.length > 0 ? control.parameters.choices[0].id : false) ||
+          null
+        );
+        break;
+
+      case 'BOOLEAN':
+        value = control.parameters.defaultValue || false;
+        break;
+
+      case 'PERCENTAGE':
+        value = control.parameters.defaultValue || 0.5;
+        break;
+
+      case 'NUMBER':
+        value = control.parameters.defaultValue || '';
+        break;
+
+      default:
+        value = report.settings[fieldName] || control.parameters.defaultValue || '';
+        break;
+      }
+
+      return { ...acc, [fieldName]: value };
+    }, {});
+    const reportWithInitialSettings = { ...report, settings: initialReportSettings };
+    dispatch<any>(updateModal({ report: reportWithInitialSettings }));
+
+    // Then perform the initial rendering of the report if all fields are filled in
+    if (getEmptyRequiredFields(reportWithInitialSettings).length === 0) {
+      dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+    }
+  },
+  onReportSettingsUpdated: (() => {
+    const debouncedUpdate = debounce(report => {
+      dispatch<any>(rerenderReportInReportModal(report));
+    }, 500);
+
+    return (report, invokeImmediately?: boolean) => {
+      if (invokeImmediately) {
+        dispatch<any>(rerenderReportInReportModal(report));
+      } else {
+        debouncedUpdate(report);
+      }
+    };
+  })(),
+}))(DashboardReportModalUnconnected);
+
 export function DashboardEdit({
   activeModal,
   selectedDashboard,
@@ -717,30 +822,15 @@ export function DashboardEdit({
   onShowDeleteConfirm,
 
   onCreateReport,
-  onEditReport,
   onCloseModal,
-  onUpdateModal,
-  onReportSettingsUpdated,
-  onReportModalMovedToReportConfigurationPage,
+  onEditReport,
   onSaveReportModal,
   onReportShowDeletePopup,
 }) {
   return (
     <Fragment>
       <DashboardReportModal
-        activeModal={activeModal}
-        spaceHierarchy={spaceHierarchy}
-        calculatedReportDataForPreviewedReport={calculatedReportDataForPreviewedReport}
-        // List of all reports from the server (ie, the response of GET /v2/reports)
-        reportList={dashboards.reportList}
-        // List of all reports in the working copy of the selected dashboard
-        // (ie, `report_set` from GET /v2/dashboards/:id)
-        reportsInSelectedDashboard={dashboards.formState ? dashboards.formState.reportSet : []}
-        timeSegmentLabels={dashboards.timeSegmentLabels}
-
-        onUpdateModal={onUpdateModal}
-        onReportSettingsUpdated={onReportSettingsUpdated}
-        onReportModalMovedToReportConfigurationPage={onReportModalMovedToReportConfigurationPage}
+        onCloseModal={onCloseModal}
         onAddReportToDashboard={report => {
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
@@ -748,7 +838,6 @@ export function DashboardEdit({
         onReportShowDeletePopup={report => onReportShowDeletePopup(selectedDashboard, report)}
 
         onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
-        onCloseModal={onCloseModal}
       />
 
       {dashboards.view === 'LOADING' ? (
@@ -907,6 +996,9 @@ export default connect((state: any) => ({
   dashboards: state.dashboards,
   calculatedReportDataForPreviewedReport: extractCalculatedReportDataFromDashboardsReducer(state.dashboards),
 }), dispatch => ({
+  onCloseModal() {
+    dispatch<any>(closeReportModal());
+  },
   onUpdateFormState(key, value) {
     dispatch(dashboardsUpdateFormState(key, value));
   },
@@ -959,12 +1051,6 @@ export default connect((state: any) => ({
       OPERATION_UPDATE,
     ));
   },
-  onCloseModal() {
-    dispatch<any>(closeReportModal());
-  },
-  onUpdateModal(key, value) {
-    dispatch<any>(updateModal({[key]: value}));
-  },
   async onSaveReportModal(dashboard, report) {
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
@@ -987,95 +1073,6 @@ export default connect((state: any) => ({
     }
 
     dispatch<any>(closeReportModal());
-  },
-  onReportSettingsUpdated: (() => {
-    const debouncedUpdate = debounce(report => {
-      dispatch<any>(rerenderReportInReportModal(report));
-    }, 500);
-
-    return (report, invokeImmediately?: boolean) => {
-      if (invokeImmediately) {
-        dispatch<any>(rerenderReportInReportModal(report));
-      } else {
-        debouncedUpdate(report);
-      }
-    };
-  })(),
-  onReportModalMovedToReportConfigurationPage(report, formattedHierarchy) {
-    // Set default parameters for a newly created report
-    const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
-    const initialReportSettings = reportType.metadata.controls.reduce((acc, control) => {
-      const fieldName = changeCase.camel(control.parameters.field);
-
-      let value;
-      switch (control.type) {
-      case 'SPACE_PICKER':
-        let defaultValue;
-        if (control.parameters.calculateDefaultSelectedSpace) {
-          // The defualt value is determined by running `calculateDefaultSelectedSpace`
-          defaultValue = control.parameters.calculateDefaultSelectedSpace(formattedHierarchy);
-        } else {
-          // Otherwise, the default value is the first space with a space type of space
-          defaultValue = formattedHierarchy.find(i => i.space.spaceType === 'space');
-        }
-
-        const defaultSpace = (
-          control.parameters.defaultValue || // The defined default value in the control
-          defaultValue || // A fallback value calculated above
-          null
-        );
-
-        value = defaultSpace.space ? defaultSpace.space.id : defaultSpace;
-
-        if (control.parameters.canSelectMultiple) { value = [value]; }
-        break;
-
-      case 'TIME_RANGE_PICKER':
-        value = control.parameters.defaultValue || 'LAST_WEEK'; // default fallback value
-        break;
-
-      case 'TIME_SEGMENT_LABEL_PICKER':
-      case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
-        value = (
-          control.parameters.defaultValue ||
-          (control.parameters.canSelectMultiple ? [] : null) // default fallback value
-        );
-        break;
-
-      case 'SELECT_BOX':
-        value = (
-          control.parameters.defaultValue ||
-          (control.parameters.choices.length > 0 ? control.parameters.choices[0].id : false) ||
-          null
-        );
-        break;
-
-      case 'BOOLEAN':
-        value = control.parameters.defaultValue || false;
-        break;
-
-      case 'PERCENTAGE':
-        value = control.parameters.defaultValue || 0.5;
-        break;
-
-      case 'NUMBER':
-        value = control.parameters.defaultValue || '';
-        break;
-
-      default:
-        value = report.settings[fieldName] || control.parameters.defaultValue || '';
-        break;
-      }
-
-      return { ...acc, [fieldName]: value };
-    }, {});
-    const reportWithInitialSettings = { ...report, settings: initialReportSettings };
-    dispatch<any>(updateModal({ report: reportWithInitialSettings }));
-
-    // Then perform the initial rendering of the report if all fields are filled in
-    if (getEmptyRequiredFields(reportWithInitialSettings).length === 0) {
-      dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
-    }
   },
   async onReportShowDeletePopup(selectedDashboard, report) {
     if (report.dashboardCount === 1) {
