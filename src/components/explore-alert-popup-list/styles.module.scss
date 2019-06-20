@@ -101,22 +101,61 @@ $dashboardAlertBackdropZIndex: 99999;
 .dashboardAlertListDropdownItem {
   display: flex;
   flex-direction: column;
-  padding-top: 24px;
+  padding-top: 32px;
 }
+.dashboardAlertListDropdownItem:first-of-type { padding-top: 24px; }
 .dashboardAlertListDropdownItem:last-of-type { padding-bottom: 24px; }
 .dashboardAlertListDropdownItemRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
 }
 
-.dashboardAlertListDropdownItemFirstRow {
+.dashboardAlertListDropdownItemInfo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 16px;
+}
+
+.dashboardAlertListDropdownItemInfoFirstRow {
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  font-size: 16px;
+  font-size: 14px;
   padding-bottom: 8px;
+  color: $grayDarkest;
+  transition: color 200ms ease;
+}
+
+.dashboardAlertListDropdownItemInfoSecondRow {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  user-select: none;
+  cursor: default;
+  color: $grayCinder;
+  transition: color 200ms ease;
+}
+.dashboardAlertListDropdownItemInfoSecondRowText {
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dashboardAlertListDropdownItemInfoEscalationText {
+  display: flex;
+  align-items: center;
+  margin-left: 24px;
+  font-size: 12px;
+  color: $brandWarning;
+  transition: color 200ms ease;
+}
+
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoFirstRow,
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoSecondRow,
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoEscalationText {
+  color: $grayDarker;
 }
 
 .dashboardAlertListDropdownItemEdit {
@@ -131,28 +170,6 @@ $dashboardAlertBackdropZIndex: 99999;
 }
 .dashboardAlertListDropdownItemEdit:hover { opacity: 0.9; }
 .dashboardAlertListDropdownItemEdit:active { opacity: 1; }
-
-.dashboardAlertListDropdownItemSecondRow {
-  display: flex;
-  align-items: center;
-
-  font-weight: bold;
-  user-select: none;
-  cursor: default;
-  color: $grayCinder;
-}
-.dashboardAlertListDropdownItemSecondRowText {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.dashboardAlertListDropdownItemEscalationText {
-  padding-left: 24px;
-  font-size: 14px;
-  color: $brandWarning;
-}
-
-
 
 .dashboardAlertListEmptyContainer {
   display: flex;

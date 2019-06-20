@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import { AppBar, AppBarSection, AppBarTitle, Icons, Switch } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
@@ -46,7 +46,7 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
           className={classnames(styles.dashboardAlertListButton, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: !visible})}
         >
-          <Icons.Alert
+          <Icons.Notification
             color={colorVariables.brandPrimary}
             accentColor={alertsForSelectedSpace.find(x => x.enabled) ? colorVariables.brandDanger : colorVariables.brandPrimary} />
           <span className={styles.dashboardAlertListButtonText}>Alerts</span>
@@ -83,25 +83,36 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
               {alertsForSelectedSpace
               .sort((a, b) => a.id > b.id ? 1 : -1)
               .map(alert => (
-                <li key={alert.id} className={styles.dashboardAlertListDropdownItem}>
+                <li
+                  key={alert.id}
+                  className={classnames(styles.dashboardAlertListDropdownItem, {
+                    [styles.dashboardAlertListDropdownItemDisabled]: !alert.enabled
+                  })}
+                >
                   <div className={styles.dashboardAlertListDropdownItemRow}>
-                    <div style={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
-                      <Switch
-                        value={alert.enabled}
-                        onChange={e => onToggleAlert(alert, e.target.checked)}
-                      />
-                      <div style={{display: 'flex', flexDirection: 'column', paddingLeft: 16}}>
-                        <div className={styles.dashboardAlertListDropdownItemFirstRow}>
-                          Text me when occupancy {alert.triggerType === 'greater_than' ? 'exceeds' : 'drops below'}
-                        </div>
-                        <div className={styles.dashboardAlertListDropdownItemSecondRow}>
-                          <span className={styles.dashboardAlertListDropdownItemSecondRowText}>
-                            {alert.triggerValue} people
-                            <span className={styles.dashboardAlertListDropdownItemEscalationText}>
-                              {alert.meta.escalationDelta ? `+${alert.meta.escalationDelta}` : null}
-                            </span>
+                    <Switch
+                      value={alert.enabled}
+                      onChange={e => onToggleAlert(alert, e.target.checked)}
+                    />
+                    <div className={styles.dashboardAlertListDropdownItemInfo}>
+                      <div className={styles.dashboardAlertListDropdownItemInfoFirstRow}>
+                        Text me when occupancy {alert.triggerType === 'greater_than' ? 'exceeds' : 'drops below'}
+                      </div>
+                      <div className={styles.dashboardAlertListDropdownItemInfoSecondRow}>
+                        <span className={styles.dashboardAlertListDropdownItemInfoSecondRowText}>
+                          {alert.triggerValue} people
+                          <span className={styles.dashboardAlertListDropdownItemInfoEscalationText}>
+                            {alert.meta.escalationDelta ? <Fragment>
+                              <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
+                                <Icons.Danger
+                                  height={16}
+                                  color={colorVariables[alert.enabled ? 'brandWarning' : 'grayDarker']}
+                                />
+                              </div>
+                              <div style={{marginTop: 3}}>+{alert.meta.escalationDelta}</div>
+                            </Fragment> : null}
                           </span>
-                        </div>
+                        </span>
                       </div>
                     </div>
                     <span
