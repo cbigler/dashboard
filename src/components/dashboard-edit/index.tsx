@@ -110,6 +110,19 @@ const HEADER_REPORT = {
   },
 };
 
+// Given a report, return any fields that are required but aren't filled in
+function getEmptyRequiredFields(report) {
+  if (report.type === 'HEADER') {
+    return [];
+  }
+  return REPORTS[report.type].metadata.controls
+    .filter(control => control.parameters.required)
+    .filter(control => {
+      const value = report.settings[changeCase.camel(control.parameters.field)];
+      return !value || value.length === 0;
+    });
+}
+
 function DashboardReportModal({
   activeModal,
   spaceHierarchy,
@@ -136,6 +149,8 @@ function DashboardReportModal({
 
     const filterReportCollection = filterCollection({fields: ['name', 'displayType']});
     const filterReportTypeCollection = filterCollection({fields: ['displayName']});
+
+    const requiredControlsThatAreEmpty = selectedReportType ? getEmptyRequiredFields(activeModal.data.report) : [];
 
     let modalWidth = 1024,
         modalHeight = 800;
@@ -357,7 +372,9 @@ function DashboardReportModal({
                       onUpdateModal('report', report);
 
                       // Called so that the report calculations can be rerun
-                      onReportSettingsUpdated(report, false);
+                      if (getEmptyRequiredFields(report).length === 0) {
+                        onReportSettingsUpdated(report, false);
+                      }
                     }
 
                     switch (control.type) {
@@ -382,26 +399,35 @@ function DashboardReportModal({
                       break;
                     case 'TIME_SEGMENT_LABEL_PICKER':
                       input = (
-                        <TagInput
-                          choices={timeSegmentLabels.map(label => ({id: label, label}))}
-                          tags={activeModal.data.report.settings[fieldName].map(label => ({id: label, label}))}
-                          placeholder={'eg. "Whole Day"'}
-                          emptyTagsPlaceholder="No time segments selected."
-                          id={id}
-                          width="100%"
-                          onCreateNewTag={name => reportUpdateSettings(fieldName, [
-                            ...activeModal.data.report.settings[fieldName],
-                            name,
-                          ])}
-                          onAddTag={tag => reportUpdateSettings(fieldName, [
-                            ...activeModal.data.report.settings[fieldName],
-                            tag.id,
-                          ])}
-                          onRemoveTag={tag => {
-                            const labels = activeModal.data.report.settings[fieldName].filter(t => t !== tag.id);
-                            reportUpdateSettings(fieldName, labels);
-                          }}
-                        />
+                        control.parameters.canSelectMultiple ? (
+                          <TagInput
+                            choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                            tags={activeModal.data.report.settings[fieldName].map(label => ({id: label, label}))}
+                            placeholder={'eg. "Whole Day"'}
+                            emptyTagsPlaceholder="No time segments selected."
+                            id={id}
+                            width="100%"
+                            canCreateTags={false}
+                            onAddTag={tag => reportUpdateSettings(fieldName, [
+                              ...activeModal.data.report.settings[fieldName],
+                              tag.id,
+                            ])}
+                            onRemoveTag={tag => {
+                              const labels = activeModal.data.report.settings[fieldName].filter(t => t !== tag.id);
+                              reportUpdateSettings(fieldName, labels);
+                            }}
+                          />
+                        ) : (
+                          <InputBox
+                            type="select"
+                            choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                            placeholder={'eg. "Whole Day"'}
+                            id={id}
+                            width="100%"
+                            value={activeModal.data.report.settings[fieldName]}
+                            onChange={item => reportUpdateSettings(fieldName, item.id)}
+                          />
+                        )
                       );
                       break;
                     case 'TIME_RANGE_PICKER':
@@ -421,6 +447,33 @@ function DashboardReportModal({
                           ]}
                           onChange={choice => reportUpdateSettings(fieldName, choice.id)}
                         />
+                      );
+                      break;
+                    case 'PERCENTAGE':
+                      input = (
+                        <Fragment>
+                          <input
+                            type="range"
+                            min={0}
+                            max={1}
+                            step={0.05}
+                            value={activeModal.data.report.settings[fieldName]}
+                            onChange={e => {
+                              const report = {
+                                ...activeModal.data.report,
+                                settings: {
+                                  ...activeModal.data.report.settings,
+                                  [fieldName]: e.target.value,
+                                },
+                              };
+                              onUpdateModal('report', report);
+
+                              // Called so that the report calculations can be rerun
+                            }}
+                            onMouseUp={() => onReportSettingsUpdated(activeModal.data.report, false)}
+                          />
+                          {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
+                        </Fragment>
                       );
                       break;
                     case 'SELECT_BOX':
@@ -500,23 +553,28 @@ function DashboardReportModal({
                           variant="underline"
                           type="muted"
                           onClick={() => onReportSettingsUpdated(activeModal.data.report, true)}
+                          disabled={requiredControlsThatAreEmpty.length > 0}
                         >Refresh Report</Button>
                       </AppBarSection>
                     </AppBar>
                   </AppBarContext.Provider>
-                  <div className={styles.reportBackdrop}>
-                    {calculatedReportDataForPreviewedReport.state === 'LOADING' ? (
-                      <div className={styles.centered}>
-                        <GenericLoadingState />
-                      </div>
-                    ) : (
-                      <Report
-                        report={activeModal.data.report}
-                        reportData={calculatedReportDataForPreviewedReport}
-                        expanded
-                      />
-                    )}
-                  </div>
+                  {requiredControlsThatAreEmpty.length === 0 ? (
+                    <div className={styles.reportBackdrop}>
+                      {calculatedReportDataForPreviewedReport.state === 'LOADING' ? (
+                        <div className={styles.centered}>
+                          <GenericLoadingState />
+                        </div>
+                      ) : (
+                        <Report
+                          report={activeModal.data.report}
+                          reportData={calculatedReportDataForPreviewedReport}
+                          expanded
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <p>These required controls have not been filled out: {requiredControlsThatAreEmpty.map(i => i.label).join(', ')}</p>
+                  )}
                 </div>
               ) : null}
             </div>
@@ -943,7 +1001,7 @@ export default connect((state: any) => ({
       case 'TIME_SEGMENT_LABEL_PICKER':
         value = (
           control.parameters.defaultValue ||
-          [] // default fallback value
+          (control.parameters.canSelectMultiple ? [] : null) // default fallback value
         );
         break;
 
@@ -959,6 +1017,13 @@ export default connect((state: any) => ({
         value = (
           control.parameters.defaultValue ||
           false
+        );
+        break;
+
+      case 'PERCENTAGE':
+        value = (
+          control.parameters.defaultValue ||
+          0.5
         );
         break;
 
@@ -983,8 +1048,10 @@ export default connect((state: any) => ({
     const reportWithInitialSettings = { ...report, settings: initialReportSettings };
     dispatch<any>(updateModal({ report: reportWithInitialSettings }));
 
-    // Then perform the initial rendering of the report
-    dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+    // Then perform the initial rendering of the report if all fields are filled in
+    if (getEmptyRequiredFields(reportWithInitialSettings).length === 0) {
+      dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+    }
   },
   async onReportShowDeletePopup(selectedDashboard, report) {
     if (report.dashboardCount === 1) {
