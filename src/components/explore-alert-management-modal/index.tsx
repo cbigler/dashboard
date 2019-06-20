@@ -112,7 +112,7 @@ export function ExploreAlertManagementModal({
                 )}
               />
               <div style={{width: 8}}></div>
-              people
+              {parseInt(alert.triggerValue) === 1 ? 'person' : 'people'}
             </div>}
           />
         </div>

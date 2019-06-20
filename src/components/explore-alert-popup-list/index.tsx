@@ -100,7 +100,7 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
                       </div>
                       <div className={styles.dashboardAlertListDropdownItemInfoSecondRow}>
                         <span className={styles.dashboardAlertListDropdownItemInfoSecondRowText}>
-                          {alert.triggerValue} people
+                          {alert.triggerValue} {parseInt(alert.triggerValue) === 1 ? 'person' : 'people'}
                           <span className={styles.dashboardAlertListDropdownItemInfoEscalationText}>
                             {alert.meta.escalationDelta ? <Fragment>
                               <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
