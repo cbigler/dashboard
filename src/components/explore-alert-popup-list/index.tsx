@@ -101,17 +101,19 @@ export default class ExploreAlertPopupList extends Component<ExploreAlertPopupLi
                       <div className={styles.dashboardAlertListDropdownItemInfoSecondRow}>
                         <span className={styles.dashboardAlertListDropdownItemInfoSecondRowText}>
                           {alert.triggerValue} {parseInt(alert.triggerValue) === 1 ? 'person' : 'people'}
-                          <span className={styles.dashboardAlertListDropdownItemInfoEscalationText}>
-                            {alert.meta.escalationDelta ? <Fragment>
-                              <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
-                                <Icons.Danger
-                                  height={16}
-                                  color={colorVariables[alert.enabled ? 'brandWarning' : 'grayDarker']}
-                                />
-                              </div>
-                              <div style={{marginTop: 3}}>+{alert.meta.escalationDelta}</div>
-                            </Fragment> : null}
-                          </span>
+                          {alert.isOneShot ? null :
+                            <span className={styles.dashboardAlertListDropdownItemInfoEscalationText}>
+                              {alert.meta.escalationDelta ? <Fragment>
+                                <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
+                                  <Icons.Danger
+                                    height={16}
+                                    color={colorVariables[alert.enabled ? 'brandWarning' : 'grayDarker']}
+                                  />
+                                </div>
+                                <div style={{marginTop: 3}}>+{alert.meta.escalationDelta}</div>
+                              </Fragment> : null}
+                            </span>
+                          }
                         </span>
                       </div>
                     </div>

@@ -57,6 +57,7 @@ export function ExploreAlertManagementModal({
   return <Modal
     visible={visible}
     width={480}
+    height={520}
     onBlur={onCloseModal}
     onEscape={onCloseModal}
   >
@@ -137,7 +138,7 @@ export function ExploreAlertManagementModal({
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN ?
+        {alert.triggerType === GREATER_THAN && !alert.isOneShot ?
           <div className={styles.exploreAlertManagementModalFormRow}>
             <FormLabel
               label="Notify me again if it increases by"
@@ -154,7 +155,7 @@ export function ExploreAlertManagementModal({
                   )}
                 />
                 <div style={{width: 8}}></div>
-                people
+                {parseInt(alert.meta.escalationDelta) === 1 ? 'person' : 'people'}
               </div>}
             />
           </div> : null
