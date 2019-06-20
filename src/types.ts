@@ -168,7 +168,11 @@ export type DensityNotification = {
   triggerValue: number,
   isOneShot: boolean,
   cooldown: number,
-  meta?: Object
+  meta?: {
+    toNum?: string,
+    escalationDelta?: number,
+    escalationSentAt?: number
+  }
 };
 
 export type DensityToken = {

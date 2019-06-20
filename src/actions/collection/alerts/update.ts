@@ -28,7 +28,10 @@ export default function collectionAlertsUpdate({
         trigger_value: triggerValue,
         is_one_shot: isOneShot,
         cooldown: cooldown,
-        meta: meta,
+        meta: {
+          to_num: (meta || {}).toNum,
+          escalation_delta: (meta || {}).escalationDelta,
+        },
       });
     } catch (err) {
       errorThrown = err;
