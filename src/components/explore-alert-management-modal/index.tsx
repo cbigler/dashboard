@@ -10,6 +10,7 @@ import {
   InputBox,
   Modal,
   PhoneInputBox,
+  Switch,
 } from '@density/ui';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label';
@@ -30,13 +31,13 @@ export const TRIGGER_TYPE_CHOICES = [
 ];
 
 export const COOLDOWN_CHOICES = [
-  {id: -1, label: 'Don\'t remind'},
   {id: 30, label: '30 minutes'},
   {id: 60, label: '60 minutes'},
   {id: 120, label: '2 hours'},
   {id: 240, label: '4 hours'},
   {id: 720, label: '12 hours'},
   {id: 1440, label: '24 hours'},
+  {id: -1, label: 'No reminder'},
 ];
 
 export function ExploreAlertManagementModal({
@@ -123,9 +124,15 @@ export function ExploreAlertManagementModal({
               <InputBox
                 type="select"
                 value={alert.isOneShot ? -1 : alert.cooldown}
+                disabled={alert.isOneShot}
                 width={160}
                 choices={COOLDOWN_CHOICES}
                 onChange={value => onUpdateAlert(alert, 'cooldown', value.id)}
+              />
+              <div style={{width: 8}}></div>
+              <Switch
+                value={!alert.isOneShot}
+                onChange={e => onUpdateAlert(alert, 'isOneShot', !e.target.checked)}
               />
             </div>}
           />
@@ -187,12 +194,15 @@ export default connect(
   }),
   dispatch => ({
     onUpdateAlert: async (current, key, value) => {
-      dispatch<any>(updateModal({
-        alert: {
-          ...current,
-          [key]: value
-        }
-      }));
+      const alert = {
+        ...current,
+        [key]: value
+      };
+      if (alert.cooldown === -1) {
+        alert.cooldown = 30;
+        alert.isOneShot = true;
+      }
+      dispatch<any>(updateModal({ alert }));
     },
     onUpdateAlertMeta: async (current, key, value) => {
       dispatch<any>(updateModal({
@@ -208,10 +218,6 @@ export default connect(
     onSaveAlert: async alert => {
       if (alert.triggerType !== GREATER_THAN) {
         delete alert.meta.escalationDelta;
-      }
-      if (alert.cooldown === -1) {
-        alert.cooldown = 60;
-        alert.isOneShot = true;
       }
       if (alert.id) {
         dispatch<any>(collectionAlertsUpdate(alert));

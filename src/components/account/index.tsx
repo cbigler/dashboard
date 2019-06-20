@@ -357,7 +357,7 @@ function AlertSection({
                 onClick={() => (
                   onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } })
                 )}
-              >Edit</ListViewClickableLink>
+              ><span style={{paddingRight: 16}}>Edit</span></ListViewClickableLink>
             )}
           />
         </ListView>
