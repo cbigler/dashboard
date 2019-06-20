@@ -41,7 +41,6 @@ export function ExploreAlertManagementModal({
   return <Modal
     visible={visible}
     width={480}
-    height={540}
     onBlur={onCloseModal}
     onEscape={onCloseModal}
   >
@@ -51,7 +50,10 @@ export function ExploreAlertManagementModal({
       </AppBar>
       
       <div className={styles.exploreAlertManagementModalBody}>
-        <div className={styles.exploreAlertManagementModalFormRow}>
+        <div
+          className={styles.exploreAlertManagementModalFormRow}
+          style={{marginBottom: 4}}
+        >
           <FormLabel
             label="Phone number"
             htmlFor="update-alert-phone-number"
