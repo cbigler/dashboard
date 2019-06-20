@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import { InputBox } from '@density/ui';
 import classnames from 'classnames';
 
@@ -26,7 +26,6 @@ const SPACE_FUNCTION_CHOICES = [
 ];
 
 export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, onChangeField}) {
-  let inputs;
 
   function getSpaceTypeLabel(spaceType) {
     return {
