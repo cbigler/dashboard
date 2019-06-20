@@ -3,17 +3,17 @@ import accounts from '../../client/accounts';
 
 export const USER_UPDATE = 'USER_UPDATE';
 
-export default function userUpdate(fullName, marketingConsent) {
+export default function   userUpdate(fullName, phoneNumber) {
   return (dispatch, getState) => {
-    dispatch({ type: USER_UPDATE, fullName, marketingConsent });
+    dispatch({ type: USER_UPDATE, fullName });
 
     // Set new user details.
     return accounts().put('/users/me', {
       full_name: fullName,
-      marketing_consent: marketingConsent,
+      phone_number: phoneNumber
     }).then(() => {
       // Report success.
-      dispatch({ type: USER_PUSH, item: {fullName, marketingConsent} });
+      dispatch({ type: USER_PUSH, item: {fullName, phoneNumber} });
     });
   };
 }

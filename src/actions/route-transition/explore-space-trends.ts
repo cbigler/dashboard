@@ -30,6 +30,7 @@ import {
   DEFAULT_TIME_SEGMENT_LABEL,
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
+import collectionAlertsLoad from '../collection/alerts/load';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -53,7 +54,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
       spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (err) {
-      dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
+      dispatch(collectionSpacesError(`Error loading data: ${err.message}`));
       return;
     }
 
@@ -62,6 +63,8 @@ export default function routeTransitionExploreSpaceTrends(id) {
       dispatch(collectionSpacesError(`Space with id ${id} not found`));
       return;
     }
+
+    await dispatch(collectionAlertsLoad());
 
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));

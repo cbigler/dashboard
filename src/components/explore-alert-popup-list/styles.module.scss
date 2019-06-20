@@ -1,0 +1,229 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+$dashboardAlertBackdropZIndex: 99999;
+
+.dashboardAlertList { position: relative; }
+
+.dashboardAlertBackdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  z-index: $dashboardAlertBackdropZIndex;
+  display: none;
+}
+.dashboardAlertBackdrop.visible { display: block; }
+
+
+.dashboardAlertListButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+
+  color: $brandPrimary;
+  background-color: #fff;
+  height: 40px;
+  padding-top: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
+  border: 1px solid $inputFieldBorderColor;
+  border-radius: $borderRadiusBase;
+  outline: none;
+}
+@media (max-width: 375px) {
+  // Hide alerts on mobile
+  .dashboardAlertListButton { display: none; }
+}
+.dashboardAlertListButton.visible {
+  position: relative;
+  z-index: $dashboardAlertBackdropZIndex + 1;
+}
+.dashboardAlertListButton:focus { border-color: $brandPrimary; }
+
+.dashboardAlertListButtonText {
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+
+.dashboardAlertListDropdown {
+  position: absolute;
+  right: 0px;
+  width: 450px;
+  z-index: 999999;
+
+  margin-top: 8px;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+
+  opacity: 0;
+  transition: all 150ms ease-in-out;
+  pointer-events: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.dashboardAlertListDropdown.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+
+.dashboardAlertListDropdownCreateButton {
+  display: flex;
+  align-items: center;
+  color: $brandPrimary;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+}
+.dashboardAlertListDropdownCreateButton:hover { opacity: 0.9; }
+.dashboardAlertListDropdownCreateButton:active { opacity: 1; }
+.dashboardAlertListDropdownCreateButtonText { margin-left: 8px; }
+
+
+.dashboardAlertListDropdownList {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.dashboardAlertListDropdownItem {
+  display: flex;
+  flex-direction: column;
+  padding-top: 32px;
+}
+.dashboardAlertListDropdownItem:first-of-type { padding-top: 24px; }
+.dashboardAlertListDropdownItem:last-of-type { padding-bottom: 24px; }
+.dashboardAlertListDropdownItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboardAlertListDropdownItemInfo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 16px;
+}
+
+.dashboardAlertListDropdownItemInfoFirstRow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  padding-bottom: 8px;
+  color: $grayDarkest;
+  transition: color 200ms ease;
+}
+
+.dashboardAlertListDropdownItemInfoSecondRow {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  user-select: none;
+  cursor: default;
+  color: $grayCinder;
+  transition: color 200ms ease;
+}
+.dashboardAlertListDropdownItemInfoSecondRowText {
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dashboardAlertListDropdownItemInfoEscalationText {
+  display: flex;
+  align-items: center;
+  margin-left: 24px;
+  font-size: 12px;
+  color: $brandWarning;
+  transition: color 200ms ease;
+}
+
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoFirstRow,
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoSecondRow,
+.dashboardAlertListDropdownItemDisabled .dashboardAlertListDropdownItemInfoEscalationText {
+  color: $grayDarker;
+}
+
+.dashboardAlertListDropdownItemEdit {
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+  font-weight: bold;
+  user-select: none;
+  margin-left: 24px;
+}
+.dashboardAlertListDropdownItemEdit:hover { opacity: 0.9; }
+.dashboardAlertListDropdownItemEdit:active { opacity: 1; }
+
+.dashboardAlertListEmptyContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px;
+}
+.dashboardAlertListEmptyContainerText {
+  margin-left: 24px;
+}
+.dashboardAlertListEmptyContainerTitle {
+  color: $grayCinder;
+  font-size: $fontSizeBase;
+  font-weight: 400;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+.dashboardAlertListEmptyContainerDesc {
+  color: $grayDark;
+  font-size: 14px;
+}
+
+
+
+.dashboardAlertListErrorContainer {
+  display: flex;
+  align-items: center;
+  height: 240px;
+}
+.dashboardCigestListErrorContainerTitle {
+  font-size: 24px;
+  color: $brandDanger;
+  margin-top: 0px;
+}
+.dashboardAlertListErrorContainerDesc { font-size: $fontSizeBase; }
+
+
+
+.dashboardAlertListLoadingPlaceholderContainer {
+  height: 210px;
+  padding-top: 30px;
+}
+.dashboardAlertListLoadingPlaceholderRow.one {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.dashboardAlertListLoadingPlaceholderRow.two {
+  display: flex;
+  margin-bottom: 21px;
+}
+.dashboardAlertListLoadingPlaceholder {
+  background-color: $grayLight;
+  border-radius: $borderRadiusSmall;
+  height: 8px;
+}
+.dashboardAlertListLoadingPlaceholder.dark { background-color: $grayDark; }
