@@ -111,7 +111,6 @@ export function ExploreControlBar({
           </div> : null}
           {(activePage !== 'EXPLORE_SPACE_DAILY' && filters.startDate && filters.endDate) ? <div className={styles.exploreControlDateRangePicker}>
             <DateRangePicker
-              anchor="ANCHOR_RIGHT"
               startDate={formatForReactDates(
                 parseISOTimeAtSpace(filters.startDate, selectedSpace),
                 selectedSpace,
