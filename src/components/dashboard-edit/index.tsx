@@ -110,6 +110,8 @@ const HEADER_REPORT = {
   },
 };
 
+const COLOR_LIST = [ 'BLUE', 'GREEN', 'YELLOW', 'ORANGE', 'RED' ];
+
 // Given a report, return any fields that are required but aren't filled in
 function getEmptyRequiredFields(report) {
   if (report.type === 'HEADER') {
@@ -344,6 +346,7 @@ function DashboardReportModal({
                   <FormLabel
                     label="Name"
                     htmlFor="reports-name"
+                    required
                     input={<InputBox
                       type="text"
                       id="reports-name"
@@ -430,6 +433,42 @@ function DashboardReportModal({
                         )
                       );
                       break;
+                    case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
+                      input = (
+                        control.parameters.canSelectMultiple ? (
+                          <TagInput
+                            choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                            tags={activeModal.data.report.settings[fieldName].map(({label}) => ({id: label, label}))}
+                            placeholder={'eg. "Whole Day"'}
+                            emptyTagsPlaceholder="No time segments selected."
+                            id={id}
+                            width="100%"
+                            canCreateTags={false}
+                            onAddTag={tag => reportUpdateSettings(fieldName, [
+                              ...activeModal.data.report.settings[fieldName],
+                              {
+                                label: tag.id,
+                                color: COLOR_LIST[activeModal.data.report.settings[fieldName].length % COLOR_LIST.length],
+                              },
+                            ])}
+                            onRemoveTag={tag => {
+                              const labels = activeModal.data.report.settings[fieldName].filter(t => t.label !== tag.id);
+                              reportUpdateSettings(fieldName, labels);
+                            }}
+                          />
+                        ) : (
+                          <InputBox
+                            type="select"
+                            choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                            placeholder={'eg. "Whole Day"'}
+                            id={id}
+                            width="100%"
+                            value={activeModal.data.report.settings[fieldName]}
+                            onChange={item => reportUpdateSettings(fieldName, item.id)}
+                          />
+                        )
+                      );
+                      break;
                     case 'TIME_RANGE_PICKER':
                       input = (
                         <InputBox
@@ -443,7 +482,6 @@ function DashboardReportModal({
                             {id: 'WEEK_TO_DATE', label: 'Week to date' },
                             {id: 'LAST_7_DAYS', label: 'Last 7 days' },
                             {id: 'LAST_28_DAYS', label: 'Last 28 days' },
-                            {id: 'CUSTOM_RANGE', label: 'Custom Range...' },
                           ]}
                           onChange={choice => reportUpdateSettings(fieldName, choice.id)}
                         />
@@ -538,6 +576,7 @@ function DashboardReportModal({
                         key={control.label}
                         htmlFor={id}
                         input={input}
+                        required={control.parameters.required}
                       />
                     );
                   })}
@@ -992,13 +1031,11 @@ export default connect((state: any) => ({
         break;
 
       case 'TIME_RANGE_PICKER':
-        value = (
-          control.parameters.defaultValue ||
-          'LAST_WEEK' // default fallback value
-        );
+        value = control.parameters.defaultValue || 'LAST_WEEK'; // default fallback value
         break;
 
       case 'TIME_SEGMENT_LABEL_PICKER':
+      case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
         value = (
           control.parameters.defaultValue ||
           (control.parameters.canSelectMultiple ? [] : null) // default fallback value
@@ -1014,32 +1051,19 @@ export default connect((state: any) => ({
         break;
 
       case 'BOOLEAN':
-        value = (
-          control.parameters.defaultValue ||
-          false
-        );
+        value = control.parameters.defaultValue || false;
         break;
 
       case 'PERCENTAGE':
-        value = (
-          control.parameters.defaultValue ||
-          0.5
-        );
+        value = control.parameters.defaultValue || 0.5;
         break;
 
       case 'NUMBER':
-        value = (
-          control.parameters.defaultValue ||
-          ''
-        );
+        value = control.parameters.defaultValue || '';
         break;
 
       default:
-        value = (
-          report.settings[fieldName] ||
-          control.parameters.defaultValue ||
-          ''
-        );
+        value = report.settings[fieldName] || control.parameters.defaultValue || '';
         break;
       }
 
