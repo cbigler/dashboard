@@ -89,7 +89,11 @@ export function ExploreAlertManagementModal({
                 type="text"
                 width="80px"
                 value={alert.triggerValue}
-                onChange={e => onUpdateAlert(alert, 'triggerValue', e.target.value)}
+                onChange={e => onUpdateAlert(
+                  alert,
+                  'triggerValue',
+                  e.target.value.replace(/[^0-9]/, '')
+                )}
               />
               <div style={{width: 8}}></div>
               people
@@ -129,7 +133,11 @@ export function ExploreAlertManagementModal({
                   type="text"
                   width="80px"
                   value={alert.meta.escalationDelta}
-                  onChange={e => onUpdateAlertMeta(alert, 'escalationDelta', e.target.value)}
+                  onChange={e => onUpdateAlertMeta(
+                    alert,
+                    'escalationDelta',
+                    e.target.value.replace(/[^0-9]/, '')
+                  )}
                 />
                 <div style={{width: 8}}></div>
                 people
