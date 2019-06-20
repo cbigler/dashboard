@@ -30,6 +30,7 @@ import showModal from '../../actions/modal/show';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+import showToast from '../../actions/toasts';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -334,14 +335,15 @@ export default connect((state: any) => {
     onSpaceSearch(searchQuery) {
       dispatch(collectionSpacesFilter('search', searchQuery));
     },
-    onUpdateAlert(alert) {
-      dispatch(collectionAlertsUpdate(alert));
-    },
-    onCloseModal() {
-      dispatch(hideModal());
+    async onUpdateAlert(alert) {
+      await dispatch(collectionAlertsUpdate(alert));
+      dispatch(showToast({ text: alert.enabled ? 'Alert enabled' : 'Alert disabled' }));
     },
     onShowModal(name, data) {
       dispatch(showModal(name, data));
+    },
+    onCloseModal() {
+      dispatch(hideModal());
     },
   };
 })(Explore);

@@ -19,6 +19,7 @@ import hideModal from '../../actions/modal/hide';
 import collectionAlertsCreate from '../../actions/collection/alerts/create';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import collectionAlertsDestroy from '../../actions/collection/alerts/destroy';
+import showToast from '../../actions/toasts';
 
 const GREATER_THAN = 'greater_than',
       LESS_THAN = 'less_than';
@@ -211,10 +212,12 @@ export default connect(
       } else {
         dispatch<any>(collectionAlertsCreate(alert));
       }
+      dispatch<any>(showToast({ text: 'Alert saved' }));
       dispatch<any>(hideModal());
     },
     onDeleteAlert: async alert => {
       dispatch<any>(collectionAlertsDestroy(alert));
+      dispatch<any>(showToast({ text: 'Alert deleted' }));
       dispatch<any>(hideModal());
     },
     onCloseModal: async alert => {
