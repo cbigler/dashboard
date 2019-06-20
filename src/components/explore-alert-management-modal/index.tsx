@@ -21,8 +21,23 @@ import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import collectionAlertsDestroy from '../../actions/collection/alerts/destroy';
 import showToast from '../../actions/toasts';
 
-const GREATER_THAN = 'greater_than',
-      LESS_THAN = 'less_than';
+export const  GREATER_THAN = 'greater_than',
+              LESS_THAN = 'less_than';
+
+export const TRIGGER_TYPE_CHOICES = [
+  {id: GREATER_THAN, label: 'Greater than'},
+  {id: LESS_THAN, label: 'Less than'},
+];
+
+export const COOLDOWN_CHOICES = [
+  {id: -1, label: 'Don\'t remind'},
+  {id: 30, label: '30 minutes'},
+  {id: 60, label: '60 minutes'},
+  {id: 120, label: '2 hours'},
+  {id: 240, label: '4 hours'},
+  {id: 720, label: '12 hours'},
+  {id: 1440, label: '24 hours'},
+];
 
 export function ExploreAlertManagementModal({
   visible,
@@ -81,10 +96,7 @@ export function ExploreAlertManagementModal({
                 type="select"
                 value={alert.triggerType}
                 width={160}
-                choices={[
-                  {id: GREATER_THAN, label: 'Greater than'},
-                  {id: LESS_THAN, label: 'Less than'},
-                ]}
+                choices={TRIGGER_TYPE_CHOICES}
                 onChange={value => onUpdateAlert(alert, 'triggerType', value.id)}
               />
               <div style={{width: 8}}></div>
@@ -112,15 +124,7 @@ export function ExploreAlertManagementModal({
                 type="select"
                 value={alert.isOneShot ? -1 : alert.cooldown}
                 width={160}
-                choices={[
-                  {id: -1, label: 'Don\'t remind'},
-                  {id: 30, label: '30 minutes'},
-                  {id: 60, label: '60 minutes'},
-                  {id: 120, label: '2 hours'},
-                  {id: 240, label: '4 hours'},
-                  {id: 720, label: '12 hours'},
-                  {id: 1440, label: '24 hours'},
-                ]}
+                choices={COOLDOWN_CHOICES}
                 onChange={value => onUpdateAlert(alert, 'cooldown', value.id)}
               />
             </div>}

@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import {
   InputBox,
   PhoneInputBox,
+  Switch,
   Button,
   AppBar,
   AppBarSection,
@@ -28,10 +29,19 @@ import hideModal from '../../actions/modal/hide';
 
 import colors from '@density/ui/variables/colors.json';
 import showToast from '../../actions/toasts';
+import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+
+import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
+import ExploreAlertManagementModal, { COOLDOWN_CHOICES } from '../explore-alert-management-modal';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
 const EDIT = 'EDIT';
+
+const COOLDOWN_CHOICES_MAP = COOLDOWN_CHOICES.reduce((current, next) => {
+  current[next.id] = next.label;
+  return current;
+}, {});
 
 
 const GeneralInfoSection = props => {
@@ -289,6 +299,73 @@ const PasswordSection = props => {
   )
 }
 
+function AlertSection({
+  alerts,
+  spaces,
+  onUpdateAlert,
+  onShowModal,
+}) {
+
+  // Prepare the array of necessary data once, so columns can iterate quickly
+  const alertData = alerts.data.map(alert => {
+    const space = spaces.data.find(space => space.id === alert.spaceId) || {};
+    return { ...alert, spaceName: space.name };
+  });
+
+  return <div className={styles.accountPageSection}>
+    <div className={styles.accountPageSectionHeader}>
+      <div className={styles.accountPageSectionHeaderText}>Alerts</div>
+    </div>
+    <div className={styles.accountPageSectionBody}>
+      <div style={{padding: '0 24px'}}>
+        <div className={styles.accountPageSubsectionHeader}>SMS</div>
+        <ListView data={alertData}>
+          <ListViewColumn
+            title="Space"
+            flexGrow={3}
+            template={alert => (
+              <ListViewClickableLink
+                onClick={() => (
+                  window.location.href = `#/spaces/explore/${alert.spaceId}/trends`
+                )}
+              >{alert.spaceName}</ListViewClickableLink>
+            )}
+          />
+          <ListViewColumn
+            title="Trigger"
+            flexGrow={1}
+            template={alert => {
+              const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
+              return `Occupancy ${greaterLessSymbol} ${alert.triggerValue}`;
+            }}
+          />
+          <ListViewColumn
+            title="Frequency"
+            flexGrow={1}
+            template={alert => COOLDOWN_CHOICES_MAP[alert.cooldown]}
+          />
+          <ListViewColumn
+            title="Enabled"
+            template={alert => <Switch
+              value={alert.enabled}
+              onChange={e => onUpdateAlert({ ...alert, enabled: e.target.checked})}
+            />}
+          />
+          <ListViewColumn
+            template={alert => (
+              <ListViewClickableLink
+                onClick={() => (
+                  onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } })
+                )}
+              >Edit</ListViewClickableLink>
+            )}
+          />
+        </ListView>
+      </div>
+    </div>
+  </div>;
+}
+
 export class Account extends React.Component<any, any> {
   constructor(props) {
     super(props);
@@ -304,12 +381,17 @@ export class Account extends React.Component<any, any> {
   render() {
     const {
       user,
+      alerts,
+      spaces,
+      activeModal,
+      onUpdateAlert,
+      onShowModal,
       onSubmitPassword,
       onSubmitUserUpdate,
     } = this.props;
 
-    // const canChangePassword = user.data && !user.data.isDemo && !user.data.organization.forceSsoLogin;
-    const canChangePassword = true;
+    const canChangePassword = user.data && !user.data.isDemo && !user.data.organization.forceSsoLogin;
+    const canManageAlerts = user.data && user.data.role !== 'readonly';
     return (
       <AppFrame>
         <AppPane>
@@ -324,13 +406,34 @@ export class Account extends React.Component<any, any> {
             <ErrorBar message={this.state.error} />
             <div className={styles.accountPage}>
 
+              {/* If an alert management modal is visible, render it above the view */}
+              {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
+                <ExploreAlertManagementModal />
+              ) : null}
+
               {/* GENERAL INFO */}
-              <GeneralInfoSection user={user} onSubmitUserUpdate={onSubmitUserUpdate} />
+              <GeneralInfoSection
+                user={user}
+                onSubmitUserUpdate={onSubmitUserUpdate}
+              />
               
               {/* PASSWORD */}
               {canChangePassword ? (
-                <PasswordSection onSubmitPassword={onSubmitPassword} setErrorText={this.setErrorText} />
-              ): null}
+                <PasswordSection
+                  onSubmitPassword={onSubmitPassword}
+                  setErrorText={this.setErrorText}
+                />
+              ) : null}
+
+              {/* ALERTS */}
+              {canManageAlerts ? (
+                <AlertSection
+                  alerts={alerts}
+                  spaces={spaces}
+                  onUpdateAlert={onUpdateAlert}
+                  onShowModal={onShowModal}
+                />
+              ) : null}
               
               <div className={styles.accountDeactivateContainer}>
                 <span>If you&apos;d like to deactivate your account, please <a href="mailto:support@density.io?subject=I want to deactivate my Density account"> contact support</a>.</span>
@@ -347,11 +450,23 @@ export class Account extends React.Component<any, any> {
 export default connect((state: any) => {
   return {
     user: state.user,
+    alerts: state.alerts,
+    spaces: state.spaces,
     activeModal: state.activeModal,
     loading: state.user.loading,
   };
 }, dispatch => {
   return {
+    async onUpdateAlert(alert) {
+      await dispatch<any>(collectionAlertsUpdate(alert));
+      dispatch<any>(showToast({
+        text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
+        timeout: 1000
+      }));
+    },
+    onShowModal(name, data) {
+      dispatch<any>(showModal(name, data));
+    },
     onSubmitPassword(currentPassword, password) {
       return dispatch<any>(userResetPassword(currentPassword, password)).then(() => {
         dispatch<any>(showModal('account-password-reset'));

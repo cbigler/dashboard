@@ -337,7 +337,10 @@ export default connect((state: any) => {
     },
     async onUpdateAlert(alert) {
       await dispatch(collectionAlertsUpdate(alert));
-      dispatch(showToast({ text: alert.enabled ? 'Alert enabled' : 'Alert disabled' }));
+      dispatch(showToast({
+        text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
+        timeout: 1000
+      }));
     },
     onShowModal(name, data) {
       dispatch(showModal(name, data));
