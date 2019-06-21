@@ -241,7 +241,7 @@ export class Dashboard extends React.Component<any, any> {
       onShowModal,
     } = this.props;
 
-    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
+    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 328;
 
     return (
       <Fragment>
