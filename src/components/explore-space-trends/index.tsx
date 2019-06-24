@@ -15,17 +15,7 @@ import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
-class ExploreSpaceTrends extends React.Component<any, any> {
-  container: any;
-  state = { width: 0 }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const width = this.container.offsetWidth - 80;
-    if (width !== prevState.width) {
-      this.setState({width});
-    }
-  }
-
+class ExploreSpaceTrends extends React.PureComponent<any, any> {
   render() {
     const {
       spaces,
@@ -46,7 +36,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
       const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
-      return <div className={styles.exploreSpaceTrendsPage} ref={r => { this.container = r; }}>
+      return <div className={styles.exploreSpaceTrendsPage}>
         <ErrorBar
           message={spaces.error}
           modalOpen={activeModal.name !== null}
@@ -56,14 +46,13 @@ class ExploreSpaceTrends extends React.Component<any, any> {
 
         {spaces.filters.startDate && spaces.filters.endDate ? (
           <div className={styles.exploreSpaceTrendsContainer} >
-            <div className={styles.exploreSpaceTrends} ref={r => { this.container = r; }}>
+            <div className={styles.exploreSpaceTrends}>
               <div className={styles.exploreSpaceTrendsItem}>
                 <DailyMetricsCard
                   space={space}
                   startDate={spaces.filters.startDate}
                   endDate={spaces.filters.endDate}
                   timeSegmentLabel={selectedTimeSegmentLabel}
-                  chartWidth={this.state.width}
                 />
               </div>
               <div className={styles.exploreSpaceTrendsItem}>
@@ -93,7 +82,6 @@ class ExploreSpaceTrends extends React.Component<any, any> {
                   endDate={spaces.filters.endDate}
                   timeSegmentLabel={selectedTimeSegmentLabel}
                   timeSegments={applicableTimeSegments}
-                  chartWidth={this.state.width}
                 />
               </div>
             </div>
@@ -101,7 +89,7 @@ class ExploreSpaceTrends extends React.Component<any, any> {
         ) : null}
       </div>;
     } else {
-      return <div ref={r => { this.container = r; }}></div>;
+      return null;
     }
   }
 }

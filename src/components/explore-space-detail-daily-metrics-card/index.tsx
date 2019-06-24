@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -34,6 +34,7 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import { chartAsReactComponent } from '@density/charts';
+import autoWidthHoc from '../../helpers/auto-width-hoc';
 const DailyMetricsComponent = chartAsReactComponent(dailyMetrics);
 const LineChartComponent = chartAsReactComponent(lineChart);
 
@@ -47,12 +48,11 @@ const GRAPH_TYPE_TRANSITION_POINT_IN_DAYS = 14;
 
 const CHART_HEIGHT = 350;
 
-export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
+export class ExploreSpaceDetailDailyMetricsCard extends PureComponent<any, any> {
   render() {
     const {
       spaces,
       calculatedData,
-      chartWidth,
 
       space,
       startDate,
@@ -62,6 +62,9 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
       onRefresh,
       onChangeMetricToDisplay,
     } = this.props;
+
+    // Subtract 2 from width because of borders
+    const width = this.props.width - 2;
 
     if (space) {
       return (
@@ -135,7 +138,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                 return <div className={styles.largeTimespanChart}>
                   <LineChartComponent
                     timeZone={space.timeZone}
-                    svgWidth={chartWidth}
+                    svgWidth={width}
                     svgHeight={370}
 
                     xAxis={xAxisDailyTick({
@@ -210,7 +213,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
                         value: i.value,
                       };
                     })}
-                    width={chartWidth}
+                    width={width}
                     height={CHART_HEIGHT}
                   />
                 </div>;
@@ -243,6 +246,7 @@ export class ExploreSpaceDetailDailyMetricsCard extends Component<any, any> {
 export default connect((state: any) => ({
   spaces: state.spaces,
   calculatedData: state.exploreData.calculations.dailyMetrics,
+  resizeCounter: state.resizeCounter,
 }), dispatch => ({
   onRefresh(space) {
     dispatch<any>(calculateDailyMetrics(space));
@@ -251,4 +255,4 @@ export default connect((state: any) => ({
     dispatch(collectionSpacesFilter('metricToDisplay', metric));
     dispatch<any>(calculateDailyMetrics(space));
   }
-}))(ExploreSpaceDetailDailyMetricsCard);
+}))(autoWidthHoc(ExploreSpaceDetailDailyMetricsCard));

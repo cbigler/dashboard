@@ -37,6 +37,7 @@ import {
 } from '@density/chart-line-chart/dist/overlays';
 
 import { chartAsReactComponent } from '@density/charts';
+import autoWidthHoc from '../../helpers/auto-width-hoc';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const AVERAGE_WEEKLY_BREAKDOWN_PERCENTAGE_BAR_BREAK_WIDTH_IN_PX = 320;
@@ -48,7 +49,7 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any> {
+export class ExploreSpaceDetailUtilizationCard extends React.PureComponent<any, any> {
   calculateAverageUtilization(data=this.props.calculatedData.data.counts) {
     // No data exists, so render a '-' instead of actual data.
     if (data.length === 0) {
@@ -63,7 +64,6 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
   render() {
     const {
       calculatedData,
-      chartWidth,
 
       space,
       startDate,
@@ -72,6 +72,9 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
       onRefresh,
     } = this.props;
+
+    // This component subtracts 80 from its container width
+    const width = this.props.width - 80;
 
     const averageWeekHeader = (
       <CardHeader>
@@ -232,7 +235,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
         </div>;
 
       case calculatedData.state === 'COMPLETE':
-        let numberOfTicks = chartWidth >= 640 ? 12 : 6
+        let numberOfTicks = width >= 640 ? 12 : 6
         let dayDuration = 0;
         if (calculatedData.data.utilizationsByTime.length > 1) {
           const firstTime = moment(calculatedData.data.utilizationsByTime[0].time, 'HH:mm');
@@ -310,7 +313,7 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
               <div className={styles.exploreSpaceDetailUtilizationCardDailyBreakdownChart}>
                 <LineChartComponent
                   timeZone={space.timeZone}
-                  svgWidth={chartWidth}
+                  svgWidth={width}
                   svgHeight={CHART_HEIGHT}
 
                   xAxis={xAxisDailyTick({
@@ -390,8 +393,9 @@ export class ExploreSpaceDetailUtilizationCard extends React.Component<any, any>
 
 export default connect((state: any) => ({
   calculatedData: state.exploreData.calculations.utilization,
+  resizeCounter: state.resizeCounter,
 }), dispatch => ({
   onRefresh(space) {
     dispatch<any>(calculateUtilization(space));
   },
-}))(ExploreSpaceDetailUtilizationCard);
+}))(autoWidthHoc(ExploreSpaceDetailUtilizationCard));

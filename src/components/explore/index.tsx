@@ -18,6 +18,7 @@ import {
 } from '@density/ui';
 
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
+import autoWidthHoc from '../../helpers/auto-width-hoc';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
@@ -152,34 +153,7 @@ function pruneHierarchy(spaceTree, matchedSpaceIds) {
   }
 }
 
-export class Explore extends React.Component<any, any> {
-  private pageContainerRef: React.RefObject<HTMLInputElement>;
-
-  constructor(props) {
-    super(props);
-    this.pageContainerRef = React.createRef();
-    this.state = {
-      pageSize: 0,
-    };
-  }
-
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-  }
-
-  onResize = () => {
-    if (this.pageContainerRef) {
-      const div: any = this.pageContainerRef.current;
-      this.setState({
-        pageSize: div.clientWidth,
-      });
-    }
-  }
-
+export class Explore extends React.PureComponent<any, any> {
   render() {
     const {
       spaces,
@@ -191,9 +165,8 @@ export class Explore extends React.Component<any, any> {
       onUpdateAlert,
       onSpaceSearch,
       onShowModal,
+      width,
     } = this.props;
-
-    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 328;
 
     let filteredSpaces = spaceHierarchy.data;
     if (spaces.filters.search) {
@@ -216,9 +189,9 @@ export class Explore extends React.Component<any, any> {
         ) : null}
 
         {/* Main application */}
-        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
+        <div className={styles.appFrameWrapper}>
           <AppFrame>
-            <AppSidebar visible={true} width={sidebarWidth}>
+            <AppSidebar visible={true} width={width <= 1120 ? 280 : 328}>
               <AppBar>
                 <InputBox
                   type="text"
@@ -329,6 +302,7 @@ export default connect((state: any) => {
     alerts: state.alerts,
     activePage: state.activePage,
     activeModal: state.activeModal,
+    resizeCounter: state.resizeCounter,
   };
 }, (dispatch: any) => {
   return {
@@ -349,4 +323,4 @@ export default connect((state: any) => {
       dispatch(hideModal());
     },
   };
-})(Explore);
+})(autoWidthHoc(Explore));

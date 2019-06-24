@@ -1,9 +1,9 @@
 import styles from './styles.module.scss';
 
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import classnames from 'classnames';
 
-export default class ExploreFilterBar extends Component {
+export default class ExploreFilterBar extends PureComponent {
   tracker: any;
   filterBar: any;
 
