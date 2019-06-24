@@ -1,9 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 import {
   getDurationBetweenMomentsInDays,
+  formatInISOTime,
 } from '../../helpers/space-time-utilities/index';
+import mixpanelTrack from '../../helpers/mixpanel-track/index';
 
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report/index';
 
@@ -12,6 +15,10 @@ import styles from './styles.module.scss';
 import Report from '@density/reports';
 
 import {
+  AppBar,
+  AppBarContext,
+  AppBarSection,
+  Button,
   Card,
   CardHeader,
   CardLoading,
@@ -23,7 +30,7 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class HourlyBreakdownCard extends React.Component<any, any> {
+export class HourlyBreakdownCard extends React.PureComponent<any, any> {
   render() {
     const {
       space,
@@ -34,6 +41,7 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
       metric,
       title,
       aggregation,
+      onDownloadCSV,
     } = this.props;
 
     let hourlyBreakdown = hourlyBreakdownVisits;
@@ -87,24 +95,39 @@ export class HourlyBreakdownCard extends React.Component<any, any> {
         // Force this one to be scrollable
         hourlyBreakdown.data.scrollable = true;
 
-        return (<div className={styles.exploreSpaceDetailHourlyBreakdownContainer}>
-          <Report
-            report={generateHourlyBreakdownEphemeralReport(
-              space,
-              startDate,
-              endDate,
-              metric,
-              title,
-              aggregation
-            )}
-            reportData={{
-              state: hourlyBreakdown.state,
-              data: hourlyBreakdown.data,
-              error: hourlyBreakdown.error,
-            }}
-            expanded={true}
-          />
-        </div>);
+        return (
+          <div>
+            <AppBarContext.Provider value="TRANSPARENT">
+              <AppBar padding="0">
+                <AppBarSection />
+                <AppBarSection>
+                  <Button
+                    onClick={() => onDownloadCSV(space, metric, startDate, endDate, hourlyBreakdown.data.data)}
+                    disabled={hourlyBreakdown.state !== 'COMPLETE'}
+                  >Download CSV</Button>
+                </AppBarSection>
+              </AppBar>
+            </AppBarContext.Provider>
+            <div className={styles.exploreSpaceDetailHourlyBreakdownContainer}>
+              <Report
+                report={generateHourlyBreakdownEphemeralReport(
+                  space,
+                  startDate,
+                  endDate,
+                  metric,
+                  title,
+                  aggregation
+                )}
+                reportData={{
+                  state: hourlyBreakdown.state,
+                  data: hourlyBreakdown.data,
+                  error: hourlyBreakdown.error,
+                }}
+                expanded={true}
+              />
+            </div>
+          </div>
+        );
 
       default:
         return null;
@@ -117,4 +140,35 @@ export default connect((state: any) => ({
   hourlyBreakdownPeaks: state.exploreData.calculations.hourlyBreakdownPeaks,
   spaces: state.spaces
 }), dispatch => ({
+  onDownloadCSV: (space, metric, startDate, endDate, data) => {
+    mixpanelTrack('Hourly Breakdown Export', {
+      space_id: space.id,
+      start_time: startDate,
+      end_time: endDate,
+    });
+
+    const currentTime = moment(startDate);
+    const csvData = data.reduce((curr, next) => {
+      curr += next.values.map(value => {
+        const line = `${formatInISOTime(currentTime)},${value}\n`;
+        currentTime.add(1, 'hour');
+        return line;
+      }).join('');
+      return curr;
+    }, `timestamp,${metric === 'PEAKS' ? 'peak' : 'visits'}\n`)
+
+    // This is a workaround to allow a user to download this csv data, or if that doesn't work,
+    // then at least open it in a new tab for them to view and copy to the clipboard.
+    // 1. Create a new blob url.
+    // 2. Redirect the user to it in a new tab.
+    const dataBlob = new Blob([csvData], {type: 'text/csv'});
+    const dataURL = URL.createObjectURL(dataBlob);
+
+    const tempLink = document.createElement('a');
+    document.body.appendChild(tempLink);
+    tempLink.href = dataURL;
+    tempLink.setAttribute('download', `${space.id}_${startDate}-${endDate}.csv`.replace(':', ''));
+    tempLink.click();
+    document.body.removeChild(tempLink);
+  }
 }))(HourlyBreakdownCard);

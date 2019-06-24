@@ -124,7 +124,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
       const tempLink = document.createElement('a');
       document.body.appendChild(tempLink);
       tempLink.href = dataURL;
-      tempLink.setAttribute('download', `${space.id}: ${startDate} - ${endDate}.csv`);
+      tempLink.setAttribute('download', `${space.id}_${startDate}-${endDate}.csv`.replace(':', ''));
       tempLink.click();
       document.body.removeChild(tempLink);
     } catch (error) {
