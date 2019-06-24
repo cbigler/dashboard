@@ -255,4 +255,4 @@ export default connect((state: any) => ({
     dispatch(collectionSpacesFilter('metricToDisplay', metric));
     dispatch<any>(calculateDailyMetrics(space));
   }
-}))(autoWidthHoc(ExploreSpaceDetailDailyMetricsCard));
+}))(autoWidthHoc(ExploreSpaceDetailDailyMetricsCard, 600));

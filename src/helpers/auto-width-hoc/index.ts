@@ -1,15 +1,25 @@
 import React from 'react';
+import unsafeHandleWindowResize from '../unsafe-handle-window-resize';
 
-export default Component => {
+export default (Component, delay = 300) => {
   class AutoWidthComponent extends React.Component<any, any> {
     container: any;
+    resizeListener: any;
     state = { width: 0 };
 
-    componentDidUpdate(prevProps, prevState) {
-      const width = this.container.offsetWidth;
-      if (width !== prevState.width) {
-        this.setState({ width });
+    resize() {
+      if (this.container) {
+        this.setState({ width: this.container.offsetWidth });
       }
+    }
+
+    componentDidMount() {
+      this.resizeListener = unsafeHandleWindowResize(this.resize.bind(this), delay);
+      this.resize.call(this);
+    }
+
+    componentWillUnmount() {
+      window.removeEventListener('resize', this.resizeListener);
     }
 
     render() {

@@ -35,7 +35,7 @@ const LineChartComponent = chartAsReactComponent(lineChart);
 
 const CHART_HEIGHT = 350;
 
-export class ExploreSpaceDetailFootTrafficCard extends React.Component<any, any> {
+export class ExploreSpaceDetailFootTrafficCard extends React.PureComponent<any, any> {
   render() {
     const {
       space,

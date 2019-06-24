@@ -398,4 +398,4 @@ export default connect((state: any) => ({
   onRefresh(space) {
     dispatch<any>(calculateUtilization(space));
   },
-}))(autoWidthHoc(ExploreSpaceDetailUtilizationCard));
+}))(autoWidthHoc(ExploreSpaceDetailUtilizationCard, 600));
