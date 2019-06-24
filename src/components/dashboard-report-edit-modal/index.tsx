@@ -381,7 +381,7 @@ function DashboardReportEditModal({
                           width="100%"
                           canSelectMultiple={control.parameters.canSelectMultiple}
                           dropdownWidth="100%"
-                          isItemDisabled={control.parameters.isSpaceItemSelected}
+                          isItemDisabled={control.parameters.isSpaceItemDisabled}
                         />
                       );
                       break;
@@ -592,7 +592,7 @@ function DashboardReportEditModal({
                         <Report
                           report={activeModal.data.report}
                           reportData={calculatedReportDataForPreviewedReport}
-                          expanded
+                          onOpenReportExpandedModal={() => {}}
                         />
                       )}
                     </div>
