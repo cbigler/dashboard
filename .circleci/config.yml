@@ -3,7 +3,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:12.4
+      - image: circleci/node:10.16
     resource_class: large
     steps:
       - checkout
@@ -30,8 +30,8 @@ jobs:
 
   preview:
     docker:
-      - image: circleci/node:12.4
-    resource_class: small
+      - image: circleci/node:10.16
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
@@ -67,7 +67,7 @@ jobs:
 
   staging:
     docker:
-      - image: circleci/node:12.4
+      - image: circleci/node:10.16
     resource_class: small
     steps:
       - checkout
@@ -102,7 +102,7 @@ jobs:
 
   production:
     docker:
-      - image: circleci/node:12.4
+      - image: circleci/node:10.16
     resource_class: small
     steps:
       - checkout
