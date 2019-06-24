@@ -167,7 +167,7 @@ export default connect((state: any) => ({
     const tempLink = document.createElement('a');
     document.body.appendChild(tempLink);
     tempLink.href = dataURL;
-    tempLink.setAttribute('download', `${space.id}_${startDate}-${endDate}.csv`.replace(':', ''));
+    tempLink.setAttribute('download', `${space.id}_${startDate}_${endDate}.csv`);
     tempLink.click();
     document.body.removeChild(tempLink);
   }
