@@ -27,6 +27,7 @@ import { getGoSlow } from '../../components/environment-switcher';
 
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionServicesError from '../collection/services/error';
+import collectionAlertsLoad from '../collection/alerts/load';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS = 'ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS';
 
@@ -50,6 +51,8 @@ export default function routeTransitionExploreSpaceMeeting(id, serviceName) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
       return;
     }
+
+    await dispatch(collectionAlertsLoad());
 
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));

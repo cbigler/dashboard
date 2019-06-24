@@ -8,7 +8,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v8
+          key: node_modules-{{checksum "./package.json"}}-v9
       - run:
           name: "Print out versions"
           command: |
@@ -24,7 +24,7 @@ jobs:
           name: "Run tests"
           command: npm test
       - save_cache:
-          key: node_modules-{{checksum "./package.json"}}-v8
+          key: node_modules-{{checksum "./package.json"}}-v9
           paths:
             - "./node_modules"
 
@@ -35,7 +35,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v8
+          key: node_modules-{{checksum "./package.json"}}-v9
       - run:
           name: "Set preview url in package.json"
           command: |
@@ -72,7 +72,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v8
+          key: node_modules-{{checksum "./package.json"}}-v9
       - run:
           name: "Build staging dashboard"
           command: |
@@ -107,7 +107,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v8
+          key: node_modules-{{checksum "./package.json"}}-v9
       - run:
           name: "Build production dashboard"
           command: |

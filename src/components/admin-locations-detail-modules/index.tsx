@@ -28,7 +28,7 @@ export default function AdminLocationsDetailModule({
   title,
   error=false,
   includePadding=true,
-  actions=null as ReactNode,
+  actions=null as ReactNode | null,
   children,
 }) {
   return (

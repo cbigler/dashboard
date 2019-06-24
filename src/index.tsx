@@ -115,11 +115,15 @@ function trackHashChange() {
     }
   }, {});
 
+  const loggedIn = (store.getState() as any).sessionToken !== null;
+
   // Mixpanel: track url chage
-  mixpanelTrack('Pageview', {
-    ...analyticsParameters,
-    url: window.location.hash,
-  });
+  if (loggedIn) {
+    mixpanelTrack('Pageview', {
+      ...analyticsParameters,
+      url: window.location.hash,
+    });  
+  }
 
   // google analytics: track page view
   if (process.env.REACT_APP_GA_TRACKING_CODE) {

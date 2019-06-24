@@ -7,6 +7,7 @@ import accountForgotPassword from './reducers/account-forgot-password/index';
 import accountRegistration from './reducers/account-registration/index';
 import activeModal from './reducers/active-modal/index';
 import activePage from './reducers/active-page/index';
+import alerts from './reducers/alerts/index';
 import toasts from'./reducers/toasts/index';
 import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
@@ -33,6 +34,7 @@ const reducer = combineReducers({
   accountRegistration,
   activeModal,
   activePage,
+  alerts,
   toasts,
   sessionToken,
   spaces,
