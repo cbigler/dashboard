@@ -61,7 +61,7 @@ export function closeReportModal() {
 // reflect the new control values.
 export function rerenderReportInReportModal(report) {
   return (dispatch, getState) => {
-    dispatch(clearReportData(PREVIEW_REPORT_ID));
+    dispatch(clearPreviewReportData());
 
     const dashboardWeekStart = (
       getState().user.data.organization.settings.dashboardWeekStart ||
@@ -85,6 +85,10 @@ export function rerenderReportInReportModal(report) {
       ),
     );
   };
+}
+
+export function clearPreviewReportData() {
+  return dispatch => dispatch(clearReportData(PREVIEW_REPORT_ID));
 }
 
 export function extractCalculatedReportDataFromDashboardsReducer(dashboards) {

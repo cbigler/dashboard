@@ -121,3 +121,23 @@
   flex-direction: column;
   height: 100%;
 }
+
+
+.nonIdealState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.nonIdealState h4 {
+  font-size: 18px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.nonIdealStateListItem {
+  font-weight: 500;
+}

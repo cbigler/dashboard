@@ -25,6 +25,7 @@ import {
 import updateModal from '../../actions/modal/update';
 import {
   rerenderReportInReportModal,
+  clearPreviewReportData,
 
   ReportModalPages,
   PAGE_PICK_EXISTING_REPORT,
@@ -597,7 +598,21 @@ function DashboardReportEditModal({
                       )}
                     </div>
                   ) : (
-                    <p>These required controls have not been filled out: {requiredControlsThatAreEmpty.map(i => i.label).join(', ')}</p>
+                    <div className={styles.nonIdealState}>
+                      <h4>Required fields are empty</h4>
+                      <p>
+                        Please enter data into these fields:{' '}
+                        {
+                          requiredControlsThatAreEmpty
+                            .map(i => <span className={styles.nonIdealStateListItem}>{i.label}</span>)
+                            .reduce((acc, i, index) => index === requiredControlsThatAreEmpty.length - 1 ? (
+                              <Fragment>{acc}, and {i}</Fragment>
+                            ) : (
+                              <Fragment>{acc}, {i}</Fragment>
+                            ))
+                        }
+                      </p>
+                    </div>
                   )}
                 </div>
               ) : null}
@@ -751,21 +766,22 @@ export default connect((state: any) => ({
         value = control.parameters.defaultValue || 0.5;
         break;
 
-      case 'NUMBER':
-        value = control.parameters.defaultValue || '';
-        break;
-
       default:
-        value = report.settings[fieldName] || control.parameters.defaultValue || '';
+        value = control.parameters.defaultValue || '';
         break;
       }
 
       return { ...acc, [fieldName]: value };
     }, {});
     const reportWithInitialSettings = { ...report, settings: initialReportSettings };
+
+    // Reset report data back to LOADING state, this is done so that when the a new report type is
+    // immediately loaded its not trying to render it with report data made for a different type of
+    // report
+    dispatch<any>(clearPreviewReportData());
+
     dispatch<any>(updateModal({ report: reportWithInitialSettings }));
 
-    // Then perform the initial rendering of the report if all fields are filled in
     if (getEmptyRequiredFields(reportWithInitialSettings).length === 0) {
       dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
     }
