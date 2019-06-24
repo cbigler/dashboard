@@ -381,6 +381,7 @@ function DashboardReportEditModal({
                           width="100%"
                           canSelectMultiple={control.parameters.canSelectMultiple}
                           dropdownWidth="100%"
+                          isItemDisabled={control.parameters.isSpaceItemSelected}
                         />
                       );
                       break;
@@ -671,8 +672,10 @@ function DashboardReportEditModal({
                       onClick={() => onSaveReportModal(activeModal.data.report)}
                       width={65}
                       disabled={
-                        activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
-                        activeModal.data.report.name.length === 0
+                        (
+                          activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
+                          activeModal.data.report.name.length === 0
+                        ) || requiredControlsThatAreEmpty.length > 0
                       }
                     >Save</Button>
                   ) : null}
@@ -712,24 +715,12 @@ export default connect((state: any) => ({
       let value;
       switch (control.type) {
       case 'SPACE_PICKER':
-        let defaultValue;
-        if (control.parameters.calculateDefaultSelectedSpace) {
-          // The defualt value is determined by running `calculateDefaultSelectedSpace`
-          defaultValue = control.parameters.calculateDefaultSelectedSpace(formattedHierarchy);
+        if (control.parameters.canSelectMultiple) {
+          value = (control.parameters.defaultValue || []).map(item => item.space.id);
         } else {
-          // Otherwise, the default value is the first space with a space type of space
-          defaultValue = formattedHierarchy.find(i => i.space.spaceType === 'space');
+          const defaultSpace = (control.parameters.defaultValue || null);
+          value = defaultSpace && defaultSpace.space ? defaultSpace.space.id : defaultSpace;
         }
-
-        const defaultSpace = (
-          control.parameters.defaultValue || // The defined default value in the control
-          defaultValue || // A fallback value calculated above
-          null
-        );
-
-        value = defaultSpace.space ? defaultSpace.space.id : defaultSpace;
-
-        if (control.parameters.canSelectMultiple) { value = [value]; }
         break;
 
       case 'TIME_RANGE_PICKER':
