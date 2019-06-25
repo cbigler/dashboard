@@ -135,6 +135,11 @@ function DashboardReportEditModal({
     const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
     const filterReportCollection = filterCollection({fields: ['name', 'displayType']});
+    const filteredReportList = filterReportCollection(
+      reportList,
+      activeModal.data.reportListSearchString,
+    );
+
     const filterReportTypeCollection = filterCollection({fields: ['displayName']});
 
     const requiredControlsThatAreEmpty = selectedReportType ? getEmptyRequiredFields(activeModal.data.report) : [];
@@ -196,48 +201,57 @@ function DashboardReportEditModal({
               </div>
               <div className={styles.reportModalReportList}>
                 {reportList.length === 0 ? (
-                  <p>No reports exist in your organization.</p>
+                  <div className={styles.nonIdealState}>
+                    <h4>No reports exist in your organization</h4>
+                    <p>Create a new report to add data to your dashboard.</p>
+                  </div>
                 ) : (
-                  <ListView data={filterReportCollection(reportList, activeModal.data.reportListSearchString)}>
-                    <ListViewColumn
-                      title=""
-                      template={item => <RadioButton
-                        checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
-                        onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
-                        // Cannot select reports that are already in the dashboard
-                        disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
-                      />}
-                      flexGrow={0}
-                      flexShrink={0}
-                      width={50}
-                    />
-                    <ListViewColumn
-                      title="Name"
-                      template={item => item.name}
-                      flexGrow={1}
-                      onClick={item => {
-                        if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
-                          onUpdateModal('pickExistingReportSelectedReportId', item.id)
-                        }
-                      }}
-                    />
-                    <ListViewColumn
-                      title="Report Type"
-                      template={item => {
-                        if (item.type === 'HEADER') {
-                          return 'Header';
-                        } else {
-                          return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
-                        }
-                      }}
-                      onClick={item => {
-                        if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
-                          onUpdateModal('pickExistingReportSelectedReportId', item.id)
-                        }
-                      }}
-                      flexGrow={1}
-                    />
-                  </ListView>
+                  filteredReportList.length === 0 ? (
+                    <div className={styles.nonIdealState}>
+                      <h4>No reports found matching "{activeModal.data.reportListSearchString}"</h4>
+                    </div>
+                  ) : (
+                    <ListView data={filteredReportList}>
+                      <ListViewColumn
+                        title=""
+                        template={item => <RadioButton
+                          checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
+                          onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
+                          // Cannot select reports that are already in the dashboard
+                          disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
+                        />}
+                        flexGrow={0}
+                        flexShrink={0}
+                        width={50}
+                      />
+                      <ListViewColumn
+                        title="Name"
+                        template={item => item.name}
+                        flexGrow={1}
+                        onClick={item => {
+                          if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                            onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                          }
+                        }}
+                      />
+                      <ListViewColumn
+                        title="Report Type"
+                        template={item => {
+                          if (item.type === 'HEADER') {
+                            return 'Header';
+                          } else {
+                            return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                          }
+                        }}
+                        onClick={item => {
+                          if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
+                            onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                          }
+                        }}
+                        flexGrow={1}
+                      />
+                    </ListView>
+                  )
                 )}
               </div>
             </Fragment>
@@ -366,6 +380,7 @@ function DashboardReportEditModal({
                     }
 
                     switch (control.type) {
+
                     case 'SPACE_PICKER':
                       input = (
                         <SpacePickerDropdown
@@ -386,6 +401,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'TIME_SEGMENT_LABEL_PICKER':
                       input = (
                         control.parameters.canSelectMultiple ? (
@@ -419,6 +435,7 @@ function DashboardReportEditModal({
                         )
                       );
                       break;
+
                     case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
                       input = (
                         control.parameters.canSelectMultiple ? (
@@ -455,6 +472,7 @@ function DashboardReportEditModal({
                         )
                       );
                       break;
+
                     case 'TIME_RANGE_PICKER':
                       input = (
                         <InputBox
@@ -473,11 +491,13 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'PERCENTAGE':
                       input = (
-                        <Fragment>
+                        <div className={styles.percentageRange}>
                           <input
                             type="range"
+                            className={styles.percentageRangeBar}
                             min={0}
                             max={1}
                             step={0.05}
@@ -487,7 +507,7 @@ function DashboardReportEditModal({
                                 ...activeModal.data.report,
                                 settings: {
                                   ...activeModal.data.report.settings,
-                                  [fieldName]: e.target.value,
+                                  [fieldName]: parseFloat(e.target.value),
                                 },
                               };
                               onUpdateModal('report', report);
@@ -496,10 +516,13 @@ function DashboardReportEditModal({
                             }}
                             onMouseUp={() => onReportSettingsUpdated(activeModal.data.report, false)}
                           />
-                          {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
-                        </Fragment>
+                          <div className={styles.percentageRangeLabel}>
+                            {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
+                          </div>
+                        </div>
                       );
                       break;
+
                     case 'SELECT_BOX':
                       input = (
                         <InputBox
@@ -512,6 +535,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'BOOLEAN':
                       input = (
                         <Switch
@@ -523,6 +547,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'NUMBER':
                       input = (
                         <InputBox
@@ -543,6 +568,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     default:
                       input = (
                         <InputBox
