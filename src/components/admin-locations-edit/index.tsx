@@ -32,6 +32,7 @@ import {
   ButtonGroup,
   Icons,
 } from '@density/ui';
+import AdminLocationsDetailModulesParent from '../admin-locations-detail-modules/parent';
 
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
@@ -111,6 +112,12 @@ export function SpaceTypeForm({
         onChangeField={onChangeField}
         onSetDoorwayField={onSetDoorwayField}
         onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
+      />
+    ),
+    parent: (
+      <AdminLocationsDetailModulesParent
+        formState={formState}
+        onChangeField={onChangeField}
       />
     ),
     dangerZone: (
