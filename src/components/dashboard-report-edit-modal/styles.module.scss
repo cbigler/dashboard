@@ -141,3 +141,22 @@
 .nonIdealStateListItem {
   font-weight: 500;
 }
+
+.percentageRange {
+  display: flex;
+  align-items: center;
+}
+
+.percentageRangeBar {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.percentageRangeLabel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-left: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: $brandPrimary;
+}

@@ -262,11 +262,11 @@ export type DensityReportOptions = {
 export type DensityReportCalculatationFunction = (report: DensityReport, opts: DensityReportOptions) => Promise<object>;
 
 export type DensityServiceSpace = {
-    service: string,
-    serviceSpaceId: string,
-    name: string,
-    spaceType: string,
-    parent: string,
+  service: string,
+  serviceSpaceId: string,
+  name: string,
+  spaceType: string,
+  parent: string,
 };
 export type DensitySpaceHierarchyItem = {
   id: string,
@@ -275,6 +275,7 @@ export type DensitySpaceHierarchyItem = {
   hasPurview: boolean,
   timeSegments: Array<DensityTimeSegment>,
   inheritsTimeSegments: boolean,
+  capacity?: null | number,
   dailyReset: string,
   children?: Array<DensitySpaceHierarchyItem>,
 };

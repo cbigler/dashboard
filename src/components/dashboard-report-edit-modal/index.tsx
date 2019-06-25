@@ -366,6 +366,7 @@ function DashboardReportEditModal({
                     }
 
                     switch (control.type) {
+
                     case 'SPACE_PICKER':
                       input = (
                         <SpacePickerDropdown
@@ -386,6 +387,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'TIME_SEGMENT_LABEL_PICKER':
                       input = (
                         control.parameters.canSelectMultiple ? (
@@ -419,6 +421,7 @@ function DashboardReportEditModal({
                         )
                       );
                       break;
+
                     case 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS':
                       input = (
                         control.parameters.canSelectMultiple ? (
@@ -455,6 +458,7 @@ function DashboardReportEditModal({
                         )
                       );
                       break;
+
                     case 'TIME_RANGE_PICKER':
                       input = (
                         <InputBox
@@ -473,11 +477,13 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'PERCENTAGE':
                       input = (
-                        <Fragment>
+                        <div className={styles.percentageRange}>
                           <input
                             type="range"
+                            className={styles.percentageRangeBar}
                             min={0}
                             max={1}
                             step={0.05}
@@ -487,7 +493,7 @@ function DashboardReportEditModal({
                                 ...activeModal.data.report,
                                 settings: {
                                   ...activeModal.data.report.settings,
-                                  [fieldName]: e.target.value,
+                                  [fieldName]: parseFloat(e.target.value),
                                 },
                               };
                               onUpdateModal('report', report);
@@ -496,10 +502,13 @@ function DashboardReportEditModal({
                             }}
                             onMouseUp={() => onReportSettingsUpdated(activeModal.data.report, false)}
                           />
-                          {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
-                        </Fragment>
+                          <div className={styles.percentageRangeLabel}>
+                            {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
+                          </div>
+                        </div>
                       );
                       break;
+
                     case 'SELECT_BOX':
                       input = (
                         <InputBox
@@ -512,6 +521,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'BOOLEAN':
                       input = (
                         <Switch
@@ -523,6 +533,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     case 'NUMBER':
                       input = (
                         <InputBox
@@ -543,6 +554,7 @@ function DashboardReportEditModal({
                         />
                       );
                       break;
+
                     default:
                       input = (
                         <InputBox

@@ -6,7 +6,6 @@ import {
   DensityDashboard,
   DensityReport,
   DensitySpaceHierarchyItem,
-  DensitySpace,
 } from '../../types';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 
