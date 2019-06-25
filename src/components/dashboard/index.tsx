@@ -156,6 +156,7 @@ function DashboardMainScrollViewContent({
         </div>
       );
     }
+
   } else {
     return null;
   }
@@ -211,7 +212,7 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
                   setOpened(false);
                   onCreateDashboard();
                 }}
-              >Create new dashboard</Button>
+              >Add a dashboard</Button>
             </AppBarSection>
           </AppBar>
           {dashboards.loading ? null : <div className={styles.dashboardDropdownPopupScroll}>
@@ -305,7 +306,6 @@ export class Dashboard extends React.Component<any, any> {
         <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
             <AppPane>
-
               {selectedDashboard || dashboards.loading ? (
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
