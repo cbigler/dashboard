@@ -594,6 +594,7 @@ function DashboardReportEditModal({
                           report={activeModal.data.report}
                           reportData={calculatedReportDataForPreviewedReport}
                           onOpenReportExpandedModal={() => {}}
+                          displayContext={{showExpandControl: false}}
                         />
                       )}
                     </div>
