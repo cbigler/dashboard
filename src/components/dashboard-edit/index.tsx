@@ -41,12 +41,11 @@ import {
   Icons,
   InputBox,
 } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 import DetailModule from '../admin-locations-detail-modules';
 import FormLabel from '../form-label';
 
 import DashboardReportEditModal from '../dashboard-report-edit-modal';
-
-REPORTS.TOTAL_VISITS_ONE_SPACE.metadata.controls[2].type = 'TIME_SEGMENT_LABEL_PICKER_WITH_COLORS';
 
 export function DashboardEdit({
   activeModal,
@@ -144,7 +143,7 @@ export function DashboardEdit({
                           title="Name"
                           template={item => (
                             <Fragment>
-                              <Icons.Soup />
+                              <Icons.Report color={colorVariables.grayDark} />
                               <span className={styles.name}>
                                 {item.name}
                               </span>

@@ -122,7 +122,6 @@
   height: 100%;
 }
 
-
 .nonIdealState {
   display: flex;
   flex-direction: column;
@@ -130,28 +129,23 @@
   justify-content: center;
   height: 100%;
 }
-
 .nonIdealState h4 {
   font-size: 18px;
   text-decoration: none;
   margin-bottom: 8px;
   font-weight: bold;
+  text-align: center;
 }
-
-.nonIdealStateListItem {
-  font-weight: 500;
-}
+.nonIdealStateListItem { font-weight: 500; }
 
 .percentageRange {
   display: flex;
   align-items: center;
 }
-
 .percentageRangeBar {
   flex-grow: 1;
   flex-shrink: 1;
 }
-
 .percentageRangeLabel {
   flex-grow: 0;
   flex-shrink: 0;
