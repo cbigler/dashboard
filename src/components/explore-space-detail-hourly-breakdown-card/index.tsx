@@ -5,6 +5,7 @@ import moment from 'moment';
 import {
   getDurationBetweenMomentsInDays,
   formatInISOTime,
+  formatInISOTimeAtSpace,
 } from '../../helpers/space-time-utilities/index';
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
 
@@ -150,12 +151,12 @@ export default connect((state: any) => ({
     const currentTime = moment(startDate);
     const csvData = data.reduce((curr, next) => {
       curr += next.values.map(value => {
-        const line = `${formatInISOTime(currentTime)},${value}\n`;
+        const line = `${formatInISOTime(currentTime)},${formatInISOTimeAtSpace(currentTime, space)},${value}\n`;
         currentTime.add(1, 'hour');
         return line;
       }).join('');
       return curr;
-    }, `timestamp,${metric === 'PEAKS' ? 'peak' : 'visits'}\n`)
+    }, `Timestamp,Local Time,${metric === 'PEAKS' ? 'Peak' : 'Visits'}\n`)
 
     // This is a workaround to allow a user to download this csv data, or if that doesn't work,
     // then at least open it in a new tab for them to view and copy to the clipboard.
