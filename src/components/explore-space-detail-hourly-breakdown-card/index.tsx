@@ -30,110 +30,107 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class HourlyBreakdownCard extends React.PureComponent<any, any> {
-  render() {
-    const {
-      space,
-      startDate,
-      endDate,
-      hourlyBreakdownVisits,
-      hourlyBreakdownPeaks,
-      metric,
-      title,
-      aggregation,
-      onDownloadCSV,
-    } = this.props;
+export const HourlyBreakdownCard = React.memo(function({
+  space,
+  startDate,
+  endDate,
+  hourlyBreakdownVisits,
+  hourlyBreakdownPeaks,
+  metric,
+  title,
+  aggregation,
+  onDownloadCSV,
+}: any) {
 
-    let hourlyBreakdown = hourlyBreakdownVisits;
-    if(metric === "PEAKS") {
-      hourlyBreakdown = hourlyBreakdownPeaks;
-    }
-
-    let body;
-    switch (true) {
-      case hourlyBreakdown.state === 'LOADING':
-        body = (
-          <span>
-            {(() => {
-              if (getDurationBetweenMomentsInDays(startDate, endDate) > 14) {
-                return 'Generating Data (this may take a while ... )'
-              } else {
-                return 'Generating Data . . .';
-              }
-            })()}
-          </span>
-        );
-
-        return (
-          <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
-            <CardLoading indeterminate />
-            <CardHeader>
-              {title}
-            </CardHeader>
-            <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyInfo} style={{height: 739}}>
-              {body}
-            </div>
-          </Card>
-        );
-
-      case hourlyBreakdown.state === 'ERROR':
-        body = (
-          <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyError}>
-            <span>
-              <span className={styles.exploreSpaceDetailHourlyBreakdownCardBodyErrorIcon}>&#xe91a;</span>
-                {hourlyBreakdown.error}
-            </span>
-          </div>
-        );
-
-        return <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
-            {body}
-          </Card>;
-
-      case hourlyBreakdown.state === 'COMPLETE':
-
-        // Force this one to be scrollable
-        hourlyBreakdown.data.scrollable = true;
-
-        return (
-          <div>
-            <AppBarContext.Provider value="TRANSPARENT">
-              <AppBar padding="0">
-                <AppBarSection />
-                <AppBarSection>
-                  <Button
-                    onClick={() => onDownloadCSV(space, metric, startDate, endDate, hourlyBreakdown.data.data)}
-                    disabled={hourlyBreakdown.state !== 'COMPLETE'}
-                  >Download CSV</Button>
-                </AppBarSection>
-              </AppBar>
-            </AppBarContext.Provider>
-            <div className={styles.exploreSpaceDetailHourlyBreakdownContainer}>
-              <Report
-                report={generateHourlyBreakdownEphemeralReport(
-                  space,
-                  startDate,
-                  endDate,
-                  metric,
-                  title,
-                  aggregation
-                )}
-                reportData={{
-                  state: hourlyBreakdown.state,
-                  data: hourlyBreakdown.data,
-                  error: hourlyBreakdown.error,
-                }}
-                expanded={true}
-              />
-            </div>
-          </div>
-        );
-
-      default:
-        return null;
-    }
+  let hourlyBreakdown = hourlyBreakdownVisits;
+  if(metric === "PEAKS") {
+    hourlyBreakdown = hourlyBreakdownPeaks;
   }
-}
+
+  let body;
+  switch (true) {
+    case hourlyBreakdown.state === 'LOADING':
+      body = (
+        <span>
+          {(() => {
+            if (getDurationBetweenMomentsInDays(startDate, endDate) > 14) {
+              return 'Generating Data (this may take a while ... )'
+            } else {
+              return 'Generating Data . . .';
+            }
+          })()}
+        </span>
+      );
+
+      return (
+        <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
+          <CardLoading indeterminate />
+          <CardHeader>
+            {title}
+          </CardHeader>
+          <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyInfo} style={{height: 739}}>
+            {body}
+          </div>
+        </Card>
+      );
+
+    case hourlyBreakdown.state === 'ERROR':
+      body = (
+        <div className={styles.exploreSpaceDetailHourlyBreakdownCardBodyError}>
+          <span>
+            <span className={styles.exploreSpaceDetailHourlyBreakdownCardBodyErrorIcon}>&#xe91a;</span>
+              {hourlyBreakdown.error}
+          </span>
+        </div>
+      );
+
+      return <Card className={styles.exploreSpaceDetailHourlyBreakdownCard}>
+          {body}
+        </Card>;
+
+    case hourlyBreakdown.state === 'COMPLETE':
+
+      // Force this one to be scrollable
+      hourlyBreakdown.data.scrollable = true;
+
+      return (
+        <div>
+          <AppBarContext.Provider value="TRANSPARENT">
+            <AppBar padding="0">
+              <AppBarSection />
+              <AppBarSection>
+                <Button
+                  onClick={() => onDownloadCSV(space, metric, startDate, endDate, hourlyBreakdown.data.data)}
+                  disabled={hourlyBreakdown.state !== 'COMPLETE'}
+                >Download CSV</Button>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
+          <div className={styles.exploreSpaceDetailHourlyBreakdownContainer}>
+            <Report
+              report={generateHourlyBreakdownEphemeralReport(
+                space,
+                startDate,
+                endDate,
+                metric,
+                title,
+                aggregation
+              )}
+              reportData={{
+                state: hourlyBreakdown.state,
+                data: hourlyBreakdown.data,
+                error: hourlyBreakdown.error,
+              }}
+              expanded={true}
+            />
+          </div>
+        </div>
+      );
+
+    default:
+      return null;
+  }
+});
 
 export default connect((state: any) => ({
   hourlyBreakdownVisits: state.exploreData.calculations.hourlyBreakdownVisits,

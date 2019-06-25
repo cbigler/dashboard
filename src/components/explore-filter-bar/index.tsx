@@ -1,9 +1,9 @@
 import styles from './styles.module.scss';
 
-import React, { PureComponent } from 'react';
+import React from 'react';
 import classnames from 'classnames';
 
-export default class ExploreFilterBar extends PureComponent {
+export default class ExploreFilterBar extends React.PureComponent {
   tracker: any;
   filterBar: any;
 
@@ -65,9 +65,13 @@ interface ExploreFilterBarItemProps {
   children: any
 }
 
-export function ExploreFilterBarItem({label, right, children}: ExploreFilterBarItemProps) {
+export const ExploreFilterBarItem = React.memo(function ExploreFilterBarItem({
+  label,
+  right,
+  children
+}: ExploreFilterBarItemProps) {
   return <li className={classnames(styles.exploreFilterBarItem, {[styles.right]: right})}>
     <label className={styles.exploreFilterBarItemLabel}>{label}</label>
     {children}
   </li>;
-}
+});

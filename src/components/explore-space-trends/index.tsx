@@ -15,84 +15,80 @@ import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
-class ExploreSpaceTrends extends React.PureComponent<any, any> {
-  render() {
-    const {
-      spaces,
-      space,
-      spaceHierarchy,
-      activeModal,
-    } = this.props;
+const ExploreSpaceTrends = React.memo(function({
+  spaces,
+  space,
+  spaceHierarchy,
+  activeModal,
+}: any) {
+  if (space) {
+    const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
 
-    if (space) {
-      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+    // Which time segment label was selected?
+    const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
-      // Which time segment label was selected?
-      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
+    // And, with the knowlege of the selected space, which time segment within that time segment
+    // label is applicable to this space?
+    const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
-      // And, with the knowlege of the selected space, which time segment within that time segment
-      // label is applicable to this space?
-      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
+    const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
-      const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
+    return <div className={styles.exploreSpaceTrendsPage}>
+      <ErrorBar
+        message={spaces.error}
+        modalOpen={activeModal.name !== null}
+      />
 
-      return <div className={styles.exploreSpaceTrendsPage}>
-        <ErrorBar
-          message={spaces.error}
-          modalOpen={activeModal.name !== null}
-        />
+      {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
 
-        {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
-
-        {spaces.filters.startDate && spaces.filters.endDate ? (
-          <div className={styles.exploreSpaceTrendsContainer} >
-            <div className={styles.exploreSpaceTrends}>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <DailyMetricsCard
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  timeSegmentLabel={selectedTimeSegmentLabel}
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <HourlyBreakdownCard 
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  metric="VISITS"
-                  title="Hourly Breakdown - Visits"
-                  aggregation="NONE"
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <HourlyBreakdownCard 
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  metric="PEAKS"
-                  title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
-                  aggregation="AVERAGE"
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <UtilizationCard
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  timeSegmentLabel={selectedTimeSegmentLabel}
-                  timeSegments={applicableTimeSegments}
-                />
-              </div>
+      {spaces.filters.startDate && spaces.filters.endDate ? (
+        <div className={styles.exploreSpaceTrendsContainer} >
+          <div className={styles.exploreSpaceTrends}>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <DailyMetricsCard
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                timeSegmentLabel={selectedTimeSegmentLabel}
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <HourlyBreakdownCard 
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                metric="VISITS"
+                title="Hourly Breakdown - Visits"
+                aggregation="NONE"
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <HourlyBreakdownCard 
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                metric="PEAKS"
+                title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
+                aggregation="AVERAGE"
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <UtilizationCard
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                timeSegmentLabel={selectedTimeSegmentLabel}
+                timeSegments={applicableTimeSegments}
+              />
             </div>
           </div>
-        ) : null}
-      </div>;
-    } else {
-      return null;
-    }
+        </div>
+      ) : null}
+    </div>;
+  } else {
+    return null;
   }
-}
+});
 
 export default connect((state: any) => {
   return {
