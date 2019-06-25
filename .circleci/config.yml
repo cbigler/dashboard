@@ -68,7 +68,7 @@ jobs:
   staging:
     docker:
       - image: circleci/node:10.16
-    resource_class: small
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
@@ -103,7 +103,7 @@ jobs:
   production:
     docker:
       - image: circleci/node:10.16
-    resource_class: small
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
