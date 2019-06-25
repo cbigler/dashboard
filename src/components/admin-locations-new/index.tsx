@@ -149,7 +149,6 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                 <SpaceTypeForm
                   spaceType={newSpaceType}
                   spaceHierarchy={this.props.spaceManagement.spaceHierarchy}
-                  spaces={this.props.spaceManagement.spaces}
                   formState={this.props.spaceManagement.formState}
                   tagsCollection={this.props.tagsCollection}
                   assignedTeamsCollection={this.props.assignedTeamsCollection}

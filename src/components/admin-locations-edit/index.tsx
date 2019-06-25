@@ -37,7 +37,6 @@ import AdminLocationsDetailModulesParent from '../admin-locations-detail-modules
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
   spaceHierarchy: Array<DensitySpaceHierarchyItem>,
-  spaces: { data?: Array<DensitySpace> },
   formState: { [key: string]: any },
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
@@ -50,7 +49,6 @@ type AdminLocationsFormProps = {
 export function SpaceTypeForm({
   spaceType,
   spaceHierarchy,
-  spaces,
   formState,
   tagsCollection,
   assignedTeamsCollection,
@@ -122,7 +120,6 @@ export function SpaceTypeForm({
       <AdminLocationsDetailModulesParent
         formState={formState}
         spaceHierarchy={spaceHierarchy}
-        spaces={spaces}
         onChangeParent={spaceId => onChangeField('parentId', spaceId)}
       />
     ),
@@ -306,7 +303,6 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                 <SpaceTypeForm
                   spaceType={selectedSpace.spaceType}
                   spaceHierarchy={spaceManagement.spaceHierarchy}
-                  spaces={spaceManagement.spaces}
                   formState={spaceManagement.formState}
                   tagsCollection={tagsCollection}
                   assignedTeamsCollection={assignedTeamsCollection}
