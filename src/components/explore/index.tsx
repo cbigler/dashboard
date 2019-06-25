@@ -36,7 +36,13 @@ import showToast from '../../actions/toasts';
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
 
-function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}) {
+function ExploreSidebarItemRaw({spaces, space, activePage, selectedSpace, depth}) {
+  const id = space.id;
+  const name = space.name;
+  const spaceType = space.spaceType;
+  const selected = selectedSpace ? selectedSpace.id === space.id : false;
+  const enabled = !!spaces.data.find(x => x.id === space.id && x.doorways.length > 0);
+
   let page;
   switch(activePage) {
     case 'EXPLORE_SPACE_TRENDS':
@@ -75,52 +81,43 @@ function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}
       break;
   }
 
-  if (enabled) {
-    return (
-      <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
-        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
-          <div className={styles.exploreSidebarItemRow}>
-            {icon}
-            <span className={styles.exploreSidebarItemName}>{name}</span>
-          </div>
-        </div>
-      </a>
-    );
-  } else {
-    return (
-      <div className={classnames(
-        styles.exploreAppFrameSidebarListItem,
-        styles.disabled,
-        styles[spaceType]
-      )}>
-        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
-          <div className={styles.exploreSidebarItemRow}>
-            {icon}
-            <span className={styles.exploreSidebarItemName}>{name}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-function RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth) {
   return (
     <div key={space.id} className={styles[`${space.spaceType}Container`]}>
-      <ExploreSidebarItem
-        id={space.id}
-        name={space.name}
-        spaceType={space.spaceType}
-        activePage={activePage}
-        selected={selectedSpace ? selectedSpace.id === space.id : false}
-        enabled={!!spaces.data.find(x => x.id === space.id && x.doorways.length > 0)}
-      />
+      {enabled ?
+        <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
+          <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+            <div className={styles.exploreSidebarItemRow}>
+              {icon}
+              <span className={styles.exploreSidebarItemName}>{name}</span>
+            </div>
+          </div>
+        </a> :
+        <div className={classnames(
+          styles.exploreAppFrameSidebarListItem,
+          styles.disabled,
+          styles[spaceType]
+        )}>
+          <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+            <div className={styles.exploreSidebarItemRow}>
+              {icon}
+              <span className={styles.exploreSidebarItemName}>{name}</span>
+            </div>
+          </div>
+        </div> 
+      }
       {space.children && space.children.map(space => (
-        RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth+1)
+        <ExploreSidebarItemRaw
+          spaces={spaces}
+          space={space}
+          activePage={activePage}
+          selectedSpace={selectedSpace}
+          depth={depth+1} />
       ))}
     </div>
   )
 }
+
+const ExploreSidebarItem = React.memo(ExploreSidebarItemRaw);
 
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {
@@ -206,7 +203,12 @@ export function ExploreRaw ({
                   <Fragment>
                     {spaceList.length === 0 && spaces.filters.search.length === 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
                     {spaceList.map(space => (
-                      RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
+                      <ExploreSidebarItem
+                        spaces={spaces}
+                        space={space}
+                        activePage={activePage}
+                        selectedSpace={selectedSpace}
+                        depth={0} />
                     ))}
                   </Fragment>
               </nav>
