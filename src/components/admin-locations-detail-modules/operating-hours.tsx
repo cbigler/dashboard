@@ -512,7 +512,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               <AppBarSection />
               <AppBarSection>
                 <ButtonGroup>
-                  <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
+                  <Button onClick={onOpenCopyFromSpace}>Copy from space</Button>
                   <Button variant="filled" onClick={() => {
                     // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
                     // the server yet have a unique identifier. This uuid will be discarded after the
@@ -531,7 +531,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ...formState.operatingHours,
                       { ...operatingHoursItem, id },
                     ]);
-                  }}>Add a Segment</Button>
+                  }}>Add a segment</Button>
                 </ButtonGroup>
               </AppBarSection>
             </AppBar>

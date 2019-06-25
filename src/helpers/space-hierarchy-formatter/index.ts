@@ -18,7 +18,7 @@ export type SpaceHierarchyDisplayItem = {
 
 const flat = (nestedArray) => nestedArray.reduce((a, b) => [...a, ...b], []);
 
-export default function spaceHierarchyFormatterNew(
+export default function spaceHierarchyFormatter(
   hierarchy: Array<DensitySpaceHierarchyItem>
 ): Array<SpaceHierarchyDisplayItem> {
   function recurseHierarchy(space, ancestry=[] as Array<any>, depth = -1) {

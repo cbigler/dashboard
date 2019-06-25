@@ -2,26 +2,28 @@ import React from 'react';
 
 import AdminLocationsDetailModule from './index';
 import SpacePicker from '../space-picker';
-import { connect } from 'react-redux';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 
-export function AdminLocationsDetailModulesParent({
+export default function AdminLocationsDetailModulesParent({
   formState,
-  onChangeField,
-  spaceHierarchy
+  spaceHierarchy,
+  onChangeParent,
 }) {
-  const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
+  const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy).filter(item => {
+    return formState.id !== item.space.id &&
+      (formState.spaceType !== 'building' || item.space.spaceType === 'campus') &&
+      (formState.spaceType !== 'floor' || item.space.spaceType === 'building');
+  });
   return (
-    <AdminLocationsDetailModule title="General Info">
+    <AdminLocationsDetailModule title="Parent" includePadding={false} >
       <SpacePicker
-        value={formState.parentId}
-        onChange={space => onChangeField('parentId', space.id)}
+        value={formattedHierarchy.find(item => item.space.id === formState.parentId) || null}
+        onChange={item => onChangeParent(item.space.id)}
+
         formattedHierarchy={formattedHierarchy}
+        searchBoxPlaceholder="Search for space name"
+        height={444}
       />
     </AdminLocationsDetailModule>
   );
 }
-
-export default connect((state: any) => ({
-  spaceHierarchy: state.spaceHierarchy
-}));

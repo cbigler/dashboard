@@ -148,6 +148,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
                   spaceType={newSpaceType}
+                  spaceHierarchy={this.props.spaceManagement.spaceHierarchy}
                   formState={this.props.spaceManagement.formState}
                   tagsCollection={this.props.tagsCollection}
                   assignedTeamsCollection={this.props.assignedTeamsCollection}

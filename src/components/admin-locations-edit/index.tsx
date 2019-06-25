@@ -9,7 +9,7 @@ import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
-import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
+import { DensitySpace, DensityTag, DensityAssignedTeam, DensitySpaceHierarchyItem } from '../../types';
 import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
 
 import {
@@ -36,6 +36,7 @@ import AdminLocationsDetailModulesParent from '../admin-locations-detail-modules
 
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
+  spaceHierarchy: Array<DensitySpaceHierarchyItem>,
   formState: { [key: string]: any },
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
@@ -47,6 +48,7 @@ type AdminLocationsFormProps = {
 // A component that renders all the space management modules for the given space type
 export function SpaceTypeForm({
   spaceType,
+  spaceHierarchy,
   formState,
   tagsCollection,
   assignedTeamsCollection,
@@ -117,7 +119,8 @@ export function SpaceTypeForm({
     parent: (
       <AdminLocationsDetailModulesParent
         formState={formState}
-        onChangeField={onChangeField}
+        spaceHierarchy={spaceHierarchy}
+        onChangeParent={spaceId => onChangeField('parentId', spaceId)}
       />
     ),
     dangerZone: (
@@ -146,6 +149,7 @@ export function SpaceTypeForm({
       MODULES.metadata,
       MODULES.tags,
       MODULES.teams,
+      MODULES.parent,
       MODULES.dangerZone,
     ],
     floor: [
@@ -155,6 +159,7 @@ export function SpaceTypeForm({
       MODULES.metadata,
       MODULES.tags,
       MODULES.teams,
+      MODULES.parent,
       MODULES.dangerZone,
     ],
     space: [
@@ -164,6 +169,7 @@ export function SpaceTypeForm({
       MODULES.operatingHours,
       MODULES.tags,
       MODULES.teams,
+      MODULES.parent,
       MODULES.dangerZone,
     ],
   };
@@ -296,6 +302,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
                   spaceType={selectedSpace.spaceType}
+                  spaceHierarchy={spaceManagement.spaceHierarchy}
                   formState={spaceManagement.formState}
                   tagsCollection={tagsCollection}
                   assignedTeamsCollection={assignedTeamsCollection}
@@ -321,6 +328,7 @@ export default connect((state: any) => {
   const selectedSpace = state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id);
   return {
     spaceManagement: state.spaceManagement,
+    spaceHierarchy: state.spaceManagement.spaceHierarchy,
     tagsCollection: state.tags,
     assignedTeamsCollection: state.assignedTeams,
     selectedSpace,
