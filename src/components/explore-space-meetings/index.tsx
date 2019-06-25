@@ -16,7 +16,7 @@ import Toaster from '../toaster';
 import GenericErrorState from '../generic-error-state/index';
 
 
-function ExploreSpaceMeetings({
+export function ExploreSpaceMeetingsRaw({
   space,
   integrations,
   exploreDataMeetings,
@@ -162,4 +162,4 @@ export default connect((state: any) => {
     exploreDataMeetings: state.exploreData.calculations.meetings,
     integrations: state.integrations,
   };
-})(ExploreSpaceMeetings);
+})(React.memo(ExploreSpaceMeetingsRaw));

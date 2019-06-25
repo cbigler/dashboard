@@ -40,7 +40,7 @@ export const COOLDOWN_CHOICES = [
   {id: -1, label: 'No reminder'},
 ];
 
-export function ExploreAlertManagementModal({
+export function ExploreAlertManagementModalRaw({
   visible,
   alert,
   user,
@@ -242,4 +242,4 @@ export default connect(
       dispatch<any>(hideModal());
     }
   }),
-)(ExploreAlertManagementModal);
+)(React.memo(ExploreAlertManagementModalRaw));

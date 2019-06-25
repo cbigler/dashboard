@@ -24,7 +24,7 @@ export const LOADING = 'LOADING',
       VISIBLE = 'VISIBLE',
       ERROR = 'ERROR';
 
-export function ExploreSpaceDetailRawEventsCard({
+export function ExploreSpaceDetailRawEventsCardRaw({
   space,
   spaces,
   date,
@@ -110,4 +110,4 @@ export default connect((state: any) => ({
     dispatch(collectionSpacesFilter('dailyRawEventsPage', page));
     dispatch<any>(calculateDailyRawEvents(space));
   },
-}))(ExploreSpaceDetailRawEventsCard);
+}))(React.memo(ExploreSpaceDetailRawEventsCardRaw));

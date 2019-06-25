@@ -73,6 +73,7 @@ import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-
 import routeTransitionAdminLocationsNew from './actions/route-transition/admin-locations-new';
 
 import sessionTokenSet from './actions/session-token/set';
+import incrementResizeCounter from './actions/miscellaneous/increment-resize-counter';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
 import collectionSpacesSet from './actions/collection/spaces/set';
 import collectionSpacesCountChange from './actions/collection/spaces/count-change';
@@ -207,7 +208,7 @@ router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => rout
 (window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);
 
 // Add a handler to debounce & handle window resize events
-(window as any).resizeHandler = unsafeHandleWindowResize(store);
+(window as any).resizeHandler = unsafeHandleWindowResize(() => store.dispatch(incrementResizeCounter()));
 
 // Make sure that the user is logged in prior to going to a page.
 async function preRouteAuthentication() {
