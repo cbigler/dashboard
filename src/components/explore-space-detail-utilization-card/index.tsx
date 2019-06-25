@@ -49,7 +49,7 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export class ExploreSpaceDetailUtilizationCard extends React.PureComponent<any, any> {
+export class ExploreSpaceDetailUtilizationCardRaw extends React.PureComponent<any> {
   calculateAverageUtilization(data=this.props.calculatedData.data.counts) {
     // No data exists, so render a '-' instead of actual data.
     if (data.length === 0) {
@@ -398,4 +398,4 @@ export default connect((state: any) => ({
   onRefresh(space) {
     dispatch<any>(calculateUtilization(space));
   },
-}))(autoWidthHoc(ExploreSpaceDetailUtilizationCard, 600));
+}))(autoWidthHoc(ExploreSpaceDetailUtilizationCardRaw, 600));
