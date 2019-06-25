@@ -3,7 +3,7 @@ import changeCase from 'change-case';
 import debounce from 'lodash.debounce';
 import { connect } from 'react-redux';
 import styles from './styles.module.scss';
-import Report, { REPORTS } from '@density/reports';
+import Report, { REPORTS, TIME_RANGES } from '@density/reports';
 
 import { DensityReport, DensitySpaceHierarchyItem, DensityTimeSegmentLabel } from '../../types';
 
@@ -463,11 +463,11 @@ function DashboardReportEditModal({
                           width="100%"
                           value={activeModal.data.report.settings[fieldName]}
                           choices={[
-                            {id: 'LAST_WEEK', label: 'Last Week' },
-                            {id: 'LAST_4_WEEKS', label: 'Last 4 weeks' },
-                            {id: 'WEEK_TO_DATE', label: 'Week to date' },
-                            {id: 'LAST_7_DAYS', label: 'Last 7 days' },
-                            {id: 'LAST_28_DAYS', label: 'Last 28 days' },
+                            {id: TIME_RANGES.LAST_WEEK, label: 'Last Week' },
+                            {id: TIME_RANGES.LAST_4_WEEKS, label: 'Last 4 weeks' },
+                            {id: TIME_RANGES.WEEK_TO_DATE, label: 'Week to date' },
+                            {id: TIME_RANGES.LAST_7_DAYS, label: 'Last 7 days' },
+                            {id: TIME_RANGES.LAST_28_DAYS, label: 'Last 28 days' },
                           ]}
                           onChange={choice => reportUpdateSettings(fieldName, choice.id)}
                         />
