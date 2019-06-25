@@ -5,7 +5,7 @@ import sinon from 'sinon';
 
 import mockdate from 'mockdate';
 
-import RawEventsCard from './index';
+import { ExploreSpaceDetailRawEventsCardRaw as RawEventsCard } from './index';
 
 const space = {id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'};
 
