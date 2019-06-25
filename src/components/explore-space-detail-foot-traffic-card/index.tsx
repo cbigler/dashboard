@@ -20,6 +20,7 @@ import {
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
+import autoWidthHoc from '../../helpers/auto-width-hoc';
 
 import { calculateFootTraffic } from '../../actions/route-transition/explore-space-daily';
 
@@ -35,17 +36,19 @@ const LineChartComponent = chartAsReactComponent(lineChart);
 
 const CHART_HEIGHT = 350;
 
-export const ExploreSpaceDetailFootTrafficCard = React.memo(function ({
+export function ExploreSpaceDetailFootTrafficCardRaw ({
   space,
 
   date,
   timeSegments,
   timeSegmentLabel,
   calculatedData,
-  chartWidth,
+  width,
 
   onRefresh,
-}: any) {
+}) {
+  // Subtract 2 from width and more due to rendering weirdness
+  const innerWidth = width - 45;
 
   const localTimestamp = moment.utc(date).tz(space.timeZone).startOf('day');
   const dayOfWeek = localTimestamp.format('dddd');
@@ -119,7 +122,7 @@ export const ExploreSpaceDetailFootTrafficCard = React.memo(function ({
       calculatedData.data.reduce((acc, i) => i.count > acc.count ? i : acc, {count: -1})
     ) : null;
 
-    const numberOfTicks = chartWidth >= 640 ? 12 : 6
+    const numberOfTicks = innerWidth >= 640 ? 12 : 6
     const dayDuration = Math.abs(startTime.diff(endTime, 'seconds')) + 1;
 
     const yAxisPoints: {value: number, hasShadow: boolean, hasRule?: boolean}[] = [];
@@ -171,7 +174,7 @@ export const ExploreSpaceDetailFootTrafficCard = React.memo(function ({
         <CardBody className={styles.exploreSpaceDetailFootTrafficCardBody}>
           {calculatedData.state === 'COMPLETE' && chartData.length > 0 ? <LineChartComponent
             timeZone={space.timeZone}
-            svgWidth={chartWidth}
+            svgWidth={innerWidth}
             svgHeight={CHART_HEIGHT}
 
             xAxisStart={startTime}
@@ -250,7 +253,7 @@ export const ExploreSpaceDetailFootTrafficCard = React.memo(function ({
   } else {
     return <span>This space doesn't exist.</span>;
   }
-});
+}
 
 export default connect((state: any) => ({
   calculatedData: state.exploreData.calculations.footTraffic,
@@ -258,4 +261,4 @@ export default connect((state: any) => ({
   onRefresh(space) {
     dispatch<any>(calculateFootTraffic(space));
   },
-}))(ExploreSpaceDetailFootTrafficCard);
+}))(autoWidthHoc(React.memo(ExploreSpaceDetailFootTrafficCardRaw), 600));

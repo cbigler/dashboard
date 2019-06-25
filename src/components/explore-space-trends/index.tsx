@@ -15,7 +15,7 @@ import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
-const ExploreSpaceTrends = React.memo(function({
+function ExploreSpaceTrendsRaw ({
   spaces,
   space,
   spaceHierarchy,
@@ -88,7 +88,7 @@ const ExploreSpaceTrends = React.memo(function({
   } else {
     return null;
   }
-});
+}
 
 export default connect((state: any) => {
   return {
@@ -98,4 +98,4 @@ export default connect((state: any) => {
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };
-})(ExploreSpaceTrends);
+})(React.memo(ExploreSpaceTrendsRaw));

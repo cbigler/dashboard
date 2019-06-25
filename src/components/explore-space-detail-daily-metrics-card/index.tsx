@@ -48,7 +48,7 @@ const GRAPH_TYPE_TRANSITION_POINT_IN_DAYS = 14;
 
 const CHART_HEIGHT = 350;
 
-export const ExploreSpaceDetailDailyMetricsCard = React.memo(function ({
+export function ExploreSpaceDetailDailyMetricsCardRaw ({
   spaces,
   calculatedData,
 
@@ -238,7 +238,7 @@ export const ExploreSpaceDetailDailyMetricsCard = React.memo(function ({
   } else {
     return null;
   }
-});
+}
 
 export default connect((state: any) => ({
   spaces: state.spaces,
@@ -252,4 +252,4 @@ export default connect((state: any) => ({
     dispatch(collectionSpacesFilter('metricToDisplay', metric));
     dispatch<any>(calculateDailyMetrics(space));
   }
-}))(autoWidthHoc(ExploreSpaceDetailDailyMetricsCard, 600));
+}))(autoWidthHoc(React.memo(ExploreSpaceDetailDailyMetricsCardRaw), 600));

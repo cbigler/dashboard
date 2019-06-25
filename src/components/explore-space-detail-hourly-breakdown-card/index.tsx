@@ -30,7 +30,7 @@ export const LOADING = 'LOADING',
              REQUIRES_CAPACITY = 'REQUIRES_CAPACITY',
              ERROR = 'ERROR';
 
-export const HourlyBreakdownCard = React.memo(function({
+export function HourlyBreakdownCardRaw({
   space,
   startDate,
   endDate,
@@ -130,7 +130,7 @@ export const HourlyBreakdownCard = React.memo(function({
     default:
       return null;
   }
-});
+}
 
 export default connect((state: any) => ({
   hourlyBreakdownVisits: state.exploreData.calculations.hourlyBreakdownVisits,
@@ -168,4 +168,4 @@ export default connect((state: any) => ({
     tempLink.click();
     document.body.removeChild(tempLink);
   }
-}))(HourlyBreakdownCard);
+}))(React.memo(HourlyBreakdownCardRaw));

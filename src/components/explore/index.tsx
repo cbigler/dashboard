@@ -153,7 +153,7 @@ function pruneHierarchy(spaceTree, matchedSpaceIds) {
   }
 }
 
-export const Explore = React.memo(function ({
+export function ExploreRaw ({
   spaces,
   spaceHierarchy,
   selectedSpace,
@@ -289,7 +289,7 @@ export const Explore = React.memo(function ({
       </div>
     </Fragment>
   );
-});
+}
 
 export default connect((state: any) => {
   return {
@@ -320,4 +320,4 @@ export default connect((state: any) => {
       dispatch(hideModal());
     },
   };
-})(autoWidthHoc(Explore));
+})(autoWidthHoc(React.memo(ExploreRaw)));
