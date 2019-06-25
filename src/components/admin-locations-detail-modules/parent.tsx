@@ -7,6 +7,7 @@ import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/ind
 export default function AdminLocationsDetailModulesParent({
   formState,
   spaceHierarchy,
+  spaces,
   onChangeParent,
 }) {
   const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy).filter(item => {
@@ -15,14 +16,17 @@ export default function AdminLocationsDetailModulesParent({
       (formState.spaceType !== 'floor' || item.space.spaceType === 'building');
   });
   return (
-    <AdminLocationsDetailModule title="Parent" includePadding={false} >
+    <AdminLocationsDetailModule title="Change Parent" includePadding={false}>
       <SpacePicker
         value={formattedHierarchy.find(item => item.space.id === formState.parentId) || null}
         onChange={item => onChangeParent(item.space.id)}
 
         formattedHierarchy={formattedHierarchy}
         searchBoxPlaceholder="Search for space name"
-        height={444}
+        height={288}
+        isItemDisabled={item => {
+          return !spaces.data || !spaces.data.find(space => space.id === item.space.id);
+        }}
       />
     </AdminLocationsDetailModule>
   );
