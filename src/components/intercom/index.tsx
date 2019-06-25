@@ -9,7 +9,9 @@ export function IntercomDensity({ user }) {
     intercomUser = {
       user_id: user.data.id,
       email: user.data.email,
-      name: user.data.fullName
+      name: user.data.fullName,
+      org_id: user.data.organization.id,
+      org_name: user.data.organization.name,
     }
   }
   if (process.env.REACT_APP_INTERCOM_APP_ID) {
