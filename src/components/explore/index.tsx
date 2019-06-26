@@ -7,6 +7,7 @@ import fuzzy from 'fuzzy';
 
 import {
   AppBar,
+  AppBarSection,
   AppBarTitle,
   AppFrame,
   AppPane,
@@ -16,19 +17,32 @@ import {
   InputBox,
 } from '@density/ui';
 
-import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
-
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
+import autoWidthHoc from '../../helpers/auto-width-hoc';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
+import ExploreControlBar from '../explore-control-bar';
+import hideModal from '../../actions/modal/hide';
+import showModal from '../../actions/modal/show';
+import ExploreAlertManagementModal from '../explore-alert-management-modal';
+import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
+import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+import showToast from '../../actions/toasts';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
 
-function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}) {
+function ExploreSidebarItemRaw({spaces, space, activePage, selectedSpace, depth}) {
+  const id = space.id;
+  const name = space.name;
+  const spaceType = space.spaceType;
+  const selected = selectedSpace ? selectedSpace.id === space.id : false;
+  const enabled = !!spaces.data.find(x => x.id === space.id && x.doorways.length > 0);
+
   let page;
   switch(activePage) {
     case 'EXPLORE_SPACE_TRENDS':
@@ -67,52 +81,43 @@ function ExploreSidebarItem({selected, enabled, id, name, spaceType, activePage}
       break;
   }
 
-  if (enabled) {
-    return (
-      <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
-        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
-          <div className={styles.exploreSidebarItemRow}>
-            {icon}
-            <span className={styles.exploreSidebarItemName}>{name}</span>
-          </div>
-        </div>
-      </a>
-    );
-  } else {
-    return (
-      <div className={classnames(
-        styles.exploreAppFrameSidebarListItem,
-        styles.disabled,
-        styles[spaceType]
-      )}>
-        <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
-          <div className={styles.exploreSidebarItemRow}>
-            {icon}
-            <span className={styles.exploreSidebarItemName}>{name}</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-function RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth) {
   return (
     <div key={space.id} className={styles[`${space.spaceType}Container`]}>
-      <ExploreSidebarItem
-        id={space.id}
-        name={space.name}
-        spaceType={space.spaceType}
-        activePage={activePage}
-        selected={selectedSpace ? selectedSpace.id === space.id : false}
-        enabled={!!spaces.data.find(x => x.id === space.id && x.doorways.length > 0)}
-      />
+      {enabled ?
+        <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
+          <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+            <div className={styles.exploreSidebarItemRow}>
+              {icon}
+              <span className={styles.exploreSidebarItemName}>{name}</span>
+            </div>
+          </div>
+        </a> :
+        <div className={classnames(
+          styles.exploreAppFrameSidebarListItem,
+          styles.disabled,
+          styles[spaceType]
+        )}>
+          <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
+            <div className={styles.exploreSidebarItemRow}>
+              {icon}
+              <span className={styles.exploreSidebarItemName}>{name}</span>
+            </div>
+          </div>
+        </div> 
+      }
       {space.children && space.children.map(space => (
-        RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, depth+1)
+        <ExploreSidebarItemRaw
+          spaces={spaces}
+          space={space}
+          activePage={activePage}
+          selectedSpace={selectedSpace}
+          depth={depth+1} />
       ))}
     </div>
   )
 }
+
+const ExploreSidebarItem = React.memo(ExploreSidebarItemRaw);
 
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {
@@ -145,138 +150,176 @@ function pruneHierarchy(spaceTree, matchedSpaceIds) {
   }
 }
 
-export class Explore extends React.Component<any, any> {
-  private pageContainerRef: React.RefObject<HTMLInputElement>;
+export function ExploreRaw ({
+  spaces,
+  spaceHierarchy,
+  selectedSpace,
+  alerts,
+  activePage,
+  activeModal,
+  onUpdateAlert,
+  onSpaceSearch,
+  onShowModal,
+  width,
+}: any) {
 
-  constructor(props) {
-    super(props);
-    this.pageContainerRef = React.createRef();
-    this.state = {
-      pageSize: 0,
-    };
+  let filteredSpaces = spaceHierarchy.data;
+  if (spaces.filters.search) {
+    const matchedSpaceIds = fuzzy.filter<any>(
+      spaces.filters.search,
+      spaces.data,
+      { pre: '<', post: '>', extract: x => x['name'] }
+    ).map(x => x.original['id']);
+    const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
+    filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
   }
 
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-  }
+  const spaceList = sortSpaceTree(filteredSpaces);
+  return (
+    <Fragment>
 
-  onResize = () => {
-    if (this.pageContainerRef) {
-      const div: any = this.pageContainerRef.current;
-      this.setState({
-        pageSize: div.clientWidth,
-      });
-    }
-  }
+      {/* If an expanded report modal is visible, then render it above the view */}
+      {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
+        <ExploreAlertManagementModal />
+      ) : null}
 
-  render() {
-    const {
-      spaces,
-      spaceHierarchy,
-      selectedSpace,
-      activePage,
-      onSpaceSearch,
-    } = this.props;
-
-    const sidebarWidth = this.state.pageSize <= 1120 ? 280 : 415;
-
-    let filteredSpaces = spaceHierarchy.data;
-    if (spaces.filters.search) {
-      const matchedSpaceIds = fuzzy.filter<any>(
-        spaces.filters.search,
-        spaces.data,
-        { pre: '<', post: '>', extract: x => x['name'] }
-      ).map(x => x.original['id']);
-      const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
-      filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
-    }
-
-    const spaceList = sortSpaceTree(filteredSpaces);
-    return (
-      <Fragment>
-        {/* Main application */}
-        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
-          <AppFrame>
-            <AppSidebar visible={true} width={sidebarWidth}>
-              <AppBar>
-                <InputBox
-                  type="text"
-                  width="100%"
-                  placeholder="Filter spaces ..."
-                  disabled={false}
-                  leftIcon={<Icons.Search />}
-                  value={spaces.filters.search}
-                  onChange={e => onSpaceSearch(e.target.value)}
-                />
-              </AppBar>
-              <AppScrollView>
-                <nav className={styles.exploreAppFrameSidebarList}>
-                    <Fragment>
-                      {spaceList.length === 0 && spaces.filters.search.length === 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
-                      {spaceList.map(space => (
-                        RenderExploreSidebarItem(spaces, space, activePage, selectedSpace, 0)
-                      ))}
-                    </Fragment>
-                </nav>
-              </AppScrollView>
-            </AppSidebar>
-            <AppPane>
-              <AppBar>
-                <AppBarTitle>{selectedSpace ? selectedSpace.name : ""}</AppBarTitle>
-                { selectedSpace ?
+      {/* Main application */}
+      <div className={styles.appFrameWrapper}>
+        <AppFrame>
+          <AppSidebar visible={true} width={width <= 1120 ? 280 : 328}>
+            <AppBar>
+              <InputBox
+                type="text"
+                width="100%"
+                placeholder="Filter spaces ..."
+                disabled={false}
+                leftIcon={<Icons.Search />}
+                value={spaces.filters.search}
+                onChange={e => onSpaceSearch(e.target.value)}
+              />
+            </AppBar>
+            <AppScrollView>
+              <nav className={styles.exploreAppFrameSidebarList}>
+                  <Fragment>
+                    {spaceList.length === 0 && spaces.filters.search.length === 0 ? <div className={styles.loadingSpaces}>Loading spaces...</div> : null}
+                    {spaceList.map(space => (
+                      <ExploreSidebarItem
+                        spaces={spaces}
+                        space={space}
+                        activePage={activePage}
+                        selectedSpace={selectedSpace}
+                        depth={0} />
+                    ))}
+                  </Fragment>
+              </nav>
+            </AppScrollView>
+          </AppSidebar>
+          <AppPane>
+            <AppBar>
+              <AppBarSection>
+                <AppBarTitle>{(selectedSpace && selectedSpace.name) || ""}</AppBarTitle>
+              </AppBarSection>
+              {selectedSpace ? <AppBarSection>
                 <AppBarSubnav>
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/trends`}
+                    href={`#/spaces/explore/${selectedSpace.id}/trends`}
                     active={activePage === "EXPLORE_SPACE_TRENDS"}
                   >
                     Trends
                   </AppBarSubnavLink>
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/daily`}
+                    href={`#/spaces/explore/${selectedSpace.id}/daily`}
                     active={activePage === "EXPLORE_SPACE_DAILY"}
                   >
                     Daily
                   </AppBarSubnavLink>
-                  { ["conference_room", "meeting_room"].includes(selectedSpace['function']) ? <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/meetings`}
+                  { ["conference_room", "meeting_room"].includes(selectedSpace.function) ? <AppBarSubnavLink
+                    href={`#/spaces/explore/${selectedSpace.id}/meetings`}
                     active={activePage === "EXPLORE_SPACE_MEETINGS"}
                   >
                     Meetings
                   </AppBarSubnavLink> : null }
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${spaces.selected}/data-export`}
+                    href={`#/spaces/explore/${selectedSpace.id}/data-export`}
                     active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
                   >
                     Data Export
                   </AppBarSubnavLink>
-                </AppBarSubnav> : null}
-              </AppBar>
-              <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
-                <ExploreSpacePage activePage={activePage} />
-              </AppScrollView>
-            </AppPane>
-          </AppFrame>
-        </div>
-      </Fragment>
-    );
-  }
+                </AppBarSubnav>
+              </AppBarSection> : null}
+              <AppBarSection>
+                <ExploreAlertPopupList
+                  alerts={alerts}
+                  selectedSpace={selectedSpace}
+                  onCreateAlert={() => {
+                    onShowModal('MODAL_ALERT_MANAGEMENT', {
+                      alert: {
+                        spaceId: selectedSpace.id,
+                        enabled: true,
+                        isOneShot: false,
+                        notificationType: 'sms',
+                        triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
+                        triggerType: 'greater_than',
+                        cooldown: 30,
+                        meta: {
+                          toNum: '',
+                          escalationDelta: 30
+                        }
+                      }
+                    });
+                  }}
+                  onEditAlert={alert => {
+                    onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } });
+                  }}
+                  onToggleAlert={(alert, enabled) => {
+                    onUpdateAlert({...alert, enabled});
+                  }}
+                />
+              </AppBarSection>
+            </AppBar>
+            <ExploreControlBar
+              selectedSpace={selectedSpace}
+              spaceHierarchy={spaceHierarchy}
+              activePage={activePage}
+              filters={spaces.filters}
+            />
+            <AppScrollView backgroundColor={EXPLORE_BACKGROUND}>
+              <ExploreSpacePage activePage={activePage} />
+            </AppScrollView>
+          </AppPane>
+        </AppFrame>
+      </div>
+    </Fragment>
+  );
 }
 
 export default connect((state: any) => {
-  const selectedSpace = state.spaces.data.find(d => d.id === state.spaces.selected);
   return {
     spaces: state.spaces,
     spaceHierarchy: state.spaceHierarchy,
-    selectedSpace
+    selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+    alerts: state.alerts,
+    activePage: state.activePage,
+    activeModal: state.activeModal,
+    resizeCounter: state.resizeCounter,
   };
-}, dispatch => {
+}, (dispatch: any) => {
   return {
     onSpaceSearch(searchQuery) {
       dispatch(collectionSpacesFilter('search', searchQuery));
     },
+    async onUpdateAlert(alert) {
+      await dispatch(collectionAlertsUpdate(alert));
+      dispatch(showToast({
+        text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
+        timeout: 1000
+      }));
+    },
+    onShowModal(name, data) {
+      dispatch(showModal(name, data));
+    },
+    onCloseModal() {
+      dispatch(hideModal());
+    },
   };
-})(Explore);
+})(autoWidthHoc(React.memo(ExploreRaw)));

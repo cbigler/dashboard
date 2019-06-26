@@ -23,6 +23,7 @@ import {
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
+import collectionAlertsLoad from '../collection/alerts/load';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
 
@@ -46,6 +47,7 @@ export default function routeTransitionExploreSpaceDaily(id) {
       dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
       return;
     }
+    await dispatch(collectionAlertsLoad());
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));

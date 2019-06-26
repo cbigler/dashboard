@@ -192,6 +192,7 @@ export default connect((state: any) => {
 
       dispatch(showToast({ text: 'Space created!' }));
       window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
+      window.location.reload();
     },
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));

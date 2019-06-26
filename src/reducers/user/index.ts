@@ -17,7 +17,7 @@ const initialState = {
 export function user(state=initialState, action) {
   switch (action.type) {
   case USER_SET:
-  return {...state, loading: false, data: objectSnakeToCamel<DensityUser>(action.data)};
+    return {...state, loading: false, data: objectSnakeToCamel<DensityUser>(action.data)};
   case USER_PUSH:
     return {
       ...state,

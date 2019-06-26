@@ -6,7 +6,7 @@ import sinon from 'sinon';
 import moment from 'moment';
 import 'moment-timezone';
 
-import { ExploreSpaceDetailUtilizationCard } from './index';
+import { ExploreSpaceDetailUtilizationCardRaw as UtilizationCard } from './index';
 
 import {
   DEFAULT_TIME_SEGMENT_LABEL,
@@ -17,7 +17,7 @@ describe('space utilization card', function() {
 
   it('should render explore space utilization card (smoke test)', async function() {
     // Render the component
-    shallow(<ExploreSpaceDetailUtilizationCard
+    shallow(<UtilizationCard
       space={{
         id: 'spc_1',
         name: 'My Space',
@@ -44,7 +44,7 @@ describe('space utilization card', function() {
   });
   it('should render explore space utilization card with a space that does not have a capacity', async function() {
     // Render the component
-    shallow(<ExploreSpaceDetailUtilizationCard
+    shallow(<UtilizationCard
       space={{
         id: 'spc_1',
         name: 'My Space',

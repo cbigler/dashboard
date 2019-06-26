@@ -4,6 +4,7 @@ import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-defaul
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
+import collectionAlertsLoad from '../collection/alerts/load';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT = 'ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT';
 
@@ -15,6 +16,7 @@ export default function routeTransitionExploreSpaceDataExport(id) {
       const spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       const spaces = await fetchAllObjects<DensitySpace>('/spaces');
       const selectedSpace = spaces.find(s => s.id === id);
+      await dispatch(collectionAlertsLoad());
       dispatch(collectionSpaceHierarchySet(spaceHierarchy));
       dispatch(collectionSpacesSet(spaces));
       dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));

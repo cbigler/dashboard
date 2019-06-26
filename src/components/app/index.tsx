@@ -105,12 +105,12 @@ function ActivePage({activePage, user, settings}) {
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
   case "EXPLORE":
-    return <Explore activePage={activePage} />;
+    return <Explore />;
   case "EXPLORE_SPACE_TRENDS":
   case "EXPLORE_SPACE_DAILY":
   case "EXPLORE_SPACE_DATA_EXPORT":
   case "EXPLORE_SPACE_MEETINGS":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <Explore activePage={activePage} />;
+    return stringToBoolean(settings.insightsPageLocked) ? null : <Explore />;
   case "ACCOUNT":
     return <Account />;
   case "ACCOUNT_REGISTRATION":

@@ -18,8 +18,10 @@ import {
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
-const CSV_BASE = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
-const CSV_URL = `${CSV_BASE}/csv`;
+export function getCSVURL() {
+  const baseV1 = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
+  return `${baseV1}/csv`;
+}
 
 export const LOADING_INITIAL = 'LOADING_INITIAL',
       LOADING_PREVIEW = 'LOADING_PREVIEW',
@@ -50,7 +52,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_PREVIEW});
 
     try {
-      const previewData = (await core().get(CSV_URL, { params: {
+      const previewData = (await core().get(getCSVURL(), { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
@@ -102,7 +104,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_CSV});
 
     try {
-      const csvData = (await core().get(CSV_URL, { params: {
+      const csvData = (await core().get(getCSVURL(), { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
@@ -122,7 +124,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
       const tempLink = document.createElement('a');
       document.body.appendChild(tempLink);
       tempLink.href = dataURL;
-      tempLink.setAttribute('download', `${space.id}: ${startDate} - ${endDate}.csv`);
+      tempLink.setAttribute('download', `${space.id}_${startDate}_${endDate}.csv`);
       tempLink.click();
       document.body.removeChild(tempLink);
     } catch (error) {
