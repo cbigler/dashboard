@@ -6,7 +6,7 @@ import createDashboard from '../../actions/dashboards/create-dashboard';
 
 import styles from './styles.module.scss';
 
-export function DashboardsList({ dashboards, onCreateDashboard }) {
+export function DashboardsList({ dashboards, isReadOnlyUser, onCreateDashboard }) {
   if (dashboards.error) {
     return (
       <div className={styles.dashboardsList}>
@@ -24,8 +24,10 @@ export function DashboardsList({ dashboards, onCreateDashboard }) {
             <img src="https://densityco.github.io/assets/images/wave.dfbfe264.png" alt="" />
             Welcome!
           </h1>
-          <p>Dashboards are a convient way for you to see the space and data you’re interested in.</p>
-          <Button onClick={onCreateDashboard}>Create a dashboard</Button>
+          <p>Dashboards are a convenient way for you to see the space and data you’re interested in.</p>
+          {!isReadOnlyUser ? (
+            <Button onClick={onCreateDashboard}>Create a dashboard</Button>
+          ) : null}
         </div>
       </div>
     );
@@ -37,6 +39,7 @@ export function DashboardsList({ dashboards, onCreateDashboard }) {
 export default connect((state: any) => {
   return {
     dashboards: state.dashboards,
+    isReadOnlyUser: state.user && state.user.data && !state.user.data.permissions.includes('core_write'),
   };
 }, dispatch => {
   return {

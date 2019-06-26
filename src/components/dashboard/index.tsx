@@ -82,7 +82,7 @@ function DashboardMainScrollViewContent({
           <img src="https://densityco.github.io/assets/images/wave.dfbfe264.png" alt="" />
           Welcome!
         </h3>
-        <p>Dashboards are a convient way for you to see the space and data you’re interested in.</p>
+        <p>Dashboards are a convenient way for you to see the space and data you’re interested in.</p>
         {!isReadOnlyUser ? (
           <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
         ) : null}
