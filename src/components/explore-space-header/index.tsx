@@ -12,7 +12,7 @@ import hideModal from '../../actions/modal/hide';
 import styles from './styles.module.scss';
 import cleanSpaceData from '../../helpers/clean-space-data';
 
-export function ExploreSpaceHeader({
+export function ExploreSpaceHeaderRaw({
   space,
   activeModal,
   spaceFilters,
@@ -97,4 +97,4 @@ export default connect((state: any) => {
       }
     },
   };
-})(ExploreSpaceHeader);
+})(React.memo(ExploreSpaceHeaderRaw));

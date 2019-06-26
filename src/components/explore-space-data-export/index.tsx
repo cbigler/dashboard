@@ -8,7 +8,7 @@ import RawEventsExportCard from '../explore-space-detail-raw-events-export-card/
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 
-function ExploreSpaceDataExport({
+function ExploreSpaceDataExportRaw({
   spaces,
   space,
 }) {
@@ -47,4 +47,4 @@ export default connect((state: any) => {
       dispatch(collectionSpacesFilter(key, value));
     },
   };
-})(ExploreSpaceDataExport);
+})(React.memo(ExploreSpaceDataExportRaw));

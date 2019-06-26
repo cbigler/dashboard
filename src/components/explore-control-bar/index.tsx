@@ -29,7 +29,7 @@ import getCommonRangesForSpace from '../../helpers/common-ranges';
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 
-export function ExploreControlBar({
+export function ExploreControlBarRaw({
   selectedSpace,
   spaceHierarchy,
   activePage,
@@ -213,4 +213,4 @@ export default connect(() => ({}), dispatch => {
       }
     },
   };
-})(ExploreControlBar);
+})(React.memo(ExploreControlBarRaw));

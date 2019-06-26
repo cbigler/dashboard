@@ -479,6 +479,7 @@ function DashboardReportEditModal({
                             id={id}
                             width="100%"
                             canCreateTags={false}
+                            openDropdownOnFocus={true}
                             onAddTag={tag => reportUpdateSettings(fieldName, [
                               ...activeModal.data.report.settings[fieldName],
                               {

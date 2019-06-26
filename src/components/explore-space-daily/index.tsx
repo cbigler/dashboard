@@ -12,67 +12,53 @@ import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
-class ExploreSpaceDaily extends React.Component<any, any> {
-  container: any;
-  state = { width: 0 }
+export function ExploreSpaceDailyRaw ({
+  spaces,
+  space,
+  spaceHierarchy,
+  activeModal,
+}) {
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const width = this.container.offsetWidth - 80;
-    if (width !== prevState.width) {
-      this.setState({width});
-    }
-  }
+  if (space) {
+    const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
 
-  render() {
-    const {
-      spaces,
-      space,
-      spaceHierarchy,
-      activeModal,
-    } = this.props;
+    // Which time segment label was selected?
+    const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
-    if (space) {
-      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+    // And, with the knowlege of the selected space, which time segment within that time segment
+    // label is applicable to this space?
+    const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
-      // Which time segment label was selected?
-      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
+    return <div className={styles.exploreSpaceDailyPage}>
+      <ErrorBar
+        message={spaces.error}
+        modalOpen={activeModal.name !== null}
+      />
 
-      // And, with the knowlege of the selected space, which time segment within that time segment
-      // label is applicable to this space?
-      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
+      <ExploreSpaceHeader />
 
-      return <div className={styles.exploreSpaceDailyPage} ref={r => { this.container = r; }}>
-        <ErrorBar
-          message={spaces.error}
-          modalOpen={activeModal.name !== null}
-        />
-
-        <ExploreSpaceHeader />
-
-        <div className={styles.exploreSpaceDailyContainer}>
-          <div className={styles.exploreSpaceDaily}>
-            <div className={styles.exploreSpaceDailyItem}>
-              <FootTrafficCard
-                space={space}
-                date={spaces.filters.date}
-                timeSegmentLabel={selectedTimeSegmentLabel}
-                timeSegments={applicableTimeSegments}
-                chartWidth={this.state.width}
-              />
-            </div>
-            <div className={styles.exploreSpaceDailyItem}>
-              <RawEventsCard
-                space={space}
-                date={spaces.filters.date}
-                timeSegmentLabel={selectedTimeSegmentLabel}
-              />
-            </div>
+      <div className={styles.exploreSpaceDailyContainer}>
+        <div className={styles.exploreSpaceDaily}>
+          <div className={styles.exploreSpaceDailyItem}>
+            <FootTrafficCard
+              space={space}
+              date={spaces.filters.date}
+              timeSegmentLabel={selectedTimeSegmentLabel}
+              timeSegments={applicableTimeSegments}
+            />
+          </div>
+          <div className={styles.exploreSpaceDailyItem}>
+            <RawEventsCard
+              space={space}
+              date={spaces.filters.date}
+              timeSegmentLabel={selectedTimeSegmentLabel}
+            />
           </div>
         </div>
-      </div>;
-    } else {
-      return <div ref={r => { this.container = r; }}></div>;
-    }
+      </div>
+    </div>;
+  } else {
+    return null;
   }
 }
 
@@ -84,4 +70,4 @@ export default connect((state: any) => {
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };
-})(ExploreSpaceDaily);
+})(React.memo(ExploreSpaceDailyRaw));
