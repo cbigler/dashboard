@@ -52,8 +52,6 @@ import FormLabel from '../form-label';
 import spaceHierarchyFormatter, { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import filterCollection from '../../helpers/filter-collection';
 
-import hourlyBreakdownScreenshot from '../../Screen Shot 2019-06-10 at 12.23.41 PM.png'
-
 type DashboardReportModalProps = {
   activeModal: {
     name: string,
@@ -324,7 +322,7 @@ function DashboardReportEditModal({
                         </div>
                         <img
                           className={styles.reportTypeImage}
-                          src={hourlyBreakdownScreenshot}
+                          src={metadata.imageUrl}
                           alt=""
                         />
                       </div>
@@ -343,7 +341,11 @@ function DashboardReportEditModal({
                       </AppBar>
                     </AppBarContext.Provider>
                     <div className={styles.reportImageBackdrop}>
-                      REPORT IMAGE HERE
+                      <img
+                        src={selectedReportType.metadata.imageUrl}
+                        style={{width: 250}}
+                        alt=""
+                      />
                     </div>
                     <p className={styles.reportFullDescription}>
                       {selectedReportType ? selectedReportType.metadata.description : null}

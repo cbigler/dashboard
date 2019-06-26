@@ -49,6 +49,7 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
 
   padding-top: 12px;
@@ -81,14 +82,15 @@
 }
 
 .reportTypeImage {
-  height: 110px;
+  width: 80px;
+  height: 60px;
 }
 
 .reportImageBackdrop {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  height: 300px;
   width: 100%;
   background-color: $grayLightest;
 }
