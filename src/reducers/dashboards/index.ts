@@ -8,6 +8,7 @@ import {
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
   COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+  COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
 } from '../../actions/collection/dashboards/calculate-report-data';
 
 import { DensityDashboard } from '../../types';
@@ -108,6 +109,19 @@ export default function dashboards(state=initialState, action) {
           state: 'ERROR',
           data: null,
           error: action.error,
+        },
+      },
+    };
+
+  // If report space has no data yet since it is too new, put it in 'NO_DATA' state
+  case COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA:
+    return {
+      ...state,
+      calculatedReportData: {
+        ...state.calculatedReportData,
+        [action.report.id]: {
+          state: 'NO_DATA',
+          data: null,
         },
       },
     };
