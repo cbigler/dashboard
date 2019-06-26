@@ -65,6 +65,7 @@ function DashboardMainScrollViewContent({
   dashboards,
   selectedDashboard,
   resizeCounter,
+  isReadOnlyUser,
 }) {
   if (!dashboards.selected && !dashboards.loading) {
     return (
@@ -82,7 +83,9 @@ function DashboardMainScrollViewContent({
           Welcome!
         </h3>
         <p>Dashboards are a convient way for you to see the space and data you’re interested in.</p>
-        <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+        {!isReadOnlyUser ? (
+          <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+        ) : null}
       </div>
     );
 
@@ -278,6 +281,7 @@ export class Dashboard extends React.Component<any, any> {
       resizeCounter,
       settings,
       isDemoUser,
+      isReadOnlyUser,
 
       onDashboardChangeWeek,
       onCloseModal,
@@ -365,7 +369,9 @@ export class Dashboard extends React.Component<any, any> {
                             }}
                           />
                         ) : null}
-                        <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+                        {!isReadOnlyUser ? (
+                          <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+                        ) : null}
                       </AppBarSection>
                     ) : null}
                   </AppBar>
@@ -376,6 +382,7 @@ export class Dashboard extends React.Component<any, any> {
                   dashboards={dashboards}
                   selectedDashboard={selectedDashboard}
                   resizeCounter={resizeCounter}
+                  isReadOnlyUser={isReadOnlyUser}
                 />
               </AppScrollView>
             </AppPane>
@@ -394,6 +401,7 @@ export default connect((state: any) => {
     activeModal: state.activeModal,
 
     isDemoUser: state.user && state.user.data && state.user.data.isDemo,
+    isReadOnlyUser: state.user && state.user.data && !state.user.data.permissions.includes('core_write'),
 
     date: state.miscellaneous.dashboardDate,
     sidebarVisible: state.miscellaneous.dashboardSidebarVisible,
