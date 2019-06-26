@@ -26,6 +26,7 @@ import { ReportLoading } from '@density/reports';
 import Report from '../report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
+import GenericErrorState from '../generic-error-state/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
@@ -75,17 +76,20 @@ function DashboardMainScrollViewContent({
 
   } else if (selectedDashboard && selectedDashboard.reportSet.length === 0) {
     return (
-      <div className={styles.dashboardNonIdealState}>
-        <h1>No reports in dashboard</h1>
-        <span>To add reports to this dashboard, please talk to your Density account manager.</span>
+      <div className={styles.dashboardEmptyState}>
+        <h3>
+          <img src="https://densityco.github.io/assets/images/wave.dfbfe264.png" alt="" />
+          Welcome!
+        </h3>
+        <p>Dashboards are a convient way for you to see the space and data you’re interested in.</p>
+        <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
       </div>
     );
 
   } else if (dashboards.error) {
     return (
       <div className={styles.dashboardNonIdealState}>
-        <h1>Error loading dashboards</h1>
-        <span>{dashboards.error}</span>
+        <GenericErrorState />
       </div>
     );
 

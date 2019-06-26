@@ -128,89 +128,87 @@ export function DashboardEdit({
                   />
                 </DetailModule>
               </div>
-              {dashboards.formState.reportSet ? (
-                <div className={styles.dashboardEditModuleWrapper}>
-                  <DetailModule title="Reports" actions={(
-                    <AppBarSection>
-                      <ButtonGroup>
-                        <Button onClick={onAddExistingReport}>
-                          Add saved report
-                        </Button>
-                        <Button variant="filled" onClick={onCreateReport}>
-                          Create new report
-                        </Button>
-                      </ButtonGroup>
-                    </AppBarSection>
-                  )}>
-                    {dashboards.formState.reportSet.length === 0 ? (
-                      <p>There are no reports in this dashboard.</p>
-                    ) : (
-                      <ListView data={dashboards.formState.reportSet}>
-                        <ListViewColumn
-                          title="Name"
-                          template={item => (
-                            <Fragment>
-                              <Icons.Report color={colorVariables.grayDark} />
-                              <span className={styles.name}>
-                                {item.name}
-                              </span>
-                            </Fragment>
-                          )}
-                        />
-                        <ListViewColumn
-                          title="Report Type"
-                          template={item => {
-                            if (item.type === 'HEADER') {
-                              return 'Header';
-                            } else {
-                              return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
-                            }
-                          }}
-                          flexGrow={1}
-                        />
-                        <ListViewColumn
-                          title=""
-                          template={item => (
-                            <ButtonGroup>
-                              <Button
-                                onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
-                                disabled={item.id === dashboards.formState.reportSet[0].id}
-                                width={40}
-                                height={40}
-                                size="small"
-                              >
-                                <Icons.ArrowUp width={12} height={12} />
-                              </Button>
-                              <Button
-                                onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
-                                disabled={item.id === dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id}
-                                width={40}
-                                height={40}
-                                size="small"
-                              >
-                                <Icons.ArrowDown width={12} height={12} />
-                              </Button>
-                            </ButtonGroup>
-                          )}
-                          width="auto"
-                        />
-                        <ListViewColumn
-                          title=""
-                          template={item => (
-                            <ButtonGroup>
-                              <Button
-                                variant="underline"
-                                onClick={() => onEditReport(item)}
-                              >Edit</Button>
-                            </ButtonGroup>
-                          )}
-                          width="auto"
-                        />
-                      </ListView>
-                    )}
-                  </DetailModule>
-                </div>
-              ) : null}
+              <div className={styles.dashboardEditModuleWrapper}>
+                <DetailModule title="Reports" actions={(
+                  <AppBarSection>
+                    <ButtonGroup>
+                      <Button onClick={onAddExistingReport}>
+                        Add saved report
+                      </Button>
+                      <Button variant="filled" onClick={onCreateReport}>
+                        Create new report
+                      </Button>
+                    </ButtonGroup>
+                  </AppBarSection>
+                )}>
+                  {dashboards.formState.reportSet.length === 0 ? (
+                    <p>There are no reports in this dashboard.</p>
+                  ) : (
+                    <ListView data={dashboards.formState.reportSet}>
+                      <ListViewColumn
+                        title="Name"
+                        template={item => (
+                          <Fragment>
+                            <Icons.Report color={colorVariables.grayDark} />
+                            <span className={styles.name}>
+                              {item.name}
+                            </span>
+                          </Fragment>
+                        )}
+                      />
+                      <ListViewColumn
+                        title="Report Type"
+                        template={item => {
+                          if (item.type === 'HEADER') {
+                            return 'Header';
+                          } else {
+                            return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                          }
+                        }}
+                        flexGrow={1}
+                      />
+                      <ListViewColumn
+                        title=""
+                        template={item => (
+                          <ButtonGroup>
+                            <Button
+                              onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
+                              disabled={item.id === dashboards.formState.reportSet[0].id}
+                              width={40}
+                              height={40}
+                              size="small"
+                            >
+                              <Icons.ArrowUp width={12} height={12} />
+                            </Button>
+                            <Button
+                              onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
+                              disabled={item.id === dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id}
+                              width={40}
+                              height={40}
+                              size="small"
+                            >
+                              <Icons.ArrowDown width={12} height={12} />
+                            </Button>
+                          </ButtonGroup>
+                        )}
+                        width="auto"
+                      />
+                      <ListViewColumn
+                        title=""
+                        template={item => (
+                          <ButtonGroup>
+                            <Button
+                              variant="underline"
+                              onClick={() => onEditReport(item)}
+                            >Edit</Button>
+                          </ButtonGroup>
+                        )}
+                        width="auto"
+                      />
+                    </ListView>
+                  )}
+                </DetailModule>
+              </div>
               <div className={styles.dashboardEditModuleWrapper}>
                 <DetailModule title="Danger Zone" error>
                   <div className={styles.dangerZoneWrapper}>

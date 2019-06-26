@@ -52,7 +52,6 @@
   align-items: center;
   cursor: pointer;
 
-  padding-top: 12px;
   padding-left: 24px;
   padding-right: 24px;
 
@@ -147,6 +146,73 @@
 .percentageRangeBar {
   flex-grow: 1;
   flex-shrink: 1;
+	width: 100%;
+	height: 24px;
+	-webkit-appearance: none;
+	margin: 10px 0;
+
+	&:focus { outline: none; }
+	&::-webkit-slider-runnable-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-webkit-slider-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+		-webkit-appearance: none;
+		margin-top: -6px;
+	}
+	&:focus::-webkit-slider-runnable-track { background-color: $gray; }
+	&::-moz-range-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-moz-range-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background: $brandPrimary;
+		cursor: pointer;
+	}
+	&::-ms-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background: transparent;
+		border-color: transparent;
+		color: transparent;
+	}
+	&::-ms-fill-lower {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-fill-upper {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-thumb {
+		margin-top: 1px;
+		border: 1px solid #00001E;
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+	}
+	&:focus::-ms-fill-lower { background-color: $gray; }
+	&:focus::-ms-fill-upper { background-color: $gray; }
 }
 .percentageRangeLabel {
   flex-grow: 0;

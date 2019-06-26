@@ -352,7 +352,13 @@ function DashboardReportEditModal({
                     </p>
                   </Fragment>
                 ) : (
-                  <p>No report selected</p>
+                  <Fragment>
+                    <AppBar />
+                    <div className={styles.nonIdealState}>
+                      <h4>No report type selected</h4>
+                      <p>Select a report type on the left to create a report</p>
+                    </div>
+                  </Fragment>
                 )}
               </div>
             </div>
@@ -438,6 +444,7 @@ function DashboardReportEditModal({
                             id={id}
                             width="100%"
                             canCreateTags={false}
+                            openDropdownOnFocus={true}
                             onAddTag={tag => reportUpdateSettings(fieldName, [
                               ...activeModal.data.report.settings[fieldName],
                               tag.id,

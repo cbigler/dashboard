@@ -67,7 +67,7 @@ export default function dashboards(state=initialState, action) {
   }
 
   case ROUTE_TRANSITION_DASHBOARD_EDIT:
-    return { ...state, selected: action.dashboardId };
+    return { ...state, selected: action.dashboardId, loading: true, view: 'LOADING' };
 
   case DASHBOARDS_UPDATE:
     return { ...state, loading: true, view: 'LOADING' };

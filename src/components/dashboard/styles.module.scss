@@ -227,3 +227,28 @@
   max-height: 300px;
   overflow-y: auto;
 }
+
+.dashboardEmptyState {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+}
+
+.dashboardEmptyState > div { width: 320px; }
+
+.dashboardEmptyState h3 {
+  font-size: 18px;
+}
+.dashboardEmptyState h3 img {
+  width: 24px;
+  margin-bottom: -5px;
+  margin-right: 6px;
+}
+.dashboardEmptyState p {
+  font-size: $fontSizeBase;
+  margin-bottom: 18px;
+}
