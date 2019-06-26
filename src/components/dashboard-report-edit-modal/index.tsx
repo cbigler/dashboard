@@ -33,7 +33,7 @@ import {
   clearPreviewReportData,
 
   ReportModalPages,
-  PAGE_PICK_EXISTING_REPORT,
+  PAGE_PICK_SAVED_REPORT,
   PAGE_NEW_REPORT_TYPE,
   PAGE_NEW_REPORT_CONFIGURATION,
 
@@ -60,7 +60,7 @@ type DashboardReportModalProps = {
       page: ReportModalPages,
       operationType: ReportOperationType,
       report: DensityReport,
-      pickExistingReportSelectedReportId: string | null,
+      pickSavedReportSelectedReportId: string | null,
       newReportReportTypeSearchString: string,
       reportListSearchString: string,
     },
@@ -153,7 +153,7 @@ function DashboardReportEditModal({
 
     let modalWidth = 1024,
         modalHeight = 800;
-    if (activeModal.data.page === PAGE_PICK_EXISTING_REPORT) {
+    if (activeModal.data.page === PAGE_PICK_SAVED_REPORT) {
       modalWidth = 756;
     }
     // When editing a header, there isn't a sidebar so make the modal smaller.
@@ -177,14 +177,14 @@ function DashboardReportEditModal({
           <AppBar>
             <AppBarTitle>
               {
-                activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
-                  'Add Existing Report to Dashboard'
+                activeModal.data.page === PAGE_PICK_SAVED_REPORT ? (
+                  'Add Saved Report to Dashboard'
                 ) : `${activeModal.data.operationType === OPERATION_CREATE ? 'New' : 'Edit'} Report`
               }
             </AppBarTitle>
           </AppBar>
 
-          {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+          {activeModal.data.page === PAGE_PICK_SAVED_REPORT ? (
             <Fragment>
               <div className={styles.searchBar}>
                 <AppBar>
@@ -222,14 +222,14 @@ function DashboardReportEditModal({
                           }
 
                           return (
-														<div className={styles.existingReportNameWrapper}>
+														<div className={styles.savedReportNameWrapper}>
 															<RadioButton
-																checked={item.id === activeModal.data.pickExistingReportSelectedReportId}
-																onChange={() => onUpdateModal('pickExistingReportSelectedReportId', item.id)}
+																checked={item.id === activeModal.data.pickSavedReportSelectedReportId}
+																onChange={() => onUpdateModal('pickSavedReportSelectedReportId', item.id)}
 																// Cannot select reports that are already in the dashboard
 																disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
 															/>
-															<div className={styles.existingReportNameWrapperColumn}>
+															<div className={styles.savedReportNameWrapperColumn}>
 																<h5>{item.name}</h5>
 																<span>{reportType}</span>
 															</div>
@@ -239,7 +239,7 @@ function DashboardReportEditModal({
                         flexGrow={1}
                         onClick={item => {
                           if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
-                            onUpdateModal('pickExistingReportSelectedReportId', item.id)
+                            onUpdateModal('pickSavedReportSelectedReportId', item.id)
                           }
                         }}
                       />
@@ -264,7 +264,7 @@ function DashboardReportEditModal({
                           }
 
                           return (
-                            <span className={styles.existingReportSpaces}>
+                            <span className={styles.savedReportSpaces}>
                               {spaceText}
                             </span>
                           )
@@ -689,17 +689,17 @@ function DashboardReportEditModal({
                   {activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION && activeModal.data.operationType === OPERATION_CREATE ? (
                     <Button onClick={() => onUpdateModal('page', PAGE_NEW_REPORT_TYPE)}>Back</Button>
                   ) : null}
-                  {activeModal.data.page === PAGE_PICK_EXISTING_REPORT ? (
+                  {activeModal.data.page === PAGE_PICK_SAVED_REPORT ? (
                     <Button
                       variant="filled"
                       width={65}
                       disabled={
-                        activeModal.data.page === PAGE_PICK_EXISTING_REPORT &&
-                        !activeModal.data.pickExistingReportSelectedReportId
+                        activeModal.data.page === PAGE_PICK_SAVED_REPORT &&
+                        !activeModal.data.pickSavedReportSelectedReportId
                       }
                       onClick={() => {
                         const report = reportList.find(
-                          r => r.id === activeModal.data.pickExistingReportSelectedReportId
+                          r => r.id === activeModal.data.pickSavedReportSelectedReportId
                         );
                         onAddReportToDashboard(report);
                       }}

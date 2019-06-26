@@ -157,14 +157,14 @@
   color: $brandPrimary;
 }
 
-.existingReportNameWrapper {
+.savedReportNameWrapper {
   display: flex;
   flex-direction: row;
   align-items: center;
   user-select: none;
 }
-.existingReportNameWrapperColumn { margin-left: 20px; }
-.existingReportNameWrapperColumn > h5 {
+.savedReportNameWrapperColumn { margin-left: 20px; }
+.savedReportNameWrapperColumn > h5 {
 	margin-top: 0px;
 	margin-bottom: 4px;
 	font-size: 16px;
@@ -174,11 +174,11 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.existingReportNameWrapperColumn > span {
+.savedReportNameWrapperColumn > span {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.existingReportSpaces {
+.savedReportSpaces {
   line-height: 24px;
 }

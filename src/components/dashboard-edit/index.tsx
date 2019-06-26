@@ -17,7 +17,7 @@ import {
   openReportModal,
   closeReportModal,
 
-  PAGE_PICK_EXISTING_REPORT,
+  PAGE_PICK_SAVED_REPORT,
   PAGE_NEW_REPORT_CONFIGURATION,
   PAGE_NEW_REPORT_TYPE,
 
@@ -134,7 +134,7 @@ export function DashboardEdit({
                     <AppBarSection>
                       <ButtonGroup>
                         <Button onClick={onAddExistingReport}>
-                          Add existing report
+                          Add saved report
                         </Button>
                         <Button variant="filled" onClick={onCreateReport}>
                           Create new report
@@ -294,7 +294,7 @@ export default connect((state: any) => ({
   onAddExistingReport() {
     dispatch<any>(openReportModal(
       { name: '', type: '', settings: {}, creatorEmail: '' },
-      PAGE_PICK_EXISTING_REPORT,
+      PAGE_PICK_SAVED_REPORT,
       OPERATION_CREATE,
     ));
   },
