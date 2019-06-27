@@ -89,6 +89,7 @@ type DashboardReportModalProps = {
   ) => void,
   onAddReportToDashboard: (DensityReport) => void,
   onReportShowDeletePopup: (DensityReport) => void,
+  onRemoveReportFromDashboard: (DensityReport) => void,
 };
 
 const HEADER_REPORT = {
@@ -130,6 +131,7 @@ function DashboardReportEditModal({
   onSaveReportModal,
   onReportSettingsUpdated,
   onReportModalMovedToReportConfigurationPage,
+  onRemoveReportFromDashboard,
   onAddReportToDashboard,
   onReportShowDeletePopup,
 }: DashboardReportModalProps) {
@@ -681,11 +683,17 @@ function DashboardReportEditModal({
             <AppBar>
               <AppBarSection>
                 {activeModal.data.operationType === OPERATION_UPDATE ? (
-                  <Button
-                    variant="underline"
-                    type="danger"
-                    onClick={() => onReportShowDeletePopup(activeModal.data.report)}
-                  >Delete report</Button>
+                  <ButtonGroup>
+                    <Button
+                      type="danger"
+                      onClick={() => onRemoveReportFromDashboard(activeModal.data.report)}
+                    >Remove from dashboard</Button>
+                    <Button
+                      variant="underline"
+                      type="danger"
+                      onClick={() => onReportShowDeletePopup(activeModal.data.report)}
+                    >Delete</Button>
+                  </ButtonGroup>
                 ) : null}
               </AppBarSection>
               <AppBarSection>

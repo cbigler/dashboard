@@ -59,6 +59,7 @@ export function DashboardEdit({
   onRelativeReportMove,
   onSaveDashboard,
   onShowDeleteConfirm,
+  onRemoveReportFromDashboard,
 
   onCreateReport,
   onAddExistingReport,
@@ -75,7 +76,8 @@ export function DashboardEdit({
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
         }}
-        onReportShowDeletePopup={report => onReportShowDeletePopup(selectedDashboard, report)}
+        onReportShowDeletePopup={report => onReportShowDeletePopup(dashboards.formState, report)}
+        onRemoveReportFromDashboard={report => onRemoveReportFromDashboard(dashboards.formState, report)}
 
         onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
       />
@@ -326,43 +328,46 @@ export default connect((state: any) => ({
 
     dispatch<any>(closeReportModal());
   },
-  async onReportShowDeletePopup(selectedDashboard, report) {
-    if (report.dashboardCount === 1) {
-      await dispatch<any>(closeReportModal());
+  async onReportShowDeletePopup(formState, report) {
+    await dispatch<any>(closeReportModal());
 
-      // Show a popup to allow the user to pick if they want to delete the link or also the report if
-      // this is the last instance if this report in a dashboard.
-      dispatch<any>(showModal('MODAL_CONFIRM', {
-        prompt: 'Are you sure you want to delete this report? As this is the last dashboard containing the report, this will also delete the report too.',
-        confirmText: 'Delete',
-        callback: async () => {
-          // Delete the report from all dashboards. This also cascades to delete all report
-          // dashboard links too.
-          const ok = await dispatch<any>(reportDelete(report));
+    // Show a popup to allow the user to pick if they want to delete the link or also the report if
+    // this is the last instance if this report in a dashboard.
+    dispatch<any>(showModal('MODAL_CONFIRM', {
+      prompt: [
+        'Are you sure you want to delete this report? This will delete the report from the system',
+        `${report.dashboardCount > 1 ? `and also remove it from ${report.dashboardCount-1} dashboards` : 'and all dashboards it is part of'}.`,
+      ].join(''),
+      confirmText: 'Delete',
+      callback: async () => {
+        // Delete the report from all dashboards. This also cascades to delete all report
+        // dashboard links too on the server.
+        const ok = await dispatch<any>(reportDelete(report));
 
-          if (ok) {
-            // Remove report from dashboard locally
-            dispatch(dashboardsUpdateFormState(
-              'reportSet',
-              selectedDashboard.reportSet.filter(r => r.id !== report.id),
-            ));
+        if (ok) {
+          // Remove report from dashboard locally
+          dispatch(dashboardsUpdateFormState(
+            'reportSet',
+            formState.reportSet.filter(r => r.id !== report.id),
+          ));
 
-            dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
-          } else {
-            dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
-          }
-        },
-      }));
-    } else {
-      dispatch<any>(closeReportModal());
+          dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
+        } else {
+          dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
+        }
 
-      // This report is in multiple dashboards, so only allow deletion of the link.
-      dispatch(dashboardsUpdateFormState(
-        'reportSet',
-        selectedDashboard.reportSet.filter(r => r.id !== report.id),
-      ));
+        dispatch<any>(closeReportModal());
+      },
+    }));
+  },
+  onRemoveReportFromDashboard(formState, report) {
+    // Only delete the link, not the report itself
+    dispatch(dashboardsUpdateFormState(
+      'reportSet',
+      formState.reportSet.filter(r => r.id !== report.id),
+    ));
 
-      dispatch<any>(showToast({text: 'Deleted report from dashboard.'}));
-    }
+    dispatch<any>(showToast({text: 'Removed report from dashboard.'}));
+    dispatch<any>(closeReportModal());
   },
 }))(DashboardEdit);
