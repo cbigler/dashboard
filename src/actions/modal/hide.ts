@@ -12,8 +12,8 @@ export default function hideModal(name=null) {
         // Only dispatch if the modal hasn't been re-opened during the interval
         if (!getState().activeModal.visible) {
           dispatch({ type: HIDE_MODAL, name });
-          resolve();
         }
+        resolve();
       }, 500);
     });
   };

@@ -336,7 +336,7 @@ export default connect((state: any) => ({
     dispatch<any>(showModal('MODAL_CONFIRM', {
       prompt: [
         'Are you sure you want to delete this report? This will delete the report from the system',
-        `${report.dashboardCount > 1 ? `and also remove it from ${report.dashboardCount-1} dashboards` : 'and all dashboards it is part of'}.`,
+        `${report.dashboardCount > 1 ? `and also remove it from ${report.dashboardCount-1} dashboards` : 'and any dashboards it is part of'}.`,
       ].join(''),
       confirmText: 'Delete',
       callback: async () => {
