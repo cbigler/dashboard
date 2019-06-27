@@ -12,6 +12,7 @@ import showToast from '../../actions/toasts';
 import GenericLoadingState from '../generic-loading-state';
 import GenericErrorState from '../generic-error-state';
 import ListView, { ListViewColumn } from '../list-view';
+import mixpanelTrack from '../../helpers/mixpanel-track';
 
 import {
   openReportModal,
@@ -75,6 +76,13 @@ export function DashboardEdit({
         onAddReportToDashboard={report => {
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
+          mixpanelTrack('Report Added to Dashboard', {
+            report_id: report.id,
+            dashboard_id: selectedDashboard.id,
+            dashboard_name: selectedDashboard.name,
+            report_name: report.name,
+            report_type: report.type,
+          });
         }}
         onReportShowDeletePopup={report => onReportShowDeletePopup(dashboards.formState, report)}
         onRemoveReportFromDashboard={report => onRemoveReportFromDashboard(dashboards.formState, report)}
