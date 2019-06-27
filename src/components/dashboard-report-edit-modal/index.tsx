@@ -149,7 +149,7 @@ function DashboardReportEditModal({
       activeModal.data.reportListSearchString,
     );
 
-    const filterReportTypeCollection = filterCollection({fields: ['displayName']});
+    const filterReportTypeCollection = filterCollection({fields: ['displayName', 'description']});
 
     const requiredControlsThatAreEmpty = selectedReportType ? getEmptyRequiredFields(activeModal.data.report) : [];
 
@@ -685,7 +685,7 @@ function DashboardReportEditModal({
                 {activeModal.data.operationType === OPERATION_UPDATE ? (
                   <ButtonGroup>
                     <Button
-                      type="danger"
+                      type="muted"
                       onClick={() => onRemoveReportFromDashboard(activeModal.data.report)}
                     >Remove from dashboard</Button>
                     <Button
