@@ -57,6 +57,7 @@ import routeTransitionAccountRegister from './actions/route-transition/account-r
 import routeTransitionAccountForgotPassword from './actions/route-transition/account-forgot-password';
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
+import routeTransitionDashboardEdit from './actions/route-transition/dashboard-edit';
 
 import routeTransitionAdminSpaceMappings from './actions/route-transition/admin-space-mappings';
 import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
@@ -166,6 +167,7 @@ router.addRoute('spaces/insights/:id/data-export', redirect(id => `spaces/explor
 // ^ I AM DEPRECATED
 
 router.addRoute('dashboards', () => routeTransitionDashboardList());
+router.addRoute('dashboards/:id/edit', id => routeTransitionDashboardEdit(id));
 router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(id));
 
 router.addRoute('spaces/explore', () => routeTransitionExplore());

@@ -1,0 +1,250 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.reportModalReportList {
+  overflow-y: auto;
+  margin-top: 8px;
+  padding-left: 24px;
+  padding-right: 24px;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+
+.parent {
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.left {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 1;
+  flex-grow: 1;
+  width: 390px;
+  height: 100%;
+}
+.right {
+  display: flex;
+  flex-direction: column;
+  width: 600px;
+  height: 100%;
+  border-left: 1px solid $grayLight;
+}
+
+.searchBar {
+  background-color: $grayLightest;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.reportTypeList {
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reportTypeItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+
+  padding-left: 24px;
+  padding-right: 24px;
+
+  border-bottom: 1px solid $grayLight;
+  user-select: none;
+  outline: none;
+  height: 120px;
+}
+.reportTypeItem:focus {
+  background-color: $grayLightest;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+}
+
+.name {
+  margin-left: 16px;
+  font-weight: 500;
+  height: 16px;
+}
+
+.reportTypeItemDescription {
+  margin-top: 8px;
+  margin-right: 24px;
+}
+
+.reportTypeImage {
+  width: 80px;
+  height: 60px;
+}
+
+.reportImageBackdrop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  width: 100%;
+  background-color: $grayLightest;
+}
+
+.reportFullDescription {
+  padding: 24px;
+  white-space: pre-wrap;
+}
+
+.reportConfigurationParent {
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 12px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.reportBackdrop {
+  flex-grow: 1;
+  flex-shrink: 1;
+  background-color: $grayLightest;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.reportModalWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.nonIdealState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+.nonIdealState h4 {
+  font-size: 18px;
+  text-decoration: none;
+  margin-bottom: 8px;
+  font-weight: bold;
+  text-align: center;
+}
+.nonIdealStateListItem { font-weight: 500; }
+
+.percentageRange {
+  display: flex;
+  align-items: center;
+}
+.percentageRangeBar {
+  flex-grow: 1;
+  flex-shrink: 1;
+	width: 100%;
+	height: 24px;
+	-webkit-appearance: none;
+	margin: 10px 0;
+
+	&:focus { outline: none; }
+	&::-webkit-slider-runnable-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-webkit-slider-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+		-webkit-appearance: none;
+		margin-top: -6px;
+	}
+	&:focus::-webkit-slider-runnable-track { background-color: $gray; }
+	&::-moz-range-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-moz-range-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background: $brandPrimary;
+		cursor: pointer;
+	}
+	&::-ms-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background: transparent;
+		border-color: transparent;
+		color: transparent;
+	}
+	&::-ms-fill-lower {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-fill-upper {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-thumb {
+		margin-top: 1px;
+		border: 1px solid #00001E;
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+	}
+	&:focus::-ms-fill-lower { background-color: $gray; }
+	&:focus::-ms-fill-upper { background-color: $gray; }
+}
+.percentageRangeLabel {
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-left: 16px;
+  font-size: 16px;
+  font-weight: 500;
+  color: $brandPrimary;
+}
+
+.savedReportNameWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+}
+.savedReportNameWrapperColumn { margin-left: 20px; }
+.savedReportNameWrapperColumn > h5 {
+	margin-top: 0px;
+	margin-bottom: 4px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #445158;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.savedReportNameWrapperColumn > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.savedReportSpaces {
+  line-height: 24px;
+}

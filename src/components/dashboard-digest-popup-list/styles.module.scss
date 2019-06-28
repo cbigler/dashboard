@@ -4,7 +4,11 @@
 
 $dashboardDigestBackdropZIndex: 99999;
 
-.dashboardDigestList { position: relative; }
+.dashboardDigestList {
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+}
 
 .dashboardDigestBackdrop {
   position: fixed;

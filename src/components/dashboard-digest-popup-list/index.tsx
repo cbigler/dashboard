@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
-import { AppBar, AppBarSection, AppBarTitle, Icons } from '@density/ui';
+import { AppBar, AppBarSection, AppBarTitle, AppBarContext, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -81,28 +81,30 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
         </button>
 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>
-          <AppBar>
-            <AppBarSection>
-              <AppBarTitle>Email Digests</AppBarTitle>
-            </AppBarSection>
-            <AppBarSection>
-              <span
-                className={styles.dashboardDigestListDropdownCreateButton}
-                role="button"
-                onClick={() => {
-                  this.setState({visible: false}, () => {
-                    onCreateDigest();
-                  });
-                }}
-                tabIndex={visible ? 0 : -1}
-              >
-                <Icons.PlusCircle color={colorVariables.brandPrimary} />
-                <span className={styles.dashboardDigestListDropdownCreateButtonText}>
-                  Create new digest
+          <AppBarContext.Provider value="CARD_HEADER">
+            <AppBar>
+              <AppBarSection>
+                <AppBarTitle>Email Digests</AppBarTitle>
+              </AppBarSection>
+              <AppBarSection>
+                <span
+                  className={styles.dashboardDigestListDropdownCreateButton}
+                  role="button"
+                  onClick={() => {
+                    this.setState({visible: false}, () => {
+                      onCreateDigest();
+                    });
+                  }}
+                  tabIndex={visible ? 0 : -1}
+                >
+                  <Icons.PlusCircle color={colorVariables.brandPrimary} />
+                  <span className={styles.dashboardDigestListDropdownCreateButtonText}>
+                    Create new digest
+                  </span>
                 </span>
-              </span>
-            </AppBarSection>
-          </AppBar>
+              </AppBarSection>
+            </AppBar>
+          </AppBarContext.Provider>
 
           {/* regular state is a list of digestes */}
           {digestSchedules.view === 'VISIBLE' ? (

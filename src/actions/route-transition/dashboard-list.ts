@@ -1,4 +1,5 @@
-import dashboardsError from '../collection/dashboards/error';
+import dashboardsError from '../dashboards/error';
+import dashboardsSet from '../dashboards/set';
 
 import { DensityDashboard } from '../../types';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
@@ -9,9 +10,16 @@ export default function routeTransitionDashboardList() {
   return async dispatch => {
     dispatch({ type: ROUTE_TRANSITION_DASHBOARD_LIST });
 
-    const dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
+		let dashboards;
+		try {
+			dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
+		} catch (err) {
+			dispatch(dashboardsError(err));
+			return;
+		}
+
     if (dashboards.length === 0) {
-      dispatch(dashboardsError('No dashboards were found. Please talk to your Density account representative to create a dashboard.'));
+			dispatch(dashboardsSet([]));
       return;
     }
 

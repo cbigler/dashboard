@@ -1,0 +1,62 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.dashboardEdit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: $grayLightest;
+  padding-top: 48px;
+  padding-bottom: 48px;
+  height: 100%;
+
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.backArrow {
+  margin-right: 24px;
+  text-decoration: none;
+}
+
+.dashboardEditModuleWrapper { margin-top: 24px; }
+
+.arrowButtons {
+  margin-right: 8px;
+  opacity: 0;
+  transition: all 100ms ease-in-out;
+}
+.arrowButtons:hover { opacity: 1; }
+
+.name { margin-left: 8px; }
+
+.dangerZoneWrapper { display: flex; }
+.dangerZoneLeft {
+  flex-grow: 1;
+  flex-shrink: 1;
+}
+.dangerZoneLeft h4 {
+  margin-top: 0px;
+  margin-bottom: 8px;
+  text-decoration: none;
+}
+.dangerZoneRight {
+  display: flex;
+  align-items: center;
+}
+
+.dashboardDeleteReportModal {
+  display: flex;
+  flex-direction: column;
+}
+.dashboardDeleteReportModalContent {
+  padding: 32px;
+  line-height: 24px;
+}
