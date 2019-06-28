@@ -1,14 +1,15 @@
 import { REPORTS, UnauthorizedError } from '@density/reports';
-import { getGoSlow } from '../../../components/environment-switcher/index';
-import core from '../../../client/core';
+import { getGoSlow } from '../../components/environment-switcher/index';
+import core from '../../client/core';
 
-import { DensityReportCalculatationFunction } from '../../../types';
-import getBackendErrorDetail from '../../../helpers/get-backend-error-detail';
+import { DensityReportCalculatationFunction } from '../../types';
+import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
 
-export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
-export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
-export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
-export const COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
 export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
   return async (dispatch, getState) => {
@@ -16,7 +17,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
       switch (report.type) {
       case 'HEADER':
         dispatch({
-          type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
+          type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
           report,
           data: null, /* headers don't need data */
         });
@@ -29,7 +30,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
 
       case 'NOOP_COMPLETES_IMMEDIATELY':
         dispatch({
-          type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
+          type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
           report,
           data: {
             hello: 'world',
@@ -39,7 +40,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
 
       case 'NOOP_ERRORS_IMMEDIATELY':
         dispatch({
-          type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+          type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
           report,
           error: new Error('Error was thrown during calculation'),
         });
@@ -51,7 +52,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
         if (!reportDataCalculationFunction) {
           dispatch({
-            type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+            type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
             report,
             error: `No data calculation function found for a report with type ${report.type}!`,
           });
@@ -72,7 +73,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
           console.error(errorThrown); // DON'T REMOVE ME!
           if (errorThrown instanceof UnauthorizedError) {
             dispatch({
-              type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+              type: DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
               report,
             });
           } else if (
@@ -81,19 +82,19 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
             getBackendErrorDetail(errorThrown) === 'end_time must be after the space was created.'
           ) {
             dispatch({
-              type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
+              type: DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
               report,
             });
           } else {
             dispatch({
-              type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
+              type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
               report,
               error: errorThrown.message,
             });
           }
         } else {
           dispatch({
-            type: COLLECTION_DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
+            type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
             report,
             data,
           });
@@ -101,4 +102,8 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
       }
     }));
   };
+}
+
+export function clearReportData(reportId) {
+  return { type: DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR, reportId };
 }
