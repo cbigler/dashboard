@@ -87,7 +87,7 @@ export function DashboardEdit({
         onReportShowDeletePopup={report => onReportShowDeletePopup(dashboards.formState, report)}
         onRemoveReportFromDashboard={report => onRemoveReportFromDashboard(dashboards.formState, report)}
 
-        onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
+        onSaveReportModal={report => onSaveReportModal(dashboards.formState, report)}
       />
 
       {dashboards.view === 'LOADING' ? (
@@ -313,7 +313,7 @@ export default connect((state: any) => ({
       OPERATION_UPDATE,
     ));
   },
-  async onSaveReportModal(dashboard, report) {
+  async onSaveReportModal(formState, report) {
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
     if (shouldCreateReport) {
@@ -331,7 +331,7 @@ export default connect((state: any) => ({
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, result]));
+      dispatch<any>(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]));
     }
 
     dispatch<any>(closeReportModal());
