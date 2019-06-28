@@ -17,6 +17,7 @@ import {
   DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
   DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
   DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR,
+  DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
 } from '../../actions/dashboards/calculate-report-data';
 
 import { DASHBOARDS_UPDATE_FORM_STATE } from '../../actions/dashboards/update-form-state';
@@ -192,6 +193,19 @@ export default function dashboards(state=initialState, action) {
           state: 'ERROR',
           data: null,
           error: action.error,
+        },
+      },
+    };
+
+  // If report space has no data yet since it is too new, put it in 'NO_DATA' state
+  case DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA:
+    return {
+      ...state,
+      calculatedReportData: {
+        ...state.calculatedReportData,
+        [action.report.id]: {
+          state: 'NO_DATA',
+          data: null,
         },
       },
     };
