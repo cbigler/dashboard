@@ -95,7 +95,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                       value={formattedHierarchy.find(i => i.space.id === formState.parentId) || null}
                       onChange={hierarchyItem => onChangeField('parentId', hierarchyItem.space.id)}
                       formattedHierarchy={formattedHierarchy}
-                      searchBoxPlaceholder="Search for space name"
+                      placeholder="Select a campus" // Only navigable buildings will show this empty state
                       width="100%"
                       dropdownWidth="100%"
                     />
