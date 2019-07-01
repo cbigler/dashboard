@@ -32,7 +32,6 @@ import {
   ButtonGroup,
   Icons,
 } from '@density/ui';
-import AdminLocationsDetailModulesParent from '../admin-locations-detail-modules/parent';
 
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
@@ -60,6 +59,7 @@ export function SpaceTypeForm({
     generalInfo: (
       <AdminLocationsDetailModulesGeneralInfo
         spaceType={spaceType}
+        spaceHierarchy={spaceHierarchy}
         formState={formState}
         onChangeField={onChangeField}
       />
@@ -116,13 +116,6 @@ export function SpaceTypeForm({
         onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
       />
     ),
-    parent: (
-      <AdminLocationsDetailModulesParent
-        formState={formState}
-        spaceHierarchy={spaceHierarchy}
-        onChangeParent={spaceId => onChangeField('parentId', spaceId)}
-      />
-    ),
     dangerZone: (
       <Fragment>
         {operationType === 'UPDATE' ? (
@@ -149,7 +142,6 @@ export function SpaceTypeForm({
       MODULES.metadata,
       MODULES.tags,
       MODULES.teams,
-      MODULES.parent,
       MODULES.dangerZone,
     ],
     floor: [
@@ -159,7 +151,6 @@ export function SpaceTypeForm({
       MODULES.metadata,
       MODULES.tags,
       MODULES.teams,
-      MODULES.parent,
       MODULES.dangerZone,
     ],
     space: [
@@ -169,7 +160,6 @@ export function SpaceTypeForm({
       MODULES.operatingHours,
       MODULES.tags,
       MODULES.teams,
-      MODULES.parent,
       MODULES.dangerZone,
     ],
   };
