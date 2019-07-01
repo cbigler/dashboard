@@ -232,6 +232,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       <AdminLocationsDetailModule
         title="Operating Hours"
         includePadding={false}
+        hideOverflow={true}
         actions={
           <AppBarSection>
             {!formState.overrideDefaultControlHidden ? (
