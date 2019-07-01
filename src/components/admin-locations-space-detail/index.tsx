@@ -84,7 +84,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
               ) : null}
             </AppBarSection>
           </AppBar>
-          <AdminLocationsLeftPaneDataRow includeTopBorder={false}>
+          <AdminLocationsLeftPaneDataRow includeTopBorder={false} includeBottomBorder={false}>
             {leftPaneDataItemContents}
           </AdminLocationsLeftPaneDataRow>
         </div>

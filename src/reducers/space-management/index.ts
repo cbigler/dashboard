@@ -51,6 +51,7 @@ export type OperatingHoursLabelItem = {
   name: string,
 };
 export type AdminLocationsFormState = {
+  id: string | null,
   name: string,
   spaceType: string,
   'function': string | null | undefined,
@@ -195,6 +196,7 @@ function calculateInitialFormState({
 
   return {
     // General information module
+    id: space.id || null,
     name: space.name || '',
     spaceType: space.spaceType,
     'function': space['function'],

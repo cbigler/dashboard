@@ -87,7 +87,7 @@ export function DashboardEdit({
         onReportShowDeletePopup={report => onReportShowDeletePopup(dashboards.formState, report)}
         onRemoveReportFromDashboard={report => onRemoveReportFromDashboard(dashboards.formState, report)}
 
-        onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
+        onSaveReportModal={report => onSaveReportModal(dashboards.formState, report)}
       />
 
       {dashboards.view === 'LOADING' ? (
@@ -313,7 +313,7 @@ export default connect((state: any) => ({
       OPERATION_UPDATE,
     ));
   },
-  async onSaveReportModal(dashboard, report) {
+  async onSaveReportModal(formState, report) {
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
     if (shouldCreateReport) {
@@ -331,7 +331,7 @@ export default connect((state: any) => ({
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, result]));
+      dispatch<any>(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]));
     }
 
     dispatch<any>(closeReportModal());
@@ -344,7 +344,7 @@ export default connect((state: any) => ({
     dispatch<any>(showModal('MODAL_CONFIRM', {
       prompt: [
         'Are you sure you want to delete this report? This will delete the report from the system',
-        `${report.dashboardCount > 1 ? `and also remove it from ${report.dashboardCount-1} dashboards` : 'and any dashboards it is part of'}.`,
+        `${report.dashboardCount > 1 ? ` and also remove it from ${report.dashboardCount-1} other ${report.dashboardCount-1 === 1 ? 'dashboard' : 'dashboards'}` : 'and any dashboards it is part of'}.`,
       ].join(''),
       confirmText: 'Delete',
       callback: async () => {

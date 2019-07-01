@@ -9,7 +9,7 @@ import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
-import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
+import { DensitySpace, DensityTag, DensityAssignedTeam, DensitySpaceHierarchyItem } from '../../types';
 import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
 
 import {
@@ -35,6 +35,7 @@ import {
 
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
+  spaceHierarchy: Array<DensitySpaceHierarchyItem>,
   formState: { [key: string]: any },
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
@@ -46,6 +47,7 @@ type AdminLocationsFormProps = {
 // A component that renders all the space management modules for the given space type
 export function SpaceTypeForm({
   spaceType,
+  spaceHierarchy,
   formState,
   tagsCollection,
   assignedTeamsCollection,
@@ -57,6 +59,7 @@ export function SpaceTypeForm({
     generalInfo: (
       <AdminLocationsDetailModulesGeneralInfo
         spaceType={spaceType}
+        spaceHierarchy={spaceHierarchy}
         formState={formState}
         onChangeField={onChangeField}
       />
@@ -289,6 +292,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
                   spaceType={selectedSpace.spaceType}
+                  spaceHierarchy={spaceManagement.spaceHierarchy}
                   formState={spaceManagement.formState}
                   tagsCollection={tagsCollection}
                   assignedTeamsCollection={assignedTeamsCollection}

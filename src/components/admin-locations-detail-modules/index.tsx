@@ -28,11 +28,15 @@ export default function AdminLocationsDetailModule({
   title,
   error=false,
   includePadding=true,
+  hideOverflow=false,
   actions=null as ReactNode | null,
   children,
 }) {
   return (
-    <div className={classnames(styles.module, {[styles.moduleError]: error})}>
+    <div className={classnames(styles.module, {
+      [styles.moduleHideOverflow]: hideOverflow,
+      [styles.moduleError]: error
+    })}>
       <div className={styles.moduleHeader}>
         <AppBarContext.Provider value="CARD_HEADER">
           <AppBar>

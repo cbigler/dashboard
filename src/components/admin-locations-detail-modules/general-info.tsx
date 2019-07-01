@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { InputBox } from '@density/ui';
 import classnames from 'classnames';
 
@@ -9,6 +9,8 @@ import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
 import { fileToDataURI } from '../../helpers/media-files';
 
 import AdminLocationsDetailModule from './index';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import { SpacePickerDropdown } from '../space-picker';
 
 const SPACE_FUNCTION_CHOICES = [
   {id: 'breakout', label: 'Breakout'},
@@ -25,16 +27,32 @@ const SPACE_FUNCTION_CHOICES = [
   {id: null, label: 'Other'},
 ];
 
-export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formState, onChangeField}) {
+function getSpaceParentHierarchy(spaceHierarchy, formState) {
+  return spaceHierarchyFormatter(spaceHierarchy).filter(item => {
+    return formState.id !== item.space.id &&
+      (formState.spaceType !== 'building' || item.space.spaceType === 'campus') &&
+      (formState.spaceType !== 'floor' || item.space.spaceType === 'building');
+  });
+}
 
-  function getSpaceTypeLabel(spaceType) {
-    return {
-      campus: 'Campus',
-      building: 'Building',
-      floor: 'Level',
-      space: 'Room',
-    }[spaceType] || 'Unknown';
-  }
+function getSpaceTypeLabel(spaceType) {
+  return {
+    campus: 'Campus',
+    building: 'Building',
+    floor: 'Level',
+    space: 'Room',
+  }[spaceType] || 'Unknown';
+}
+
+export default function AdminLocationsDetailModulesGeneralInfo({
+  spaceType,
+  spaceHierarchy,
+  formState,
+  onChangeField
+}) {
+
+  const formattedHierarchy = spaceType !== 'campus' ?
+    getSpaceParentHierarchy(spaceHierarchy, formState) : [];
 
   return (
     <AdminLocationsDetailModule title="General Info">
@@ -68,22 +86,39 @@ export default function AdminLocationsDetailModulesGeneralInfo({spaceType, formS
               }
             />
             {spaceType !== 'campus' ? (
-              <FormLabel
-                label="Space function"
-                htmlFor="admin-locations-detail-modules-general-function"
-                input={
-                  <InputBox
-                    type="select"
-                    id="admin-locations-detail-modules-general-function"
-                    placeholder="No function assigned"
-                    value={formState['function']}
-                    menuMaxHeight={300}
-                    choices={SPACE_FUNCTION_CHOICES}
-                    onChange={e => onChangeField('function', e.id)}
-                    width="100%"
-                  />
-                }
-              />
+              <Fragment>
+                <FormLabel
+                  label="Parent"
+                  htmlFor="admin-locations-detail-modules-general-parent"
+                  input={
+                    <SpacePickerDropdown
+                      value={formattedHierarchy.find(i => i.space.id === formState.parentId) || null}
+                      onChange={hierarchyItem => onChangeField('parentId', hierarchyItem.space.id)}
+                      formattedHierarchy={formattedHierarchy}
+                      placeholder="Select a campus" // Only navigable buildings will show this empty state
+                      width="100%"
+                      dropdownWidth="100%"
+                    />
+                  }
+                />
+                <FormLabel
+                  label="Space function"
+                  htmlFor="admin-locations-detail-modules-general-function"
+                  input={
+                    <InputBox
+                      type="select"
+                      id="admin-locations-detail-modules-general-function"
+                      placeholder="No function assigned"
+                      value={formState['function']}
+                      menuMaxHeight={300}
+                      choices={SPACE_FUNCTION_CHOICES}
+                      onChange={e => onChangeField('function', e.id)}
+                      width="100%"
+                    />
+                  }
+                />
+              </Fragment>
+              
             ) : null}
           </div>
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>

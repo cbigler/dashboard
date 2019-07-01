@@ -3,11 +3,13 @@ import { getGoSlow } from '../../components/environment-switcher/index';
 import core from '../../client/core';
 
 import { DensityReportCalculatationFunction } from '../../types';
+import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
 
 export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
+export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
 export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
   return async (dispatch, getState) => {
@@ -72,6 +74,15 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
           if (errorThrown instanceof UnauthorizedError) {
             dispatch({
               type: DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
+              report,
+            });
+          } else if (
+            errorThrown.response &&
+            errorThrown.response.status === 400 &&
+            getBackendErrorDetail(errorThrown) === 'end_time must be after the space was created.'
+          ) {
+            dispatch({
+              type: DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
               report,
             });
           } else {

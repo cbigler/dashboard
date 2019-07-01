@@ -2,14 +2,20 @@ import React from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-export function AdminLocationsLeftPaneDataRow({includeTopBorder, children}) {
+export function AdminLocationsLeftPaneDataRow({
+  includeTopBorder = true,
+  includeBottomBorder = true,
+  children
+}) {
   return (
     <div
-      className={classnames(styles.leftPaneDataRow, {[styles.topBorder]: includeTopBorder})}
+      className={classnames(styles.leftPaneDataRow, {
+        [styles.topBorder]: includeTopBorder,
+        [styles.bottomBorder]: includeBottomBorder,
+      })}
     >{children}</div>
   );
 }
-AdminLocationsLeftPaneDataRow.defaultProps = { includeTopBorder: true };
 
 export function AdminLocationsLeftPaneDataRowItem({id, label, value}) {
   return (

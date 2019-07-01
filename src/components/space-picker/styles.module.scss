@@ -22,9 +22,9 @@
   border: 1px solid $inputFieldBorderColor;
   border-radius: $borderRadiusBase;
   background-color: #fff;
-  cursor: text;
   font-family: $fontBase;
   cursor: pointer;
+  color: $grayCinder;
   user-select: none;
   transition: all 100ms ease-in-out;
   outline: none;
@@ -46,6 +46,9 @@
   color: $grayCinder;
   background-color: #fff;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  border: 1px solid $inputFieldBorderColor;
+  border-radius: $borderRadiusBase;
   transition: all 100ms ease-in-out;
   user-select: none;
   overflow-y: auto;
@@ -63,6 +66,9 @@
   pointer-events: auto;
 }
 
+.chevron {
+  transform: translate(-1px, 1px);
+}
 .chevron.flip {
   transform: rotate(180deg);
 }
