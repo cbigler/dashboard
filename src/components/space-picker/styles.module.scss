@@ -22,9 +22,9 @@
   border: 1px solid $inputFieldBorderColor;
   border-radius: $borderRadiusBase;
   background-color: #fff;
-  cursor: text;
   font-family: $fontBase;
   cursor: pointer;
+  color: $grayCinder;
   user-select: none;
   transition: all 100ms ease-in-out;
   outline: none;
@@ -66,6 +66,9 @@
   pointer-events: auto;
 }
 
+.chevron {
+  transform: translate(-1px, 1px);
+}
 .chevron.flip {
   transform: rotate(180deg);
 }
