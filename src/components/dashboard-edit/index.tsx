@@ -12,13 +12,15 @@ import showToast from '../../actions/toasts';
 import GenericLoadingState from '../generic-loading-state';
 import GenericErrorState from '../generic-error-state';
 import ListView, { ListViewColumn } from '../list-view';
+import mixpanelTrack from '../../helpers/mixpanel-track';
 
 import {
   openReportModal,
   closeReportModal,
 
-  PAGE_PICK_EXISTING_REPORT,
+  PAGE_PICK_SAVED_REPORT,
   PAGE_NEW_REPORT_CONFIGURATION,
+  PAGE_NEW_REPORT_TYPE,
 
   OPERATION_CREATE,
   OPERATION_UPDATE,
@@ -58,8 +60,10 @@ export function DashboardEdit({
   onRelativeReportMove,
   onSaveDashboard,
   onShowDeleteConfirm,
+  onRemoveReportFromDashboard,
 
   onCreateReport,
+  onAddExistingReport,
   onCloseModal,
   onEditReport,
   onSaveReportModal,
@@ -72,10 +76,18 @@ export function DashboardEdit({
         onAddReportToDashboard={report => {
           onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
           onCloseModal();
+          mixpanelTrack('Report Added to Dashboard', {
+            report_id: report.id,
+            dashboard_id: selectedDashboard.id,
+            dashboard_name: selectedDashboard.name,
+            report_name: report.name,
+            report_type: report.type,
+          });
         }}
-        onReportShowDeletePopup={report => onReportShowDeletePopup(selectedDashboard, report)}
+        onReportShowDeletePopup={report => onReportShowDeletePopup(dashboards.formState, report)}
+        onRemoveReportFromDashboard={report => onRemoveReportFromDashboard(dashboards.formState, report)}
 
-        onSaveReportModal={report => onSaveReportModal(selectedDashboard, report)}
+        onSaveReportModal={report => onSaveReportModal(dashboards.formState, report)}
       />
 
       {dashboards.view === 'LOADING' ? (
@@ -126,82 +138,87 @@ export function DashboardEdit({
                   />
                 </DetailModule>
               </div>
-              {dashboards.formState.reportSet ? (
-                <div className={styles.dashboardEditModuleWrapper}>
-                  <DetailModule title="Reports" actions={(
-                    <AppBarSection>
-                      <Button variant="filled" onClick={onCreateReport}>
-                        Add report
+              <div className={styles.dashboardEditModuleWrapper}>
+                <DetailModule title="Reports" actions={(
+                  <AppBarSection>
+                    <ButtonGroup>
+                      <Button onClick={onAddExistingReport}>
+                        Add saved report
                       </Button>
-                    </AppBarSection>
-                  )}>
-                    {dashboards.formState.reportSet.length === 0 ? (
-                      <p>There are no reports in this dashboard.</p>
-                    ) : (
-                      <ListView data={dashboards.formState.reportSet}>
-                        <ListViewColumn
-                          title="Name"
-                          template={item => (
-                            <Fragment>
-                              <Icons.Report color={colorVariables.grayDark} />
-                              <span className={styles.name}>
-                                {item.name}
-                              </span>
-                            </Fragment>
-                          )}
-                        />
-                        <ListViewColumn
-                          title=""
-                          template={item => (
-                            <ButtonGroup>
-                              <span style={{
-                                // Can not move first report further up in the list
-                                visibility: item.id === dashboards.formState.reportSet[0].id ? 'hidden' : 'visible',
-                              }}>
-                                <Button
-                                  onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
-                                  variant="underline"
-                                >
-                                  <Icons.ArrowUp width={12} height={12} />
-                                </Button>
-                              </span>
-                              {item.id !== dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id ? (
-                                <Button
-                                  onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
-                                  variant="underline"
-                                >
-                                  <Icons.ArrowDown width={12} height={12} />
-                                </Button>
-                              ) : null}
-                            </ButtonGroup>
-                          )}
-                          flexGrow={1}
-                        />
-                        <ListViewColumn
-                          title="Report Type"
-                          template={item => {
-                            if (item.type === 'HEADER') {
-                              return 'Header';
-                            } else {
-                              return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
-                            }
-                          }}
-                          flexGrow={1}
-                        />
-                        <ListViewColumn
-                          title=""
-                          template={item => (
+                      <Button variant="filled" onClick={onCreateReport}>
+                        Create new report
+                      </Button>
+                    </ButtonGroup>
+                  </AppBarSection>
+                )}>
+                  {dashboards.formState.reportSet.length === 0 ? (
+                    <p>There are no reports in this dashboard.</p>
+                  ) : (
+                    <ListView data={dashboards.formState.reportSet}>
+                      <ListViewColumn
+                        title="Name"
+                        template={item => (
+                          <Fragment>
+                            <Icons.Report color={colorVariables.grayDark} />
+                            <span className={styles.name}>
+                              {item.name}
+                            </span>
+                          </Fragment>
+                        )}
+                      />
+                      <ListViewColumn
+                        title="Report Type"
+                        template={item => {
+                          if (item.type === 'HEADER') {
+                            return 'Header';
+                          } else {
+                            return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
+                          }
+                        }}
+                        flexGrow={1}
+                      />
+                      <ListViewColumn
+                        title=""
+                        template={item => (
+                          <ButtonGroup>
+                            <Button
+                              onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
+                              disabled={item.id === dashboards.formState.reportSet[0].id}
+                              width={40}
+                              height={40}
+                              size="small"
+                            >
+                              <Icons.ArrowUp width={12} height={12} />
+                            </Button>
+                            <Button
+                              onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
+                              disabled={item.id === dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id}
+                              width={40}
+                              height={40}
+                              size="small"
+                            >
+                              <Icons.ArrowDown width={12} height={12} />
+                            </Button>
+                          </ButtonGroup>
+                        )}
+                        width="auto"
+                      />
+                      <ListViewColumn
+                        title=""
+                        template={item => (
+                          <ButtonGroup>
                             <Button
                               variant="underline"
                               onClick={() => onEditReport(item)}
                             >Edit</Button>
-                          )}
-                        />
-                      </ListView>
-                    )}
-                  </DetailModule>
-                </div>
-              ) : null}
+                          </ButtonGroup>
+                        )}
+                        width="auto"
+                      />
+                    </ListView>
+                  )}
+                </DetailModule>
+              </div>
               <div className={styles.dashboardEditModuleWrapper}>
                 <DetailModule title="Danger Zone" error>
                   <div className={styles.dangerZoneWrapper}>
@@ -278,7 +295,14 @@ export default connect((state: any) => ({
   onCreateReport() {
     dispatch<any>(openReportModal(
       { name: '', type: '', settings: {}, creatorEmail: '' },
-      PAGE_PICK_EXISTING_REPORT,
+      PAGE_NEW_REPORT_TYPE,
+      OPERATION_CREATE,
+    ));
+  },
+  onAddExistingReport() {
+    dispatch<any>(openReportModal(
+      { name: '', type: '', settings: {}, creatorEmail: '' },
+      PAGE_PICK_SAVED_REPORT,
       OPERATION_CREATE,
     ));
   },
@@ -289,7 +313,7 @@ export default connect((state: any) => ({
       OPERATION_UPDATE,
     ));
   },
-  async onSaveReportModal(dashboard, report) {
+  async onSaveReportModal(formState, report) {
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
     if (shouldCreateReport) {
@@ -307,48 +331,51 @@ export default connect((state: any) => ({
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch<any>(dashboardsUpdateFormState('reportSet', [...dashboard.reportSet, result]));
+      dispatch<any>(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]));
     }
 
     dispatch<any>(closeReportModal());
   },
-  async onReportShowDeletePopup(selectedDashboard, report) {
-    if (report.dashboardCount === 1) {
-      await dispatch<any>(closeReportModal());
+  async onReportShowDeletePopup(formState, report) {
+    await dispatch<any>(closeReportModal());
 
-      // Show a popup to allow the user to pick if they want to delete the link or also the report if
-      // this is the last instance if this report in a dashboard.
-      dispatch<any>(showModal('MODAL_CONFIRM', {
-        prompt: 'Are you sure you want to delete this report? As this is the last dashboard containing the report, this will also delete the report too.',
-        confirmText: 'Delete',
-        callback: async () => {
-          // Delete the report from all dashboards. This also cascades to delete all report
-          // dashboard links too.
-          const ok = await dispatch<any>(reportDelete(report));
+    // Show a popup to allow the user to pick if they want to delete the link or also the report if
+    // this is the last instance if this report in a dashboard.
+    dispatch<any>(showModal('MODAL_CONFIRM', {
+      prompt: [
+        'Are you sure you want to delete this report? This will delete the report from the system',
+        `${report.dashboardCount > 1 ? ` and also remove it from ${report.dashboardCount-1} other ${report.dashboardCount-1 === 1 ? 'dashboard' : 'dashboards'}` : 'and any dashboards it is part of'}.`,
+      ].join(''),
+      confirmText: 'Delete',
+      callback: async () => {
+        // Delete the report from all dashboards. This also cascades to delete all report
+        // dashboard links too on the server.
+        const ok = await dispatch<any>(reportDelete(report));
 
-          if (ok) {
-            // Remove report from dashboard locally
-            dispatch(dashboardsUpdateFormState(
-              'reportSet',
-              selectedDashboard.reportSet.filter(r => r.id !== report.id),
-            ));
+        if (ok) {
+          // Remove report from dashboard locally
+          dispatch(dashboardsUpdateFormState(
+            'reportSet',
+            formState.reportSet.filter(r => r.id !== report.id),
+          ));
 
-            dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
-          } else {
-            dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
-          }
-        },
-      }));
-    } else {
-      dispatch<any>(closeReportModal());
+          dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
+        } else {
+          dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
+        }
 
-      // This report is in multiple dashboards, so only allow deletion of the link.
-      dispatch(dashboardsUpdateFormState(
-        'reportSet',
-        selectedDashboard.reportSet.filter(r => r.id !== report.id),
-      ));
+        dispatch<any>(closeReportModal());
+      },
+    }));
+  },
+  onRemoveReportFromDashboard(formState, report) {
+    // Only delete the link, not the report itself
+    dispatch(dashboardsUpdateFormState(
+      'reportSet',
+      formState.reportSet.filter(r => r.id !== report.id),
+    ));
 
-      dispatch<any>(showToast({text: 'Deleted report from dashboard.'}));
-    }
+    dispatch<any>(showToast({text: 'Removed report from dashboard.'}));
+    dispatch<any>(closeReportModal());
   },
 }))(DashboardEdit);

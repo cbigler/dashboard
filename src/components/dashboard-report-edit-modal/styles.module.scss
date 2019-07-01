@@ -14,6 +14,7 @@
   display: flex;
   flex-grow: 1;
   flex-shrink: 1;
+  overflow-y: hidden;
 }
 .left {
   display: flex;
@@ -49,9 +50,9 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   cursor: pointer;
 
-  padding-top: 12px;
   padding-left: 24px;
   padding-right: 24px;
 
@@ -81,14 +82,15 @@
 }
 
 .reportTypeImage {
-  height: 110px;
+  width: 80px;
+  height: 60px;
 }
 
 .reportImageBackdrop {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 200px;
+  height: 300px;
   width: 100%;
   background-color: $grayLightest;
 }
@@ -145,6 +147,73 @@
 .percentageRangeBar {
   flex-grow: 1;
   flex-shrink: 1;
+	width: 100%;
+	height: 24px;
+	-webkit-appearance: none;
+	margin: 10px 0;
+
+	&:focus { outline: none; }
+	&::-webkit-slider-runnable-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-webkit-slider-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+		-webkit-appearance: none;
+		margin-top: -6px;
+	}
+	&:focus::-webkit-slider-runnable-track { background-color: $gray; }
+	&::-moz-range-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-moz-range-thumb {
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background: $brandPrimary;
+		cursor: pointer;
+	}
+	&::-ms-track {
+		width: 100%;
+		height: 5px;
+		cursor: pointer;
+		animate: 0.2s;
+		background: transparent;
+		border-color: transparent;
+		color: transparent;
+	}
+	&::-ms-fill-lower {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-fill-upper {
+		background-color: $gray;
+		border: 0px solid #010101;
+	}
+	&::-ms-thumb {
+		margin-top: 1px;
+		border: 1px solid #00001E;
+		height: 16px;
+		width: 16px;
+		border-radius: 15px;
+		background-color: $brandPrimary;
+		cursor: pointer;
+	}
+	&:focus::-ms-fill-lower { background-color: $gray; }
+	&:focus::-ms-fill-upper { background-color: $gray; }
 }
 .percentageRangeLabel {
   flex-grow: 0;
@@ -153,4 +222,30 @@
   font-size: 16px;
   font-weight: 500;
   color: $brandPrimary;
+}
+
+.savedReportNameWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+}
+.savedReportNameWrapperColumn { margin-left: 20px; }
+.savedReportNameWrapperColumn > h5 {
+	margin-top: 0px;
+	margin-bottom: 4px;
+	font-size: 16px;
+	font-weight: bold;
+	color: #445158;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.savedReportNameWrapperColumn > span {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.savedReportSpaces {
+  line-height: 24px;
 }

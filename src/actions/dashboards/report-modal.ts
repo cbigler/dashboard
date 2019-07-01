@@ -7,11 +7,11 @@ import calculateReportData, { clearReportData } from '../../actions/dashboards/c
 
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
-export const PAGE_PICK_EXISTING_REPORT = 'PAGE_PICK_EXISTING_REPORT',
+export const PAGE_PICK_SAVED_REPORT = 'PAGE_PICK_SAVED_REPORT',
              PAGE_NEW_REPORT_TYPE = 'PAGE_NEW_REPORT_TYPE',
              PAGE_NEW_REPORT_CONFIGURATION = 'PAGE_NEW_REPORT_CONFIGURATION';
 
-export type ReportModalPages = 'PAGE_PICK_EXISTING_REPORT' | 'PAGE_NEW_REPORT_TYPE' | 'PAGE_NEW_REPORT_CONFIGURATION';
+export type ReportModalPages = 'PAGE_PICK_SAVED_REPORT' | 'PAGE_NEW_REPORT_TYPE' | 'PAGE_NEW_REPORT_CONFIGURATION';
 
 export const OPERATION_CREATE = 'OPERATION_CREATE',
              OPERATION_UPDATE = 'OPERATION_UPDATE';

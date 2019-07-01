@@ -1,5 +1,6 @@
 import showModal from '../modal/show';
 import core from '../../client/core';
+import mixpanelTrack from '../../helpers/mixpanel-track';
 
 import showToast from '../../actions/toasts';
 
@@ -25,6 +26,11 @@ export default function createDashboard() {
       dispatch(showToast({ text: 'Error creating dashboard.', type: 'error' }));
       return;
     }
+
+    mixpanelTrack('Dashboard Created', {
+      dashboard_id: newDashboard.data.id,
+      dashboard_name: newDashboard.data.name,
+    });
 
     dispatch(showToast({text: 'Created dashboard.'}));
     window.location.href = `#/dashboards/${newDashboard.data.id}`;

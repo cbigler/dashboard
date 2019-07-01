@@ -15,94 +15,78 @@ import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
 
-class ExploreSpaceTrends extends React.Component<any, any> {
-  container: any;
-  state = { width: 0 }
+function ExploreSpaceTrendsRaw ({
+  spaces,
+  space,
+  spaceHierarchy,
+  activeModal,
+}: any) {
+  if (space) {
+    const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    const width = this.container.offsetWidth - 80;
-    if (width !== prevState.width) {
-      this.setState({width});
-    }
-  }
+    // Which time segment label was selected?
+    const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
 
-  render() {
-    const {
-      spaces,
-      space,
-      spaceHierarchy,
-      activeModal,
-    } = this.props;
+    // And, with the knowlege of the selected space, which time segment within that time segment
+    // label is applicable to this space?
+    const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
-    if (space) {
-      const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
+    const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
-      // Which time segment label was selected?
-      const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
+    return <div className={styles.exploreSpaceTrendsPage}>
+      <ErrorBar
+        message={spaces.error}
+        modalOpen={activeModal.name !== null}
+      />
 
-      // And, with the knowlege of the selected space, which time segment within that time segment
-      // label is applicable to this space?
-      const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
+      {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
 
-      const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
-
-      return <div className={styles.exploreSpaceTrendsPage} ref={r => { this.container = r; }}>
-        <ErrorBar
-          message={spaces.error}
-          modalOpen={activeModal.name !== null}
-        />
-
-        {spaces.filters.startDate && spaces.filters.endDate ? <ExploreSpaceHeader /> : null}
-
-        {spaces.filters.startDate && spaces.filters.endDate ? (
-          <div className={styles.exploreSpaceTrendsContainer} >
-            <div className={styles.exploreSpaceTrends} ref={r => { this.container = r; }}>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <DailyMetricsCard
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  timeSegmentLabel={selectedTimeSegmentLabel}
-                  chartWidth={this.state.width}
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <HourlyBreakdownCard 
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  metric="VISITS"
-                  title="Hourly Breakdown - Visits"
-                  aggregation="NONE"
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <HourlyBreakdownCard 
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  metric="PEAKS"
-                  title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
-                  aggregation="AVERAGE"
-                />
-              </div>
-              <div className={styles.exploreSpaceTrendsItem}>
-                <UtilizationCard
-                  space={space}
-                  startDate={spaces.filters.startDate}
-                  endDate={spaces.filters.endDate}
-                  timeSegmentLabel={selectedTimeSegmentLabel}
-                  timeSegments={applicableTimeSegments}
-                  chartWidth={this.state.width}
-                />
-              </div>
+      {spaces.filters.startDate && spaces.filters.endDate ? (
+        <div className={styles.exploreSpaceTrendsContainer} >
+          <div className={styles.exploreSpaceTrends}>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <DailyMetricsCard
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                timeSegmentLabel={selectedTimeSegmentLabel}
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <HourlyBreakdownCard 
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                metric="VISITS"
+                title="Hourly Breakdown - Visits"
+                aggregation="NONE"
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <HourlyBreakdownCard 
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                metric="PEAKS"
+                title={multiWeekSelection ? "Hourly Breakdown - Average Peak Occupancy" : "Hourly Breakdown - Peak Occupancy"}
+                aggregation="AVERAGE"
+              />
+            </div>
+            <div className={styles.exploreSpaceTrendsItem}>
+              <UtilizationCard
+                space={space}
+                startDate={spaces.filters.startDate}
+                endDate={spaces.filters.endDate}
+                timeSegmentLabel={selectedTimeSegmentLabel}
+                timeSegments={applicableTimeSegments}
+              />
             </div>
           </div>
-        ) : null}
-      </div>;
-    } else {
-      return <div ref={r => { this.container = r; }}></div>;
-    }
+        </div>
+      ) : null}
+    </div>;
+  } else {
+    return null;
   }
 }
 
@@ -114,4 +98,4 @@ export default connect((state: any) => {
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
   };
-})(ExploreSpaceTrends);
+})(React.memo(ExploreSpaceTrendsRaw));

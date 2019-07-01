@@ -3,12 +3,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: medium
+      - image: circleci/node:10.16
+    resource_class: large
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v9
+          key: node_modules-{{checksum "./package.json"}}-v10
       - run:
           name: "Print out versions"
           command: |
@@ -24,18 +24,18 @@ jobs:
           name: "Run tests"
           command: npm test
       - save_cache:
-          key: node_modules-{{checksum "./package.json"}}-v9
+          key: node_modules-{{checksum "./package.json"}}-v10
           paths:
             - "./node_modules"
 
   preview:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: small
+      - image: circleci/node:10.16
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v9
+          key: node_modules-{{checksum "./package.json"}}-v10
       - run:
           name: "Set preview url in package.json"
           command: |
@@ -67,12 +67,12 @@ jobs:
 
   staging:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: small
+      - image: circleci/node:10.16
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v9
+          key: node_modules-{{checksum "./package.json"}}-v10
       - run:
           name: "Build staging dashboard"
           command: |
@@ -102,12 +102,12 @@ jobs:
 
   production:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: small
+      - image: circleci/node:10.16
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v9
+          key: node_modules-{{checksum "./package.json"}}-v10
       - run:
           name: "Build production dashboard"
           command: |

@@ -3,6 +3,7 @@ import changeCase from 'change-case';
 import core from '../../client/core';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityReport } from '../../types';
+import mixpanelTrack from '../../helpers/mixpanel-track';
 
 export const DASHBOARDS_REPORT_CREATE = 'DASHBOARDS_REPORT_CREATE';
 
@@ -20,6 +21,14 @@ export default function reportCreate(report) {
     } catch (err) {
       return null;
     }
-    return objectSnakeToCamel<DensityReport>(reportResponse.data);
+
+    const response = objectSnakeToCamel<DensityReport>(reportResponse.data);
+
+    mixpanelTrack('Report Created', {
+      report_id: response.id,
+      report_name: response.name,
+      report_type: response.type,
+    });
+    return response;
   };
 }
