@@ -97,6 +97,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                       formattedHierarchy={formattedHierarchy}
                       searchBoxPlaceholder="Search for space name"
                       width="100%"
+                      dropdownWidth="100%"
                     />
                   }
                 />
