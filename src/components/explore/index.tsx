@@ -260,10 +260,10 @@ export function ExploreRaw ({
                         notificationType: 'sms',
                         triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
                         triggerType: 'greater_than',
-                        cooldown: 30,
+                        cooldown: 60,
                         meta: {
                           toNum: '',
-                          escalationDelta: 30
+                          escalationDelta: null,
                         }
                       }
                     });

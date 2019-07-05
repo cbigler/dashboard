@@ -31,13 +31,13 @@ export const TRIGGER_TYPE_CHOICES = [
 ];
 
 export const COOLDOWN_CHOICES = [
-  {id: 30, label: '30 minutes'},
-  {id: 60, label: '60 minutes'},
-  {id: 120, label: '2 hours'},
-  {id: 240, label: '4 hours'},
-  {id: 720, label: '12 hours'},
-  {id: 1440, label: '24 hours'},
-  {id: -1, label: 'No reminder'},
+  {id: 30, label: 'Every 30 minutes'},
+  {id: 60, label: 'Every 60 minutes'},
+  {id: 120, label: 'Every 2 hours'},
+  {id: 240, label: 'Every 4 hours'},
+  {id: 720, label: 'Every 12 hours'},
+  {id: 1440, label: 'Every 24 hours'},
+  {id: -1, label: 'Once'},
 ];
 
 export function ExploreAlertManagementModalRaw({
@@ -53,7 +53,6 @@ export function ExploreAlertManagementModalRaw({
 
   const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
   const escalationDeltaInvalid = alert.meta.escalationDelta && isNaN(parseInt(alert.meta.escalationDelta));
-
   return <Modal
     visible={visible}
     width={480}
@@ -119,18 +118,18 @@ export function ExploreAlertManagementModalRaw({
         </div>
         <div className={styles.exploreAlertManagementModalFormRow}>
           <FormLabel
-            label="Send a reminder every"
+            label="Notify me at most"
             htmlFor="update-alert-cooldown-period"
             input={<div style={{display: 'flex', alignItems: 'center'}}>
               <InputBox
                 type="select"
                 value={alert.isOneShot ? -1 : alert.cooldown}
                 disabled={alert.isOneShot}
-                width={160}
+                width={250}
                 choices={COOLDOWN_CHOICES}
                 onChange={value => onUpdateAlert(alert, 'cooldown', value.id)}
               />
-              <div style={{width: 8}}></div>
+              <div style={{width: 14}}></div>
               <Switch
                 value={!alert.isOneShot}
                 onChange={e => onUpdateAlert(alert, 'isOneShot', !e.target.checked)}
