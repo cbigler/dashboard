@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import {
   AppBar,
@@ -31,13 +31,13 @@ export const TRIGGER_TYPE_CHOICES = [
 ];
 
 export const COOLDOWN_CHOICES = [
+  {id: -1, label: 'Once'},
   {id: 30, label: 'Every 30 minutes'},
   {id: 60, label: 'Every 60 minutes'},
   {id: 120, label: 'Every 2 hours'},
   {id: 240, label: 'Every 4 hours'},
   {id: 720, label: 'Every 12 hours'},
   {id: 1440, label: 'Every 24 hours'},
-  {id: -1, label: 'Once'},
 ];
 
 export function ExploreAlertManagementModalRaw({
@@ -56,7 +56,6 @@ export function ExploreAlertManagementModalRaw({
   return <Modal
     visible={visible}
     width={480}
-    height={520}
     onBlur={onCloseModal}
     onEscape={onCloseModal}
   >
@@ -123,41 +122,42 @@ export function ExploreAlertManagementModalRaw({
             input={<div style={{display: 'flex', alignItems: 'center'}}>
               <InputBox
                 type="select"
-                value={alert.isOneShot ? -1 : alert.cooldown}
-                disabled={alert.isOneShot}
+                value={alert.cooldown}
                 width={250}
                 choices={COOLDOWN_CHOICES}
                 onChange={value => onUpdateAlert(alert, 'cooldown', value.id)}
               />
-              <div style={{width: 14}}></div>
-              <Switch
-                value={!alert.isOneShot}
-                onChange={e => onUpdateAlert(alert, 'isOneShot', !e.target.checked)}
-              />
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN && !alert.isOneShot ?
-          <div className={styles.exploreAlertManagementModalFormRow}>
-            <FormLabel
-              label="Notify me again if it increases by"
-              htmlFor="update-alert-escalation-threshold"
-              input={<div style={{display: 'flex', alignItems: 'center'}}>
-                <InputBox
-                  type="text"
-                  width="80px"
-                  value={alert.meta.escalationDelta}
-                  onChange={e => onUpdateAlertMeta(
-                    alert,
-                    'escalationDelta',
-                    e.target.value.replace(/[^0-9]/, '')
-                  )}
-                />
-                <div style={{width: 8}}></div>
-                {parseInt(alert.meta.escalationDelta) === 1 ? 'person' : 'people'}
-              </div>}
-            />
-          </div> : null
+        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown) !== -1 ?
+          <Fragment>
+            <div className={styles.exploreAlertManagementModalFormRow}>
+              <div className={styles.escalationDescription}>
+                If the occupancy grows quickly, we can escalate this alert and bypass the {alert.cooldown} minute cooldown period.
+              </div>
+            </div>
+            <div className={styles.exploreAlertManagementModalFormRow}>
+              <FormLabel
+                label="Notify me again if it increases by"
+                htmlFor="update-alert-escalation-threshold"
+                input={<div style={{display: 'flex', alignItems: 'center'}}>
+                  <InputBox
+                    type="text"
+                    width="80px"
+                    value={alert.meta.escalationDelta}
+                    onChange={e => onUpdateAlertMeta(
+                      alert,
+                      'escalationDelta',
+                      e.target.value.replace(/[^0-9]/, '')
+                    )}
+                  />
+                  <div style={{width: 8}}></div>
+                  {parseInt(alert.meta.escalationDelta) === 1 ? 'person' : 'people'}
+                </div>}
+              />
+            </div>
+          </Fragment> : null
         }
       </div>
 
@@ -198,10 +198,6 @@ export default connect(
         ...current,
         [key]: value
       };
-      if (alert.cooldown === -1) {
-        alert.cooldown = 30;
-        alert.isOneShot = true;
-      }
       dispatch<any>(updateModal({ alert }));
     },
     onUpdateAlertMeta: async (current, key, value) => {
@@ -223,6 +219,10 @@ export default connect(
       }
       if (alert.cooldown) {
         alert.cooldown = parseInt(alert.cooldown);
+        if (alert.cooldown === -1) {
+          alert.cooldown = 0;
+          alert.isOneShot = true;
+        }
       }
       if (alert.id) {
         dispatch<any>(collectionAlertsUpdate(alert));

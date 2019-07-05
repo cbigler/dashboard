@@ -256,11 +256,11 @@ export function ExploreRaw ({
                       alert: {
                         spaceId: selectedSpace.id,
                         enabled: true,
-                        isOneShot: false,
+                        isOneShot: true,
                         notificationType: 'sms',
                         triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
                         triggerType: 'greater_than',
-                        cooldown: 60,
+                        cooldown: -1,
                         meta: {
                           toNum: '',
                           escalationDelta: null,
