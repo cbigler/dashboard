@@ -158,15 +158,21 @@ export default connect((state: any) => ({
     // This is a workaround to allow a user to download this csv data, or if that doesn't work,
     // then at least open it in a new tab for them to view and copy to the clipboard.
     // 1. Create a new blob url.
-    // 2. Redirect the user to it in a new tab.
-    const dataBlob = new Blob([csvData], {type: 'text/csv'});
-    const dataURL = URL.createObjectURL(dataBlob);
+    // 2a. Redirect the user to it in a new tab.
+    // 2b. Except on IE where we use a .msSaveBlob() function
+    const fileName = `${space.id}_${startDate}_${endDate}.csv`;
+    const dataBlob = new Blob([csvData], {type: 'text/csv;charset=utf8;'});
 
-    const tempLink = document.createElement('a');
-    document.body.appendChild(tempLink);
-    tempLink.href = dataURL;
-    tempLink.setAttribute('download', `${space.id}_${startDate}_${endDate}.csv`);
-    tempLink.click();
-    document.body.removeChild(tempLink);
+    if (navigator && navigator.msSaveBlob) { // IE 10+
+      navigator.msSaveBlob(dataBlob, fileName);
+    } else {
+      const dataURL = URL.createObjectURL(dataBlob);
+      const tempLink = document.createElement('a');
+      document.body.appendChild(tempLink);
+      tempLink.href = dataURL;
+      tempLink.setAttribute('download', fileName);
+      tempLink.click();
+      document.body.removeChild(tempLink);
+    }
   }
 }))(React.memo(HourlyBreakdownCardRaw));
