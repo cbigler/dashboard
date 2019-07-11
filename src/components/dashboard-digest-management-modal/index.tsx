@@ -519,7 +519,7 @@ function DigestManagementRecipientList({
             <div className={styles.digestManagementRecipientListEmptyStateInner}>
               <span className={styles.digestManagementRecipientListEmptyStateTitle}>Whoops</span>
               <span className={styles.digestManagementRecipientListEmptyStateDesc}>
-                We couldn't find any users that matched "{searchQuery}"
+                We couldn't find any users that matched "{searchQuery}". Head to <a href="/#/admin/user-management">User Management</a> to add a new account.
               </span>
             </div>
           </div>
