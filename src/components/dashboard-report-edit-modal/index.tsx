@@ -29,6 +29,7 @@ import {
   RadioButton,
   Switch,
   DateRangePicker,
+  DateRangePickerContext,
 } from '@density/ui';
 
 import updateModal from '../../actions/modal/update';
@@ -545,11 +546,31 @@ function DashboardReportEditModal({
                               ]}
                               onChange={choice => {
                                 if (choice.id === 'CUSTOM_RANGE') {
+                                  let displayTimeZone = 'America/New_York'; // Default value
+
+                                  // Use a huristic to try to guess what time zone should be
+                                  // defaulted to.
+                                  if (activeModal.data.report.settings.spaceId) {
+                                    const matchingSpace = spaces.data.find(
+                                      space => space.id === activeModal.data.report.settings.spaceId
+                                    );
+                                    if (matchingSpace) {
+                                      displayTimeZone = matchingSpace.timeZone;
+                                    }
+                                  } else if (activeModal.data.report.settings.spaceIds && activeModal.data.report.settings.spaceIds.length > 0) {
+                                    const matchingSpace = spaces.data.find(
+                                      space => space.id === activeModal.data.report.settings.spaceIds[0]
+                                    );
+                                    if (matchingSpace) {
+                                      displayTimeZone = matchingSpace.timeZone;
+                                    }
+                                  }
+
                                   reportUpdateSettings(fieldName, {
                                     type: 'CUSTOM_RANGE',
-                                    displayTimeZone: 'America/New_York',
-                                    startDate: moment.tz('America/New_York').subtract(7, 'days').startOf('day').format(),
-                                    endDate: moment.tz('America/New_York').subtract(1, 'day').startOf('day').format(),
+                                    displayTimeZone,
+                                    startDate: moment.tz(displayTimeZone).subtract(7, 'days').startOf('day').format(),
+                                    endDate: moment.tz(displayTimeZone).subtract(1, 'day').startOf('day').format(),
                                   });
                                 } else {
                                   reportUpdateSettings(fieldName, choice.id);
@@ -562,6 +583,84 @@ function DashboardReportEditModal({
                           {/* If custom range was picked, show some other options */}
                           {activeModal.data.report.settings[fieldName].type === 'CUSTOM_RANGE' ? (
                             <Fragment>
+                              <FormLabel
+                                label="Date Range"
+                                key={`${control.label} Date Range`}
+                                htmlFor={id}
+                                input={<DateRangePickerContext.Provider value="SMALL_WIDTH">
+                                  <DateRangePicker
+                                    startDate={formatForReactDates(
+                                      moment.tz(
+                                        activeModal.data.report.settings[fieldName].startDate,
+                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      ),
+                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                    )}
+                                    endDate={formatForReactDates(
+                                      moment.tz(
+                                        activeModal.data.report.settings[fieldName].endDate,
+                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      ),
+                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                    )}
+                                    onChange={({startDate, endDate}) => {
+                                      if (startDate) {
+                                        startDate = parseFromReactDates(startDate, {
+                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        }).startOf('day');
+                                      } else {
+                                        startDate = parseISOTimeAtSpace(
+                                          activeModal.data.report.settings[fieldName].startDate,
+                                          {
+                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          }
+                                        );
+                                      }
+                                      if (endDate) {
+                                        endDate = parseFromReactDates(endDate, {
+                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        }).endOf('day');
+                                      } else {
+                                        endDate = parseISOTimeAtSpace(
+                                          activeModal.data.report.settings[fieldName].endDate,
+                                          {
+                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          }
+                                        );
+                                      }
+
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        startDate: startDate.format(),
+                                        endDate: endDate.format(),
+                                      });
+                                    }}
+                                    isOutsideRange={day => isOutsideRange({
+                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                    }, day)}
+                                    // Within the component, store if the user has selected the start of end date picker
+                                    // input
+                                    focusedInput={activeModal.data.report.settings[fieldName].datePickerInput}
+                                    onFocusChange={(focused, a) => {
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        datePickerInput: focused,
+                                      });
+                                    }}
+                                    commonRanges={getCommonRangesForSpace({
+                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                    })}
+                                    onSelectCommonRange={({startDate, endDate}) => {
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        startDate: startDate.format(),
+                                        endDate: endDate.format(),
+                                      });
+                                    }}
+                                  />
+                                </DateRangePickerContext.Provider>}
+                                required={control.parameters.required}
+                              />
                               <FormLabel
                                 label="Time Zone"
                                 key={`${control.label} Time Zone`}
@@ -576,83 +675,6 @@ function DashboardReportEditModal({
                                     reportUpdateSettings(fieldName, {
                                       ...activeModal.data.report.settings[fieldName],
                                       displayTimeZone: choice.id,
-                                    });
-                                  }}
-                                />}
-                                required={control.parameters.required}
-                              />
-                              <FormLabel
-                                label="Date Range"
-                                key={`${control.label} Date Range`}
-                                htmlFor={id}
-                                input={<DateRangePicker
-                                  startDate={formatForReactDates(
-                                    moment.tz(
-                                      activeModal.data.report.settings[fieldName].startDate,
-                                      activeModal.data.report.settings[fieldName].displayTimeZone,
-                                    ),
-                                    {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
-                                  )}
-                                  endDate={formatForReactDates(
-                                    moment.tz(
-                                      activeModal.data.report.settings[fieldName].endDate,
-                                      activeModal.data.report.settings[fieldName].displayTimeZone,
-                                    ),
-                                    {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
-                                  )}
-                                  numberOfMonths={1}
-                                  onChange={({startDate, endDate}) => {
-                                    if (startDate) {
-                                      startDate = parseFromReactDates(startDate, {
-                                        timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                      }).startOf('day');
-                                    } else {
-                                      startDate = parseISOTimeAtSpace(
-                                        activeModal.data.report.settings[fieldName].startDate,
-                                        {
-                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                        }
-                                      );
-                                    }
-                                    if (endDate) {
-                                      endDate = parseFromReactDates(endDate, {
-                                        timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                      }).endOf('day');
-                                    } else {
-                                      endDate = parseISOTimeAtSpace(
-                                        activeModal.data.report.settings[fieldName].endDate,
-                                        {
-                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                        }
-                                      );
-                                    }
-
-                                    reportUpdateSettings(fieldName, {
-                                      ...activeModal.data.report.settings[fieldName],
-                                      startDate: startDate.format(),
-                                      endDate: endDate.format(),
-                                    });
-                                  }}
-                                  isOutsideRange={day => isOutsideRange({
-                                    timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                  }, day)}
-                                  // Within the component, store if the user has selected the start of end date picker
-                                  // input
-                                  focusedInput={activeModal.data.report.settings[fieldName].datePickerInput}
-                                  onFocusChange={(focused, a) => {
-                                    reportUpdateSettings(fieldName, {
-                                      ...activeModal.data.report.settings[fieldName],
-                                      datePickerInput: focused,
-                                    });
-                                  }}
-                                  commonRanges={getCommonRangesForSpace({
-                                    timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
-                                  })}
-                                  onSelectCommonRange={({startDate, endDate}) => {
-                                    reportUpdateSettings(fieldName, {
-                                      ...activeModal.data.report.settings[fieldName],
-                                      startDate: startDate.format(),
-                                      endDate: endDate.format(),
                                     });
                                   }}
                                 />}
