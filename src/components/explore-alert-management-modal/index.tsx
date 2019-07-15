@@ -129,7 +129,7 @@ export function ExploreAlertManagementModalRaw({
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown) !== -1 ?
+        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) !== -1 ?
           <Fragment>
             <div className={styles.exploreAlertManagementModalFormRow}>
               <div className={styles.escalationDescription}>
