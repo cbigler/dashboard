@@ -10,7 +10,6 @@ import {
   InputBox,
   Modal,
   PhoneInputBox,
-  Switch,
 } from '@density/ui';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label';
