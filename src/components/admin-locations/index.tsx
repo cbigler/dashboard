@@ -5,7 +5,6 @@ import styles from './styles.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import GenericErrorState from '../generic-error-state/index';
-import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsRootDetail from '../admin-locations-root-detail/index';
 import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
@@ -21,6 +20,8 @@ import {
   AppBarSection,
   Button,
   ButtonGroup,
+  ListView,
+  ListViewColumn,
   Skeleton,
 } from '@density/ui';
 
@@ -237,7 +238,7 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <div className={styles.loadingWrapper}>
                 <ListView data={[1, 2]} keyTemplate={i => i}>
                   <ListViewColumn
-                    title="Info"
+                    id="Info"
                     flexGrow={1}
                     flexShrink={1}
                     template={() => (
@@ -245,7 +246,6 @@ function AdminLocations({user, selectedSpace, spaces}) {
                     )}
                   />
                   <ListViewColumn
-                    title=""
                     template={() => (
                       <Skeleton width={200} height={16} />
                     )}

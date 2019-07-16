@@ -21,6 +21,8 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
   TagInput,
   Modal,
   RadioButton,
@@ -45,7 +47,6 @@ import {
 } from '../../actions/dashboards/report-modal';
 
 import GenericLoadingState from '../generic-loading-state';
-import ListView, { ListViewColumn } from '../list-view';
 import { SpacePickerDropdown } from '../space-picker';
 import FormLabel from '../form-label';
 
@@ -214,7 +215,7 @@ function DashboardReportEditModal({
                   ) : (
                     <ListView data={filteredReportList}>
                       <ListViewColumn
-                        title="Name"
+                        id="Name"
                         template={item => {
                           let reportType;
                           if (item.type === 'HEADER') {
@@ -246,7 +247,7 @@ function DashboardReportEditModal({
                         }}
                       />
                       <ListViewColumn
-                        title="Spaces"
+                        id="Spaces"
                         template={item => {
                           let spaceIds: Array<string> = [];
                           if (item.settings.spaceId) {

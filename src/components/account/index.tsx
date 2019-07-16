@@ -14,6 +14,9 @@ import {
   AppFrame,
   AppPane,
   AppScrollView,
+  ListView,
+  ListViewColumn,
+  ListViewClickableLink,
 } from '@density/ui';
 // import AppBar, { AppBarSection, AppBarTitle } from '@density/ui';
 
@@ -31,7 +34,6 @@ import colors from '@density/ui/variables/colors.json';
 import showToast from '../../actions/toasts';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 import ExploreAlertManagementModal, { COOLDOWN_CHOICES } from '../explore-alert-management-modal';
 
 // modes for management sections
@@ -321,7 +323,7 @@ function AlertSection({
         <div className={styles.accountPageSubsectionHeader}>SMS</div>
         <ListView data={alertData}>
           <ListViewColumn
-            title="Space"
+            id="Space"
             flexGrow={3}
             template={alert => (
               <ListViewClickableLink
@@ -332,7 +334,7 @@ function AlertSection({
             )}
           />
           <ListViewColumn
-            title="Trigger"
+            id="Trigger"
             flexGrow={1}
             template={alert => {
               const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
@@ -340,12 +342,12 @@ function AlertSection({
             }}
           />
           <ListViewColumn
-            title="Frequency"
+            id="Frequency"
             flexGrow={1}
             template={alert => COOLDOWN_CHOICES_MAP[alert.cooldown]}
           />
           <ListViewColumn
-            title="Enabled"
+            id="Enabled"
             template={alert => <Switch
               value={alert.enabled}
               onChange={e => onUpdateAlert({ ...alert, enabled: e.target.checked})}

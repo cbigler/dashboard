@@ -7,7 +7,10 @@ import {
   AppBar,
   AppBarSection,
   AppScrollView,
-  Icons
+  Icons,
+  ListView,
+  ListViewColumn,
+  ListViewClickableLink,
 } from '@density/ui';
 
 import colorVariables from '@density/ui/variables/colors.json';
@@ -18,8 +21,6 @@ import Toaster from '../toaster/index';
 import integrationServicesList from '../../actions/integrations/services';
 import collectionSpaceMappingsCreate from '../../actions/collection/space-mappings/create-update';
 import collectionSpaceMappingsDestroy from '../../actions/collection/space-mappings/destroy';
-
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import SpaceMappingsCreateUpdateModal from '../admin-space-mappings-create-update-modal/index';
 import SpaceMappingsDestroyModal from '../admin-space-mappings-destroy-modal/index';
@@ -116,12 +117,12 @@ export class AdminSpaceMappings extends React.Component<any, any> {
 
           {currentService && currentService.serviceAuthorization.lastSync !== null ? (
             <ListView keyTemplate={space => space.name} data={conferenceRooms as Array<DensitySpace>}>
-              <ListViewColumn title="Density Conference Room" template={space => (
+              <ListViewColumn id="Density Conference Room" template={space => (
                 <span className={styles.adminIntegrationsListviewValue}>{space.ancestry[0].name} > <strong>{space.name}</strong></span>
               )} />
-              <ListViewColumn flexGrow={1} flexShrink={1} />
+              <ListViewColumn width="auto" />
               <ListViewColumn 
-                title={currentService ? `${currentService.displayName} Space` : "..."} 
+                id={currentService ? `${currentService.displayName} Space` : "..."} 
                 template={space => {
                   const serviceSpace = serviceSpaceForService(space.spaceMappings, currentService)
                   if (serviceSpace) {
@@ -136,7 +137,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 })}
               />
               <ListViewColumn 
-                title="Meeting Analytics" 
+                id="Meeting Analytics" 
                 template={space => {
                   if (space.spaceMappings.length > 0) {
                     return <ListViewClickableLink>View</ListViewClickableLink>

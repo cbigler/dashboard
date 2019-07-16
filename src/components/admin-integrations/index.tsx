@@ -7,7 +7,10 @@ import {
   AppBar,
   AppBarSection,
   AppScrollView,
-  Icons
+  Icons,
+  ListView,
+  ListViewColumn,
+  ListViewClickableLink,
 } from '@density/ui';
 
 import robinIcon from '../../assets/images/icon-robin.svg';
@@ -16,8 +19,6 @@ import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import outlookIcon from '../../assets/images/icon-outlook.svg';
 import colorVariables from '@density/ui/variables/colors.json';
-
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -137,16 +138,16 @@ export function AdminIntegrations({
       <div className={styles.adminIntegrationsRoomBookingList}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
-          <ListViewColumn title="Service" template={item => (
+          <ListViewColumn id="Service" template={item => (
             <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
-          <ListViewColumn title="Name" template={item => (
+          <ListViewColumn id="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn id="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
-          <ListViewColumn title="Default service" template={item => {
+          <ListViewColumn id="Default service" template={item => {
             if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
               return <span className={styles.adminIntegrationsListviewValue}>Default</span>
             } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
@@ -157,7 +158,7 @@ export function AdminIntegrations({
           }} 
           onClick={item => onMakeServiceAuthorizationDefault(item.serviceAuthorization.id)}
           />          
-          <ListViewColumn flexGrow={1} flexShrink={1} />
+          <ListViewColumn width="auto" />
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
             onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
@@ -176,16 +177,16 @@ export function AdminIntegrations({
       <div className={styles.adminIntegrationsChatList}>
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
-          <ListViewColumn title="Service" template={item => (
+          <ListViewColumn id="Service" template={item => (
             <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
           )} />
-          <ListViewColumn title="Name" template={item => (
+          <ListViewColumn id="Name" template={item => (
             <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
           )} />
-          <ListViewColumn title="Added by" template={item => item.serviceAuthorization.id != null ? (
+          <ListViewColumn id="Added by" template={item => item.serviceAuthorization.id != null ? (
             <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
           } />
-          <ListViewColumn flexGrow={1} flexShrink={1} />
+          <ListViewColumn width="auto" />
           <ListViewColumn
             template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {

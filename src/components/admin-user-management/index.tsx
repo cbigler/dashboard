@@ -18,6 +18,9 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
+  ListViewClickableLink,
   Modal,
   Skeleton,
 } from '@density/ui';
@@ -38,7 +41,6 @@ import collectionUsersUpdate from '../../actions/collection/users/update';
 import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
 
 import FormLabel from '../form-label';
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 
 export const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
@@ -200,14 +202,14 @@ export function AdminUserManagement({
         {users.view === 'LOADING' ? (
           <div className={classnames(styles.adminUserManagementList, {[styles.centered]: showEmptySearchState})}>
             <ListView data={[1, 2]} keyTemplate={n => n}>
-              <ListViewColumn title="User" template={() => <Skeleton width={200} />} />
-              <ListViewColumn title="Role" template={() => <Skeleton width={80} />} />
-              <ListViewColumn flexGrow={1} flexShrink={1} />
-              <ListViewColumn title="Activity" template={() => <Skeleton width={80} />} />
-              <ListViewColumn title="Invitation" template={() => <Skeleton width={100} />} />
+              <ListViewColumn id="User" template={() => <Skeleton width={200} />} />
+              <ListViewColumn id="Role" template={() => <Skeleton width={80} />} />
+              <ListViewColumn width="auto" />
+              <ListViewColumn id="Activity" template={() => <Skeleton width={80} />} />
+              <ListViewColumn id="Invitation" template={() => <Skeleton width={100} />} />
               <ListViewColumn />
-              <ListViewColumn title="Space access" template={() => <Skeleton />} />
-              <ListViewColumn title="Actions" template={() => <Skeleton />} />
+              <ListViewColumn id="Space access" template={() => <Skeleton />} />
+              <ListViewColumn id="Actions" template={() => <Skeleton />} />
             </ListView>
           </div>
         ) : null}
@@ -220,13 +222,14 @@ export function AdminUserManagement({
               </div>
             ) : (
               <ListView data={filteredUsers}>
-                <ListViewColumn title="User" template={item => (
+                <ListViewColumn id="User" template={item => (
                   <span className={styles.adminUserManagementCellNameEmailCell}>
                     <h5>{item.fullName || '---'}</h5>
                     <span>{item.email}</span>
                   </span>
                 )} />
                 <ListViewColumn
+                  id="Role"
                   title={(
                     <Fragment>
                       <span style={{paddingRight: 8}}>Role</span>
@@ -241,13 +244,13 @@ export function AdminUserManagement({
                   )}
                   template={item => ROLE_INFO[item.role].label}
                 />
-                <ListViewColumn flexGrow={1} flexShrink={1} />
-                <ListViewColumn title="Activity" template={item => {
+                <ListViewColumn width="auto" />
+                <ListViewColumn id="Activity" template={item => {
                   const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
                   return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
                 }} />
                 <ListViewColumn
-                  title="Invitation"
+                  id="Invitation"
                   template={item => (
                     <Fragment>
                       <span className={styles.adminUserManagementCellInvitationStatus}>
@@ -268,6 +271,7 @@ export function AdminUserManagement({
                 <ListViewColumn
                 />
                 <ListViewColumn
+                  id="Space access"
                   title={(
                     <span style={{paddingRight: 8}}>Space access</span>
                   )}
@@ -289,7 +293,7 @@ export function AdminUserManagement({
                   flexShrink={0}
                 />
                 <ListViewColumn
-                  title="Actions"
+                  id="Actions"
                   template={item => item.isEditable && item.id !== user.data.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
                       Edit

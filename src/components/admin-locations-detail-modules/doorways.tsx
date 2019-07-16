@@ -16,11 +16,12 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
   Modal,
   RadioButton,
 } from '@density/ui';
 
-import ListView, { ListViewColumn } from '../list-view';
 import Checkbox from '../checkbox';
 import FormLabel from '../form-label/index';
 
@@ -428,7 +429,7 @@ function DoorwayList({
     <div className={classnames(styles.list, {[styles.shaded]: shaded})}>
       <ListView data={doorways}>
         <ListViewColumn
-          title="Doorways"
+          id="Doorways"
           template={item => {
             const newDoorwayCheckboxState = !item.selected;
             return (
@@ -452,7 +453,7 @@ function DoorwayList({
           width={320}
         />
         <ListViewColumn
-          title="Linked spaces"
+          id="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
             if (spacesOtherThanSelectedSpace.length > 1) {
@@ -478,7 +479,7 @@ function DoorwayList({
           width={240}
         />
         <ListViewColumn
-          title="DPU position"
+          id="DPU position"
           template={i => {
             return (
               <Fragment>
@@ -513,7 +514,7 @@ function DoorwayList({
           width={160}
         />
         <ListViewColumn
-          title={null}
+          id={null}
           template={i => i.selected ? (
             <div
               className={styles.editLink}

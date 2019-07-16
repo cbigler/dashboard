@@ -11,7 +11,6 @@ import showToast from '../../actions/toasts';
 
 import GenericLoadingState from '../generic-loading-state';
 import GenericErrorState from '../generic-error-state';
-import ListView, { ListViewColumn } from '../list-view';
 import mixpanelTrack from '../../helpers/mixpanel-track';
 
 import {
@@ -42,6 +41,8 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import DetailModule from '../admin-locations-detail-modules';
@@ -156,7 +157,7 @@ export function DashboardEdit({
                   ) : (
                     <ListView data={dashboards.formState.reportSet}>
                       <ListViewColumn
-                        title="Name"
+                        id="Name"
                         template={item => (
                           <Fragment>
                             <Icons.Report color={colorVariables.grayDark} />
@@ -167,7 +168,7 @@ export function DashboardEdit({
                         )}
                       />
                       <ListViewColumn
-                        title="Report Type"
+                        id="Report Type"
                         template={item => {
                           if (item.type === 'HEADER') {
                             return 'Header';
@@ -178,7 +179,6 @@ export function DashboardEdit({
                         flexGrow={1}
                       />
                       <ListViewColumn
-                        title=""
                         template={item => (
                           <ButtonGroup>
                             <Button
@@ -204,7 +204,6 @@ export function DashboardEdit({
                         width="auto"
                       />
                       <ListViewColumn
-                        title=""
                         template={item => (
                           <ButtonGroup>
                             <Button
