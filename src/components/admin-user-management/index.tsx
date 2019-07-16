@@ -202,14 +202,14 @@ export function AdminUserManagement({
         {users.view === 'LOADING' ? (
           <div className={classnames(styles.adminUserManagementList, {[styles.centered]: showEmptySearchState})}>
             <ListView data={[1, 2]} keyTemplate={n => n}>
-              <ListViewColumn id="User" template={() => <Skeleton width={200} />} />
-              <ListViewColumn id="Role" template={() => <Skeleton width={80} />} />
-              <ListViewColumn width="auto" />
-              <ListViewColumn id="Activity" template={() => <Skeleton width={80} />} />
-              <ListViewColumn id="Invitation" template={() => <Skeleton width={100} />} />
+              <ListViewColumn id="User" width={240} template={() => <Skeleton />} />
+              <ListViewColumn id="Role" width={140} template={() => <Skeleton />} />
               <ListViewColumn />
-              <ListViewColumn id="Space access" template={() => <Skeleton />} />
-              <ListViewColumn id="Actions" template={() => <Skeleton />} />
+              <ListViewColumn id="Activity" width={200} template={() => <Skeleton />} />
+              <ListViewColumn id="Invitation" width={100} template={() => <Skeleton />} />
+              <ListViewColumn />
+              <ListViewColumn id="Space access" width={120} template={() => <Skeleton />} />
+              <ListViewColumn id="Actions" width={80} template={() => <Skeleton />} />
             </ListView>
           </div>
         ) : null}
@@ -222,14 +222,18 @@ export function AdminUserManagement({
               </div>
             ) : (
               <ListView data={filteredUsers}>
-                <ListViewColumn id="User" template={item => (
-                  <span className={styles.adminUserManagementCellNameEmailCell}>
-                    <h5>{item.fullName || '---'}</h5>
-                    <span>{item.email}</span>
-                  </span>
-                )} />
+                <ListViewColumn
+                  id="User"
+                  width={240}
+                  template={item => (
+                    <span className={styles.adminUserManagementCellNameEmailCell}>
+                      <h5>{item.fullName || '---'}</h5>
+                      <span>{item.email}</span>
+                    </span>
+                  )} />
                 <ListViewColumn
                   id="Role"
+                  width={140}
                   title={(
                     <Fragment>
                       <span style={{paddingRight: 8}}>Role</span>
@@ -244,13 +248,18 @@ export function AdminUserManagement({
                   )}
                   template={item => ROLE_INFO[item.role].label}
                 />
-                <ListViewColumn width="auto" />
-                <ListViewColumn id="Activity" template={item => {
-                  const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
-                  return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
-                }} />
+                <ListViewColumn />
+                <ListViewColumn
+                  id="Activity"
+                  width={200}
+                  template={item => {
+                    const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
+                    return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
+                  }}
+                />
                 <ListViewColumn
                   id="Invitation"
+                  width={100}
                   template={item => (
                     <Fragment>
                       <span className={styles.adminUserManagementCellInvitationStatus}>
@@ -268,10 +277,10 @@ export function AdminUserManagement({
                     </Fragment>
                   )}
                 />
-                <ListViewColumn
-                />
+                <ListViewColumn />
                 <ListViewColumn
                   id="Space access"
+                  width={120}
                   title={(
                     <span style={{paddingRight: 8}}>Space access</span>
                   )}
@@ -290,16 +299,16 @@ export function AdminUserManagement({
                       </span>;
                     }
                   }}
-                  flexShrink={0}
                 />
                 <ListViewColumn
                   id="Actions"
+                  width={72}
+                  align="right"
                   template={item => item.isEditable && item.id !== user.data.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
                       Edit
                     </ListViewClickableLink>
                   ) : null}
-                  flexShrink={0}
                 />
               </ListView>
             )}

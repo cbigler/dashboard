@@ -17,6 +17,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
       >
         <ListViewColumn
           id="Info"
+          width={320}
           template={item => (
             <Fragment>
               <AdminLocationsListViewImage space={item} />
@@ -28,18 +29,20 @@ function SpaceList({ user, spaces, renderedSpaces }) {
               </div>
             </Fragment>
           )}
-          width="auto"
         />
         <ListViewColumn
           id="Levels"
+          width={80}
           template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
         />
         <ListViewColumn
           id="Rooms"
+          width={80}
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
         />
         <ListViewColumn
           id={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+          width={120}
           template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
             item.sizeArea,
             item.sizeAreaUnit,
@@ -48,21 +51,29 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         />
         <ListViewColumn
           id="Annual rent"
+          width={100}
           template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
         />
         <ListViewColumn
           id="Target capacity"
+          width={120}
           template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
         />
         <ListViewColumn
           id="Capacity"
+          width={100}
           template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
         />
         <ListViewColumn
           id="DPUs"
+          width={80}
           template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
         />
-        <ListViewColumn template={item => <Icons.ArrowRight />} />
+        <ListViewColumn
+          width={60}
+          align="right"
+          template={item => <span style={{paddingRight: 24}}><Icons.ArrowRight /></span>}
+        />
       </ListView>
     </div>
   );

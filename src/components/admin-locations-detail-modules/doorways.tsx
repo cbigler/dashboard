@@ -448,9 +448,7 @@ function DoorwayList({
               </Fragment>
             );
           }}
-          flexGrow={1}
-          flexShrink={1}
-          width={320}
+          width={360}
         />
         <ListViewColumn
           id="Linked spaces"
@@ -476,7 +474,7 @@ function DoorwayList({
               )
             }
           }}
-          width={240}
+          width={200}
         />
         <ListViewColumn
           id="DPU position"
@@ -499,7 +497,9 @@ function DoorwayList({
                         });
                       }}
                     >
-                      <Icons.Switch color={colorVariables.brandPrimary} />
+                      <div style={{marginTop: 6}}>
+                        <Icons.Switch color={colorVariables.brandPrimary} />
+                      </div>
                     </Button>
                     <span className={styles.dpuPosition}>
                       {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
@@ -511,7 +511,7 @@ function DoorwayList({
               </Fragment>
             );
           }}
-          width={160}
+          width={140}
         />
         <ListViewColumn
           id={null}

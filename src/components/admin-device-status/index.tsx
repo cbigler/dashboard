@@ -35,21 +35,26 @@ export function AdminDeviceStatus({
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
           id="Serial number"
+          width={160}
           template={item => <strong>{item.serialNumber}</strong>} />
         <ListViewColumn
           id="Status"
+          width={160}
           template={item => <span style={{
             color: getStatusColor(item.status)
           }}>{item.status}</span>} />
         <ListViewColumn
           id="Last heartbeat"
+          width={180}
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
-        <ListViewColumn flexGrow={1} />
+        <ListViewColumn />
         <ListViewColumn
           id="Doorway"
+          minWidth={180}
           template={item => item.doorwayName} />
         <ListViewColumn
           id="Space(s)"
+          minWidth={240}
           template={item => spaces.data.filter(space => {
             return space.doorways.map(doorway => {
               return doorway.id

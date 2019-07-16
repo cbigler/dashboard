@@ -43,6 +43,7 @@ import {
   InputBox,
   ListView,
   ListViewColumn,
+  ListViewColumnSpacer,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import DetailModule from '../admin-locations-detail-modules';
@@ -158,6 +159,7 @@ export function DashboardEdit({
                     <ListView data={dashboards.formState.reportSet}>
                       <ListViewColumn
                         id="Name"
+                        width={240}
                         template={item => (
                           <Fragment>
                             <Icons.Report color={colorVariables.grayDark} />
@@ -169,6 +171,7 @@ export function DashboardEdit({
                       />
                       <ListViewColumn
                         id="Report Type"
+                        width={240}
                         template={item => {
                           if (item.type === 'HEADER') {
                             return 'Header';
@@ -176,9 +179,10 @@ export function DashboardEdit({
                             return REPORTS[item.type] ? REPORTS[item.type].metadata.displayName : item.type;
                           }
                         }}
-                        flexGrow={1}
                       />
+                      <ListViewColumnSpacer />
                       <ListViewColumn
+                        width={100}
                         template={item => (
                           <ButtonGroup>
                             <Button
@@ -201,9 +205,10 @@ export function DashboardEdit({
                             </Button>
                           </ButtonGroup>
                         )}
-                        width="auto"
                       />
                       <ListViewColumn
+                        width={60}
+                        align="right"
                         template={item => (
                           <ButtonGroup>
                             <Button
@@ -212,7 +217,6 @@ export function DashboardEdit({
                             >Edit</Button>
                           </ButtonGroup>
                         )}
-                        width="auto"
                       />
                     </ListView>
                   )}

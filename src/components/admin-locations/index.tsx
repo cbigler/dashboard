@@ -239,13 +239,13 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 <ListView data={[1, 2]} keyTemplate={i => i}>
                   <ListViewColumn
                     id="Info"
-                    flexGrow={1}
-                    flexShrink={1}
+                    width="auto"
                     template={() => (
                       <Skeleton width={200} height={16} />
                     )}
                   />
                   <ListViewColumn
+                    width={200}
                     template={() => (
                       <Skeleton width={200} height={16} />
                     )}

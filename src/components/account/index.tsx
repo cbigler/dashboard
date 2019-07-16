@@ -324,7 +324,7 @@ function AlertSection({
         <ListView data={alertData}>
           <ListViewColumn
             id="Space"
-            flexGrow={3}
+            width={200}
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
@@ -335,7 +335,6 @@ function AlertSection({
           />
           <ListViewColumn
             id="Trigger"
-            flexGrow={1}
             template={alert => {
               const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
               return `Occupancy ${greaterLessSymbol} ${alert.triggerValue}`;
@@ -343,7 +342,6 @@ function AlertSection({
           />
           <ListViewColumn
             id="Frequency"
-            flexGrow={1}
             template={alert => COOLDOWN_CHOICES_MAP[alert.cooldown]}
           />
           <ListViewColumn

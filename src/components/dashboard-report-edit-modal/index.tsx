@@ -216,6 +216,7 @@ function DashboardReportEditModal({
                     <ListView data={filteredReportList}>
                       <ListViewColumn
                         id="Name"
+                        width={320}
                         template={item => {
                           let reportType;
                           if (item.type === 'HEADER') {
@@ -239,7 +240,6 @@ function DashboardReportEditModal({
 														</div>
                           );
                         }}
-                        flexGrow={1}
                         onClick={item => {
                           if (!reportsInSelectedDashboard.find(report => report.id === item.id)) {
                             onUpdateModal('pickSavedReportSelectedReportId', item.id)
@@ -272,7 +272,6 @@ function DashboardReportEditModal({
                             </span>
                           )
                         }}
-                        flexGrow={1}
                       />
                     </ListView>
                   )
