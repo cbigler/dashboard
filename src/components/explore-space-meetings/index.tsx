@@ -65,9 +65,7 @@ export function ExploreSpaceMeetingsRaw({
                     Setup an integration with Robin to get started.
                   </div>
 
-                  <Button variant="filled" onClick={() => {
-                    window.location.href = '#/admin/integrations';
-                  }}>Integrate</Button>
+                  <Button variant="filled" href="#/admin/integrations">Integrate</Button>
                 </div>
               </div>
             ) : null}
