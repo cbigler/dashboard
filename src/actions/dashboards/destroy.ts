@@ -11,6 +11,7 @@ export default function dashboardsDestroy(dashboard) {
       dispatch(dashboardsError(err));
       return false;
     }
+    dispatch({type: DASHBOARDS_DESTROY, dashboard});
     return true;
   };
 }

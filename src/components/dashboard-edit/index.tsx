@@ -104,7 +104,7 @@ export function DashboardEdit({
         </div>
       ) : null}
 
-      {dashboards.view === 'VISIBLE' ? (
+      {dashboards.view === 'VISIBLE' && selectedDashboard ? (
         <AppFrame>
           <AppPane>
             <AppBar>
@@ -286,12 +286,11 @@ export default connect((state: any) => ({
       callback: async () => {
         const ok = await dispatch<any>(dashboardsDestroy(dashboard));
         if (ok) {
+          window.location.href = `#/dashboards`;
           dispatch<any>(showToast({ text: 'Dashboard deleted successfully' }));
         } else {
           dispatch<any>(showToast({ type: 'error', text: 'Error deleting dashboard' }));
         }
-        // TODO: I am unsure exactly why this won't redirect without the timeout.
-        setTimeout(() => { window.location.href = `#/dashboards`; }, 500);
       }
     }));
   },

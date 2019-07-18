@@ -6,6 +6,7 @@ import { DASHBOARDS_ERROR } from '../../actions/dashboards/error';
 import { DASHBOARDS_SELECT } from '../../actions/dashboards/select';
 import { DASHBOARDS_UPDATE } from '../../actions/dashboards/update';
 import { DASHBOARDS_DESTROY } from '../../actions/dashboards/destroy';
+import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
@@ -38,7 +39,9 @@ const initialState = {
     }
     */
   },
-  formState: {},
+  formState: {
+    id: undefined,
+  },
   reportList: [],
   timeSegmentLabels: [],
 };
@@ -65,6 +68,10 @@ export default function dashboards(state=initialState, action) {
         }), {})),
       },
     };
+  }
+
+  case ROUTE_TRANSITION_DASHBOARD_LIST: {
+    return { ...state, loading: true, view: 'LOADING' };
   }
 
   case ROUTE_TRANSITION_DASHBOARD_EDIT:
@@ -156,7 +163,9 @@ export default function dashboards(state=initialState, action) {
       ...state,
       view: 'VISIBLE',
       loading: false,
-      data: state.data.map((item: any) => item.id !== action.dashboard.id),
+      selected: state.selected === action.dashboard.id ? null : state.selected,
+      data: state.data.filter((item: any) => item.id !== action.dashboard.id),
+      formState: state.formState.id === action.dashboard.id ? {} : state.formState,
     };
   }
 
