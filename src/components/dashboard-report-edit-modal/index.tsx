@@ -2,8 +2,11 @@ import React, { ReactNode, Fragment } from 'react';
 import changeCase from 'change-case';
 import debounce from 'lodash.debounce';
 import { connect } from 'react-redux';
+import moment from 'moment';
 import styles from './styles.module.scss';
 import Report, { REPORTS, TIME_RANGES } from '@density/reports';
+import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
+import getCommonRangesForSpace from '../../helpers/common-ranges';
 
 import {
   DensityReport,
@@ -25,6 +28,8 @@ import {
   Modal,
   RadioButton,
   Switch,
+  DateRangePicker,
+  DateRangePickerContext,
 } from '@density/ui';
 
 import updateModal from '../../actions/modal/update';
@@ -51,6 +56,12 @@ import FormLabel from '../form-label';
 
 import spaceHierarchyFormatter, { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import filterCollection from '../../helpers/filter-collection';
+import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices';
+import {
+  formatForReactDates,
+  parseFromReactDates,
+  parseISOTimeAtSpace,
+} from '../../helpers/space-time-utilities';
 
 type DashboardReportModalProps = {
   activeModal: {
@@ -509,23 +520,170 @@ function DashboardReportEditModal({
                       break;
 
                     case 'TIME_RANGE_PICKER':
-                      input = (
-                        <InputBox
-                          type="select"
-                          id={id}
-                          width="100%"
-                          value={activeModal.data.report.settings[fieldName]}
-                          choices={[
-                            {id: TIME_RANGES.LAST_WEEK, label: 'Last Week' },
-                            {id: TIME_RANGES.LAST_4_WEEKS, label: 'Last 4 weeks' },
-                            {id: TIME_RANGES.WEEK_TO_DATE, label: 'Week to date' },
-                            {id: TIME_RANGES.LAST_7_DAYS, label: 'Last 7 days' },
-                            {id: TIME_RANGES.LAST_28_DAYS, label: 'Last 28 days' },
-                          ]}
-                          onChange={choice => reportUpdateSettings(fieldName, choice.id)}
-                        />
+                      return (
+                        <Fragment key={control.label}>
+
+                          {/* The main time range selector */}
+                          <FormLabel
+                            label={control.label}
+                            key={control.label}
+                            htmlFor={id}
+                            input={<InputBox
+                              type="select"
+                              id={id}
+                              width="100%"
+                              value={
+                                activeModal.data.report.settings[fieldName].type ||
+                                activeModal.data.report.settings[fieldName]
+                              }
+                              choices={[
+                                {id: TIME_RANGES.LAST_WEEK, label: 'Last Week' },
+                                {id: TIME_RANGES.LAST_4_WEEKS, label: 'Last 4 weeks' },
+                                {id: TIME_RANGES.WEEK_TO_DATE, label: 'Week to date' },
+                                {id: TIME_RANGES.LAST_7_DAYS, label: 'Last 7 days' },
+                                {id: TIME_RANGES.LAST_28_DAYS, label: 'Last 28 days' },
+                                {id: 'CUSTOM_RANGE', label: 'Absolute time period...' },
+                              ]}
+                              onChange={choice => {
+                                if (choice.id === 'CUSTOM_RANGE') {
+                                  let displayTimeZone = 'America/New_York'; // Default value
+
+                                  // Use a huristic to try to guess what time zone should be
+                                  // defaulted to.
+                                  if (activeModal.data.report.settings.spaceId) {
+                                    const matchingSpace = spaces.data.find(
+                                      space => space.id === activeModal.data.report.settings.spaceId
+                                    );
+                                    if (matchingSpace) {
+                                      displayTimeZone = matchingSpace.timeZone;
+                                    }
+                                  } else if (activeModal.data.report.settings.spaceIds && activeModal.data.report.settings.spaceIds.length > 0) {
+                                    const matchingSpace = spaces.data.find(
+                                      space => space.id === activeModal.data.report.settings.spaceIds[0]
+                                    );
+                                    if (matchingSpace) {
+                                      displayTimeZone = matchingSpace.timeZone;
+                                    }
+                                  }
+
+                                  reportUpdateSettings(fieldName, {
+                                    type: 'CUSTOM_RANGE',
+                                    displayTimeZone,
+                                    startDate: moment.tz(displayTimeZone).subtract(7, 'days').startOf('day').format(),
+                                    endDate: moment.tz(displayTimeZone).subtract(1, 'day').startOf('day').format(),
+                                  });
+                                } else {
+                                  reportUpdateSettings(fieldName, choice.id);
+                                }
+                              }}
+                            />}
+                            required={control.parameters.required}
+                          />
+
+                          {/* If custom range was picked, show some other options */}
+                          {activeModal.data.report.settings[fieldName].type === 'CUSTOM_RANGE' ? (
+                            <Fragment>
+                              <FormLabel
+                                label="Date Range"
+                                key={`${control.label} Date Range`}
+                                htmlFor={id}
+                                input={<DateRangePickerContext.Provider value="SMALL_WIDTH">
+                                  <DateRangePicker
+                                    startDate={formatForReactDates(
+                                      moment.tz(
+                                        activeModal.data.report.settings[fieldName].startDate,
+                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      ),
+                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                    )}
+                                    endDate={formatForReactDates(
+                                      moment.tz(
+                                        activeModal.data.report.settings[fieldName].endDate,
+                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      ),
+                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                    )}
+                                    onChange={({startDate, endDate}) => {
+                                      if (startDate) {
+                                        startDate = parseFromReactDates(startDate, {
+                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        }).startOf('day');
+                                      } else {
+                                        startDate = parseISOTimeAtSpace(
+                                          activeModal.data.report.settings[fieldName].startDate,
+                                          {
+                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          }
+                                        );
+                                      }
+                                      if (endDate) {
+                                        endDate = parseFromReactDates(endDate, {
+                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        }).endOf('day');
+                                      } else {
+                                        endDate = parseISOTimeAtSpace(
+                                          activeModal.data.report.settings[fieldName].endDate,
+                                          {
+                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          }
+                                        );
+                                      }
+
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        startDate: startDate.format(),
+                                        endDate: endDate.format(),
+                                      });
+                                    }}
+                                    isOutsideRange={day => isOutsideRange({
+                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                    }, day)}
+                                    // Within the component, store if the user has selected the start of end date picker
+                                    // input
+                                    focusedInput={activeModal.data.report.settings[fieldName].datePickerInput}
+                                    onFocusChange={(focused, a) => {
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        datePickerInput: focused,
+                                      });
+                                    }}
+                                    commonRanges={getCommonRangesForSpace({
+                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                    })}
+                                    onSelectCommonRange={({startDate, endDate}) => {
+                                      reportUpdateSettings(fieldName, {
+                                        ...activeModal.data.report.settings[fieldName],
+                                        startDate: startDate.format(),
+                                        endDate: endDate.format(),
+                                      });
+                                    }}
+                                  />
+                                </DateRangePickerContext.Provider>}
+                                required={control.parameters.required}
+                              />
+                              <FormLabel
+                                label="Time Zone"
+                                key={`${control.label} Time Zone`}
+                                htmlFor={id}
+                                input={<InputBox
+                                  type="select"
+                                  choices={TIME_ZONE_CHOICES}
+                                  menuMaxHeight={300}
+                                  width="100%"
+                                  value={activeModal.data.report.settings[fieldName].displayTimeZone}
+                                  onChange={choice => {
+                                    reportUpdateSettings(fieldName, {
+                                      ...activeModal.data.report.settings[fieldName],
+                                      displayTimeZone: choice.id,
+                                    });
+                                  }}
+                                />}
+                                required={control.parameters.required}
+                              />
+                            </Fragment>
+                          ) : null}
+                        </Fragment>
                       );
-                      break;
 
                     case 'PERCENTAGE':
                       input = (
