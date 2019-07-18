@@ -20,11 +20,11 @@
   border-top: 1px solid $grayLight;
 }
 .name {
-  width: 320px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   padding-left: 10px;
+  padding-right: 10px;
 }
 .itemContainer {
   display: flex;

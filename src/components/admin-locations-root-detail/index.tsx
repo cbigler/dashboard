@@ -1,20 +1,23 @@
 import React, { Fragment } from 'react';
-import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit/index';
 
 import styles from './styles.module.scss';
 
-import { Icons } from '@density/ui';
+import { Icons, ListView, ListViewColumn } from '@density/ui';
 
 
 function SpaceList({ user, spaces, renderedSpaces }) {
   return (
     <div className={styles.spaceList}>
-      <ListView data={renderedSpaces}>
+      <ListView
+        data={renderedSpaces}
+        onClickRow={item => window.location.href = `#/admin/locations/${item.id}`}
+      >
         <ListViewColumn
-          title="Info"
+          id="Info"
+          width={320}
           template={item => (
             <Fragment>
               <AdminLocationsListViewImage space={item} />
@@ -26,52 +29,50 @@ function SpaceList({ user, spaces, renderedSpaces }) {
               </div>
             </Fragment>
           )}
-          flexGrow={1}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Levels"
+          id="Levels"
+          width={80}
           template={item => spaces.data.filter(space => space.spaceType === 'floor' && space.ancestry.map(a => a.id).includes(item.id)).length}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Rooms"
+          id="Rooms"
+          width={80}
           template={item => spaces.data.filter(space => space.spaceType === 'space' && space.ancestry.map(a => a.id).includes(item.id)).length}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+          id={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+          width={120}
           template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
             item.sizeArea,
             item.sizeAreaUnit,
             user.data.sizeAreaDisplayUnit,
           ) : <Fragment>&mdash;</Fragment>}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Annual rent"
+          id="Annual rent"
+          width={100}
           template={item => item.annualRent ? `$${item.annualRent}` : <Fragment>&mdash;</Fragment>}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Target capacity"
+          id="Target capacity"
+          width={120}
           template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="Capacity"
+          id="Capacity"
+          width={100}
           template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title="DPUs"
+          id="DPUs"
+          width={80}
           template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
-          href={item => `#/admin/locations/${item.id}`}
         />
         <ListViewColumn
-          title=""
-          template={item => <Icons.ArrowRight />}
-          href={item => `#/admin/locations/${item.id}`}
+          width={60}
+          align="right"
+          template={item => <span style={{paddingRight: 24}}><Icons.ArrowRight /></span>}
         />
       </ListView>
     </div>

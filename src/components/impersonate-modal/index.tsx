@@ -13,6 +13,8 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
   RadioButton,
   Switch,
   Modal,
@@ -26,8 +28,6 @@ import filterCollection from '../../helpers/filter-collection';
 import hideModal from '../../actions/modal/hide';
 import updateModal from '../../actions/modal/update';
 import impersonateSet from '../../actions/impersonate';
-
-import ListView, { ListViewColumn } from '../list-view';
 
 import styles from './styles.module.scss';
 
@@ -99,7 +99,7 @@ export function ImpersonateModal({
         }}>
           <ListView data={filteredOrgs} showHeaders={false}>
             <ListViewColumn
-              flexGrow={1}
+              width="auto"
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
                 activeModal.data.organizations.find(x => x.id === item.id)

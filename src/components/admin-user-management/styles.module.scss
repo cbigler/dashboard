@@ -16,6 +16,10 @@
   height: 100%;
 }
 
+.adminUserManagementCellNameEmailCell {
+  width: 100%;
+}
+
 .adminUserManagementCellNameEmailCell > h5 {
   margin-top: 0px;
   margin-bottom: 4px;
@@ -28,6 +32,7 @@
   white-space: nowrap;
 }
 .adminUserManagementCellNameEmailCell > span {
+  display: block;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

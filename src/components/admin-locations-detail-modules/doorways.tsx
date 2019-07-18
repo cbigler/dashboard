@@ -16,11 +16,12 @@ import {
   ButtonGroup,
   Icons,
   InputBox,
+  ListView,
+  ListViewColumn,
   Modal,
   RadioButton,
 } from '@density/ui';
 
-import ListView, { ListViewColumn } from '../list-view';
 import Checkbox from '../checkbox';
 import FormLabel from '../form-label/index';
 
@@ -428,7 +429,7 @@ function DoorwayList({
     <div className={classnames(styles.list, {[styles.shaded]: shaded})}>
       <ListView data={doorways}>
         <ListViewColumn
-          title="Doorways"
+          id="Doorways"
           template={item => {
             const newDoorwayCheckboxState = !item.selected;
             return (
@@ -447,12 +448,10 @@ function DoorwayList({
               </Fragment>
             );
           }}
-          flexGrow={1}
-          flexShrink={1}
-          width={320}
+          width={360}
         />
         <ListViewColumn
-          title="Linked spaces"
+          id="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
             if (spacesOtherThanSelectedSpace.length > 1) {
@@ -475,10 +474,10 @@ function DoorwayList({
               )
             }
           }}
-          width={240}
+          width={200}
         />
         <ListViewColumn
-          title="DPU position"
+          id="DPU position"
           template={i => {
             return (
               <Fragment>
@@ -498,7 +497,9 @@ function DoorwayList({
                         });
                       }}
                     >
-                      <Icons.Switch color={colorVariables.brandPrimary} />
+                      <div style={{marginTop: 6}}>
+                        <Icons.Switch color={colorVariables.brandPrimary} />
+                      </div>
                     </Button>
                     <span className={styles.dpuPosition}>
                       {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
@@ -510,10 +511,10 @@ function DoorwayList({
               </Fragment>
             );
           }}
-          width={160}
+          width={140}
         />
         <ListViewColumn
-          title={null}
+          id={null}
           template={i => i.selected ? (
             <div
               className={styles.editLink}

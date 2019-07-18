@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import styles from './styles.module.scss';
-import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsListViewImage  from '../admin-locations-list-view-image/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
@@ -20,6 +19,8 @@ import {
   AppSidebar,
   Button,
   Icons,
+  ListView,
+  ListViewColumn,
 } from '@density/ui';
 
 export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace }) {
@@ -116,46 +117,48 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
               />
 
               <div className={styles.wrapper}>
-                <ListView data={visibleSpaces}>
+                <ListView
+                  data={visibleSpaces}
+                  onClickRow={item => window.location.href = `#/admin/locations/${item.id}`}
+                >
                   <ListViewColumn
-                    title="Info"
+                    id="Info"
+                    width={240}
                     template={item => (
                       <Fragment>
                         <AdminLocationsListViewImage space={item} />
                         <span className={styles.name}>{item.name}</span>
                       </Fragment>
                     )}
-                    flexGrow={1}
-                    href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+                    id={`Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})`}
+                    width={120}
                     template={item => item.sizeArea && item.sizeAreaUnit ? convertUnit(
                       item.sizeArea,
                       item.sizeAreaUnit,
                       user.data.sizeAreaDisplayUnit,
                     ) : <Fragment>&mdash;</Fragment>}
-                    href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title="Target capacity"
+                    id="Target capacity"
+                    width={120}
                     template={item => item.targetCapacity ? item.targetCapacity : <Fragment>&mdash;</Fragment>}
-                    href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title="Capacity"
+                    id="Capacity"
+                    width={100}
                     template={item => item.capacity ? item.capacity : <Fragment>&mdash;</Fragment>}
-                    href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title="DPUs"
+                    id="DPUs"
+                    width={80}
                     template={item => item.sensorsTotal ? item.sensorsTotal : <Fragment>&mdash;</Fragment>}
-                    href={item => `#/admin/locations/${item.id}`}
                   />
                   <ListViewColumn
-                    title=""
-                    template={item => <Icons.ArrowRight />}
-                    href={item => `#/admin/locations/${item.id}`}
+                    width={60}
+                    align="right"
+                    template={item => <span style={{paddingRight: 24}}><Icons.ArrowRight /></span>}
                   />
                 </ListView>
               </div>

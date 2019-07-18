@@ -4,10 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { AppScrollView } from '@density/ui';
+import { AppScrollView, ListView, ListViewColumn, ListViewColumnSpacer } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
-
-import ListView, { ListViewColumn } from '../list-view';
 
 function getStatusColor(status) {
   switch (status) {
@@ -36,22 +34,27 @@ export function AdminDeviceStatus({
     <div className={styles.adminDeviceList}>
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
-          title="Serial number"
+          id="Serial number"
+          width={160}
           template={item => <strong>{item.serialNumber}</strong>} />
         <ListViewColumn
-          title="Status"
+          id="Status"
+          width={128}
           template={item => <span style={{
             color: getStatusColor(item.status)
           }}>{item.status}</span>} />
         <ListViewColumn
-          title="Last heartbeat"
+          id="Last heartbeat"
+          width={146}
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
-        <ListViewColumn flexGrow={1} />
+        <ListViewColumnSpacer />
         <ListViewColumn
-          title="Doorway"
+          id="Doorway"
+          width={320}
           template={item => item.doorwayName} />
         <ListViewColumn
-          title="Space(s)"
+          id="Space(s)"
+          width={360}
           template={item => spaces.data.filter(space => {
             return space.doorways.map(doorway => {
               return doorway.id

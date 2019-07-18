@@ -14,6 +14,10 @@ import {
   AppFrame,
   AppPane,
   AppScrollView,
+  ListView,
+  ListViewColumn,
+  ListViewColumnSpacer,
+  ListViewClickableLink,
 } from '@density/ui';
 // import AppBar, { AppBarSection, AppBarTitle } from '@density/ui';
 
@@ -31,7 +35,6 @@ import colors from '@density/ui/variables/colors.json';
 import showToast from '../../actions/toasts';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 import ExploreAlertManagementModal, { COOLDOWN_CHOICES } from '../explore-alert-management-modal';
 
 // modes for management sections
@@ -321,8 +324,8 @@ function AlertSection({
         <div className={styles.accountPageSubsectionHeader}>SMS</div>
         <ListView data={alertData}>
           <ListViewColumn
-            title="Space"
-            flexGrow={3}
+            id="Space"
+            width={240}
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
@@ -331,33 +334,38 @@ function AlertSection({
               >{alert.spaceName}</ListViewClickableLink>
             )}
           />
+
+          <ListViewColumnSpacer />
           <ListViewColumn
-            title="Trigger"
-            flexGrow={1}
+            id="Trigger"
+            width={160}
             template={alert => {
               const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
               return `Occupancy ${greaterLessSymbol} ${alert.triggerValue}`;
             }}
           />
           <ListViewColumn
-            title="Frequency"
-            flexGrow={1}
+            id="Frequency"
+            width={160}
             template={alert => COOLDOWN_CHOICES_MAP[alert.cooldown]}
           />
           <ListViewColumn
-            title="Enabled"
+            id="Enabled"
+            width={120}
             template={alert => <Switch
               value={alert.enabled}
               onChange={e => onUpdateAlert({ ...alert, enabled: e.target.checked})}
             />}
           />
           <ListViewColumn
+            width={60}
+            align="right"
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
                   onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } })
                 )}
-              ><span style={{paddingRight: 16}}>Edit</span></ListViewClickableLink>
+              >Edit</ListViewClickableLink>
             )}
           />
         </ListView>

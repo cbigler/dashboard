@@ -8,12 +8,15 @@ import {
   AppBarSection,
   AppScrollView,
   Button,
-  Icons
+  Icons,
+  ListView,
+  ListViewColumn,
+  ListViewColumnSpacer,
+  ListViewClickableLink,
 } from '@density/ui';
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 import TokenCreateModal from '../admin-token-create-modal';
 import TokenUpdateModal from '../admin-token-update-modal';
 import WebhookCreateModal from '../admin-webhook-create-modal';
@@ -49,7 +52,7 @@ export function TokenKeyHider ({value, onCopyToken}) {
         cursor: 'pointer',
         marginRight: '16px'
       }}
-    >{hidden ? '*'.repeat(value.length) : value}</span>
+    >{hidden ? '**********************************************' : value}</span>
     <Button
       size="small"
       type="primary"
@@ -141,18 +144,37 @@ export function AdminDeveloper({
       <div className={styles.adminDeveloperTokenList}>
         <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>
-          <ListViewColumn title="Name" template={item => (
-            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
-          )} />
-          <ListViewColumn title="Permissions" template={item => (
-            <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
-          )} />
-          <ListViewColumn title="Token" template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />} />
-          <ListViewColumn flexGrow={1} />
           <ListViewColumn
+            id="Name"
+            width={240}
+            template={item => (
+              <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
+            )}
+          />
+          <ListViewColumn
+            id="Permissions"
+            width={120}
+            template={item => (
+              <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
+            )} />
+          <ListViewColumn
+            id="Token"
+            width={560}
+            template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />}
+          />
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Edit"
+            title=" "
+            width={60}
+            align="right"
             template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: false})} />
           <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: true})} />
         </ListView>
@@ -160,17 +182,33 @@ export function AdminDeveloper({
       <div className={styles.adminDeveloperWebhookList}>
         <div className={styles.adminDeveloperSectionHeader}>Webhooks</div>
         <ListView data={webhooks.data}>
-          <ListViewColumn title="Name" template={item => (
-            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
-          )} />
-          <ListViewColumn title="Payload URL" template={item => (
-            <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
-          )} />
-          <ListViewColumn flexGrow={1} />
           <ListViewColumn
+            id="Name"
+            width={240}
+            template={item => (
+              <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
+            )}
+          />
+          <ListViewColumn
+            id="Payload URL"
+            width={680}
+            template={item => (
+              <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
+            )}
+          />
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Edit"
+            title=" "
+            width={60}
+            align="right"
             template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: false})} />
           <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: true})} />
         </ListView>
