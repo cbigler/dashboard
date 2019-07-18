@@ -16,6 +16,7 @@ import {
   AppScrollView,
   ListView,
   ListViewColumn,
+  ListViewColumnSpacer,
   ListViewClickableLink,
 } from '@density/ui';
 // import AppBar, { AppBarSection, AppBarTitle } from '@density/ui';
@@ -324,7 +325,7 @@ function AlertSection({
         <ListView data={alertData}>
           <ListViewColumn
             id="Space"
-            width={200}
+            width={240}
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
@@ -333,8 +334,11 @@ function AlertSection({
               >{alert.spaceName}</ListViewClickableLink>
             )}
           />
+
+          <ListViewColumnSpacer />
           <ListViewColumn
             id="Trigger"
+            width={160}
             template={alert => {
               const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
               return `Occupancy ${greaterLessSymbol} ${alert.triggerValue}`;
@@ -342,22 +346,26 @@ function AlertSection({
           />
           <ListViewColumn
             id="Frequency"
+            width={160}
             template={alert => COOLDOWN_CHOICES_MAP[alert.cooldown]}
           />
           <ListViewColumn
             id="Enabled"
+            width={120}
             template={alert => <Switch
               value={alert.enabled}
               onChange={e => onUpdateAlert({ ...alert, enabled: e.target.checked})}
             />}
           />
           <ListViewColumn
+            width={60}
+            align="right"
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
                   onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } })
                 )}
-              ><span style={{paddingRight: 16}}>Edit</span></ListViewClickableLink>
+              >Edit</ListViewClickableLink>
             )}
           />
         </ListView>

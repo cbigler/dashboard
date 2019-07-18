@@ -230,6 +230,7 @@ export function AdminIntegrations({
             id="Activate/Edit"
             title=" "
             width={90}
+            align="right"
             template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {
               if (!item.serviceAuthorization.id) {
@@ -241,6 +242,7 @@ export function AdminIntegrations({
             id="Delete"
             title=" "
             width={30}
+            align="right"
             template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}
           />
