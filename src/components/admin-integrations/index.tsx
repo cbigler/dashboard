@@ -10,6 +10,7 @@ import {
   Icons,
   ListView,
   ListViewColumn,
+  ListViewColumnSpacer,
   ListViewClickableLink,
 } from '@density/ui';
 
@@ -54,13 +55,12 @@ function iconForIntegration(serviceName: string) {
   }
 }
 
-function activateEditLink(item) {
+function activateEditLink(item, onClick) {
   if (!item.serviceAuthorization.id) {
-    return <ListViewClickableLink>Activate</ListViewClickableLink>;
+    return <ListViewClickableLink onClick={onClick}>Activate</ListViewClickableLink>;
   }
-
   if (item.name === "robin") {
-    return <ListViewClickableLink>Edit</ListViewClickableLink>;
+    return <ListViewClickableLink onClick={onClick}>Edit</ListViewClickableLink>;
   }
 }
 
@@ -138,38 +138,65 @@ export function AdminIntegrations({
       <div className={styles.adminIntegrationsRoomBookingList}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
-          <ListViewColumn id="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
-          )} />
-          <ListViewColumn id="Name" template={item => (
-            <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
-          )} />
-          <ListViewColumn id="Added by" template={item => item.serviceAuthorization.id != null ? (
-            <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
-          } />
-          <ListViewColumn id="Default service" template={item => {
-            if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
-              return <span className={styles.adminIntegrationsListviewValue}>Default</span>
-            } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
-              return <ListViewClickableLink>Make default</ListViewClickableLink>
-            } else {
-              return null;
-            }
-          }} 
-          onClick={item => onMakeServiceAuthorizationDefault(item.serviceAuthorization.id)}
-          />          
-          <ListViewColumn width="auto" />
           <ListViewColumn
+            id="Service"
+            width={80}
+            template={item => (
+              <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
+            )}
+          />
+          <ListViewColumn
+            id="Name"
+            width={170}
+            template={item => (
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+            )}
+          />
+          <ListViewColumn
+            id="Added by"
+            width={170}
+            template={item => item.serviceAuthorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            }
+          />
+          <ListViewColumn
+            id="Default service"
+            width={120}
+            template={item => {
+              if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
+                return <span className={styles.adminIntegrationsListviewValue}>Default</span>
+              } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
+                return <ListViewClickableLink>Make default</ListViewClickableLink>
+              } else {
+                return null;
+              }
+            }} 
+            onClick={item => onMakeServiceAuthorizationDefault(item.serviceAuthorization.id)}
+          />          
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Space Mappings"
+            title=" "
+            width={150}
             template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
             onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
           />
           <ListViewColumn
-            template={item => activateEditLink(item)}
-            onClick={item => handleActivateEditClick(item, onOpenModal)}
+            id="Activate/Edit"
+            title=" "
+            width={90}
+            align="right"
+            template={item => activateEditLink(item, item => handleActivateEditClick(item, onOpenModal))}
           />
           <ListViewColumn
-            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-            onClick={item => handleDeleteClick(item, onOpenModal)}
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
+            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash
+              color={colorVariables.grayDarker}
+              onClick={item => handleDeleteClick(item, onOpenModal)}
+            />}
            />
 
         </ListView>
@@ -177,17 +204,32 @@ export function AdminIntegrations({
       <div className={styles.adminIntegrationsChatList}>
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
-          <ListViewColumn id="Service" template={item => (
-            <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
-          )} />
-          <ListViewColumn id="Name" template={item => (
-            <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
-          )} />
-          <ListViewColumn id="Added by" template={item => item.serviceAuthorization.id != null ? (
-            <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
-          } />
-          <ListViewColumn width="auto" />
           <ListViewColumn
+            id="Service"
+            width={80}
+            template={item => (
+              <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
+            )}
+          />
+          <ListViewColumn
+            id="Name"
+            width={170}
+            template={item => (
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+            )}
+          />
+          <ListViewColumn
+            id="Added by"
+            width={170}
+            template={item => item.serviceAuthorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            }
+          />
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Activate/Edit"
+            title=" "
+            width={90}
             template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {
               if (!item.serviceAuthorization.id) {
@@ -196,8 +238,12 @@ export function AdminIntegrations({
             }}
           />
           <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
             template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-            onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})} />
+            onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}
+          />
         </ListView>
       </div>
       
