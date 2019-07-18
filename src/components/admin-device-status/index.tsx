@@ -4,7 +4,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { AppScrollView, ListView, ListViewColumn } from '@density/ui';
+import { AppScrollView, ListView, ListViewColumn, ListViewColumnSpacer } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 function getStatusColor(status) {
@@ -39,22 +39,22 @@ export function AdminDeviceStatus({
           template={item => <strong>{item.serialNumber}</strong>} />
         <ListViewColumn
           id="Status"
-          width={160}
+          width={128}
           template={item => <span style={{
             color: getStatusColor(item.status)
           }}>{item.status}</span>} />
         <ListViewColumn
           id="Last heartbeat"
-          width={180}
+          width={146}
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
-        <ListViewColumn />
+        <ListViewColumnSpacer />
         <ListViewColumn
           id="Doorway"
-          minWidth={180}
+          width={320}
           template={item => item.doorwayName} />
         <ListViewColumn
           id="Space(s)"
-          minWidth={240}
+          width={360}
           template={item => spaces.data.filter(space => {
             return space.doorways.map(doorway => {
               return doorway.id
