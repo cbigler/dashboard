@@ -62,7 +62,6 @@ export default class IntegrationsServiceDestroyModal extends React.Component<any
                   <Button
                     variant="filled"
                     type="primary"
-                    width="100%"
                     disabled={"DELETE" !== this.state.destroyConfirmationText}
                     onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
                   >I understand the consequences. Delete.</Button>

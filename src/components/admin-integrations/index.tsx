@@ -186,17 +186,23 @@ export function AdminIntegrations({
             title=" "
             width={90}
             align="right"
-            template={item => activateEditLink(item, item => handleActivateEditClick(item, onOpenModal))}
+            template={item => activateEditLink(
+              item,
+              () => handleActivateEditClick(item, onOpenModal)
+            )}
           />
           <ListViewColumn
             id="Delete"
             title=" "
             width={30}
             align="right"
-            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash
-              color={colorVariables.grayDarker}
-              onClick={item => handleDeleteClick(item, onOpenModal)}
-            />}
+            template={item => (
+              !item.serviceAuthorization.id ?
+                null :
+                <ListViewClickableLink onClick={() => handleDeleteClick(item, onOpenModal)}>
+                  <Icons.Trash color={colorVariables.grayDarker} />
+                </ListViewClickableLink>
+            )}
            />
 
         </ListView>

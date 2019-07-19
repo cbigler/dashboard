@@ -10,6 +10,7 @@ import {
   Icons,
   ListView,
   ListViewColumn,
+  ListViewColumnSpacer,
   ListViewClickableLink,
 } from '@density/ui';
 
@@ -117,12 +118,17 @@ export class AdminSpaceMappings extends React.Component<any, any> {
 
           {currentService && currentService.serviceAuthorization.lastSync !== null ? (
             <ListView keyTemplate={space => space.name} data={conferenceRooms as Array<DensitySpace>}>
-              <ListViewColumn id="Density Conference Room" template={space => (
-                <span className={styles.adminIntegrationsListviewValue}>{space.ancestry[0].name} > <strong>{space.name}</strong></span>
-              )} />
-              <ListViewColumn width="auto" />
+              <ListViewColumn
+                id="Density Conference Room"
+                width={360}
+                template={space => (
+                  <span className={styles.adminIntegrationsListviewValue}>{space.ancestry[0].name} > <strong>{space.name}</strong></span>
+                )}
+              />
+              <ListViewColumnSpacer />
               <ListViewColumn 
-                id={currentService ? `${currentService.displayName} Space` : "..."} 
+                id={currentService ? `${currentService.displayName} Space` : "..."}
+                width={360}
                 template={space => {
                   const serviceSpace = serviceSpaceForService(space.spaceMappings, currentService)
                   if (serviceSpace) {
@@ -137,17 +143,26 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 })}
               />
               <ListViewColumn 
-                id="Meeting Analytics" 
+                id="Meeting Analytics"
+                width={60}
+                align="right"
                 template={space => {
                   if (space.spaceMappings.length > 0) {
-                    return <ListViewClickableLink>View</ListViewClickableLink>
+                    return <ListViewClickableLink
+                      onClick={space => window.location.href = `/#/spaces/explore/${space.id}/meetings/${currentService.name}`}
+                    >
+                      View
+                    </ListViewClickableLink>
                   } else {
                     return null;
                   }
                 }}
-                onClick={space => window.location.href = `/#/spaces/explore/${space.id}/meetings/${currentService.name}`}
               />
               <ListViewColumn
+                id="Delete"
+                title=" "
+                width={30}
+                align="right"
                 template={space => {
                   if (space.spaceMappings.length > 0) {
                     return <Icons.Trash color={colorVariables.grayDarker} />
