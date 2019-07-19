@@ -44,7 +44,6 @@ export default class SpaceMappingsDestroyModal extends React.Component<any, any>
                   <Button
                     variant="filled"
                     type="primary"
-                    width="100%"
                     onClick={() => this.props.onDestroy(this.props.spaceMappingId)}
                   >I understand the consequences. Delete.</Button>
                 </ButtonGroup>

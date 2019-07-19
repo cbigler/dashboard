@@ -128,7 +128,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
               <ListViewColumnSpacer />
               <ListViewColumn
                 id={currentService ? `${currentService.displayName} Space` : "..."}
-                width={360}
+                width={240}
                 template={space => {
                   const serviceSpace = serviceSpaceForService(space.spaceMappings, currentService)
                   if (serviceSpace) {
@@ -144,12 +144,11 @@ export class AdminSpaceMappings extends React.Component<any, any> {
               />
               <ListViewColumn
                 id="Meeting Analytics"
-                width={60}
-                align="right"
+                width={160}
                 template={space => {
                   if (space.spaceMappings.length > 0) {
                     return <ListViewClickableLink
-                      onClick={space => window.location.href = `/#/spaces/explore/${space.id}/meetings/${currentService.name}`}
+                      onClick={() => window.location.href = `/#/spaces/explore/${space.id}/meetings/${currentService.name}`}
                     >
                       View
                     </ListViewClickableLink>
@@ -165,12 +164,15 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 align="right"
                 template={space => {
                   if (space.spaceMappings.length > 0) {
-                    return <Icons.Trash color={colorVariables.grayDarker} />
+                    return <ListViewClickableLink
+                      onClick={() => onOpenModal('space-mappings-destroy', {spaceMappingId: space.spaceMappings[0].id})}
+                    >
+                      <Icons.Trash color={colorVariables.grayDarker} />
+                    </ListViewClickableLink>
                   } else {
                     return null;
                   }
                 }}
-                onClick={space => onOpenModal('space-mappings-destroy', {spaceMappingId: space.spaceMappings[0].id})}
                />
             </ListView>
           ) : <div>Loading your room-booking spaces...</div>}
