@@ -33,7 +33,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
       >
         <ListViewColumn
           id="Info"
-          width={240}
+          width={320}
           template={item => (
             <Fragment>
               <AdminLocationsListViewImage space={item} />

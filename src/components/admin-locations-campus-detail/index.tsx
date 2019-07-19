@@ -104,7 +104,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
               >
                 <ListViewColumn
                   id="Info"
-                  width={240}
+                  width={320}
                   template={item => (
                     <Fragment>
                       <AdminLocationsListViewImage space={item} />

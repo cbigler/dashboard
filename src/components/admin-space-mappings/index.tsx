@@ -126,7 +126,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 )}
               />
               <ListViewColumnSpacer />
-              <ListViewColumn 
+              <ListViewColumn
                 id={currentService ? `${currentService.displayName} Space` : "..."}
                 width={360}
                 template={space => {
@@ -142,7 +142,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                   serviceSpaceId: space.spaceMappings.length > 0 ? space.spaceMappings[0].serviceSpaceId : null
                 })}
               />
-              <ListViewColumn 
+              <ListViewColumn
                 id="Meeting Analytics"
                 width={60}
                 align="right"
