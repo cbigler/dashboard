@@ -20,6 +20,7 @@ import {
   InputBox,
   ListView,
   ListViewColumn,
+  ListViewColumnSpacer,
   ListViewClickableLink,
   Modal,
   Skeleton,
@@ -203,13 +204,13 @@ export function AdminUserManagement({
           <div className={classnames(styles.adminUserManagementList, {[styles.centered]: showEmptySearchState})}>
             <ListView data={[1, 2]} keyTemplate={n => n}>
               <ListViewColumn id="User" width={240} template={() => <Skeleton />} />
-              <ListViewColumn id="Role" width={140} template={() => <Skeleton />} />
-              <ListViewColumn />
-              <ListViewColumn id="Activity" width={200} template={() => <Skeleton />} />
-              <ListViewColumn id="Invitation" width={100} template={() => <Skeleton />} />
-              <ListViewColumn />
+              <ListViewColumn id="Role" width={120} template={() => <Skeleton />} />
+              <ListViewColumnSpacer />
+              <ListViewColumn id="Activity" width={180} template={() => <Skeleton />} />
+              <ListViewColumn id="Invitation" width={120} template={() => <Skeleton />} />
+              <ListViewColumnSpacer />
               <ListViewColumn id="Space access" width={120} template={() => <Skeleton />} />
-              <ListViewColumn id="Actions" width={80} template={() => <Skeleton />} />
+              <ListViewColumn id="Actions" width={72} align="right" template={() => <Skeleton />} />
             </ListView>
           </div>
         ) : null}
@@ -233,7 +234,7 @@ export function AdminUserManagement({
                   )} />
                 <ListViewColumn
                   id="Role"
-                  width={140}
+                  width={120}
                   title={(
                     <Fragment>
                       <span style={{paddingRight: 8}}>Role</span>
@@ -248,10 +249,10 @@ export function AdminUserManagement({
                   )}
                   template={item => ROLE_INFO[item.role].label}
                 />
-                <ListViewColumn />
+                <ListViewColumnSpacer />
                 <ListViewColumn
                   id="Activity"
-                  width={200}
+                  width={180}
                   template={item => {
                     const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
                     return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
@@ -259,7 +260,7 @@ export function AdminUserManagement({
                 />
                 <ListViewColumn
                   id="Invitation"
-                  width={100}
+                  width={120}
                   template={item => (
                     <Fragment>
                       <span className={styles.adminUserManagementCellInvitationStatus}>
@@ -277,13 +278,11 @@ export function AdminUserManagement({
                     </Fragment>
                   )}
                 />
-                <ListViewColumn />
+                <ListViewColumnSpacer />
                 <ListViewColumn
                   id="Space access"
                   width={120}
-                  title={(
-                    <span style={{paddingRight: 8}}>Space access</span>
-                  )}
+                  title="Space access"
                   template={item => {
                     if (!item.isEditable) {
                       return <span>Some spaces</span>;
