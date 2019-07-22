@@ -20,6 +20,7 @@ type SpacePickerProps = {
   onChange: (SpaceHierarchyDisplayItem) => any,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
 
+  showSearchBox?: boolean,
   searchBoxPlaceholder?: string,
   placeholder?: string,
   width?: number | string,
@@ -74,6 +75,7 @@ export default function SpacePicker({
   canSelectMultiple=false,
   isItemDisabled=(s) => false,
   height,
+  showSearchBox=true,
   searchBoxPlaceholder=`ex: "New York"`,
   onCloseDropdown=() => {},
 }: SpacePickerProps) {
@@ -107,7 +109,7 @@ export default function SpacePicker({
 
   return (
     <div>
-      <div className={styles.searchBar}>
+      {showSearchBox ? <div className={styles.searchBar}>
         <AppBar>
           <InputBox
             type="text"
@@ -118,7 +120,7 @@ export default function SpacePicker({
             onChange={e => setSearchText(e.target.value)}
           />
         </AppBar>
-      </div>
+      </div> : null}
 
       <div className={styles.scrollContainer} style={{height}}>
         {formattedHierarchy.map(item => {

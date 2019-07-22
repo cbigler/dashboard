@@ -54,22 +54,6 @@ function ExploreSpacePage({ activePage }) {
   }
 }
 
-function pruneHierarchy(spaceTree, matchedSpaceIds) {
-  if (spaceTree.children) {
-    spaceTree.children = spaceTree.children.map(x => {
-      return pruneHierarchy(x, matchedSpaceIds);
-    }).filter(x => x);
-  }
-  if (
-    (spaceTree.children && spaceTree.children.length > 0) ||
-    matchedSpaceIds.indexOf(spaceTree.id) > -1
-  ) {
-    return spaceTree;
-  } else {
-    return null;
-  }
-}
-
 export function SpacesRaw ({
   spaces,
   spaceHierarchy,
@@ -82,20 +66,16 @@ export function SpacesRaw ({
   onShowModal,
   width,
 }: any) {
-  const formattedHierarchy = spaceHierarchy.data.length ? spaceHierarchyFormatter(spaceHierarchy.data) : [];
-  console.log(formattedHierarchy);
-  // let filteredSpaces = spaceHierarchy.data;
-  // if (spaces.filters.search) {
-  //   const matchedSpaceIds = fuzzy.filter<any>(
-  //     spaces.filters.search,
-  //     spaces.data,
-  //     { pre: '<', post: '>', extract: x => x['name'] }
-  //   ).map(x => x.original['id']);
-  //   const filteredSpacesCopy = JSON.parse(JSON.stringify(filteredSpaces));
-  //   filteredSpaces = filteredSpacesCopy.map(x => pruneHierarchy(x, matchedSpaceIds)).filter(x => x);
-  // }
+  let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
-  // const spaceList = sortSpaceTree(filteredSpaces);
+  if (spaces.filters.search) {
+    const matchedSpaceIds = fuzzy.filter<any>(
+      spaces.filters.search,
+      spaces.data,
+      { pre: '<', post: '>', extract: x => x['name'] }
+    ).map(x => x.original['id']);
+    formattedHierarchy = formattedHierarchy.filter(x => matchedSpaceIds.includes(x.space.id)).filter(x => x);
+  }
 
   return (
     <Fragment>
@@ -122,24 +102,20 @@ export function SpacesRaw ({
             </AppBar>
             <AppScrollView>
               <nav className={styles.exploreAppFrameSidebarList}>
-                  <Fragment>
-                    {formattedHierarchy.length === 0 && spaces.filters.search.length === 0 ?
-                      <div className={styles.loadingSpaces}>Loading spaces...</div> :
-                      selectedSpace ?
-                        <SpacePicker
-                          value={formattedHierarchy.find(x => x.space.id === selectedSpace.id) || null}
-                          onChange={item => window.location.href = `#/spaces/${item.space.id}/trends`}
-
-                          formattedHierarchy={formattedHierarchy}
-                          searchBoxPlaceholder="Search for space name"
-                          height={444}
-                          isItemDisabled={item => {
-                            return !spaces.data.find(s => s.id === item.space.id);
-                          }}
-                        /> :
-                        null
-                    }
-                  </Fragment>
+                {formattedHierarchy.length === 0 && spaces.filters.search.length === 0 ?
+                  <div className={styles.loadingSpaces}>Loading spaces...</div> :
+                  selectedSpace ?
+                    <SpacePicker
+                      value={formattedHierarchy.find(x => x.space.id === selectedSpace.id) || null}
+                      onChange={item => window.location.href = `#/spaces/${item.space.id}/trends`}
+                      showSearchBox={false}
+                      formattedHierarchy={formattedHierarchy}
+                      isItemDisabled={item => {
+                        return !spaces.data.find(s => s.id === item.space.id);
+                      }}
+                    /> :
+                    null
+                }
               </nav>
             </AppScrollView>
           </AppSidebar>
