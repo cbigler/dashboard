@@ -2,7 +2,6 @@ import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import classnames from 'classnames';
 import fuzzy from 'fuzzy';
 
 import {
@@ -17,7 +16,6 @@ import {
   InputBox,
 } from '@density/ui';
 
-import sortSpaceTree from '../../helpers/sort-space-tree/index';
 import autoWidthHoc from '../../helpers/auto-width-hoc';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
@@ -182,12 +180,6 @@ export function SpacesRaw ({
                 />
               </AppBarSection>
             </AppBar>
-            <ExploreControlBar
-              selectedSpace={selectedSpace}
-              spaceHierarchy={spaceHierarchy}
-              activePage={activePage}
-              filters={spaces.filters}
-            />
             <AppScrollView backgroundColor={SPACES_BACKGROUND}>
               {selectedSpace ?
                 <SpacesReportController
