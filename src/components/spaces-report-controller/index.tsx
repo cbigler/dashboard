@@ -45,16 +45,15 @@ type ReportControllerProps = {
 function SpacesReportDatePicker({
   date,
   space,
-  focused,
   onChange,
-  onFocusChange,
 }) {
+  const [focused, setFocused] = useState(false);
   return <DatePicker
     anchor="ANCHOR_RIGHT"
     date={formatForReactDates(parseISOTimeAtSpace(date, space), space)}
     onChange={date => onChange(space, formatInISOTime(parseFromReactDates(date, space)))}
     focused={focused}
-    onFocusChange={onFocusChange}
+    onFocusChange={event => setFocused(event.focused)}
     arrowRightDisabled={
       parseISOTimeAtSpace(date, space).format('MM/DD/YYYY') ===
       getCurrentLocalTimeAtSpace(space).format('MM/DD/YYYY')
@@ -70,10 +69,9 @@ function SpacesReportDateRangePicker({
   startDate,
   endDate,
   space,
-  focused,
   onChange,
-  onFocusChange,
 }) {
+  const [focused, setFocused] = useState(false);
   return <DateRangePicker
     startDate={formatForReactDates(parseISOTimeAtSpace(startDate, space), space)}
     endDate={formatForReactDates(parseISOTimeAtSpace(endDate, space), space)}
@@ -96,7 +94,7 @@ function SpacesReportDateRangePicker({
       }
     }}
     focusedInput={focused}
-    onFocusChange={onFocusChange}
+    onFocusChange={event => setFocused(event.focused)}
     numberOfMonths={document.body && document.body.clientWidth > gridVariables.screenSmMin ? 2 : 1}
     isOutsideRange={day => isOutsideRange(space, day)}
 
@@ -129,8 +127,6 @@ export function SpacesReportController({
                     key={control.label}
                     date={control.value}
                     onChange={value => alert(value)}
-                    focused={state.datePickerFocused}
-                    onFocusChange={() => setState({datePickerFocused: !state.datePickerFocused})}
                   />;
                 case 'date_range':
                   return <SpacesReportDateRangePicker
@@ -139,8 +135,6 @@ export function SpacesReportController({
                     startDate={control.value.start}
                     endDate={control.value.end}
                     onChange={value => alert(value)}
-                    focused={state.datePickerFocused}
-                    onFocusChange={() => setState({datePickerFocused: !state.datePickerFocused})}
                   />;
               }
             })}

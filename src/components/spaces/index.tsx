@@ -23,7 +23,6 @@ import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
-import ExploreControlBar from '../explore-control-bar';
 import hideModal from '../../actions/modal/hide';
 import showModal from '../../actions/modal/show';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
