@@ -7,7 +7,7 @@ import accounts from '../../client/accounts';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 
-import Explore from '../explore/index';
+import Spaces from '../spaces/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
@@ -106,12 +106,12 @@ function ActivePage({activePage, user, settings}) {
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
   case "EXPLORE":
-    return <Explore />;
+    return <Spaces />;
   case "EXPLORE_SPACE_TRENDS":
   case "EXPLORE_SPACE_DAILY":
   case "EXPLORE_SPACE_DATA_EXPORT":
   case "EXPLORE_SPACE_MEETINGS":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <Explore />;
+    return stringToBoolean(settings.insightsPageLocked) ? null : <Spaces />;
   case "ACCOUNT":
     return <Account />;
   case "ACCOUNT_REGISTRATION":
