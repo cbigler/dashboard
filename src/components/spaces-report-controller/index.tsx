@@ -20,22 +20,19 @@ import {
   formatForReactDates,
   getCurrentLocalTimeAtSpace,
 } from '../../helpers/space-time-utilities';
-import { connect } from 'react-redux';
 import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
+import { ReportControl, ReportControlTypes } from '../../reducers/space-reports';
 
 // When the user selects a start date, select a range that's this long. THe user can stil ladjust
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 
-type ReportControllerProps = {
+export type ReportControllerProps = {
   space: DensitySpace;
   title: string;
-  controls: Array<{
-    label: string,
-    value: any,
-    type: 'date' | 'date_range' | 'time_segment'
-  }>;
+  controls: Array<ReportControl>;
+  onUpdateControls: Function;
   reports: Array<{
     component: any,
     data: any
@@ -107,12 +104,9 @@ export function SpacesReportController({
   space,
   title,
   controls,
-  reports
+  reports,
+  onUpdateControls,
 }: ReportControllerProps) {
-  const [state, setState] = useState({
-    datePickerFocused: false,
-  });
-
   return (
     <div>
       <AppBarContext.Provider value="TRANSPARENT">
@@ -120,22 +114,24 @@ export function SpacesReportController({
           <AppBarSection>{title}</AppBarSection>
           <AppBarSection>
             {controls.map(control => {
-              switch(control.type) {
-                case 'date':
+              switch(control.controlType) {
+                case ReportControlTypes.DATE:
                   return <SpacesReportDatePicker
                     space={space}
-                    key={control.label}
-                    date={control.value}
-                    onChange={value => alert(value)}
+                    key={control.key}
+                    date={control.date}
+                    onChange={value => onUpdateControls(control.key, value)}
                   />;
-                case 'date_range':
+                case ReportControlTypes.DATE_RANGE:
                   return <SpacesReportDateRangePicker
                     space={space}
-                    key={control.label}
-                    startDate={control.value.start}
-                    endDate={control.value.end}
-                    onChange={value => alert(value)}
+                    key={control.key}
+                    startDate={control.startDate}
+                    endDate={control.endDate}
+                    onChange={value => onUpdateControls(control.key, value)}
                   />;
+                case ReportControlTypes.TIME_SEGMENT:
+                  return <div>Time Segment</div>;
               }
             })}
           </AppBarSection>
@@ -149,36 +145,3 @@ export function SpacesReportController({
 }
 
 export default React.memo(SpacesReportController);
-
-// export default connect(() => ({}), dispatch => {
-//   return {
-//     onChangeSpaceFilter(key, value) {
-//       dispatch(collectionSpacesFilter(key, value));
-//     },
-//     onChangeDate(activePage, space, value) {
-//       dispatch(collectionSpacesFilter('date', value));
-//       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-//       if (activePage === 'EXPLORE_SPACE_DAILY') {
-//         dispatch<any>(calculateDailyModules(space));
-//       }
-//     },
-//     onChangeTimeSegmentLabel(activePage, space, spaceFilters, value) {
-//       dispatch(collectionSpacesFilter('timeSegmentLabel', value));
-//       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-//       if (activePage === 'EXPLORE_SPACE_TRENDS') {
-//         dispatch<any>(calculateTrendsModules(space, spaceFilters));
-//       } else if (activePage === 'EXPLORE_SPACE_DAILY') {
-//         dispatch<any>(calculateDailyModules(space));
-//       }
-//     },
-//     onChangeDateRange(activePage, space, spaceFilters, startDate, endDate) {
-//       dispatch(collectionSpacesFilter('startDate', startDate));
-//       dispatch(collectionSpacesFilter('endDate', endDate));
-//       if (activePage === 'EXPLORE_SPACE_TRENDS') {
-//         dispatch<any>(calculateTrendsModules(space, spaceFilters));
-//       } else if (activePage === 'EXPLORE_SPACE_MEETINGS') {
-//         dispatch<any>(calculateMeetingsModules(space.id));
-//       }
-//     },
-//   };
-// })(React.memo(ExploreReportController));

@@ -29,8 +29,8 @@ import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import showToast from '../../actions/toasts';
-import { SpacesReportController } from '../spaces-report-controller';
-import { getCurrentLocalTimeAtSpace } from '../../helpers/space-time-utilities';
+import { SpacesReportController, ReportControlTypes } from '../spaces-report-controller';
+import { getCurrentLocalTimeAtSpace, parseFromReactDates } from '../../helpers/space-time-utilities';
 import SpacePicker from '../space-picker';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
@@ -184,7 +184,14 @@ export function SpacesRaw ({
                 <SpacesReportController
                   space={selectedSpace}
                   title="Controls"
-                  controls={[{label: 'asdf', value: getCurrentLocalTimeAtSpace(selectedSpace), type: 'date'}]}
+                  controls={[{
+                    key: 'asdf',
+                    date: '2018-01-01',
+                    controlType: ReportControlTypes.DATE
+                  }]}
+                  onUpdateControls={(key, value) => {
+                    console.log(key, value);
+                  }}
                   reports={[]}
                 /> : null}
               <ExploreSpacePage activePage={activePage} />
@@ -201,6 +208,7 @@ export default connect((state: any) => {
     spaces: state.spaces,
     spaceHierarchy: state.spaceHierarchy,
     selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+    spaceReports: state.spaceReports.data,
     alerts: state.alerts,
     activePage: state.activePage,
     activeModal: state.activeModal,
