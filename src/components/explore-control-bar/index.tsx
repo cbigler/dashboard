@@ -163,10 +163,11 @@ export function ExploreControlBarRaw({
               commonRanges={getCommonRangesForSpace(selectedSpace)}
               onSelectCommonRange={({startDate, endDate}) => {
                 onChangeDateRange(
+                  activePage,
                   selectedSpace,
+                  {...filters, startDate, endDate},
                   formatInISOTime(startDate),
                   formatInISOTime(endDate),
-                  {...filters, startDate, endDate}
                 );
               }}
             />
