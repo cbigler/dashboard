@@ -1,8 +1,8 @@
-import ActionTypes from './action-types';
+import { SpaceReportActionTypes } from '../../interfaces/space-reports';
 
 export default function spacesSetReportControllers(space, controllers) {
   return {
-    type: ActionTypes.SPACES_SET_REPORT_CONTROLLERS,
+    type: SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS,
     space,
     controllers,
   };

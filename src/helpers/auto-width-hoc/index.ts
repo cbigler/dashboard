@@ -1,8 +1,10 @@
 import React from 'react';
 import unsafeHandleWindowResize from '../unsafe-handle-window-resize';
 
-export default (Component, delay = 300) => {
-  class AutoWidthComponent extends React.Component<any, any> {
+export interface AutoWidthHocProps { width: number };
+
+export default <P>(Component: React.FunctionComponent<P>, delay = 300) => {
+  class AutoWidthComponent extends React.Component<Exclude<P, AutoWidthHocProps>> {
     container: any;
     resizeListener: any;
     state = { width: 0 };

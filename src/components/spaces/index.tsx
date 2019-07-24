@@ -16,23 +16,28 @@ import {
   InputBox,
 } from '@density/ui';
 
-import autoWidthHoc from '../../helpers/auto-width-hoc';
+import { State } from '../../interfaces/global';
+import { SpaceReportControlTypes } from '../../interfaces/space-reports';
+
+import autoWidthHoc, { AutoWidthHocProps } from '../../helpers/auto-width-hoc';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+
+import hideModal from '../../actions/modal/hide';
+import showModal from '../../actions/modal/show';
+import showToast from '../../actions/toasts';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
-import hideModal from '../../actions/modal/hide';
-import showModal from '../../actions/modal/show';
+import SpacesReportController from '../spaces-report-controller/index';
+
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
-import collectionAlertsUpdate from '../../actions/collection/alerts/update';
-import showToast from '../../actions/toasts';
-import { SpacesReportController, ReportControlTypes } from '../spaces-report-controller';
-import { getCurrentLocalTimeAtSpace, parseFromReactDates } from '../../helpers/space-time-utilities';
 import SpacePicker from '../space-picker';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
 const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -51,9 +56,42 @@ function ExploreSpacePage({ activePage }) {
   }
 }
 
+interface SpacesRawProps { };
+
+const mapStateToProps = (state: State, ownProps: {}) => ({
+  spaces: state.spaces,
+  spaceHierarchy: state.spaceHierarchy,
+  spaceReports: state.spaceReports,
+  selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+  alerts: state.alerts,
+  activePage: state.activePage,
+  activeModal: state.activeModal,
+  resizeCounter: state.resizeCounter,
+});
+
+const mapDispatchToProps = (dispatch: any) => ({
+  onSpaceSearch(searchQuery) {
+    dispatch(collectionSpacesFilter('search', searchQuery));
+  },
+  async onUpdateAlert(alert) {
+    await dispatch(collectionAlertsUpdate(alert));
+    dispatch(showToast({
+      text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
+      timeout: 1000
+    }));
+  },
+  onShowModal(name, data) {
+    dispatch(showModal(name, data));
+  },
+  onCloseModal() {
+    dispatch(hideModal());
+  },
+});
+
 export function SpacesRaw ({
   spaces,
   spaceHierarchy,
+  spaceReports,
   selectedSpace,
   alerts,
   activePage,
@@ -62,7 +100,12 @@ export function SpacesRaw ({
   onSpaceSearch,
   onShowModal,
   width,
-}: any) {
+} : (
+  SpacesRawProps &
+  ReturnType<typeof mapStateToProps> &
+  ReturnType<typeof mapDispatchToProps> &
+  AutoWidthHocProps
+)) {
   let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
   if (spaces.filters.search) {
@@ -187,7 +230,7 @@ export function SpacesRaw ({
                   controls={[{
                     key: 'asdf',
                     date: '2018-01-01',
-                    controlType: ReportControlTypes.DATE
+                    controlType: SpaceReportControlTypes.DATE
                   }]}
                   onUpdateControls={(key, value) => {
                     console.log(key, value);
@@ -203,34 +246,6 @@ export function SpacesRaw ({
   );
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    spaceHierarchy: state.spaceHierarchy,
-    selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
-    spaceReports: state.spaceReports.data,
-    alerts: state.alerts,
-    activePage: state.activePage,
-    activeModal: state.activeModal,
-    resizeCounter: state.resizeCounter,
-  };
-}, (dispatch: any) => {
-  return {
-    onSpaceSearch(searchQuery) {
-      dispatch(collectionSpacesFilter('search', searchQuery));
-    },
-    async onUpdateAlert(alert) {
-      await dispatch(collectionAlertsUpdate(alert));
-      dispatch(showToast({
-        text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
-        timeout: 1000
-      }));
-    },
-    onShowModal(name, data) {
-      dispatch(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch(hideModal());
-    },
-  };
-})(autoWidthHoc(React.memo(SpacesRaw)));
+const Spaces = connect(mapStateToProps, mapDispatchToProps)(autoWidthHoc(React.memo(SpacesRaw)));
+
+export default Spaces;

@@ -22,7 +22,7 @@ import {
 } from '../../helpers/space-time-utilities';
 import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { ReportControl, ReportControlTypes } from '../../reducers/space-reports';
+import { ISpaceReportControl, SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 // When the user selects a start date, select a range that's this long. THe user can stil ladjust
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
@@ -31,7 +31,7 @@ const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 export type ReportControllerProps = {
   space: DensitySpace;
   title: string;
-  controls: Array<ReportControl>;
+  controls: Array<ISpaceReportControl>;
   onUpdateControls: Function;
   reports: Array<{
     component: any,
@@ -115,14 +115,14 @@ export function SpacesReportController({
           <AppBarSection>
             {controls.map(control => {
               switch(control.controlType) {
-                case ReportControlTypes.DATE:
+                case SpaceReportControlTypes.DATE:
                   return <SpacesReportDatePicker
                     space={space}
                     key={control.key}
                     date={control.date}
                     onChange={value => onUpdateControls(control.key, value)}
                   />;
-                case ReportControlTypes.DATE_RANGE:
+                case SpaceReportControlTypes.DATE_RANGE:
                   return <SpacesReportDateRangePicker
                     space={space}
                     key={control.key}
@@ -130,7 +130,7 @@ export function SpacesReportController({
                     endDate={control.endDate}
                     onChange={value => onUpdateControls(control.key, value)}
                   />;
-                case ReportControlTypes.TIME_SEGMENT:
+                case SpaceReportControlTypes.TIME_SEGMENT:
                   return <div>Time Segment</div>;
               }
             })}
