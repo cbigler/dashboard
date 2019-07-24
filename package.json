@@ -11,7 +11,7 @@
     "@density/charts": "^1.0.1",
     "@density/conduit": "^0.3.0",
     "@density/react-dates": "^12.6.0",
-    "@density/reports": "^6.0.0",
+    "@density/reports": "^6.2.1",
     "@density/ui": "^18.1.1",
     "@mapbox/mapbox-gl-geocoder": "^4.0.0",
     "auth0-js": "^9.9.0",
