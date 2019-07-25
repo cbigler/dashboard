@@ -36,6 +36,7 @@ import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
+import ExploreControlBar from '../explore-control-bar';
 
 const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -203,7 +204,7 @@ export function SpacesRaw () {
               </AppBarSection>
             </AppBar>
             <AppScrollView backgroundColor={SPACES_BACKGROUND}>
-              {selectedSpace ?
+              {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
                 <SpacesReportController
                   space={selectedSpace}
                   title="Controls"
@@ -218,7 +219,15 @@ export function SpacesRaw () {
                   reports={[]}
                 /> : null}
               {activePage !== 'SPACES_SPACE_TRENDS' ?
-                <ExploreSpacePage activePage={activePage} /> : null}
+                <Fragment>
+                  <ExploreControlBar
+                    selectedSpace={selectedSpace}
+                    spaceHierarchy={spaceHierarchy}
+                    activePage={activePage}
+                    filters={spaces.filters}
+                  />
+                  <ExploreSpacePage activePage={activePage} /> 
+                </Fragment> : null}
             </AppScrollView>
           </AppPane>
         </AppFrame>
