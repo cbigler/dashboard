@@ -17,7 +17,6 @@ import {
 } from '@density/ui';
 
 import { AppState } from '../../interfaces/global';
-import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
@@ -58,7 +57,7 @@ export function SpacesRaw () {
   const {
     spaces,
     spaceHierarchy,
-    //spaceReports,
+    spaceReports,
     selectedSpace,
     alerts,
     activePage,
@@ -203,32 +202,33 @@ export function SpacesRaw () {
                 />
               </AppBarSection>
             </AppBar>
-            <AppScrollView backgroundColor={SPACES_BACKGROUND}>
-              {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
-                <SpacesReportController
-                  space={selectedSpace}
-                  title="Controls"
-                  controls={[{
-                    key: 'asdf',
-                    date: '2018-01-01',
-                    controlType: SpaceReportControlTypes.DATE
-                  }]}
-                  onUpdateControls={(key, value) => {
-                    console.log(key, value);
-                  }}
-                  reports={[]}
-                /> : null}
-              {activePage !== 'SPACES_SPACE_TRENDS' ?
-                <Fragment>
-                  <ExploreControlBar
-                    selectedSpace={selectedSpace}
-                    spaceHierarchy={spaceHierarchy}
-                    activePage={activePage}
-                    filters={spaces.filters}
-                  />
+            
+            {/* New controller for trends page */}
+            {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
+              <SpacesReportController
+                space={selectedSpace}
+                spaceHierarchy={spaceHierarchy.data}
+                controls={spaceReports.controllers[0].controls}
+                onUpdateControls={(key, value) => {
+                  console.log(key, value);
+                }}
+                reports={[]}
+              /> : null}
+
+            {/* Old components for other pages */}
+            {activePage !== 'SPACES_SPACE_TRENDS' ?
+              <Fragment>
+                <ExploreControlBar
+                  selectedSpace={selectedSpace}
+                  spaceHierarchy={spaceHierarchy}
+                  activePage={activePage}
+                  filters={spaces.filters}
+                />
+                <AppScrollView backgroundColor={SPACES_BACKGROUND}>
                   <ExploreSpacePage activePage={activePage} /> 
-                </Fragment> : null}
-            </AppScrollView>
+                </AppScrollView>
+              </Fragment> : null}
+
           </AppPane>
         </AppFrame>
       </div>
