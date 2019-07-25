@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment, useRef } from 'react';
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import fuzzy from 'fuzzy';
 
 import {
@@ -16,19 +16,17 @@ import {
   InputBox,
 } from '@density/ui';
 
-import { State } from '../../interfaces/global';
+import { AppState } from '../../interfaces/global';
 import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
-import hideModal from '../../actions/modal/hide';
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
-import ExploreSpaceTrends from '../explore-space-trends/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import ExploreSpaceMeetings from '../explore-space-meetings/index';
@@ -37,14 +35,12 @@ import SpacesReportController from '../spaces-report-controller/index';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker from '../space-picker';
-import { useAutoWidth } from '../../helpers/hooks';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 
 const SPACES_BACKGROUND = '#FAFAFA';
 
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {
-    case 'SPACES_SPACE_TRENDS':
-      return <ExploreSpaceTrends />;
     case 'SPACES_SPACE_DAILY':
       return <ExploreSpaceDaily />;
     case 'SPACES_SPACE_DATA_EXPORT':
@@ -56,55 +52,28 @@ function ExploreSpacePage({ activePage }) {
   }
 }
 
-interface SpacesRawProps { };
+export function SpacesRaw () {
+  const dispatch = useDispatch();
+  const {
+    spaces,
+    spaceHierarchy,
+    //spaceReports,
+    selectedSpace,
+    alerts,
+    activePage,
+    activeModal,
+    //resizeCounter,
+  } = useSelector((state: AppState) => ({
+    spaces: state.spaces,
+    spaceHierarchy: state.spaceHierarchy,
+    spaceReports: state.spaceReports,
+    selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+    alerts: state.alerts,
+    activePage: state.activePage,
+    activeModal: state.activeModal,
+    resizeCounter: state.resizeCounter,
+  }));
 
-const mapStateToProps = (state: State, ownProps: {}) => ({
-  spaces: state.spaces,
-  spaceHierarchy: state.spaceHierarchy,
-  spaceReports: state.spaceReports,
-  selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
-  alerts: state.alerts,
-  activePage: state.activePage,
-  activeModal: state.activeModal,
-  resizeCounter: state.resizeCounter,
-});
-
-const mapDispatchToProps = (dispatch: any) => ({
-  onSpaceSearch(searchQuery) {
-    dispatch(collectionSpacesFilter('search', searchQuery));
-  },
-  async onUpdateAlert(alert) {
-    await dispatch(collectionAlertsUpdate(alert));
-    dispatch(showToast({
-      text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
-      timeout: 1000
-    }));
-  },
-  onShowModal(name, data) {
-    dispatch(showModal(name, data));
-  },
-  onCloseModal() {
-    dispatch(hideModal());
-  },
-});
-
-export function SpacesRaw ({
-  spaces,
-  spaceHierarchy,
-  spaceReports,
-  selectedSpace,
-  alerts,
-  activePage,
-  activeModal,
-  onUpdateAlert,
-  onSpaceSearch,
-  onShowModal,
-}) {
-// } : (
-//   SpacesRawProps &
-//   ReturnType<typeof mapStateToProps> &
-//   ReturnType<typeof mapDispatchToProps>
-// )) {
   const ref = useRef(null);
   const width = useAutoWidth(ref);
 
@@ -139,12 +108,14 @@ export function SpacesRaw ({
                 disabled={false}
                 leftIcon={<Icons.Search />}
                 value={spaces.filters.search}
-                onChange={e => onSpaceSearch(e.target.value)}
+                onChange={e => {
+                  dispatch(collectionSpacesFilter('search', e.target.value));
+                }}
               />
             </AppBar>
             <AppScrollView>
               <nav className={styles.exploreAppFrameSidebarList}>
-                {formattedHierarchy.length === 0 && spaces.filters.search.length === 0 ?
+                {formattedHierarchy.length === 0 && !spaces.filters.search ?
                   <div className={styles.loadingSpaces}>Loading spaces...</div> :
                   selectedSpace ?
                     <SpacePicker
@@ -199,7 +170,7 @@ export function SpacesRaw ({
                   alerts={alerts}
                   selectedSpace={selectedSpace}
                   onCreateAlert={() => {
-                    onShowModal('MODAL_ALERT_MANAGEMENT', {
+                    dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
                       alert: {
                         spaceId: selectedSpace.id,
                         enabled: true,
@@ -213,13 +184,20 @@ export function SpacesRaw ({
                           escalationDelta: null,
                         }
                       }
-                    });
+                    }));
                   }}
                   onEditAlert={alert => {
-                    onShowModal('MODAL_ALERT_MANAGEMENT', { alert: { meta: {}, ...alert } });
+                    dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
+                      alert: { meta: {}, ...alert }
+                    }));
                   }}
-                  onToggleAlert={(alert, enabled) => {
-                    onUpdateAlert({...alert, enabled});
+                  onToggleAlert={async (alert, enabled) => {
+                    const updated = {...alert, enabled};
+                    await dispatch(collectionAlertsUpdate(updated));
+                    dispatch(showToast({
+                      text: enabled ? 'Alert enabled' : 'Alert disabled',
+                      timeout: 1000
+                    }));
                   }}
                 />
               </AppBarSection>
@@ -239,7 +217,8 @@ export function SpacesRaw ({
                   }}
                   reports={[]}
                 /> : null}
-              <ExploreSpacePage activePage={activePage} />
+              {activePage !== 'SPACES_SPACE_TRENDS' ?
+                <ExploreSpacePage activePage={activePage} /> : null}
             </AppScrollView>
           </AppPane>
         </AppFrame>
@@ -248,6 +227,4 @@ export function SpacesRaw ({
   );
 }
 
-const Spaces = connect(mapStateToProps, mapDispatchToProps)(React.memo(SpacesRaw));
-
-export default Spaces;
+export default React.memo(SpacesRaw);

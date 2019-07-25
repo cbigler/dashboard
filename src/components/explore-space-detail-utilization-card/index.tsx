@@ -37,7 +37,7 @@ import {
 } from '@density/chart-line-chart/dist/overlays';
 
 import { chartAsReactComponent } from '@density/charts';
-import { useAutoWidth } from '../../helpers/hooks';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const AVERAGE_WEEKLY_BREAKDOWN_PERCENTAGE_BAR_BREAK_WIDTH_IN_PX = 320;

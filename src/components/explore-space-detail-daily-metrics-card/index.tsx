@@ -34,7 +34,7 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import { chartAsReactComponent } from '@density/charts';
-import { useAutoWidth } from '../../helpers/hooks';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 const DailyMetricsComponent = chartAsReactComponent(dailyMetrics);
 const LineChartComponent = chartAsReactComponent(lineChart);
 
