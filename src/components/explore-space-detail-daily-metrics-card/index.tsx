@@ -68,7 +68,8 @@ export function ExploreSpaceDetailDailyMetricsCardRaw ({
 
   if (space) {
     return (
-      <Card ref={ref}>
+      <div ref={ref}>
+      <Card>
         {calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
 
         <CardHeader className={styles.exploreSpaceDetailDailyMetricsCardHeader}>
@@ -236,6 +237,7 @@ export function ExploreSpaceDetailDailyMetricsCardRaw ({
           </div> : null }
         </CardBody>
       </Card>
+      </div>
     );
   } else {
     return null;

@@ -133,7 +133,8 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
     }
 
     return (
-      <Card ref={ref} className={styles.exploreSpaceDetailCard}>
+      <div ref={ref}>
+      <Card className={styles.exploreSpaceDetailCard}>
         { calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
         <CardHeader className={styles.exploreSpaceDetailFootTrafficCardHeader}>
           Foot Traffic
@@ -251,6 +252,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
         </div> : null}
       </CardBody>
     </Card>
+    </div>
   );
   } else {
     return <span>This space doesn't exist.</span>;

@@ -105,12 +105,12 @@ function ActivePage({activePage, user, settings}) {
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
-  case "EXPLORE":
+  case "SPACES":
     return <Spaces />;
-  case "EXPLORE_SPACE_TRENDS":
-  case "EXPLORE_SPACE_DAILY":
-  case "EXPLORE_SPACE_DATA_EXPORT":
-  case "EXPLORE_SPACE_MEETINGS":
+  case "SPACES_SPACE_TRENDS":
+  case "SPACES_SPACE_DAILY":
+  case "SPACES_SPACE_DATA_EXPORT":
+  case "SPACES_SPACE_MEETINGS":
     return stringToBoolean(settings.insightsPageLocked) ? null : <Spaces />;
   case "ACCOUNT":
     return <Account />;
