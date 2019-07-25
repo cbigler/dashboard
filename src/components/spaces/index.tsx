@@ -36,7 +36,7 @@ import SpacesReportController from '../spaces-report-controller/index';
 
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
-import SpacePicker from '../space-picker';
+import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/hooks';
 
 const SPACES_BACKGROUND = '#FAFAFA';
@@ -152,6 +152,7 @@ export function SpacesRaw ({
                       onChange={item => window.location.href = `#/spaces/${item.space.id}/trends`}
                       showSearchBox={false}
                       formattedHierarchy={formattedHierarchy}
+                      selectControl={SelectControlTypes.NONE}
                       isItemDisabled={item => {
                         return !spaces.data.find(s => s.id === item.space.id);
                       }}

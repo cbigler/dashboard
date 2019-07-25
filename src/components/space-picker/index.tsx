@@ -15,6 +15,12 @@ import colorVariables from '@density/ui/variables/colors.json';
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 
+export enum SelectControlTypes {
+  RADIOBUTTON = 'RADIOBUTTON',
+  CHECKBOX = 'CHECKBOX',
+  NONE = 'NONE',
+};
+
 type SpacePickerProps = {
   value: Array<SpaceHierarchyDisplayItem> | Array<string> | SpaceHierarchyDisplayItem | string | null,
   onChange: (SpaceHierarchyDisplayItem) => any,
@@ -26,6 +32,7 @@ type SpacePickerProps = {
   width?: number | string,
   height?: number | string,
   canSelectMultiple?: boolean,
+  selectControl?: SelectControlTypes,
   isItemDisabled?: (SpaceHierarchyDisplayItem) => boolean,
   onCloseDropdown?: () => void,
 };
@@ -78,10 +85,15 @@ export default function SpacePicker({
   showSearchBox=true,
   searchBoxPlaceholder=`ex: "New York"`,
   onCloseDropdown=() => {},
+  selectControl=undefined,
 }: SpacePickerProps) {
   const [searchText, setSearchText] = useState('');
 
   const selectedSpaceIds = convertValueToSpaceIds(value, canSelectMultiple);
+
+  // The select control is the control to the left of each space that can be clicked to select it.
+  const defaultSelectControl = canSelectMultiple ? SelectControlTypes.CHECKBOX : SelectControlTypes.RADIOBUTTON;
+  selectControl = selectControl || defaultSelectControl;
 
   if (searchText.length > 0) {
     formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, searchText);
@@ -145,19 +157,20 @@ export default function SpacePicker({
                 }
               }}
             >
-              {canSelectMultiple ? (
-                <Checkbox
-                  disabled={spaceDisabled}
-                  checked={isChecked}
-                  onChange={e => {}}
-                />
-              ) : (
+              {selectControl === SelectControlTypes.RADIOBUTTON ? (
                 <RadioButton
                   disabled={spaceDisabled}
                   checked={isChecked}
                   onChange={e => {}}
                 />
-              )}
+              ) : null}
+              {selectControl === SelectControlTypes.CHECKBOX ? (
+                <Checkbox
+                  disabled={spaceDisabled}
+                  checked={isChecked}
+                  onChange={e => {}}
+                />
+              ) : null}
 
               {item.space.spaceType === 'building' ? (
                 <span className={styles.itemIcon}>
@@ -178,6 +191,7 @@ export default function SpacePicker({
                 className={classnames(styles.itemName, {
                   [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
                   [styles.disabled]: spaceDisabled,
+                  [styles.selected]: selectControl === SelectControlTypes.NONE && isChecked,
                 })}
               >
                 {item.space.name}
