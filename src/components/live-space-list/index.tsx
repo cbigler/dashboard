@@ -129,7 +129,7 @@ export function LiveSpaceList({
 }
 
 const AutoRefreshedLiveSpaceList = autoRefresh({
-  shouldComponentUpdate: !isDocumentHidden()
+  shouldComponentUpdate: () => !isDocumentHidden()
 })(LiveSpaceList);
 
 export default connect((state: any) => {
