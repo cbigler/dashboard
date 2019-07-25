@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { connect } from 'react-redux';
 import fuzzy from 'fuzzy';
 
@@ -19,7 +19,6 @@ import {
 import { State } from '../../interfaces/global';
 import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
-import autoWidthHoc, { AutoWidthHocProps } from '../../helpers/auto-width-hoc';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
 import hideModal from '../../actions/modal/hide';
@@ -38,6 +37,7 @@ import SpacesReportController from '../spaces-report-controller/index';
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker from '../space-picker';
+import { useAutoWidth } from '../../helpers/hooks';
 
 const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -99,13 +99,15 @@ export function SpacesRaw ({
   onUpdateAlert,
   onSpaceSearch,
   onShowModal,
-  width,
-} : (
-  SpacesRawProps &
-  ReturnType<typeof mapStateToProps> &
-  ReturnType<typeof mapDispatchToProps> &
-  AutoWidthHocProps
-)) {
+}) {
+// } : (
+//   SpacesRawProps &
+//   ReturnType<typeof mapStateToProps> &
+//   ReturnType<typeof mapDispatchToProps>
+// )) {
+  const ref = useRef(null);
+  const width = useAutoWidth(ref);
+
   let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
   if (spaces.filters.search) {
@@ -126,7 +128,7 @@ export function SpacesRaw ({
       ) : null}
 
       {/* Main application */}
-      <div className={styles.appFrameWrapper}>
+      <div ref={ref} className={styles.appFrameWrapper}>
         <AppFrame>
           <AppSidebar visible={true} width={width <= 1120 ? 280 : 328}>
             <AppBar>
@@ -246,6 +248,6 @@ export function SpacesRaw ({
   );
 }
 
-const Spaces = connect(mapStateToProps, mapDispatchToProps)(autoWidthHoc(React.memo(SpacesRaw)));
+const Spaces = connect(mapStateToProps, mapDispatchToProps)(React.memo(SpacesRaw));
 
 export default Spaces;

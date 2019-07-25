@@ -132,6 +132,8 @@ export function SpacesReportController({
                   />;
                 case SpaceReportControlTypes.TIME_SEGMENT:
                   return <div>Time Segment</div>;
+                default:
+                  return <div>Unknown Control</div>;
               }
             })}
           </AppBarSection>

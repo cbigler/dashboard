@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment } from 'react';
+import React, { Fragment, useRef } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import fuzzy from 'fuzzy';
@@ -18,7 +18,6 @@ import {
 } from '@density/ui';
 
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
-import autoWidthHoc from '../../helpers/auto-width-hoc';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceTrends from '../explore-space-trends/index';
@@ -32,6 +31,7 @@ import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import showToast from '../../actions/toasts';
+import { useAutoWidth } from '../../helpers/hooks';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 
@@ -160,8 +160,9 @@ export function ExploreRaw ({
   onUpdateAlert,
   onSpaceSearch,
   onShowModal,
-  width,
 }: any) {
+  const ref = useRef(null);
+  const width = useAutoWidth(ref);
 
   let filteredSpaces = spaceHierarchy.data;
   if (spaces.filters.search) {
@@ -184,7 +185,7 @@ export function ExploreRaw ({
       ) : null}
 
       {/* Main application */}
-      <div className={styles.appFrameWrapper}>
+      <div ref={ref} className={styles.appFrameWrapper}>
         <AppFrame>
           <AppSidebar visible={true} width={width <= 1120 ? 280 : 328}>
             <AppBar>
@@ -322,4 +323,4 @@ export default connect((state: any) => {
       dispatch(hideModal());
     },
   };
-})(autoWidthHoc(React.memo(ExploreRaw)));
+})(React.memo(ExploreRaw));

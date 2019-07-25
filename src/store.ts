@@ -30,7 +30,7 @@ import spaceManagement from './reducers/space-management/index';
 import tags from './reducers/tags/index';
 import assignedTeams from './reducers/assigned-teams/index';
 
-const reducer = combineReducers({
+export const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
   activeModal,

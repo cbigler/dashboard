@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React from 'react';
+import React, { useRef } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -34,7 +34,7 @@ import {
 } from '../../helpers/space-time-utilities/index';
 
 import { chartAsReactComponent } from '@density/charts';
-import autoWidthHoc from '../../helpers/auto-width-hoc';
+import { useAutoWidth } from '../../helpers/hooks';
 const DailyMetricsComponent = chartAsReactComponent(dailyMetrics);
 const LineChartComponent = chartAsReactComponent(lineChart);
 
@@ -59,14 +59,16 @@ export function ExploreSpaceDetailDailyMetricsCardRaw ({
 
   onRefresh,
   onChangeMetricToDisplay,
-  width,
 }: any) {
+  const ref = useRef(null);
+  const width = useAutoWidth(ref, 600);
+
   // Subtract 2 from width because of borders
   const innerWidth = width - 2;
 
   if (space) {
     return (
-      <Card>
+      <Card ref={ref}>
         {calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
 
         <CardHeader className={styles.exploreSpaceDetailDailyMetricsCardHeader}>
@@ -252,4 +254,4 @@ export default connect((state: any) => ({
     dispatch(collectionSpacesFilter('metricToDisplay', metric));
     dispatch<any>(calculateDailyMetrics(space));
   }
-}))(autoWidthHoc(React.memo(ExploreSpaceDetailDailyMetricsCardRaw), 600));
+}))(React.memo(ExploreSpaceDetailDailyMetricsCardRaw));

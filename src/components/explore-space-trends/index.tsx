@@ -11,25 +11,15 @@ import HourlyBreakdownCard from '../explore-space-detail-hourly-breakdown-card/i
 import styles from './styles.module.scss';
 
 import isMultiWeekSelection from '../../helpers/multi-week-selection/index';
-import {
-  getShownTimeSegmentsForSpace,
-} from '../../helpers/time-segments/index';
 
 function ExploreSpaceTrendsRaw ({
   spaces,
   space,
-  spaceHierarchy,
   activeModal,
 }: any) {
   if (space) {
-    const shownTimeSegments = getShownTimeSegmentsForSpace(space, spaceHierarchy.data);
-
     // Which time segment label was selected?
     const selectedTimeSegmentLabel = spaces.filters.timeSegmentLabel;
-
-    // And, with the knowlege of the selected space, which time segment within that time segment
-    // label is applicable to this space?
-    const applicableTimeSegments = shownTimeSegments.filter(i => i.label === selectedTimeSegmentLabel);
 
     const multiWeekSelection = isMultiWeekSelection(spaces.filters.startDate, spaces.filters.endDate);
 
@@ -78,7 +68,6 @@ function ExploreSpaceTrendsRaw ({
                 startDate={spaces.filters.startDate}
                 endDate={spaces.filters.endDate}
                 timeSegmentLabel={selectedTimeSegmentLabel}
-                timeSegments={applicableTimeSegments}
               />
             </div>
           </div>
