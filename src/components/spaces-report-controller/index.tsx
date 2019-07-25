@@ -85,11 +85,11 @@ function SpacesReportDateRangePicker({
         endDate={formatForReactDates(parseISOTimeAtSpace(endDate, space), space)}
         onChange={({start, end}) => {
           start = start ?
-            parseFromReactDates(start, space).startOf('day') :
-            parseISOTimeAtSpace(startDate, space);
+            formatForReactDates(parseISOTimeAtSpace(start, space).startOf('day'), space) :
+            formatForReactDates(parseISOTimeAtSpace(startDate, space), space);
           end = end ?
-            parseFromReactDates(end, space).endOf('day') :
-            parseISOTimeAtSpace(endDate, space)
+            formatForReactDates(parseISOTimeAtSpace(end, space).endOf('day'), space) :
+            formatForReactDates(parseISOTimeAtSpace(endDate, space).endOf('day'), space);
 
           // If the user selected over 14 days, then clamp them back to 14 days.
           if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
