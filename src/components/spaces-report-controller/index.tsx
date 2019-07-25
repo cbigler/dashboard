@@ -77,7 +77,7 @@ function SpacesReportDateRangePicker({
   space,
   onChange,
 }) {
-  const [focused, setFocused] = useState(false);
+  const [focused, setFocused] = useState(null);
   return (
     <div className={styles.spacesReportControl}>
       <DateRangePicker
@@ -92,8 +92,8 @@ function SpacesReportDateRangePicker({
             formatForReactDates(parseISOTimeAtSpace(endDate, space).endOf('day'), space);
 
           // If the user selected over 14 days, then clamp them back to 14 days.
-          if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-            endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
+          if (start && end && end.diff(start, 'days') > MAXIMUM_DAY_LENGTH) {
+            end = start.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
           }
 
           // Only update the start and end data if at least one of them has changed
