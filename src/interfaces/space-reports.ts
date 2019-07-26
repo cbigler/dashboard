@@ -1,4 +1,5 @@
 import { ReactComponentLike } from "prop-types";
+import { DensitySpace } from "../types";
 
 // Space Report Actions
 
@@ -9,7 +10,8 @@ export enum SpaceReportActionTypes {
 
 export type SpaceReportsAction = {
   type: SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS,
-  controllers: Array<ISpaceReportController>
+  controllers: Array<ISpaceReportController>,
+  space: DensitySpace,
 } | {
   type: SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER,
   controller: ISpaceReportController
@@ -21,9 +23,11 @@ export type SpaceReportsAction = {
 export interface ISpaceReportData {
   status: 'LOADING' | 'COMPLETE' | 'ERROR';
   data: any;
-  report: {
-    component: ReactComponentLike;
-    calculations: Function;
+  configuration: {
+    id: string;
+    name: string;
+    type: string;
+    settings: any;
   };
 };
 

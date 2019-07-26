@@ -84,7 +84,7 @@ function ExploreSidebarItemRaw({spaces, space, activePage, selectedSpace, depth}
   return (
     <div key={space.id} className={styles[`${space.spaceType}Container`]}>
       {enabled ?
-        <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/explore/${id}/${page}`}>
+        <a className={classnames(styles.exploreAppFrameSidebarListItem, styles[spaceType])} href={`#/spaces/${id}/${page}`}>
           <div className={classnames(styles.exploreSidebarItem, {[styles.selected]: selected})}>
             <div className={styles.exploreSidebarItemRow}>
               {icon}
@@ -223,25 +223,25 @@ export function ExploreRaw ({
               {selectedSpace ? <AppBarSection>
                 <AppBarSubnav>
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${selectedSpace.id}/trends`}
+                    href={`#/spaces/${selectedSpace.id}/trends`}
                     active={activePage === "EXPLORE_SPACE_TRENDS"}
                   >
                     Trends
                   </AppBarSubnavLink>
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${selectedSpace.id}/daily`}
+                    href={`#/spaces/${selectedSpace.id}/daily`}
                     active={activePage === "EXPLORE_SPACE_DAILY"}
                   >
                     Daily
                   </AppBarSubnavLink>
                   { ["conference_room", "meeting_room"].includes(selectedSpace.function) ? <AppBarSubnavLink
-                    href={`#/spaces/explore/${selectedSpace.id}/meetings`}
+                    href={`#/spaces/${selectedSpace.id}/meetings`}
                     active={activePage === "EXPLORE_SPACE_MEETINGS"}
                   >
                     Meetings
                   </AppBarSubnavLink> : null }
                   <AppBarSubnavLink
-                    href={`#/spaces/explore/${selectedSpace.id}/data-export`}
+                    href={`#/spaces/${selectedSpace.id}/data-export`}
                     active={activePage === "EXPLORE_SPACE_DATA_EXPORT"}
                   >
                     Data Export

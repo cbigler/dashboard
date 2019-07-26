@@ -4,12 +4,60 @@ import {
   SpaceReportControlTypes,
   SpaceReportActionTypes,
 } from '../../interfaces/space-reports';
+import { DensitySpace } from '../../types';
 
-const initialState = {
+const startDate = moment().subtract(2, 'weeks').format('YYYY-MM-DD');
+const endDate = moment().format('YYYY-MM-DD');
+
+export const initialState = {
   space: null,
   controllers: [{
     key: 'trends_page_controls',
-    reports: [],
+    reports: [{
+      status: 'LOADING',
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_hourly_visits',
+        name: 'Hourly visits',
+        type: 'HOURLY_BREAKDOWN',
+        settings: {
+          spaceId: null as string | null,
+          scrollable: true,
+          metric: 'VISITS',
+          aggregation: 'NONE',
+          timeRange: {
+            type: 'CUSTOM_RANGE',
+            startDate: startDate as null | string,
+            endDate: endDate as null | string,
+          },
+          includeWeekends: true,
+          hourStart: 6,
+          hourEnd: 20
+        }
+      }
+    }, {
+      status: 'LOADING',
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_hourly_count',
+        name: 'Hourly count',
+        type: 'HOURLY_BREAKDOWN',
+        settings: {
+          spaceId: null as string | null,
+          scrollable: true,
+          metric: 'VISITS',
+          aggregation: 'NONE',
+          timeRange: {
+            type: 'CUSTOM_RANGE',
+            startDate: startDate as null | string,
+            endDate: endDate as null | string,
+          },
+          includeWeekends: true,
+          hourStart: 6,
+          hourEnd: 20
+        }
+      }
+    }],
     controls: [{
       key: 'Time Segment',
       controlType: SpaceReportControlTypes.TIME_SEGMENT,
@@ -25,7 +73,8 @@ const initialState = {
 
 export default function spaceReports(state=initialState, action: {
   type: SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS,
-  controllers: Array<ISpaceReportController>
+  controllers: Array<ISpaceReportController>,
+  space: DensitySpace
 } | {
   type: SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER,
   controller: ISpaceReportController
@@ -43,7 +92,13 @@ export default function spaceReports(state=initialState, action: {
   case SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS:
     return {
       ...state,
-      controllers: action.controllers
+      controllers: action.controllers.map(controller => ({
+        ...controller,
+        reports: controller.reports.map(report => {
+          report.configuration.settings.spaceId = action.space.id;
+          return {...report};
+        })
+      }))
     };
 
   // Update one of the report controllers

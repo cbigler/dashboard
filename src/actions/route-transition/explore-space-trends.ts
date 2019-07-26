@@ -10,7 +10,7 @@ import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
-import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem, DensityReportCalculatationFunction } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -31,6 +31,8 @@ import {
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsLoad from '../collection/alerts/load';
+import { initialState } from '../../reducers/space-reports';
+import spacesSetReportControllers from '../space-reports/set-report-controllers';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -75,6 +77,26 @@ export default function routeTransitionExploreSpaceTrends(id) {
     dispatch(collectionSpacesFilter('endDate', state.spaces.filters.endDate));
 
     dispatch(calculate(selectedSpace, state.spaces.filters));
+
+    await Promise.all(
+      initialState.controllers[0].reports.map(async report => {
+        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
+        report.configuration.settings.spaceId = selectedSpace.id;
+        try {
+          const data = await reportDataCalculationFunction(report.configuration, {
+            date: moment().format('2019-01-01'),
+            weekStart: 'Sunday',
+            client: core(),
+            slow: getGoSlow(),
+          });
+          report.data = data;
+          report.status = 'COMPLETE';
+        } catch (error) {
+          console.log(error);
+        }
+      })
+    );
+    dispatch(spacesSetReportControllers(selectedSpace, initialState.controllers));
   }
 }
 

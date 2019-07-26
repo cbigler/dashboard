@@ -213,7 +213,7 @@ export function SpacesRaw () {
                 onUpdateControls={(key, value) => {
                   console.log(key, value);
                 }}
-                reports={[]}
+                reports={spaceReports.controllers[0].reports}
               /> : null}
 
             {/* Old components for other pages */}

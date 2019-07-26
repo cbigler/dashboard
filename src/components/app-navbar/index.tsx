@@ -143,7 +143,7 @@ export default function AppNavbar({
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
             selected={['SPACES', 'SPACES_SPACE_DETAIL', 'SPACES_SPACE_TRENDS', 'SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={true}
-            path="#/spaces/explore"
+            path="#/spaces"
             icon={<Icons.Building />}
             text="Spaces"
           /> : null}

@@ -26,7 +26,7 @@ import {
 } from '../../helpers/space-time-utilities';
 import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { ISpaceReportControl, SpaceReportControlTypes } from '../../interfaces/space-reports';
+import { ISpaceReportControl, SpaceReportControlTypes, ISpaceReportData } from '../../interfaces/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 // When the user selects a start date, select a range that's this long. THe user can still adjust
@@ -38,10 +38,7 @@ export type ReportControllerProps = {
   spaceHierarchy: Array<DensitySpaceHierarchyItem>;
   controls: Array<ISpaceReportControl>;
   onUpdateControls: Function;
-  reports: Array<{
-    component: any,
-    data: any
-  }>;
+  reports: Array<ISpaceReportData>;
 }
 
 function SpacesReportDatePicker({
@@ -192,7 +189,15 @@ export function SpacesReportController({
       </AppBar>
       <AppScrollView>
         {reports.map(report => {
-          return <div>Report</div>;
+          return report.status === 'COMPLETE' ? <Report
+            report={report.configuration}
+            reportData={{
+              state: 'COMPLETE',
+              data: report.data,
+              error: null
+            }}
+            expanded={false}
+          /> : null;
         })}
       </AppScrollView>
     </div>
