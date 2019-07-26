@@ -447,10 +447,18 @@ function DashboardReportEditModal({
                       break;
 
                     case 'TIME_SEGMENT_LABEL_PICKER':
+                      const space = spaces.data.find(s => s.id === activeModal.data.report.settings.spaceId);
                       input = (
                         control.parameters.canSelectMultiple ? (
                           <TagInput
-                            choices={timeSegmentLabels.map(label => ({id: label, label}))}
+                            choices={
+                              timeSegmentLabels.filter(label => {
+                                // If the report only allows selection of a single space, filter the
+                                // list of time segment labels by that space.
+                                if (!space) { return true; }
+                                return (space as any).timeSegments.find(tsm => tsm.label === label);
+                              }).map(label => ({id: label, label}))
+                            }
                             tags={activeModal.data.report.settings[fieldName].map(label => ({id: label, label}))}
                             placeholder={'eg. "Whole Day"'}
                             emptyTagsPlaceholder="No time segments selected."
@@ -749,6 +757,7 @@ function DashboardReportEditModal({
                             activeModal.data.report.settings[`_${fieldName}String`] ||
                             activeModal.data.report.settings[fieldName]
                           }
+                          min={control.parameters.minimum}
                           onChange={e => {
                             // Modify the string version of the field name and use taht as the "working copy"
                             reportUpdateSettings(`_${fieldName}String`, e.target.value);
