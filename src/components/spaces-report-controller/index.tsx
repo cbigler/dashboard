@@ -25,15 +25,16 @@ import {
   getCurrentLocalTimeAtSpace,
   prettyPrintHoursMinutes,
 } from '../../helpers/space-time-utilities';
-import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-picker-is-outside-range';
+import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import { ISpaceReportControl, SpaceReportControlTypes, ISpaceReportData } from '../../interfaces/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 import { SPACES_BACKGROUND } from '../spaces';
 
-// When the user selects a start date, select a range that's this long. THe user can still adjust
-// the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
+// When the user selects a start date, select a range that's this long. The user can stil ladjust
+// the range up to a maximum length of 92 though
+const MAXIMUM_DAY_LENGTH = 92;
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 
 export type ReportControllerProps = {

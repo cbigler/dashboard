@@ -25,7 +25,7 @@ import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAU
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 
-// When the user selects a start date, select a range that's this long. THe user can stil ladjust
+// When the user selects a start date, select a range that's this long. The user can stil ladjust
 // the range up to a maximum length of 92 though
 const MAXIMUM_DAY_LENGTH = 92;
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
