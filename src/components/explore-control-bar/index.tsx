@@ -22,11 +22,12 @@ import { calculate as calculateDailyModules } from '../../actions/route-transiti
 import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 import { calculate as calculateMeetingsModules } from '../../actions/route-transition/explore-space-meetings';
 import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
-import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-picker-is-outside-range';
+import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 
 // When the user selects a start date, select a range that's this long. THe user can stil ladjust
-// the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
+// the range up to a maximum length of 92 though
+const MAXIMUM_DAY_LENGTH = 92;
 const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 
 export function ExploreControlBarRaw({
