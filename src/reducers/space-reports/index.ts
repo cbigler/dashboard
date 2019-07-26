@@ -8,10 +8,14 @@ import {
 const initialState = {
   space: null,
   controllers: [{
-    key: 'Report Controls',
+    key: 'trends_page_controls',
     reports: [],
     controls: [{
-      key: 'Date',
+      key: 'Time Segment',
+      controlType: SpaceReportControlTypes.TIME_SEGMENT,
+      timeSegment: null
+    }, {
+      key: 'Date Range',
       controlType: SpaceReportControlTypes.DATE_RANGE,
       startDate: moment().subtract(2, 'weeks').format('YYYY-MM-DD'),
       endDate: moment().format('YYYY-MM-DD'),

@@ -31,7 +31,7 @@ import ExploreAlertManagementModal from '../explore-alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import showToast from '../../actions/toasts';
-import { useAutoWidth } from '../../helpers/hooks';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 
 const EXPLORE_BACKGROUND = '#FAFAFA';
 

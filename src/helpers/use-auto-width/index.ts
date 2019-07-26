@@ -26,9 +26,12 @@ export function useEventListener(eventName, handler, element = window){
 export function useAutoWidth(ref, delay = 300) {
   const [width, setWidth] = useState(0);
   const handler = useCallback(
-    () => setTimeout(() => setWidth(ref ? ref.offsetWidth : 0), delay),
-    [ref, delay, setWidth]
+    () => setTimeout(() => (
+      setWidth(ref.current ? ref.current.offsetWidth : 0)
+    ), delay),
+    [ref, delay]
   );
   useEventListener('resize', handler);
+  handler();
   return width;
 }

@@ -52,7 +52,7 @@ export function ExploreControlBarRaw({
     return (
       <AppBar>
         <AppBarSection>
-          {activePage === 'EXPLORE_SPACE_DAILY' ? <div className={styles.exploreControlDatePicker}>
+          {activePage === 'SPACES_SPACE_DAILY' ? <div className={styles.exploreControlDatePicker}>
             <DatePicker
               date={formatForReactDates(parseISOTimeAtSpace(filters.date, selectedSpace), selectedSpace)}
               onChange={date => onChangeDate(activePage, selectedSpace, formatInISOTime(parseFromReactDates(date, selectedSpace)))}
@@ -70,7 +70,7 @@ export function ExploreControlBarRaw({
               )}
             />
           </div> : null}
-          {['EXPLORE_SPACE_DATA_EXPORT', 'EXPLORE_SPACE_MEETINGS'].indexOf(activePage) === -1 ? <div className={styles.exploreControlTimeSegment}>
+          {['SPACES_SPACE_DATA_EXPORT', 'SPACES_SPACE_MEETINGS'].indexOf(activePage) === -1 ? <div className={styles.exploreControlTimeSegment}>
               <InputBox
               type="select"
               className={styles.exploreSpaceDailyTimeSegmentBox}
@@ -110,7 +110,7 @@ export function ExploreControlBarRaw({
               onChange={value => onChangeTimeSegmentLabel(activePage, selectedSpace, filters, value.id)}
             />
           </div> : null}
-          {(activePage !== 'EXPLORE_SPACE_DAILY' && filters.startDate && filters.endDate) ? <div className={styles.exploreControlDateRangePicker}>
+          {(activePage !== 'SPACES_SPACE_DAILY' && filters.startDate && filters.endDate) ? <div className={styles.exploreControlDateRangePicker}>
             <DateRangePicker
               startDate={formatForReactDates(
                 parseISOTimeAtSpace(filters.startDate, selectedSpace),
@@ -163,10 +163,11 @@ export function ExploreControlBarRaw({
               commonRanges={getCommonRangesForSpace(selectedSpace)}
               onSelectCommonRange={({startDate, endDate}) => {
                 onChangeDateRange(
+                  activePage,
                   selectedSpace,
+                  {...filters, startDate, endDate},
                   formatInISOTime(startDate),
                   formatInISOTime(endDate),
-                  {...filters, startDate, endDate}
                 );
               }}
             />
@@ -190,25 +191,25 @@ export default connect(() => ({}), dispatch => {
     onChangeDate(activePage, space, value) {
       dispatch(collectionSpacesFilter('date', value));
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      if (activePage === 'EXPLORE_SPACE_DAILY') {
+      if (activePage === 'SPACES_SPACE_DAILY') {
         dispatch<any>(calculateDailyModules(space));
       }
     },
     onChangeTimeSegmentLabel(activePage, space, spaceFilters, value) {
       dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      if (activePage === 'EXPLORE_SPACE_TRENDS') {
+      if (activePage === 'SPACES_SPACE_TRENDS') {
         dispatch<any>(calculateTrendsModules(space, spaceFilters));
-      } else if (activePage === 'EXPLORE_SPACE_DAILY') {
+      } else if (activePage === 'SPACES_SPACE_DAILY') {
         dispatch<any>(calculateDailyModules(space));
       }
     },
     onChangeDateRange(activePage, space, spaceFilters, startDate, endDate) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      if (activePage === 'EXPLORE_SPACE_TRENDS') {
+      if (activePage === 'SPACES_SPACE_TRENDS') {
         dispatch<any>(calculateTrendsModules(space, spaceFilters));
-      } else if (activePage === 'EXPLORE_SPACE_MEETINGS') {
+      } else if (activePage === 'SPACES_SPACE_MEETINGS') {
         dispatch<any>(calculateMeetingsModules(space.id))
       }
     },
