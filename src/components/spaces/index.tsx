@@ -37,7 +37,7 @@ import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
 
-const SPACES_BACKGROUND = '#FAFAFA';
+export const SPACES_BACKGROUND = '#FAFAFA';
 
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {

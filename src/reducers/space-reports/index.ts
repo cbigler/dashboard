@@ -18,7 +18,7 @@ export const initialState = {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_visits',
-        name: 'Hourly visits',
+        name: 'Visits per hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
@@ -40,12 +40,12 @@ export const initialState = {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_count',
-        name: 'Hourly count',
+        name: 'Count per hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
           scrollable: true,
-          metric: 'VISITS',
+          metric: 'PEAKS',
           aggregation: 'NONE',
           timeRange: {
             type: 'CUSTOM_RANGE',
@@ -102,6 +102,15 @@ export default function spaceReports(state=initialState, action: {
     };
 
   // Update one of the report controllers
+  case SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER:
+    return {
+      ...state,
+      controllers: state.controllers.map(x => {
+        return x.key === action.controller.key ? action.controller : x;
+      })
+    };
+
+  // Update the space and date for a report controller
   case SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER:
     return {
       ...state,

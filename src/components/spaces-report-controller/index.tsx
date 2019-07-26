@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import {
   AppBar,
@@ -8,6 +8,7 @@ import {
   AppScrollView,
   DatePicker,
   DateRangePicker,
+  DashboardReportGrid,
   InputBox,
 } from '@density/ui';
 import gridVariables from '@density/ui/variables/grid.json';
@@ -28,6 +29,8 @@ import isOutsideRange, { MAXIMUM_DAY_LENGTH } from '../../helpers/date-range-pic
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import { ISpaceReportControl, SpaceReportControlTypes, ISpaceReportData } from '../../interfaces/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
+
+import { SPACES_BACKGROUND } from '../spaces';
 
 // When the user selects a start date, select a range that's this long. THe user can still adjust
 // the range up to a maximum length of `MAXIMUM_DAY_LENGTH` though.
@@ -123,7 +126,7 @@ export function SpacesReportController({
     ...shownTimeSegments.map(i => i.label),
   ];
   return (
-    <div>
+    <Fragment>
       <AppBar>
         <AppBarSection>
           {controls.map(control => {
@@ -187,20 +190,27 @@ export function SpacesReportController({
           })}
         </AppBarSection>
       </AppBar>
-      <AppScrollView>
-        {reports.map(report => {
-          return report.status === 'COMPLETE' ? <Report
-            report={report.configuration}
-            reportData={{
-              state: 'COMPLETE',
-              data: report.data,
-              error: null
-            }}
-            expanded={false}
-          /> : null;
-        })}
+      <AppScrollView backgroundColor={SPACES_BACKGROUND}>
+        <div style={{padding: '12px 24px'}}>
+          <DashboardReportGrid
+            reports={reports.map(report => {
+              return {
+                id: report.configuration.id,
+                report: report.status === 'COMPLETE' ? <Report
+                  report={report.configuration}
+                  reportData={{
+                    state: 'COMPLETE',
+                    data: report.data,
+                    error: null
+                  }}
+                  expanded={true}
+                /> : null
+              };
+            })}
+          />
+        </div>
       </AppScrollView>
-    </div>
+    </Fragment>
   );
 }
 

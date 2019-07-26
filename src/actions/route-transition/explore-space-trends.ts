@@ -84,11 +84,12 @@ export default function routeTransitionExploreSpaceTrends(id) {
         report.configuration.settings.spaceId = selectedSpace.id;
         try {
           const data = await reportDataCalculationFunction(report.configuration, {
-            date: moment().format('2019-01-01'),
-            weekStart: 'Sunday',
+            date: '',
+            weekStart: '',
             client: core(),
             slow: getGoSlow(),
           });
+          console.log(data)
           report.data = data;
           report.status = 'COMPLETE';
         } catch (error) {
