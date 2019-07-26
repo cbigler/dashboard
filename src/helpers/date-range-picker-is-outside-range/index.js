@@ -1,8 +1,5 @@
 import { getCurrentLocalTimeAtSpace } from '../space-time-utilities/index';
 
-// The maximum number of days in the past that can be selected by the date range picker
-export const MAXIMUM_DAY_LENGTH = 6 * 31; // Three months of data
-
 // Given a day on the calendar and the current day, determine if the square on the calendar should
 // be grayed out or not.
 export default function isOutsideRange(space, localDay) {
@@ -26,11 +23,6 @@ export default function isOutsideRange(space, localDay) {
   //                           to a new locale.
   const now = getCurrentLocalTimeAtSpace(space).startOf('day');
 
-  // If a startDate is selected, then permit the previous MAXIMUM_DAY_LENGTH days to be selectable
-  const rangeStart = now.clone().subtract(MAXIMUM_DAY_LENGTH-1, 'days');
-  const rangeEnd = now.clone().subtract(1, 'day');
-  const isWithinRange = (
-    day.isAfter(rangeStart, 'day') && day.isSameOrBefore(rangeEnd, 'day')
-  );
-  return !isWithinRange;
+  // Permit only days in the past to be selected
+  return !day.isSameOrBefore(now.clone().subtract(1, 'day'));
 }
