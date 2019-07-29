@@ -5,6 +5,7 @@ import {
   SpaceReportActionTypes,
 } from '../../interfaces/space-reports';
 import { DensitySpace } from '../../types';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 
 const startDate = moment().subtract(2, 'weeks').format('YYYY-MM-DD');
 const endDate = moment().format('YYYY-MM-DD');
@@ -61,7 +62,7 @@ export const initialState = {
     controls: [{
       key: 'Time Segment',
       controlType: SpaceReportControlTypes.TIME_SEGMENT,
-      timeSegment: null
+      timeSegment: DEFAULT_TIME_SEGMENT_LABEL
     }, {
       key: 'Date Range',
       controlType: SpaceReportControlTypes.DATE_RANGE,
@@ -102,15 +103,6 @@ export default function spaceReports(state=initialState, action: {
     };
 
   // Update one of the report controllers
-  case SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER:
-    return {
-      ...state,
-      controllers: state.controllers.map(x => {
-        return x.key === action.controller.key ? action.controller : x;
-      })
-    };
-
-  // Update the space and date for a report controller
   case SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER:
     return {
       ...state,

@@ -99,7 +99,7 @@ function SpacesReportDateRangePicker({
 
           // Only update the start and end data if at least one of them has changed
           if (formatInISOTime(start) !== startDate || formatInISOTime(end) !== endDate) {
-            onChange(formatInISOTime(start), formatInISOTime(end));
+            onChange({startDate: formatInISOTime(start), endDate: formatInISOTime(end)});
           }
         }}
         focusedInput={focused}

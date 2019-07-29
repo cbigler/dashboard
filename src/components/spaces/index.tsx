@@ -36,6 +36,8 @@ import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
+import spacesUpdateReportController from '../../actions/space-reports/update-report-controller';
+import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -211,6 +213,13 @@ export function SpacesRaw () {
                 spaceHierarchy={spaceHierarchy.data}
                 controls={spaceReports.controllers[0].controls}
                 onUpdateControls={(key, value) => {
+                  const controller = {...spaceReports.controllers[0]};
+                  const control = controller.controls.find(control => control.key === key) as any;
+                  if (control.controlType === SpaceReportControlTypes.DATE_RANGE) {
+                    control.startDate = value.startDate;
+                    control.endDate = value.endDate;
+                  }
+                  dispatch(spacesUpdateReportController(selectedSpace, controller))
                   console.log(key, value);
                 }}
                 reports={spaceReports.controllers[0].reports}
