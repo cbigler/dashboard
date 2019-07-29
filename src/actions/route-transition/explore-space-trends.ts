@@ -33,6 +33,7 @@ import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsLoad from '../collection/alerts/load';
 import { initialState } from '../../reducers/space-reports';
 import spacesSetReportControllers from '../space-reports/set-report-controllers';
+import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -81,19 +82,35 @@ export default function routeTransitionExploreSpaceTrends(id) {
     await Promise.all(
       initialState.controllers[0].reports.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
-        report.configuration.settings.spaceId = selectedSpace.id;
+        
+        const dateRangeControl = initialState.controllers[0].controls.find(x => x.controlType === SpaceReportControlTypes.DATE_RANGE) as any;
+        const startDate = moment.tz(dateRangeControl.startDate, selectedSpace.timeZone);
+        const endDate = moment.tz(dateRangeControl.endDate, selectedSpace.timeZone);
+
+        const configuration = {
+          ...report.configuration,
+          settings: {
+            ...report.configuration.settings,
+            spaceId: selectedSpace.id,
+            timeRange: {
+              type: 'CUSTOM_RANGE',
+              startDate: startDate,
+              endDate: endDate,
+            },
+          }
+        };
+
         try {
-          const data = await reportDataCalculationFunction(report.configuration, {
+          const data = await reportDataCalculationFunction(configuration, {
             date: '',
             weekStart: '',
             client: core(),
             slow: getGoSlow(),
           });
-          console.log(data)
           report.data = data;
           report.status = 'COMPLETE';
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       })
     );

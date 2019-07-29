@@ -220,7 +220,6 @@ export function SpacesRaw () {
                     control.endDate = value.endDate;
                   }
                   dispatch(spacesUpdateReportController(selectedSpace, controller))
-                  console.log(key, value);
                 }}
                 reports={spaceReports.controllers[0].reports}
               /> : null}

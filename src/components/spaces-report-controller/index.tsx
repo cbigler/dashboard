@@ -18,12 +18,11 @@ import { isInclusivelyBeforeDay } from '@density/react-dates';
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 import Report from '../report';
 import {
-  parseISOTimeAtSpace,
-  parseFromReactDates,
-  formatInISOTime,
-  formatForReactDates,
   getCurrentLocalTimeAtSpace,
   prettyPrintHoursMinutes,
+  parseDateStringAtSpace,
+  serializeMomentToDateString,
+  currentDateStringAtSpace,
 } from '../../helpers/space-time-utilities';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
@@ -46,23 +45,21 @@ export type ReportControllerProps = {
 }
 
 function SpacesReportDatePicker({
+  key,
   date,
   space,
   onChange,
 }) {
   const [focused, setFocused] = useState(false);
   return (
-    <div className={styles.spacesReportControl}>
+    <div key={key} className={styles.spacesReportControl}>
       <DatePicker
         anchor="ANCHOR_RIGHT"
-        date={formatForReactDates(parseISOTimeAtSpace(date, space), space)}
-        onChange={date => onChange(formatForReactDates(parseISOTimeAtSpace(date, space), space))}
+        date={parseDateStringAtSpace(date, space)}
+        onChange={value => onChange(serializeMomentToDateString(value))}
         focused={focused}
         onFocusChange={event => setFocused(event.focused)}
-        arrowRightDisabled={
-          parseISOTimeAtSpace(date, space).format('MM/DD/YYYY') ===
-          getCurrentLocalTimeAtSpace(space).format('MM/DD/YYYY')
-        }
+        arrowRightDisabled={date === currentDateStringAtSpace(space)}
         isOutsideRange={day => !isInclusivelyBeforeDay(
           day,
           getCurrentLocalTimeAtSpace(space).startOf('day'),
@@ -73,6 +70,7 @@ function SpacesReportDatePicker({
 }
 
 function SpacesReportDateRangePicker({
+  key,
   startDate,
   endDate,
   space,
@@ -80,26 +78,29 @@ function SpacesReportDateRangePicker({
 }) {
   const [focused, setFocused] = useState(null);
   return (
-    <div className={styles.spacesReportControl}>
+    <div key={key} className={styles.spacesReportControl}>
       <DateRangePicker
-        startDate={formatForReactDates(parseISOTimeAtSpace(startDate, space), space)}
-        endDate={formatForReactDates(parseISOTimeAtSpace(endDate, space), space)}
-        onChange={({start, end}) => {
-          start = start ?
-            formatForReactDates(parseISOTimeAtSpace(start, space).startOf('day'), space) :
-            formatForReactDates(parseISOTimeAtSpace(startDate, space), space);
-          end = end ?
-            formatForReactDates(parseISOTimeAtSpace(end, space).endOf('day'), space) :
-            formatForReactDates(parseISOTimeAtSpace(endDate, space).endOf('day'), space);
+        startDate={parseDateStringAtSpace(startDate, space)}
+        endDate={parseDateStringAtSpace(endDate, space)}
+        onChange={value => {
+          let start = value.startDate,
+              end = value.endDate;
 
           // If the user selected over 14 days, then clamp them back to 14 days.
           if (start && end && end.diff(start, 'days') > MAXIMUM_DAY_LENGTH) {
             end = start.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
           }
 
+          // Serialize to a date string
+          start = start ? serializeMomentToDateString(start) : currentDateStringAtSpace(space);
+          end = end ? serializeMomentToDateString(end) : currentDateStringAtSpace(space);
+
           // Only update the start and end data if at least one of them has changed
-          if (formatInISOTime(start) !== startDate || formatInISOTime(end) !== endDate) {
-            onChange({startDate: formatInISOTime(start), endDate: formatInISOTime(end)});
+          if (start !== startDate || end !== endDate) {
+            onChange({
+              startDate: start,
+              endDate: end
+            });
           }
         }}
         focusedInput={focused}
@@ -108,7 +109,10 @@ function SpacesReportDateRangePicker({
         isOutsideRange={day => isOutsideRange(space, day)}
 
         commonRanges={getCommonRangesForSpace(space)}
-        onSelectCommonRange={({start, end}) => onChange(formatInISOTime(start), formatInISOTime(end))}
+        onSelectCommonRange={({start, end}) => onChange({
+          startDate: serializeMomentToDateString(start),
+          endDate: serializeMomentToDateString(end),
+        })}
       />
     </div>
   );
@@ -152,6 +156,7 @@ export function SpacesReportController({
                   <div className={styles.spacesReportControl}>
                     <InputBox
                       type="select"
+                      key={control.key}
                       width={280}
                       className={styles.spacesReportControlTimeSegmentBox}
                       value={control.timeSegment}
@@ -186,7 +191,7 @@ export function SpacesReportController({
                   </div>
                 );
               default:
-                return <div>Unknown Control</div>;
+                return <div key={Math.random()}>Unknown Control</div>;
             }
           })}
         </AppBarSection>

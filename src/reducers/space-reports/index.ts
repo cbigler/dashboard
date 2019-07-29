@@ -6,9 +6,11 @@ import {
 } from '../../interfaces/space-reports';
 import { DensitySpace } from '../../types';
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
+import { serializeMomentToDateString } from '../../helpers/space-time-utilities';
 
-const startDate = moment().subtract(2, 'weeks').format('YYYY-MM-DD');
-const endDate = moment().format('YYYY-MM-DD');
+const now = moment();
+const startDate = serializeMomentToDateString(moment(now).subtract(2, 'weeks'));
+const endDate = serializeMomentToDateString(moment(now));
 
 export const initialState = {
   space: null,
@@ -26,11 +28,6 @@ export const initialState = {
           scrollable: true,
           metric: 'VISITS',
           aggregation: 'NONE',
-          timeRange: {
-            type: 'CUSTOM_RANGE',
-            startDate: startDate as null | string,
-            endDate: endDate as null | string,
-          },
           includeWeekends: true,
           hourStart: 6,
           hourEnd: 20
@@ -48,11 +45,6 @@ export const initialState = {
           scrollable: true,
           metric: 'PEAKS',
           aggregation: 'NONE',
-          timeRange: {
-            type: 'CUSTOM_RANGE',
-            startDate: startDate as null | string,
-            endDate: endDate as null | string,
-          },
           includeWeekends: true,
           hourStart: 6,
           hourEnd: 20
@@ -66,8 +58,8 @@ export const initialState = {
     }, {
       key: 'Date Range',
       controlType: SpaceReportControlTypes.DATE_RANGE,
-      startDate: moment().subtract(2, 'weeks').format('YYYY-MM-DD'),
-      endDate: moment().format('YYYY-MM-DD'),
+      startDate,
+      endDate,
     }]
   }] as Array<ISpaceReportController>
 };

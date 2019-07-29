@@ -1,4 +1,3 @@
-import { ReactComponentLike } from "prop-types";
 import { DensitySpace } from "../types";
 
 // Space Report Actions

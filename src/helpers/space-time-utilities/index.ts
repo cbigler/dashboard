@@ -4,6 +4,20 @@ import 'moment-timezone';
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
 
+
+// New time functions
+export function currentDateStringAtSpace(space) {
+  return moment.tz(space.timeZone).format('YYYY-MM-DD');
+}
+export function parseDateStringAtSpace(dateString, space) {
+  return moment.tz(dateString, space.timeZone);
+}
+export function serializeMomentToDateString(dateInstance) {
+  return dateInstance.format('YYYY-MM-DD');
+}
+
+ 
+// DEPRECATED Old time functions
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
 }
