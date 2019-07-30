@@ -254,8 +254,8 @@ export type DensitySpaceMapping = {
 };
 
 export type DensityReportOptions = {
-  date: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
-  weekStart: string; // A weekday for the report week to start on. Default is "Sunday".
+  date?: string; // A moment representing "now", in utc. This permits reports to be run for any time period, including in the past!
+  weekStart?: string; // A weekday for the report week to start on. Default is "Sunday".
   client: any; // An axios client used to make AJAX requests.
   slow: boolean; // A flag representing if the report calculations should run specifying the "?slow=true" flag, which bypasses the new reporting database.
 }

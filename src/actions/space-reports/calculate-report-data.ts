@@ -38,8 +38,6 @@ export default function spaceReportsCalculateReportData(controller, space) {
 
         try {
           const data = await reportDataCalculationFunction(configuration, {
-            date: '',
-            weekStart: '',
             client: core(),
             slow: getGoSlow(),
           });
