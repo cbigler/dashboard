@@ -220,7 +220,6 @@ export function SpacesRaw () {
                       return control.key === key ? {...control, ...value} : control;
                     })
                   };
-                  console.log(updated);
                   dispatch(spacesUpdateReportController(selectedSpace, updated));
                 }}
                 reports={spaceReports.controllers[0].reports}

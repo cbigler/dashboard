@@ -45,14 +45,13 @@ export type ReportControllerProps = {
 }
 
 function SpacesReportDatePicker({
-  key,
   date,
   space,
   onChange,
 }) {
   const [focused, setFocused] = useState(false);
   return (
-    <div key={key} className={styles.spacesReportControl}>
+    <div className={styles.spacesReportControl}>
       <DatePicker
         anchor="ANCHOR_RIGHT"
         date={parseDateStringAtSpace(date, space)}
@@ -70,7 +69,6 @@ function SpacesReportDatePicker({
 }
 
 function SpacesReportDateRangePicker({
-  key,
   startDate,
   endDate,
   space,
@@ -78,7 +76,7 @@ function SpacesReportDateRangePicker({
 }) {
   const [focused, setFocused] = useState(null);
   return (
-    <div key={key} className={styles.spacesReportControl}>
+    <div className={styles.spacesReportControl}>
       <DateRangePicker
         startDate={parseDateStringAtSpace(startDate, space)}
         endDate={parseDateStringAtSpace(endDate, space)}
@@ -109,14 +107,61 @@ function SpacesReportDateRangePicker({
         isOutsideRange={day => isOutsideRange(space, day)}
 
         commonRanges={getCommonRangesForSpace(space)}
-        onSelectCommonRange={({start, end}) => onChange({
-          startDate: serializeMomentToDateString(start),
-          endDate: serializeMomentToDateString(end),
+        onSelectCommonRange={({startDate, endDate}) => onChange({
+          startDate: serializeMomentToDateString(startDate),
+          endDate: serializeMomentToDateString(endDate),
         })}
       />
     </div>
   );
 }
+
+function SpacesReportTimeSegmentPicker({
+  space,
+  timeSegment,
+  shownTimeSegments,
+  spaceTimeSegmentLabelsArray,
+  onChange,
+}) {
+  return (
+    <div className={styles.spacesReportControl}>
+      <InputBox
+        type="select"
+        width={280}
+        className={styles.spacesReportControlTimeSegmentBox}
+        value={timeSegment}
+        choices={spaceTimeSegmentLabelsArray
+          // Remove multiple entries from the list if a time segment shows up multiple times
+          .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
+          .map(label => {
+            const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
+            if (applicableTimeSegmentsForLabel.length === 1) {
+              const timeSegment = applicableTimeSegmentsForLabel[0];
+              const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
+              return {
+                id: label,
+                label: `${label} (${prettyPrintHoursMinutes(
+                  getCurrentLocalTimeAtSpace(space).startOf('day').add(startSeconds, 'seconds')
+                )} - ${prettyPrintHoursMinutes(
+                  getCurrentLocalTimeAtSpace(space).startOf('day').add(endSeconds, 'seconds')
+                )})`,
+              };
+            } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
+              return { id: label, label: 'Whole day (12:00a - 11:59p)' }
+            } else {
+              return {
+                id: label,
+                label: `${label} (mixed hours)`
+              };
+            }
+          })
+        }
+        onChange={onChange}
+      />
+    </div>
+  );
+}
+
 
 export function SpacesReportController({
   space,
@@ -152,44 +197,14 @@ export function SpacesReportController({
                   onChange={value => onUpdateControls(control.key, value)}
                 />;
               case SpaceReportControlTypes.TIME_SEGMENT:
-                return (
-                  <div className={styles.spacesReportControl}>
-                    <InputBox
-                      type="select"
-                      key={control.key}
-                      width={280}
-                      className={styles.spacesReportControlTimeSegmentBox}
-                      value={control.timeSegment}
-                      choices={spaceTimeSegmentLabelsArray
-                        // Remove multiple entries from the list if a time segment shows up multiple times
-                        .filter((label, index) => spaceTimeSegmentLabelsArray.indexOf(label) === index)
-                        .map(label => {
-                          const applicableTimeSegmentsForLabel = shownTimeSegments.filter(i => i.label === label);
-                          if (applicableTimeSegmentsForLabel.length === 1) {
-                            const timeSegment = applicableTimeSegmentsForLabel[0];
-                            const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
-                            return {
-                              id: label,
-                              label: `${label} (${prettyPrintHoursMinutes(
-                                getCurrentLocalTimeAtSpace(space).startOf('day').add(startSeconds, 'seconds')
-                              )} - ${prettyPrintHoursMinutes(
-                                getCurrentLocalTimeAtSpace(space).startOf('day').add(endSeconds, 'seconds')
-                              )})`,
-                            };
-                          } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
-                            return { id: label, label: 'Whole day (12:00a - 11:59p)' }
-                          } else {
-                            return {
-                              id: label,
-                              label: `${label} (mixed hours)`
-                            };
-                          }
-                        })
-                      }
-                      onChange={value => onUpdateControls(control.key, {timeSegment: value.id})}
-                    />
-                  </div>
-                );
+                return <SpacesReportTimeSegmentPicker
+                  space={space}
+                  key={control.key}
+                  timeSegment={control.timeSegment}
+                  shownTimeSegments={shownTimeSegments}
+                  spaceTimeSegmentLabelsArray={spaceTimeSegmentLabelsArray}
+                  onChange={value => onUpdateControls(control.key, {timeSegment: value.id})}
+                />;
               default:
                 return <div key={Math.random()}>Unknown Control</div>;
             }
