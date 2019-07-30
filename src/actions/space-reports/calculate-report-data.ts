@@ -21,7 +21,7 @@ export default function spaceReportsCalculateReportData(controller, space) {
         
         const dateRangeControl = controller.controls.find(x => x.controlType === SpaceReportControlTypes.DATE_RANGE) as any;
         const startDate = moment.tz(dateRangeControl.startDate, space.timeZone);
-        const endDate = moment.tz(dateRangeControl.endDate, space.timeZone);
+        const endDate = moment.tz(dateRangeControl.endDate, space.timeZone).add(1, 'day');
 
         const configuration = {
           ...report.configuration,
