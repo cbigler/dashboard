@@ -20,12 +20,36 @@ export const initialState = {
       status: 'LOADING',
       data: null,
       configuration: {
+        id: 'rpt_ephemeral_daily_visits',
+        name: 'Daily Visits',
+        type: 'PERIODIC_METRICS',
+        settings: {
+          spaceId: null as string | null,
+          metric: 'ENTRANCES'
+        }
+      }
+    }, {
+      status: 'LOADING',
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_daily_occupancy',
+        name: 'Daily Occupancy',
+        type: 'PERIODIC_METRICS',
+        settings: {
+          spaceId: null as string | null,
+          metric: 'PEAK_OCCUPANCY'
+        }
+      }
+    }, {
+      status: 'LOADING',
+      data: null,
+      configuration: {
         id: 'rpt_ephemeral_hourly_visits',
-        name: 'Visits per hour',
+        name: 'Visits per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
-          scrollable: true,
+          //scrollable: true,
           metric: 'VISITS',
           aggregation: 'NONE',
           includeWeekends: true,
@@ -38,7 +62,7 @@ export const initialState = {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_count',
-        name: 'Count per hour',
+        name: 'Count per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,

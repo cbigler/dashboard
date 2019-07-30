@@ -212,23 +212,18 @@ export function SpacesReportController({
         </AppBarSection>
       </AppBar>
       <AppScrollView backgroundColor={SPACES_BACKGROUND}>
-        <div style={{padding: '12px 24px'}}>
-          <DashboardReportGrid
-            reports={reports.map(report => {
-              return {
-                id: report.configuration.id,
-                report: report.status === 'COMPLETE' ? <Report
-                  report={report.configuration}
-                  reportData={{
-                    state: 'COMPLETE',
-                    data: report.data,
-                    error: null
-                  }}
-                  expanded={true}
-                /> : null
-              };
-            })}
-          />
+        <div style={{padding: '24px'}}>
+          {reports.map(report => {
+            return report.status === 'COMPLETE' ? <div style={{paddingBottom: 24}}><Report
+              key={report.configuration.id}
+              report={report.configuration}
+              reportData={{
+                state: 'COMPLETE',
+                data: report.data,
+                error: null
+              }}
+            /></div> : null;
+          })}
         </div>
       </AppScrollView>
     </Fragment>
