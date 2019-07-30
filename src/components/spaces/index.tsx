@@ -37,7 +37,6 @@ import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
 import spacesUpdateReportController from '../../actions/space-reports/update-report-controller';
-import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
