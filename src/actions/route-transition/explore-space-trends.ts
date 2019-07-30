@@ -3,14 +3,12 @@ import core from '../../client/core';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
-import collectionSpacesFilter from '../collection/spaces/filter';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import generateHourlyBreakdownEphemeralReport from '../../helpers/generate-hourly-breakdown-ephemeral-report';
 import isMultiWeekSelection from '../../helpers/multi-week-selection';
 
-import { DensitySpace, DensitySpaceHierarchyItem, DensityReportCalculatationFunction } from '../../types';
+import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 
 import exploreDataCalculateDataLoading from '../../actions/explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../../actions/explore-data/calculate-data-complete';
@@ -31,9 +29,7 @@ import {
 } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsLoad from '../collection/alerts/load';
-import { initialState } from '../../reducers/space-reports';
-import spacesSetReportControllers from '../space-reports/set-report-controllers';
-import { SpaceReportControlTypes } from '../../interfaces/space-reports';
+import spaceReportsCalculateReportData from '../space-reports/calculate-report-data';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
@@ -41,10 +37,7 @@ export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_S
 export default function routeTransitionExploreSpaceTrends(id) {
   return async (dispatch, getState) => {
     // Prior to changing the active page, change the module state to be loading.
-    dispatch(exploreDataCalculateDataLoading('dailyMetrics', null));
-    dispatch(exploreDataCalculateDataLoading('utilization', null));
     dispatch(exploreDataCalculateDataLoading('hourlyBreakdownVisits', null));
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdownPeaks', null));
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
@@ -71,50 +64,11 @@ export default function routeTransitionExploreSpaceTrends(id) {
 
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));
-    dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
-    let state = getState();
-    dispatch(collectionSpacesFilter('startDate', state.spaces.filters.startDate));
-    dispatch(collectionSpacesFilter('endDate', state.spaces.filters.endDate));
-
-    dispatch(calculate(selectedSpace, state.spaces.filters));
-
-    await Promise.all(
-      initialState.controllers[0].reports.map(async report => {
-        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
-        
-        const dateRangeControl = initialState.controllers[0].controls.find(x => x.controlType === SpaceReportControlTypes.DATE_RANGE) as any;
-        const startDate = moment.tz(dateRangeControl.startDate, selectedSpace.timeZone);
-        const endDate = moment.tz(dateRangeControl.endDate, selectedSpace.timeZone);
-
-        const configuration = {
-          ...report.configuration,
-          settings: {
-            ...report.configuration.settings,
-            spaceId: selectedSpace.id,
-            timeRange: {
-              type: 'CUSTOM_RANGE',
-              startDate: startDate,
-              endDate: endDate,
-            },
-          }
-        };
-
-        try {
-          const data = await reportDataCalculationFunction(configuration, {
-            date: '',
-            weekStart: '',
-            client: core(),
-            slow: getGoSlow(),
-          });
-          report.data = data;
-          report.status = 'COMPLETE';
-        } catch (error) {
-          console.error(error);
-        }
-      })
-    );
-    dispatch(spacesSetReportControllers(selectedSpace, initialState.controllers));
+    // Calculate all reports for all controllers
+    getState().spaceReports.controllers.map(controller => {
+      dispatch(spaceReportsCalculateReportData(controller, selectedSpace));
+    });
   }
 }
 

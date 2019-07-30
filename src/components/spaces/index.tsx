@@ -37,6 +37,7 @@ import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
 import spacesUpdateReportController from '../../actions/space-reports/update-report-controller';
+import spaceReportsCalculateReportData from '../../actions/space-reports/calculate-report-data';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -220,6 +221,7 @@ export function SpacesRaw () {
                     })
                   };
                   dispatch(spacesUpdateReportController(selectedSpace, updated));
+                  dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
                 }}
                 reports={spaceReports.controllers[0].reports}
               /> : null}

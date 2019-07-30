@@ -1,9 +1,11 @@
-import { REPORTS, UnauthorizedError } from '@density/reports';
+import { REPORTS } from '@density/reports';
 import { getGoSlow } from '../../components/environment-switcher/index';
 import core from '../../client/core';
 
 import { DensityReportCalculatationFunction } from '../../types';
-import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
+import { SpaceReportControlTypes } from '../../interfaces/space-reports';
+import * as moment from 'moment';
+import spacesUpdateReportController from './update-report-controller';
 
 export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
@@ -11,99 +13,43 @@ export const DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'DASHBOARDS_CALCULA
 export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
-export default function collectionDashboardsCalculateReportData(reports, date, weekStart) {
-  return async (dispatch, getState) => {
-    return Promise.all(reports.map(async report => {
-      switch (report.type) {
-      case 'HEADER':
-        dispatch({
-          type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
-          report,
-          data: null, /* headers don't need data */
-        });
-        break;
+export default function spaceReportsCalculateReportData(controller, space) {
+  return async dispatch => {
+    await Promise.all(
+      controller.reports.map(async report => {
+        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
+        
+        const dateRangeControl = controller.controls.find(x => x.controlType === SpaceReportControlTypes.DATE_RANGE) as any;
+        const startDate = moment.tz(dateRangeControl.startDate, space.timeZone);
+        const endDate = moment.tz(dateRangeControl.endDate, space.timeZone);
 
-      // The below three "reports" are used in the tests to validate the interaction between the
-      // actions and reducers works properly.
-      case 'NOOP_DOES_NOTHING':
-        break;
-
-      case 'NOOP_COMPLETES_IMMEDIATELY':
-        dispatch({
-          type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
-          report,
-          data: {
-            hello: 'world',
-          },
-        });
-        break;
-
-      case 'NOOP_ERRORS_IMMEDIATELY':
-        dispatch({
-          type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
-          report,
-          error: new Error('Error was thrown during calculation'),
-        });
-        break;
-
-      default:
-        let data, errorThrown: any = false;
-
-        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
-        if (!reportDataCalculationFunction) {
-          dispatch({
-            type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
-            report,
-            error: `No data calculation function found for a report with type ${report.type}!`,
-          });
-          return;
-        }
+        const configuration = {
+          ...report.configuration,
+          settings: {
+            ...report.configuration.settings,
+            spaceId: space.id,
+            timeRange: {
+              type: 'CUSTOM_RANGE',
+              startDate: startDate,
+              endDate: endDate,
+            },
+          }
+        };
 
         try {
-          data = await reportDataCalculationFunction(
-            report,
-            { date, weekStart, client: core(), slow: getGoSlow() }
-          );
-        } catch (err) {
-          errorThrown = err;
-        }
-
-        if (errorThrown) {
-          // Log the error so a developer can see what went wrong.
-          console.error(errorThrown); // DON'T REMOVE ME!
-          if (errorThrown instanceof UnauthorizedError) {
-            dispatch({
-              type: DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED,
-              report,
-            });
-          } else if (
-            errorThrown.response &&
-            errorThrown.response.status === 400 &&
-            getBackendErrorDetail(errorThrown) === 'end_time must be after the space was created.'
-          ) {
-            dispatch({
-              type: DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA,
-              report,
-            });
-          } else {
-            dispatch({
-              type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,
-              report,
-              error: errorThrown.message,
-            });
-          }
-        } else {
-          dispatch({
-            type: DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE,
-            report,
-            data,
+          const data = await reportDataCalculationFunction(configuration, {
+            date: '',
+            weekStart: '',
+            client: core(),
+            slow: getGoSlow(),
           });
+          report.data = data;
+          report.status = 'COMPLETE';
+        } catch (error) {
+          console.error(error);
         }
-      }
-    }));
+      })
+    );
+    dispatch(spacesUpdateReportController(space, controller));
   };
-}
-
-export function clearReportData(reportId) {
-  return { type: DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR, reportId };
 }
