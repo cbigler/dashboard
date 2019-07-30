@@ -20,7 +20,6 @@ export type SpaceReportsAction = {
 // Space Report State
 
 export interface ISpaceReportData {
-  status: 'LOADING' | 'COMPLETE' | 'ERROR';
   data: any;
   configuration: {
     id: string;
@@ -53,6 +52,7 @@ export type ISpaceReportControl = {
 
 export interface ISpaceReportController {
   key: string;
+  status: 'LOADING' | 'COMPLETE' | 'ERROR';
   reports: Array<ISpaceReportData>;
   controls: Array<ISpaceReportControl>;
 };

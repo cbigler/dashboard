@@ -15,6 +15,10 @@ export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_RE
 
 export default function spaceReportsCalculateReportData(controller, space) {
   return async dispatch => {
+    dispatch(spacesUpdateReportController(space, {
+      ...controller,
+      status: 'LOADING'
+    }));
     await Promise.all(
       controller.reports.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
@@ -48,6 +52,9 @@ export default function spaceReportsCalculateReportData(controller, space) {
         }
       })
     );
-    dispatch(spacesUpdateReportController(space, controller));
+    dispatch(spacesUpdateReportController(space, {
+      ...controller,
+      status: 'COMPLETE'
+    }));
   };
 }

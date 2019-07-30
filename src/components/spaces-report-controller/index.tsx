@@ -26,7 +26,7 @@ import {
 } from '../../helpers/space-time-utilities';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { ISpaceReportControl, SpaceReportControlTypes, ISpaceReportData } from '../../interfaces/space-reports';
+import { SpaceReportControlTypes, ISpaceReportController } from '../../interfaces/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 import { SPACES_BACKGROUND } from '../spaces';
@@ -39,9 +39,8 @@ const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
 export type ReportControllerProps = {
   space: DensitySpace;
   spaceHierarchy: Array<DensitySpaceHierarchyItem>;
-  controls: Array<ISpaceReportControl>;
+  controller: ISpaceReportController;
   onUpdateControls: Function;
-  reports: Array<ISpaceReportData>;
 }
 
 function SpacesReportDatePicker({
@@ -166,8 +165,7 @@ function SpacesReportTimeSegmentPicker({
 export function SpacesReportController({
   space,
   spaceHierarchy,
-  controls,
-  reports,
+  controller,
   onUpdateControls,
 }: ReportControllerProps) {
   const shownTimeSegments = space ? getShownTimeSegmentsForSpace(space, spaceHierarchy) : [];
@@ -179,7 +177,7 @@ export function SpacesReportController({
     <Fragment>
       <AppBar>
         <AppBarSection>
-          {controls.map(control => {
+          {controller.controls.map(control => {
             switch(control.controlType) {
               case SpaceReportControlTypes.DATE:
                 return <SpacesReportDatePicker
@@ -213,17 +211,18 @@ export function SpacesReportController({
       </AppBar>
       <AppScrollView backgroundColor={SPACES_BACKGROUND}>
         <div style={{padding: '24px'}}>
-          {reports.map(report => {
-            return report.status === 'COMPLETE' ? <div style={{paddingBottom: 24}}><Report
-              key={report.configuration.id}
-              report={report.configuration}
-              reportData={{
-                state: 'COMPLETE',
-                data: report.data,
-                error: null
-              }}
-            /></div> : null;
-          })}
+          {controller.status === 'COMPLETE' ?
+            controller.reports.map(report => <div style={{paddingBottom: 24}}>
+              <Report
+                key={report.configuration.id}
+                report={report.configuration}
+                reportData={{
+                  state: 'COMPLETE',
+                  data: report.data,
+                  error: null
+                }}
+              />
+            </div>) : null}
         </div>
       </AppScrollView>
     </Fragment>

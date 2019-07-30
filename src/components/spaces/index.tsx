@@ -208,12 +208,11 @@ export function SpacesRaw () {
             
             {/* New controller for trends page */}
             {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
-              <SpacesReportController
+              spaceReports.controllers.map(controller => <SpacesReportController
                 space={selectedSpace}
                 spaceHierarchy={spaceHierarchy.data}
-                controls={spaceReports.controllers[0].controls}
+                controller={controller}
                 onUpdateControls={(key, value) => {
-                  const controller = spaceReports.controllers[0];
                   const updated = {
                     ...controller,
                     controls: controller.controls.map(control => {
@@ -223,8 +222,7 @@ export function SpacesRaw () {
                   dispatch(spacesUpdateReportController(selectedSpace, updated));
                   dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
                 }}
-                reports={spaceReports.controllers[0].reports}
-              /> : null}
+              />) : null}
 
             {/* Old components for other pages */}
             {activePage !== 'SPACES_SPACE_TRENDS' ?

@@ -16,8 +16,8 @@ export const initialState = {
   space: null,
   controllers: [{
     key: 'trends_page_controls',
+    status: 'LOADING',
     reports: [{
-      status: 'LOADING',
       data: null,
       configuration: {
         id: 'rpt_ephemeral_daily_visits',
@@ -29,7 +29,6 @@ export const initialState = {
         }
       }
     }, {
-      status: 'LOADING',
       data: null,
       configuration: {
         id: 'rpt_ephemeral_daily_occupancy',
@@ -41,7 +40,6 @@ export const initialState = {
         }
       }
     }, {
-      status: 'LOADING',
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_visits',
@@ -58,7 +56,6 @@ export const initialState = {
         }
       }
     }, {
-      status: 'LOADING',
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_count',
@@ -97,13 +94,6 @@ export default function spaceReports(state=initialState, action: {
   controller: ISpaceReportController
 }) {
   switch (action.type) {
-
-  // // Change the space that is currently selected
-  // case SPACES_SET_REPORT_SPACE:
-  //   return {
-  //     ...state,
-  //     action.space
-  //   };
 
   // Change the report controllers that are currently active
   case SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS:
