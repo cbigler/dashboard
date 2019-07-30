@@ -6,6 +6,7 @@ import { DensityReportCalculatationFunction } from '../../types';
 import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 import * as moment from 'moment';
 import spacesUpdateReportController from './update-report-controller';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 
 export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
@@ -27,6 +28,8 @@ export default function spaceReportsCalculateReportData(controller, space) {
         const startDate = moment.tz(dateRangeControl.startDate, space.timeZone);
         const endDate = moment.tz(dateRangeControl.endDate, space.timeZone).add(1, 'day');
 
+        const timeSegmentControl = controller.controls.find(x => x.controlType === SpaceReportControlTypes.TIME_SEGMENT) as any;
+
         const configuration = {
           ...report.configuration,
           settings: {
@@ -37,6 +40,7 @@ export default function spaceReportsCalculateReportData(controller, space) {
               startDate: startDate,
               endDate: endDate,
             },
+            timeSegmentLabels: timeSegmentControl.timeSegment === DEFAULT_TIME_SEGMENT_LABEL ? [] : [ timeSegmentControl.timeSegment ],
           }
         };
 
