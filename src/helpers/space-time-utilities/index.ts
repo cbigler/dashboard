@@ -17,7 +17,7 @@ export function serializeMomentToDateString(dateInstance) {
 }
 
  
-// DEPRECATED Old time functions
+// Old time functions
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
 }

@@ -213,13 +213,15 @@ export function SpacesRaw () {
                 spaceHierarchy={spaceHierarchy.data}
                 controls={spaceReports.controllers[0].controls}
                 onUpdateControls={(key, value) => {
-                  const controller = {...spaceReports.controllers[0]};
-                  const control = controller.controls.find(control => control.key === key) as any;
-                  if (control.controlType === SpaceReportControlTypes.DATE_RANGE) {
-                    control.startDate = value.startDate;
-                    control.endDate = value.endDate;
-                  }
-                  dispatch(spacesUpdateReportController(selectedSpace, controller))
+                  const controller = spaceReports.controllers[0];
+                  const updated = {
+                    ...controller,
+                    controls: controller.controls.map(control => {
+                      return control.key === key ? {...control, ...value} : control;
+                    })
+                  };
+                  console.log(updated);
+                  dispatch(spacesUpdateReportController(selectedSpace, updated));
                 }}
                 reports={spaceReports.controllers[0].reports}
               /> : null}

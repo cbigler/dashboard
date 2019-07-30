@@ -10,7 +10,7 @@ import { serializeMomentToDateString } from '../../helpers/space-time-utilities'
 
 const now = moment();
 const startDate = serializeMomentToDateString(moment(now).subtract(2, 'weeks'));
-const endDate = serializeMomentToDateString(moment(now));
+const endDate = serializeMomentToDateString(moment(now).subtract(1, 'day'));
 
 export const initialState = {
   space: null,

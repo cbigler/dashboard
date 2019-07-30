@@ -186,7 +186,7 @@ export function SpacesReportController({
                           }
                         })
                       }
-                      onChange={value => onUpdateControls(control.key, value)}
+                      onChange={value => onUpdateControls(control.key, {timeSegment: value.id})}
                     />
                   </div>
                 );
