@@ -57,6 +57,7 @@ function DashboardExpandedReportModal({visible, report, reportData, onCloseModal
       report={report as any}
       reportData={reportData as any}
       expanded={true}
+      hideBorder={true}
     /> : null}
   </Modal>
 }
