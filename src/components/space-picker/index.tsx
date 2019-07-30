@@ -186,6 +186,13 @@ export default function SpacePicker({
                   />
                 </span>
               ) : null}
+              {item.space.spaceType === 'space' && selectControl === SelectControlTypes.NONE ? (
+                <span className={styles.itemIcon} style={{transform: `translate(0, -4px)`}}>
+                  <Icons.L
+                    color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
+                  />
+                </span>
+              ) : null}
 
               <span
                 className={classnames(styles.itemName, {
