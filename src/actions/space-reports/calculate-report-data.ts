@@ -20,7 +20,7 @@ export default function spaceReportsCalculateReportData(controller, space) {
       ...controller,
       status: 'LOADING'
     }));
-    await Promise.all(
+    const reports = await Promise.all(
       controller.reports.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
         
@@ -49,16 +49,17 @@ export default function spaceReportsCalculateReportData(controller, space) {
             client: core(),
             slow: getGoSlow(),
           });
-          report.data = data;
-          report.status = 'COMPLETE';
+          return { ...report, status: 'COMPLETE', data };
         } catch (error) {
           console.error(error);
+          return { ...report, status: 'ERROR', error };
         }
       })
     );
     dispatch(spacesUpdateReportController(space, {
       ...controller,
-      status: 'COMPLETE'
+      status: 'COMPLETE',
+      reports,
     }));
   };
 }
