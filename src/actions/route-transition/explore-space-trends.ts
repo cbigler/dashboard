@@ -30,14 +30,19 @@ import {
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsLoad from '../collection/alerts/load';
 import spaceReportsCalculateReportData from '../space-reports/calculate-report-data';
+import spacesUpdateReportController from '../space-reports/update-report-controller';
 
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS = 'ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS';
 
 export default function routeTransitionExploreSpaceTrends(id) {
   return async (dispatch, getState) => {
-    // Prior to changing the active page, change the module state to be loading.
-    dispatch(exploreDataCalculateDataLoading('hourlyBreakdownVisits', null));
+    getState().spaceReports.controllers.forEach(controller => {
+      dispatch(spacesUpdateReportController(null, {
+        ...controller,
+        status: 'LOADING'
+      }));
+    })
 
     // Change the active page
     dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS, id });
