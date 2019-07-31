@@ -8,7 +8,6 @@ import {
   AppScrollView,
   DatePicker,
   DateRangePicker,
-  DashboardReportGrid,
   InputBox,
 } from '@density/ui';
 import gridVariables from '@density/ui/variables/grid.json';
@@ -212,9 +211,8 @@ export function SpacesReportController({
       <AppScrollView backgroundColor={SPACES_BACKGROUND}>
         <div style={{padding: '24px'}}>
           {controller.status === 'COMPLETE' ?
-            controller.reports.map(report => <div style={{paddingBottom: 24}}>
+            controller.reports.map(report => <div key={report.configuration.id} style={{paddingBottom: 24}}>
               <Report
-                key={report.configuration.id}
                 report={report.configuration}
                 reportData={{
                   state: 'COMPLETE',

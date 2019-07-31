@@ -209,6 +209,7 @@ export function SpacesRaw () {
             {/* New controller for trends page */}
             {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
               spaceReports.controllers.map(controller => <SpacesReportController
+                key={controller.key}
                 space={selectedSpace}
                 spaceHierarchy={spaceHierarchy.data}
                 controller={controller}
