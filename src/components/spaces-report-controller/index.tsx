@@ -37,11 +37,6 @@ function getLabelForSpaceFunction(id) {
   return (choice && choice.label) || 'Space';
 }
 
-// When the user selects a start date, select a range that's this long. The user can stil ladjust
-// the range up to a maximum length of 92 though
-const MAXIMUM_DAY_LENGTH = 92;
-const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
-
 export type ReportControllerProps = {
   space: DensitySpace;
   spaceHierarchy: Array<DensitySpaceHierarchyItem>;
@@ -88,11 +83,6 @@ function SpacesReportDateRangePicker({
         onChange={value => {
           let start = value.startDate,
               end = value.endDate;
-
-          // If the user selected over 14 days, then clamp them back to 14 days.
-          if (start && end && end.diff(start, 'days') > MAXIMUM_DAY_LENGTH) {
-            end = start.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
-          }
 
           // Serialize to a date string
           start = start ? serializeMomentToDateString(start) : currentDateStringAtSpace(space);

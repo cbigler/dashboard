@@ -23,11 +23,6 @@ import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAU
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 
-// When the user selects a start date, select a range that's this long. THe user can stil ladjust
-// the range up to a maximum length of 92 though
-const MAXIMUM_DAY_LENGTH = 92;
-const INITIAL_RANGE_SELECTION = MAXIMUM_DAY_LENGTH / 2;
-
 export function ExploreControlBarRaw({
   selectedSpace,
   spaceHierarchy,
@@ -129,11 +124,6 @@ export function ExploreControlBarRaw({
                   endDate = parseFromReactDates(endDate, selectedSpace).endOf('day');
                 } else {
                   endDate = parseISOTimeAtSpace(filters.endDate, selectedSpace);
-                }
-
-                // If the user selected over 14 days, then clamp them back to 14 days.
-                if (startDate && endDate && endDate.diff(startDate, 'days') > MAXIMUM_DAY_LENGTH) {
-                  endDate = startDate.clone().add(INITIAL_RANGE_SELECTION-1, 'days');
                 }
 
                 // Only update the start and end data if one of them has changed from its previous
