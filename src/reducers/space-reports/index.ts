@@ -12,6 +12,8 @@ const now = moment();
 const startDate = serializeMomentToDateString(moment(now).subtract(2, 'weeks'));
 const endDate = serializeMomentToDateString(moment(now).subtract(1, 'day'));
 
+const SMALL_ROOM_FUNCTIONS = ['collaboration', 'conference_room', 'focus_quiet', 'meeting_room', 'phone_booth'];
+
 export const initialState = {
   space: null,
   controllers: [{
@@ -46,6 +48,12 @@ export const initialState = {
         }
       }
     }, {
+      configuration: {
+        id: 'rpt_ephemeral_text_2',
+        type: 'TEXT',
+        settings: { header: 'When do people visit this {FUNCTION}?' }
+      }
+    }, {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_visits',
@@ -75,6 +83,46 @@ export const initialState = {
           includeWeekends: true,
           hourStart: 6,
           hourEnd: 20
+        }
+      }
+    }, {
+      configuration: {
+        id: 'rpt_ephemeral_text_3',
+        spaceFunctions: SMALL_ROOM_FUNCTIONS,
+        type: 'TEXT',
+        settings: { header: 'How is this {FUNCTION} used?' }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_time_occupied',
+        spaceFunctions: SMALL_ROOM_FUNCTIONS,
+        name: 'Time Occupied',
+        type: 'TIME_OCCUPIED',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_room_use',
+        spaceFunctions: SMALL_ROOM_FUNCTIONS,
+        name: 'Room Use',
+        type: 'OCCUPANCY_DISTRIBUTION',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_popular_times',
+        spaceFunctions: SMALL_ROOM_FUNCTIONS,
+        name: 'Popular Times',
+        type: 'POPULAR_TIMES',
+        settings: {
+          spaceId: null as string | null,
         }
       }
     }],

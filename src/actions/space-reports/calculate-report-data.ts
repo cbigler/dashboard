@@ -19,6 +19,7 @@ export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPO
 export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
 function getLabelForSpaceFunction(id) {
+  id = id || 'no_match';
   const choice = SPACE_FUNCTION_CHOICES.find(x => x.id === id);
   return (choice && choice.label) || 'Space';
 }
@@ -84,15 +85,19 @@ export default function spaceReportsCalculateReportData(controller, space, roomB
           }
         };
 
-        try {
-          const data = await reportDataCalculationFunction(configuration, {
-            client: core(),
-            slow: getGoSlow(),
-          });
-          return { ...report, status: 'COMPLETE', data };
-        } catch (error) {
-          console.error(error);
-          return { ...report, status: 'ERROR', error };
+        if (!report.configuration.spaceFunctions || report.configuration.spaceFunctions.indexOf(space.function) > -1) {
+          try {
+            const data = await reportDataCalculationFunction(configuration, {
+              client: core(),
+              slow: getGoSlow(),
+            });
+            return { ...report, status: 'COMPLETE', data };
+          } catch (error) {
+            console.error(error);
+            return { ...report, status: 'ERROR', error };
+          }
+        } else {
+          return report;
         }
       })
     );

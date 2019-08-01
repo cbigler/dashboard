@@ -212,17 +212,19 @@ export function SpacesReportController({
         <div style={{padding: '24px'}}>
           {controller.status === 'COMPLETE' ?
             controller.reports.map(report => {
-              return report.status === 'COMPLETE' ? <div key={report.configuration.id} style={{paddingBottom: 24}}>
-                <Report
-                  report={report.configuration}
-                  reportData={{
-                    state: 'COMPLETE',
-                    data: report.data,
-                    error: null
-                  }}
-                  hideExpandAction={true}
-                />
-              </div>: null;
+              return report.status === 'COMPLETE' ? (
+                <div key={report.configuration.id} style={{paddingBottom: 24}}>
+                  <Report
+                    report={report.configuration}
+                    reportData={{
+                      state: 'COMPLETE',
+                      data: report.data,
+                      error: null
+                    }}
+                    hideExpandAction={true}
+                  />
+                </div>
+              ) : null;
             }) : null}
         </div>
       </AppScrollView>

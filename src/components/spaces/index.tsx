@@ -246,7 +246,7 @@ export function SpacesRaw () {
               )) : null}
 
             {/* Old components for other pages */}
-            {['SPACES_SPACE_TRENDS', 'SPACES_SPACE_MEETINGS'].indexOf(activePage) === -1 ?
+            {['SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].indexOf(activePage) > -1 ?
               <Fragment>
                 <ExploreControlBar
                   selectedSpace={selectedSpace}
