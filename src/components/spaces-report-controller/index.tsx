@@ -11,6 +11,7 @@ import {
   InputBox,
 } from '@density/ui';
 import gridVariables from '@density/ui/variables/grid.json';
+import classnames from 'classnames';
 
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 
@@ -206,13 +207,13 @@ export function SpacesReportController({
         </AppBarSection>
       </AppBar>
       <AppScrollView backgroundColor={SPACES_BACKGROUND}>
-        <div style={{padding: '0 24px 24px 24px'}}>
-          {controller.status === 'COMPLETE' ?
-            controller.reports.map(report => {
+        {controller.status === 'COMPLETE' ? (
+          <div className={styles.spacesReportContainer}>
+            {controller.reports.map((report, index) => {
               return report.status === 'COMPLETE' ? (
                 <div key={report.configuration.id} style={{paddingBottom: 24}}>
                   {report.configuration.type === 'TEXT' ?
-                    <h1 className={styles.spacesReportHeader}>{
+                    <h1 className={classnames(styles.spacesReportHeader, { [styles.first]: !index })}>{
                       report.configuration.settings.header.replace(
                         '{FUNCTION}',
                         getLabelForSpaceFunction(space.function)
@@ -229,8 +230,15 @@ export function SpacesReportController({
                     />}
                 </div>
               ) : null;
-            }) : null}
-        </div>
+            })}
+          </div>
+        ) : (
+          <div className={styles.centeredMessage}>
+            <div className={styles.spacesReportLoadingMessage}>
+              Loading data and rendering reports...
+            </div>
+          </div>
+        )}
       </AppScrollView>
     </Fragment>
   );

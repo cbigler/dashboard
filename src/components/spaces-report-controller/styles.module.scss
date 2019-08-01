@@ -1,7 +1,12 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 
 .spacesReportControl {
   margin-right: 8px;
+}
+
+.spacesReportContainer {
+  padding: 24px;
 }
 
 .spacesReportHeader {
@@ -12,4 +17,29 @@
   font-size: 24px;
   font-weight: 400;
   color: $grayCinder;
+}
+.spacesReportHeader.first {
+  margin-top: 16px;
+}
+
+.centeredMessage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+}
+
+.spacesReportLoadingMessage {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
+  height: 72px;
+
+  padding-left: 24px;
+  padding-right: 24px;
 }
