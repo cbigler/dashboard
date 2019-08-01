@@ -19,7 +19,6 @@ import { formatForReactDates, parseISOTimeAtSpace, formatInISOTime, parseFromRea
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import { calculate as calculateDailyModules } from '../../actions/route-transition/explore-space-daily';
-import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 import { calculate as calculateMeetingsModules } from '../../actions/route-transition/explore-space-meetings';
 import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
@@ -199,18 +198,14 @@ export default connect(() => ({}), dispatch => {
     onChangeTimeSegmentLabel(activePage, space, spaceFilters, value) {
       dispatch(collectionSpacesFilter('timeSegmentLabel', value));
       dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      if (activePage === 'SPACES_SPACE_TRENDS') {
-        dispatch<any>(calculateTrendsModules(space, spaceFilters));
-      } else if (activePage === 'SPACES_SPACE_DAILY') {
+      if (activePage === 'SPACES_SPACE_DAILY') {
         dispatch<any>(calculateDailyModules(space));
       }
     },
     onChangeDateRange(activePage, space, spaceFilters, startDate, endDate) {
       dispatch(collectionSpacesFilter('startDate', startDate));
       dispatch(collectionSpacesFilter('endDate', endDate));
-      if (activePage === 'SPACES_SPACE_TRENDS') {
-        dispatch<any>(calculateTrendsModules(space, spaceFilters));
-      } else if (activePage === 'SPACES_SPACE_MEETINGS') {
+      if (activePage === 'SPACES_SPACE_MEETINGS') {
         dispatch<any>(calculateMeetingsModules(space.id))
       }
     },
