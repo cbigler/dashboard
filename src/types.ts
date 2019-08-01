@@ -25,6 +25,7 @@ export type DensitySpace = {
     name: string,
     sensorPlacement: 1 | -1,
   }>,
+  function?: string,
   tags: Array<string>,
   addressLine1: string | null,
   addressLine2: string | null,

@@ -29,6 +29,13 @@ import { SpaceReportControlTypes, ISpaceReportController } from '../../interface
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 import { SPACES_BACKGROUND } from '../spaces';
+import { SPACE_FUNCTION_CHOICES } from '../../components/admin-locations-detail-modules/general-info';
+
+function getLabelForSpaceFunction(id) {
+  id = id || 'no_match';
+  const choice = SPACE_FUNCTION_CHOICES.find(x => x.id === id);
+  return (choice && choice.label) || 'Space';
+}
 
 // When the user selects a start date, select a range that's this long. The user can stil ladjust
 // the range up to a maximum length of 92 though
@@ -209,20 +216,27 @@ export function SpacesReportController({
         </AppBarSection>
       </AppBar>
       <AppScrollView backgroundColor={SPACES_BACKGROUND}>
-        <div style={{padding: '24px'}}>
+        <div style={{padding: '0 24px 24px 24px'}}>
           {controller.status === 'COMPLETE' ?
             controller.reports.map(report => {
               return report.status === 'COMPLETE' ? (
                 <div key={report.configuration.id} style={{paddingBottom: 24}}>
-                  <Report
-                    report={report.configuration}
-                    reportData={{
-                      state: 'COMPLETE',
-                      data: report.data,
-                      error: null
-                    }}
-                    hideExpandAction={true}
-                  />
+                  {report.configuration.type === 'TEXT' ?
+                    <h1 className={styles.spacesReportHeader}>{
+                      report.configuration.settings.header.replace(
+                        '{FUNCTION}',
+                        getLabelForSpaceFunction(space.function)
+                      )
+                    }</h1> :
+                    <Report
+                      report={report.configuration}
+                      reportData={{
+                        state: 'COMPLETE',
+                        data: report.data,
+                        error: null
+                      }}
+                      hideExpandAction={true}
+                    />}
                 </div>
               ) : null;
             }) : null}

@@ -40,7 +40,7 @@ export const initialState = {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_daily_occupancy',
-        name: 'Daily Occupancy',
+        name: 'Daily Peak Occupancy',
         type: 'PERIODIC_METRICS',
         settings: {
           spaceId: null as string | null,
