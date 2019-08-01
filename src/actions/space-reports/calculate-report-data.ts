@@ -97,7 +97,7 @@ export default function spaceReportsCalculateReportData(controller, space, roomB
             return { ...report, status: 'ERROR', error };
           }
         } else {
-          return report;
+          return { ...report, status: 'LOADING' };
         }
       })
     );
