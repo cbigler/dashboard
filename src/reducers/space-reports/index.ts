@@ -61,7 +61,7 @@ export const initialState = {
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
-          //scrollable: true,
+          scrollable: true,
           metric: 'VISITS',
           aggregation: 'NONE',
           includeWeekends: true,
