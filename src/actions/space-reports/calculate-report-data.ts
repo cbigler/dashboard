@@ -2,11 +2,14 @@ import { REPORTS } from '@density/reports';
 import { getGoSlow } from '../../components/environment-switcher/index';
 import core from '../../client/core';
 
-import { DensityReportCalculatationFunction } from '../../types';
+import { DensityReportCalculatationFunction, DensityService } from '../../types';
 import { SpaceReportControlTypes } from '../../interfaces/space-reports';
 import * as moment from 'moment';
 import spacesUpdateReportController from './update-report-controller';
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
+import collectionServicesError from '../collection/services/error';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import { integrationsRoomBookingSetService } from '../integrations/room-booking';
 
 export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_ERROR = 'DASHBOARDS_CALCULATE_REPORT_DATA_ERROR';
@@ -14,12 +17,38 @@ export const DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'DASHBOARDS_CALCULA
 export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
-export default function spaceReportsCalculateReportData(controller, space) {
+export default function spaceReportsCalculateReportData(controller, space, roomBookingServiceName = null) {
   return async dispatch => {
     dispatch(spacesUpdateReportController(space, {
       ...controller,
       status: 'LOADING'
     }));
+
+    // Determine if a room booking integration is active
+    const services: Array<DensityService> = await (async function() {
+      let servicesResponse;
+      try {
+        servicesResponse = await core().get('/integrations/services/', {});
+      } catch (err) {
+        dispatch(collectionServicesError(`Error loading integrations list: ${err.message}`));
+        return null;
+      }
+
+      return servicesResponse.data.map(s => objectSnakeToCamel<DensityService>(s));
+    })();
+
+    let roomBookingService;
+    if (roomBookingServiceName) {
+      roomBookingService = services.find(service => service.name === roomBookingServiceName);
+    } else {
+      roomBookingService = services
+        .filter(service => service.category === 'Room Booking')
+        .filter(service => typeof service.serviceAuthorization.id !== 'undefined')
+        .find(service => service.serviceAuthorization.default);
+    }
+
+    dispatch(integrationsRoomBookingSetService(roomBookingService));
+
     const reports = await Promise.all(
       controller.reports.map(async report => {
         const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.configuration.type].calculations;
