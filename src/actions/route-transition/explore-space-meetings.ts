@@ -10,7 +10,7 @@ import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import {
   DensityReport,
-  DensityReportCalculatationFunction,
+  DensityReportCalculationFunction,
   DensitySpace,
   DensityService,
   DensitySpaceHierarchyItem,
@@ -156,7 +156,7 @@ export function calculate(id) {
     );
     const meetingReportResults = await Promise.all(
       meetingEphemeralReportGenerators.map(async report => {
-        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
+        const reportDataCalculationFunction: DensityReportCalculationFunction = REPORTS[report.type].calculations;
         try {
           const data = await reportDataCalculationFunction(report, {
             date,

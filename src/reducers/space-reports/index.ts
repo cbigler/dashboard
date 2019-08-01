@@ -18,6 +18,12 @@ export const initialState = {
     key: 'trends_page_controls',
     status: 'LOADING',
     reports: [{
+      configuration: {
+        id: 'rpt_ephemeral_text_1',
+        type: 'TEXT',
+        settings: { header: 'How many people visit this {FUNCTION}?' }
+      }
+    }, {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_daily_visits',
