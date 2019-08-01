@@ -39,23 +39,6 @@ export const initialState = {
     }, {
       data: null,
       configuration: {
-        id: 'rpt_ephemeral_daily_occupancy',
-        name: 'Daily Peak Occupancy',
-        type: 'PERIODIC_METRICS',
-        settings: {
-          spaceId: null as string | null,
-          metric: 'PEAK_OCCUPANCY'
-        }
-      }
-    }, {
-      configuration: {
-        id: 'rpt_ephemeral_text_2',
-        type: 'TEXT',
-        settings: { header: 'When do people visit this {FUNCTION}?' }
-      }
-    }, {
-      data: null,
-      configuration: {
         id: 'rpt_ephemeral_hourly_visits',
         name: 'Visits per Hour',
         type: 'HOURLY_BREAKDOWN',
@@ -70,10 +53,27 @@ export const initialState = {
         }
       }
     }, {
+      configuration: {
+        id: 'rpt_ephemeral_text_2',
+        type: 'TEXT',
+        settings: { header: 'How busy does this {FUNCTION} get?' }
+      }
+    }, {
       data: null,
       configuration: {
-        id: 'rpt_ephemeral_hourly_count',
-        name: 'Count per Hour',
+        id: 'rpt_ephemeral_daily_occupancy',
+        name: 'Daily Peak Occupancy',
+        type: 'PERIODIC_METRICS',
+        settings: {
+          spaceId: null as string | null,
+          metric: 'PEAK_OCCUPANCY'
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_hourly_occupancy',
+        name: 'Peak Occupancy per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
