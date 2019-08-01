@@ -71,6 +71,46 @@ export const initialState = {
           hourEnd: 20
         }
       }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_meeting_attendance',
+        name: 'Meeting attendance',
+        type: 'MEETING_ATTENDANCE',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_meeting_size',
+        name: 'Meeting size',
+        type: 'MEETING_SIZE',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_booking_behavior',
+        name: 'Booker behavior',
+        type: 'BOOKING_BEHAVIOR',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
+    }, {
+      data: null,
+      configuration: {
+        id: 'rpt_ephemeral_busiest_meeting',
+        name: 'Meetings: Day-to-day',
+        type: 'DAY_TO_DAY_MEETINGS',
+        settings: {
+          spaceId: null as string | null,
+        }
+      }
     }],
     controls: [{
       key: 'Time Segment',
