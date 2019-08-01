@@ -28,7 +28,6 @@ import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 import ExploreAlertPopupList from '../explore-alert-popup-list/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
-import ExploreSpaceMeetings from '../explore-space-meetings/index';
 import SpacesReportController from '../spaces-report-controller/index';
 
 import ExploreAlertManagementModal from '../explore-alert-management-modal';
@@ -47,8 +46,6 @@ function ExploreSpacePage({ activePage }) {
       return <ExploreSpaceDaily />;
     case 'SPACES_SPACE_DATA_EXPORT':
       return <ExploreSpaceDataExport />;
-    case 'SPACES_SPACE_MEETINGS':
-      return <ExploreSpaceMeetings />;
     default:
       return null;
   }
@@ -208,25 +205,48 @@ export function SpacesRaw () {
             
             {/* New controller for trends page */}
             {activePage === 'SPACES_SPACE_TRENDS' && selectedSpace ?
-              spaceReports.controllers.map(controller => <SpacesReportController
-                key={controller.key}
-                space={selectedSpace}
-                spaceHierarchy={spaceHierarchy.data}
-                controller={controller}
-                onUpdateControls={(key, value) => {
-                  const updated = {
-                    ...controller,
-                    controls: controller.controls.map(control => {
-                      return control.key === key ? {...control, ...value} : control;
-                    })
-                  };
-                  dispatch(spacesUpdateReportController(selectedSpace, updated));
-                  dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
-                }}
-              />) : null}
+              spaceReports.controllers.filter(x => x.key === 'trends_page_controller').map(controller => (
+                <SpacesReportController
+                  key={controller.key}
+                  space={selectedSpace}
+                  spaceHierarchy={spaceHierarchy.data}
+                  controller={controller}
+                  onUpdateControls={(key, value) => {
+                    const updated = {
+                      ...controller,
+                      controls: controller.controls.map(control => {
+                        return control.key === key ? {...control, ...value} : control;
+                      })
+                    };
+                    dispatch(spacesUpdateReportController(selectedSpace, updated));
+                    dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
+                  }}
+                />
+              )) : null}
+
+            {/* New controller for meetings page */}
+            {activePage === 'SPACES_SPACE_MEETINGS' && selectedSpace ?
+              spaceReports.controllers.filter(x => x.key === 'meetings_page_controller').map(controller => (
+                <SpacesReportController
+                  key={controller.key}
+                  space={selectedSpace}
+                  spaceHierarchy={spaceHierarchy.data}
+                  controller={controller}
+                  onUpdateControls={(key, value) => {
+                    const updated = {
+                      ...controller,
+                      controls: controller.controls.map(control => {
+                        return control.key === key ? {...control, ...value} : control;
+                      })
+                    };
+                    dispatch(spacesUpdateReportController(selectedSpace, updated));
+                    dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
+                  }}
+                />
+              )) : null}
 
             {/* Old components for other pages */}
-            {activePage !== 'SPACES_SPACE_TRENDS' ?
+            {['SPACES_SPACE_TRENDS', 'SPACES_SPACE_MEETINGS'].indexOf(activePage) === -1 ?
               <Fragment>
                 <ExploreControlBar
                   selectedSpace={selectedSpace}

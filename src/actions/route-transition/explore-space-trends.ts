@@ -48,7 +48,7 @@ export default function routeTransitionExploreSpaceTrends(id) {
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));
 
     // Calculate all reports for all controllers
-    return getState().spaceReports.controllers.map(controller => {
+    return getState().spaceReports.controllers.filter(x => x.key === 'trends_page_controller').map(controller => {
       return dispatch(spaceReportsCalculateReportData(controller, selectedSpace));
     });
   }

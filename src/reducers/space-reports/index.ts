@@ -15,7 +15,7 @@ const endDate = serializeMomentToDateString(moment(now).subtract(1, 'day'));
 export const initialState = {
   space: null,
   controllers: [{
-    key: 'trends_page_controls',
+    key: 'trends_page_controller',
     status: 'LOADING',
     reports: [{
       configuration: {
@@ -77,7 +77,21 @@ export const initialState = {
           hourEnd: 20
         }
       }
+    }],
+    controls: [{
+      key: 'Time Segment',
+      controlType: SpaceReportControlTypes.TIME_SEGMENT,
+      timeSegment: DEFAULT_TIME_SEGMENT_LABEL
     }, {
+      key: 'Date Range',
+      controlType: SpaceReportControlTypes.DATE_RANGE,
+      startDate,
+      endDate,
+    }]
+  }, {
+    key: 'meetings_page_controller',
+    status: 'LOADING',
+    reports: [{
       data: null,
       configuration: {
         id: 'rpt_ephemeral_meeting_attendance',
@@ -119,10 +133,6 @@ export const initialState = {
       }
     }],
     controls: [{
-      key: 'Time Segment',
-      controlType: SpaceReportControlTypes.TIME_SEGMENT,
-      timeSegment: DEFAULT_TIME_SEGMENT_LABEL
-    }, {
       key: 'Date Range',
       controlType: SpaceReportControlTypes.DATE_RANGE,
       startDate,

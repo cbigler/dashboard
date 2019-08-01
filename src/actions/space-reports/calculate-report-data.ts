@@ -79,7 +79,8 @@ export default function spaceReportsCalculateReportData(controller, space, roomB
               startDate: startDate,
               endDate: endDate,
             },
-            timeSegmentLabels: timeSegmentControl.timeSegment === DEFAULT_TIME_SEGMENT_LABEL ? [] : [ timeSegmentControl.timeSegment ],
+            timeSegmentLabels: !timeSegmentControl ? [] :
+              timeSegmentControl.timeSegment === DEFAULT_TIME_SEGMENT_LABEL ? [] : [ timeSegmentControl.timeSegment ],
           }
         };
 
