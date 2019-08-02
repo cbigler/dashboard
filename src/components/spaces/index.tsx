@@ -136,7 +136,8 @@ export function SpacesRaw () {
                       formattedHierarchy={formattedHierarchy}
                       selectControl={SelectControlTypes.NONE}
                       isItemDisabled={item => {
-                        return !spaces.data.find(s => s.id === item.space.id);
+                        const space = spaces.data.find(s => s.id === item.space.id);
+                        return !space || !space.doorways.length;
                       }}
                     /> :
                     null
