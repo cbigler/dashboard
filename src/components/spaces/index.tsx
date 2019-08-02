@@ -37,6 +37,8 @@ import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
 import spacesUpdateReportController from '../../actions/space-reports/update-report-controller';
 import spaceReportsCalculateReportData from '../../actions/space-reports/calculate-report-data';
+import { ExpandedReportModal } from '../report';
+import hideModal from '../../actions/modal/hide';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -94,6 +96,16 @@ export function SpacesRaw () {
       {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
         <ExploreAlertManagementModal />
       ) : null}
+
+      {/* If an expanded report modal is visible, then render it above the view */}
+      {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
+          <ExpandedReportModal
+            visible={activeModal.visible}
+            report={activeModal.data.report}
+            reportData={activeModal.data.reportData}
+            onCloseModal={() => dispatch(hideModal())}
+          />
+        ) : null}
 
       {/* Main application */}
       <div ref={ref} className={styles.appFrameWrapper}>

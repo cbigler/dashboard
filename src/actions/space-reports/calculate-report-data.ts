@@ -54,7 +54,11 @@ export default function spaceReportsCalculateReportData(controller, space, roomB
               client: core(),
               slow: getGoSlow(),
             });
-            return { ...report, status: 'COMPLETE', data };
+            return {
+              ...report,
+              status: 'COMPLETE',
+              data: { ...data, scrollable: true } // TODO: `scrollable` does not belong here
+            };
           } catch (error) {
             console.error(error);
             return { ...report, status: 'ERROR', error };

@@ -226,7 +226,6 @@ export function SpacesReportController({
                         data: report.data,
                         error: null
                       }}
-                      hideExpandAction={true}
                     />}
                 </div>
               ) : null;

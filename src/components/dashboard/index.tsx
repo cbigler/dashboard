@@ -19,11 +19,10 @@ import {
   Button,
   DashboardReportGrid,
   Icons,
-  Modal,
 } from '@density/ui';
 
 import { ReportLoading } from '@density/reports';
-import Report from '../report';
+import Report, { ExpandedReportModal } from '../report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
 import GenericErrorState from '../generic-error-state/index';
@@ -35,32 +34,6 @@ import createDashboard from '../../actions/dashboards/create-dashboard';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
-
-function DashboardExpandedReportModal({visible, report, reportData, onCloseModal}) {
-  return <Modal
-    visible={visible}
-    onBlur={onCloseModal}
-    onEscape={onCloseModal}
-    width={1000}
-  >
-    <div style={{marginTop: -64}}>
-      <AppBarContext.Provider value="TRANSPARENT">
-        <AppBar padding="0">
-          <AppBarSection></AppBarSection>
-          <AppBarSection>
-            <Button onClick={onCloseModal}>Close</Button>
-          </AppBarSection>
-        </AppBar>
-      </AppBarContext.Provider>
-    </div>
-    {report ? <Report
-      report={report as any}
-      reportData={reportData as any}
-      expanded={true}
-      hideBorder={true}
-    /> : null}
-  </Modal>
-}
 
 function DashboardMainScrollViewContent({
   dashboards,
@@ -294,10 +267,10 @@ export class Dashboard extends React.Component<any, any> {
       <Fragment>
         {/* If an expanded report modal is visible, then render it above the view */}
         {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
-          <DashboardExpandedReportModal
+          <ExpandedReportModal
             visible={activeModal.visible}
             report={activeModal.data.report}
-            reportData={dashboards.calculatedReportData[activeModal.data.report.id]}
+            reportData={activeModal.data.reportData}
             onCloseModal={onCloseModal}
           />
         ) : null}
