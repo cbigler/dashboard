@@ -118,6 +118,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.itemName.selected {
+  color: $brandPrimary;
+  font-weight: 500;
+}
 .copyFromSpaceModalItemName.bold { font-weight: bold; }
 .copyFromSpaceModalItemName.disabled {
   color: $grayDark;

@@ -2,7 +2,7 @@ import { REPORTS, UnauthorizedError } from '@density/reports';
 import { getGoSlow } from '../../components/environment-switcher/index';
 import core from '../../client/core';
 
-import { DensityReportCalculatationFunction } from '../../types';
+import { DensityReportCalculationFunction } from '../../types';
 import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
 
 export const DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE = 'DASHBOARDS_CALCULATE_REPORT_DATA_COMPLETE';
@@ -49,7 +49,7 @@ export default function collectionDashboardsCalculateReportData(reports, date, w
       default:
         let data, errorThrown: any = false;
 
-        const reportDataCalculationFunction: DensityReportCalculatationFunction = REPORTS[report.type].calculations;
+        const reportDataCalculationFunction: DensityReportCalculationFunction = REPORTS[report.type].calculations;
         if (!reportDataCalculationFunction) {
           dispatch({
             type: DASHBOARDS_CALCULATE_REPORT_DATA_ERROR,

@@ -12,7 +12,7 @@ import AdminLocationsDetailModule from './index';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 import { SpacePickerDropdown } from '../space-picker';
 
-const SPACE_FUNCTION_CHOICES = [
+export const SPACE_FUNCTION_CHOICES = [
   {id: 'break_room', label: 'Break Room'},
   {id: 'cafe', label: 'Cafe'},
   {id: 'collaboration', label: 'Collaboration Room'},

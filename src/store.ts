@@ -12,6 +12,7 @@ import toasts from'./reducers/toasts/index';
 import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
 import spaceHierarchy from './reducers/space-hierarchy/index';
+import spaceReports from './reducers/space-reports/index';
 import tokens from './reducers/tokens/index';
 import user from './reducers/user/index';
 import impersonate from './reducers/impersonate/index';
@@ -29,7 +30,7 @@ import spaceManagement from './reducers/space-management/index';
 import tags from './reducers/tags/index';
 import assignedTeams from './reducers/assigned-teams/index';
 
-const reducer = combineReducers({
+export const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
   activeModal,
@@ -39,6 +40,7 @@ const reducer = combineReducers({
   sessionToken,
   spaces,
   spaceHierarchy,
+  spaceReports,
   tokens,
   sensors,
   user,

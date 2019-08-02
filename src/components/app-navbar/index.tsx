@@ -141,9 +141,9 @@ export default function AppNavbar({
             <Icons.DensityMark color="white" />
           </div>
           {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
-            selected={['EXPLORE', 'EXPLORE_SPACE_DETAIL', 'EXPLORE_SPACE_TRENDS', 'EXPLORE_SPACE_DAILY', 'EXPLORE_SPACE_DATA_EXPORT'].includes(page)}
+            selected={['SPACES', 'SPACES_SPACE_DETAIL', 'SPACES_SPACE_TRENDS', 'SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={true}
-            path="#/spaces/explore"
+            path="#/spaces"
             icon={<Icons.Building />}
             text="Spaces"
           /> : null}

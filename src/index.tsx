@@ -159,24 +159,30 @@ router.addRoute('access_token=:oauth', () => ({type: 'NOOP'}));
 
 // v I AM DEPRECATED
 router.addRoute('insights/spaces', redirect('spaces/explore')); // DEPRECATED
-router.addRoute('spaces/insights/:id', redirect(id => `spaces/explore/${id}/trends`)); // DEPRECATED
 router.addRoute('spaces/insights', redirect(`spaces/explore`)); // DEPRECATED
+router.addRoute('spaces/insights/:id', redirect(id => `spaces/explore/${id}`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/trends', redirect(id => `spaces/explore/${id}/trends`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/daily', redirect(id => `spaces/explore/${id}/daily`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/data-export', redirect(id => `spaces/explore/${id}/data-export`)); // DEPRECATED
+
+router.addRoute('spaces/explore', redirect(`spaces`)); // DEPRECATED
+router.addRoute('spaces/explore/:id', redirect(id => `spaces/${id}`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/trends', redirect(id => `spaces/${id}/trends`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/daily', redirect(id => `spaces/${id}/daily`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/data-export', redirect(id => `spaces/${id}/data-export`)); // DEPRECATED
 // ^ I AM DEPRECATED
 
 router.addRoute('dashboards', () => routeTransitionDashboardList());
 router.addRoute('dashboards/:id/edit', id => routeTransitionDashboardEdit(id));
 router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(id));
 
-router.addRoute('spaces/explore', () => routeTransitionExplore());
-router.addRoute('spaces/explore/:id/trends', id => routeTransitionExploreSpaceTrends(id));
-router.addRoute('spaces/explore/:id/daily', id => routeTransitionExploreSpaceDaily(id));
-router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
-router.addRoute('spaces/explore/:id/meetings', id => routeTransitionExploreSpaceMeetings(id, null));
-router.addRoute('spaces/explore/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(id, service));
-
+router.addRoute('spaces', () => routeTransitionExplore());
+router.addRoute('spaces/:id', redirect(id => `spaces/${id}/trends`));
+router.addRoute('spaces/:id/trends', id => routeTransitionExploreSpaceTrends(id));
+router.addRoute('spaces/:id/daily', id => routeTransitionExploreSpaceDaily(id));
+router.addRoute('spaces/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
+router.addRoute('spaces/:id/meetings', id => routeTransitionExploreSpaceMeetings(id, null));
+router.addRoute('spaces/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(id, service));
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList());
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(id));
 
