@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
 
@@ -20,7 +20,6 @@ import {
   parseStartAndEndTimesInTimeSegment,
 } from '../../helpers/time-segments/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
-import autoWidthHoc from '../../helpers/auto-width-hoc';
 
 import { calculateFootTraffic } from '../../actions/route-transition/explore-space-daily';
 
@@ -32,6 +31,7 @@ import {
   overlayTwoPopupsPlainTextFormatter,
 } from '@density/chart-line-chart/dist/overlays';
 import { chartAsReactComponent } from '@density/charts';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const CHART_HEIGHT = 350;
@@ -43,10 +43,12 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
   timeSegments,
   timeSegmentLabel,
   calculatedData,
-  width,
 
   onRefresh,
 }) {
+  const ref = useRef(null);
+  const width = useAutoWidth(ref, 600);
+
   // Subtract 2 from width and more due to rendering weirdness
   const innerWidth = width - 45;
 
@@ -131,6 +133,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
     }
 
     return (
+      <div ref={ref}>
       <Card className={styles.exploreSpaceDetailCard}>
         { calculatedData.state === 'LOADING' ? <CardLoading indeterminate /> : null }
         <CardHeader className={styles.exploreSpaceDetailFootTrafficCardHeader}>
@@ -249,6 +252,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
         </div> : null}
       </CardBody>
     </Card>
+    </div>
   );
   } else {
     return <span>This space doesn't exist.</span>;
@@ -261,4 +265,4 @@ export default connect((state: any) => ({
   onRefresh(space) {
     dispatch<any>(calculateFootTraffic(space));
   },
-}))(autoWidthHoc(React.memo(ExploreSpaceDetailFootTrafficCardRaw), 600));
+}))(React.memo(ExploreSpaceDetailFootTrafficCardRaw));

@@ -329,7 +329,7 @@ function AlertSection({
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
-                  window.location.href = `#/spaces/explore/${alert.spaceId}/trends`
+                  window.location.href = `#/spaces/${alert.spaceId}/trends`
                 )}
               >{alert.spaceName}</ListViewClickableLink>
             )}

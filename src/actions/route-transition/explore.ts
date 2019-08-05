@@ -29,7 +29,7 @@ export default function routeTransitionExplore() {
       const spaceTree = sortSpaceTree(currentSpaces);
       const firstSpace = returnSpaceOrFirstChild(spaceTree[0]);
       if (firstSpace) {
-        window.location.href = `#/spaces/explore/${firstSpace.id}/trends`;  
+        window.location.href = `#/spaces/${firstSpace.id}/trends`;  
       }  
     }
 
@@ -53,7 +53,7 @@ export default function routeTransitionExplore() {
       const spaceTree = sortSpaceTree(spaceHierarchy);
       const firstSpace = returnSpaceOrFirstChild(spaceTree[0]);
       if (firstSpace) {
-        window.location.href = `#/spaces/explore/${firstSpace.id}/trends`;  
+        window.location.href = `#/spaces/${firstSpace.id}/trends`;  
       }  
     }
 

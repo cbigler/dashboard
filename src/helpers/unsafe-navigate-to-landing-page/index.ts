@@ -15,6 +15,6 @@ export default function unsafeNavigateToLandingPage(settings, redirect, force = 
     window.location.hash = '#/spaces/live';
   // Otherwise land on the explore page
   } else {
-    window.location.hash = '#/spaces/explore';
+    window.location.hash = '#/spaces';
   }
 }

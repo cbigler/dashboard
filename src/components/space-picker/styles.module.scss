@@ -108,7 +108,7 @@
 }
 .item.depth0 { border-top: 1px solid $gray; }
 .item.depth0:first-child { border-top-width: 0px; }
-.item.disabled { cursor: default; }
+.item.disabled { cursor: default; color: $grayDarker; }
 
 .itemIcon { margin-left: 8px; }
 
@@ -117,6 +117,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.itemName.selected {
+  color: $brandPrimary;
+  font-weight: 500;
 }
 .copyFromSpaceModalItemName.bold { font-weight: bold; }
 .copyFromSpaceModalItemName.disabled {

@@ -148,7 +148,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 template={space => {
                   if (space.spaceMappings.length > 0) {
                     return <ListViewClickableLink
-                      onClick={() => window.location.href = `/#/spaces/explore/${space.id}/meetings/${currentService.name}`}
+                      onClick={() => window.location.href = `/#/spaces/${space.id}/meetings/${currentService.name}`}
                     >
                       View
                     </ListViewClickableLink>

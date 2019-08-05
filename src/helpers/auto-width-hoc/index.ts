@@ -2,7 +2,7 @@ import React from 'react';
 import unsafeHandleWindowResize from '../unsafe-handle-window-resize';
 
 export default (Component, delay = 300) => {
-  class AutoWidthComponent extends React.Component<any, any> {
+  class AutoWidthComponent extends React.Component {
     container: any;
     resizeListener: any;
     state = { width: 0 };

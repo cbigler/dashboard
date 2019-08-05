@@ -48,7 +48,7 @@ export function ExploreSpaceDetailRawEventsCardRaw({
             </p>
 
             <p className={styles.exploreSpaceDetailRawEventsCardPopupP}>
-              Head to the <a href={`#/spaces/explore/${space.id}/data-export`}>data export</a> page
+              Head to the <a href={`#/spaces/${space.id}/data-export`}>data export</a> page
               to download multiple days worth of event data in csv format.
             </p>
           </InfoPopup>
