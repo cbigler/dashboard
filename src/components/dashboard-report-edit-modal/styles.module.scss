@@ -246,6 +246,10 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
-.savedReportSpaces {
-  line-height: 24px;
+.savedReportSpaces { line-height: 24px; }
+
+.insightList ul {
+  list-style-type: none;
+  padding-left: 0px;
 }
+.insightList ul li { margin-bottom: 8px; }

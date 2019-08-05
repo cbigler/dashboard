@@ -7,6 +7,7 @@ import styles from './styles.module.scss';
 import Report, { REPORTS, TIME_RANGES } from '@density/reports';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
+import MarkdownEditor from '../markdown-editor/index';
 
 import {
   DensityReport,
@@ -744,6 +745,38 @@ function DashboardReportEditModal({
                             reportUpdateSettings(fieldName, e.target.checked)
                           }}
                         />
+                      );
+                      break;
+
+                    case 'MARKDOWN':
+                      input = (
+                        <MarkdownEditor
+                          id={id}
+                          width="100%"
+                          value={activeModal.data.report.settings[fieldName]}
+                          onChange={e => {
+                            reportUpdateSettings(fieldName, e.target.value);
+                          }}
+                        />
+                      );
+                      break;
+
+                    case 'INSIGHT_LIST':
+                      const markdownList = activeModal.data.report.settings[fieldName] || [];
+                      input = (
+                        <Fragment>
+                          <em style={{marginBottom: 8, fontSize: 14}}>
+                            To define multiple insights, put each on a new line.
+                          </em>
+                          <MarkdownEditor
+                            id={id}
+                            width="100%"
+                            value={markdownList.join('\n')}
+                            onChange={e => {
+                              reportUpdateSettings(fieldName, (e.target.value || '').split('\n'));
+                            }}
+                          />
+                        </Fragment>
                       );
                       break;
 

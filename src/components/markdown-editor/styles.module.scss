@@ -1,0 +1,27 @@
+@import "@density/ui/variables/colors.scss";
+
+.markdownEditorWrapper { width: 100%; }
+.markdownEditorHints {
+  padding: 0px;
+  margin: 0px;
+  margin-top: 8px;
+  list-style-type: none;
+  font-size: 12px;
+  user-select: none;
+  opacity: 0.6;
+  transition: all 250ms ease-in-out;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.markdownEditorHints:hover { opacity: 1; }
+.markdownEditorHints li {
+  display: inline;
+  margin-right: 8px;
+}
+.markdownEditorHints strong { color: $brandPrimary; }
+.markdownEditorHints .link {
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: default;
+}
+.markdownEditorHints .red { color: $reportRed; }
