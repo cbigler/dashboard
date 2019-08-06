@@ -10,13 +10,10 @@ export function useEventListener(eventName, handler, element = window){
   useEffect(
     () => {
       const isSupported = element && element.addEventListener;
-      if (!isSupported) return;
-
+      if (!isSupported) { return; }
       const eventListener = event => savedHandler.current(event);
       element.addEventListener(eventName, eventListener);
-      return () => {
-        element.removeEventListener(eventName, eventListener);
-      };
+      return () => element.removeEventListener(eventName, eventListener);
     },
     [eventName, element]
   );
@@ -32,6 +29,6 @@ export function useAutoWidth(ref, delay = 300) {
     [ref, delay]
   );
   useEventListener('resize', handler);
-  handler();
+  useEffect(() => handler() && undefined, []);
   return width;
 }
