@@ -27,6 +27,6 @@ export function useAutoWidth(ref, delay = 300) {
     [ref, delay]
   );
   useEventListener('resize', handler);
-  useEffect(() => handler() && undefined, []);
+  useEffect(() => handler() && undefined, [handler]);
   return width;
 }
