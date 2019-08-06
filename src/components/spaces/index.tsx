@@ -156,7 +156,8 @@ export function SpacesRaw () {
                       formattedHierarchy={formattedHierarchy}
                       selectControl={SelectControlTypes.NONE}
                       onChange={item => {
-                        window.location.href = getHashRoute(item.space, activePage);
+                        const space = spaces.data.find(s => s.id === item.space.id);
+                        window.location.href = getHashRoute(space, activePage);
                       }}
                       isItemDisabled={item => {
                         const space = spaces.data.find(s => s.id === item.space.id);
@@ -263,22 +264,35 @@ export function SpacesRaw () {
             {/* New controller for meetings page */}
             {activePage === 'SPACES_SPACE_MEETINGS' && selectedSpace ?
               spaceReports.controllers.filter(x => x.key === 'meetings_page_controller').map(controller => (
-                <SpacesReportController
-                  key={controller.key}
-                  space={selectedSpace}
-                  spaceHierarchy={spaceHierarchy.data}
-                  controller={controller}
-                  onUpdateControls={(key, value) => {
-                    const updated = {
-                      ...controller,
-                      controls: controller.controls.map(control => {
-                        return control.key === key ? {...control, ...value} : control;
-                      })
-                    };
-                    dispatch(spacesUpdateReportController(selectedSpace, updated));
-                    dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
-                  }}
-                />
+                (selectedSpace.spaceMappings || []).length ?
+                  <SpacesReportController
+                    key={controller.key}
+                    space={selectedSpace}
+                    spaceHierarchy={spaceHierarchy.data}
+                    controller={controller}
+                    onUpdateControls={(key, value) => {
+                      const updated = {
+                        ...controller,
+                        controls: controller.controls.map(control => {
+                          return control.key === key ? {...control, ...value} : control;
+                        })
+                      };
+                      dispatch(spacesUpdateReportController(selectedSpace, updated));
+                      dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
+                    }}
+                  /> :
+                  <div style={{ width: '100%', height: '100%', background: SPACES_BACKGROUND }}>
+                    <div className={styles.centeredMessage}>
+                      <div className={styles.roomBookingMessage}>
+                        <span>
+                          Please set up a{' '}
+                          <a href="#/admin/integrations">room booking integration</a>
+                          {' '}to view meeting data for this space.
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
               )) : null}
 
             {/* Old components for other pages */}
