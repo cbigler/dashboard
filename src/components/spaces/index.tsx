@@ -42,6 +42,27 @@ import hideModal from '../../actions/modal/hide';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
+function hasMeetingsPage(space) {
+  return ['conference_room', 'meeting_room'].includes(space.function);
+}
+
+function getHashRoute(space, activePage) {
+  switch(activePage) {
+    case 'SPACES_SPACE_TRENDS':
+      return `#/spaces/${space.id}/trends`;
+    case 'SPACES_SPACE_DAILY':
+      return `#/spaces/${space.id}/daily`;
+    case 'SPACES_SPACE_DATA_EXPORT':
+      return `#/spaces/${space.id}/data-export`;
+    case 'SPACES_SPACE_MEETINGS':
+      return hasMeetingsPage(space) ?
+        `#/spaces/${space.id}/meetings` :
+        `#/spaces/${space.id}/trends`;
+    default:
+      return `#/spaces/${space.id}/trends`;
+  }
+}
+
 function ExploreSpacePage({ activePage }) {
   switch(activePage) {
     case 'SPACES_SPACE_DAILY':
@@ -131,10 +152,12 @@ export function SpacesRaw () {
                   selectedSpace ?
                     <SpacePicker
                       value={formattedHierarchy.find(x => x.space.id === selectedSpace.id) || null}
-                      onChange={item => window.location.href = `#/spaces/${item.space.id}/trends`}
                       showSearchBox={false}
                       formattedHierarchy={formattedHierarchy}
                       selectControl={SelectControlTypes.NONE}
+                      onChange={item => {
+                        window.location.href = getHashRoute(item.space, activePage);
+                      }}
                       isItemDisabled={item => {
                         const space = spaces.data.find(s => s.id === item.space.id);
                         return !space || !space.doorways.length;
@@ -154,25 +177,25 @@ export function SpacesRaw () {
                 <AppBarSubnav>
                   <AppBarSubnavLink
                     href={`#/spaces/${selectedSpace.id}/trends`}
-                    active={activePage === "SPACES_SPACE_TRENDS"}
+                    active={activePage === 'SPACES_SPACE_TRENDS'}
                   >
                     Trends
                   </AppBarSubnavLink>
                   <AppBarSubnavLink
                     href={`#/spaces/${selectedSpace.id}/daily`}
-                    active={activePage === "SPACES_SPACE_DAILY"}
+                    active={activePage === 'SPACES_SPACE_DAILY'}
                   >
                     Daily
                   </AppBarSubnavLink>
-                  { ["conference_room", "meeting_room"].includes(selectedSpace.function) ? <AppBarSubnavLink
+                  { hasMeetingsPage(selectedSpace) ? <AppBarSubnavLink
                     href={`#/spaces/${selectedSpace.id}/meetings`}
-                    active={activePage === "SPACES_SPACE_MEETINGS"}
+                    active={activePage === 'SPACES_SPACE_MEETINGS'}
                   >
                     Meetings
                   </AppBarSubnavLink> : null }
                   <AppBarSubnavLink
                     href={`#/spaces/${selectedSpace.id}/data-export`}
-                    active={activePage === "SPACES_SPACE_DATA_EXPORT"}
+                    active={activePage === 'SPACES_SPACE_DATA_EXPORT'}
                   >
                     Data Export
                   </AppBarSubnavLink>
