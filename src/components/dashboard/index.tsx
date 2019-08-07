@@ -31,6 +31,7 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
 import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
 import createDashboard from '../../actions/dashboards/create-dashboard';
+import showToast from '../../actions/toasts';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
@@ -40,6 +41,7 @@ function DashboardMainScrollViewContent({
   selectedDashboard,
   resizeCounter,
   isReadOnlyUser,
+  onCsvExportError,
 }) {
   if (!dashboards.selected && !dashboards.loading) {
     return (
@@ -122,6 +124,7 @@ function DashboardMainScrollViewContent({
                               report={report}
                               reportData={dashboards.calculatedReportData[report.id]}
                               expanded={false}
+                              onCsvExportError={onCsvExportError}
                             />
                           ),
                         };
@@ -261,6 +264,7 @@ export class Dashboard extends React.Component<any, any> {
       onCloseModal,
       onShowModal,
       onCreateDashboard,
+      onCsvExportError,
     } = this.props;
 
     return (
@@ -357,6 +361,7 @@ export class Dashboard extends React.Component<any, any> {
                   selectedDashboard={selectedDashboard}
                   resizeCounter={resizeCounter}
                   isReadOnlyUser={isReadOnlyUser}
+                  onCsvExportError={onCsvExportError}
                 />
               </AppScrollView>
             </AppPane>
@@ -397,6 +402,9 @@ export default connect((state: any) => {
     },
     onShowModal(name, data) {
       dispatch(showModal(name, data));
+    },
+    onCsvExportError() {
+      dispatch(showToast({ type: 'error', text: 'Error exporting CSV' }));
     },
   };
 })(Dashboard);
