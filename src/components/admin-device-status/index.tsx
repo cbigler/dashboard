@@ -19,6 +19,24 @@ function getStatusColor(status) {
   }
 }
 
+function renderNetworkAddressElement(item, networkInterface) {
+  if (item.networkAddresses) {
+    let networks = item.networkAddresses.filter(na => na.if === networkInterface);
+    if (networks.length > 0) {
+      return (
+        <div key={networks[0].if}>
+          {networks[0].mac ? (<div style={{fontSize: 12, marginBottom: 3}}>mac: <strong style={{fontWeight: 500}}>{networks[0].mac}</strong></div>) : null}
+          {networks.map(network => <div style={{fontSize: 12, marginBottom: 3}} key={network.address}>{network.family}: <strong style={{fontWeight: 500}}>{network.address}</strong></div>)}
+        </div>
+      )
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+}
+
 export function AdminDeviceStatus({
   sensors,
   spaces
@@ -62,6 +80,16 @@ export function AdminDeviceStatus({
           }).map(space => {
             return <div style={{marginRight: 10}} key={space.id}>{space.name}</div>
           })} />
+        <ListViewColumn
+          id="Ethernet"
+          width={280}
+          template={item => renderNetworkAddressElement(item, 'eth0')}
+        />
+        <ListViewColumn
+          id="WiFi"
+          width={280}
+          template={item => renderNetworkAddressElement(item, 'wlan0')}
+        />
       </ListView>
     </div>
   </AppScrollView>;
