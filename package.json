@@ -45,7 +45,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^24.0.17",
     "@types/moment-timezone": "^0.5.10",
     "@types/node": "^10.12.18",
     "@types/qs": "^6.5.1",
@@ -60,7 +60,7 @@
     "react-scripts": "^3.0.1",
     "react-test-renderer": "^16.8.1",
     "redux-mock-store": "^1.5.3",
-    "sinon": "^7.2.3",
+    "sinon": "^7.4.1",
     "typescript": "~3.5.3"
   },
   "scripts": {
