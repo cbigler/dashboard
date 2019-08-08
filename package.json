@@ -45,7 +45,7 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.10",
+    "@types/jest": "^24.0.17",
     "@types/moment-timezone": "^0.5.10",
     "@types/node": "^10.12.18",
     "@types/qs": "^6.5.1",
