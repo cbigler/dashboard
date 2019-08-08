@@ -14,7 +14,7 @@
     "@density/reports": "^8.0.7",
     "@density/ui": "^18.1.1",
     "@mapbox/mapbox-gl-geocoder": "^4.0.0",
-    "auth0-js": "^9.9.0",
+    "auth0-js": "^9.11.3",
     "axios": "^0.19.0",
     "change-case": "^3.1.0",
     "classnames": "^2.2.6",
