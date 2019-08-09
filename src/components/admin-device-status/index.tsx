@@ -19,7 +19,10 @@ function getStatusColor(status) {
   }
 }
 
-function renderNetworkAddressElement(item, networkInterface) {
+export function NetworkAddressElement({
+  item,
+  networkInterface,
+}) {
   if (item.networkAddresses) {
     let networks = item.networkAddresses.filter(na => na.if === networkInterface);
     if (networks.length > 0) {
@@ -83,12 +86,12 @@ export function AdminDeviceStatus({
         <ListViewColumn
           id="Ethernet"
           width={280}
-          template={item => renderNetworkAddressElement(item, 'eth0')}
+          template={item => <NetworkAddressElement item={item} networkInterface={'eth0'} />}
         />
         <ListViewColumn
           id="WiFi"
           width={280}
-          template={item => renderNetworkAddressElement(item, 'wlan0')}
+          template={item => <NetworkAddressElement item={item} networkInterface={'wlan0'} />}
         />
       </ListView>
     </div>
