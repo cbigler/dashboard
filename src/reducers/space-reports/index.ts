@@ -79,7 +79,7 @@ export const initialState = {
           spaceId: null as string | null,
           scrollable: true,
           metric: 'PEAKS',
-          aggregation: 'NONE',
+          aggregation: 'AVERAGE',
           includeWeekends: true,
           hourStart: 6,
           hourEnd: 20
