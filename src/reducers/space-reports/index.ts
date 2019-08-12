@@ -73,7 +73,7 @@ export const initialState = {
       data: null,
       configuration: {
         id: 'rpt_ephemeral_hourly_occupancy',
-        name: 'Peak Occupancy per Hour',
+        name: 'Average Peak Occupancy per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
           spaceId: null as string | null,
