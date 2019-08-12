@@ -1,0 +1,36 @@
+#!/bin/bash
+DOCS="$(dirname $0)/../docs"
+
+function print_file {
+  headers="$( \
+		cat $1 \
+		| grep '^#' \
+		| awk -v len=30 '{ if (length($0) > len) print substr($0, 1, len-3) "..."; else print; }' \
+		| tr '\n' ' '
+	)"
+	
+  echo -e "$idx) $2\t\t$headers"
+}
+
+if [ -n "$1" ]; then
+  search="$1"
+else
+  printf "Search docs: "; read search
+fi
+
+results="$(grep -iFR "$search" $DOCS)"
+file_names="$(echo "$results" | awk -F: '{ print $1 }' | sort | uniq)"
+
+echo "Results:"
+idx=1
+for file in $file_names; do
+  print_file $file docs${file/#$DOCS}
+  idx=$(( idx + 1 ))
+done
+
+printf "Pick Result: "; read result
+EDITOR="${EDITOR:-vi}"
+if [ "$EDITOR" = "vi" ]; then
+	EDITOR="less -r"
+fi
+$EDITOR "$(echo $file_names | head -n $result | tail)"
