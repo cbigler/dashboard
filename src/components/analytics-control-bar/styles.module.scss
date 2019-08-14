@@ -1,0 +1,47 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.analyticsControlBar {
+  color: red;
+}
+
+
+
+
+
+.header {
+  width: 400px;
+}
+.back {
+  cursor: pointer;
+  margin-right: 16px;
+  outline: none;
+}
+
+
+
+
+
+.itemList {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+  padding: 8px;
+}
+
+.itemList li {
+  display: flex;
+  align-items: center;
+  width: 300px;
+  height: 40px;
+  border-radius: $borderRadiusBase;
+  padding-left: 16px;
+  padding-right: 16px;
+  cursor: pointer;
+  outline: none;
+}
+.itemList li:hover { background-color: $grayLighter; }
+.itemList li:focus {
+  background-color: $grayLighter;
+}
