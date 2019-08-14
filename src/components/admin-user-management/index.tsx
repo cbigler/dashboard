@@ -7,6 +7,7 @@ import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
 import GenericErrorState from '../generic-error-state/index';
+import { UserActionTypes } from '../../interfaces/users';
 
 import {
   AppBar,
@@ -32,14 +33,16 @@ import { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
 import { getChildrenOfSpace } from '../../helpers/filter-hierarchy';
 import filterCollection from '../../helpers/filter-collection';
 import deduplicate from '../../helpers/deduplicate';
+import useRxStore from '../../helpers/use-rx-store';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
-import showToast from '../../actions/toasts';
 import updateModal from '../../actions/modal/update';
-import collectionUsersCreate from '../../actions/collection/users/create';
-import collectionUsersUpdate from '../../actions/collection/users/update';
-import collectionUsersInviteResend from '../../actions/collection/users/invite_resend';
+
+import collectionUsersCreate from '../../rx-actions/users/create';
+import collectionUsersInviteResend from '../../rx-actions/users/invite-resend';
+import usersStore from '../../rx-stores/users';
 
 import FormLabel from '../form-label';
 
@@ -61,19 +64,13 @@ function canResendInvitation(user, item) {
 export function AdminUserManagement({
   spaces,
   spaceHierarchy,
-  users,
   user,
   activeModal,
   resizeCounter,
-
-  onClickAddUser,
-  onCancelAddUser,
-  onUpdateNewUser,
-  onSaveNewUser,
-  onChangeUserRole,
-  onResendInvitation,
-  onUpdateUsersFilter,
 }) {
+  const users = useRxStore(usersStore);
+  const dispatch = useRxDispatch();
+
   // Stop here if user is still loading
   if (user.loading || !user.data) { return null; }
 
@@ -85,11 +82,11 @@ export function AdminUserManagement({
 
   // Filter users based on search box
   let filteredUsers = manageableUsers;
-  if (users.filters.search) {
-    filteredUsers = userFilter(filteredUsers, users.filters.search);
+  if (users.searchText) {
+    filteredUsers = userFilter(filteredUsers, users.searchText);
   }
 
-  const showEmptySearchState = users.filters.search && filteredUsers.length === 0;
+  const showEmptySearchState = users.searchText && filteredUsers.length === 0;
 
   return (
     <Fragment>
@@ -98,8 +95,8 @@ export function AdminUserManagement({
         <Modal
           visible={activeModal.visible}
           width={783}
-          onBlur={onCancelAddUser}
-          onEscape={onCancelAddUser}
+          onBlur={() => dispatch(hideModal() as any)}
+          onEscape={() => dispatch(hideModal() as any)}
         >
           <AppBar>
             <AppBarTitle>New User</AppBarTitle>
@@ -119,7 +116,7 @@ export function AdminUserManagement({
                     id="admin-user-management-new-user-email"
                     value={activeModal.data.email}
                     placeholder="ex: stuart.little@density.io"
-                    onChange={e => onUpdateNewUser({email: e.target.value})}
+                    onChange={e => dispatch(updateModal({email: e.target.value}) as any)}
                   />}
                 />
               </div>
@@ -130,11 +127,11 @@ export function AdminUserManagement({
                 <AdminUserManagementRoleRadioList
                   user={user}
                   value={activeModal.data.role}
-                  onChange={role => onUpdateNewUser({
+                  onChange={role => dispatch(updateModal({
                     role,
                     spaceFilteringActive: role === 'owner' ? false : activeModal.data.spaceFilteringActive,
                     spaceIds: role === 'owner' ? [] : activeModal.data.spaceIds,
-                  })}
+                  }) as any)}
                 />
               </div>
             </div>
@@ -144,9 +141,9 @@ export function AdminUserManagement({
                 spaceHierarchy={spaceHierarchy}
                 disabled={activeModal.data.role === 'owner'}
                 active={activeModal.data.spaceFilteringActive}
-                onChangeActive={spaceFilteringActive => onUpdateNewUser({spaceFilteringActive})}
+                onChangeActive={spaceFilteringActive => dispatch(updateModal({spaceFilteringActive}) as any)}
                 selectedSpaceIds={activeModal.data.spaceIds}
-                onChange={spaceIds => onUpdateNewUser({spaceIds})}
+                onChange={spaceIds => dispatch(updateModal({spaceIds}) as any)}
                 height={556}
               />
             </div>
@@ -156,7 +153,7 @@ export function AdminUserManagement({
               <AppBarSection></AppBarSection>
               <AppBarSection>
                 <ButtonGroup>
-                  <Button variant="underline" onClick={onCancelAddUser}>Cancel</Button>
+                  <Button variant="underline" onClick={() => dispatch(hideModal() as any)}>Cancel</Button>
                   <Button
                     variant="filled"
                     type="primary"
@@ -166,7 +163,10 @@ export function AdminUserManagement({
                         !activeModal.data.spaceFilteringActive || 
                         activeModal.data.spaceIds.length > 0)
                     )}
-                    onClick={() => onSaveNewUser(activeModal.data)}
+                    onClick={() => {
+                      dispatch(hideModal() as any);
+                      collectionUsersCreate(dispatch, activeModal.data);
+                    }}
                   >
                     Save user
                   </Button>
@@ -183,14 +183,24 @@ export function AdminUserManagement({
             type="text"
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
-            value={users.filters.search}
+            value={users.searchText}
             width={320}
-            onChange={onUpdateUsersFilter}
+            onChange={e => dispatch({
+              type: UserActionTypes.USER_MANAGEMENT_UPDATE_SEARCH,
+              text: e.target.value,
+            })}
             disabled={users.view !== 'VISIBLE'}
           />
         </AppBarSection>
         <AppBarSection>
-          <Button type="primary" variant="filled" onClick={onClickAddUser}>Add user</Button>
+          <Button type="primary" variant="filled" onClick={() => dispatch(
+            showModal('MODAL_ADMIN_USER_ADD', {
+              email: '',
+              role: null,
+              spaceFilteringActive: false,
+              spaceIds: [],
+            }) as any
+          )}>Add user</Button>
         </AppBarSection>
       </AppBar>
 
@@ -219,7 +229,7 @@ export function AdminUserManagement({
             {showEmptySearchState ? (
               <div className={styles.adminUserManagementEmptySearchState}>
                 <h2>Whoops</h2>
-                <p>We couldn't find a person that matched "{users.filters.search}"</p>
+                <p>We couldn't find a person that matched "{users.searchText}"</p>
               </div>
             ) : (
               <ListView data={filteredUsers}>
@@ -270,7 +280,7 @@ export function AdminUserManagement({
                         <span
                           role="button"
                           className={styles.adminUserManagementCellInvitationResend}
-                          onClick={() => onResendInvitation(item)}
+                          onClick={() => collectionUsersInviteResend(dispatch, item)}
                         >
                           <Icons.Refresh color={colorVariables.brandPrimary} />
                         </span>
@@ -362,47 +372,8 @@ export default connect((state: any) => {
   return {
     spaces: state.spaces,
     spaceHierarchy: state.spaceHierarchy,
-    users: state.users,
     user: state.user,
     activeModal: state.activeModal,
     resizeCounter: state.resizeCounter,
-  };
-}, dispatch => {
-  return {
-    onClickAddUser() {
-      (dispatch as any)(showModal('MODAL_ADMIN_USER_ADD', {
-        email: '',
-        role: null,
-        spaceFilteringActive: false,
-        spaceIds: [],
-      }));
-    },
-    onCancelAddUser() {
-      (dispatch as any)(hideModal());
-    },
-    onUpdateNewUser(updates) {
-      dispatch(updateModal(updates));
-    },
-    onSaveNewUser(data) {
-      (dispatch as any)(hideModal());
-      (dispatch as any)(collectionUsersCreate(data));
-    },
-    async onChangeUserRole(user, role) {
-      const ok = await (dispatch as any)(collectionUsersUpdate({ id: user.id, role }));
-      if (ok) {
-        dispatch<any>(showToast({ text: 'User role updated successfully' }));
-      } else {
-        dispatch<any>(showToast({ type: 'error', text: 'Error updating user role' }));
-      }
-    },
-    onCancelDeleteUser() {
-      (dispatch as any)(hideModal());
-    },
-    onResendInvitation(user) {
-      (dispatch as any)(collectionUsersInviteResend(user));
-    },
-    onUpdateUsersFilter(event) {
-      dispatch({type: 'COLLECTION_USERS_FILTER', filter: 'search', value: event.target.value });
-    }
   };
 })(AdminUserManagement);

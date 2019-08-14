@@ -16,9 +16,9 @@ import FormLabel from '../form-label';
 import { connect } from 'react-redux';
 import updateModal from '../../actions/modal/update';
 import hideModal from '../../actions/modal/hide';
-import collectionAlertsCreate from '../../actions/collection/alerts/create';
-import collectionAlertsUpdate from '../../actions/collection/alerts/update';
-import collectionAlertsDestroy from '../../actions/collection/alerts/destroy';
+import collectionAlertsCreate from '../../rx-actions/alerts/create';
+import collectionAlertsUpdate from '../../rx-actions/alerts/update';
+import collectionAlertsDelete from '../../rx-actions/alerts/delete';
 import showToast from '../../actions/toasts';
 
 export const  GREATER_THAN = 'greater_than',
@@ -39,7 +39,7 @@ export const COOLDOWN_CHOICES = [
   {id: 1440, label: 'Every 24 hours'},
 ];
 
-export function ExploreAlertManagementModalRaw({
+export function AlertManagementModalRaw({
   visible,
   alert,
   user,
@@ -58,14 +58,14 @@ export function ExploreAlertManagementModalRaw({
     onBlur={onCloseModal}
     onEscape={onCloseModal}
   >
-    <div className={styles.exploreAlertManagementModalContainer}>
+    <div className={styles.alertManagementModalContainer}>
       <AppBar>
         <AppBarTitle>{alert.id ? 'Edit Text Alert' : 'New Text Alert'}</AppBarTitle>
       </AppBar>
       
-      <div className={styles.exploreAlertManagementModalBody}>
+      <div className={styles.alertManagementModalBody}>
         <div
-          className={styles.exploreAlertManagementModalFormRow}
+          className={styles.alertManagementModalFormRow}
           style={{marginBottom: 4}}
         >
           <FormLabel
@@ -86,7 +86,7 @@ export function ExploreAlertManagementModalRaw({
             >Use my number</Button>
           </div> : null}
         </div>
-        <div className={styles.exploreAlertManagementModalFormRow}>
+        <div className={styles.alertManagementModalFormRow}>
           <FormLabel
             label="Notify me when the occupancy is"
             htmlFor="update-alert-metric-quantity"
@@ -114,7 +114,7 @@ export function ExploreAlertManagementModalRaw({
             </div>}
           />
         </div>
-        <div className={styles.exploreAlertManagementModalFormRow}>
+        <div className={styles.alertManagementModalFormRow}>
           <FormLabel
             label="Notify me at most"
             htmlFor="update-alert-cooldown-period"
@@ -131,12 +131,12 @@ export function ExploreAlertManagementModalRaw({
         </div>
         {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) !== -1 ?
           <Fragment>
-            <div className={styles.exploreAlertManagementModalFormRow}>
+            <div className={styles.alertManagementModalFormRow}>
               <div className={styles.escalationDescription}>
                 If the occupancy grows quickly, we can escalate this alert and bypass the {alert.cooldown} minute cooldown period.
               </div>
             </div>
-            <div className={styles.exploreAlertManagementModalFormRow}>
+            <div className={styles.alertManagementModalFormRow}>
               <FormLabel
                 label="Notify me again if it increases by"
                 htmlFor="update-alert-escalation-threshold"
@@ -224,15 +224,15 @@ export default connect(
         }
       }
       if (alert.id) {
-        dispatch<any>(collectionAlertsUpdate(alert));
+        collectionAlertsUpdate(dispatch, alert);
       } else {
-        dispatch<any>(collectionAlertsCreate(alert));
+        collectionAlertsCreate(dispatch, alert);
       }
       dispatch<any>(showToast({ text: 'Alert saved' }));
       dispatch<any>(hideModal());
     },
     onDeleteAlert: async alert => {
-      dispatch<any>(collectionAlertsDestroy(alert));
+      collectionAlertsDelete(dispatch, alert);
       dispatch<any>(showToast({ text: 'Alert deleted' }));
       dispatch<any>(hideModal());
     },
@@ -240,4 +240,4 @@ export default connect(
       dispatch<any>(hideModal());
     }
   }),
-)(React.memo(ExploreAlertManagementModalRaw));
+)(React.memo(AlertManagementModalRaw));

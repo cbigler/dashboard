@@ -5,8 +5,8 @@ import dashboardsSet from '../dashboards/set';
 import dashboardsError from '../dashboards/error';
 import dashboardsSelect from '../dashboards/select';
 
-import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
-import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
+import collectionDigestSchedulesSet from '../collection/digest-schedules/set';
+import collectionDigestSchedulesError from '../collection/digest-schedules/error';
 import setDashboardDate from '../miscellaneous/set-dashboard-date';
 
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
@@ -26,10 +26,10 @@ function loadDigestSchedules() {
       errorThrown = err;
     }
     if (!errorThrown) {
-      dispatch(collectionDispatchSchedulesSet(schedules));
+      dispatch(collectionDigestSchedulesSet(schedules));
     } else {
       console.error(errorThrown);
-      dispatch(collectionDispatchSchedulesError(errorThrown));
+      dispatch(collectionDigestSchedulesError(errorThrown));
     }
   }
 }

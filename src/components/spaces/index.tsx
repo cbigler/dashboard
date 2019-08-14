@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 import fuzzy from 'fuzzy';
 
 import {
@@ -16,21 +16,16 @@ import {
   InputBox,
 } from '@density/ui';
 
-import { AppState } from '../../interfaces/global';
-
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
-import showModal from '../../actions/modal/show';
-import showToast from '../../actions/toasts';
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
-import collectionAlertsUpdate from '../../actions/collection/alerts/update';
 
-import ExploreAlertPopupList from '../explore-alert-popup-list/index';
+import AlertPopupList from '../alert-popup-list/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
 import ExploreSpaceDataExport from '../explore-space-data-export/index';
 import SpacesReportController from '../spaces-report-controller/index';
 
-import ExploreAlertManagementModal from '../explore-alert-management-modal';
+import AlertManagementModal from '../alert-management-modal';
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
@@ -74,28 +69,19 @@ function ExploreSpacePage({ activePage }) {
   }
 }
 
-export function SpacesRaw () {
-  const dispatch = useDispatch();
-  const {
-    spaces,
-    spaceHierarchy,
-    spaceReports,
-    selectedSpace,
-    alerts,
-    activePage,
-    activeModal,
-    //resizeCounter,
-  } = useSelector((state: AppState) => ({
-    spaces: state.spaces,
-    spaceHierarchy: state.spaceHierarchy,
-    spaceReports: state.spaceReports,
-    selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
-    alerts: state.alerts,
-    activePage: state.activePage,
-    activeModal: state.activeModal,
-    resizeCounter: state.resizeCounter,
-  }));
-
+export function SpacesRaw ({
+  spaces,
+  spaceHierarchy,
+  spaceReports,
+  selectedSpace,
+  activePage,
+  activeModal,
+  //resizeCounter,
+  onCloseModal,
+  onFilterSpaces,
+  onUpdateReportController,
+  onCalculateReportData,
+}) {
   const ref = useRef(null);
   const width = useAutoWidth(ref);
 
@@ -115,7 +101,7 @@ export function SpacesRaw () {
 
       {/* If an expanded report modal is visible, then render it above the view */}
       {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
-        <ExploreAlertManagementModal />
+        <AlertManagementModal />
       ) : null}
 
       {/* If an expanded report modal is visible, then render it above the view */}
@@ -124,7 +110,7 @@ export function SpacesRaw () {
             visible={activeModal.visible}
             report={activeModal.data.report}
             reportData={activeModal.data.reportData}
-            onCloseModal={() => dispatch(hideModal())}
+            onCloseModal={onCloseModal}
           />
         ) : null}
 
@@ -140,9 +126,7 @@ export function SpacesRaw () {
                 disabled={false}
                 leftIcon={<Icons.Search />}
                 value={spaces.filters.search}
-                onChange={e => {
-                  dispatch(collectionSpacesFilter('search', e.target.value));
-                }}
+                onChange={onFilterSpaces}
               />
             </AppBar>
             <AppScrollView>
@@ -203,40 +187,7 @@ export function SpacesRaw () {
                 </AppBarSubnav>
               </AppBarSection> : null}
               <AppBarSection>
-                <ExploreAlertPopupList
-                  alerts={alerts}
-                  selectedSpace={selectedSpace}
-                  onCreateAlert={() => {
-                    dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
-                      alert: {
-                        spaceId: selectedSpace.id,
-                        enabled: true,
-                        isOneShot: true,
-                        notificationType: 'sms',
-                        triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
-                        triggerType: 'greater_than',
-                        cooldown: -1,
-                        meta: {
-                          toNum: '',
-                          escalationDelta: null,
-                        }
-                      }
-                    }));
-                  }}
-                  onEditAlert={alert => {
-                    dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
-                      alert: { meta: {}, ...alert }
-                    }));
-                  }}
-                  onToggleAlert={async (alert, enabled) => {
-                    const updated = {...alert, enabled};
-                    await dispatch(collectionAlertsUpdate(updated));
-                    dispatch(showToast({
-                      text: enabled ? 'Alert enabled' : 'Alert disabled',
-                      timeout: 1000
-                    }));
-                  }}
-                />
+                <AlertPopupList selectedSpace={selectedSpace} />
               </AppBarSection>
             </AppBar>
             
@@ -255,8 +206,8 @@ export function SpacesRaw () {
                         return control.key === key ? {...control, ...value} : control;
                       })
                     };
-                    dispatch(spacesUpdateReportController(selectedSpace, updated));
-                    dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
+                    onUpdateReportController(selectedSpace, updated);
+                    onCalculateReportData(selectedSpace, updated);
                   }}
                 />
               )) : null}
@@ -277,8 +228,8 @@ export function SpacesRaw () {
                           return control.key === key ? {...control, ...value} : control;
                         })
                       };
-                      dispatch(spacesUpdateReportController(selectedSpace, updated));
-                      dispatch(spaceReportsCalculateReportData(updated, selectedSpace));
+                      onUpdateReportController(selectedSpace, updated);
+                      onCalculateReportData(selectedSpace, updated);
                     }}
                   /> :
                   <div style={{ width: '100%', height: '100%', background: SPACES_BACKGROUND }}>
@@ -316,4 +267,21 @@ export function SpacesRaw () {
   );
 }
 
-export default React.memo(SpacesRaw);
+export default connect((state: any) => ({
+  spaces: state.spaces,
+  spaceHierarchy: state.spaceHierarchy,
+  spaceReports: state.spaceReports,
+  selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
+  activePage: state.activePage,
+  activeModal: state.activeModal,
+  resizeCounter: state.resizeCounter,
+}), (dispatch: any) => ({
+  onCloseModal: () => dispatch(hideModal()),
+  onFilterSpaces: e => dispatch(collectionSpacesFilter('search', e.target.value)),
+  onUpdateReportController: (selectedSpace, updated) => (
+    dispatch(spacesUpdateReportController(selectedSpace, updated))
+  ),
+  onCalculateReportData: (selectedSpace, updated) => (
+    dispatch(spaceReportsCalculateReportData(updated, selectedSpace))
+  ),
+}))(SpacesRaw);

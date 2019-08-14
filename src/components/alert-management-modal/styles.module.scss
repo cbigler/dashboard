@@ -3,19 +3,19 @@
 @import "@density/ui/variables/fonts.scss";
 
 
-.exploreAlertManagementModalContainer {
+.alertManagementModalContainer {
   height: 100%;
   width: 100%;
   display: flex;
   flex-direction: column;
 }
 
-.exploreAlertManagementModalBody {
+.alertManagementModalBody {
   flex-grow: 1;
   padding: 24px;
 }
 
-.exploreAlertManagementModalFormRow {
+.alertManagementModalFormRow {
   width: 100%;
   margin-bottom: 10px;
   display: flex;
@@ -23,7 +23,7 @@
   justify-content: space-between;
 }
 
-.exploreAlertManagementModalFormRow:last-of-type {
+.alertManagementModalFormRow:last-of-type {
   margin-bottom: 0;
 }
 

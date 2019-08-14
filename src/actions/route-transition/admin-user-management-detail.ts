@@ -1,10 +1,9 @@
-import collectionUsersError from '../collection/users/error';
-import collectionUsersPush from '../collection/users/push';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionSpacesSet from '../collection/spaces/set';
-import accounts from '../../client/accounts';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { UserActionTypes } from '../../interfaces/users';
+import userManagementReadOne from '../../rx-actions/users/read-one';
 
 export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL';
 
@@ -17,9 +16,10 @@ export default function routeTransitionAdminUserManagementDetail(id) {
       setLoading: true,
     });
 
-    let user, hierarchy, spaces, errorThrown = null;
+    await userManagementReadOne(dispatch, id);
+
+    let hierarchy, spaces, errorThrown = null;
     try {
-      user = await accounts().get(`/users/${id}`);
       hierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
       spaces = await fetchAllObjects<DensitySpace>('/spaces');
     } catch (e) {
@@ -27,9 +27,8 @@ export default function routeTransitionAdminUserManagementDetail(id) {
     }
 
     if (errorThrown) {
-      dispatch(collectionUsersError(errorThrown));
+      dispatch({ type: UserActionTypes.USER_MANAGEMENT_ERROR, error: errorThrown });
     } else {
-      dispatch(collectionUsersPush(user.data));
       dispatch(collectionSpaceHierarchySet(hierarchy));
       dispatch(collectionSpacesSet(spaces));
     }

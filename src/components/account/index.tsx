@@ -33,9 +33,11 @@ import hideModal from '../../actions/modal/hide';
 
 import colors from '@density/ui/variables/colors.json';
 import showToast from '../../actions/toasts';
-import collectionAlertsUpdate from '../../actions/collection/alerts/update';
+import collectionAlertsUpdate from '../../rx-actions/alerts/update';
 
-import ExploreAlertManagementModal, { COOLDOWN_CHOICES } from '../explore-alert-management-modal';
+import AlertManagementModal, { COOLDOWN_CHOICES } from '../alert-management-modal';
+import useRxStore from '../../helpers/use-rx-store';
+import alertsStore from '../../rx-stores/alerts';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -303,11 +305,11 @@ const PasswordSection = props => {
 }
 
 function AlertSection({
-  alerts,
   spaces,
   onUpdateAlert,
   onShowModal,
 }) {
+  const alerts = useRxStore(alertsStore);
 
   // Prepare the array of necessary data once, so columns can iterate quickly
   const alertData = alerts.data.map(alert => {
@@ -389,7 +391,6 @@ export class Account extends React.Component<any, any> {
   render() {
     const {
       user,
-      alerts,
       spaces,
       activeModal,
       onUpdateAlert,
@@ -416,7 +417,7 @@ export class Account extends React.Component<any, any> {
 
               {/* If an alert management modal is visible, render it above the view */}
               {activeModal.name === 'MODAL_ALERT_MANAGEMENT' ? (
-                <ExploreAlertManagementModal />
+                <AlertManagementModal />
               ) : null}
 
               {/* GENERAL INFO */}
@@ -436,7 +437,6 @@ export class Account extends React.Component<any, any> {
               {/* ALERTS */}
               {canManageAlerts ? (
                 <AlertSection
-                  alerts={alerts}
                   spaces={spaces}
                   onUpdateAlert={onUpdateAlert}
                   onShowModal={onShowModal}
@@ -458,7 +458,6 @@ export class Account extends React.Component<any, any> {
 export default connect((state: any) => {
   return {
     user: state.user,
-    alerts: state.alerts,
     spaces: state.spaces,
     activeModal: state.activeModal,
     loading: state.user.loading,
@@ -466,7 +465,7 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     async onUpdateAlert(alert) {
-      await dispatch<any>(collectionAlertsUpdate(alert));
+      await collectionAlertsUpdate(dispatch, alert);
       dispatch<any>(showToast({
         text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
         timeout: 1000

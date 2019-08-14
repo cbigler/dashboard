@@ -89,7 +89,7 @@ import fetchAllObjects from './helpers/fetch-all-objects';
 import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
 import { configureClients } from './helpers/unsafe-configure-app';
 
-const store = storeFactory();
+export const store = storeFactory();
 
 configureClients(store);
 

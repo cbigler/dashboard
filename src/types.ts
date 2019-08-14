@@ -218,6 +218,7 @@ export type DensityUser = {
   permissions: Array<string>,
   spaces: Array<string>,
   sizeAreaDisplayUnit: 'square_feet' | 'square_meters',
+  isEditable: boolean,
 };
 
 export type DensityTag = {

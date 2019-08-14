@@ -1,4 +1,4 @@
-# DashboardDispatchManagementModal
+# DashboardDigestManagementModal
 
-This component renders a modal that can be used to create a new dispatch or modify an existing
-dispatch for a dashboard.
+This component renders a modal that can be used to create a new digest or modify an existing
+digest for a dashboard.

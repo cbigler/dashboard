@@ -1,13 +1,15 @@
-// Redux is used to manage state.
-import {createStore, compose, applyMiddleware, combineReducers} from 'redux';
+// DEPRECATED: Redux is used to manage state.
+import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
+
+// Interop with new RxJS state
+import { rxLegacyReduxMiddleware, rxLegacyReduxSetStore } from './rx-stores';
 
 // Assemble all parts of the reducer
 import accountForgotPassword from './reducers/account-forgot-password/index';
 import accountRegistration from './reducers/account-registration/index';
 import activeModal from './reducers/active-modal/index';
 import activePage from './reducers/active-page/index';
-import alerts from './reducers/alerts/index';
 import toasts from'./reducers/toasts/index';
 import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
@@ -22,7 +24,6 @@ import eventPusherStatus from './reducers/event-pusher-status/index';
 import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
-import users from './reducers/users/index';
 import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
 import integrations from './reducers/integrations/index';
@@ -35,7 +36,6 @@ export const reducer = combineReducers({
   accountRegistration,
   activeModal,
   activePage,
-  alerts,
   toasts,
   sessionToken,
   spaces,
@@ -50,7 +50,6 @@ export const reducer = combineReducers({
   dashboards,
   exploreData,
   resizeCounter,
-  users,
   digestSchedules,
   miscellaneous,
   integrations,
@@ -60,8 +59,13 @@ export const reducer = combineReducers({
 });
 
 // Create our redux store for storing the application state.
-export default () => createStore(reducer, {}, compose(
-  applyMiddleware(thunk),
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ ?
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__() : f => f
-));
+export default function() {
+  const store = createStore(reducer, {}, compose(
+    applyMiddleware(thunk),
+    applyMiddleware(rxLegacyReduxMiddleware),
+    (window as any).__REDUX_DEVTOOLS_EXTENSION__ ?
+      (window as any).__REDUX_DEVTOOLS_EXTENSION__() : f => f
+  ));
+  rxLegacyReduxSetStore(store);
+  return store;
+};

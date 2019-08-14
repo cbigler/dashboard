@@ -5,7 +5,7 @@ import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-import collectionAlertsLoad from '../collection/alerts/load';
+import collectionAlertsRead from '../../rx-actions/alerts/read';
 import spaceReportsCalculateReportData from '../space-reports/calculate-report-data';
 import spacesUpdateReportController from '../space-reports/update-report-controller';
 
@@ -42,7 +42,7 @@ export default function routeTransitionExploreSpaceMeetings(id, roomBookingServi
       return;
     }
 
-    await dispatch(collectionAlertsLoad());
+    await collectionAlertsRead(dispatch);
 
     dispatch(collectionSpacesSet(spaces));
     dispatch(collectionSpaceHierarchySet(spaceHierarchy));
