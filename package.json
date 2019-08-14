@@ -31,7 +31,7 @@
     "popper.js": "^1.14.7",
     "prop-types": "^15.7.2",
     "qs": "^6.6.0",
-    "react": "^16.8.1",
+    "react": "^16.9.0",
     "react-addons-shallow-compare": "^15.6.2",
     "react-app-polyfill": "^1.0.1",
     "react-dom": "^16.8.1",
