@@ -33,12 +33,10 @@ export default async function collectionAlertsUpdate(
   if (errorThrown) {
     console.error(errorThrown);
     dispatch({ type: AlertActionTypes.COLLECTION_ALERTS_ERROR, error: errorThrown });
-    return false;
   } else {
     dispatch({
       type: AlertActionTypes.COLLECTION_ALERTS_PUSH,
       alert: objectSnakeToCamel<DensityNotification>(response.data),
     });
-    return true;
   }
 }

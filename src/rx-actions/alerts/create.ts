@@ -1,5 +1,6 @@
 import core from '../../client/core';
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityNotification } from '../../types';
 import { getNotificationsURL } from './read';
 import { AlertActionTypes } from '../../interfaces/alerts';
@@ -40,9 +41,10 @@ export default async function collectionAlertsCreate(
   if (errorThrown) {
     console.error(errorThrown);
     dispatch({ type: AlertActionTypes.COLLECTION_ALERTS_ERROR, error: errorThrown });
-    return false;
   } else {
-    dispatch({ type: AlertActionTypes.COLLECTION_ALERTS_PUSH, alert: response.data });
-    return true;
+    dispatch({
+      type: AlertActionTypes.COLLECTION_ALERTS_PUSH,
+      alert: objectSnakeToCamel<DensityNotification>(response.data),
+    });
   }
 }
