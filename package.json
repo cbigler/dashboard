@@ -56,7 +56,7 @@
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.9.1",
     "jest-resolve": "^24.8.0",
-    "mockdate": "^2.0.2",
+    "mockdate": "^2.0.5",
     "node-sass": "^4.12.0",
     "react-scripts": "^3.0.1",
     "react-test-renderer": "^16.9.0",
