@@ -55,7 +55,7 @@
     "@types/react-redux": "^7.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.9.1",
-    "jest-resolve": "^23.6.0",
+    "jest-resolve": "^24.8.0",
     "mockdate": "^2.0.2",
     "node-sass": "^4.12.0",
     "react-scripts": "^3.0.1",
