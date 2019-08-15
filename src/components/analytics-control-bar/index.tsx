@@ -32,10 +32,11 @@ function ItemList({choices, template, onClick}) {
       {choices.map(choice => (
         <li
           tabIndex={0}
-          onClick={() => onClick(choice)}
+          key={choice.id}
+          onClick={e => onClick(choice, e)}
           onKeyPress={e => {
-            if (e.key === 'Enter') {
-              onClick(choice);
+            if (e.key === 'Enter' || e.key === 'Space') {
+              onClick(choice, e);
             }
           }}
         >
@@ -44,6 +45,38 @@ function ItemList({choices, template, onClick}) {
       ))}
     </ul>
   )
+}
+
+function MultipleSelectItemList({choices, value, onChange}) {
+  return (
+    <ItemList
+      choices={choices}
+      template={choice => (
+        <Fragment>
+          <Checkbox
+            id={choice.id}
+            checked={value.includes(choice.id)}
+            onChange={(e) => {
+              if (e.target.checked) {
+                onChange([ ...value, choice.id ]);
+              } else {
+                onChange(value.filter(i => i !== choice.id));
+              }
+            }}
+          />
+          {choice.label}
+        </Fragment>
+      )}
+      onClick={(choice, e) => {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') { return; }
+        if (value.includes(choice.id)) {
+          onChange(value.filter(i => i !== choice.id));
+        } else {
+          onChange([ ...value, choice.id ]);
+        }
+      }}
+    />
+  );
 }
 
 function CircleIconButton({ children, onClick }) {
@@ -61,54 +94,107 @@ export type AnalyticsSpaceFilter = {
   field: string,
   values: Array<string>,
 }
+const EMPTY_FILTER = { field: '', values: [] };
 
 export type AnalyticsSpaceSelectorProps = {
   spaces: Array<AnalyticsSpaceFilter>,
   onChange: (spaces: Array<AnalyticsSpaceFilter>) => void,
 }
 
-enum AnalyticsSpaceSelectorPage {
-  List = 'List',
-  SpaceName = 'SpaceName',
-  SpaceFunction = 'SpaceFunction',
-  SpaceType = 'SpaceType',
-}
-
-const ANALYTICS_PAGE_TO_LABEL = {
-  [AnalyticsSpaceSelectorPage.SpaceFunction]: 'Add by Function',
-  [AnalyticsSpaceSelectorPage.SpaceType]: 'Add by Type',
-  [AnalyticsSpaceSelectorPage.SpaceName]: 'Add by Space Name',
+const ANALYTICS_FIELD_TYPE_TO_LABEL = {
+  'function': 'Add by Function',
+  spaceType: 'Add by Type',
+  name: 'Add by Space Name',
 };
 
-export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelectorProps) {
+const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION = {
+  'function': id => SPACE_FUNCTION_CHOICES.find(i => i.id === id).label,
+  spaceType: (spaceType, spaces) => {
+    return { campus: 'Campus', building: 'Building', floor: 'Floor', space: 'Space' }[spaceType];
+  },
+  name: n => n,
+};
+
+export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) {
   const [ open, setOpen ] = useState(false);
-  const [ page, setPage ] = useState(AnalyticsSpaceSelectorPage.List);
   const [ searchText, setSearchText ] = useState('');
+
+  const [ filter, onChange ] = useState<AnalyticsSpaceFilter>(EMPTY_FILTER);
 
   function onCloseAndReset() {
     setOpen(false);
-    setTimeout(() => {
-      setPage(AnalyticsSpaceSelectorPage.List);
-      setSearchText('');
-    }, 250);
   };
+
+  const nameFormattingFunction = ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION[filter.field] || (n => n);
+
+  let text = <FilterBold>Select your Spaces</FilterBold>;
+  if (filter.values.length > 0) {
+    const valueList = (
+      <Fragment>
+        {filter.values.slice(0, 2).reduce((acc, name) => {
+          if (!acc) {
+            return (
+              <FilterBold>{nameFormattingFunction(name, spaces)}</FilterBold>
+            );
+          } else {
+            return (
+              <Fragment>
+                {acc}, <FilterBold>{nameFormattingFunction(name)}</FilterBold>
+              </Fragment>
+            )
+          }
+        }, null)}
+        {filter.values.length > 2 ? (
+          <Fragment>
+            , and{' '}
+            <FilterBold>
+              {filter.values.length-2} {filter.values.length-2 === 1 ? 'other' : 'others'}
+            </FilterBold>
+          </Fragment>
+        ) : null}
+      </Fragment>
+    );
+    switch (filter.field) {
+    case 'function':
+      text = (
+        <Fragment>
+          <FilterBold>Function</FilterBold> is {valueList}
+        </Fragment>
+      );
+      break;
+    case 'spaceType':
+      text = (
+        <Fragment>
+          <FilterBold>Type</FilterBold> is {valueList}
+        </Fragment>
+      );
+      break;
+    case 'name':
+      text = (
+        <Fragment>
+          <FilterBold>Space</FilterBold> is {valueList}
+        </Fragment>
+      );
+      break;
+    }
+  }
 
   return (
     <Filter
       open={open}
       onOpen={() => setOpen(true)}
       onClose={onCloseAndReset}
-      text={<Fragment><FilterBold>Space</FilterBold> is <FilterBold>Orange</FilterBold></Fragment>}
+      text={text}
     >
-      {page === AnalyticsSpaceSelectorPage.List ? (
+      {filter.field === '' ? (
         // Show a list of potential filters on the list page
         <div className={styles.popupBodySmall}>
           <ItemList
             choices={
-              Object.entries(ANALYTICS_PAGE_TO_LABEL)
+              Object.entries(ANALYTICS_FIELD_TYPE_TO_LABEL)
               .map(([key, value]) => ({id: key, label: value}))
             }
-            onClick={choice => setPage(choice.id)}
+            onClick={choice => onChange({ field: choice.id, values: [] })}
           />
         </div>
       ) : (
@@ -118,18 +204,18 @@ export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelec
             <AppBar>
               <AppBarTitle>
                 <div className={styles.back}>
-                  <CircleIconButton onClick={() => setPage(AnalyticsSpaceSelectorPage.List)}>
+                  <CircleIconButton onClick={() => onChange(EMPTY_FILTER)}>
                     <Icons.ArrowLeft />
                   </CircleIconButton>
                 </div>
-                {ANALYTICS_PAGE_TO_LABEL[page]}
+                {ANALYTICS_FIELD_TYPE_TO_LABEL[filter.field]}
               </AppBarTitle>
             </AppBar>
           </AppBarContext.Provider>
         </div>
       )}
 
-      {page === AnalyticsSpaceSelectorPage.SpaceFunction ? (
+      {filter.field === 'function' ? (
         <Fragment>
           <AppBar>
             <InputBox
@@ -141,44 +227,40 @@ export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelec
             />
           </AppBar>
           <div className={styles.popupBody}>
-            <ItemList
-              choices={SPACE_FUNCTION_CHOICES}
-              template={choice => (
-                <Fragment>
-                  <Checkbox
-                    id={choice.id}
-                    checked={false}
-                    onChange={console.log}
-                  />
-                  {choice.label}
-                </Fragment>
-              )}
-              onClick={choice => {
-                onCloseAndReset();
-                console.log(choice);
-              }}
+            <MultipleSelectItemList
+              choices={
+                SPACE_FUNCTION_CHOICES
+                .map(choice => ({
+                  ...choice,
+                  label: `${choice.label} (${spaces.filter(s => s['function'] === choice.id).length})`,
+                }))
+              }
+              value={filter.values}
+              onChange={values => onChange({ ...filter, values })}
             />
           </div>
         </Fragment>
       ) : null}
 
-      {page === AnalyticsSpaceSelectorPage.SpaceType ? (
+      {filter.field === 'spaceType' ? (
         <Fragment>
           <div className={styles.popupBody}>
-            <ItemList
+            <MultipleSelectItemList
               choices={[
-                {id: 'space', label: 'Campus'},
-                {id: 'space', label: 'Building'},
-                {id: 'space', label: 'Floor'},
-                {id: 'space', label: 'Space'},
+                {id: 'campus', label: `Campus (${spaces.filter(s => s.spaceType === 'campus').length})`},
+                {id: 'building', label: `Building (${spaces.filter(s => s.spaceType === 'building').length})`},
+                {id: 'floor', label: `Floor (${spaces.filter(s => s.spaceType === 'floor').length})`},
+                {id: 'space', label: `Space (${spaces.filter(s => s.spaceType === 'space').length})`},
               ]}
-              onClick={choice => {
-                onCloseAndReset();
-                console.log(choice);
-              }}
+              value={filter.values}
+              onChange={values => onChange({ ...filter, values })}
             />
           </div>
         </Fragment>
+      ) : null}
+
+      {filter.field !== '' ? (
+        <button>Add Filter</button>
       ) : null}
     </Filter>
   );

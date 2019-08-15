@@ -2,6 +2,12 @@
 import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
 
+import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import spaces from './spaces.json';
+import hierarchy from './hierarchy.json';
+const SPACES = spaces.map(objectSnakeToCamel);
+const HIERARCHY = hierarchy.map(objectSnakeToCamel);
+
 import { AnalyticsSpaceSelector } from './index';
 
 function State({ initialState, children }) {
@@ -25,7 +31,10 @@ storiesOf('Analytics Control Bar / Space Selector', module)
           <button>Focusable Item</button>
           <br/>
           <br/>
-          <AnalyticsSpaceSelector />
+          <AnalyticsSpaceSelector
+            spaces={SPACES}
+            hierarchy={HIERARCHY}
+          />
           <br/>
           <br/>
           <button>Focusable Item</button>
