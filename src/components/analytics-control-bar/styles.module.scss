@@ -15,9 +15,7 @@
   background-color: $grayLightest;
 }
 .back {
-  cursor: pointer;
   margin-right: 16px;
-  outline: none;
 }
 .popupBody {
   height: 300px;
@@ -55,4 +53,24 @@
 .itemList li:hover { background-color: $grayLighter; }
 .itemList li:focus {
   background-color: $grayLighter;
+}
+
+
+
+
+.circleIconButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0px;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+  background-color: transparent;
+  transition: all 150ms ease-in-out;
+}
+.circleIconButton:focus {
+  background-color: $grayLight;
 }

@@ -5,6 +5,7 @@ import classnames from 'classnames';
 // FIXME: move this
 import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
 // FIXME: move this
+import Checkbox from '../checkbox';
 
 import Filter, { FilterBold } from './filter';
 
@@ -25,7 +26,7 @@ export default function AnalyticsControlBar() {
   );
 }
 
-function ItemList({choices, onClick}) {
+function ItemList({choices, template, onClick}) {
   return (
     <ul className={styles.itemList}>
       {choices.map(choice => (
@@ -38,11 +39,19 @@ function ItemList({choices, onClick}) {
             }
           }}
         >
-          {choice.label}
+          {template ? template(choice) : choice.label}
         </li>
       ))}
     </ul>
   )
+}
+
+function CircleIconButton({ children, onClick }) {
+  return (
+    <button className={styles.circleIconButton} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
 
 
@@ -108,13 +117,10 @@ export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelec
           <AppBarContext.Provider value="CARD_HEADER">
             <AppBar>
               <AppBarTitle>
-                <div
-                  role="button"
-                  tabIndex={0}
-                  className={styles.back}
-                  onClick={() => setPage(AnalyticsSpaceSelectorPage.List)}
-                >
-                  <Icons.ArrowLeft />
+                <div className={styles.back}>
+                  <CircleIconButton onClick={() => setPage(AnalyticsSpaceSelectorPage.List)}>
+                    <Icons.ArrowLeft />
+                  </CircleIconButton>
                 </div>
                 {ANALYTICS_PAGE_TO_LABEL[page]}
               </AppBarTitle>
@@ -125,9 +131,28 @@ export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelec
 
       {page === AnalyticsSpaceSelectorPage.SpaceFunction ? (
         <Fragment>
+          <AppBar>
+            <InputBox
+              type="text"
+              placeholder="Search for a space function"
+              width="100%"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+            />
+          </AppBar>
           <div className={styles.popupBody}>
             <ItemList
               choices={SPACE_FUNCTION_CHOICES}
+              template={choice => (
+                <Fragment>
+                  <Checkbox
+                    id={choice.id}
+                    checked={false}
+                    onChange={console.log}
+                  />
+                  {choice.label}
+                </Fragment>
+              )}
               onClick={choice => {
                 onCloseAndReset();
                 console.log(choice);
@@ -139,13 +164,6 @@ export function AnalyticsSpaceSelector({ spaces, onChange }: AnalyticsSpaceSelec
 
       {page === AnalyticsSpaceSelectorPage.SpaceType ? (
         <Fragment>
-          <AppBar>
-            <InputBox
-              type="text"
-              placeholder="Search for a space type"
-              width="100%"
-            />
-          </AppBar>
           <div className={styles.popupBody}>
             <ItemList
               choices={[
