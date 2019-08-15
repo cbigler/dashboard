@@ -12,11 +12,19 @@
 
 .header {
   width: 400px;
+  background-color: $grayLightest;
 }
 .back {
   cursor: pointer;
   margin-right: 16px;
   outline: none;
+}
+.popupBody {
+  height: 300px;
+  overflow-y: auto;
+}
+.popupBodySmall {
+  width: 300px;
 }
 
 
@@ -33,13 +41,16 @@
 .itemList li {
   display: flex;
   align-items: center;
-  width: 300px;
+  width: 100%;
   height: 40px;
+  box-sizing: border-box;
+
   border-radius: $borderRadiusBase;
   padding-left: 16px;
   padding-right: 16px;
   cursor: pointer;
   outline: none;
+  user-select: none;
 }
 .itemList li:hover { background-color: $grayLighter; }
 .itemList li:focus {
