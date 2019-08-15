@@ -1022,6 +1022,10 @@ export default connect((state: any) => ({
         value = control.parameters.defaultValue || 0.5;
         break;
 
+      case 'INSIGHT_LIST':
+        value = control.parameters.defaultValue || [];
+        break;
+
       default:
         value = control.parameters.defaultValue || '';
         break;
