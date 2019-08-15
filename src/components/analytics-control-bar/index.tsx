@@ -1,17 +1,18 @@
 import React, { useState, Fragment } from 'react';
 import styles from './styles.module.scss';
-import classnames from 'classnames';
 
 // FIXME: move this
 import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
 // FIXME: move this
 import Checkbox from '../checkbox';
+import SpacePicker from '../space-picker';
+import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
+import filterCollection from '../../helpers/filter-collection';
 
 import Filter, { FilterBold } from './filter';
 
 import {
   AppBar,
-  AppBarSection,
   AppBarTitle,
   AppBarContext,
   Icons,
@@ -34,9 +35,27 @@ function ItemList({choices, template, onClick}) {
           tabIndex={0}
           key={choice.id}
           onClick={e => onClick(choice, e)}
-          onKeyPress={e => {
-            if (e.key === 'Enter' || e.key === 'Space') {
+          onKeyDown={e => {
+            switch (e.key) {
+            // Enter will select the current item
+            case 'Enter':
+            case ' ':
+              e.preventDefault();
               onClick(choice, e);
+              return;
+            // Arrow keys will move up and down
+            case 'ArrowUp':
+              if (e.target.previousElementSibling) {
+                e.preventDefault();
+                e.target.previousElementSibling.focus();
+              }
+              return;
+            case 'ArrowDown':
+              if (e.target.nextElementSibling) {
+                e.preventDefault();
+                e.target.nextElementSibling.focus();
+              }
+              return;
             }
           }}
         >
@@ -98,32 +117,38 @@ const EMPTY_FILTER = { field: '', values: [] };
 
 export type AnalyticsSpaceSelectorProps = {
   spaces: Array<AnalyticsSpaceFilter>,
+  hierarchy: Array<SpaceHierarchyDisplayItem>,
   onChange: (spaces: Array<AnalyticsSpaceFilter>) => void,
 }
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
   'function': 'Add by Function',
   spaceType: 'Add by Type',
-  name: 'Add by Space Name',
+  id: 'Add by Space Name',
 };
 
-const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION = {
-  'function': id => SPACE_FUNCTION_CHOICES.find(i => i.id === id).label,
-  spaceType: (spaceType, spaces) => {
-    return { campus: 'Campus', building: 'Building', floor: 'Floor', space: 'Space' }[spaceType];
+const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: string, formattedHierarchy: Array<SpaceHierarchyDisplayItem>) => string } = {
+  'function': spaceFunction => {
+    const choice = SPACE_FUNCTION_CHOICES.find(i => i.id === spaceFunction);
+    return choice ? choice.label : '(unknown function)';
   },
-  name: n => n,
+  spaceType: spaceType => ({
+    campus: 'Campus',
+    building: 'Building',
+    floor: 'Floor',
+    space: 'Space',
+  }[spaceType] || '(unknown type)'),
+  id: (id, formattedHierarchy) => {
+    const hierarchyItem = formattedHierarchy.find(i => i.space.id === id);
+    return hierarchyItem ? hierarchyItem.space.name : '(unknown space)';
+  },
 };
 
-export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) {
+const choiceFilter = filterCollection({fields: ['label']});
+
+export function AnalyticsSpaceSelector({ filter, onChange, spaces, formattedHierarchy }: AnalyticsSpaceSelectorProps) {
   const [ open, setOpen ] = useState(false);
   const [ searchText, setSearchText ] = useState('');
-
-  const [ filter, onChange ] = useState<AnalyticsSpaceFilter>(EMPTY_FILTER);
-
-  function onCloseAndReset() {
-    setOpen(false);
-  };
 
   const nameFormattingFunction = ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION[filter.field] || (n => n);
 
@@ -134,12 +159,12 @@ export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) 
         {filter.values.slice(0, 2).reduce((acc, name) => {
           if (!acc) {
             return (
-              <FilterBold>{nameFormattingFunction(name, spaces)}</FilterBold>
+              <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
             );
           } else {
             return (
               <Fragment>
-                {acc}, <FilterBold>{nameFormattingFunction(name)}</FilterBold>
+                {acc}, <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
               </Fragment>
             )
           }
@@ -169,7 +194,7 @@ export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) 
         </Fragment>
       );
       break;
-    case 'name':
+    case 'id':
       text = (
         <Fragment>
           <FilterBold>Space</FilterBold> is {valueList}
@@ -183,7 +208,7 @@ export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) 
     <Filter
       open={open}
       onOpen={() => setOpen(true)}
-      onClose={onCloseAndReset}
+      onClose={() => setOpen(false)}
       text={text}
     >
       {filter.field === '' ? (
@@ -224,12 +249,13 @@ export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) 
               width="100%"
               value={searchText}
               onChange={e => setSearchText(e.target.value)}
+              leftIcon={<Icons.Search />}
             />
           </AppBar>
           <div className={styles.popupBody}>
             <MultipleSelectItemList
               choices={
-                SPACE_FUNCTION_CHOICES
+                choiceFilter(SPACE_FUNCTION_CHOICES, searchText)
                 .map(choice => ({
                   ...choice,
                   label: `${choice.label} (${spaces.filter(s => s['function'] === choice.id).length})`,
@@ -243,24 +269,36 @@ export function AnalyticsSpaceSelector({ spaces }: AnalyticsSpaceSelectorProps) 
       ) : null}
 
       {filter.field === 'spaceType' ? (
-        <Fragment>
-          <div className={styles.popupBody}>
-            <MultipleSelectItemList
-              choices={[
-                {id: 'campus', label: `Campus (${spaces.filter(s => s.spaceType === 'campus').length})`},
-                {id: 'building', label: `Building (${spaces.filter(s => s.spaceType === 'building').length})`},
-                {id: 'floor', label: `Floor (${spaces.filter(s => s.spaceType === 'floor').length})`},
-                {id: 'space', label: `Space (${spaces.filter(s => s.spaceType === 'space').length})`},
-              ]}
-              value={filter.values}
-              onChange={values => onChange({ ...filter, values })}
-            />
-          </div>
-        </Fragment>
+        <div className={styles.popupBody}>
+          <MultipleSelectItemList
+            choices={[
+              {id: 'campus', label: `Campus (${spaces.filter(s => s.spaceType === 'campus').length})`},
+              {id: 'building', label: `Building (${spaces.filter(s => s.spaceType === 'building').length})`},
+              {id: 'floor', label: `Floor (${spaces.filter(s => s.spaceType === 'floor').length})`},
+              {id: 'space', label: `Space (${spaces.filter(s => s.spaceType === 'space').length})`},
+            ]}
+            value={filter.values}
+            onChange={values => onChange({ ...filter, values })}
+          />
+        </div>
+      ) : null}
+
+      {filter.field === 'id' ? (
+        <SpacePicker
+          canSelectMultiple
+          formattedHierarchy={formattedHierarchy}
+          value={filter.values}
+          onChange={hierarchyItems => onChange({ ...filter, values: hierarchyItems.map(i => i.space.id) })}
+          height={400}
+        />
       ) : null}
 
       {filter.field !== '' ? (
-        <button>Add Filter</button>
+        <button className={styles.submitButton} onClick={() => setOpen(false)}>
+          {/* hack so that focus styles only show when keyboard focuses the control:
+              see https://stackoverflow.com/a/45191208/4115328 */}
+          <span tabIndex={-1} className={styles.inner}>Add Filter</span>
+        </button>
       ) : null}
     </Filter>
   );

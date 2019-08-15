@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef, useEffect } from 'react';
+import React, { Fragment, useRef } from 'react';
 import styles from './filter.module.scss';
 import classnames from 'classnames';
 
@@ -59,7 +59,7 @@ export default function Filter({text, children, open, onOpen, onClose}) {
         </span>
 
         {/* Filter Popup */}
-        <div className={classnames(styles.popup, {[styles.open]: open})}>
+        <div className={classnames(styles.popup, {[styles.open]: open})} aria-hidden={!open}>
           {children}
         </div>
       </span>

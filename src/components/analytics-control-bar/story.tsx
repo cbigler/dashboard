@@ -5,8 +5,9 @@ import { storiesOf } from '@storybook/react';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import spaces from './spaces.json';
 import hierarchy from './hierarchy.json';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 const SPACES = spaces.map(objectSnakeToCamel);
-const HIERARCHY = hierarchy.map(objectSnakeToCamel);
+const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
 import { AnalyticsSpaceSelector } from './index';
 
@@ -16,7 +17,10 @@ function State({ initialState, children }) {
     <Fragment>
       {children(state, setState)}
       <br />
-      <pre>
+      <br />
+      <strong>State:</strong>
+      <br />
+      <pre style={{height: 100, overflow: 'auto', padding: 8, background: '#eee'}}>
         {JSON.stringify(state, null, 2)}
       </pre>
     </Fragment>
@@ -25,20 +29,35 @@ function State({ initialState, children }) {
 
 storiesOf('Analytics Control Bar / Space Selector', module)
   .add('Default', () => (
-    <State initialState={null}>
+    <State initialState={{field: '', values: []}}>
       {(state, setState) => (
         <Fragment>
-          <button>Focusable Item</button>
+          <p>Note: Try selecting the button below and tabbing to test keyboard interactivity.</p>
+          <button>Focusable item before space selector</button>
           <br/>
           <br/>
           <AnalyticsSpaceSelector
+            filter={state}
+            onChange={setState}
             spaces={SPACES}
-            hierarchy={HIERARCHY}
+            formattedHierarchy={FORMATTED_HIERARCHY}
           />
           <br/>
           <br/>
-          <button>Focusable Item</button>
+          <button>Focusable item after space selector</button>
         </Fragment>
+      )}
+    </State>
+  ))
+  .add('Starting with spaceType=space selected', () => (
+    <State initialState={{field: 'spaceType', values: ['space']}}>
+      {(state, setState) => (
+        <AnalyticsSpaceSelector
+          filter={state}
+          onChange={setState}
+          spaces={SPACES}
+          formattedHierarchy={FORMATTED_HIERARCHY}
+        />
       )}
     </State>
   ))

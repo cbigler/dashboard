@@ -21,9 +21,23 @@
   height: 300px;
   overflow-y: auto;
 }
-.popupBodySmall {
-  width: 300px;
+.popupBodySmall { width: 300px; }
+.submitButton {
+  width: 100%;
+  height: 56px;
+  background-color: $grayCinder;
+  border: 0px;
+  color: #fff;
+  font-family: $fontBase;
+  font-size: $fontSizeBase;
+  font-weight: 500;
+  cursor: pointer;
 }
+
+// hack so that focus styles only show when keyboard focuses the control
+// see https://stackoverflow.com/a/45191208/4115328
+.submitButton:focus, .submitButton .inner { outline: none; }
+.submitButton:focus > .inner { text-decoration: underline; }
 
 
 
@@ -42,6 +56,7 @@
   width: 100%;
   height: 40px;
   box-sizing: border-box;
+  white-space: nowrap;
 
   border-radius: $borderRadiusBase;
   padding-left: 16px;
