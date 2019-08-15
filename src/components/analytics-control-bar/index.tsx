@@ -4,12 +4,19 @@ import styles from './styles.module.scss';
 // FIXME: move this
 import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
 // FIXME: move this
-import Checkbox from '../checkbox';
+//
 import SpacePicker from '../space-picker';
+
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import filterCollection from '../../helpers/filter-collection';
+import { DensitySpace } from '../../types';
 
 import Filter, { FilterBold } from './filter';
+import {
+  ItemList,
+  MultipleSelectItemList,
+  CircleIconButton,
+} from './utilities';
 
 import {
   AppBar,
@@ -27,83 +34,11 @@ export default function AnalyticsControlBar() {
   );
 }
 
-function ItemList({choices, template, onClick}) {
-  return (
-    <ul className={styles.itemList}>
-      {choices.map(choice => (
-        <li
-          tabIndex={0}
-          key={choice.id}
-          onClick={e => onClick(choice, e)}
-          onKeyDown={e => {
-            switch (e.key) {
-            // Enter will select the current item
-            case 'Enter':
-            case ' ':
-              e.preventDefault();
-              onClick(choice, e);
-              return;
-            // Arrow keys will move up and down
-            case 'ArrowUp':
-              if (e.target.previousElementSibling) {
-                e.preventDefault();
-                e.target.previousElementSibling.focus();
-              }
-              return;
-            case 'ArrowDown':
-              if (e.target.nextElementSibling) {
-                e.preventDefault();
-                e.target.nextElementSibling.focus();
-              }
-              return;
-            }
-          }}
-        >
-          {template ? template(choice) : choice.label}
-        </li>
-      ))}
-    </ul>
-  )
-}
 
-function MultipleSelectItemList({choices, value, onChange}) {
-  return (
-    <ItemList
-      choices={choices}
-      template={choice => (
-        <Fragment>
-          <Checkbox
-            id={choice.id}
-            checked={value.includes(choice.id)}
-            onChange={(e) => {
-              if (e.target.checked) {
-                onChange([ ...value, choice.id ]);
-              } else {
-                onChange(value.filter(i => i !== choice.id));
-              }
-            }}
-          />
-          {choice.label}
-        </Fragment>
-      )}
-      onClick={(choice, e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') { return; }
-        if (value.includes(choice.id)) {
-          onChange(value.filter(i => i !== choice.id));
-        } else {
-          onChange([ ...value, choice.id ]);
-        }
-      }}
-    />
-  );
-}
 
-function CircleIconButton({ children, onClick }) {
-  return (
-    <button className={styles.circleIconButton} onClick={onClick}>
-      {children}
-    </button>
-  );
+
+export function AnalyticsDateSelector({date}) {
+  return <p>a</p>;
 }
 
 
@@ -111,14 +46,16 @@ function CircleIconButton({ children, onClick }) {
 
 export type AnalyticsSpaceFilter = {
   field: string,
-  values: Array<string>,
+  values: Array<string | null>,
 }
 const EMPTY_FILTER = { field: '', values: [] };
 
 export type AnalyticsSpaceSelectorProps = {
-  spaces: Array<AnalyticsSpaceFilter>,
+  filter: AnalyticsSpaceFilter,
+  onChange: (filter: AnalyticsSpaceFilter) => void,
+
+  spaces: Array<DensitySpace>,
   hierarchy: Array<SpaceHierarchyDisplayItem>,
-  onChange: (spaces: Array<AnalyticsSpaceFilter>) => void,
 }
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
