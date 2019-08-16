@@ -80,7 +80,8 @@
     "make-helper": "./utilities/make-helper",
     "make-reducer": "./utilities/make-reducer",
     "storybook": "start-storybook -p 4004",
-    "story": "npm run storybook"
+    "story": "npm run storybook",
+    "build-storybook": "build-storybook"
   },
   "browserslist": [
     ">0.2%",

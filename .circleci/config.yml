@@ -65,6 +65,35 @@ jobs:
             -H "Authorization: Bearer $GITHUB_MACHINE_USER_TOKEN" \
             https://api.github.com/repos/densityco/dashboard/statuses/${CIRCLE_SHA1}
 
+  preview-storybook:
+    docker:
+      - image: circleci/node:10.7.0
+    resource_class: small
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{checksum "./package.json"}}-v10
+      - run:
+          name: "Build preview"
+          command: npm run build-storybook
+      - run:
+          name: "Push preview to the cloud"
+          command: |
+            echo "* Installing amazon's cli..."
+            sudo apt-get install -y python-pip python-dev
+            sudo pip install -U 'awscli>=1.15'
+
+            echo "* Copying to S3..."
+            aws s3 sync storybook-static/ s3://dashboard-storybook.density.rodeo/${CIRCLE_SHA1} --region us-east-1
+      - run:
+          name: "Post preview link to any pull requests commit is part of"
+          command: |
+            echo "* Posting status to commit ${CIRCLE_SHA1}"
+            curl -X POST \
+            -d "{\"state\":\"success\", \"context\": \"Dashboard storybook build\", \"target_url\": \"https://dashboard-storybook.density.rodeo/${CIRCLE_SHA1}\"}" \
+            -H "Authorization: Bearer $GITHUB_MACHINE_USER_TOKEN" \
+            https://api.github.com/repos/densityco/dashboard/statuses/${CIRCLE_SHA1}
+
   staging:
     docker:
       - image: circleci/node:10.16
@@ -150,6 +179,10 @@ workflows:
           filters:
             branches:
               ignore: trunk
+      - preview-storybook:
+          requires:
+            - build
+
       # Trunk is built and deployed to `https://dashboard.density.rodeo`
       - staging:
           requires:
