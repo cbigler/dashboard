@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import styles from './styles.module.scss';
 import Checkbox from '../checkbox';
+import { Icons } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 export function ItemList({choices, template, onClick}) {
   return (
@@ -77,6 +79,31 @@ export function CircleIconButton({ children, onClick }) {
   return (
     <button className={styles.circleIconButton} onClick={onClick}>
       {children}
+    </button>
+  );
+}
+
+export function AddButton({ onClick }) {
+  return (
+    <button className={styles.addButton} onClick={onClick} aria-label="Add new filter">
+      <Icons.Plus width={12} height={12} />
+    </button>
+  );
+}
+
+export function FilterDeleteButton({ onClick, onFocus, onBlur }) {
+  return (
+    <button
+      className={styles.deleteButton}
+      onClick={onClick}
+      onFocus={onFocus}
+      onBlur={onBlur}
+    >
+      <Icons.Close
+        color={colorVariables.brandDanger}
+        width={8}
+        height={8}
+      />
     </button>
   );
 }

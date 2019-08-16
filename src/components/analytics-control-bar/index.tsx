@@ -18,6 +18,8 @@ import {
   ItemList,
   MultipleSelectItemList,
   CircleIconButton,
+  AddButton,
+  FilterDeleteButton,
 } from './utilities';
 
 import {
@@ -87,17 +89,12 @@ export default function AnalyticsControlBar({
               />
             </div>
           )).reduce((acc, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
-          <button
-            onClick={() => {
-              onChangeFilters([
-                ...filters,
-                { field: '', values: [] },
-              ]);
-            }}
-            className={styles.addButton}
-          >
-            <Icons.Plus width={12} height={12} />
-          </button>
+          <AddButton onClick={() => {
+            onChangeFilters([
+              ...filters,
+              { field: '', values: [] },
+            ]);
+          }} />
         </div>
       </AppBarSection>
     </AppBar>
@@ -242,7 +239,7 @@ export function AnalyticsSpaceSelector({
   const [ deleteButtonVisible, setDeleteButtonVisible ] = useState(false);
   const [ searchText, setSearchText ] = useState('');
 
-  const deleteButtonRef = useRef();
+  const deleteButtonWrapperRef = useRef();
 
   const nameFormattingFunction = ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION[filter.field] || (n => n);
 
@@ -303,25 +300,18 @@ export function AnalyticsSpaceSelector({
       {/* A delete button is visible to the left of this filter */}
       {deletable ? (
         <div
-          ref={deleteButtonRef}
+          ref={deleteButtonWrapperRef}
           className={classnames(
             styles.deleteButtonWrapper,
             {[styles.visible]: deleteButtonVisible}
           )}
           onMouseLeave={() => setDeleteButtonVisible(false)}
         >
-          <button
-            className={styles.deleteButton}
+          <FilterDeleteButton
             onClick={onDelete}
             onFocus={() => setDeleteButtonVisible(true)}
             onBlur={() => setDeleteButtonVisible(false)}
-          >
-            <Icons.Close
-              color={colorVariables.brandDanger}
-              width={8}
-              height={8}
-            />
-          </button>
+          />
         </div>
       ) : null}
 
@@ -334,7 +324,7 @@ export function AnalyticsSpaceSelector({
         onMouseLeave={e => {
           // Hide the delete button if the mouse is not moving into it
           const elementMouseMovingInto = e.relatedTarget;
-          if (deletable && elementMouseMovingInto !== deleteButtonRef.current) {
+          if (deletable && elementMouseMovingInto !== deleteButtonWrapperRef.current) {
             setDeleteButtonVisible(false);
           }
         }}
