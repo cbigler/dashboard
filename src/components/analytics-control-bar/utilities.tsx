@@ -6,7 +6,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 
 
-const ARROW_TEMPLATE = choice => {
+export const ARROW_TEMPLATE = choice => {
   return <div className={styles.itemListDefaultTemplateRow}>
     {choice.label}
     <Icons.ChevronRight width={12} height={12} />
@@ -21,7 +21,7 @@ type ItemListProps = {
 };
 
 export function ItemList({choices, template, onClick}: ItemListProps) {
-  template = template || ARROW_TEMPLATE;
+  template = template || (choice => choice.label);
   return (
     <ul className={styles.itemList}>
       {choices.map(choice => (

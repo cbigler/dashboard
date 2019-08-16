@@ -15,6 +15,7 @@ import { DensitySpace } from '../../types';
 import Filter, { FilterBold } from './filter';
 import {
   ItemList,
+  ARROW_TEMPLATE,
   MultipleSelectItemList,
   BackButton,
   AddButton,
@@ -35,20 +36,29 @@ export default function AnalyticsControlBar({
   filters,
   onChangeFilters,
 
+  interval,
+  onChangeInterval,
+
   spaces,
   formattedHierarchy,
 }) {
   return (
     <AppBar>
       <AppBarSection>
-        <div className={styles.analyticsSpaceFilterList}>
-          <AnalyticsSpaceFilterBuilder
-            filters={filters}
-            onChange={onChangeFilters}
-            spaces={spaces}
-            formattedHierarchy={formattedHierarchy}
-          />
-        </div>
+        <AnalyticsSpaceFilterBuilder
+          filters={filters}
+          onChange={onChangeFilters}
+          spaces={spaces}
+          formattedHierarchy={formattedHierarchy}
+        />
+
+        {/* FIXME: temporary, mention this in a code review if not removed */}
+        <div style={{width: 200}} />
+
+        <AnalyticsIntervalSelector
+          value={interval}
+          onChange={onChangeInterval}
+        />
       </AppBarSection>
     </AppBar>
   );
@@ -63,16 +73,21 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
           <AnalyticsSpaceSelector
             ref={index === filters.length-1 ? lastSpaceFilter : undefined}
             filter={filter}
-            deletable={filters.length > 1}
+            deletable={filter.field !== ''}
             onChange={filter => {
               const filtersCopy = filters.slice();
               filtersCopy[index] = filter;
               onChange(filtersCopy);
             }}
             onDelete={() => {
-              const filtersCopy = filters.slice();
-              filtersCopy.splice(index, 1);
-              onChange(filtersCopy);
+              if (filters.length === 1) {
+                // If the last filter is being deleted, then replace it with an empty filter.
+                onChange([EMPTY_FILTER]);
+              } else {
+                const filtersCopy = filters.slice();
+                filtersCopy.splice(index, 1);
+                onChange(filtersCopy);
+              }
             }}
             onClose={() => {
               const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
@@ -82,7 +97,7 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
                   // If there was a single field, then reset the field to be an empty field so that
                   // the empty state is maintained.
                   setTimeout(() => {
-                    onChange([{field: '', values: []}]);
+                    onChange([EMPTY_FILTER]);
                   }, 250);
                 } else {
                   // Otherwise, remove the filter.
@@ -115,98 +130,14 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
 }
 
 
-export enum RangeType {
-  ABSOLUTE = 'ABSOLUTE',
-  RELATIVE = 'RELATIVE',
-}
-
-export enum RelativeTimeframe {
-  TODAY = 'TODAY',
-  WEEK_TO_DATE = 'WEEK_TO_DATE',
-  MONTH_TO_DATE = 'MONTH_TO_DATE',
-  LAST_WEEK = 'LAST_WEEK',
-  LAST_MONTH = 'LAST_MONTH',
-  LAST_7_DAYS = 'LAST_7_DAYS',
-  LAST_30_DAYS = 'LAST_30_DAYS',
-  LAST_90_DAYS = 'LAST_90_DAYS',
-}
-
-const formatRelativeTimeframe = (timeframe: RelativeTimeframe) => {
-  switch (timeframe) {
-  case RelativeTimeframe.TODAY:
-    return 'Today';
-  case RelativeTimeframe.LAST_WEEK:
-    return 'Last week';
-  case RelativeTimeframe.LAST_MONTH:
-    return 'Last month';
-  case RelativeTimeframe.WEEK_TO_DATE:
-    return 'Week to date';
-  case RelativeTimeframe.MONTH_TO_DATE:
-    return 'Month to date';
-  case RelativeTimeframe.LAST_7_DAYS:
-    return 'Last 7 days';
-  case RelativeTimeframe.LAST_30_DAYS:
-    return 'Last 30 days';
-  case RelativeTimeframe.LAST_90_DAYS:
-    return 'Last 90 days';
-  default:
-    return 'Unknown'
-  }
-};
-
-export type DateRange = {
-  type: RangeType.ABSOLUTE,
-  startDate: string,
-  endDate: string,
-} | {
-  type: RangeType.RELATIVE,
-  timeRange: RelativeTimeframe,
-};
-
-export function AnalyticsDateSelector({ value, onChange }) {
-  const [ open, setOpen ] = useState(false);
-  return (
-    <Filter
-      open={open}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
-      text={<FilterBold>Date will go here</FilterBold>}
-    >
-      <ItemList
-        choices={[
-          ...Object.keys(RelativeTimeframe).map(key => ({id: key, label: formatRelativeTimeframe(key)})),
-          {id: 'ABSOLUTE', label: 'Custom'},
-        ]}
-        onClick={choice => {
-          if (choice.id === 'ABSOLUTE') {
-            onChange({
-              type: RangeType.ABSOLUTE,
-              startDate: null,
-              endDate: null,
-            });
-          } else {
-            onChange({
-              type: RangeType.RELATIVE,
-              timeRange: choice.id,
-            });
-            setOpen(false);
-          }
-        }}
-      />
-    </Filter>
-  )
-}
-
-
-
 
 export type AnalyticsSpaceFilter = {
   field: string,
   values: Array<string | null>,
 }
-const EMPTY_FILTER = { field: '', values: [] };
+const EMPTY_FILTER: AnalyticsSpaceFilter = { field: '', values: [] };
 
-export type AnalyticsSpaceSelectorProps = {
+type AnalyticsSpaceSelectorProps = {
   filter: AnalyticsSpaceFilter,
   onChange: (filter: AnalyticsSpaceFilter) => void,
   onDelete: () => void,
@@ -361,6 +292,7 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
           // Show a list of potential filters on the list page
           <div className={styles.popupBodySmall}>
             <ItemList
+              template={ARROW_TEMPLATE}
               choices={
                 Object.entries(ANALYTICS_FIELD_TYPE_TO_LABEL)
                 .map(([key, value]) => ({id: key, label: value}))
@@ -456,3 +388,141 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
     </div>
   );
 });
+
+
+export enum AnalyticsInterval {
+  DAY = 'DAY',
+  HOUR = 'HOUR',
+  FIFTEEN_MINUTES = 'FIFTEEN_MINUTES',
+}
+
+const INTERVAL_CHOICES = [
+  { id: AnalyticsInterval.DAY, label: 'Day' },
+  { id: AnalyticsInterval.HOUR, label: 'Hour' },
+  { id: AnalyticsInterval.FIFTEEN_MINUTES, label: '15 Minutes' },
+];
+
+export const AnalyticsIntervalSelector = ({ value, onChange }) => {
+  const [ open, setOpen ] = useState(false);
+
+  const choice = INTERVAL_CHOICES.find(choice => choice.id === value);
+
+  return (
+    <div className={styles.analyticsIntervalSelector}>
+      <Filter
+        open={open}
+        onOpen={() => setOpen(true)}
+        onClose={() => setOpen(false)}
+        text={<FilterBold>{choice ? choice.label : '(unknown interval)'}</FilterBold>}
+      >
+        <ItemList
+          choices={INTERVAL_CHOICES}
+          onClick={choice => {
+            onChange(choice.id);
+            setOpen(false);
+          }}
+        />
+      </Filter>
+    </div>
+  );
+};
+
+
+
+/*
+export enum RangeType {
+  ABSOLUTE = 'ABSOLUTE',
+  RELATIVE = 'RELATIVE',
+}
+
+function makeRelativeTimeRange(start: moment, end: moment): DateRange {
+  return {
+    type: RangeType.RELATIVE,
+    start
+  }
+}
+
+const TIMEFRAME_CHOICES: { [key: string]: DateRange }= {
+  'Today': { type: RangeType.RELATIVE, unit:  },
+  WEEK_TO_DATE = 'WEEK_TO_DATE',
+  MONTH_TO_DATE = 'MONTH_TO_DATE',
+  LAST_WEEK = 'LAST_WEEK',
+  LAST_MONTH = 'LAST_MONTH',
+  LAST_7_DAYS = 'LAST_7_DAYS',
+  LAST_30_DAYS = 'LAST_30_DAYS',
+  LAST_90_DAYS = 'LAST_90_DAYS',
+}
+
+const formatRelativeTimeframe = (timeframe: RelativeTimeframe) => {
+  switch (timeframe) {
+  case RelativeTimeframe.TODAY:
+    return 'Today';
+  case RelativeTimeframe.LAST_WEEK:
+    return 'Last week';
+  case RelativeTimeframe.LAST_MONTH:
+    return 'Last month';
+  case RelativeTimeframe.WEEK_TO_DATE:
+    return 'Week to date';
+  case RelativeTimeframe.MONTH_TO_DATE:
+    return 'Month to date';
+  case RelativeTimeframe.LAST_7_DAYS:
+    return 'Last 7 days';
+  case RelativeTimeframe.LAST_30_DAYS:
+    return 'Last 30 days';
+  case RelativeTimeframe.LAST_90_DAYS:
+    return 'Last 90 days';
+  default:
+    return 'Unknown'
+  }
+};
+
+export type DateRange = {
+  type: RangeType.ABSOLUTE,
+  startDate: string,
+  endDate: string,
+} | {
+  type: RangeType.RELATIVE,
+  start: {
+    unit: RelativeBasisUnit,
+    magnitude: number,
+  },
+  end: {
+    unit: RelativeBasisUnit,
+    magnitude: number,
+  },
+};
+
+export function AnalyticsDateSelector({ value, onChange }) {
+  const [ open, setOpen ] = useState(false);
+  return (
+    <Filter
+      open={open}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      text={<FilterBold>Date will go here</FilterBold>}
+    >
+      <ItemList
+        choices={[
+          ...Object.keys(RelativeTimeframe).map(key => ({id: key, label: formatRelativeTimeframe(key)})),
+          {id: 'ABSOLUTE', label: 'Custom'},
+        ]}
+        onClick={choice => {
+          if (choice.id === RangeType.ABSOLUTE) {
+            onChange({
+              type: RangeType.ABSOLUTE,
+              startDate: null,
+              endDate: null,
+            });
+          } else {
+            onChange({
+              type: RangeType.RELATIVE,
+              timeRange: choice.id,
+            });
+            setOpen(false);
+          }
+        }}
+      />
+    </Filter>
+  )
+}
+*/
