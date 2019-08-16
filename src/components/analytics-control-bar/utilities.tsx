@@ -1,10 +1,27 @@
 import React, { Fragment } from 'react';
-import styles from './styles.module.scss';
+import styles from './utilities.module.scss';
 import Checkbox from '../checkbox';
 import { Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-export function ItemList({choices, template, onClick}) {
+
+
+const ARROW_TEMPLATE = choice => {
+  return <div className={styles.itemListDefaultTemplateRow}>
+    {choice.label}
+    <Icons.ChevronRight width={12} height={12} />
+  </div>
+};
+
+type ItemListChoice = { id: string, label: React.ReactNode };
+type ItemListProps = {
+  choices: Array<ItemListChoice>,
+  template?: (choice: ItemListChoice) => React.ReactNode,
+  onClick: (choice: ItemListChoice) => void,
+};
+
+export function ItemList({choices, template, onClick}: ItemListProps) {
+  template = template || ARROW_TEMPLATE;
   return (
     <ul className={styles.itemList}>
       {choices.map(choice => (
@@ -36,14 +53,22 @@ export function ItemList({choices, template, onClick}) {
             }
           }}
         >
-          {template ? template(choice) : choice.label}
+          {template(choice)}
         </li>
       ))}
     </ul>
   )
 }
 
-export function MultipleSelectItemList({choices, value, onChange}) {
+
+
+type MultipleSelectItemListProps = {
+  choices: Array<ItemListChoice>,
+  value: ItemListChoice["id"],
+  onChange: (choices: Array<ItemListChoice>) => void,
+};
+
+export function MultipleSelectItemList({ choices, value, onChange }: MultipleSelectItemListProps) {
   return (
     <ItemList
       choices={choices}
@@ -64,7 +89,9 @@ export function MultipleSelectItemList({choices, value, onChange}) {
         </Fragment>
       )}
       onClick={(choice, e) => {
-        if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL') { return; }
+        const tagName = e.target.tagName.toLowerCase();
+        if (tagName === 'input' || tagName === 'label') { return; }
+
         if (value.includes(choice.id)) {
           onChange(value.filter(i => i !== choice.id));
         } else {
@@ -75,9 +102,9 @@ export function MultipleSelectItemList({choices, value, onChange}) {
   );
 }
 
-export function BackButton({ children, onClick }) {
+export function BackButton({ onClick }) {
   return (
-    <button className={styles.circleIconButton} onClick={onClick} aria-label="Back to filter list">
+    <button className={styles.backButton} onClick={onClick} aria-label="Back to filter list">
       <Icons.ArrowLeft />
     </button>
   );

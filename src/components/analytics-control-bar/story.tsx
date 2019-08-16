@@ -1,6 +1,7 @@
 /* eslint-disable import/first */
 import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import spaces from './spaces.json';
@@ -84,7 +85,7 @@ storiesOf('Analytics Control Bar / Space Selector', module)
             filter={state}
             onChange={setState}
             deletable
-            onDelete={() => console.log('ONDELETE CALLED')}
+            onDelete={action('onDelete')}
             spaces={SPACES}
             formattedHierarchy={FORMATTED_HIERARCHY}
           />
