@@ -9,7 +9,7 @@ import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
-import { AnalyticsSpaceSelector } from './index';
+import AnalyticsControlBar, { AnalyticsSpaceSelector, AnalyticsDateSelector } from './index';
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);
@@ -26,6 +26,21 @@ function State({ initialState, children }) {
     </Fragment>
   )
 }
+
+storiesOf('Analytics Control Bar', module)
+  .add('Default', () => (
+    <State initialState={[{field: '', values: []}]}>
+      {(state, setState) => (
+        <AnalyticsControlBar
+          filters={state}
+          onChangeFilters={setState}
+
+          spaces={SPACES}
+          formattedHierarchy={FORMATTED_HIERARCHY}
+        />
+      )}
+    </State>
+  ))
 
 storiesOf('Analytics Control Bar / Space Selector', module)
   .add('Default', () => (
@@ -57,6 +72,18 @@ storiesOf('Analytics Control Bar / Space Selector', module)
           onChange={setState}
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
+        />
+      )}
+    </State>
+  ))
+
+storiesOf('Analytics Control Bar / Date Selector', module)
+  .add('Default', () => (
+    <State initialState={null}>
+      {(state, setState) => (
+        <AnalyticsDateSelector
+          value={state}
+          onChange={setState}
         />
       )}
     </State>

@@ -1,4 +1,5 @@
 import React, { Fragment, useRef } from 'react';
+import ReactDOM from 'react-dom';
 import styles from './filter.module.scss';
 import classnames from 'classnames';
 
@@ -12,16 +13,28 @@ function isElementInside(parentElement, element) {
   return false;
 }
 
-export default function Filter({text, children, open, onOpen, onClose}) {
+type FilterProps = {
+  text: React.ReactNode,
+  children: React.ReactNode,
+  open: boolean,
+  onOpen: (boolean) => void,
+  onClose: () => void,
+  onMouseEnter?: () => void,
+  onMouseLeave?: () => void,
+};
+
+export default function Filter({text, children, open, onOpen, onClose, onMouseEnter, onMouseLeave}: FilterProps) {
   const wrapperRef = useRef();
 
   return (
     <Fragment>
       {open ? (
-        <div
-          className={styles.backdrop}
-          onClick={onClose}
-        />
+        ReactDOM.createPortal(
+          <div
+            className={styles.backdrop}
+            onClick={onClose}
+          />
+        , document.body)
       ) : null}
 
       <span
@@ -54,6 +67,8 @@ export default function Filter({text, children, open, onOpen, onClose}) {
           role="button"
           className={styles.filter}
           onClick={onOpen}
+          onMouseEnter={e => !open && onMouseEnter && onMouseEnter(e)}
+          onMouseLeave={e => onMouseLeave && onMouseLeave(e)}
         >
           {text}
         </span>

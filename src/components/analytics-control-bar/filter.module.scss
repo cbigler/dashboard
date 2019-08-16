@@ -8,12 +8,13 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  z-index: 2;
+  z-index: 1;
 }
 
 .wrapper {
   position: relative;
   outline: none;
+  color: $grayDarkest;
 }
 
 .filter {
@@ -24,9 +25,10 @@
   border-bottom: 1px solid $brandPrimary;
   cursor: pointer;
 	user-select: none;
-  z-index: 1;
+  z-index: 2;
 }
 .filterBold { color: #000; }
+.filter:hover .filterBold, .wrapper:focus .filterBold { color: $brandPrimary; }
 
 .popup {
   position: absolute;
@@ -40,7 +42,7 @@
   border-radius: $borderRadiusBase;
 	box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
   background-color: #fff;
-  z-index: 2;
+  z-index: 3;
   overflow: hidden;
 }
 .popup.open {
