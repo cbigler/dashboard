@@ -76,6 +76,22 @@ storiesOf('Analytics Control Bar / Space Selector', module)
       )}
     </State>
   ))
+  .add('With delete button shown and onDelete callback attached', () => (
+    <State initialState={{field: '', values: []}}>
+      {(state, setState) => (
+        <div style={{padding: 48}}>
+          <AnalyticsSpaceSelector
+            filter={state}
+            onChange={setState}
+            deletable
+            onDelete={() => console.log('ONDELETE CALLED')}
+            spaces={SPACES}
+            formattedHierarchy={FORMATTED_HIERARCHY}
+          />
+        </div>
+      )}
+    </State>
+  ))
 
 storiesOf('Analytics Control Bar / Date Selector', module)
   .add('Default', () => (

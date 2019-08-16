@@ -23,8 +23,21 @@ type FilterProps = {
   onMouseLeave?: () => void,
 };
 
-export default function Filter({text, children, open, onOpen, onClose, onMouseEnter, onMouseLeave}: FilterProps) {
-  const wrapperRef = useRef();
+const Filter = React.forwardRef((props: FilterProps, ref) => {
+  const {
+    text,
+    children,
+    open,
+    onOpen,
+    onClose,
+    onMouseEnter,
+    onMouseLeave,
+  } = props;
+
+  // Because a ref may be forwarded into this component, use it if it's defined but fall back to a
+  // ref defined in this component already.
+  const wrapperRefOriginal = useRef();
+  let wrapperRef = ref || wrapperRefOriginal;
 
   return (
     <Fragment>
@@ -80,7 +93,8 @@ export default function Filter({text, children, open, onOpen, onClose, onMouseEn
       </span>
     </Fragment>
   );
-}
+});
+export default Filter;
 
 export function FilterBold({children}) {
   return (

@@ -75,10 +75,10 @@ export function MultipleSelectItemList({choices, value, onChange}) {
   );
 }
 
-export function CircleIconButton({ children, onClick }) {
+export function BackButton({ children, onClick }) {
   return (
-    <button className={styles.circleIconButton} onClick={onClick}>
-      {children}
+    <button className={styles.circleIconButton} onClick={onClick} aria-label="Back to filter list">
+      <Icons.ArrowLeft />
     </button>
   );
 }

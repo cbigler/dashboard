@@ -1,7 +1,6 @@
 import React, { useState, useRef, Fragment } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import colorVariables from '@density/ui/variables/colors.json';
 
 // FIXME: Move this into a helper! Point this out in a code review!
 import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
@@ -17,7 +16,7 @@ import Filter, { FilterBold } from './filter';
 import {
   ItemList,
   MultipleSelectItemList,
-  CircleIconButton,
+  BackButton,
   AddButton,
   FilterDeleteButton,
 } from './utilities';
@@ -31,32 +30,6 @@ import {
   InputBox,
 } from '@density/ui';
 
-  // FIXME: from reports repo, should be made into a helper! Point this out in a code review!
-function toEnglishJsxList(items, separator=' ', shouldIncludeAnd=true) {
-  if (items.length < 2) {
-    return (
-      <Fragment>{items[0]}</Fragment>
-    );
-  } else if (items.length === 2) {
-    return (
-      <Fragment>{items[0]} {shouldIncludeAnd ? "and" : ""}{separator}{items[1]}</Fragment>
-    );
-  } else {
-    return items.reduce((acc, item, index) => {
-      if (index < (items.length - 1)) {
-        return (
-          <Fragment>{acc}{index > 0 ? ',' : ''}{separator}{item}</Fragment>
-        );
-      } else {
-        return (
-          <Fragment>
-            {acc}, {shouldIncludeAnd ? "and" : ""}{separator}{item}
-          </Fragment>
-        );
-      }
-    }, null);
-  }
-}
 
 export default function AnalyticsControlBar({
   filters,
@@ -69,35 +42,75 @@ export default function AnalyticsControlBar({
     <AppBar>
       <AppBarSection>
         <div className={styles.analyticsSpaceFilterList}>
-          {filters.map((filter, index) => (
-            <div className={styles.analyticsSpaceFilterListItem}>
-              <AnalyticsSpaceSelector
-                filter={filter}
-                deletable={filters.length > 1}
-                onChange={filter => {
-                  const filtersCopy = filters.slice();
-                  filtersCopy[index] = filter;
-                  onChangeFilters(filtersCopy);
-                }}
-                onDelete={() => {
-                  const filtersCopy = filters.slice();
-                  filtersCopy.splice(index, 1);
-                  onChangeFilters(filtersCopy);
-                }}
-                spaces={spaces}
-                formattedHierarchy={formattedHierarchy}
-              />
-            </div>
-          )).reduce((acc, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
-          <AddButton onClick={() => {
-            onChangeFilters([
-              ...filters,
-              { field: '', values: [] },
-            ]);
-          }} />
+          <AnalyticsSpaceFilterBuilder
+            filters={filters}
+            onChange={onChangeFilters}
+            spaces={spaces}
+            formattedHierarchy={formattedHierarchy}
+          />
         </div>
       </AppBarSection>
     </AppBar>
+  );
+}
+
+function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHierarchy }) {
+  const lastSpaceFilter = useRef();
+  return (
+    <div className={styles.analyticsSpaceFilterList} aria-label="Space filter list">
+      {filters.map((filter, index) => (
+        <div className={styles.analyticsSpaceFilterListItem}>
+          <AnalyticsSpaceSelector
+            ref={index === filters.length-1 ? lastSpaceFilter : undefined}
+            filter={filter}
+            deletable={filters.length > 1}
+            onChange={filter => {
+              const filtersCopy = filters.slice();
+              filtersCopy[index] = filter;
+              onChange(filtersCopy);
+            }}
+            onDelete={() => {
+              const filtersCopy = filters.slice();
+              filtersCopy.splice(index, 1);
+              onChange(filtersCopy);
+            }}
+            onClose={() => {
+              const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
+              if (fieldIsEmpty) {
+                // No data was put into the field when the popup was open, so remove it from the list.
+                if (filters.length === 1) {
+                  // If there was a single field, then reset the field to be an empty field so that
+                  // the empty state is maintained.
+                  setTimeout(() => {
+                    onChange([{field: '', values: []}]);
+                  }, 250);
+                } else {
+                  // Otherwise, remove the filter.
+                  const filtersCopy = filters.slice();
+                  filtersCopy.splice(index, 1);
+                  onChange(filtersCopy);
+                }
+              }
+            }}
+            spaces={spaces}
+            formattedHierarchy={formattedHierarchy}
+          />
+        </div>
+      )).reduce((acc, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
+      <AddButton onClick={() => {
+        // Don't add a new filter if there is a single empty filter already as part of the "empty state"
+        const isSingleEmptyFilter = filters.length === 1 && filters[0].field === '';
+        if (!isSingleEmptyFilter) {
+          onChange([ ...filters, { field: '', values: [] } ]);
+        }
+
+        // Focus the last space filter that is visible, it is delayed so that it will happen on the
+        // next render after the above onChange is processed.
+        setTimeout(() => {
+          lastSpaceFilter.current.focus();
+        }, 100);
+      }} />
+    </div>
   );
 }
 
@@ -196,6 +209,8 @@ const EMPTY_FILTER = { field: '', values: [] };
 export type AnalyticsSpaceSelectorProps = {
   filter: AnalyticsSpaceFilter,
   onChange: (filter: AnalyticsSpaceFilter) => void,
+  onDelete: () => void,
+  onClose: () => void,
 
   spaces: Array<DensitySpace>,
   hierarchy: Array<SpaceHierarchyDisplayItem>,
@@ -227,14 +242,21 @@ const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: stri
 
 const choiceFilter = filterCollection({fields: ['label']});
 
-export function AnalyticsSpaceSelector({
-  filter,
-  onChange,
-  deletable,
-  onDelete,
-  spaces,
-  formattedHierarchy,
-}: AnalyticsSpaceSelectorProps) {
+export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSelectorProps, forwardedRef) => {
+  const {
+    filter,
+    onChange,
+
+    deletable,
+    onDelete,
+
+    spaces,
+    formattedHierarchy,
+
+    // Passed through from the `Filter` component
+    onClose,
+  } = props;
+
   const [ open, setOpen ] = useState(false);
   const [ deleteButtonVisible, setDeleteButtonVisible ] = useState(false);
   const [ searchText, setSearchText ] = useState('');
@@ -316,9 +338,15 @@ export function AnalyticsSpaceSelector({
       ) : null}
 
       <Filter
+        ref={forwardedRef}
         open={open}
         onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          setOpen(false);
+          if (onClose) {
+            onClose();
+          }
+        }}
         text={text}
         onMouseEnter={() => deletable && setDeleteButtonVisible(true)}
         onMouseLeave={e => {
@@ -347,9 +375,7 @@ export function AnalyticsSpaceSelector({
               <AppBar>
                 <AppBarTitle>
                   <div className={styles.back}>
-                    <CircleIconButton onClick={() => onChange(EMPTY_FILTER)}>
-                      <Icons.ArrowLeft />
-                    </CircleIconButton>
+                    <BackButton onClick={() => onChange(EMPTY_FILTER)} />
                   </div>
                   {ANALYTICS_FIELD_TYPE_TO_LABEL[filter.field]}
                 </AppBarTitle>
@@ -412,7 +438,15 @@ export function AnalyticsSpaceSelector({
         ) : null}
 
         {filter.field !== '' ? (
-          <button className={styles.submitButton} onClick={() => setOpen(false)}>
+          <button
+            className={styles.submitButton}
+            onClick={() => {
+              setOpen(false);
+              if (onClose) {
+                onClose();
+              }
+            }}
+          >
             {/* hack so that focus styles only show when keyboard focuses the control:
                 see https://stackoverflow.com/a/45191208/4115328 */}
             <span tabIndex={-1} className={styles.inner}>Add Filter</span>
@@ -421,4 +455,4 @@ export function AnalyticsSpaceSelector({
       </Filter>
     </div>
   );
-}
+});
