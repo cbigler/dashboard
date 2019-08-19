@@ -122,7 +122,13 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed.
         setTimeout(() => {
-          lastSpaceFilter.current.focus();
+          if (
+            typeof lastSpaceFilter !== 'undefined' &&
+            typeof lastSpaceFilter.current !== 'undefined' &&
+            typeof lastSpaceFilter.current.focus === 'function'
+          ) {
+            lastSpaceFilter.current.focus();
+          }
         }, 100);
       }} />
     </div>
@@ -144,7 +150,7 @@ type AnalyticsSpaceSelectorProps = {
   onClose: () => void,
 
   spaces: Array<DensitySpace>,
-  hierarchy: Array<SpaceHierarchyDisplayItem>,
+  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
   deletable: boolean,
 }
 

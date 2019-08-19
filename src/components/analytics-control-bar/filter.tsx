@@ -17,13 +17,13 @@ type FilterProps = {
   text: React.ReactNode,
   children: React.ReactNode,
   open: boolean,
-  onOpen: (boolean) => void,
+  onOpen: () => void,
   onClose: () => void,
-  onMouseEnter?: () => void,
-  onMouseLeave?: () => void,
+  onMouseEnter?: (string) => void,
+  onMouseLeave?: (string) => void,
 };
 
-const Filter = React.forwardRef((props: FilterProps, ref) => {
+const Filter = React.forwardRef((props: FilterProps, forwardedRef: React.Ref<HTMLSpanElement> | null) => {
   const {
     text,
     children,
@@ -34,10 +34,7 @@ const Filter = React.forwardRef((props: FilterProps, ref) => {
     onMouseLeave,
   } = props;
 
-  // Because a ref may be forwarded into this component, use it if it's defined but fall back to a
-  // ref defined in this component already.
-  const wrapperRefOriginal = useRef();
-  let wrapperRef = ref || wrapperRefOriginal;
+  const wrapperRef = useRef<HTMLSpanElement | null>(null);
 
   return (
     <Fragment>
@@ -51,7 +48,16 @@ const Filter = React.forwardRef((props: FilterProps, ref) => {
       ) : null}
 
       <span
-        ref={wrapperRef}
+        ref={ref => {
+          wrapperRef.current = ref;
+          if (forwardedRef) {
+            if (typeof forwardedRef === 'function') {
+              forwardedRef(ref);
+            } else {
+              (forwardedRef.current as any) = ref;
+            }
+          }
+        }}
         className={styles.wrapper}
         tabIndex={0}
         onFocus={e => {

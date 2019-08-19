@@ -4,6 +4,9 @@ import 'react-app-polyfill/stable';
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
+import 'moment-timezone';
+import AnalyticsControlBar from './components/analytics-control-bar';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
@@ -383,6 +386,14 @@ ReactDOM.render(
         keys={['!', '!', '`', ' ']} // Press '!!` ' to open environment switcher.
         fields={fields}
         onChange={configureClients}
+      />
+      <AnalyticsControlBar
+        filters={[]}
+        onChangeFilters={console.log}
+        interval={'DAY'}
+        onChangeInterval={console.log}
+        spaces={[]}
+        formattedHierarchy={[]}
       />
     </div>
   </Provider>,
