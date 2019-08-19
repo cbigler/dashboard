@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import uuid from 'uuid';
 import styles from './styles.module.scss';
 
-export default function Checkbox({ id=null, checked, disabled=false, onChange }) {
+type CheckboxProps = {
+  id?: string,
+  checked: boolean,
+  disabled?: boolean,
+  onChange: (event: React.SyntheticEvent) => void,
+}
+
+export default function Checkbox({ id, checked, disabled=false, onChange }: CheckboxProps) {
   const [idProp] = useState(id || `checkbox-${uuid.v4()}`);
   return (
     <div>

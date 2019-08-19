@@ -23,7 +23,7 @@ type FilterProps = {
   onMouseLeave?: (string) => void,
 };
 
-const Filter = React.forwardRef((props: FilterProps, forwardedRef: React.Ref<HTMLSpanElement> | null) => {
+export default function Filter(props: FilterProps) {
   const {
     text,
     children,
@@ -48,16 +48,7 @@ const Filter = React.forwardRef((props: FilterProps, forwardedRef: React.Ref<HTM
       ) : null}
 
       <span
-        ref={ref => {
-          wrapperRef.current = ref;
-          if (forwardedRef) {
-            if (typeof forwardedRef === 'function') {
-              forwardedRef(ref);
-            } else {
-              (forwardedRef.current as any) = ref;
-            }
-          }
-        }}
+        ref={wrapperRef}
         className={styles.wrapper}
         tabIndex={0}
         onFocus={e => {
@@ -99,8 +90,7 @@ const Filter = React.forwardRef((props: FilterProps, forwardedRef: React.Ref<HTM
       </span>
     </Fragment>
   );
-});
-export default Filter;
+}
 
 export function FilterBold({children}) {
   return (

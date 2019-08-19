@@ -31,6 +31,16 @@ import {
   InputBox,
 } from '@density/ui';
 
+type AnalyticsControlBarTypes = {
+  filters: Array<AnalyticsSpaceFilter>,
+  onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
+
+  interval: AnalyticsInterval,
+  onChangeInterval: (AnalyticsInterval) => void,
+
+  spaces: Array<DensitySpace>,
+  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+}
 
 export default function AnalyticsControlBar({
   filters,
@@ -41,7 +51,7 @@ export default function AnalyticsControlBar({
 
   spaces,
   formattedHierarchy,
-}) {
+}: AnalyticsControlBarTypes) {
   return (
     <AppBar>
       <AppBarSection>
@@ -64,14 +74,26 @@ export default function AnalyticsControlBar({
   );
 }
 
-function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHierarchy }) {
-  const lastSpaceFilter = useRef();
+type AnalyticsSpaceFilterBuilderTypes = {
+  filters: Array<AnalyticsSpaceFilter>,
+  onChange: (filters: Array<AnalyticsSpaceFilter>) => void,
+
+  spaces: Array<DensitySpace>,
+  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+}
+
+function AnalyticsSpaceFilterBuilder({
+  filters,
+  onChange,
+  spaces,
+  formattedHierarchy,
+}: AnalyticsSpaceFilterBuilderTypes) {
+  const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
   return (
     <div className={styles.analyticsSpaceFilterList} aria-label="Space filter list">
       {filters.map((filter, index) => (
         <div className={styles.analyticsSpaceFilterListItem}>
           <AnalyticsSpaceSelector
-            ref={index === filters.length-1 ? lastSpaceFilter : undefined}
             filter={filter}
             deletable={filter.field !== ''}
             onChange={filter => {
@@ -89,7 +111,10 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
                 onChange(filtersCopy);
               }
             }}
+            open={openedFilterIndex === index}
+            onOpen={() => setOpenedFilterIndex(index)}
             onClose={() => {
+              setOpenedFilterIndex(-1);
               const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
               if (fieldIsEmpty) {
                 // No data was put into the field when the popup was open, so remove it from the list.
@@ -111,24 +136,22 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
             formattedHierarchy={formattedHierarchy}
           />
         </div>
-      )).reduce((acc, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
+      )).reduce((acc: React.ReactNode, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
       <AddButton onClick={() => {
+        let openedFilterIndex = filters.length - 1;
+
         // Don't add a new filter if there is a single empty filter already as part of the "empty state"
         const isSingleEmptyFilter = filters.length === 1 && filters[0].field === '';
         if (!isSingleEmptyFilter) {
-          onChange([ ...filters, { field: '', values: [] } ]);
+          const newFilters = [ ...filters, { field: '', values: [] } ]
+          onChange(newFilters);
+          openedFilterIndex = newFilters.length - 1;
         }
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed.
         setTimeout(() => {
-          if (
-            typeof lastSpaceFilter !== 'undefined' &&
-            typeof lastSpaceFilter.current !== 'undefined' &&
-            typeof lastSpaceFilter.current.focus === 'function'
-          ) {
-            lastSpaceFilter.current.focus();
-          }
+          setOpenedFilterIndex(openedFilterIndex);
         }, 100);
       }} />
     </div>
@@ -139,19 +162,23 @@ function AnalyticsSpaceFilterBuilder({ filters, onChange, spaces, formattedHiera
 
 export type AnalyticsSpaceFilter = {
   field: string,
-  values: Array<string | null>,
+  values: Array<string>,
 }
 const EMPTY_FILTER: AnalyticsSpaceFilter = { field: '', values: [] };
 
 type AnalyticsSpaceSelectorProps = {
   filter: AnalyticsSpaceFilter,
   onChange: (filter: AnalyticsSpaceFilter) => void,
-  onDelete: () => void,
+
+  deletable?: boolean,
+  onDelete?: () => void,
+
+  open: boolean,
+  onOpen: () => void,
   onClose: () => void,
 
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
-  deletable: boolean,
 }
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
@@ -179,26 +206,26 @@ const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: stri
 
 const choiceFilter = filterCollection({fields: ['label']});
 
-export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSelectorProps, forwardedRef) => {
+export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
   const {
     filter,
     onChange,
 
-    deletable,
-    onDelete,
+    deletable = false,
+    onDelete = () => {},
+
+    open,
+    onOpen,
+    onClose,
 
     spaces,
     formattedHierarchy,
-
-    // Passed through from the `Filter` component
-    onClose,
   } = props;
 
-  const [ open, setOpen ] = useState(false);
   const [ deleteButtonVisible, setDeleteButtonVisible ] = useState(false);
   const [ searchText, setSearchText ] = useState('');
 
-  const deleteButtonWrapperRef = useRef();
+  const deleteButtonWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const nameFormattingFunction = ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION[filter.field] || (n => n);
 
@@ -206,8 +233,10 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
   if (filter.values.length > 0) {
     const valueList = (
       <Fragment>
-        {filter.values.slice(0, 2).reduce((acc, name) => {
-          if (!acc) {
+        {filter.values.slice(0, 2).reduce((acc: React.ReactNode, name) => {
+          if (!name) {
+            return null;
+          } else if (!acc) {
             return (
               <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
             );
@@ -275,15 +304,9 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
       ) : null}
 
       <Filter
-        ref={forwardedRef}
         open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => {
-          setOpen(false);
-          if (onClose) {
-            onClose();
-          }
-        }}
+        onOpen={() => onOpen()}
+        onClose={() => onClose()}
         text={text}
         onMouseEnter={() => deletable && setDeleteButtonVisible(true)}
         onMouseLeave={e => {
@@ -378,12 +401,7 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
         {filter.field !== '' ? (
           <button
             className={styles.submitButton}
-            onClick={() => {
-              setOpen(false);
-              if (onClose) {
-                onClose();
-              }
-            }}
+            onClick={() => onClose()}
           >
             {/* hack so that focus styles only show when keyboard focuses the control:
                 see https://stackoverflow.com/a/45191208/4115328 */}
@@ -393,7 +411,7 @@ export const AnalyticsSpaceSelector = React.forwardRef((props: AnalyticsSpaceSel
       </Filter>
     </div>
   );
-});
+}
 
 
 export enum AnalyticsInterval {

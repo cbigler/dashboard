@@ -17,11 +17,12 @@ type ItemListChoice = { id: string, label: React.ReactNode };
 type ItemListProps = {
   choices: Array<ItemListChoice>,
   template?: (choice: ItemListChoice) => React.ReactNode,
-  onClick: (choice: ItemListChoice) => void,
+  onClick: (choice: ItemListChoice, event: React.SyntheticEvent<HTMLLIElement>) => void,
 };
 
-export function ItemList({choices, template, onClick}: ItemListProps) {
-  template = template || (choice => choice.label);
+const DEFAULT_TEMPLATE = choice => choice.label;
+export function ItemList(props: ItemListProps) {
+  const { choices, template = DEFAULT_TEMPLATE, onClick } = props;
   return (
     <ul className={styles.itemList}>
       {choices.map(choice => (
@@ -39,15 +40,17 @@ export function ItemList({choices, template, onClick}: ItemListProps) {
               return;
             // Arrow keys will move up and down
             case 'ArrowUp':
-              if (e.target.previousElementSibling) {
+              const previousElementSibling = (e.target as HTMLLIElement).previousElementSibling;
+              if (previousElementSibling) {
                 e.preventDefault();
-                e.target.previousElementSibling.focus();
+                (previousElementSibling as HTMLElement).focus();
               }
               return;
             case 'ArrowDown':
-              if (e.target.nextElementSibling) {
+              const nextElementSibling = (e.target as HTMLLIElement).nextElementSibling;
+              if (nextElementSibling) {
                 e.preventDefault();
-                e.target.nextElementSibling.focus();
+                (nextElementSibling as HTMLElement).focus();
               }
               return;
             }
@@ -64,8 +67,8 @@ export function ItemList({choices, template, onClick}: ItemListProps) {
 
 type MultipleSelectItemListProps = {
   choices: Array<ItemListChoice>,
-  value: ItemListChoice["id"],
-  onChange: (choices: Array<ItemListChoice>) => void,
+  value: Array<ItemListChoice["id"]>,
+  onChange: (choices: Array<ItemListChoice["id"]>) => void,
 };
 
 export function MultipleSelectItemList({ choices, value, onChange }: MultipleSelectItemListProps) {
@@ -75,10 +78,10 @@ export function MultipleSelectItemList({ choices, value, onChange }: MultipleSel
       template={choice => (
         <Fragment>
           <Checkbox
-            id={choice.id}
+            id={choice.id as string}
             checked={value.includes(choice.id)}
             onChange={(e) => {
-              if (e.target.checked) {
+              if ((e.target as HTMLInputElement).checked) {
                 onChange([ ...value, choice.id ]);
               } else {
                 onChange(value.filter(i => i !== choice.id));
@@ -89,7 +92,7 @@ export function MultipleSelectItemList({ choices, value, onChange }: MultipleSel
         </Fragment>
       )}
       onClick={(choice, e) => {
-        const tagName = e.target.tagName.toLowerCase();
+        const tagName = (e.target as HTMLElement).tagName.toLowerCase();
         if (tagName === 'input' || tagName === 'label') { return; }
 
         if (value.includes(choice.id)) {
