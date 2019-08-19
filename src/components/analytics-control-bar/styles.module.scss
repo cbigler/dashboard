@@ -46,6 +46,10 @@ $deleteButtonSpacing: 4px;
   font-weight: 500;
   cursor: pointer;
 }
+.submitButton[disabled] {
+  background-color: $grayDark;
+  cursor: default;
+}
 
 // hack so that focus styles only show when keyboard focuses the control
 // see https://stackoverflow.com/a/45191208/4115328

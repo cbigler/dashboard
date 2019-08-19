@@ -405,6 +405,7 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
           <button
             className={styles.submitButton}
             onClick={() => onClose()}
+            disabled={filter.values.length === 0}
           >
             {/* hack so that focus styles only show when keyboard focuses the control:
                 see https://stackoverflow.com/a/45191208/4115328 */}
