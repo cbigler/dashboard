@@ -31,7 +31,7 @@ import {
   InputBox,
 } from '@density/ui';
 
-type AnalyticsControlBarTypes = {
+type AnalyticsControlBarProps = {
   filters: Array<AnalyticsSpaceFilter>,
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
 
@@ -51,7 +51,7 @@ export default function AnalyticsControlBar({
 
   spaces,
   formattedHierarchy,
-}: AnalyticsControlBarTypes) {
+}: AnalyticsControlBarProps) {
   return (
     <AppBar>
       <AppBarSection>
@@ -74,7 +74,7 @@ export default function AnalyticsControlBar({
   );
 }
 
-type AnalyticsSpaceFilterBuilderTypes = {
+type AnalyticsSpaceFilterBuilderProps = {
   filters: Array<AnalyticsSpaceFilter>,
   onChange: (filters: Array<AnalyticsSpaceFilter>) => void,
 
@@ -87,7 +87,7 @@ function AnalyticsSpaceFilterBuilder({
   onChange,
   spaces,
   formattedHierarchy,
-}: AnalyticsSpaceFilterBuilderTypes) {
+}: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
   return (
     <div className={styles.analyticsSpaceFilterList} aria-label="Space filter list">
@@ -95,7 +95,7 @@ function AnalyticsSpaceFilterBuilder({
         <div className={styles.analyticsSpaceFilterListItem}>
           <AnalyticsSpaceSelector
             filter={filter}
-            deletable={filter.field !== ''}
+            deletable={filters.length > 1 && filter.field !== ''}
             onChange={filter => {
               const filtersCopy = filters.slice();
               filtersCopy[index] = filter;
@@ -115,22 +115,27 @@ function AnalyticsSpaceFilterBuilder({
             onOpen={() => setOpenedFilterIndex(index)}
             onClose={() => {
               setOpenedFilterIndex(-1);
-              const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
-              if (fieldIsEmpty) {
-                // No data was put into the field when the popup was open, so remove it from the list.
-                if (filters.length === 1) {
-                  // If there was a single field, then reset the field to be an empty field so that
-                  // the empty state is maintained.
-                  setTimeout(() => {
-                    onChange([EMPTY_FILTER]);
-                  }, 250);
-                } else {
-                  // Otherwise, remove the filter.
-                  const filtersCopy = filters.slice();
-                  filtersCopy.splice(index, 1);
-                  onChange(filtersCopy);
+
+              // Waits to change the fields array until after the popup has been closed to get
+              // around weird visual artifacts
+              setTimeout(() => {
+                const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
+                if (fieldIsEmpty) {
+                  // No data was put into the field when the popup was open, so remove it from the list.
+                  if (filters.length === 1) {
+                    // If there was a single field, then reset the field to be an empty field so that
+                    // the empty state is maintained.
+                    setTimeout(() => {
+                      onChange([EMPTY_FILTER]);
+                    }, 250);
+                  } else {
+                    // Otherwise, remove the filter.
+                    const filtersCopy = filters.slice();
+                    filtersCopy.splice(index, 1);
+                    onChange(filtersCopy);
+                  }
                 }
-              }
+              }, 100);
             }}
             spaces={spaces}
             formattedHierarchy={formattedHierarchy}
@@ -149,7 +154,8 @@ function AnalyticsSpaceFilterBuilder({
         }
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
-        // next render after the above onChange is processed.
+        // next render after the above onChange is processed ans so that the animation to open is
+        // shown.
         setTimeout(() => {
           setOpenedFilterIndex(openedFilterIndex);
         }, 100);

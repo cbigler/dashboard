@@ -1,4 +1,4 @@
-import React, { Fragment, useRef } from 'react';
+import React, { Fragment, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import styles from './filter.module.scss';
 import classnames from 'classnames';
@@ -35,6 +35,15 @@ export default function Filter(props: FilterProps) {
   } = props;
 
   const wrapperRef = useRef<HTMLSpanElement | null>(null);
+
+  // When the filter is focused, focus the wrapper div
+  useEffect(() => {
+    if (!wrapperRef.current) { return; }
+
+    if (open && !isElementInside(wrapperRef.current, document.activeElement)) {
+      (wrapperRef.current as HTMLElement).focus()
+    }
+  }, [open]);
 
   return (
     <Fragment>

@@ -85,8 +85,9 @@ storiesOf('Analytics Control Bar / Space Selector', module)
           onOpen={() => setState({...state, open: true})}
           onClose={() => setState({...state, open: false})}
 
-          filter={state}
-          onChange={setState}
+          filter={state.filter}
+          onChange={filter => setState({...state, filter})}
+
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
         />
@@ -94,19 +95,20 @@ storiesOf('Analytics Control Bar / Space Selector', module)
     </State>
   ))
   .add('With delete button shown and onDelete callback attached', () => (
-    <State initialState={{open: false, filter: {field: '', values: []}}}>
+    <State initialState={{open: false, filter: {field: 'spaceType', values: ['space']}}}>
       {(state, setState) => (
-        <div style={{padding: 48}}>
+        <div style={{padding: 20}}>
           <AnalyticsSpaceSelector
             open={state.open}
             onOpen={() => setState({...state, open: true})}
             onClose={() => setState({...state, open: false})}
 
-            filter={state}
-            onChange={setState}
-
             deletable
             onDelete={action('onDelete')}
+
+            filter={state.filter}
+            onChange={filter => setState({...state, filter})}
+
             spaces={SPACES}
             formattedHierarchy={FORMATTED_HIERARCHY}
           />
