@@ -65,6 +65,9 @@ $deleteButtonSpacing: 4px;
 .analyticsSpaceFilterListItem:first-of-type { margin-left: 0px; }
 
 
-.analyticsIntervalSelector {
-  width: 120px;
+.analyticsIntervalSelector { width: 120px; }
+.analyticsIntervalLabel {
+  color: $gray;
+  padding-left: 16px;
+  padding-right: 16px;
 }

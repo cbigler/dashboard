@@ -62,9 +62,6 @@ export default function AnalyticsControlBar({
           formattedHierarchy={formattedHierarchy}
         />
 
-        {/* FIXME: temporary, mention this in a code review if not removed */}
-        <div style={{width: 200}} />
-
         <AnalyticsIntervalSelector
           value={interval}
           onChange={onChangeInterval}
@@ -95,7 +92,7 @@ function AnalyticsSpaceFilterBuilder({
         <div className={styles.analyticsSpaceFilterListItem}>
           <AnalyticsSpaceSelector
             filter={filter}
-            deletable={filters.length > 1 && filter.field !== ''}
+            deletable={filters.length > 1 || filter.field !== ''}
             onChange={filter => {
               const filtersCopy = filters.slice();
               filtersCopy[index] = filter;
@@ -439,6 +436,7 @@ export const AnalyticsIntervalSelector = ({ value, onChange }) => {
 
   return (
     <div className={styles.analyticsIntervalSelector}>
+      <span className={styles.analyticsIntervalLabel}>by</span>
       <Filter
         open={open}
         onOpen={() => setOpen(true)}
@@ -449,6 +447,8 @@ export const AnalyticsIntervalSelector = ({ value, onChange }) => {
           choices={INTERVAL_CHOICES}
           onClick={choice => {
             onChange(choice.id);
+            // Blur the element that was selected if there was a focused element
+            if (document.activeElement) { (document.activeElement as HTMLElement).blur(); }
             setOpen(false);
           }}
         />
