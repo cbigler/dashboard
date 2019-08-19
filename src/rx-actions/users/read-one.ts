@@ -1,9 +1,9 @@
 import showToast from '../../actions/toasts';
 import accounts from '../../client/accounts';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { DensityUser } from '../../types';
-import { DispatchType } from '../../interfaces';
+import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionUsersReadOne(dispatch: DispatchType, id: string) {
   dispatch({ type: UserActionTypes.USER_MANAGEMENT_USERS_LOAD_ONE, id });

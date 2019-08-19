@@ -1,4 +1,4 @@
-import { SpaceReportActionTypes } from '../../interfaces/space-reports';
+import { SpaceReportActionTypes } from '../../types/space-reports';
 
 export default function spacesUpdateReportController(space, controller) {
   return {

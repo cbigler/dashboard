@@ -1,4 +1,4 @@
-import { DensitySpace } from "../types";
+import { DensitySpace } from ".";
 
 // Space Report Actions
 
@@ -20,13 +20,13 @@ export type SpaceReportsAction = {
 // Space Report State
 
 export interface ISpaceReport {
-  data: any;
+  data: Any<FixInRefactor>;
   status: 'LOADING' | 'COMPLETE' | 'ERROR';
   configuration: {
     id: string;
     name: string;
     type: string;
-    settings: any;
+    settings: Any<FixInRefactor>;
   };
 };
 

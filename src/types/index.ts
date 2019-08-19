@@ -1,4 +1,4 @@
-export type DaysOfWeek = "Monday" | "Tuesday" | "Wednesday" | "Thursday" | "Friday" | "Saturday" | "Sunday";
+export type DaysOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
 export enum DensitySpaceTypes {
 	SPACE = 'space',
@@ -103,7 +103,7 @@ export type DensityTimeSegmentGroup = {
   }>,
 };
 
-export type DensitySensorType = "s5" | "r60" | "r56" | "virtual";
+export type DensitySensorType = 's5' | 'r60' | 'r56' | 'virtual';
 export type DensitySensor = {
 	serialNumber: string,
   doorwayId: string,
@@ -153,7 +153,7 @@ export type DensityDigestSchedule = {
     email: string,
   },
   dashboardId: string,
-  frequency: "WEEKLY" | "MONTHLY",
+  frequency: 'WEEKLY' | 'MONTHLY',
   daysOfWeek: Array<DaysOfWeek>,
   dayNumber: number,
   time: string,
@@ -165,8 +165,8 @@ export type DensityNotification = {
   id?: string,
   spaceId: string,
   enabled: boolean,
-  notificationType: "sms" | "push_notification",
-  triggerType: "greater_than" | "less_than" | "equal_to",
+  notificationType: 'sms' | 'push_notification',
+  triggerType: 'greater_than' | 'less_than' | 'equal_to',
   triggerValue: number,
   isOneShot: boolean,
   cooldown: number,
@@ -181,7 +181,7 @@ export type DensityToken = {
   key: string,
   name: string,
   description: string,
-  tokenType: "readonly" | "readwrite",
+  tokenType: 'readonly' | 'readwrite',
 };
 
 export type DensityReset = {

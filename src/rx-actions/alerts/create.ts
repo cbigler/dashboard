@@ -3,8 +3,8 @@ import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityNotification } from '../../types';
 import { getNotificationsURL } from './read';
-import { AlertActionTypes } from '../../interfaces/alerts';
-import { DispatchType } from '../../interfaces';
+import { AlertActionTypes } from '../../types/alerts';
+import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionAlertsCreate(
   dispatch: DispatchType,

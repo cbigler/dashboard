@@ -1,6 +1,6 @@
 import createRxStore, { skipUpdate } from './index';
 
-import { UserActionTypes, UserState } from '../interfaces/users';
+import { UserActionTypes, UserState } from '../types/users';
 
 const initialState: UserState = {
   view: 'LOADING',

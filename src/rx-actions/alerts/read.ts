@@ -1,8 +1,8 @@
 import core from '../../client/core';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DensityNotification } from '../../types';
-import { AlertActionTypes } from '../../interfaces/alerts';
-import { DispatchType } from '../../interfaces';
+import { AlertActionTypes } from '../../types/alerts';
+import { DispatchType } from '../../types/rx-actions';
 
 export function getNotificationsURL() {
   const baseV1 = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');

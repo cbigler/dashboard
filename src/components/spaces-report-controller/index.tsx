@@ -26,7 +26,7 @@ import {
 } from '../../helpers/space-time-utilities';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
-import { SpaceReportControlTypes, ISpaceReportController } from '../../interfaces/space-reports';
+import { SpaceReportControlTypes, ISpaceReportController } from '../../types/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 import { SPACES_BACKGROUND } from '../spaces';

@@ -1,8 +1,8 @@
 import accounts from '../../client/accounts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 import { DensityUser } from '../../types';
-import { DispatchType } from '../../interfaces';
+import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionUsersUpdate(dispatch: DispatchType, user) {
   //dispatch({ type: UserManagementActionTypes.USER_MANAGEMENT_USERS_PUSH, user });

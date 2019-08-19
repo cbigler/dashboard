@@ -1,6 +1,6 @@
 import createRxStore, { skipUpdate } from './index';
 
-import { AlertActionTypes, AlertState } from '../interfaces/alerts';
+import { AlertActionTypes, AlertState } from '../types/alerts';
 
 const initialState: AlertState = {
   view: 'LOADING',

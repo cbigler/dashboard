@@ -1,4 +1,4 @@
-import { DensityNotification } from "../types";
+import { DensityNotification } from ".";
 
 
 // Alert (DensityNotification) Actions

@@ -3,7 +3,7 @@ import {
   ISpaceReportController,
   SpaceReportControlTypes,
   SpaceReportActionTypes,
-} from '../../interfaces/space-reports';
+} from '../../types/space-reports';
 import { DensitySpace } from '../../types';
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 import { serializeMomentToDateString } from '../../helpers/space-time-utilities';

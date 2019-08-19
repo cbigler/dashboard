@@ -3,7 +3,7 @@ import { getGoSlow } from '../../components/environment-switcher/index';
 import core from '../../client/core';
 
 import { DensityReportCalculationFunction } from '../../types'; //DensityService
-import { SpaceReportControlTypes } from '../../interfaces/space-reports';
+import { SpaceReportControlTypes } from '../../types/space-reports';
 import * as moment from 'moment';
 import spacesUpdateReportController from './update-report-controller';
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';

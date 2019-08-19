@@ -3,7 +3,7 @@ import { BehaviorSubject } from 'rxjs';
 
 import useRxStore from '../use-rx-store';
 import useRxDispatch from '../use-rx-dispatch';
-import { GlobalAction } from '../../interfaces';
+import { GlobalAction } from '../../types/rx-actions';
 
 export default function rxConnect<CP=any, SP=any, DP=any, S=any>(
   store: BehaviorSubject<S>,

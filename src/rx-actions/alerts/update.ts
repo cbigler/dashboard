@@ -1,8 +1,8 @@
 import core from '../../client/core';
 import { getNotificationsURL } from './read';
 import { DensityNotification } from '../../types';
-import { DispatchType } from '../../interfaces';
-import { AlertActionTypes } from '../../interfaces/alerts';
+import { DispatchType } from '../../types/rx-actions';
+import { AlertActionTypes } from '../../types/alerts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 
 export default async function collectionAlertsUpdate(

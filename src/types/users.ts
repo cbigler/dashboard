@@ -1,4 +1,4 @@
-import { DensityUser } from "../types";
+import { DensityUser } from ".";
 
 
 export enum UserActionTypes {

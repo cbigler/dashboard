@@ -29,7 +29,7 @@ import {
 import useRxStore from '../../helpers/use-rx-store';
 import usersStore from '../../rx-stores/users';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 
 function onStartDeleteUser(dispatch, user) {
   dispatch(showModal('MODAL_CONFIRM', {

@@ -1,5 +1,5 @@
 import { DensityUser } from '../../types';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 
 import accounts from '../../client/accounts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
@@ -7,7 +7,7 @@ import showToast from '../../actions/toasts';
 
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
-import { DispatchType } from '../../interfaces';
+import { DispatchType } from '../../types/rx-actions';
 
 export default async function userManagementCreate(dispatch: DispatchType, user) {
   dispatch({ type: UserActionTypes.USER_MANAGEMENT_USERS_CREATE, user });

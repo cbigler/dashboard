@@ -1,8 +1,8 @@
 import showToast from '../../actions/toasts';
 import accounts from '../../client/accounts';
 
-import { UserActionTypes } from '../../interfaces/users';
-import { DispatchType } from '../../interfaces';
+import { UserActionTypes } from '../../types/users';
+import { DispatchType } from '../../types/rx-actions';
 import { DensityUser } from '../../types';
 
 export default async function usersInviteResend(dispatch: DispatchType, user: DensityUser) {

@@ -4,7 +4,7 @@ import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionTokensSet from '../collection/tokens/set';
 import collectionWebhooksSet from '../collection/webhooks/set';
 import collectionServicesSet from '../collection/services/set';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 
 export const ROUTE_TRANSITION_LOGOUT = 'ROUTE_TRANSITION_LOGOUT';
 

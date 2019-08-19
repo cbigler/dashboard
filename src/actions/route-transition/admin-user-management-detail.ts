@@ -2,7 +2,7 @@ import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionSpacesSet from '../collection/spaces/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
-import { UserActionTypes } from '../../interfaces/users';
+import { UserActionTypes } from '../../types/users';
 import userManagementReadOne from '../../rx-actions/users/read-one';
 
 export const ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL = 'ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL';

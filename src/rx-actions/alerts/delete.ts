@@ -1,8 +1,8 @@
 import core from '../../client/core';
 import { getNotificationsURL } from './read';
 import { DensityNotification } from '../../types';
-import { AlertActionTypes } from '../../interfaces/alerts';
-import { DispatchType } from '../../interfaces';
+import { AlertActionTypes } from '../../types/alerts';
+import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionAlertsDelete(
   dispatch: DispatchType,
