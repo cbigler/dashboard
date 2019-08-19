@@ -1,4 +1,4 @@
-import createRxStore from './index';
+import createRxStore, { skipUpdate } from './index';
 
 import { UserActionTypes, UserState } from '../interfaces/users';
 
@@ -78,5 +78,8 @@ export default createRxStore<UserState>(initialState, (state, action) => {
         view: 'ERROR',
         error: action.error
       };
+
+    default:
+      return skipUpdate;
   }
 });

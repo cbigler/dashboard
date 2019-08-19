@@ -1,4 +1,4 @@
-import createRxStore from './index';
+import createRxStore, { skipUpdate } from './index';
 
 import { AlertActionTypes, AlertState } from '../interfaces/alerts';
 
@@ -44,5 +44,8 @@ export default createRxStore<AlertState>(initialState, (state, action) => {
         view: 'ERROR',
         error: action.error
       };
+
+    default:
+      return skipUpdate;
   }
 });

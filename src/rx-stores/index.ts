@@ -16,17 +16,19 @@ let reduxStore;
 // Global action stream
 export const actions = new Subject<GlobalAction>();
 
+// Reducer functions can return this symbol to skip updating
+export const skipUpdate = Symbol('skipUpdate');
+
 // Helper to create stores
 export default function createRxStore<T>(
   initialState: T,
-  reducer: (state: T, action: GlobalAction) => T | undefined,
+  reducer: (state: T, action: GlobalAction) => T | typeof skipUpdate,
   displayName: string = typeof initialState,
 ) {
   const store = new BehaviorSubject(initialState);
   actions.subscribe((action: GlobalAction) => {
     const result = reducer(store.value, action);
-    // Tricky convention here, store state cannot be primitive undefined!!!
-    if (result !== undefined) {
+    if (result !== skipUpdate) {
       storeLog(displayName, result);
       store.next(result);
     }
