@@ -60,12 +60,11 @@ storiesOf('Analytics Control Bar / Space Selector', module)
           <br/>
           <br/>
           <AnalyticsSpaceSelector
+            filter={state.filter}
+
             open={state.open}
             onOpen={() => setState({...state, open: true})}
-            onClose={() => setState({...state, open: false})}
-
-            filter={state.filter}
-            onChange={filter => setState({...state, filter})}
+            onClose={filter => setState({...state, filter, open: false})}
 
             spaces={SPACES}
             formattedHierarchy={FORMATTED_HIERARCHY}
@@ -81,12 +80,11 @@ storiesOf('Analytics Control Bar / Space Selector', module)
     <State initialState={{open: false, filter: {field: 'spaceType', values: ['space']}}}>
       {(state, setState) => (
         <AnalyticsSpaceSelector
+          filter={state.filter}
+
           open={state.open}
           onOpen={() => setState({...state, open: true})}
           onClose={() => setState({...state, open: false})}
-
-          filter={state.filter}
-          onChange={filter => setState({...state, filter})}
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
@@ -99,15 +97,14 @@ storiesOf('Analytics Control Bar / Space Selector', module)
       {(state, setState) => (
         <div style={{padding: 20}}>
           <AnalyticsSpaceSelector
+            filter={state.filter}
+
             open={state.open}
             onOpen={() => setState({...state, open: true})}
             onClose={() => setState({...state, open: false})}
 
             deletable
             onDelete={action('onDelete')}
-
-            filter={state.filter}
-            onChange={filter => setState({...state, filter})}
 
             spaces={SPACES}
             formattedHierarchy={FORMATTED_HIERARCHY}
