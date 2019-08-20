@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import uuid from 'uuid';
 import styles from './styles.module.scss';
 
-export default function Checkbox({ id=null, checked, disabled=false, onChange }) {
+export default function Checkbox({ id=null, checked, disabled=false, onChange, label="" }) {
   const [idProp] = useState(id || `checkbox-${uuid.v4()}`);
   return (
     <div>
@@ -17,7 +17,7 @@ export default function Checkbox({ id=null, checked, disabled=false, onChange })
       <label
         className={styles.label}
         htmlFor={idProp}
-      />
+      >{label}</label>
     </div>
   );
 }
