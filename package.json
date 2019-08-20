@@ -69,8 +69,7 @@
     "react-test-renderer": "^16.9.0",
     "redux-mock-store": "^1.5.3",
     "sinon": "^7.4.1",
-    "typescript": "~3.5.3",
-    "webpack": "^4.39.1"
+    "typescript": "~3.5.3"
   },
   "scripts": {
     "start": "react-scripts start",
