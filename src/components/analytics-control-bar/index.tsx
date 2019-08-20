@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
+import moment from 'moment';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
@@ -481,6 +482,153 @@ export const AnalyticsIntervalSelector = ({ value, onChange }) => {
   );
 };
 
+
+enum RangeType {
+  ABSOLUTE = 'ABSOLUTE',
+  RELATIVE = 'RELATIVE',
+}
+
+enum RelativeUnit {
+  DAYS = 'days',
+  WEEKS = 'weeks',
+  MONTHS = 'months',
+  QUARTERS = 'quarters',
+  YEARS = 'years',
+}
+
+enum RelativeDurationRound {
+  NONE = null,
+  START = 'START',
+  END = 'END',
+}
+
+type RelativeDuration = {
+  magnitude: number,
+  unit: RelativeUnit,
+  round: RelativeDurationRound,
+}
+
+type RelativeDateRange = {
+  type: RangeType.RELATIVE,
+  start: RelativeDuration,
+  end: RelativeDuration,
+}
+
+type AbsoluteDateRange = {
+  type: RangeType.ABSOLUTE,
+  start: string,
+  end: string,
+}
+
+type DateRange = AbsoluteDateRange | RelativeDateRange;
+
+function makeDuration(magnitude, unit, round=RelativeDurationRound.NONE): RelativeDuration {
+  return { magnitude, unit, round };
+}
+
+const TIME_RANGES = {
+  TODAY: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.END),
+  },
+  LAST_7_DAYS: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(7, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_WEEK: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.END),
+  },
+  WEEK_TO_DATE: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_30_DAYS: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(30, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_MONTH: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.START),
+    end: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.END),
+  },
+  MONTH_TO_DATE: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.MONTHS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+
+  // Future time range example, not needed for analytics but an example of how we'd do this
+  NEXT_WEEK: {
+    type: RangeType.RELATIVE,
+    start: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.END),
+  },
+};
+
+const DAYS_OF_WEEK = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+function realizeDateRange(
+  dateRange: DateRange,
+  timeZone: string,
+  organizationalWeekStartDay="Sunday",
+): {startDate: moment, endDate: moment} {
+  const now = moment.tz(timeZone);
+  if (dateRange.type === RangeType.ABSOLUTE) {
+    return {
+      startDate: moment.tz(dateRange.start, timeZone).startOf('day'),
+      endDate: moment.tz(dateRange.end, timeZone).endOf('day').add(1, 'millisecond'),
+    };
+  } else {
+    return {
+      startDate: realizeRelativeDuration(dateRange.start, now, organizationalWeekStartDay).startOf('day'),
+      endDate: realizeRelativeDuration(dateRange.end, now, organizationalWeekStartDay).endOf('day').add(1, 'millisecond'),
+    };
+  }
+}
+
+function realizeRelativeDuration(
+  relativeDuration: RelativeDuration,
+  now: moment,
+  organizationalWeekStartDay: string,
+): moment {
+  let timestamp = now.clone().subtract(relativeDuration.magnitude, relativeDuration.unit);
+  // Weeks are a special case because of "organization days of week start day" being a a concept
+  // that can effect what day a week starts on
+  if (relativeDuration.unit === RelativeUnit.WEEKS) {
+    timestamp = timestamp.add(DAYS_OF_WEEK.indexOf(organizationalWeekStartDay), 'days');
+  }
+  switch (relativeDuration.round) {
+  case RelativeDurationRound.START:
+    return timestamp.startOf(relativeDuration.unit);
+  case RelativeDurationRound.END:
+    return timestamp.endOf(relativeDuration.unit);
+  case RelativeDurationRound.NONE:
+  default:
+    return timestamp;
+  }
+}
+
+console.log(TIME_RANGES)
+console.log('NOW:', moment.tz('America/New_York').format())
+for (let key in TIME_RANGES) {
+  const timeRangeStructure = TIME_RANGES[key];
+  const realizedDateRange = realizeDateRange(timeRangeStructure, 'America/New_York');
+  console.log(key, realizedDateRange.startDate.format(), realizedDateRange.endDate.format());
+}
 
 
 /*
