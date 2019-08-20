@@ -597,12 +597,12 @@ function realizeDateRange(
   if (dateRange.type === RangeType.ABSOLUTE) {
     return {
       startDate: moment.tz(dateRange.start, timeZone).startOf('day'),
-      endDate: moment.tz(dateRange.end, timeZone).endOf('day').add(1, 'millisecond'),
+      endDate: moment.tz(dateRange.end, timeZone).endOf('day'),
     };
   } else {
     return {
       startDate: realizeRelativeDuration(dateRange.start, now, organizationalWeekStartDay).startOf('day'),
-      endDate: realizeRelativeDuration(dateRange.end, now, organizationalWeekStartDay).endOf('day').add(1, 'millisecond'),
+      endDate: realizeRelativeDuration(dateRange.end, now, organizationalWeekStartDay).endOf('day'),
     };
   }
 }
