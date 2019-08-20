@@ -9,11 +9,14 @@
 $deleteButtonSpacing: 4px;
 .deleteButtonWrapper {
   position: absolute;
-  top: 1px;
-  left: (-20px - $deleteButtonSpacing);
+  top: -11px;
+  left: (-20px - 12px - $deleteButtonSpacing);
   width: 20px;
   height: 20px;
   padding-right: $deleteButtonSpacing;
+  padding-left: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 
   opacity: 0;
   pointer-events: none;

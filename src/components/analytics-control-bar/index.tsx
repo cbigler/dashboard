@@ -294,6 +294,8 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
 
   const deleteButtonWrapperRef = useRef<HTMLDivElement | null>(null);
 
+  const filterBeingCreated = filter.field === '' && filter.values.length === 0;
+
   return (
     <div className={styles.spaceSelectorWrapper}>
       {/* A delete button is visible to the left of this filter */}
@@ -349,7 +351,7 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
                   <div className={styles.back}>
                     <BackButton onClick={() => setWorkingFilter(EMPTY_FILTER)} />
                   </div>
-                  {ANALYTICS_FIELD_TYPE_TO_LABEL[workingFilter.field]}
+                  {ANALYTICS_FIELD_TYPE_TO_LABEL[workingFilter.field].replace(/Add by/g, filterBeingCreated ? 'Add by' : 'Update')}
                 </AppBarTitle>
               </AppBar>
             </AppBarContext.Provider>
@@ -423,7 +425,9 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
           >
             {/* hack so that focus styles only show when keyboard focuses the control:
                 see https://stackoverflow.com/a/45191208/4115328 */}
-            <span tabIndex={-1} className={styles.inner}>Add Filter</span>
+            <span tabIndex={-1} className={styles.inner}>
+              {filterBeingCreated ? 'Add' : 'Update'} Filter
+            </span>
           </button>
         ) : null}
       </Filter>
