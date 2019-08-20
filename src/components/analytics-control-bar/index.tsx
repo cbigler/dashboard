@@ -54,21 +54,28 @@ export default function AnalyticsControlBar({
   formattedHierarchy,
 }: AnalyticsControlBarProps) {
   return (
-    <AppBar>
-      <AppBarSection>
+    <div className={styles.analyticsControlBar}>
+      <div className={styles.analyticsControlBarSectionWrap}>
         <AnalyticsSpaceFilterBuilder
           filters={filters}
           onChange={onChangeFilters}
           spaces={spaces}
           formattedHierarchy={formattedHierarchy}
         />
-
         <AnalyticsIntervalSelector
           value={interval}
           onChange={onChangeInterval}
         />
-      </AppBarSection>
-    </AppBar>
+      </div>
+      <div className={styles.analyticsControlBarSection}>
+        {/* FIXME: put actual icons and  buttons here, point this out in a review! */}
+        <span style={{marginRight: 8}}><Icons.Star /></span>
+        <span style={{marginLeft: 8, marginRight: 8}}><Icons.AddReport /></span>
+        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Download /></span>
+        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Share /></span>
+        <span style={{marginLeft: 8}}><Icons.Code /></span>
+      </div>
+    </div>
   );
 }
 
@@ -88,9 +95,9 @@ function AnalyticsSpaceFilterBuilder({
 }: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
   return (
-    <div className={styles.analyticsSpaceFilterList} aria-label="Space filter list">
+    <Fragment>
       {filters.map((filter, index) => (
-        <div className={styles.analyticsSpaceFilterListItem}>
+        <div className={styles.analyticsSpaceFilterListItem} aria-label="Space filter">
           <AnalyticsSpaceSelector
             filter={filter}
             deletable={filters.length > 1 || filter.field !== ''}
@@ -158,7 +165,7 @@ function AnalyticsSpaceFilterBuilder({
           setOpenedFilterIndex(openedFilterIndex);
         }, 100);
       }} />
-    </div>
+    </Fragment>
   );
 }
 

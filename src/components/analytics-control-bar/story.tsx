@@ -49,6 +49,37 @@ storiesOf('Analytics Control Bar', module)
       )}
     </State>
   ))
+  .add('With a lot of space filters', () => (
+    <State initialState={{
+      interval: AnalyticsInterval.DAY,
+      filters: [
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+        {field: 'spaceType', values: ['space']},
+      ],
+    }}>
+      {(state, setState) => (
+        <AnalyticsControlBar
+          filters={state.filters}
+          onChangeFilters={filters => setState({ ...state, filters })}
+
+          interval={state.interval}
+          onChangeInterval={interval => setState({ ...state, interval })}
+
+          spaces={SPACES}
+          formattedHierarchy={FORMATTED_HIERARCHY}
+        />
+      )}
+    </State>
+  ))
 
 storiesOf('Analytics Control Bar / Space Selector', module)
   .add('Default', () => (
