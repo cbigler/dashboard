@@ -282,17 +282,22 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
     formattedHierarchy,
   } = props;
 
+  const deleteButtonWrapperRef = useRef<HTMLDivElement | null>(null);
+
   const [ deleteButtonVisible, setDeleteButtonVisible ] = useState(false);
   const [ searchText, setSearchText ] = useState('');
 
+  // Store a "working" copy of the filter so that it can be modified within the component and then
+  // after being updated, it can be sent back to the parent context from within the `onClose`
+  // callback.
   const [ workingFilter, setWorkingFilter ] = useState(EMPTY_FILTER);
   useEffect(() => {
     if (open) {
+      // When the popup is opened, initialize the working copy of the filter state from the prop
+      // value
       setWorkingFilter(filter);
     }
   }, [open, filter]);
-
-  const deleteButtonWrapperRef = useRef<HTMLDivElement | null>(null);
 
   const filterBeingCreated = filter.field === '' && filter.values.length === 0;
 
