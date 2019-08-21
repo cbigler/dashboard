@@ -476,6 +476,7 @@ type RelativeDateRange = {
   type: RangeType.RELATIVE,
   start: RelativeDuration,
   end: RelativeDuration,
+  label?: string,
 }
 
 type AbsoluteDateRange = {
@@ -490,48 +491,68 @@ function makeDuration(magnitude, unit, round=RelativeDurationRound.NONE): Relati
   return { magnitude, unit, round };
 }
 
-const TIME_RANGES = {
+const DATE_RANGES = {
   TODAY: {
+    label: 'Today',
     type: RangeType.RELATIVE,
     start: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.START),
     end: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.END),
   },
   LAST_7_DAYS: {
+    label: 'Last 7 Days',
     type: RangeType.RELATIVE,
     start: makeDuration(7, RelativeUnit.DAYS),
     end: makeDuration(0, RelativeUnit.DAYS),
   },
   LAST_WEEK: {
+    label: 'Last Week',
     type: RangeType.RELATIVE,
     start: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.START),
     end: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.END),
   },
   WEEK_TO_DATE: {
+    label: 'Week-to-Date',
     type: RangeType.RELATIVE,
     start: makeDuration(0, RelativeUnit.WEEKS, RelativeDurationRound.START),
     end: makeDuration(0, RelativeUnit.DAYS),
   },
   LAST_30_DAYS: {
+    label: 'Last 30 Days',
     type: RangeType.RELATIVE,
     start: makeDuration(30, RelativeUnit.DAYS),
     end: makeDuration(0, RelativeUnit.DAYS),
   },
   LAST_MONTH: {
+    label: 'Last Month',
     type: RangeType.RELATIVE,
     start: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.START),
     end: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.END),
   },
   MONTH_TO_DATE: {
+    label: 'Month-to-Date',
     type: RangeType.RELATIVE,
     start: makeDuration(0, RelativeUnit.MONTHS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_90_DAYS: {
+    label: 'Last 90 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(90, RelativeUnit.DAYS),
     end: makeDuration(0, RelativeUnit.DAYS),
   },
 
   // Future time range example, not needed for analytics but an example of how we'd do this
   NEXT_WEEK: {
+    label: 'Next Week',
     type: RangeType.RELATIVE,
     start: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.START),
     end: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.END),
+  },
+  NEXT_7_DAYS: {
+    label: 'Next 7 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(-7, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
   },
 };
 
