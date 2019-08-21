@@ -25,6 +25,7 @@ import { ReportLoading } from '@density/reports';
 import Report, { ExpandedReportModal } from '../report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
+import DashboardEmailModal from '../dashboard-email-modal';
 import GenericErrorState from '../generic-error-state/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
@@ -288,6 +289,14 @@ export class Dashboard extends React.Component<any, any> {
           />
         ) : null}
 
+        {activeModal.name === 'MODAL_DASHBOARD_EMAIL' ? (
+          <DashboardEmailModal
+            visible={activeModal.visible}
+            selectedDashboard={activeModal.data.selectedDashboard}
+            onCloseModal={onCloseModal}
+          />
+        ) : null}
+
         {/* Main application */}
         <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
           <AppFrame>
@@ -344,6 +353,9 @@ export class Dashboard extends React.Component<any, any> {
                             }}
                             onCreateDigest={() => {
                               onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                            }}
+                            onCreateEmail={() => {
+                              onShowModal('MODAL_DASHBOARD_EMAIL', { selectedDashboard })
                             }}
                           />
                         ) : null}

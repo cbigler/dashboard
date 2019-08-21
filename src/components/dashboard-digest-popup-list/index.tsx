@@ -46,6 +46,7 @@ type DashboardDigestPopupListProps = {
   selectedDashboard: DensityDashboard,
   onEditDigest: (DensityDigestSchedule) => any,
   onCreateDigest: () => any,
+  onCreateEmail: () => any,
 };
 type DashboardDigestPopupListState = {
   visible: boolean,
@@ -57,7 +58,13 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
   }
 
   render() {
-    const { digestSchedules, selectedDashboard, onEditDigest, onCreateDigest } = this.props;
+    const {
+      digestSchedules,
+      selectedDashboard,
+      onEditDigest,
+      onCreateDigest,
+      onCreateEmail,
+    } = this.props;
     const { visible } = this.state;
 
     const digestSchedulesForSelectedDashboard = selectedDashboard ? (
@@ -76,7 +83,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           onClick={() => this.setState({visible: !visible})}
         >
           <Icons.Mail color={colorVariables.brandPrimary} />
-          <span className={styles.dashboardDigestListButtonText}>Email digest</span>
+          <span className={styles.dashboardDigestListButtonText}>Email</span>
           <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimary} />
         </button>
 
@@ -84,9 +91,24 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           <AppBarContext.Provider value="CARD_HEADER">
             <AppBar>
               <AppBarSection>
-                <AppBarTitle>Email Digests</AppBarTitle>
+                <AppBarTitle>Email Dashboard</AppBarTitle>
               </AppBarSection>
               <AppBarSection>
+                <span
+                  className={styles.dashboardDigestListDropdownCreateButton}
+                  role="button"
+                  onClick={() => {
+                    this.setState({visible: false}, () => {
+                      onCreateEmail();
+                    });
+                  }}
+                  tabIndex={visible ? 0 : -1}
+                >
+                  <Icons.Share color={colorVariables.brandPrimary} />
+                  <span className={styles.dashboardDigestListDropdownCreateButtonText}>
+                    Send once
+                  </span>
+                </span>
                 <span
                   className={styles.dashboardDigestListDropdownCreateButton}
                   role="button"
@@ -99,7 +121,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                 >
                   <Icons.PlusCircle color={colorVariables.brandPrimary} />
                   <span className={styles.dashboardDigestListDropdownCreateButtonText}>
-                    Create new digest
+                    Create digest
                   </span>
                 </span>
               </AppBarSection>
@@ -146,10 +168,10 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                 <Letter />
                 <div className={styles.dashboardDigestListEmptyContainerText}>
                   <h3 className={styles.dashboardDigestListEmptyContainerTitle}>
-                    You haven't created any digests.
+                    You haven't created any scheduled digests.
                   </h3>
                   <span className={styles.dashboardDigestListEmptyContainerDesc}>
-                    View dashboards in your inbox.
+                    Get dashboards delivered to your inbox.
                   </span>
                 </div>
               </div>
