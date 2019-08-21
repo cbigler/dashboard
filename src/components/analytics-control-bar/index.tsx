@@ -21,6 +21,7 @@ import {
   BackButton,
   AddButton,
   FilterDeleteButton,
+  SubmitButton,
 } from './utilities';
 import AnalyticsIntervalSelector, { AnalyticsInterval } from './interval';
 
@@ -426,8 +427,7 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
         ) : null}
 
         {workingFilter.field !== '' ? (
-          <button
-            className={styles.submitButton}
+          <SubmitButton
             onClick={() => {
               if (workingFilter.field !== '' && workingFilter.values.length > 0) {
                 onClose(workingFilter);
@@ -437,12 +437,8 @@ export function AnalyticsSpaceSelector(props: AnalyticsSpaceSelectorProps) {
             }}
             disabled={workingFilter.values.length === 0}
           >
-            {/* hack so that focus styles only show when keyboard focuses the control:
-                see https://stackoverflow.com/a/45191208/4115328 */}
-            <span tabIndex={-1} className={styles.inner}>
-              {filterBeingCreated ? 'Add' : 'Update'} Filter
-            </span>
-          </button>
+            {filterBeingCreated ? 'Add' : 'Update'} Filter
+          </SubmitButton>
         ) : null}
       </Filter>
     </div>

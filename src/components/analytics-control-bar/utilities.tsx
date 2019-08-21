@@ -137,3 +137,15 @@ export function FilterDeleteButton({ onClick, onFocus, onBlur }) {
     </button>
   );
 }
+
+export function SubmitButton({ onClick, disabled, children }) {
+  return (
+    <button className={styles.submitButton} onClick={onClick} disabled={disabled}>
+      {/* hack so that focus styles only show when keyboard focuses the control:
+          see https://stackoverflow.com/a/45191208/4115328 */}
+      <span tabIndex={-1} className={styles.inner}>
+        {children}
+      </span>
+    </button>
+  );
+}
