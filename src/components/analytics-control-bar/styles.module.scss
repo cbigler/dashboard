@@ -31,29 +31,6 @@
   padding-left: 24px;
 }
 
-.spaceSelectorWrapper {
-  position: relative;
-}
-
-$deleteButtonSpacing: 4px;
-.deleteButtonWrapper {
-  position: absolute;
-  top: -11px;
-  left: (-20px - 12px - $deleteButtonSpacing);
-  width: 20px;
-  height: 20px;
-  padding-right: $deleteButtonSpacing;
-  padding-left: 12px;
-  padding-top: 12px;
-  padding-bottom: 12px;
-
-  opacity: 0;
-  pointer-events: none;
-}
-.deleteButtonWrapper.visible {
-  opacity: 1;
-  pointer-events: auto;
-}
 
 .header {
   width: 400px;
@@ -62,11 +39,6 @@ $deleteButtonSpacing: 4px;
 .back {
   margin-right: 16px;
 }
-.popupBody {
-  height: 300px;
-  overflow-y: auto;
-}
-.popupBodySmall { width: 300px; }
 
 .analyticsSpaceFilterList {
   display: flex;

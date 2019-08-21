@@ -1,6 +1,6 @@
 import React, { Fragment, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import styles from './filter.module.scss';
+import styles from './styles.module.scss';
 import classnames from 'classnames';
 
 function isElementInside(parentElement, element) {

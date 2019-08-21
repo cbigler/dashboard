@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './styles.module.scss';
 
-import Filter, { FilterBold } from './filter';
+import Filter, { FilterBold } from '../analytics-control-bar-filter';
 import { ItemList } from './utilities';
 
 
