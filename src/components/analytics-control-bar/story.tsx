@@ -13,8 +13,8 @@ const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToC
 import AnalyticsControlBar, {
   AnalyticsSpaceSelector,
   // AnalyticsDateSelector,
-  AnalyticsInterval,
 } from './index';
+import { AnalyticsInterval } from './interval';
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);
