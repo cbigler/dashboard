@@ -502,7 +502,7 @@ function makeDuration(magnitude, unit, round=RelativeDurationRound.NONE): Relati
   return { magnitude, unit, round };
 }
 
-const DATE_RANGES = {
+export const DATE_RANGES = {
   TODAY: {
     label: 'Today',
     type: RangeType.RELATIVE,

@@ -13,6 +13,7 @@ const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToC
 import AnalyticsControlBar, {
   AnalyticsSpaceSelector,
   // AnalyticsDateSelector,
+  DATE_RANGES,
 } from './index';
 import { AnalyticsInterval } from './interval';
 
@@ -34,7 +35,11 @@ function State({ initialState, children }) {
 
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
-    <State initialState={{ interval: AnalyticsInterval.DAY, dateRange: null, filters: [{field: '', values: []}] }}>
+    <State initialState={{
+      interval: AnalyticsInterval.HOUR,
+      dateRange: DATE_RANGES.LAST_30_DAYS,
+      filters: [ {field: '', values: []} ],
+    }}>
       {(state, setState) => (
         <AnalyticsControlBar
           filters={state.filters}
