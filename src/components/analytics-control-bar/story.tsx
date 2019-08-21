@@ -34,7 +34,7 @@ function State({ initialState, children }) {
 
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
-    <State initialState={{ interval: AnalyticsInterval.DAY, filters: [{field: '', values: []}] }}>
+    <State initialState={{ interval: AnalyticsInterval.DAY, dateRange: null, filters: [{field: '', values: []}] }}>
       {(state, setState) => (
         <AnalyticsControlBar
           filters={state.filters}
@@ -42,6 +42,9 @@ storiesOf('Analytics Control Bar', module)
 
           interval={state.interval}
           onChangeInterval={interval => setState({ ...state, interval })}
+
+          dateRange={state.dateRange}
+          onChangeDateRange={dateRange => setState({ ...state, dateRange })}
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}

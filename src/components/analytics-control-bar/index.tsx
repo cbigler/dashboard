@@ -27,11 +27,12 @@ import AnalyticsIntervalSelector, { AnalyticsInterval } from './interval';
 
 import {
   AppBar,
-  AppBarSection,
   AppBarTitle,
   AppBarContext,
   Icons,
   InputBox,
+  DateRangePicker,
+  DatePicker,
 } from '@density/ui';
 
 type AnalyticsControlBarProps = {
@@ -40,6 +41,9 @@ type AnalyticsControlBarProps = {
 
   interval: AnalyticsInterval,
   onChangeInterval: (AnalyticsInterval) => void,
+
+  dateRange: DateRange | null,
+  onChangeDateRange: (dateRange: DateRange | null) => void,
 
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
@@ -52,6 +56,9 @@ export default function AnalyticsControlBar({
   interval,
   onChangeInterval,
 
+  dateRange,
+  onChangeDateRange,
+
   spaces,
   formattedHierarchy,
 }: AnalyticsControlBarProps) {
@@ -63,6 +70,10 @@ export default function AnalyticsControlBar({
           onChange={onChangeFilters}
           spaces={spaces}
           formattedHierarchy={formattedHierarchy}
+        />
+        <AnalyticsDateSelector
+          value={dateRange}
+          onChange={onChangeDateRange}
         />
         <AnalyticsIntervalSelector
           value={interval}
@@ -607,109 +618,219 @@ function realizeRelativeDuration(
   }
 }
 
-console.log(TIME_RANGES)
-console.log('NOW:', moment.tz('America/New_York').format())
-for (let key in TIME_RANGES) {
-  const timeRangeStructure = TIME_RANGES[key];
-  const realizedDateRange = realizeDateRange(timeRangeStructure, 'America/New_York');
-  console.log(key, realizedDateRange.startDate.format(), realizedDateRange.endDate.format());
+// console.log(DATE_RANGES)
+// console.log('NOW:', moment.tz('America/New_York').format())
+// for (let key in DATE_RANGES) {
+//   const timeRangeStructure = DATE_RANGES[key];
+//   const realizedDateRange = realizeDateRange(timeRangeStructure, 'America/New_York');
+//   console.log(key, realizedDateRange.startDate.format(), realizedDateRange.endDate.format());
+// }
+
+enum AnalyticsDateSelectorPages {
+  LIST = 'LIST',
+  CUSTOM = 'CUSTOM',
 }
 
-
-/*
-export enum RangeType {
-  ABSOLUTE = 'ABSOLUTE',
-  RELATIVE = 'RELATIVE',
+enum AnalyticsCustomDateRangeChoices {
+  BETWEEN = 'between',
+  ON = 'on',
 }
 
-function makeRelativeTimeRange(start: moment, end: moment): DateRange {
-  return {
-    type: RangeType.RELATIVE,
-    start
-  }
-}
-
-const TIMEFRAME_CHOICES: { [key: string]: DateRange }= {
-  'Today': { type: RangeType.RELATIVE, unit:  },
-  WEEK_TO_DATE = 'WEEK_TO_DATE',
-  MONTH_TO_DATE = 'MONTH_TO_DATE',
-  LAST_WEEK = 'LAST_WEEK',
-  LAST_MONTH = 'LAST_MONTH',
-  LAST_7_DAYS = 'LAST_7_DAYS',
-  LAST_30_DAYS = 'LAST_30_DAYS',
-  LAST_90_DAYS = 'LAST_90_DAYS',
-}
-
-const formatRelativeTimeframe = (timeframe: RelativeTimeframe) => {
-  switch (timeframe) {
-  case RelativeTimeframe.TODAY:
-    return 'Today';
-  case RelativeTimeframe.LAST_WEEK:
-    return 'Last week';
-  case RelativeTimeframe.LAST_MONTH:
-    return 'Last month';
-  case RelativeTimeframe.WEEK_TO_DATE:
-    return 'Week to date';
-  case RelativeTimeframe.MONTH_TO_DATE:
-    return 'Month to date';
-  case RelativeTimeframe.LAST_7_DAYS:
-    return 'Last 7 days';
-  case RelativeTimeframe.LAST_30_DAYS:
-    return 'Last 30 days';
-  case RelativeTimeframe.LAST_90_DAYS:
-    return 'Last 90 days';
-  default:
-    return 'Unknown'
-  }
-};
-
-export type DateRange = {
-  type: RangeType.ABSOLUTE,
-  startDate: string,
-  endDate: string,
-} | {
-  type: RangeType.RELATIVE,
-  start: {
-    unit: RelativeBasisUnit,
-    magnitude: number,
-  },
-  end: {
-    unit: RelativeBasisUnit,
-    magnitude: number,
-  },
-};
-
+const TIMEFRAME_CHOICES: Array<DateRange> = [
+  DATE_RANGES.TODAY,
+  DATE_RANGES.WEEK_TO_DATE,
+  DATE_RANGES.MONTH_TO_DATE,
+  DATE_RANGES.LAST_WEEK,
+  DATE_RANGES.LAST_MONTH,
+  DATE_RANGES.LAST_7_DAYS,
+  DATE_RANGES.LAST_30_DAYS,
+  DATE_RANGES.LAST_90_DAYS,
+]
 export function AnalyticsDateSelector({ value, onChange }) {
   const [ open, setOpen ] = useState(false);
+
+  let text = 'No date range selected';
+  switch (value && value.type) {
+  case RangeType.RELATIVE:
+    text = value.label || '(unlabeled relative date range)';
+    break;
+  case RangeType.ABSOLUTE:
+    text = `${moment.utc(value.startDate).format('MM/DD/YYYY')} - ${moment.utc(value.endDate).format('MM/DD/YYYY')}`;
+    break;
+  }
+
+  const [ workingDateRange, setWorkingDateRange ] = useState(TIMEFRAME_CHOICES[0]);
+  const [ customRangeDatePickerFocus, setCustomRangeDatePickerFocus ] = useState('startDate');
+  const [ customDateRangeType, setCustomDateRangeType ] = useState(AnalyticsCustomDateRangeChoices.BETWEEN);
+
+  function onOpen() {
+    if (open) { return; }
+    setWorkingDateRange(value);
+    setCustomRangeDatePickerFocus('startDate');
+
+    // Figure out the custom date range type if the custom page is visible
+    if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
+      if (workingDateRange.startDate === '' && workingDateRange.endDate === '') {
+        setCustomDateRangeType(AnalyticsCustomDateRangeChoices.BETWEEN);
+      } else {
+        setCustomDateRangeType(
+          workingDateRange.startDate === workingDateRange.endDate ?
+            AnalyticsCustomDateRangeChoices.ON :
+            AnalyticsCustomDateRangeChoices.BETWEEN
+        );
+      }
+    }
+
+    setOpen(true);
+  }
+
+  let activePage;
+  if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
+    activePage = AnalyticsDateSelectorPages.CUSTOM;
+  } else {
+    activePage = AnalyticsDateSelectorPages.LIST;
+  }
+
   return (
     <Filter
       open={open}
-      onOpen={() => setOpen(true)}
+      onOpen={() => onOpen()}
       onClose={() => setOpen(false)}
-      text={<FilterBold>Date will go here</FilterBold>}
+      text={<FilterBold>{text}</FilterBold>}
     >
-      <ItemList
-        choices={[
-          ...Object.keys(RelativeTimeframe).map(key => ({id: key, label: formatRelativeTimeframe(key)})),
-          {id: 'ABSOLUTE', label: 'Custom'},
-        ]}
-        onClick={choice => {
-          if (choice.id === RangeType.ABSOLUTE) {
-            onChange({
-              type: RangeType.ABSOLUTE,
-              startDate: null,
-              endDate: null,
-            });
-          } else {
-            onChange({
-              type: RangeType.RELATIVE,
-              timeRange: choice.id,
-            });
-            setOpen(false);
-          }
-        }}
-      />
+      {activePage === AnalyticsDateSelectorPages.LIST ? (
+        <ItemList
+          template={ARROW_TEMPLATE}
+          choices={[
+            ...TIMEFRAME_CHOICES.map(choice => ({id: choice.label, label: choice.label})),
+            {id: 'ABSOLUTE', label: 'Custom Date Range'},
+          ]}
+          onClick={choice => {
+            const timeRange = TIMEFRAME_CHOICES.find(c => c.label === choice.id);
+            if (timeRange) {
+              // An item in the regular list was picked
+              onChange(timeRange);
+              setOpen(false);
+            } else if (choice.id === 'ABSOLUTE') {
+              // The "custom date range" choice was picked
+              setWorkingDateRange({
+                type: RangeType.ABSOLUTE,
+                startDate: moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
+                endDate: moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
+              });
+            }
+          }}
+        />
+      ) : null}
+      {activePage === AnalyticsDateSelectorPages.CUSTOM ? (
+        <div className={styles.dateSelectorCustomWrapper}>
+          <div className={styles.header}>
+            <AppBarContext.Provider value="CARD_HEADER">
+              <AppBar>
+                <AppBarTitle>
+                  <div className={styles.back}>
+                    <BackButton onClick={() => setWorkingDateRange(null)} />
+                  </div>
+                  Select a Custom Date Range
+                </AppBarTitle>
+              </AppBar>
+            </AppBarContext.Provider>
+          </div>
+          <div className={styles.dateSelectorCustomBody}>
+            <div className={styles.dateSelectorCustomBodyItem}>
+              <InputBox
+                type="select"
+                value={customDateRangeType}
+                choices={[
+                  { id: AnalyticsCustomDateRangeChoices.BETWEEN, label: 'Between' },
+                  { id: AnalyticsCustomDateRangeChoices.ON, label: 'On' },
+                ]}
+                onChange={choice => {
+                  switch (choice.id) {
+                  case AnalyticsCustomDateRangeChoices.BETWEEN:
+                    setWorkingDateRange({
+                      ...workingDateRange,
+                      startDate: moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
+                      endDate: moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
+                    });
+                  case AnalyticsCustomDateRangeChoices.ON:
+                    setWorkingDateRange({
+                      ...workingDateRange,
+                      startDate: moment().format('YYYY-MM-DD'),
+                      endDate: moment().format('YYYY-MM-DD'),
+                    });
+                  }
+                  setCustomDateRangeType(choice.id);
+                }}
+                width="100%"
+              />
+            </div>
+            <div
+              className={styles.dateSelectorCustomBodyItem}
+              style={{flexGrow: 1, flexShrink: 1}}
+
+              // Block focus / blur events from effecting the filter popup logic
+              onFocus={e => e.stopPropagation()}
+              onBlur={e => e.stopPropagation()}
+            >
+              {customDateRangeType === AnalyticsCustomDateRangeChoices.BETWEEN ? (
+                <DateRangePicker
+                  focusedInput={customRangeDatePickerFocus}
+                  onFocusChange={focus => {
+                    if (focus !== null) {
+                      setCustomRangeDatePickerFocus(focus);
+                    }
+                  }}
+                  startDate={workingDateRange.startDate ? moment(workingDateRange.startDate, 'YYYY-MM-DD') : null}
+                  endDate={workingDateRange.endDate ? moment(workingDateRange.endDate, 'YYYY-MM-DD') : null}
+                  onChange={range => {
+                    if (!range.endDate) {
+                      // A date before the start of the selected range was clicked, so use the date
+                      // that was selected 
+                      setWorkingDateRange({
+                        ...workingDateRange,
+                        startDate: range.startDate.format('YYYY-MM-DD'),
+                        endDate: '',
+                      });
+                    } else {
+                      setWorkingDateRange({
+                        ...workingDateRange,
+                        startDate: range.startDate.format('YYYY-MM-DD'),
+                        endDate: range.endDate.format('YYYY-MM-DD'),
+                      });
+                    }
+                  }}
+                  numberOfMonths={1}
+                  isOutsideRange={day => day.clone().startOf('day').isAfter(moment().startOf('day'))}
+                />
+              ) : (
+                <DatePicker
+                  focused
+                  date={workingDateRange.startDate ? moment(workingDateRange.startDate, 'YYYY-MM-DD') : null}
+                  onChange={date => {
+                    setWorkingDateRange({
+                      ...workingDateRange,
+                      startDate: date.format('YYYY-MM-DD'),
+                      endDate: date.format('YYYY-MM-DD'),
+                    });
+                  }}
+                  numberOfMonths={1}
+                  isOutsideRange={day => day.clone().startOf('day').isAfter(moment().startOf('day'))}
+                />
+              )}
+            </div>
+          </div>
+          <SubmitButton
+            onClick={() => {
+              onChange(workingDateRange);
+              setOpen(false);
+            }}
+            disabled={!workingDateRange.startDate || !workingDateRange.endDate}
+          >
+            Select date range
+          </SubmitButton>
+        </div>
+      ) : null}
     </Filter>
-  )
+  );
 }
-*/
