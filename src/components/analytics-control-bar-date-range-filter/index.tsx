@@ -230,7 +230,7 @@ export default function AnalyticsControlBarDateRangeFilter({ value, onChange }: 
       >
         {activePage === AnalyticsDateSelectorPages.LIST ? (
           <ItemList
-            template={ARROW_TEMPLATE}
+            template={choice => choice.id === 'ABSOLUTE' ? ARROW_TEMPLATE(choice) : choice.label}
             choices={[
               ...(
                 TIMEFRAME_CHOICES
