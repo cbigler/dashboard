@@ -3,9 +3,11 @@ import 'moment-timezone';
 
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
+import { DaysOfWeek } from '../../types';
 
-
-// New time functions
+// ----------------------------------------------------------------------------
+// DATE STRING RELATED OPERATIONS
+// ----------------------------------------------------------------------------
 export function currentDateStringAtSpace(space) {
   return moment.tz(space.timeZone).format('YYYY-MM-DD');
 }
@@ -16,8 +18,185 @@ export function serializeMomentToDateString(dateInstance) {
   return dateInstance.format('YYYY-MM-DD');
 }
 
- 
-// Old time functions
+
+// ----------------------------------------------------------------------------
+// DATE RANGE OPERATIONS
+// ----------------------------------------------------------------------------
+export enum RangeType {
+  ABSOLUTE = 'ABSOLUTE',
+  RELATIVE = 'RELATIVE',
+}
+
+export enum RelativeUnit {
+  DAYS = 'days',
+  WEEKS = 'weeks',
+  MONTHS = 'months',
+  QUARTERS = 'quarters',
+  YEARS = 'years',
+}
+
+export enum RelativeDurationRound {
+  START = 'START',
+  END = 'END',
+}
+
+export type RelativeDuration = {
+  magnitude: number,
+  unit: RelativeUnit,
+  round?: RelativeDurationRound,
+}
+
+export type RelativeDateRange = {
+  type: RangeType.RELATIVE,
+  start: RelativeDuration,
+  end: RelativeDuration,
+  label?: string, // Optional, used to name a given date range
+}
+
+export type AbsoluteDateRange = {
+  type: RangeType.ABSOLUTE,
+  startDate: string,
+  endDate: string,
+}
+
+export type DateRange = AbsoluteDateRange | RelativeDateRange;
+
+function makeDuration(magnitude, unit, round?): RelativeDuration {
+  return { magnitude, unit, round };
+}
+
+// A list of predefined date ranges, using these avoids having to build custom date ranges for every
+// use case.
+export const DATE_RANGES: { [key: string]: RelativeDateRange } = {
+  TODAY: {
+    label: 'Today',
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.END),
+  },
+  YESTERDAY: {
+    label: 'Yesterday',
+    type: RangeType.RELATIVE,
+    start: makeDuration(1, RelativeUnit.DAYS, RelativeDurationRound.START),
+    end: makeDuration(1, RelativeUnit.DAYS, RelativeDurationRound.END),
+  },
+  LAST_7_DAYS: {
+    label: 'Last 7 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(7, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_WEEK: {
+    label: 'Last Week',
+    type: RangeType.RELATIVE,
+    start: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.END),
+  },
+  WEEK_TO_DATE: {
+    label: 'Week-to-Date',
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_30_DAYS: {
+    label: 'Last 30 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(30, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_MONTH: {
+    label: 'Last Month',
+    type: RangeType.RELATIVE,
+    start: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.START),
+    end: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.END),
+  },
+  MONTH_TO_DATE: {
+    label: 'Month-to-Date',
+    type: RangeType.RELATIVE,
+    start: makeDuration(0, RelativeUnit.MONTHS, RelativeDurationRound.START),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+  LAST_90_DAYS: {
+    label: 'Last 90 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(90, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+
+  // Future time range example, not needed for analytics but an example of how we'd do this
+  NEXT_WEEK: {
+    label: 'Next Week',
+    type: RangeType.RELATIVE,
+    start: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.START),
+    end: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.END),
+  },
+  NEXT_7_DAYS: {
+    label: 'Next 7 Days',
+    type: RangeType.RELATIVE,
+    start: makeDuration(-7, RelativeUnit.DAYS),
+    end: makeDuration(0, RelativeUnit.DAYS),
+  },
+};
+
+const DAYS_OF_WEEK: Array<DaysOfWeek> = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+export function realizeDateRange(
+  dateRange: DateRange,
+  timeZone: string,
+  opts: { organizationalWeekStartDay?: DaysOfWeek, now?: moment.Moment } = {},
+): {startDate: moment.Moment, endDate: moment.Moment} {
+  const organizationalWeekStartDay = opts.organizationalWeekStartDay || 'Sunday';
+  const now = opts.now || moment.tz(timeZone);
+
+  if (dateRange.type === RangeType.ABSOLUTE) {
+    return {
+      startDate: moment.tz(dateRange.startDate, timeZone).startOf('day'),
+      endDate: moment.tz(dateRange.endDate, timeZone).endOf('day'),
+    };
+  } else {
+    return {
+      startDate: realizeRelativeDuration(dateRange.start, now, organizationalWeekStartDay).startOf('day'),
+      endDate: realizeRelativeDuration(dateRange.end, now, organizationalWeekStartDay).endOf('day'),
+    };
+  }
+}
+
+function realizeRelativeDuration(
+  relativeDuration: RelativeDuration,
+  now: moment.Moment,
+  organizationalWeekStartDay: DaysOfWeek,
+): moment.Moment {
+  let timestamp = now.clone().subtract(relativeDuration.magnitude, relativeDuration.unit);
+
+  switch (relativeDuration.round) {
+  case RelativeDurationRound.START:
+    timestamp = timestamp.startOf(relativeDuration.unit);
+    break;
+  case RelativeDurationRound.END:
+    timestamp = timestamp.endOf(relativeDuration.unit);
+    break;
+  }
+
+  // Weeks are a special case because of "organization days of week start day" being a a concept
+  // that can effect what day a week starts on
+  if (relativeDuration.unit === RelativeUnit.WEEKS) {
+    timestamp = timestamp.add(DAYS_OF_WEEK.indexOf(organizationalWeekStartDay), 'days');
+  }
+  return timestamp;
+}
+
+
+// ----------------------------------------------------------------------------
+// TIME-RELATED OPERATIONS
+// ----------------------------------------------------------------------------
 export function getCurrentLocalTimeAtSpace(space) {
   return moment.utc().tz(space.timeZone);
 }

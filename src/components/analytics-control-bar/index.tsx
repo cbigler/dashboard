@@ -4,6 +4,7 @@ import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import { DensitySpace } from '../../types';
+import { DATE_RANGES, DateRange, RangeType } from '../../helpers/space-time-utilities';
 
 import Filter, { FilterBold } from '../analytics-control-bar-filter';
 import AnalyticsControlBarSpaceFilter, {
@@ -13,10 +14,8 @@ import AnalyticsControlBarSpaceFilter, {
 import {
   ItemList,
   ARROW_TEMPLATE,
-  MultipleSelectItemList,
   BackButton,
   AddButton,
-  FilterDeleteButton,
   SubmitButton,
 } from './utilities';
 import AnalyticsIntervalSelector, { AnalyticsInterval } from './interval';
@@ -183,165 +182,6 @@ function AnalyticsSpaceFilterBuilder({
 
 
 
-enum RangeType {
-  ABSOLUTE = 'ABSOLUTE',
-  RELATIVE = 'RELATIVE',
-}
-
-enum RelativeUnit {
-  DAYS = 'days',
-  WEEKS = 'weeks',
-  MONTHS = 'months',
-  QUARTERS = 'quarters',
-  YEARS = 'years',
-}
-
-enum RelativeDurationRound {
-  NONE = null,
-  START = 'START',
-  END = 'END',
-}
-
-type RelativeDuration = {
-  magnitude: number,
-  unit: RelativeUnit,
-  round: RelativeDurationRound,
-}
-
-type RelativeDateRange = {
-  type: RangeType.RELATIVE,
-  start: RelativeDuration,
-  end: RelativeDuration,
-  label?: string,
-}
-
-type AbsoluteDateRange = {
-  type: RangeType.ABSOLUTE,
-  start: string,
-  end: string,
-}
-
-type DateRange = AbsoluteDateRange | RelativeDateRange;
-
-function makeDuration(magnitude, unit, round=RelativeDurationRound.NONE): RelativeDuration {
-  return { magnitude, unit, round };
-}
-
-export const DATE_RANGES = {
-  TODAY: {
-    label: 'Today',
-    type: RangeType.RELATIVE,
-    start: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.START),
-    end: makeDuration(0, RelativeUnit.DAYS, RelativeDurationRound.END),
-  },
-  LAST_7_DAYS: {
-    label: 'Last 7 Days',
-    type: RangeType.RELATIVE,
-    start: makeDuration(7, RelativeUnit.DAYS),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-  LAST_WEEK: {
-    label: 'Last Week',
-    type: RangeType.RELATIVE,
-    start: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.START),
-    end: makeDuration(1, RelativeUnit.WEEKS, RelativeDurationRound.END),
-  },
-  WEEK_TO_DATE: {
-    label: 'Week-to-Date',
-    type: RangeType.RELATIVE,
-    start: makeDuration(0, RelativeUnit.WEEKS, RelativeDurationRound.START),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-  LAST_30_DAYS: {
-    label: 'Last 30 Days',
-    type: RangeType.RELATIVE,
-    start: makeDuration(30, RelativeUnit.DAYS),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-  LAST_MONTH: {
-    label: 'Last Month',
-    type: RangeType.RELATIVE,
-    start: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.START),
-    end: makeDuration(1, RelativeUnit.MONTHS, RelativeDurationRound.END),
-  },
-  MONTH_TO_DATE: {
-    label: 'Month-to-Date',
-    type: RangeType.RELATIVE,
-    start: makeDuration(0, RelativeUnit.MONTHS, RelativeDurationRound.START),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-  LAST_90_DAYS: {
-    label: 'Last 90 Days',
-    type: RangeType.RELATIVE,
-    start: makeDuration(90, RelativeUnit.DAYS),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-
-  // Future time range example, not needed for analytics but an example of how we'd do this
-  NEXT_WEEK: {
-    label: 'Next Week',
-    type: RangeType.RELATIVE,
-    start: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.START),
-    end: makeDuration(-1, RelativeUnit.WEEKS, RelativeDurationRound.END),
-  },
-  NEXT_7_DAYS: {
-    label: 'Next 7 Days',
-    type: RangeType.RELATIVE,
-    start: makeDuration(-7, RelativeUnit.DAYS),
-    end: makeDuration(0, RelativeUnit.DAYS),
-  },
-};
-
-const DAYS_OF_WEEK = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-];
-
-function realizeDateRange(
-  dateRange: DateRange,
-  timeZone: string,
-  organizationalWeekStartDay="Sunday",
-): {startDate: moment, endDate: moment} {
-  const now = moment.tz(timeZone);
-  if (dateRange.type === RangeType.ABSOLUTE) {
-    return {
-      startDate: moment.tz(dateRange.start, timeZone).startOf('day'),
-      endDate: moment.tz(dateRange.end, timeZone).endOf('day'),
-    };
-  } else {
-    return {
-      startDate: realizeRelativeDuration(dateRange.start, now, organizationalWeekStartDay).startOf('day'),
-      endDate: realizeRelativeDuration(dateRange.end, now, organizationalWeekStartDay).endOf('day'),
-    };
-  }
-}
-
-function realizeRelativeDuration(
-  relativeDuration: RelativeDuration,
-  now: moment,
-  organizationalWeekStartDay: string,
-): moment {
-  let timestamp = now.clone().subtract(relativeDuration.magnitude, relativeDuration.unit);
-  // Weeks are a special case because of "organization days of week start day" being a a concept
-  // that can effect what day a week starts on
-  if (relativeDuration.unit === RelativeUnit.WEEKS) {
-    timestamp = timestamp.add(DAYS_OF_WEEK.indexOf(organizationalWeekStartDay), 'days');
-  }
-  switch (relativeDuration.round) {
-  case RelativeDurationRound.START:
-    return timestamp.startOf(relativeDuration.unit);
-  case RelativeDurationRound.END:
-    return timestamp.endOf(relativeDuration.unit);
-  case RelativeDurationRound.NONE:
-  default:
-    return timestamp;
-  }
-}
 
 // console.log(DATE_RANGES)
 // console.log('NOW:', moment.tz('America/New_York').format())
@@ -492,7 +332,7 @@ function DateSelectorCustom({ workingDateRange, setWorkingDateRange, onSubmit })
   );
 }
 
-const TIMEFRAME_CHOICES: Array<DateRange> = [
+const TIMEFRAME_CHOICES = [
   DATE_RANGES.TODAY,
   DATE_RANGES.WEEK_TO_DATE,
   DATE_RANGES.MONTH_TO_DATE,
@@ -521,7 +361,7 @@ export function AnalyticsDateSelector({ value, onChange }) {
     break;
   }
 
-  const [ workingDateRange, setWorkingDateRange ] = useState(TIMEFRAME_CHOICES[0]);
+  const [ workingDateRange, setWorkingDateRange ] = useState<DateRange>(TIMEFRAME_CHOICES[0]);
 
   let activePage;
   if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
@@ -553,7 +393,14 @@ export function AnalyticsDateSelector({ value, onChange }) {
           <ItemList
             template={ARROW_TEMPLATE}
             choices={[
-              ...TIMEFRAME_CHOICES.map(choice => ({id: choice.label, label: choice.label})),
+              ...(
+                TIMEFRAME_CHOICES
+                  .filter(i => typeof i.label !== 'undefined')
+                  .map(choice => ({
+                    id: choice.label || '(no id)',
+                    label: choice.label || '(no label)',
+                  }))
+              ),
               {id: 'ABSOLUTE', label: 'Custom Date Range'},
             ]}
             onClick={choice => {

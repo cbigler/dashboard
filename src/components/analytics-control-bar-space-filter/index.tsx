@@ -2,6 +2,9 @@ import React, { useState, useRef, useEffect, Fragment } from 'react';
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
+import { DensitySpace } from '../../types';
+import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
+
 // FIXME: Move this into a helper! Point this out in a code review!
 import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
 // FIXME: move this
@@ -13,7 +16,6 @@ import {
   ARROW_TEMPLATE,
   MultipleSelectItemList,
   BackButton,
-  AddButton,
   FilterDeleteButton,
   SubmitButton,
 } from '../analytics-control-bar/utilities';

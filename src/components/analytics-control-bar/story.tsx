@@ -4,18 +4,16 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
+import { DATE_RANGES } from '../../helpers/space-time-utilities';
 import spaces from './spaces.json';
 import hierarchy from './hierarchy.json';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
-import AnalyticsControlBar, {
-  AnalyticsSpaceSelector,
-  // AnalyticsDateSelector,
-  DATE_RANGES,
-} from './index';
+import AnalyticsControlBar from './index';
 import { AnalyticsInterval } from './interval';
+import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);
@@ -59,7 +57,6 @@ storiesOf('Analytics Control Bar', module)
   ))
   .add('With a lot of space filters', () => (
     <State initialState={{
-      interval: AnalyticsInterval.DAY,
       filters: [
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
@@ -73,6 +70,8 @@ storiesOf('Analytics Control Bar', module)
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
       ],
+      interval: AnalyticsInterval.HOUR,
+      dateRange: DATE_RANGES.LAST_30_DAYS,
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
@@ -81,6 +80,9 @@ storiesOf('Analytics Control Bar', module)
 
           interval={state.interval}
           onChangeInterval={interval => setState({ ...state, interval })}
+
+          dateRange={state.dateRange}
+          onChangeDateRange={dateRange => setState({ ...state, dateRange })}
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}

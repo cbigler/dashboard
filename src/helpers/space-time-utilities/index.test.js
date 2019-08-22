@@ -1,6 +1,11 @@
 import moment from 'moment';
 import assert from 'assert';
-import { splitTimeRangeIntoSubrangesWithSameOffset } from './index';
+import {
+  DATE_RANGES,
+  realizeDateRange,
+  RangeType,
+  splitTimeRangeIntoSubrangesWithSameOffset,
+} from './index';
 
 const NYC_SPACE = { name: 'New York Space', timeZone: 'America/New_York' };
 const LA_SPACE = { name: 'Los Angeles Space', timeZone: 'America/Los_Angeles' };
@@ -13,6 +18,38 @@ function assertSubRangesEqual(subrangesA, subrangesB) {
 }
 
 describe('time-conversions', function() {
+  describe('realizeDateRange', () => {
+    it('should realize absolute date ranges', () => {
+      const {startDate, endDate} = realizeDateRange({
+        type: RangeType.ABSOLUTE,
+        startDate: '2019-01-01',
+        endDate: '2019-02-01',
+      }, 'America/Los_Angeles');
+      assert.equal(startDate.format(), '2019-01-01T00:00:00-08:00');
+      assert.equal(endDate.format(), '2019-02-01T23:59:59-08:00');
+    });
+    it('should realize a relative date range in la', () => {
+      const now = moment.tz('2019-03-15T10:00:00', 'America/Los_Angeles');
+      const {startDate, endDate} = realizeDateRange(DATE_RANGES.LAST_WEEK, 'America/Los_Angeles', { now });
+      assert.equal(startDate.format(), '2019-03-03T00:00:00-08:00');
+      assert.equal(endDate.format(), '2019-03-09T23:59:59-08:00');
+    });
+    it('should realize a relative date range in ny', () => {
+      const now = moment.tz('2019-03-15T10:00:00', 'America/New_York');
+      const {startDate, endDate} = realizeDateRange(DATE_RANGES.LAST_WEEK, 'America/New_York', { now });
+      assert.equal(startDate.format(), '2019-03-03T00:00:00-05:00');
+      assert.equal(endDate.format(), '2019-03-09T23:59:59-05:00');
+    });
+    it('should realize a relative date range with a non-standard week start day', () => {
+      const now = moment.tz('2019-03-15T10:00:00', 'America/Los_Angeles');
+      const {startDate, endDate} = realizeDateRange(DATE_RANGES.LAST_WEEK, 'America/Los_Angeles', {
+        now,
+        organizationalWeekStartDay: 'Wednesday',
+      });
+      assert.equal(startDate.format(), '2019-03-06T00:00:00-08:00');
+      assert.equal(endDate.format(), '2019-03-12T23:59:59-07:00');
+    });
+  });
   describe('splitTimeRangeIntoSubrangesWithSameOffset', () => {
     describe('in new york', () => {
       it('no daylight savings', () => {
