@@ -4,10 +4,8 @@ import classnames from 'classnames';
 
 import { DensitySpace } from '../../types';
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
-
-// FIXME: Move this into a helper! Point this out in a code review!
-import { SPACE_FUNCTION_CHOICES } from '../admin-locations-detail-modules/general-info';
-// FIXME: move this
+import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
+import filterCollection from '../../helpers/filter-collection';
 
 import SpacePicker from '../space-picker';
 import Filter, { FilterBold } from '../analytics-control-bar-filter';
@@ -19,8 +17,6 @@ import {
   FilterDeleteButton,
   SubmitButton,
 } from '../analytics-control-bar/utilities';
-
-import filterCollection from '../../helpers/filter-collection';
 
 import {
   AppBar,

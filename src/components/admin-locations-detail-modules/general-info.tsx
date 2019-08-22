@@ -12,26 +12,7 @@ import AdminLocationsDetailModule from './index';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 import { SpacePickerDropdown } from '../space-picker';
 
-export const SPACE_FUNCTION_CHOICES = [
-  {id: 'break_room', label: 'Break Room'},
-  {id: 'cafe', label: 'Cafe'},
-  {id: 'collaboration', label: 'Collaboration Room'},
-  {id: 'conference_room', label: 'Conference Room'},
-  {id: 'event_space', label: 'Event Space'},
-  {id: 'focus_quiet', label: 'Focus / Quiet Room'},
-  {id: 'gym', label: 'Gym'},
-  {id: 'kitchen', label: 'Kitchen'},
-  {id: 'library', label: 'Library'},
-  {id: 'lounge', label: 'Lounge'},
-  {id: 'meeting_room', label: 'Meeting Room'},
-  {id: 'office', label: 'Office'},
-  {id: 'phone_booth', label: 'Phone Booth'},
-  {id: 'reception', label: 'Reception'},
-  {id: 'restroom', label: 'Restroom'},
-  {id: 'theater', label: 'Theater'},
-  {id: 'wellness_room', label: 'Wellness Room'},
-  {id: null, label: 'Other'},
-];
+import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
 
 function getSpaceParentHierarchy(spaceHierarchy, formState) {
   return spaceHierarchyFormatter(spaceHierarchy).filter(item => {
