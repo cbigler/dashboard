@@ -38,11 +38,17 @@
   flex-wrap: wrap;
   color: $gray;
 }
-.analyticsSpaceFilterListItem {
+.listItem {
   display: inline-block;
   margin-left: 16px;
   margin-right: 16px;
   margin-top: 8px;
   margin-bottom: 8px;
 }
-.analyticsSpaceFilterListItem:first-of-type { margin-left: 0px; }
+.listItem:first-of-type { margin-left: 0px; }
+.listItemWrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  white-space: nowrap;
+}

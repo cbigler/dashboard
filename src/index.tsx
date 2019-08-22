@@ -15,11 +15,6 @@ import queryString from 'qs';
 
 import { DensityUser, DensitySpace } from './types';
 
-import 'moment-timezone';
-import AnalyticsControlBar from './components/analytics-control-bar';
-import { AnalyticsInterval } from './components/analytics-control-bar-interval-filter';
-import { DATE_RANGES } from './helpers/space-time-utilities';
-
 // Import @density/ui package for font
 import '@density/ui';
 import './styles.scss';
@@ -390,16 +385,6 @@ ReactDOM.render(
         onChange={configureClients}
       />
     </div>
-    <AnalyticsControlBar
-      filters={[{field: '', values: []}]}
-      onChangeFilters={console.log}
-      interval={AnalyticsInterval.HOUR}
-      onChangeInterval={console.log}
-      dateRange={DATE_RANGES.LAST_30_DAYS}
-      onChangeDateRange={console.log}
-      spaces={[]}
-      formattedHierarchy={[]}
-    />
   </Provider>,
   document.getElementById('root')
 );

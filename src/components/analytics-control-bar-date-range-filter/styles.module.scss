@@ -10,10 +10,12 @@
 
 .dateSelector {
   white-space: nowrap;
+  margin-right: 16px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 .dateSelectorLabel {
   color: $gray;
-  padding-left: 16px;
   padding-right: 16px;
 }
 

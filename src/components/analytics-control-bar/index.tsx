@@ -90,7 +90,7 @@ function AnalyticsSpaceFilterBuilder({
   return (
     <Fragment>
       {filters.map((filter, index) => (
-        <div className={styles.analyticsSpaceFilterListItem} aria-label="Space filter">
+        <div className={styles.listItem} aria-label="Space filter">
           <AnalyticsControlBarSpaceFilter
             filter={filter}
             deletable={filters.length > 1 || filter.field !== ''}
@@ -139,7 +139,20 @@ function AnalyticsSpaceFilterBuilder({
             formattedHierarchy={formattedHierarchy}
           />
         </div>
-      )).reduce((acc: React.ReactNode, i) => acc ? <Fragment>{acc} and {i}</Fragment> : i, null)}
+      )).reduce((acc: React.ReactNode, i) => {
+        if (acc) {
+          return (
+            <Fragment>
+              {acc}
+              <div className={styles.listItemWrapper}>
+                <div>and</div> {i}
+              </div>
+            </Fragment>
+          );
+        } else {
+          return i;
+        }
+      })}
       <AddButton onClick={() => {
         let openedFilterIndex = filters.length - 1;
 
