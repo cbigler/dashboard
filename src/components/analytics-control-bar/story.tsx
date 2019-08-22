@@ -12,7 +12,7 @@ const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
 import AnalyticsControlBar from './index';
-import { AnalyticsInterval } from './interval';
+import { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
 import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
 function State({ initialState, children }) {

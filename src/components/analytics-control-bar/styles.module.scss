@@ -32,14 +32,6 @@
 }
 
 
-.header {
-  width: 400px;
-  background-color: $grayLightest;
-}
-.back {
-  margin-right: 16px;
-}
-
 .analyticsSpaceFilterList {
   display: flex;
   align-items: center;
@@ -54,47 +46,3 @@
   margin-bottom: 8px;
 }
 .analyticsSpaceFilterListItem:first-of-type { margin-left: 0px; }
-
-
-.analyticsIntervalSelector {
-  white-space: nowrap;
-  width: 120px;
-}
-.analyticsIntervalLabel {
-  color: $gray;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-
-
-.dateSelectorCustomWrapper {
-  display: flex;
-  flex-direction: column;
-  height: 564px;
-  width: 400px;
-}
-.dateSelectorCustomBody {
-  flex-grow: 1;
-  flex-shrink: 1;
-
-  display: flex;
-  flex-direction: column;
-  padding: 24px;
-}
-.dateSelectorCustomBodyItem {
-  padding-top: 4px;
-  padding-bottom: 4px;
-  flex-grow: 0;
-  flex-shrink: 0;
-}
-.dateSelectorCustomBodyItem:first-child { padding-top: 0px; }
-
-
-.dateSelector {
-  white-space: nowrap;
-}
-.dateSelectorLabel {
-  color: $gray;
-  padding-left: 16px;
-  padding-right: 16px;
-}
