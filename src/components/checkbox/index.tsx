@@ -7,9 +7,10 @@ type CheckboxProps = {
   checked: boolean,
   disabled?: boolean,
   onChange: (event: React.SyntheticEvent) => void,
+  label?: React.ReactNode,
 }
 
-export default function Checkbox({ id, checked, disabled=false, onChange }: CheckboxProps) {
+export default function Checkbox({ id, checked, disabled=false, onChange, label="" }: CheckboxProps) {
   const [idProp] = useState(id || `checkbox-${uuid.v4()}`);
   return (
     <div>
@@ -24,7 +25,7 @@ export default function Checkbox({ id, checked, disabled=false, onChange }: Chec
       <label
         className={styles.label}
         htmlFor={idProp}
-      />
+      >{label}</label>
     </div>
   );
 }

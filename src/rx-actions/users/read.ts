@@ -27,6 +27,5 @@ export default async function collectionUsersLoad(dispatch: DispatchType) {
       type: UserActionTypes.USER_MANAGEMENT_USERS_SET,
       users: response.data.map(u => objectSnakeToCamel<DensityUser>(u)),
     });
-    return response.users;
   }
 }

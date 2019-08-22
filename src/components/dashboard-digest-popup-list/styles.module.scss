@@ -62,11 +62,10 @@ $dashboardDigestBackdropZIndex: 99999;
 .dashboardDigestListDropdown {
   position: absolute;
   right: 0px;
-  width: 450px;
+  width: 600px;
   z-index: 999999;
 
   margin-top: 8px;
-
   background-color: #fff;
   border: 1px solid $gray;
   border-radius: $borderRadiusBase;
@@ -90,6 +89,7 @@ $dashboardDigestBackdropZIndex: 99999;
   cursor: pointer;
   outline: none;
   font-size: 14px;
+  margin-left: 16px;
 }
 .dashboardDigestListDropdownCreateButton:hover { opacity: 0.9; }
 .dashboardDigestListDropdownCreateButton:active { opacity: 1; }

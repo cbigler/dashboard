@@ -19,6 +19,7 @@ import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
 import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import outlookIcon from '../../assets/images/icon-outlook.svg';
+import condecoIcon from '../../assets/images/icon-condeco.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import showModal from '../../actions/modal/show';
@@ -39,24 +40,20 @@ import doOutlookAuthRedirect from '../../actions/integrations/outlook';
 
 
 function iconForIntegration(serviceName: string) {
-  switch(serviceName) {
-    case "google_calendar":
-      return googleCalendarIcon;
-    case "outlook":
-      return outlookIcon;
-    case "robin":
-      return robinIcon;
-    case "slack":
-      return slackIcon;
-    case "teem":
-      return teemIcon;
-    default:
-      return "";
-  }
+  const iconMap = {
+    google_calendar: googleCalendarIcon,
+    outlook: outlookIcon,
+    robin: robinIcon,
+    slack: slackIcon,
+    teem: teemIcon,
+    condeco: condecoIcon
+  };
+
+  return iconMap[serviceName] || "";
 }
 
 function activateEditLink(item, onClick) {
-  if (!item.serviceAuthorization.id) {
+  if (!item.serviceAuthorization.id && item.name !== 'condeco') {
     return <ListViewClickableLink onClick={onClick}>Activate</ListViewClickableLink>;
   }
   if (item.name === "robin") {
@@ -77,7 +74,7 @@ function handleActivateEditClick(item, onOpenModal) {
 }
 
 function handleDeleteClick(item, onOpenModal) {
-  if (item.name === "teem" || item.name === "google_calendar" || item.name === 'outlook') {
+  if (["teem", "google_calendar", "outlook", "condeco"].includes(item.name)) {
     onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
   } else {
     onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});

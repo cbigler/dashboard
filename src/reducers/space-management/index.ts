@@ -93,7 +93,8 @@ export type DoorwayItem = {
   list: 'TOP' | 'BOTTOM',
   selected: boolean,
   sensorPlacement: number | null,
-  initialSensorPlacement: number | null
+  updateHistoricCounts: boolean,
+  initialSensorPlacement: number | null,
   linkId: string | null,
   operationToPerform: 'CREATE' | 'UPDATE' | 'DELETE' | null,
   linkExistsOnServer: boolean,
@@ -124,6 +125,7 @@ function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: Dens
     selected: linkedToSpace ? true : false,
     sensorPlacement,
     initialSensorPlacement: sensorPlacement,
+    updateHistoricCounts: true,
     linkId: linkedToSpace ? linkedToSpace.linkId : null,
     operationToPerform: null,
     linkExistsOnServer: linkedToSpace ? true : false,
@@ -296,6 +298,7 @@ export function convertFormStateToSpaceFields(
       doorwayId: i.id,
       sensorPlacement: i.sensorPlacement,
       operationToPerform: i.operationToPerform,
+      updateHistoricCounts: i.updateHistoricCounts,
     })),
 
     inheritsTimeSegments: !formState.overrideDefault,

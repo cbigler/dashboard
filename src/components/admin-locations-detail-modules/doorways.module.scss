@@ -167,3 +167,7 @@
 .dpuPositionButton:active { opacity: 1; }
 .dpuPositionButton.active { border-color: $brandPrimary; }
 .dpuPositionButton svg { margin-bottom: 24px; }
+
+.updateHistoricCheckbox {
+  padding-top: 8px;
+}

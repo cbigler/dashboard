@@ -126,16 +126,9 @@ export default function collectionSpacesUpdate(item) {
               sensor_placement: linkItem.sensorPlacement,
             });
           case 'UPDATE':
-            // Links are immutable, delete and re-create a link to "update" it
-            // Note these cannot happen in parallel because we want the old link to be deleted and
-            // then the new link added, if we did them in parallel there's no garuntee of that.
-            // TODO: Is there a concern about a slight "unlinked period" between the delete and
-            // create and if an event comes in during that period it might get lost?
-            await core().delete(`/links/${linkItem.id}`);
-            return core().post(`/links`, {
-              space_id: item.id,
-              doorway_id: linkItem.doorwayId,
+            return core().post(`/links/${linkItem.id}/set_placement`, {
               sensor_placement: linkItem.sensorPlacement,
+              update_historical: linkItem.updateHistoricCounts,
             });
           case 'DELETE':
             return core().delete(`/links/${linkItem.id}`);
