@@ -35,6 +35,9 @@ npm start
 
 # Run the tests
 npm test
+
+# Run the storybook
+npm run storybook
 ```
 
 ### Environment variables
