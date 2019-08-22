@@ -49,11 +49,11 @@ function DateSelectorCustom({ workingDateRange, setWorkingDateRange, onSubmit })
   useEffect(() => {
     // Figure out the custom date range type if the custom page is visible
     if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
-      setCustomDateRangeType(
-        workingDateRange.startDate === workingDateRange.endDate ?
-          AnalyticsCustomDateRangeChoices.ON :
-          AnalyticsCustomDateRangeChoices.BETWEEN
-      );
+      if (workingDateRange.startDate === workingDateRange.endDate) {
+        setCustomDateRangeType(AnalyticsCustomDateRangeChoices.ON);
+      } else {
+        setCustomDateRangeType(AnalyticsCustomDateRangeChoices.BETWEEN);
+      }
     }
   }, [ workingDateRange ]);
 
@@ -133,7 +133,8 @@ function DateSelectorCustom({ workingDateRange, setWorkingDateRange, onSubmit })
               numberOfMonths={1}
               isOutsideRange={day => day.clone().startOf('day').isAfter(moment().startOf('day'))}
             />
-          ) : (
+          ) : null}
+          {customDateRangeType === AnalyticsCustomDateRangeChoices.ON ? (
             <DatePicker
               focused
               onFocusChange={() => {}}
@@ -148,7 +149,7 @@ function DateSelectorCustom({ workingDateRange, setWorkingDateRange, onSubmit })
               numberOfMonths={1}
               isOutsideRange={day => day.clone().startOf('day').isAfter(moment().startOf('day'))}
             />
-          )}
+          ) : null}
         </div>
       </div>
       <SubmitButton

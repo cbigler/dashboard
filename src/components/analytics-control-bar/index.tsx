@@ -123,9 +123,7 @@ function AnalyticsSpaceFilterBuilder({
                   if (filters.length === 1) {
                     // If there was a single field, then reset the field to be an empty field so that
                     // the empty state is maintained.
-                    setTimeout(() => {
-                      onChange([EMPTY_FILTER]);
-                    }, 250);
+                    onChange([EMPTY_FILTER]);
                   } else {
                     // Otherwise, remove the filter.
                     const filtersCopy = filters.slice();
