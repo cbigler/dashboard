@@ -15,6 +15,16 @@ import { AddButton } from './utilities';
 
 import { Icons } from '@density/ui';
 
+export {
+  ARROW_TEMPLATE,
+  ItemList,
+  MultipleSelectItemList,
+  BackButton,
+  AddButton,
+  FilterDeleteButton,
+  SubmitButton,
+} from './utilities';
+
 type AnalyticsControlBarProps = {
   filters: Array<AnalyticsSpaceFilter>,
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,

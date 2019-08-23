@@ -17,7 +17,7 @@ import {
   ARROW_TEMPLATE,
   BackButton,
   SubmitButton,
-} from '../analytics-control-bar/utilities';
+} from '../analytics-control-bar';
 
 
 enum AnalyticsDateSelectorPages {
