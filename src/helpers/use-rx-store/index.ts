@@ -1,11 +1,10 @@
-import { BehaviorSubject, Observable } from "rxjs";
 import { useState, useEffect } from "react";
+import { Observable } from "rxjs";
+import { StoreSubject } from "../../rx-stores";
 
-// Rx "store" BehaviorSubject subscription hook
-export default function useRxStore<T>(
-  store: BehaviorSubject<T>,
-): T {
-  const [state, setState] = useState(store.value);
+// Rx "store" StoreSubject subscription hook
+export default function useRxStore<T>(store: StoreSubject<T>): T {
+  const [state, setState] = useState(store.imperativelyGetValue());
 
   useEffect(() => {
     const subscription = store.subscribe(s => setState(s));

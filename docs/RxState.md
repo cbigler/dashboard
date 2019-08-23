@@ -128,7 +128,7 @@ export default createRxStore<QuuxState>(initialState, (state, action) => {
 
 ## Subscribe/Connect
 
-Components that need to use store state can import the `useRxStore` hook, which subscribes to a BehaviorSubject on mount, and returns its current value. The component automatically re-renders when a new value is emitted:
+Components that need to use store state can import the `useRxStore` hook, which subscribes to a StoreSubject on mount, and returns its current value. The component automatically re-renders when a new value is emitted:
 
 ```TypeScript
 // components/BarComponent.tsx

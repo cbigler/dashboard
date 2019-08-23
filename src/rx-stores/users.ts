@@ -10,7 +10,7 @@ const initialState: UserState = {
   editor: {}
 };
 
-export default createRxStore<UserState>(initialState, (state, action) => {
+export default createRxStore<UserState>('userStore', initialState, (state, action) => {
   switch (action.type) {
     case UserActionTypes.USER_MANAGEMENT_USERS_LOAD:
     case UserActionTypes.USER_MANAGEMENT_USERS_LOAD_ONE:

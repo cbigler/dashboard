@@ -13,24 +13,47 @@ const legacyActionLog = debug('rx:legacy-action');
 // From https://slack.engineering/rebuilding-slack-on-the-desktop-308d6fe94ae4
 let reduxStore;
 
-// Global action stream
+// StoreSubject is a BehaviorSubject that obfuscates the "value" accessor
+export class StoreSubject<S> extends BehaviorSubject<S> {
+  public imperativelyGetValue = () => {
+    return super.getValue();
+  };
+  public getValue = () => {
+    throw new Error(
+      'You\'re trying to read the value of a StoreSubject directly. If you ' +
+      'want to access this store\'s state, pipe and/or subscribe to it. If ' +
+      'you really need to to access the state from imperative code, use the' +
+      '`.imperativelyGetValue()` method.'
+    );
+  }
+}
+
+// Global action stream for the dashboard
 export const actions = new Subject<GlobalAction>();
 
 // Reducer functions can return this symbol to skip updating
 export const skipUpdate = Symbol('skipUpdate');
 
-// Helper to create stores
+// Helper to create stores for this application
 export default function createRxStore<T>(
+  displayName: string,
   initialState: T,
   reducer: (state: T, action: GlobalAction) => T | typeof skipUpdate,
-  displayName: string = typeof initialState,
 ) {
-  const store = new BehaviorSubject(initialState);
+
+  // StoreSubject is a special variant of an RxJS BehaviorSubject
+  const store = new StoreSubject(initialState);
+
+  // Subscribe to the global action stream
   actions.subscribe((action: GlobalAction) => {
-    const result = reducer(store.value, action);
-    if (result !== skipUpdate) {
-      storeLog(displayName, result);
-      store.next(result);
+    
+    // Run the reducer function using the store's value and the next action
+    const state = reducer(store.imperativelyGetValue(), action);
+
+    // Tricky convention, skip update if state is a special symbol
+    if (state !== skipUpdate) {
+      storeLog(displayName, state);
+      store.next(state);
     }
   });
   return store;
