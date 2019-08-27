@@ -11,19 +11,10 @@ import AnalyticsControlBarSpaceFilter, {
 } from '../analytics-control-bar-space-filter';
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
 import AnalyticsIntervalSelector, { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
-import { AddButton } from './utilities';
 
 import { Icons } from '@density/ui';
 
-export {
-  ARROW_TEMPLATE,
-  ItemList,
-  MultipleSelectItemList,
-  BackButton,
-  AddButton,
-  FilterDeleteButton,
-  SubmitButton,
-} from './utilities';
+import { AddButton } from '../analytics-control-bar-utilities';
 
 type AnalyticsControlBarProps = {
   filters: Array<AnalyticsSpaceFilter>,

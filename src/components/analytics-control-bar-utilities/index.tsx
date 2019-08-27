@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import styles from './utilities.module.scss';
+import styles from './styles.module.scss';
 import Checkbox from '../checkbox';
 import { Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';

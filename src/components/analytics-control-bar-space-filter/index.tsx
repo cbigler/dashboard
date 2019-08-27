@@ -16,7 +16,7 @@ import {
   BackButton,
   FilterDeleteButton,
   SubmitButton,
-} from '../analytics-control-bar';
+} from '../analytics-control-bar-utilities';
 
 import {
   AppBar,
