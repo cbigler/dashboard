@@ -97,9 +97,13 @@ function AnalyticsSpaceFilterBuilder({
   formattedHierarchy,
 }: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
+  const [ emptyFilterVisible, setEmptyFilterVisible ] = useState(filters.length === 0);
+
+  const filtersIncludingEmpty = [ ...filters, ...(emptyFilterVisible ? [EMPTY_FILTER] : []) ];
+
   return (
     <Fragment>
-      {filters.map((filter, index) => (
+      {filtersIncludingEmpty.map((filter, index) => (
         <div className={styles.listItem} aria-label="Space filter">
           <AnalyticsControlBarSpaceFilter
             filter={filter}
@@ -107,41 +111,26 @@ function AnalyticsSpaceFilterBuilder({
             onDelete={() => {
               if (filters.length === 1) {
                 // If the last filter is being deleted, then replace it with an empty filter.
-                onChange([EMPTY_FILTER]);
-              } else {
-                const filtersCopy = filters.slice();
-                filtersCopy.splice(index, 1);
-                onChange(filtersCopy);
+                setEmptyFilterVisible(true);
               }
+
+              const filtersCopy = filters.slice();
+              filtersCopy.splice(index, 1);
+              onChange(filtersCopy);
             }}
             open={openedFilterIndex === index}
             onOpen={() => setOpenedFilterIndex(index)}
             onClose={filter => {
-              const filtersCopy = filters.slice();
-              filtersCopy[index] = filter;
-              onChange(filtersCopy);
-
               // Close the currently open filter
               setOpenedFilterIndex(-1);
 
-              // Waits to change the fields array until after the popup has been closed to get
-              // around weird visual artifacts
-              setTimeout(() => {
-                const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
-                if (fieldIsEmpty) {
-                  // No data was put into the field when the popup was open, so remove it from the list.
-                  if (filters.length === 1) {
-                    // If there was a single field, then reset the field to be an empty field so that
-                    // the empty state is maintained.
-                    onChange([EMPTY_FILTER]);
-                  } else {
-                    // Otherwise, remove the filter.
-                    const filtersCopy = filters.slice();
-                    filtersCopy.splice(index, 1);
-                    onChange(filtersCopy);
-                  }
-                }
-              }, 100);
+              const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
+              if (!fieldIsEmpty) {
+                const filtersCopy = filters.slice();
+                filtersCopy[index] = filter;
+                onChange(filtersCopy);
+                setEmptyFilterVisible(false);
+              }
             }}
             spaces={spaces}
             formattedHierarchy={formattedHierarchy}
@@ -160,17 +149,10 @@ function AnalyticsSpaceFilterBuilder({
         } else {
           return i;
         }
-      })}
+      }, null)}
       <AddButton onClick={() => {
-        let openedFilterIndex = filters.length - 1;
-
-        // Don't add a new filter if there is a single empty filter already as part of the "empty state"
-        const isSingleEmptyFilter = filters.length === 1 && filters[0].field === '';
-        if (!isSingleEmptyFilter) {
-          const newFilters = [ ...filters, { field: '', values: [] } ];
-          onChange(newFilters);
-          openedFilterIndex = newFilters.length - 1;
-        }
+        let openedFilterIndex = filters.length;
+        setEmptyFilterVisible(true);
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed ans so that the animation to open is

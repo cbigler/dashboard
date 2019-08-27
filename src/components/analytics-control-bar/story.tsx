@@ -36,7 +36,7 @@ storiesOf('Analytics Control Bar', module)
     <State initialState={{
       interval: AnalyticsInterval.HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
-      filters: [ {field: '', values: []} ],
+      filters: [],
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
