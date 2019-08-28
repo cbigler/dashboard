@@ -115,11 +115,16 @@ function AnalyticsSpaceFilterBuilder({
               // Close the currently open filter
               setOpenedFilterIndex(-1);
 
+              const filtersCopy = filters.slice();
+
+              // Update the filter if its not the empty filter
               const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
               if (!fieldIsEmpty) {
-                const filtersCopy = filters.slice();
                 filtersCopy[index] = filter;
                 onChange(filtersCopy);
+              }
+              // Hide the empty filter if a filter was added
+              if (filtersCopy.length !== 0) {
                 setEmptyFilterVisible(false);
               }
             }}
