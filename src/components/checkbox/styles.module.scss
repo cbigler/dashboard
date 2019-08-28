@@ -1,13 +1,15 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 
-$checkbox-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (active)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(active)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' fill='%232E51B6' x='0' y='0' width='18' height='18' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$checkbox-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg
+width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg'
+xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) -
+https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (active)%3C/title%3E%3Cdesc%3ECreated
+with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(active)' stroke='none' stroke-width='1'
+fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' fill='none' x='0' y='0' width='18' height='18' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
 $checkbox-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (inactive)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(inactive)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23979797' fill='%23FFFFFF' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
 $checkbox-disabled-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (disabled-checked)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(disabled-checked)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23B1B1B1' fill='%23D7D7D7' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
 $checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (disabled)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(disabled)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23B1B1B1' fill='%23D7D7D7' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg id='icon-check-copy'%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpath d='M2,6 L10,6' id='icon-check' stroke='%23B1B1B1' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
-
-.checkbox {
-  color: red;
-}
 
 .checkbox { display: none; }
 .label {
@@ -15,7 +17,9 @@ $checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' 
   flex-direction: row;
   align-items: center;
 
-  width: 100%;
+  width: 18px;
+  height: 18px;
+  border-radius: $borderRadiusSmall;
 
   box-sizing: border-box;
   cursor: pointer;
@@ -24,6 +28,8 @@ $checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' 
   padding-bottom: 8px;
   padding-right: 4px;
   color: $grayCinder;
+
+  background-color: transparent;
 }
 .checkbox:disabled + label {
 	cursor: default;
@@ -43,6 +49,7 @@ $checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' 
 }
 .checkbox:checked + label:before {
   background-image: url($checkbox-checked-image);
+  background-position: -1px 0px;
 }
 .checkbox:disabled + label:before {
   background-image: url($checkbox-disabled-unchecked-image);
@@ -50,5 +57,6 @@ $checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' 
 }
 .checkbox:disabled:checked + label:before {
   background-image: url($checkbox-disabled-checked-image);
+  background-position: 0px;
   cursor: default;
 }
