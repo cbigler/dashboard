@@ -1,9 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import styles from './styles.module.scss';
-import { DensitySpaceTypes, DensitySpace, DensitySpaceRollupMetrics } from '../../types';
+import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics } from '../../types';
 import { formatSpaceFunction } from '../../helpers/space-function-choices';
 import { DateRange } from '../../helpers/space-time-utilities';
 import { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
+import analyticsColorScale from '../../helpers/analytics-color-scale';
+import { ascending, descending } from '../../helpers/natural-sorting';
 
 import {
   ListView,
@@ -19,8 +21,8 @@ type AnalyticsDatapoint = {
   count: number,
 };
 
-type AnalyticsRollups = {
-  [spaceId: string]: DensitySpaceRollupMetrics,
+type AnalyticsMetrics = {
+  [spaceId: string]: DensitySpaceCountMetrics,
 };
 
 enum SelectionType {
@@ -52,17 +54,37 @@ type Query = {
 type QueryResult = {
   selectedSpaceIds: Array<DensitySpace["id"]>,
   datapoints: Array<AnalyticsDatapoint>,
-  rollups: AnalyticsRollups,
+  metrics: AnalyticsMetrics,
 };
 
-export enum AnalyticsMetric {
+export enum ResourceStatus {
+  IDLE = 'idle',
+  LOADING = 'loading',
+  COMPLETE = 'complete',
+  ERROR = 'error',
+}
+
+type ResourceIdle = { status: ResourceStatus.IDLE };
+type ResourceLoading = { status: ResourceStatus.LOADING };
+type ResourceComplete<T> = {
+  status: ResourceStatus.COMPLETE,
+  data: T,
+};
+type ResourceError = {
+  status: ResourceStatus.ERROR,
+  error: any,
+};
+
+type Resource<T> = ResourceIdle | ResourceLoading | ResourceComplete<T> | ResourceError;
+
+export enum AnalyticsFocusedMetric {
   ENTRANCES = 'ENTRANCES',
   MAX = 'MAX',
   UTILIZATION = 'UTILIZATION',
 }
 
 type AnalyticsReport = {
-  // TODO: I think this sould eventually be based off of a DensityReport, and `query` should be a
+  // TODO: I think this should eventually be based off of a DensityReport, and `query` should be a
   // field in a DensityReport too. But I don't think we should do that until we know exactly what
   // the `type` / `settings` fields will look like in this if these are going to be reports.
   id: string,
@@ -73,32 +95,21 @@ type AnalyticsReport = {
   // dashboardCount
   query: Query, // When in a DensityReport, this will need to be optional
 
-  queryResult: {
-    status: 'IDLE' | 'LOADING' | 'COMPLETE' | 'ERROR',
-    result: QueryResult
-    error?: Error,
-  },
+  queryResult: Resource<QueryResult>,
   hiddenSpaceIds: Array<DensitySpace["id"]>,
-  selectedMetric: AnalyticsMetric,
+  selectedMetric: AnalyticsFocusedMetric,
   lastRunTimestamp?: string,
 };
 
 type TableDataItem = {
   space: DensitySpace,
   isVisible: boolean,
-  metricData: DensitySpaceRollupMetrics,
+  metricData: DensitySpaceCountMetrics,
 };
 
 type SortDirection = 'asc' | 'desc' | 'none';
 type SortColumn = string | null;
-type SortFunction = (a:any, b:any) => number;
-
-
-// FIXME: Rename to AnalyticsColorScale and move to helpers
-function colorScale(spaceId: DensitySpace["id"]) {
-  // FIXME: Colors are not yet defined, please point this out in a review!
-  return '#ff0000';
-}
+type SortFunction = (a: any, b: any) => number;
 
 function formatSpaceType(spaceType: DensitySpaceTypes) {
   switch (spaceType) {
@@ -115,63 +126,6 @@ function formatSpaceType(spaceType: DensitySpaceTypes) {
   }
 }
 
-// FIXME: move to sort helpers
-const isMissing = (value: any) => {
-  // null or undefined
-  if (value == null) {
-    return true;
-  }
-  // empty string
-  if (value === '') {
-    return true;
-  }
-  // NaN
-  if (typeof value === 'number' && isNaN(value)) {
-    return true;
-  }
-  return false;
-}
-
-// Both of these functions sort missing values last, then apply natural sort order to remaining values
-// FIXME: move to sort helpers
-export function ascending(a: any, b: any) {
-  if (isMissing(b)) {
-    return isMissing(a) ? 0 : -1;
-  }
-  if (isMissing(a)) {
-    return 1;
-  }
-  if (a < b) {
-    return -1;
-  } else if (a > b) {
-    return 1;
-  } else if (a >= b) {
-    return 0;
-  } else {
-    return NaN;
-  }
-}
-
-// FIXME: move to sort helpers
-export function descending(a: any, b: any) {
-  if (isMissing(b)) {
-    return isMissing(a) ? 0 : -1;
-  }
-  if (isMissing(a)) {
-    return 1;
-  }
-  if (b < a) {
-    return -1;
-  } else if (b > a) {
-    return 1;
-  } else if (b >= a) {
-    return 0;
-  } else {
-    return NaN;
-  }
-}
-
-
 export default function AnalyticsTable({
   spaces,
   analyticsReport,
@@ -181,14 +135,19 @@ export default function AnalyticsTable({
   const [sorting, setSorting] = useState<[SortDirection, SortColumn, SortFunction]>(['none', null, () => 0])
   const [spaceSortDirection, spaceSortColumn, spaceSortFunction] = sorting;
 
-  const selectedSpaces: Array<DensitySpace> = analyticsReport.queryResult.selectedSpaceIds
+  // Skip rendering the table if the analytics query has not been loaded.
+  if (analyticsReport.queryResult.status !== ResourceStatus.COMPLETE) {
+    return null;
+  }
+
+  const selectedSpaces: Array<DensitySpace> = analyticsReport.queryResult.data.selectedSpaceIds
     .map(id => spaces.find(space => space.id === id))
     .filter(space => Boolean(space))
 
   const tableData: Array<TableDataItem> = selectedSpaces.map(space => ({
     space,
     isVisible: !analyticsReport.hiddenSpaceIds.includes(space.id),
-    metricData: analyticsReport.queryResult.rollups[space.id],
+    metricData: analyticsReport.queryResult.data.metrics[space.id],
   })).sort(spaceSortFunction);
 
   const formatMetricNumber = (n: any) => {
@@ -258,11 +217,11 @@ export default function AnalyticsTable({
               template={(x: TableDataItem) => (
                 <span
                   className={styles.tableName}
-                  style={{ color: colorScale(x.space.id) }}
+                  style={{ color: analyticsColorScale(x.space) }}
                 >
                   <Checkbox
                     checked={x.isVisible}
-                    color={colorScale(x.space.id)}
+                    color={analyticsColorScale(x.space)}
                     onChange={e => {
                       const visible = (e.target as HTMLInputElement).checked;
                       changeSpaceVisibility(x.space, visible);
@@ -284,7 +243,7 @@ export default function AnalyticsTable({
             />
 
             {/* VISITS */}
-            {analyticsReport.selectedMetric === AnalyticsMetric.ENTRANCES ? (
+            {analyticsReport.selectedMetric === AnalyticsFocusedMetric.ENTRANCES ? (
               <Fragment>
                 <ListViewColumn
                   id="Total Visits"
@@ -310,7 +269,7 @@ export default function AnalyticsTable({
             ) : null}
 
             {/* COUNT */}
-            {analyticsReport.selectedMetric === AnalyticsMetric.MAX ? (
+            {analyticsReport.selectedMetric === AnalyticsFocusedMetric.MAX ? (
               <Fragment>
                 <ListViewColumn
                   id="Max Count"
@@ -338,7 +297,7 @@ export default function AnalyticsTable({
             ) : null}
 
             {/* UTILIZATION */}
-            {analyticsReport.selectedMetric === AnalyticsMetric.UTILIZATION ? (
+            {analyticsReport.selectedMetric === AnalyticsFocusedMetric.UTILIZATION ? (
               <Fragment>
                 <ListViewColumn
                   id="Max Utilization"

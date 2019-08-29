@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import AnalyticsTable, { AnalyticsMetric } from './index';
+import AnalyticsTable, { AnalyticsFocusedMetric, ResourceStatus } from './index';
 import { RangeType } from '../../helpers/space-time-utilities';
 
 import spaces from './spaces.json';
@@ -44,7 +44,7 @@ const QUERY = {
 const QUERY_RESULT = {
   datapoints: [],
   selectedSpaceIds: ['spc_631284005076992363', 'spc_631245341374546129', 'spc_631011907855188085'],
-  rollups: {
+  metrics: {
     'spc_631284005076992363': {
       count: {
         average: 10,
@@ -190,9 +190,9 @@ const ANALYTICS_REPORT = {
   id: 'rpt_xxx',
   name: 'My cool report',
   query: QUERY,
-  queryResult: QUERY_RESULT,
+  queryResult: {status: ResourceStatus.COMPLETE, data: QUERY_RESULT},
   hiddenSpaceIds: [],
-  selectedMetric: AnalyticsMetric.ENTRANCES,
+  selectedMetric: AnalyticsFocusedMetric.ENTRANCES,
   lastRunTimestamp: '2019-01-01T00:00:00Z',
 };
 

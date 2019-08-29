@@ -272,7 +272,7 @@ export type DensitySpaceCountBucketIntervalAnalytics = {
   utilization: number,
 };
 
-export type DensitySpaceRollupMetrics = {
+export type DensitySpaceCountMetrics = {
   count: {
     average: number,
     max: {
@@ -282,7 +282,7 @@ export type DensitySpaceRollupMetrics = {
     min: {
       value: number,
       timestamp: string,
-    }
+    },
   },
   entrances: {
     average: number,
@@ -315,9 +315,9 @@ export type DensitySpaceRollupMetrics = {
     min: {
       value: number,
       timestamp: string,
-    }
-  }
-}
+    },
+  },
+};
 
 
 // Service
