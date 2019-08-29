@@ -251,6 +251,74 @@ export type DensityAssignedTeam = {
 };
 
 // Counts
+export type DensitySpaceCountBucket = {
+  count: number,
+  timestamp: string,
+  interval: DensitySpaceCountBucketInterval,
+};
+
+export type DensitySpaceCountBucketInterval = {
+  start: string,
+  end: string,
+  analytics: DensitySpaceCountBucketIntervalAnalytics,
+};
+
+export type DensitySpaceCountBucketIntervalAnalytics = {
+  events: number,
+  min: number,
+  max: number,
+  entrances: number,
+  exits: number,
+  utilization: number,
+};
+
+export type DensitySpaceRollupMetrics = {
+  count: {
+    average: number,
+    max: {
+      value: number,
+      timestamp: string,
+    },
+    min: {
+      value: number,
+      timestamp: string,
+    }
+  },
+  entrances: {
+    average: number,
+    peak: {
+      value: number,
+      timestamp: string,
+    },
+    total: number,
+  },
+  exits: {
+    average: number,
+    peak: {
+      value: number,
+      timestamp: string,
+    },
+    total: number,
+  },
+  targetUtilization: {
+    average: number,
+    durations: {
+      0: string,
+      40: string,
+      80: string,
+      100: string,
+    },
+    max: {
+      value: number,
+      timestamp: string,
+    },
+    min: {
+      value: number,
+      timestamp: string,
+    }
+  }
+}
+
 
 // Service
 export type DensityService = {

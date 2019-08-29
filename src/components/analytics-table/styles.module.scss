@@ -1,0 +1,24 @@
+@import "@density/ui/variables/fonts.scss";
+
+.tableName {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  width: 100%;
+}
+.tableNameHeader {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+.tableNameLabel {
+  display: inline-block;
+  width: 100%;
+  overflow: hidden;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  user-select: none;
+  margin-left: 16px;
+  font-size: 14px;
+}
