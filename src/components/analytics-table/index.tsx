@@ -2,8 +2,6 @@ import React, { Fragment, useState } from 'react';
 import styles from './styles.module.scss';
 import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics } from '../../types';
 import { formatSpaceFunction } from '../../helpers/space-function-choices';
-import { DateRange } from '../../helpers/space-time-utilities';
-import { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
 import { ascending, descending } from '../../helpers/natural-sorting';
 
@@ -13,93 +11,10 @@ import {
   getNextSortDirection,
 } from '@density/ui';
 import Checkbox from '../checkbox';
-
-type AnalyticsDatapoint = {
-  spaceId: string,
-  startLocalEpochTime: number,
-  endLocalEpochTime: number,
-  count: number,
-};
-
-type AnalyticsMetrics = {
-  [spaceId: string]: DensitySpaceCountMetrics,
-};
-
-enum SelectionType {
-  SPACE = 'SPACE',
-}
-interface Selection {
-  type: SelectionType
-}
-
-enum FilterType { }
-interface Filter {
-  type: FilterType,
-}
-
-// an example type of Selection (the only one we have so far)
-interface SpaceSelection extends Selection {
-  type: SelectionType.SPACE,
-  field: string,
-  values: string[]
-}
-
-type Query = {
-  timeframe: DateRange,
-  granularity: AnalyticsInterval,
-  selections: Selection[],
-  filters: Filter[],
-};
-
-type QueryResult = {
-  selectedSpaceIds: Array<DensitySpace["id"]>,
-  datapoints: Array<AnalyticsDatapoint>,
-  metrics: AnalyticsMetrics,
-};
-
-export enum ResourceStatus {
-  IDLE = 'idle',
-  LOADING = 'loading',
-  COMPLETE = 'complete',
-  ERROR = 'error',
-}
-
-type ResourceIdle = { status: ResourceStatus.IDLE };
-type ResourceLoading = { status: ResourceStatus.LOADING };
-type ResourceComplete<T> = {
-  status: ResourceStatus.COMPLETE,
-  data: T,
-};
-type ResourceError = {
-  status: ResourceStatus.ERROR,
-  error: any,
-};
-
-type Resource<T> = ResourceIdle | ResourceLoading | ResourceComplete<T> | ResourceError;
-
-export enum AnalyticsFocusedMetric {
-  ENTRANCES = 'ENTRANCES',
-  MAX = 'MAX',
-  UTILIZATION = 'UTILIZATION',
-}
-
-type AnalyticsReport = {
-  // TODO: I think this should eventually be based off of a DensityReport, and `query` should be a
-  // field in a DensityReport too. But I don't think we should do that until we know exactly what
-  // the `type` / `settings` fields will look like in this if these are going to be reports.
-  id: string,
-  name: string,
-  // type
-  // settings
-  // creatorEmail
-  // dashboardCount
-  query: Query, // When in a DensityReport, this will need to be optional
-
-  queryResult: Resource<QueryResult>,
-  hiddenSpaceIds: Array<DensitySpace["id"]>,
-  selectedMetric: AnalyticsFocusedMetric,
-  lastRunTimestamp?: string,
-};
+import {
+  ResourceStatus,
+  AnalyticsFocusedMetric,
+} from '../../types/analytics';
 
 type TableDataItem = {
   space: DensitySpace,

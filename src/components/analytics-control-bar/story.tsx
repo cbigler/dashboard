@@ -12,7 +12,7 @@ const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
 import AnalyticsControlBar from './index';
-import { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
+import { QueryInterval } from '../../types/analytics';
 import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
 function State({ initialState, children }) {
@@ -34,7 +34,7 @@ function State({ initialState, children }) {
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
     <State initialState={{
-      interval: AnalyticsInterval.HOUR,
+      interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
       filters: [],
     }}>
@@ -58,7 +58,7 @@ storiesOf('Analytics Control Bar', module)
   .add('With actions', () => (
     <State initialState={{
       filters: [],
-      interval: AnalyticsInterval.HOUR,
+      interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
     }}>
       {(state, setState) => (
@@ -102,7 +102,7 @@ storiesOf('Analytics Control Bar', module)
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
       ],
-      interval: AnalyticsInterval.HOUR,
+      interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
     }}>
       {(state, setState) => (

@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
-import styles from './styles.module.scss';
 
+import { QueryInterval } from '../../types/analytics';
 import Filter, { FilterBold } from '../analytics-control-bar-filter';
 import { ItemList } from '../analytics-control-bar-utilities';
 
-export enum AnalyticsInterval {
-  DAY = 'DAY',
-  HOUR = 'HOUR',
-  FIFTEEN_MINUTES = 'FIFTEEN_MINUTES',
-}
+import styles from './styles.module.scss';
 
 const INTERVAL_CHOICES = [
-  { id: AnalyticsInterval.DAY, label: 'Day' },
-  { id: AnalyticsInterval.HOUR, label: 'Hour' },
-  { id: AnalyticsInterval.FIFTEEN_MINUTES, label: '15 Minutes' },
+  { id: QueryInterval.ONE_DAY, label: 'Day' },
+  { id: QueryInterval.ONE_HOUR, label: 'Hour' },
+  { id: QueryInterval.FIFTEEN_MINUTES, label: '15 Minutes' },
 ];
 
 type AnalyticsIntervalSelectorProps = {
-  value: AnalyticsInterval,
-  onChange: (choiceId: AnalyticsInterval) => void
+  value: QueryInterval,
+  onChange: (choiceId: QueryInterval) => void
 }
 
 const AnalyticsIntervalSelector: React.FunctionComponent<AnalyticsIntervalSelectorProps> = function AnalyticsIntervalSelector({ value, onChange }) {
@@ -38,7 +34,7 @@ const AnalyticsIntervalSelector: React.FunctionComponent<AnalyticsIntervalSelect
         <ItemList
           choices={INTERVAL_CHOICES}
           onClick={choice => {
-            onChange(choice.id as AnalyticsInterval);
+            onChange(choice.id as QueryInterval);
             // Blur the element that was selected if there was a focused element
             if (document.activeElement) { (document.activeElement as HTMLElement).blur(); }
             setOpen(false);

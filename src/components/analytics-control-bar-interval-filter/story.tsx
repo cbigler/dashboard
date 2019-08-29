@@ -3,7 +3,8 @@ import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
-import AnalyticsIntervalFilter, { AnalyticsInterval } from './index';
+import AnalyticsIntervalFilter from './index';
+import { QueryInterval } from '../../types/analytics';
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);
@@ -23,7 +24,7 @@ function State({ initialState, children }) {
 
 storiesOf('Analytics Control Bar / Interval Filter', module)
   .add('Default', () => (
-    <State initialState={AnalyticsInterval.DAY}>
+    <State initialState={QueryInterval.ONE_DAY}>
       {(state, setState) => (
         <AnalyticsIntervalFilter
           value={state}

@@ -11,7 +11,8 @@ import AnalyticsControlBarSpaceFilter, {
   EMPTY_FILTER,
 } from '../analytics-control-bar-space-filter';
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
-import AnalyticsIntervalSelector, { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
+import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
+import { QueryInterval } from '../../types/analytics';
 
 import { Icons } from '@density/ui';
 
@@ -21,8 +22,8 @@ type AnalyticsControlBarProps = {
   filters: Array<AnalyticsSpaceFilter>,
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
 
-  interval: AnalyticsInterval,
-  onChangeInterval: (interval: AnalyticsInterval) => void,
+  interval: QueryInterval,
+  onChangeInterval: (interval: QueryInterval) => void,
 
   dateRange: DateRange | null,
   onChangeDateRange: (dateRange: DateRange | null) => void,
