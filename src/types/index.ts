@@ -7,6 +7,27 @@ export enum DensitySpaceTypes {
 	CAMPUS = 'campus',
 };
 
+export enum DensitySpaceFunction {
+  BREAK_ROOM = 'break_room',
+  CAFE = 'cafe',
+  COLLABORATION = 'collaboration',
+  CONFERENCE_ROOM = 'conference_room',
+  EVENT_SPACE = 'event_space',
+  FOCUS_QUIET = 'focus_quiet',
+  GYM = 'gym',
+  KITCHEN = 'kitchen',
+  LIBRARY = 'library',
+  LOUNGE = 'lounge',
+  MEETING_ROOM = 'meeting_room',
+  OFFICE = 'office',
+  PHONE_BOOTH = 'phone_booth',
+  RECEPTION = 'reception',
+  RESTROOM = 'restroom',
+  THEATER = 'theater',
+  WELLNESS_ROOM = 'wellness_room',
+  // Note, "OTHER" is not in here since typescript does not allow "null" in enums
+}
+
 export type DensitySpace = {
   id: string,
   name: string,
@@ -25,7 +46,7 @@ export type DensitySpace = {
     name: string,
     sensorPlacement: 1 | -1,
   }>,
-  function?: string,
+  function: DensitySpaceFunction | null,
   tags: Array<string>,
   addressLine1: string | null,
   addressLine2: string | null,
@@ -230,6 +251,74 @@ export type DensityAssignedTeam = {
 };
 
 // Counts
+export type DensitySpaceCountBucket = {
+  count: number,
+  timestamp: string,
+  interval: DensitySpaceCountBucketInterval,
+};
+
+export type DensitySpaceCountBucketInterval = {
+  start: string,
+  end: string,
+  analytics: DensitySpaceCountBucketIntervalAnalytics,
+};
+
+export type DensitySpaceCountBucketIntervalAnalytics = {
+  events: number,
+  min: number,
+  max: number,
+  entrances: number,
+  exits: number,
+  utilization: number,
+};
+
+export type DensitySpaceCountMetrics = {
+  count: {
+    average: number,
+    max: {
+      value: number,
+      timestamp: string,
+    },
+    min: {
+      value: number,
+      timestamp: string,
+    },
+  },
+  entrances: {
+    average: number,
+    peak: {
+      value: number,
+      timestamp: string,
+    },
+    total: number,
+  },
+  exits: {
+    average: number,
+    peak: {
+      value: number,
+      timestamp: string,
+    },
+    total: number,
+  },
+  targetUtilization: {
+    average: number,
+    durations: {
+      0: string,
+      40: string,
+      80: string,
+      100: string,
+    },
+    max: {
+      value: number,
+      timestamp: string,
+    },
+    min: {
+      value: number,
+      timestamp: string,
+    },
+  },
+};
+
 
 // Service
 export type DensityService = {
