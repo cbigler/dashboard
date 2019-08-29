@@ -16,7 +16,12 @@ const INTERVAL_CHOICES = [
   { id: AnalyticsInterval.FIFTEEN_MINUTES, label: '15 Minutes' },
 ];
 
-export default function AnalyticsIntervalSelector({ value, onChange }) {
+type AnalyticsIntervalSelectorProps = {
+  value: AnalyticsInterval,
+  onChange: (choiceId: AnalyticsInterval) => void
+}
+
+const AnalyticsIntervalSelector: React.FunctionComponent<AnalyticsIntervalSelectorProps> = function AnalyticsIntervalSelector({ value, onChange }) {
   const [ open, setOpen ] = useState(false);
 
   const choice = INTERVAL_CHOICES.find(choice => choice.id === value);
@@ -33,7 +38,7 @@ export default function AnalyticsIntervalSelector({ value, onChange }) {
         <ItemList
           choices={INTERVAL_CHOICES}
           onClick={choice => {
-            onChange(choice.id);
+            onChange(choice.id as AnalyticsInterval);
             // Blur the element that was selected if there was a focused element
             if (document.activeElement) { (document.activeElement as HTMLElement).blur(); }
             setOpen(false);
@@ -43,3 +48,5 @@ export default function AnalyticsIntervalSelector({ value, onChange }) {
     </div>
   );
 };
+
+export default AnalyticsIntervalSelector;

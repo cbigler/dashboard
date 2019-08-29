@@ -39,21 +39,53 @@ storiesOf('Analytics Control Bar', module)
       filters: [],
     }}>
       {(state, setState) => (
-        <AnalyticsControlBar
-          filters={state.filters}
-          onChangeFilters={filters => setState({ ...state, filters })}
+      <AnalyticsControlBar
+        filters={state.filters}
+        onChangeFilters={filters => setState({ ...state, filters })}
 
-          interval={state.interval}
-          onChangeInterval={interval => setState({ ...state, interval })}
+        interval={state.interval}
+        onChangeInterval={interval => setState({ ...state, interval })}
 
-          dateRange={state.dateRange}
-          onChangeDateRange={dateRange => setState({ ...state, dateRange })}
+        dateRange={state.dateRange}
+        onChangeDateRange={dateRange => setState({ ...state, dateRange })}
 
-          spaces={SPACES}
-          formattedHierarchy={FORMATTED_HIERARCHY}
-        />
+        spaces={SPACES}
+        formattedHierarchy={FORMATTED_HIERARCHY}
+      />
       )}
     </State>
+  ))
+  .add('With actions', () => (
+    <State initialState={{
+      filters: [],
+      interval: AnalyticsInterval.HOUR,
+      dateRange: DATE_RANGES.LAST_30_DAYS,
+    }}>
+      {(state, setState) => (
+      <AnalyticsControlBar
+        filters={state.filters}
+        onChangeFilters={filters => {
+          action('onChangeFilters')(filters)
+          setState({ ...state, filters })
+        }}
+
+        interval={state.interval}
+        onChangeInterval={interval => {
+          action('onChangeInterval')(interval)
+          setState({ ...state, interval })
+        }}
+
+        dateRange={state.dateRange}
+        onChangeDateRange={dateRange => {
+          action('onChangeDateRange')(dateRange)
+          setState({ ...state, dateRange })
+        }}
+
+        spaces={SPACES}
+        formattedHierarchy={FORMATTED_HIERARCHY}
+      />
+      )}
+    </State>  
   ))
   .add('With a lot of space filters', () => (
     <State initialState={{

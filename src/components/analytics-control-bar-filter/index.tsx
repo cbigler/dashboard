@@ -23,7 +23,7 @@ type FilterProps = {
   onMouseLeave?: (string) => void,
 };
 
-export default function Filter(props: FilterProps) {
+const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
   const {
     text,
     children,
@@ -106,3 +106,5 @@ export function FilterBold({children}) {
     <span className={styles.filterBold}>{children}</span>
   );
 }
+
+export default Filter;

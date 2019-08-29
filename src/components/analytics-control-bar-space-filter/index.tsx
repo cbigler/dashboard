@@ -130,7 +130,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
   return text;
 }
 
-export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
+const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = function SpaceFilter(props) {
   const {
     filter,
 
@@ -297,3 +297,5 @@ export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
     </div>
   );
 }
+
+export default SpaceFilter;

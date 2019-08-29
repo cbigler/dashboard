@@ -1,4 +1,5 @@
 import React, { useState, Fragment } from 'react';
+import PropTypes from 'prop-types';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
@@ -21,16 +22,16 @@ type AnalyticsControlBarProps = {
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
 
   interval: AnalyticsInterval,
-  onChangeInterval: (AnalyticsInterval) => void,
+  onChangeInterval: (interval: AnalyticsInterval) => void,
 
   dateRange: DateRange | null,
   onChangeDateRange: (dateRange: DateRange | null) => void,
-
+  
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
 }
 
-export default function AnalyticsControlBar({
+const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = function AnalyticsControlBar({
   filters,
   onChangeFilters,
 
@@ -42,7 +43,7 @@ export default function AnalyticsControlBar({
 
   spaces,
   formattedHierarchy,
-}: AnalyticsControlBarProps) {
+}) {
   return (
     <div className={styles.analyticsControlBar}>
       <div className={styles.analyticsControlBarSectionWrap}>
@@ -160,3 +161,5 @@ function AnalyticsSpaceFilterBuilder({
     </Fragment>
   );
 }
+
+export default AnalyticsControlBar;

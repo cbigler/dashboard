@@ -178,7 +178,7 @@ type DateRangeFilterProps = {
   onChange: (DateRange) => void,
 };
 
-export default function AnalyticsControlBarDateRangeFilter({ value, onChange }: DateRangeFilterProps) {
+const AnalyticsControlBarDateRangeFilter: React.FunctionComponent<DateRangeFilterProps> = function AnalyticsControlBarDateRangeFilter({ value, onChange }) {
   const [ open, setOpen ] = useState(false);
 
   let text = 'No date range selected';
@@ -274,3 +274,5 @@ export default function AnalyticsControlBarDateRangeFilter({ value, onChange }: 
     </div>
   );
 }
+
+export default AnalyticsControlBarDateRangeFilter;
