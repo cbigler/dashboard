@@ -261,9 +261,7 @@ export default function AnalyticsTable({
                   id="Peak Visits"
                   width={110}
                   valueTemplate={(x: TableDataItem) => x.metricData.entrances.peak.value}
-                  template={(x: TableDataItem) => <span>
-                    {formatMetricNumber(x.metricData.entrances.peak.value)} {/*<span className={styles.tableMetricMeta}>@ {formatMetricDate(x.metricData.entrances.peak.timestamp)}</span>*/}
-                  </span>}
+                  template={(x: TableDataItem) => formatMetricNumber(x.metricData.entrances.peak.value)}
                 />
               </Fragment>
             ) : null}
@@ -275,17 +273,13 @@ export default function AnalyticsTable({
                   id="Max Count"
                   width={110}
                   valueTemplate={(x: TableDataItem) => x.metricData.count.max.value}
-                  template={(x: TableDataItem) => <span>
-                    {formatMetricNumber(x.metricData.count.max.value)} {/*<span className={styles.tableMetricMeta}>@ {formatMetricDate(x.metricData.count.max.timestamp)}</span>*/}
-                  </span>}
+                  template={(x: TableDataItem) => formatMetricNumber(x.metricData.count.max.value)}
                 />
                 <ListViewColumn
                   id="Min Count"
                   width={110}
                   valueTemplate={(x: TableDataItem) => x.metricData.count.min.value}
-                  template={(x: TableDataItem) => <span>
-                    {formatMetricNumber(x.metricData.count.min.value)} {/*<span className={styles.tableMetricMeta}>@ {formatMetricDate(x.metricData.count.min.timestamp)}</span>*/}
-                  </span>}
+                  template={(x: TableDataItem) => formatMetricNumber(x.metricData.count.min.value)}
                 />
                 <ListViewColumn
                   id="Avg Count"
