@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
@@ -29,6 +29,8 @@ const TabTarget: React.FunctionComponent<{
     <div
       className={classnames(styles.tabTarget, {[styles.tabTargetActive]: props.isActive})}
       onClick={() => props.onClick()}
+      // Cancel mouse down events within the tab target as they trigger the focus state
+      onMouseDown={e => e.preventDefault()}
       onKeyDown={e => onHandleKeyboardFocus(e, props.onClick)}
       tabIndex={0}
       aria-label={props.isSaved ? `${props.title} (Saved)` : props.title}
@@ -37,14 +39,17 @@ const TabTarget: React.FunctionComponent<{
         <Icons.SaveOutline
           width={20}
           height={20}
-          color={colorVariables.brandPrimary}
+          color={props.isSaved ? colorVariables.brandPrimary : colorVariables.grayDark}
         />
         <div className={styles.tabTargetTitle}>
           {props.title}
         </div>
         <button
           className={styles.tabTargetClose}
-          onClick={() => props.onClose()}
+          onClick={e => {
+            props.onClose();
+            e.stopPropagation();
+          }}
           aria-label={`Delete ${props.title}`}
           onKeyDown={e => onHandleKeyboardFocus(e, props.onClose)}
         >
@@ -68,12 +73,14 @@ const QueryTabList: React.FunctionComponent<{
   onCloseReport: (report: AnalyticsReport) => void,
   onAddNewReport: () => void,
 }> = ({reports, activeReportId, onChangeActiveReport, onCloseReport, onAddNewReport}) => {
-
+  const list = useRef<HTMLDivElement | null>(null);
   return (
-    <div className={styles.tabTargetList}>
+    <div className={styles.tabTargetList} ref={list}>
       <div
         className={classnames(styles.tabTarget, styles.tabTargetHome, {[styles.tabTargetActive]: !activeReportId})}
         onClick={() => onChangeActiveReport(null)}
+        // Cancel mouse down events within the tab target as they trigger the focus state
+        onMouseDown={e => e.preventDefault()}
         onKeyDown={e => onHandleKeyboardFocus(e, () => onChangeActiveReport(null))}
         role="button"
         tabIndex={0}
@@ -88,9 +95,13 @@ const QueryTabList: React.FunctionComponent<{
             key={openQuery.id}
             isActive={openQuery.id === activeReportId}
             isSaved={openQuery.isSaved}
-            onClick={() => onChangeActiveReport(openQuery.id)}
+            onClick={() => {
+              if (openQuery.id !== activeReportId) {
+                onChangeActiveReport(openQuery.id)
+              }
+            }}
             onClose={() => onCloseReport(openQuery.id)}
-            title={openQuery.title || 'Untitled Report'}
+            title={openQuery.name || 'Untitled Report'}
           />
         )
       })}
@@ -101,13 +112,7 @@ const QueryTabList: React.FunctionComponent<{
           onAddNewReport();
           e.target.blur();
         }}
-        onKeyDown={(e: React.KeyboardEvent) => onHandleKeyboardFocus(e, () => {
-          onAddNewReport();
-          const target = e.target;
-          setTimeout(() => {
-            target.previousElementSibling.focus();
-          }, 100);
-        })}
+        onKeyDown={(e: React.KeyboardEvent) => onHandleKeyboardFocus(e, onAddNewReport)}
         tabIndex={0}
       >
         <div className={styles.addReportButtonIcon}>
