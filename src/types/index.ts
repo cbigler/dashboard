@@ -7,6 +7,27 @@ export enum DensitySpaceTypes {
 	CAMPUS = 'campus',
 };
 
+export enum DensitySpaceFunction {
+  BREAK_ROOM = 'break_room',
+  CAFE = 'cafe',
+  COLLABORATION = 'collaboration',
+  CONFERENCE_ROOM = 'conference_room',
+  EVENT_SPACE = 'event_space',
+  FOCUS_QUIET = 'focus_quiet',
+  GYM = 'gym',
+  KITCHEN = 'kitchen',
+  LIBRARY = 'library',
+  LOUNGE = 'lounge',
+  MEETING_ROOM = 'meeting_room',
+  OFFICE = 'office',
+  PHONE_BOOTH = 'phone_booth',
+  RECEPTION = 'reception',
+  RESTROOM = 'restroom',
+  THEATER = 'theater',
+  WELLNESS_ROOM = 'wellness_room',
+  // Note, "OTHER" is not in here since typescript does not allow "null" in enums
+}
+
 export type DensitySpace = {
   id: string,
   name: string,
@@ -25,7 +46,7 @@ export type DensitySpace = {
     name: string,
     sensorPlacement: 1 | -1,
   }>,
-  function?: string,
+  function: DensitySpaceFunction | null,
   tags: Array<string>,
   addressLine1: string | null,
   addressLine2: string | null,
