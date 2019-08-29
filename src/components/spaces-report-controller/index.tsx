@@ -30,7 +30,7 @@ import { SpaceReportControlTypes, ISpaceReportController } from '../../types/spa
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
 import { SPACES_BACKGROUND } from '../spaces';
-import { SPACE_FUNCTION_CHOICES } from '../../components/admin-locations-detail-modules/general-info';
+import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
 
 function getLabelForSpaceFunction(id) {
   id = id || 'no_match';
