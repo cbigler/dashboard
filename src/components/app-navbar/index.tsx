@@ -144,14 +144,14 @@ export default function AppNavbar({
             selected={['SPACES', 'SPACES_SPACE_DETAIL', 'SPACES_SPACE_TRENDS', 'SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={true}
             path="#/spaces"
-            icon={<Icons.Building />}
+            icon={<Icons.Space />}
             text="Spaces"
           /> : null}
           {stringToBoolean(settings.dashboardEnabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
             showOnMobile={true}
             path="#/dashboards"
-            icon={<Icons.Dashboards />}
+            icon={<Icons.Dashboard />}
             text="Dashboards"
           /> : null}
           <AppNavbarItem
@@ -172,23 +172,9 @@ export default function AppNavbar({
                 style={{cursor: 'pointer', opacity: 1}}
               >
                 <span onClick={onClickImpersonate}>
-                  <span className={styles.appNavbarIcon}>{
-                    <svg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'>
-                      <g id='Symbols' fill='none' fillRule='evenodd'>
-                        <g id='navbar-/-icon-/-impersonation-(fill)'>
-                          <g id='IconSecurityFill'>
-                            <rect id='bounds' fillOpacity='0' fill='#E3E3E6' width='20' height='20'
-                            />
-                            <polygon id='Path' fill={colorVariables.brandPrimary} fillRule='nonzero' points='10 0.209430585 19.910252 3.51284792 16.6496836 15.4682654 10 19.9013878 3.35031642 15.4682654 0.0897480056 3.51284792'
-                            />
-                            <circle id='Oval' fill='#FFF' cx='10' cy='7' r='3' />
-                            <path d='M5,14.5 C5,14.3338815 5.01620211,13.1715473 5.04711229,13.0144913 C5.27311546,11.866159 6.28540659,11 7.5,11 L12.5,11 C13.7163773,11 14.7298576,11.8687051 14.9538784,13.0195528 C14.984144,13.1750342 15,14.3356654 15,14.5 L10,18 L5,14.5 Z'
-                            id='Path' fill='#FFF' />
-                          </g>
-                        </g>
-                      </g>
-                    </svg>
-                  }</span>
+                  <span className={styles.appNavbarIcon}>
+                    <Icons.ImpersonateOn color="primary" />
+                  </span>
                   {getUserLabel(impersonate.selectedUser)}
                 </span>
               </li>
@@ -196,7 +182,7 @@ export default function AppNavbar({
                 selected={false}
                 showOnMobile={true}
                 onClick={onClickImpersonate}
-                icon={<Icons.Security />}
+                icon={<Icons.ImpersonateOff />}
                 text="Impersonate"
                 style={{cursor: 'pointer'}}
               />
@@ -244,7 +230,7 @@ export default function AppNavbar({
               {can(user, PERMISSION_CODES.developerToolsManage) ? <AppNavbarMenuItem
                 path="#/admin/integrations"
                 text="Integrations"
-                icon={<Icons.Filters />}
+                icon={<Icons.Integrations2 />}
                 selected={['ADMIN_INTEGRATIONS', 'ADMIN_SPACE_MAPPINGS'].includes(page)}
               /> : null}
               {can(user, PERMISSION_CODES.developerToolsManage) ?
@@ -280,7 +266,7 @@ export default function AppNavbar({
             <AppNavbarMenuItem
               path="#/logout"
               text="Logout"
-              icon={<Icons.Logout />}
+              icon={<Icons.Power />}
               selected={false}
             />
           </AppNavbarMenu>

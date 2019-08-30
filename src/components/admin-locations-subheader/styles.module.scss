@@ -30,7 +30,11 @@
 }
 .subtitle.hover { text-decoration: none; }
 
-.manageLinkWrapper { margin-right: 24px; }
+.manageLinkWrapper {
+  display: flex;
+  align-items: center;
+  margin-right: 24px;
+}
 .manageLink {
   font-weight: bold;
   font-size: 14px;

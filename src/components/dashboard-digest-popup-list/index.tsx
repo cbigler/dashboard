@@ -84,7 +84,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
         >
           <Icons.Mail color={colorVariables.brandPrimary} />
           <span className={styles.dashboardDigestListButtonText}>Email</span>
-          <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimary} />
+          <Icons.ChevronDown color={colorVariables.brandPrimary} />
         </button>
 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>

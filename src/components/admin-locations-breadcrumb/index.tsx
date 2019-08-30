@@ -15,7 +15,7 @@ export default function AdminLocationsBreadcrumb({ spaces, space }) {
     return (
       <div className={styles.breadcrumb}>
         <a href={`#/admin/locations`} className={styles.item}>Locations</a>
-        <Icons.ChevronRight width={12} height={12} />
+        <Icons.ChevronRight />
 
         {space.ancestry.slice().reverse().map((s, index) => {
           return (
@@ -25,16 +25,13 @@ export default function AdminLocationsBreadcrumb({ spaces, space }) {
                 key={s.id}
                 className={styles.item}
               >{s.name}</a>
-              <Icons.ChevronRight width={12} height={12} />
+              <Icons.ChevronRight />
             </Fragment>
           );
         })}
 
         <span className={styles.item}>
-          <BreadcrumbSiblingSelector selectedSpace={space} spaces={spaces}>
-            <span className={styles.finalText}>{space.name}</span>
-            <Icons.ChevronDown width={12} height={12} />
-          </BreadcrumbSiblingSelector>
+          <BreadcrumbSiblingSelector selectedSpace={space} spaces={spaces} />
         </span>
       </div>
     );
@@ -48,7 +45,6 @@ export default function AdminLocationsBreadcrumb({ spaces, space }) {
 }
 
 type BreadcrumbSiblingSelectorProps = {
-  children: React.ReactNode,
   spaces: {
     view: 'VISIBLE' | 'ERROR' | 'LOADING',
     data: Array<DensitySpace>,
@@ -87,7 +83,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
 
   render() {
     const { filterText, activeItemIndex, visible } = this.state;
-    const { selectedSpace, spaces, children } = this.props;
+    const { selectedSpace, spaces } = this.props;
 
     const rawItems = spaces.data.filter(s => s.parentId === selectedSpace.parentId);
     const items = nameFilter(rawItems, filterText);
@@ -103,7 +99,10 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
           <span
             className={classnames(styles.target, {[styles.visible]: visible})}
             onClick={() => visible ? this.onHide() : this.onShow()}
-          >{children}</span>
+          >
+            <span className={styles.finalText}>{selectedSpace.name}</span>
+            <Icons.ChevronDown />
+          </span>
           <div className={styles.popup} style={{
             opacity: visible ? 1 : 0,
             pointerEvents: visible ? 'auto' : 'none',

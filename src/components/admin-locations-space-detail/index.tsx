@@ -158,7 +158,9 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
                   <ListViewColumn
                     width={60}
                     align="right"
-                    template={item => <span style={{paddingRight: 24}}><Icons.ArrowRight /></span>}
+                    template={item => <span style={{paddingRight: 24}}>
+                      <Icons.ArrowRight width={17} height={17} />
+                    </span>}
                   />
                 </ListView>
               </div>

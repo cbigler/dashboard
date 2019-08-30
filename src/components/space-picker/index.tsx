@@ -181,7 +181,7 @@ export default function SpacePicker({
               ) : null}
               {item.space.spaceType === 'floor' ? (
                 <span className={styles.itemIcon}>
-                  <Icons.Folder
+                  <Icons.Floor
                     color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
                   />
                 </span>
@@ -274,11 +274,7 @@ export class SpacePickerDropdown extends Component<SpacePickerDropdownProps, {op
               </span>
             )}
             <span className={classnames(styles.chevron, {[styles.flip]: opened})}>
-              <Icons.ChevronDown
-                width={12}
-                height={12}
-                color={colorVariables.brandPrimary}
-              />
+              <Icons.ChevronDown color="primary" />
             </span>
           </div>
 

@@ -22,7 +22,7 @@ export default async function fetchAllObjects<T = any>(
 ): Promise<Array<T>> {
   const opts: FetchAllObjectsOptions = {
     cache: true,
-    cacheExpiryTimeMs: 5000,
+    cacheExpiryTimeMs: 15000,
     params: {},
     body: {},
     ...options,
@@ -61,7 +61,7 @@ export async function fetchObject<T = any>(
 ): Promise<T>  {
   const opts: FetchAllObjectsOptions = {
     cache: true,
-    cacheExpiryTimeMs: 5000,
+    cacheExpiryTimeMs: 15000,
     params: {},
     body: {},
     ...options,
