@@ -74,6 +74,7 @@ const QueryTabList: React.FunctionComponent<{
   onAddNewReport: () => void,
 }> = ({reports, activeReportId, onChangeActiveReport, onCloseReport, onAddNewReport}) => {
   const list = useRef<HTMLDivElement | null>(null);
+  const addButton = useRef<HTMLDivElement | null>(null);
   return (
     <div className={styles.tabTargetList} ref={list}>
       <div
@@ -108,9 +109,12 @@ const QueryTabList: React.FunctionComponent<{
       <div
         role="button"
         className={styles.addReportButton}
+        ref={addButton}
         onClick={e => {
           onAddNewReport();
-          (e.target as HTMLElement).blur();
+          if (addButton.current) {
+            addButton.current.blur();
+          }
         }}
         onKeyDown={(e: React.KeyboardEvent) => onHandleKeyboardFocus(e, onAddNewReport)}
         tabIndex={0}
