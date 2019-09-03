@@ -72,6 +72,7 @@ import routeTransitionAdminDeviceStatus from './actions/route-transition/admin-d
 import routeTransitionAdminLocations from './actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './actions/route-transition/admin-locations-new';
+import { AnalyticsActionType } from './types/analytics';
 
 import sessionTokenSet from './actions/session-token/set';
 import incrementResizeCounter from './actions/miscellaneous/increment-resize-counter';
@@ -211,6 +212,7 @@ router.addRoute('admin/locations/create/:spaceType', (spaceType) => routeTransit
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(id));
 router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => routeTransitionAdminLocationsNew(id, spaceType));
+router.addRoute('analytics', () => ({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
 
 // Add a helper into the global namespace to allow changing of settings flags on the fly.
 (window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);

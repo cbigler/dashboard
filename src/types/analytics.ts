@@ -6,6 +6,22 @@ import {
 import { DateRange } from '../helpers/space-time-utilities';
 
 
+
+export enum AnalyticsActionType {
+  ROUTE_TRANSITION_ANALYTICS = 'ROUTE_TRANSITION_ANALYTICS',
+};
+
+export type AnalyticsAction = {
+  type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS,
+};
+
+
+export type AnalyticsState = Any<FixInReview>;
+
+
+
+
+
 export enum QueryInterval {
   ONE_WEEK = '1w',
   ONE_DAY = '1d',

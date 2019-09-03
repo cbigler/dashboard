@@ -1,9 +1,11 @@
 import { AlertAction } from "./alerts";
 import { UserAction } from "./users";
+import { AnalyticsAction } from "./analytics";
 
-export type GlobalAction =
+export type GlobalAction = (
   AlertAction |
   UserAction |
-  { type: 'foo', value: 'bar' };
+  AnalyticsAction
+);
 
 export type DispatchType = (action: GlobalAction) => void;
