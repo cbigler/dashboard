@@ -1,13 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 import { Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { AnalyticsReport } from '../components/analytics-table';
+import { AnalyticsReport } from '../../types/analytics';
 
-function onHandleKeyboardFocus(e: React.KeyboardEvent, callback: (event: React.KeyboardEvent) => void) {
+function onHandleKeyboardFocus(e: React.KeyboardEvent, callback: () => void) {
   switch (e.key) {
   case 'Enter':
   case ' ':
@@ -69,8 +69,8 @@ TabTarget.defaultProps = {
 const QueryTabList: React.FunctionComponent<{
   reports: AnalyticsReport[],
   activeReportId: string | null,
-  onChangeActiveReport: (report: AnalyticsReport) => void,
-  onCloseReport: (report: AnalyticsReport) => void,
+  onChangeActiveReport: (report: AnalyticsReport["id"] | null) => void,
+  onCloseReport: (report: AnalyticsReport["id"]) => void,
   onAddNewReport: () => void,
 }> = ({reports, activeReportId, onChangeActiveReport, onCloseReport, onAddNewReport}) => {
   const list = useRef<HTMLDivElement | null>(null);
@@ -110,7 +110,7 @@ const QueryTabList: React.FunctionComponent<{
         className={styles.addReportButton}
         onClick={e => {
           onAddNewReport();
-          e.target.blur();
+          (e.target as HTMLElement).blur();
         }}
         onKeyDown={(e: React.KeyboardEvent) => onHandleKeyboardFocus(e, onAddNewReport)}
         tabIndex={0}
