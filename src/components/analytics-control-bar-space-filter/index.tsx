@@ -79,9 +79,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     const valueList = (
       <Fragment>
         {filter.values.slice(0, 2).reduce((acc: React.ReactNode, name) => {
-          if (!name) {
-            return null;
-          } else if (!acc) {
+          if (!acc) {
             return (
               <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
             );
@@ -168,19 +166,21 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
     <div>
       {/* A delete button is visible to the left of this filter */}
       {deletable ? (
-        <div
-          ref={deleteButtonWrapperRef}
-          className={classnames(
-            styles.deleteButtonWrapper,
-            {[styles.visible]: deleteButtonVisible}
-          )}
-          onMouseLeave={() => setDeleteButtonVisible(false)}
-        >
-          <FilterDeleteButton
-            onClick={onDelete}
-            onFocus={() => setDeleteButtonVisible(true)}
-            onBlur={() => setDeleteButtonVisible(false)}
-          />
+        <div style={{position: 'relative'}}>
+          <div
+            ref={deleteButtonWrapperRef}
+            className={classnames(
+              styles.deleteButtonWrapper,
+              {[styles.visible]: deleteButtonVisible}
+            )}
+            onMouseLeave={() => setDeleteButtonVisible(false)}
+          >
+            <FilterDeleteButton
+              onClick={onDelete}
+              onFocus={() => setDeleteButtonVisible(true)}
+              onBlur={() => setDeleteButtonVisible(false)}
+            />
+          </div>
         </div>
       ) : null}
 

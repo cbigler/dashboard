@@ -40,7 +40,9 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
     if (!wrapperRef.current) { return; }
 
     if (open && !isElementInside(wrapperRef.current, document.activeElement)) {
-      (wrapperRef.current as HTMLElement).focus()
+      (wrapperRef.current as HTMLElement).focus();
+    } else if (!open && document.activeElement === wrapperRef.current) {
+      (wrapperRef.current as HTMLElement).blur();
     }
   }, [open]);
 

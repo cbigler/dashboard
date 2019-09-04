@@ -89,7 +89,9 @@ function AnalyticsSpaceFilterBuilder({
   formattedHierarchy,
 }: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
-  const [ emptyFilterVisible, setEmptyFilterVisible ] = useState(filters.length === 0);
+
+  const isAdding = openedFilterIndex > filters.length - 1;
+  const emptyFilterVisible = filters.length === 0 || isAdding;
 
   const filtersIncludingEmpty = [ ...filters, ...(emptyFilterVisible ? [EMPTY_FILTER] : []) ];
 
@@ -101,11 +103,6 @@ function AnalyticsSpaceFilterBuilder({
             filter={filter}
             deletable={filters.length > 1 || filter.field !== ''}
             onDelete={() => {
-              if (filters.length === 1) {
-                // If the last filter is being deleted, then replace it with an empty filter.
-                setEmptyFilterVisible(true);
-              }
-
               const filtersCopy = filters.slice();
               filtersCopy.splice(index, 1);
               onChange(filtersCopy);
@@ -123,10 +120,6 @@ function AnalyticsSpaceFilterBuilder({
               if (!fieldIsEmpty) {
                 filtersCopy[index] = filter;
                 onChange(filtersCopy);
-              }
-              // Hide the empty filter if a filter was added
-              if (filtersCopy.length !== 0) {
-                setEmptyFilterVisible(false);
               }
             }}
             spaces={spaces}
@@ -149,7 +142,6 @@ function AnalyticsSpaceFilterBuilder({
       }, null)}
       <AddButton onClick={() => {
         let openedFilterIndex = filters.length;
-        setEmptyFilterVisible(true);
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed ans so that the animation to open is
