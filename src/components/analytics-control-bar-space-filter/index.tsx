@@ -165,7 +165,7 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
   const filterBeingCreated = filter.field === '' && filter.values.length === 0;
 
   return (
-    <div className={styles.spaceSelectorWrapper}>
+    <div>
       {/* A delete button is visible to the left of this filter */}
       {deletable ? (
         <div

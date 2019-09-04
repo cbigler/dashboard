@@ -1,5 +1,4 @@
 import React, { useState, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';

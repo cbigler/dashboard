@@ -1,5 +1,4 @@
 import React, { Fragment, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
@@ -48,12 +47,10 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
   return (
     <Fragment>
       {open ? (
-        ReactDOM.createPortal(
-          <div
-            className={styles.backdrop}
-            onClick={onClose}
-          />
-        , document.body)
+        <div
+          className={styles.backdrop}
+          onClick={onClose}
+        />
       ) : null}
 
       <span
