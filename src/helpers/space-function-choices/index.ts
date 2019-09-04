@@ -36,6 +36,4 @@ const SPACE_FUNCTION_CHOICES: Array<{id: string | null, label: string}> = (
 // "Other" is not in the enum since its value is null, and typescript does not allow null in enums
 SPACE_FUNCTION_CHOICES.push({ id: null, label: 'Other' });
 
-console.log(SPACE_FUNCTION_CHOICES, DensitySpaceFunction, SPACE_FUNCTION_FORMATS)
-
 export default SPACE_FUNCTION_CHOICES;
