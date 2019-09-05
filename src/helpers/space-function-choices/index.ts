@@ -29,8 +29,8 @@ export function formatSpaceFunction(spaceFunction: DensitySpaceFunction): string
 }
 
 const SPACE_FUNCTION_CHOICES: Array<{id: string | null, label: string}> = (
-  Object.keys(DensitySpaceFunction)
-    .map(id => ({id, label: SPACE_FUNCTION_FORMATS[DensitySpaceFunction[id]]}))
+  Object.values(DensitySpaceFunction)
+    .map(id => ({id, label: SPACE_FUNCTION_FORMATS[id]}))
 );
 
 // "Other" is not in the enum since its value is null, and typescript does not allow null in enums
