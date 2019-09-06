@@ -1,21 +1,22 @@
-import { Observable, of, from, merge, combineLatest } from 'rxjs';
+import { of, from, merge, combineLatest } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
   catchError,
-  tap,
 } from 'rxjs/operators';
 
-import createRxStore, { rxDispatch, actions, skipUpdate, RxReduxStore, ReduxState } from './index';
+import createRxStore, { rxDispatch, actions, skipUpdate, RxReduxStore } from './index';
 import { DensitySpace, DensitySpaceHierarchyItem } from '../types';
 import {
   AnalyticsState,
   AnalyticsStateRaw,
   AnalyticsActionType,
+  AnalyticsReport,
 
   ResourceStatus,
+  ResourceComplete,
   RESOURCE_IDLE,
 } from '../types/analytics';
 import fetchAllObjects from '../helpers/fetch-all-objects';
@@ -137,7 +138,7 @@ const routeTransitionStream = actions.pipe(
   switchMap(() => RxReduxStore.pipe(take(1))),
 );
 
-const loadSpaces = () => (source: Observable<ReduxState>) => source.pipe(
+const spacesLoadStream = routeTransitionStream.pipe(
   switchMap(reduxState => {
     if (reduxState.spaces.view !== 'VISIBLE' && reduxState.spaces.data.length > 1) {
       return of();
@@ -146,10 +147,9 @@ const loadSpaces = () => (source: Observable<ReduxState>) => source.pipe(
     }
   }),
   map(spaces => collectionSpacesSet(spaces)),
-  catchError(error => of(collectionSpacesError(error))),
 );
 
-const loadSpaceHierarchy = () => (source: Observable<ReduxState>) => source.pipe(
+const spaceHierarchyLoadStream = routeTransitionStream.pipe(
   switchMap(reduxState => {
     if (reduxState.spaceHierarchy.view !== 'VISIBLE' && reduxState.spaceHierarchy.data.length > 1) {
       return of();
@@ -158,14 +158,25 @@ const loadSpaceHierarchy = () => (source: Observable<ReduxState>) => source.pipe
     }
   }),
   map(spaces => collectionSpaceHierarchySet(spaces)),
-  catchError(error => of(collectionSpacesError(error))),
 );
 
 merge(
-  routeTransitionStream.pipe(
-    loadSpaces(),
+  of({ type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING }),
+
+  // Dispatch actions as data is loaded
+  spacesLoadStream.pipe(catchError(e => of())),
+  spaceHierarchyLoadStream.pipe(catchError(e => of())),
+
+  // When both are done loading, mark the analytics page as done loading
+  combineLatest(spacesLoadStream, spaceHierarchyLoadStream).pipe(
+    map(() => ({
+      type: AnalyticsActionType.ANALYTICS_RESOURCE_COMPLETE,
+      data: [],
+      activeReportId: null,
+    })),
+    catchError(error => from([
+      collectionSpacesError(error),
+      { type: AnalyticsActionType.ANALYTICS_RESOURCE_ERROR, error },
+    ])),
   ),
-  routeTransitionStream.pipe(
-    loadSpaceHierarchy(),
-  ),
-).subscribe(action => rxDispatch(action));
+).subscribe(action => rxDispatch(action as Any<InAHurry>));
