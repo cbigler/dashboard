@@ -75,7 +75,10 @@ export function rxDispatch(action: GlobalAction) {
   }
 
   // LEGACY: dispatch every action to redux too
-  reduxStore.dispatch(action);
+  if (reduxStore) {
+    const reduxAction = { ...action, legacyReduxAction: true };
+    reduxStore.dispatch(reduxAction as (GlobalAction & {legacyReduxAction: true}));
+  }
 }
 
 
@@ -84,7 +87,9 @@ export function rxDispatch(action: GlobalAction) {
 export function rxLegacyReduxMiddleware() {
   return next => action => {
     legacyActionLog(action.type, action);
-    actions.next(action);
+    if (!action.legacyReduxAction) {
+      actions.next(action);
+    }
     return next(action);
   };
 }
