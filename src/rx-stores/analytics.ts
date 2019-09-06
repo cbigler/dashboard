@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { of, from, merge, combineLatest } from 'rxjs';
 import {
   filter,
@@ -8,18 +9,20 @@ import {
 } from 'rxjs/operators';
 
 import createRxStore, { rxDispatch, actions, skipUpdate, RxReduxStore } from './index';
-import { DensitySpace, DensitySpaceHierarchyItem } from '../types';
+import { DensitySpace, DensitySpaceHierarchyItem, DaysOfWeek } from '../types';
 import {
   AnalyticsState,
   AnalyticsStateRaw,
   AnalyticsActionType,
   AnalyticsReport,
+  QueryInterval,
 
   ResourceStatus,
   ResourceComplete,
   RESOURCE_IDLE,
 } from '../types/analytics';
 import fetchAllObjects from '../helpers/fetch-all-objects';
+import { DateRange, realizeDateRange } from '../helpers/space-time-utilities';
 
 import collectionSpacesError from '../actions/collection/spaces/error';
 import collectionSpacesSet from '../actions/collection/spaces/set';
@@ -40,6 +43,24 @@ function updateReport(
     return { ...state, data: { ...state.data, reports: newReports }};
   } else {
     return state;
+  }
+}
+
+function recommendQueryInterval(dateRange: DateRange, organizationalWeekStartDay: DaysOfWeek) {
+  const userTimeZone = moment.tz.guess();
+  const { startDate, endDate } = realizeDateRange(
+    dateRange,
+    userTimeZone,
+    { organizationalWeekStartDay },
+  );
+
+  const days = endDate.diff(startDate, 'days');
+  if (days <= 3) {
+    return QueryInterval.FIFTEEN_MINUTES;
+  } else if (days <= 10) {
+    return QueryInterval.ONE_HOUR;
+  } else {
+    return QueryInterval.ONE_DAY;
   }
 }
 
@@ -124,7 +145,11 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE:
     return updateReport(state, action.reportId, report => ({
       ...report,
-      query: { ...report.query, dateRange: action.dateRange },
+      query: {
+        ...report.query,
+        dateRange: action.dateRange,
+        interval: recommendQueryInterval(action.dateRange, action.organizationalWeekStartDay),
+      },
     }));
 
   default:

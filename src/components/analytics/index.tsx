@@ -1,16 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styles from './styles.module.scss';
 
 import AnalyticsControlBar from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
 
-import {
-  QueryInterval,
-  ResourceStatus,
-  AnalyticsFocusedMetric,
-  AnalyticsActionType,
-} from '../../types/analytics';
-import { DATE_RANGES } from '../../helpers/space-time-utilities';
+import { ResourceStatus, AnalyticsActionType } from '../../types/analytics';
 
 import { RxReduxStore } from '../../rx-stores';
 import AnalyticsStore from '../../rx-stores/analytics';
@@ -27,7 +21,8 @@ import {
 } from '@density/ui';
 
 export default function Analytics() {
-  const { spaces, spaceHierarchy } = useRxStore(RxReduxStore);
+  const { spaces, spaceHierarchy, user } = useRxStore(RxReduxStore);
+  const organizationalWeekStartDay = user.data.organization.settings.dashboardWeekStart || 'Sunday';
 
   const state = useRxStore(AnalyticsStore);
   const dispatch = useRxDispatch();
@@ -91,14 +86,15 @@ export default function Analytics() {
                     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
                     reportId: activeReport.id,
                     dateRange,
-                  })
+                    organizationalWeekStartDay,
+                  });
                 }}
 
                 spaces={spaces.data}
                 formattedHierarchy={formattedHierarchy}
               />
             ) : null}
-            <pre>{JSON.stringify(state, null, 2)}</pre>
+            <pre style={{overflowY: 'auto', height: 600, background: '#eee', padding: 10}}>{JSON.stringify(state, null, 2)}</pre>
           </div>
         </AppPane>
       </AppFrame>

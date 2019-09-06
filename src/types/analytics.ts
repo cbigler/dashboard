@@ -1,6 +1,7 @@
 import {
   DensitySpace,
   DensitySpaceCountMetrics,
+  DaysOfWeek,
 } from '.'
 
 import { DateRange } from '../helpers/space-time-utilities';
@@ -47,6 +48,7 @@ export type AnalyticsAction = (
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
     reportId: AnalyticsReport["id"],
     dateRange: DateRange,
+    organizationalWeekStartDay: DaysOfWeek,
   } |
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL,
