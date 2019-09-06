@@ -9,14 +9,38 @@ import { DateRange } from '../helpers/space-time-utilities';
 
 export enum AnalyticsActionType {
   ROUTE_TRANSITION_ANALYTICS = 'ROUTE_TRANSITION_ANALYTICS',
+
+  ANALYTICS_RESOURCE_LOADING = 'ANALYTICS_RESOURCE_LOADING',
+  ANALYTICS_RESOURCE_COMPLETE = 'ANALYTICS_RESOURCE_COMPLETE',
+  ANALYTICS_RESOURCE_ERROR = 'ANALYTICS_RESOURCE_ERROR',
+
+  ANALYTICS_OPEN_REPORT = 'ANALYTICS_OPEN_REPORT',
+  ANALYTICS_CLOSE_REPORT = 'ANALYTICS_CLOSE_REPORT',
+  ANALYTICS_FOCUS_REPORT = 'ANALYTICS_FOCUS_REPORT',
 };
 
-export type AnalyticsAction = {
-  type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS,
+export type AnalyticsAction = (
+  { type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS } |
+
+  { type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING } |
+  {
+    type: AnalyticsActionType.ANALYTICS_RESOURCE_COMPLETE,
+    data: Array<AnalyticsReport>,
+    activeReportId: AnalyticsReport["id"] | null,
+  } |
+  { type: AnalyticsActionType.ANALYTICS_RESOURCE_ERROR, error: any } |
+
+  { type: AnalyticsActionType.ANALYTICS_OPEN_REPORT, report: AnalyticsReport } |
+  { type: AnalyticsActionType.ANALYTICS_CLOSE_REPORT, reportId: AnalyticsReport["id"] } |
+  { type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT, reportId: AnalyticsReport["id"] | null }
+);
+
+
+export type AnalyticsStateRaw = {
+  reports: Array<AnalyticsReport>,
+  activeReportId: AnalyticsReport["id"] | null,
 };
-
-
-export type AnalyticsState = Any<FixInReview>;
+export type AnalyticsState = Resource<AnalyticsStateRaw>;
 
 
 
@@ -108,7 +132,9 @@ export enum ResourceStatus {
 }
 
 type ResourceIdle = { status: ResourceStatus.IDLE };
+export const RESOURCE_IDLE: ResourceIdle = { status: ResourceStatus.IDLE };
 type ResourceLoading = { status: ResourceStatus.LOADING };
+export const RESOURCE_LOADING: ResourceLoading = { status: ResourceStatus.LOADING };
 type ResourceComplete<T> = {
   status: ResourceStatus.COMPLETE,
   data: T,
