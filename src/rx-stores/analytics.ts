@@ -26,6 +26,22 @@ import collectionSpaceHierarchySet from '../actions/collection/space-hierarchy/s
 
 const initialState = RESOURCE_IDLE;
 
+// A helper to allow the reducer to update the state of an individual report easily.
+function updateReport(
+  state: ResourceComplete<AnalyticsStateRaw>,
+  reportId: AnalyticsReport["id"],
+  callback: (input: AnalyticsReport) => AnalyticsReport,
+) {
+  const reportIndex = state.data.reports.findIndex(report => report.id === reportId);
+  if (reportIndex >= 0) {
+    const newReports = state.data.reports.slice();
+    newReports[reportIndex] = callback(newReports[reportIndex]);
+    return { ...state, data: { ...state.data, reports: newReports }};
+  } else {
+    return state;
+  }
+}
+
 const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialState, (state, action) => {
   // ----------------------------------------------------------------------------
   // ACTIONS THAT WORK ALWAYS
@@ -91,6 +107,24 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
 
   case AnalyticsActionType.ANALYTICS_FOCUS_REPORT:
     return { ...state, data: { ...state.data, activeReportId: action.reportId } };
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      query: { ...report.query, filters: action.filters },
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      query: { ...report.query, interval: action.interval },
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      query: { ...report.query, dateRange: action.dateRange },
+    }));
 
   default:
     return skipUpdate;

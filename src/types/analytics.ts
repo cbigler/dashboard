@@ -17,6 +17,10 @@ export enum AnalyticsActionType {
   ANALYTICS_OPEN_REPORT = 'ANALYTICS_OPEN_REPORT',
   ANALYTICS_CLOSE_REPORT = 'ANALYTICS_CLOSE_REPORT',
   ANALYTICS_FOCUS_REPORT = 'ANALYTICS_FOCUS_REPORT',
+
+  ANALYTICS_REPORT_CHANGE_FILTERS = 'ANALYTICS_REPORT_CHANGE_FILTERS',
+  ANALYTICS_REPORT_CHANGE_INTERVAL = 'ANALYTICS_REPORT_CHANGE_INTERVAL',
+  ANALYTICS_REPORT_CHANGE_DATE_RANGE = 'ANALYTICS_REPORT_CHANGE_DATE_RANGE',
 };
 
 export type AnalyticsAction = (
@@ -32,7 +36,23 @@ export type AnalyticsAction = (
 
   { type: AnalyticsActionType.ANALYTICS_OPEN_REPORT, report: AnalyticsReport } |
   { type: AnalyticsActionType.ANALYTICS_CLOSE_REPORT, reportId: AnalyticsReport["id"] } |
-  { type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT, reportId: AnalyticsReport["id"] | null }
+  { type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT, reportId: AnalyticsReport["id"] | null } |
+
+  {
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS,
+    reportId: AnalyticsReport["id"],
+    filters: Array<QueryFilter>,
+  } |
+  {
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
+    reportId: AnalyticsReport["id"],
+    dateRange: DateRange,
+  } |
+  {
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL,
+    reportId: AnalyticsReport["id"],
+    interval: QueryInterval,
+  }
 );
 
 
@@ -135,11 +155,11 @@ type ResourceIdle = { status: ResourceStatus.IDLE };
 export const RESOURCE_IDLE: ResourceIdle = { status: ResourceStatus.IDLE };
 type ResourceLoading = { status: ResourceStatus.LOADING };
 export const RESOURCE_LOADING: ResourceLoading = { status: ResourceStatus.LOADING };
-type ResourceComplete<T> = {
+export type ResourceComplete<T> = {
   status: ResourceStatus.COMPLETE,
   data: T,
 };
-type ResourceError = {
+export type ResourceError = {
   status: ResourceStatus.ERROR,
   error: any,
 };
