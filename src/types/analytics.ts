@@ -19,6 +19,7 @@ export enum AnalyticsActionType {
   ANALYTICS_CLOSE_REPORT = 'ANALYTICS_CLOSE_REPORT',
   ANALYTICS_FOCUS_REPORT = 'ANALYTICS_FOCUS_REPORT',
 
+  ANALYTICS_REPORT_CHANGE_SELECTED_METRIC = 'ANALYTICS_REPORT_CHANGE_SELECTED_METRIC',
   ANALYTICS_REPORT_CHANGE_FILTERS = 'ANALYTICS_REPORT_CHANGE_FILTERS',
   ANALYTICS_REPORT_CHANGE_INTERVAL = 'ANALYTICS_REPORT_CHANGE_INTERVAL',
   ANALYTICS_REPORT_CHANGE_DATE_RANGE = 'ANALYTICS_REPORT_CHANGE_DATE_RANGE',
@@ -39,6 +40,11 @@ export type AnalyticsAction = (
   { type: AnalyticsActionType.ANALYTICS_CLOSE_REPORT, reportId: AnalyticsReport["id"] } |
   { type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT, reportId: AnalyticsReport["id"] | null } |
 
+  {
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC,
+    reportId: AnalyticsReport["id"],
+    metric: AnalyticsFocusedMetric,
+  } |
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS,
     reportId: AnalyticsReport["id"],

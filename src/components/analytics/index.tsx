@@ -65,6 +65,12 @@ export default function Analytics() {
             />
             {activeReport ? (
               <AnalyticsControlBar
+                metric={activeReport.selectedMetric}
+                onChangeMetric={metric => dispatch({
+                  type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC,
+                  reportId: activeReport.id,
+                  metric,
+                })}
                 filters={activeReport.query.filters}
                 onChangeFilters={filters => dispatch({
                   type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS,

@@ -130,6 +130,12 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
   case AnalyticsActionType.ANALYTICS_FOCUS_REPORT:
     return { ...state, data: { ...state.data, activeReportId: action.reportId } };
 
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      selectedMetric: action.metric,
+    }));
+
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS:
     return updateReport(state, action.reportId, report => ({
       ...report,
