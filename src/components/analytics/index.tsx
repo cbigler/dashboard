@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 
 import AnalyticsControlBar from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
+import GenericErrorState from '../generic-error-state';
 
 import {
   ResourceStatus,
@@ -51,7 +52,9 @@ export default function Analytics() {
     );
   case ResourceStatus.ERROR:
     return (
-      <p>Error</p>
+      <div className={styles.centered}>
+        <GenericErrorState />
+      </div>
     );
   case ResourceStatus.COMPLETE:
     const activeReport = state.data.activeReportId ? (
