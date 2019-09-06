@@ -90,9 +90,8 @@ interface QuerySelection {
 }
 
 export enum QueryFilterType { }
-export interface QueryFilter {
-  field: string,
-  values: Array<string>,
+interface QueryFilter {
+  type: QueryFilterType,
 }
 
 // an example type of Selection (the only one we have so far)
