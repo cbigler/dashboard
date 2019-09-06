@@ -34,8 +34,15 @@
   font-weight: bold;
   height: 36px;
 }
-.homeHeaderIcon {
-  margin-right: 8px;
+.homeHeaderIcon { margin-right: 8px; }
+
+.homeEmpty {
+  width: 320px;
+  margin-top: 120px;
+}
+.homeEmpty p {
+  margin-bottom: 18px;
+  font-size: $fontSizeBase;
 }
 
 

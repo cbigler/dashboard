@@ -151,10 +151,16 @@ function AnalyticsHomePage({introVisible, onChangeIntroVisible}) {
             <img alt="" className={styles.analyticsIntroImage} src={analyticsIntroImage} />
           </div>
         ) : null}
+
         <h2 className={styles.homeHeader}>
           <span className={styles.homeHeaderIcon}><Icons.Save color={colorVariables.brandPrimary} /></span>
           Saved Reports
         </h2>
+
+        <div className={styles.homeEmpty}>
+          <p>You haven't created any reports yet. Create a new report to get started.</p>
+          <Button>Create a Report</Button>
+        </div>
       </div>
       <div className={styles.homeRecommended}>
         <h2 className={styles.homeHeader}>
