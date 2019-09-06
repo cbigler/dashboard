@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './styles.module.scss';
 
 import AnalyticsControlBar from '../analytics-control-bar';
@@ -14,11 +14,15 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 import createReport from '../../rx-actions/analytics/create-report';
 
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import analyticsIntroImage from '../../assets/images/analytics-intro.svg';
 
 import {
   AppFrame,
   AppPane,
+  Button,
+  Icons,
 } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 export default function Analytics() {
   const { spaces, spaceHierarchy, user } = useRxStore(RxReduxStore);
@@ -26,6 +30,8 @@ export default function Analytics() {
 
   const state = useRxStore(AnalyticsStore);
   const dispatch = useRxDispatch();
+
+  const [introVisible, setIntroVisible] = useState(true);
 
   const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy.data);
 
@@ -99,11 +105,49 @@ export default function Analytics() {
                 spaces={spaces.data}
                 formattedHierarchy={formattedHierarchy}
               />
-            ) : null}
+            ) : (
+              <AnalyticsHomePage introVisible={introVisible} onChangeIntroVisible={setIntroVisible} />
+            )}
             <pre style={{overflowY: 'auto', height: 600, background: '#eee', padding: 10}}>{JSON.stringify(state, null, 2)}</pre>
           </div>
         </AppPane>
       </AppFrame>
     );
   }
+}
+
+function AnalyticsHomePage({introVisible, onChangeIntroVisible}) {
+  return (
+    <div className={styles.home}>
+      <div className={styles.homeMain}>
+        {introVisible ? (
+          <div className={styles.analyticsIntro}>
+            <div className={styles.analyticsIntroLeft}>
+              <h1>Analytics<sup>BETA</sup></h1>
+              <p>A new way to explore your Density data and gain deeper insights into your portfolio.</p>
+            </div>
+            <div className={styles.analyticsIntroRight}>
+              <Button onClick={() => onChangeIntroVisible(false)} variant="underline" type="muted">
+                <div className={styles.dismissButton}>
+                  <Icons.VisibilityHide />
+                  <span className={styles.dismissButtonText}>Dismiss</span>
+                </div>
+              </Button>
+            </div>
+            <img alt="" className={styles.analyticsIntroImage} src={analyticsIntroImage} />
+          </div>
+        ) : null}
+        <h2 className={styles.homeHeader}>
+          <span className={styles.homeHeaderIcon}><Icons.Save color={colorVariables.brandPrimary} /></span>
+          Saved Reports
+        </h2>
+      </div>
+      <div className={styles.homeRecommended}>
+        <h2 className={styles.homeHeader}>
+          <span className={styles.homeHeaderIcon}><Icons.Lightning /></span>
+          Recommended
+        </h2>
+      </div>
+    </div>
+  );
 }
