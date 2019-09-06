@@ -5,21 +5,18 @@ import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatt
 import { DensitySpace } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
 
-import AnalyticsControlBarSpaceFilter, {
-  AnalyticsSpaceFilter,
-  EMPTY_FILTER,
-} from '../analytics-control-bar-space-filter';
+import AnalyticsControlBarSpaceFilter, { EMPTY_FILTER } from '../analytics-control-bar-space-filter';
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
 import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
-import { QueryInterval } from '../../types/analytics';
+import { QueryInterval, QueryFilter } from '../../types/analytics';
 
 import { Icons } from '@density/ui';
 
 import { AddButton } from '../analytics-control-bar-utilities';
 
 type AnalyticsControlBarProps = {
-  filters: Array<AnalyticsSpaceFilter>,
-  onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
+  filters: Array<QueryFilter>,
+  onChangeFilters: (filters: Array<QueryFilter>) => void,
 
   interval: QueryInterval,
   onChangeInterval: (interval: QueryInterval) => void,
@@ -75,8 +72,8 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
 }
 
 type AnalyticsSpaceFilterBuilderProps = {
-  filters: Array<AnalyticsSpaceFilter>,
-  onChange: (filters: Array<AnalyticsSpaceFilter>) => void,
+  filters: Array<QueryFilter>,
+  onChange: (filters: Array<QueryFilter>) => void,
 
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,

@@ -6,6 +6,7 @@ import { DensitySpace } from '../../types';
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
 import filterCollection from '../../helpers/filter-collection';
+import { QueryFilter } from '../../types/analytics';
 
 import SpacePicker from '../space-picker';
 import Filter, { FilterBold } from '../analytics-control-bar-filter';
@@ -26,21 +27,17 @@ import {
   InputBox,
 } from '@density/ui';
 
-export type AnalyticsSpaceFilter = {
-  field: string,
-  values: Array<string>,
-}
-export const EMPTY_FILTER: AnalyticsSpaceFilter = { field: '', values: [] };
+export const EMPTY_FILTER: QueryFilter = { field: '', values: [] };
 
 type AnalyticsSpaceSelectorProps = {
-  filter: AnalyticsSpaceFilter,
+  filter: QueryFilter,
 
   deletable?: boolean,
   onDelete?: () => void,
 
   open: boolean,
   onOpen: () => void,
-  onClose: (AnalyticsSpaceFilter) => void,
+  onClose: (QueryFilter) => void,
 
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
