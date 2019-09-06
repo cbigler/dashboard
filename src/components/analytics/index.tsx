@@ -3,6 +3,7 @@ import styles from './styles.module.scss';
 
 import AnalyticsControlBar from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
+import AnalyticsSkeleton from '../analytics-skeleton';
 import GenericErrorState from '../generic-error-state';
 
 import {
@@ -48,7 +49,7 @@ export default function Analytics() {
     );
   case ResourceStatus.LOADING:
     return (
-      <p>Loading</p>
+      <AnalyticsSkeleton />
     );
   case ResourceStatus.ERROR:
     return (
@@ -120,7 +121,11 @@ export default function Analytics() {
                 formattedHierarchy={formattedHierarchy}
               />
             ) : (
-              <AnalyticsHomePage introVisible={introVisible} onChangeIntroVisible={setIntroVisible} />
+              <AnalyticsHomePage
+                introVisible={introVisible}
+                onChangeIntroVisible={setIntroVisible}
+                onCreateReport={() => createReport(dispatch)}
+              />
             )}
             <pre style={{overflowY: 'auto', height: 600, background: '#eee', padding: 10}}>{JSON.stringify(state, null, 2)}</pre>
           </div>
@@ -130,7 +135,7 @@ export default function Analytics() {
   }
 }
 
-function AnalyticsHomePage({introVisible, onChangeIntroVisible}) {
+function AnalyticsHomePage({introVisible, onChangeIntroVisible, onCreateReport}) {
   return (
     <div className={styles.home}>
       <div className={styles.homeMain}>
@@ -159,7 +164,7 @@ function AnalyticsHomePage({introVisible, onChangeIntroVisible}) {
 
         <div className={styles.homeEmpty}>
           <p>You haven't created any reports yet. Create a new report to get started.</p>
-          <Button>Create a Report</Button>
+          <Button onClick={onCreateReport}>Create a Report</Button>
         </div>
       </div>
       <div className={styles.homeRecommended}>
@@ -167,6 +172,8 @@ function AnalyticsHomePage({introVisible, onChangeIntroVisible}) {
           <span className={styles.homeHeaderIcon}><Icons.Lightning /></span>
           Recommended
         </h2>
+
+        HARDCODED, RECOMMENDED REPORTS GO HERE
       </div>
     </div>
   );

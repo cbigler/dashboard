@@ -164,6 +164,10 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
 });
 export default AnalyticsStore;
 
+// ----------------------------------------------------------------------------
+// ROUTE TRANSITION
+// ----------------------------------------------------------------------------
+
 const routeTransitionStream = actions.pipe(
   filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
   switchMap(() => RxReduxStore.pipe(take(1))),
