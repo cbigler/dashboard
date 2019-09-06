@@ -20,7 +20,7 @@ export enum AnalyticsActionType {
   ANALYTICS_FOCUS_REPORT = 'ANALYTICS_FOCUS_REPORT',
 
   ANALYTICS_REPORT_CHANGE_SELECTED_METRIC = 'ANALYTICS_REPORT_CHANGE_SELECTED_METRIC',
-  ANALYTICS_REPORT_CHANGE_FILTERS = 'ANALYTICS_REPORT_CHANGE_FILTERS',
+  ANALYTICS_REPORT_CHANGE_SELECTIONS = 'ANALYTICS_REPORT_CHANGE_SELECTIONS',
   ANALYTICS_REPORT_CHANGE_INTERVAL = 'ANALYTICS_REPORT_CHANGE_INTERVAL',
   ANALYTICS_REPORT_CHANGE_DATE_RANGE = 'ANALYTICS_REPORT_CHANGE_DATE_RANGE',
 };
@@ -46,9 +46,9 @@ export type AnalyticsAction = (
     metric: AnalyticsFocusedMetric,
   } |
   {
-    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS,
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
     reportId: AnalyticsReport["id"],
-    filters: Array<QueryFilter>,
+    selections: Array<QuerySelection>,
   } |
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
@@ -95,7 +95,7 @@ interface QueryFilter {
 }
 
 // an example type of Selection (the only one we have so far)
-interface SpaceSelection extends QuerySelection {
+export interface SpaceSelection extends QuerySelection {
   type: QuerySelectionType.SPACE,
   field: string,
   values: string[]

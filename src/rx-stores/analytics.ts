@@ -136,10 +136,10 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
       selectedMetric: action.metric,
     }));
 
-  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS:
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS:
     return updateReport(state, action.reportId, report => ({
       ...report,
-      query: { ...report.query, filters: action.filters },
+      query: { ...report.query, selections: action.selections },
     }));
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL:

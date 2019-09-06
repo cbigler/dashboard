@@ -4,7 +4,12 @@ import styles from './styles.module.scss';
 import AnalyticsControlBar from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
 
-import { ResourceStatus, AnalyticsActionType } from '../../types/analytics';
+import {
+  ResourceStatus,
+  AnalyticsActionType,
+  QuerySelectionType,
+  SpaceSelection,
+} from '../../types/analytics';
 
 import { RxReduxStore } from '../../rx-stores';
 import AnalyticsStore from '../../rx-stores/analytics';
@@ -77,11 +82,17 @@ export default function Analytics() {
                   reportId: activeReport.id,
                   metric,
                 })}
-                filters={activeReport.query.filters}
-                onChangeFilters={filters => dispatch({
-                  type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_FILTERS,
+                filters={
+                  activeReport.query.selections
+                  .filter(s => s.type === QuerySelectionType.SPACE) as Array<SpaceSelection>
+                }
+                onChangeFilters={selections => dispatch({
+                  type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
                   reportId: activeReport.id,
-                  filters,
+                  selections: selections.map(s => ({
+                    type: QuerySelectionType.SPACE,
+                    ...s,
+                  })) as Array<SpaceSelection>,
                 })}
 
                 interval={activeReport.query.interval}
