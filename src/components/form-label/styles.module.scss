@@ -10,7 +10,9 @@
 
 // The actual label element within the `form-label`
 .formLabelLabel {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   margin-bottom: 10px;
   font-size: $fontSizeBase;
   font-weight: $fontWeightBase;
@@ -45,4 +47,10 @@
   position: absolute;
   top: -4px;
   right: 0px;
+}
+
+.formLabelRequired {
+  color: $brandPrimary;
+  font-size: 12px;
+  font-weight: 500;
 }

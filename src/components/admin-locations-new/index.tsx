@@ -3,21 +3,15 @@ import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
-import {
-  convertFormStateToSpaceFields,
-
-  AdminLocationsNoopForm,
-  AdminLocationsCampusForm,
-  AdminLocationsBuildingForm,
-  AdminLocationsFloorForm,
-  AdminLocationsSpaceForm,
-} from '../admin-locations-edit/index';
-import { AdminLocationsFormState } from '../../reducers/space-management';
-import { DensityUser, DensitySpace } from '../../types';
+import { SpaceTypeForm } from '../admin-locations-edit/index';
+import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
+import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import showToast from '../../actions/toasts';
 import collectionSpacesCreate from '../../actions/collection/spaces/create';
+import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
+import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
 import {
   AppFrame,
@@ -25,18 +19,20 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  InputBox,
-  ButtonContext,
   Button,
+  ButtonGroup,
   Icons,
 } from '@density/ui';
 
 type AdminLocationsNewProps = {
   user: any,
   spaceManagement: any,
+  tagsCollection: Array<DensityTag>,
+  assignedTeamsCollection: Array<DensityAssignedTeam>,
   newSpaceParent: DensitySpace,
   newSpaceType: DensitySpace["spaceType"],
   onChangeField: (string, any) => any,
+  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
   onSave: (spaceFields: any, spaceParentId: string | null) => any,
 };
 
@@ -83,16 +79,8 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
     );
   }
 
-
   render() {
-    const { spaceManagement, newSpaceType, newSpaceParent } = this.props;
-
-    const FormComponent = {
-      campus: AdminLocationsCampusForm,
-      building: AdminLocationsBuildingForm,
-      floor: AdminLocationsFloorForm,
-      space: AdminLocationsSpaceForm,
-    }[newSpaceType];
+    const { spaceManagement, newSpaceType, newSpaceParent, onSetDoorwayField } = this.props;
 
     return (
       <AppFrame>
@@ -137,30 +125,34 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
                     New {SPACE_TYPE_TO_NAME[newSpaceType]}
                   </AppBarTitle>
                   <AppBarSection>
-                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                    <ButtonGroup>
                       <Button
+                        variant="underline"
                         disabled={spaceManagement.view.startsWith('LOADING')}
-                        onClick={() => {
-                          window.location.href = newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations';
-                        }}
+                        href={newSpaceParent ? `#/admin/locations/${newSpaceParent.id}` : '#/admin/locations'}
                       >Cancel</Button>
-                    </ButtonContext.Provider>
-                    <Button
-                      type="primary"
-                      onClick={this.onSave}
-                      disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
-                    >Save</Button>
+                      <Button
+                        variant="filled"
+                        type="primary"
+                        onClick={this.onSave}
+                        disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
+                      >Save</Button>
+                    </ButtonGroup>
                   </AppBarSection>
                 </AppBar>
               </div>
 
               {/* All the space type components take the same props */}
               {spaceManagement.view === 'VISIBLE' ? (
-                <FormComponent
+                <SpaceTypeForm
                   spaceType={newSpaceType}
+                  spaceHierarchy={this.props.spaceManagement.spaceHierarchy}
                   formState={this.props.spaceManagement.formState}
+                  tagsCollection={this.props.tagsCollection}
+                  assignedTeamsCollection={this.props.assignedTeamsCollection}
                   operationType="CREATE"
                   onChangeField={this.props.onChangeField}
+                  onSetDoorwayField={onSetDoorwayField}
                 />
               ) : (
                 // When loading
@@ -180,6 +172,8 @@ export default connect((state: any) => {
   return {
     user: state.user,
     spaceManagement: state.spaceManagement,
+    tagsCollection: state.tags,
+    assignedTeamsCollection: state.assignedTeams,
 
     // Figure out the type of the new space, and its parent
     newSpaceType: state.spaceManagement.formSpaceType,
@@ -193,14 +187,19 @@ export default connect((state: any) => {
       const newSpace = await dispatch(collectionSpacesCreate(space));
       if (!newSpace) {
         dispatch(showToast({ type: 'error', text: 'Error creating space' }));
+        dispatch(spaceManagementReset());
         return false;
       }
 
       dispatch(showToast({ text: 'Space created!' }));
       window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
+      window.location.reload();
     },
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
+    },
+    onSetDoorwayField(doorwayId, field, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
     },
   };
 })(AdminLocationsNewUnconnected);

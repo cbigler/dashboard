@@ -31,7 +31,7 @@ export const ROLE_INFO = {
     description: 'Edit spaces and users. Cannot access developer tools.'
   },
   'readonly': {
-    label: 'Read-Only',
+    label: 'Read-only',
     description: 'Cannot make changes to spaces or users.'
   },
   'service': {

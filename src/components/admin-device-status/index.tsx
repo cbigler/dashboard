@@ -4,10 +4,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import moment from 'moment';
 
-import { AppScrollView } from '@density/ui';
+import { AppScrollView, ListView, ListViewColumn, ListViewColumnSpacer } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
-
-import ListView, { ListViewColumn } from '../list-view';
 
 function getStatusColor(status) {
   switch (status) {
@@ -18,6 +16,27 @@ function getStatusColor(status) {
       return colorVariables.brandSuccess;
     default:
       return colorVariables.grayDarkest;
+  }
+}
+
+export function NetworkAddressElement({
+  item,
+  networkInterface,
+}) {
+  if (item.networkAddresses) {
+    let networks = item.networkAddresses.filter(na => na.if === networkInterface);
+    if (networks.length > 0) {
+      return (
+        <div key={networks[0].if}>
+          {networks[0].mac ? (<div style={{fontSize: 12, marginBottom: 3}}>mac: <strong style={{fontWeight: 500}}>{networks[0].mac}</strong></div>) : null}
+          {networks.map(network => <div style={{fontSize: 12, marginBottom: 3}} key={network.address}>{network.family}: <strong style={{fontWeight: 500}}>{network.address}</strong></div>)}
+        </div>
+      )
+    } else {
+      return null;
+    }
+  } else {
+    return null;
   }
 }
 
@@ -36,22 +55,27 @@ export function AdminDeviceStatus({
     <div className={styles.adminDeviceList}>
       <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
         <ListViewColumn
-          title="Serial Number"
+          id="Serial number"
+          width={160}
           template={item => <strong>{item.serialNumber}</strong>} />
         <ListViewColumn
-          title="Status"
+          id="Status"
+          width={128}
           template={item => <span style={{
             color: getStatusColor(item.status)
           }}>{item.status}</span>} />
         <ListViewColumn
-          title="Last Heartbeat"
+          id="Last heartbeat"
+          width={146}
           template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
-        <ListViewColumn flexGrow={1} />
+        <ListViewColumnSpacer />
         <ListViewColumn
-          title="Doorway"
+          id="Doorway"
+          width={320}
           template={item => item.doorwayName} />
         <ListViewColumn
-          title="Space(s)"
+          id="Space(s)"
+          width={360}
           template={item => spaces.data.filter(space => {
             return space.doorways.map(doorway => {
               return doorway.id
@@ -59,6 +83,16 @@ export function AdminDeviceStatus({
           }).map(space => {
             return <div style={{marginRight: 10}} key={space.id}>{space.name}</div>
           })} />
+        <ListViewColumn
+          id="Ethernet"
+          width={280}
+          template={item => <NetworkAddressElement item={item} networkInterface={'eth0'} />}
+        />
+        <ListViewColumn
+          id="WiFi"
+          width={280}
+          template={item => <NetworkAddressElement item={item} networkInterface={'wlan0'} />}
+        />
       </ListView>
     </div>
   </AppScrollView>;

@@ -14,8 +14,11 @@ import { SPACE_MANAGEMENT_FORM_DOORWAY_PUSH } from '../../actions/space-manageme
 import { SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE } from '../../actions/space-management/form-doorway-update';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../actions/space-management/error';
+import { SPACE_MANAGEMENT_RESET } from '../../actions/space-management/reset';
 import { COLLECTION_SPACES_CREATE } from '../../actions/collection/spaces/create';
 import { COLLECTION_SPACES_UPDATE } from '../../actions/collection/spaces/update';
+import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../actions/space-management/push-doorway';
+import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../actions/space-management/delete-doorway';
 
 const initialState = {
   view: 'LOADING_INITIAL',
@@ -48,9 +51,10 @@ export type OperatingHoursLabelItem = {
   name: string,
 };
 export type AdminLocationsFormState = {
+  id: string | null,
   name: string,
   spaceType: string,
-  'function': string,
+  'function': string | null | undefined,
   annualRent: any,
   sizeArea: any,
   sizeAreaUnit: 'feet' | 'meters',
@@ -64,14 +68,69 @@ export type AdminLocationsFormState = {
   dailyReset: string | null,
   parentId: string | null,
   doorwaysFilter: string,
-  doorways: Array<DensityDoorway>,
+  doorways: Array<DoorwayItem>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
   overrideDefaultControlHidden: boolean,
   imageUrl: string,
   newImageFile?: any,
+  tags?: Array<{
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
+  assignedTeams?: Array<{
+    id: string,
+    name: string,
+    operationToPerform: 'CREATE' | 'DELETE' | null,
+  }>,
 };
+
+export type DoorwayItem = {
+  id: string,
+  name: string,
+  spaces: DensityDoorway["spaces"],
+  list: 'TOP' | 'BOTTOM',
+  selected: boolean,
+  sensorPlacement: number | null,
+  updateHistoricCounts: boolean,
+  initialSensorPlacement: number | null,
+  linkId: string | null,
+  operationToPerform: 'CREATE' | 'UPDATE' | 'DELETE' | null,
+  linkExistsOnServer: boolean,
+  height: string | null,
+  width: string | null,
+  clearance: boolean | null,
+  powerType: 'POWER_OVER_ETHERNET' | 'AC_OUTLET' | null,
+  insideImageUrl: string | null,
+  outsideImageUrl: string | null,
+}
+
+function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: DensityDoorway, initialSensorPlacement=null): DoorwayItem {
+  const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === spaceId) : null;
+  const sensorPlacement = linkedToSpace ? linkedToSpace.sensorPlacement : initialSensorPlacement;
+  return {
+    id: doorway.id,
+    name: doorway.name,
+    spaces: doorway.spaces,
+
+    height: doorway.environment && doorway.environment.height ? `${doorway.environment.height}` : null,
+    width: doorway.environment && doorway.environment.width ? `${doorway.environment.width}` : null,
+    clearance: doorway.environment ? doorway.environment.clearance : null,
+    powerType: doorway.environment ? doorway.environment.powerType : null,
+    insideImageUrl: doorway.environment ? doorway.environment.insideImageUrl : null,
+    outsideImageUrl: doorway.environment ? doorway.environment.outsideImageUrl : null,
+
+    list: linkedToSpace ? 'TOP' : 'BOTTOM',
+    selected: linkedToSpace ? true : false,
+    sensorPlacement,
+    initialSensorPlacement: sensorPlacement,
+    updateHistoricCounts: true,
+    linkId: linkedToSpace ? linkedToSpace.linkId : null,
+    operationToPerform: null,
+    linkExistsOnServer: linkedToSpace ? true : false,
+  };
+}
 
 export function calculateOperatingHoursFromSpace(
   space: {dailyReset: string, timeSegments: Array<DensityTimeSegment>},
@@ -101,14 +160,15 @@ export function calculateOperatingHoursFromSpace(
       startTimeSeconds,
       endTimeSeconds,
       daysAffected: tsm.days,
+      operationToPerform: null,
     };
   }).sort((a, b) => {
     return a.startTimeSeconds - b.startTimeSeconds;
   });
 }
 
-// Given a space and the currently logged in user, return the initial state of eitehr the edit or
-// new form.
+// Given a bunch of values fetched in the route transition, determine the initial state of the edit
+// or new form.
 function calculateInitialFormState({
   spaces,
   doorways,
@@ -119,12 +179,12 @@ function calculateInitialFormState({
   formParentSpaceId,
   formSpaceType,
 }): AdminLocationsFormState {
-
   // Find the current space
   const space = spaces.data.find(s => s.id === spaces.selected) || {
     parentId: formParentSpaceId,
     spaceType: formSpaceType,
     timeSegments: [],
+    doorways: [],
   };
   const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
 
@@ -138,9 +198,10 @@ function calculateInitialFormState({
 
   return {
     // General information module
+    id: space.id || null,
     name: space.name || '',
     spaceType: space.spaceType,
-    'function': space['function'] || null,
+    'function': space['function'],
     parentId: space.parentId,
     imageUrl: space.imageUrl,
 
@@ -162,20 +223,20 @@ function calculateInitialFormState({
     ) : null,
 
 
+    // Tags module
+    tags: (space.tags || []).map(name => ({name, operationToPerform: null})),
+
+
+    // Team assignments module
+    assignedTeams: (space.assignedTeams || []).map(t => ({
+      id: t.id,
+      name: t.name,
+      operationToPerform: null,
+    })),
+
     // Doorway module (hydrate with extra form state for each doorway)
     doorwaysFilter: '',
-    doorways: doorways.map(doorway => {
-      const linkedSpace = doorway.spaces.find(x => x.id === space.id);
-      return {
-        ...doorway,
-        _formState: {
-          list: linkedSpace ? 'top' : 'bottom',
-          selected: linkedSpace ? true : false,
-          sensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null,
-          initialSensorPlacement: linkedSpace ? linkedSpace.sensorPlacement : null
-        }
-      };
-    }),
+    doorways: doorways.map(d => makeDoorwayItemFromDensityDoorway(space.id, d)) as Array<DoorwayItem>,
 
 
     // Operating hours module
@@ -188,6 +249,59 @@ function calculateInitialFormState({
     overrideDefaultControlHidden: space.parentId === null,
     operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
+  };
+}
+
+// Given the state of the form, convert that state back into fields that can be sent in the body of
+// a PUT to the space.
+export function convertFormStateToSpaceFields(
+  formState: AdminLocationsFormState,
+  spaceType: DensitySpace["spaceType"],
+): object {
+  function parseIntOrNull(string) {
+    const result = parseInt(string, 10);
+    if (isNaN(result)) {
+      return null;
+    } else {
+      return result;
+    }
+  }
+  return {
+    name: formState.name,
+    spaceType: formState.spaceType,
+    'function': formState['function'] || null,
+    parentId: formState.parentId,
+    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
+
+    newTags: formState.tags,
+    newAssignedTeams: formState.assignedTeams,
+
+    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
+    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
+    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
+    currencyUnit: formState.currencyUnit,
+    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
+    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
+
+    address: formState.address && formState.address.length > 0 ? formState.address : null,
+    latitude: formState.coordinates ? formState.coordinates[0] : null,
+    longitude: formState.coordinates ? formState.coordinates[1] : null,
+
+    dailyReset: formState.dailyReset,
+    timeZone: formState.timeZone,
+
+    newImageFile: formState.newImageFile,
+    operatingHours: formState.operatingHours,
+
+    links: formState.doorways.map(i => ({
+      id: i.linkId,
+      doorwayId: i.id,
+      sensorPlacement: i.sensorPlacement,
+      operationToPerform: i.operationToPerform,
+      updateHistoricCounts: i.updateHistoricCounts,
+    })),
+
+    inheritsTimeSegments: !formState.overrideDefault,
   };
 }
 
@@ -263,11 +377,85 @@ export default function spaceManagement(state=initialState, action) {
     newState.formState = calculateInitialFormState(newState);
     return newState;
 
+  // Called when the doorway modal is used to add a new doorway or update an existing doorway, this
+  // adds the doorway both to the doroways collection as well as to the doorway item list in the
+  // formState.
+  case SPACE_MANAGEMENT_PUSH_DOORWAY:
+    const newDoorwayItem = {
+      ...makeDoorwayItemFromDensityDoorway(
+        state.spaces.selected,
+        action.item,
+        action.initialSensorPlacement,
+      ),
+      selected: true,
+      list: 'TOP',
+      operationToPerform: 'CREATE',
+    };
+    return {
+      ...state,
+      doorways: [
+        // Update existing items
+        ...state.doorways.map((item: any) => {
+          if (action.item.id === item.id) {
+            return {...item, ...objectSnakeToCamel<DensityDoorway>(action.item)};
+          } else {
+            return item;
+          }
+        }),
+
+        // Add new items
+        ...(
+          state.doorways.find((i: any) => i.id === action.item.id) === undefined ?
+            [objectSnakeToCamel<DensityDoorway>(action.item)] :
+            []
+        ),
+      ],
+      formState: {
+        ...state.formState,
+        doorways: [
+          // Update existing items
+          ...state.formState.doorways.map((item: any) => {
+            if (action.item.id === item.id) {
+              return newDoorwayItem;
+            } else {
+              return item;
+            }
+          }),
+
+          // Add new items
+          ...(
+            state.formState.doorways.find((i: any) => i.id === action.item.id) === undefined ?
+              [newDoorwayItem] :
+              []
+          ),
+        ] as Array<DoorwayItem>,
+      },
+    };
+
+  // Called when the doorway modal deletes a doorway, removing it from both the doorways list and
+  // the formState
+  case SPACE_MANAGEMENT_DELETE_DOORWAY:
+    return {
+      ...state,
+      doorways: state.doorways.filter((item: DensityDoorway) => action.doorwayId !== item.id),
+      formState: {
+        ...state.formState,
+        doorways: state.formState.doorways.filter(item => action.doorwayId !== item.id),
+      },
+    };
+
   case SPACE_MANAGEMENT_ERROR:
     return {
       ...state,
       view: 'ERROR',
       error: action.error.message || action.error,
+    };
+
+  case SPACE_MANAGEMENT_RESET:
+    return {
+      ...state,
+      view: 'VISIBLE',
+      error: null,
     };
 
   case SPACE_MANAGEMENT_FORM_UPDATE:
@@ -285,12 +473,10 @@ export default function spaceManagement(state=initialState, action) {
           ...state.formState.doorways,
           {
             ...action.doorway,
-            _formState: {
-              list: 'bottom',
-              selected: true,
-              sensorPlacement: action.sensorPlacement,
-              initialSensorPlacement: null
-            }
+            list: 'BOTTOM',
+            selected: true,
+            sensorPlacement: action.sensorPlacement,
+            initialSensorPlacement: null
           }
         ]
       }
@@ -307,10 +493,7 @@ export default function spaceManagement(state=initialState, action) {
           }
           return {
             ...doorway,
-            _formState: {
-              ...doorway._formState,
-              [action.key]: action.value
-            }
+            [action.key]: action.value,
           };
         })
       }

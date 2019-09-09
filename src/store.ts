@@ -1,6 +1,9 @@
-// Redux is used to manage state.
-import {createStore, compose, applyMiddleware, combineReducers} from 'redux';
+// DEPRECATED: Redux is used to manage state.
+import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
 import thunk from 'redux-thunk';
+
+// Interop with new RxJS state
+import { rxLegacyReduxMiddleware, rxLegacyReduxSetStore } from './rx-stores';
 
 // Assemble all parts of the reducer
 import accountForgotPassword from './reducers/account-forgot-password/index';
@@ -11,6 +14,7 @@ import toasts from'./reducers/toasts/index';
 import sessionToken from './reducers/session-token/index';
 import spaces from './reducers/spaces/index';
 import spaceHierarchy from './reducers/space-hierarchy/index';
+import spaceReports from './reducers/space-reports/index';
 import tokens from './reducers/tokens/index';
 import user from './reducers/user/index';
 import impersonate from './reducers/impersonate/index';
@@ -20,12 +24,14 @@ import eventPusherStatus from './reducers/event-pusher-status/index';
 import dashboards from './reducers/dashboards/index';
 import exploreData from './reducers/explore-data/index';
 import resizeCounter from './reducers/resize-counter/index';
-import users from './reducers/users/index';
 import digestSchedules from './reducers/digest-schedules/index';
 import miscellaneous from './reducers/miscellaneous/index';
 import integrations from './reducers/integrations/index';
 import spaceManagement from './reducers/space-management/index';
-const reducer = combineReducers({
+import tags from './reducers/tags/index';
+import assignedTeams from './reducers/assigned-teams/index';
+
+export const reducer = combineReducers({
   accountForgotPassword,
   accountRegistration,
   activeModal,
@@ -34,6 +40,7 @@ const reducer = combineReducers({
   sessionToken,
   spaces,
   spaceHierarchy,
+  spaceReports,
   tokens,
   sensors,
   user,
@@ -43,16 +50,22 @@ const reducer = combineReducers({
   dashboards,
   exploreData,
   resizeCounter,
-  users,
   digestSchedules,
   miscellaneous,
   integrations,
   spaceManagement,
+  tags,
+  assignedTeams,
 });
 
 // Create our redux store for storing the application state.
-export default () => createStore(reducer, {}, compose(
-  applyMiddleware(thunk),
-  (window as any).__REDUX_DEVTOOLS_EXTENSION__ ?
-    (window as any).__REDUX_DEVTOOLS_EXTENSION__() : f => f
-));
+export default function() {
+  const store = createStore(reducer, {}, compose(
+    applyMiddleware(thunk),
+    applyMiddleware(rxLegacyReduxMiddleware),
+    (window as any).__REDUX_DEVTOOLS_EXTENSION__ ?
+      (window as any).__REDUX_DEVTOOLS_EXTENSION__() : f => f
+  ));
+  rxLegacyReduxSetStore(store);
+  return store;
+};

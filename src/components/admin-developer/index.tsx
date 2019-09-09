@@ -8,12 +8,15 @@ import {
   AppBarSection,
   AppScrollView,
   Button,
-  Icons
+  Icons,
+  ListView,
+  ListViewColumn,
+  ListViewColumnSpacer,
+  ListViewClickableLink,
 } from '@density/ui';
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import ListView, { ListViewColumn, ListViewClickableLink } from '../list-view';
 import TokenCreateModal from '../admin-token-create-modal';
 import TokenUpdateModal from '../admin-token-update-modal';
 import WebhookCreateModal from '../admin-webhook-create-modal';
@@ -30,10 +33,13 @@ import collectionWebhooksCreate from '../../actions/collection/webhooks/create';
 import collectionWebhooksFilter from '../../actions/collection/webhooks/filter';
 import collectionWebhooksUpdate from '../../actions/collection/webhooks/update';
 import collectionWebhooksDestroy from '../../actions/collection/webhooks/destroy';
+import updateModal from '../../actions/modal/update';
 
+
+const READONLY = 'readonly', READWRITE = 'readwrite';
 const PERMISSION_TEXT = {
-  'readonly': 'Read-Only',
-  'readwrite': 'Read-Write'
+  [READONLY]: 'Read-only',
+  [READWRITE]: 'Read-write'
 }
 
 export function TokenKeyHider ({value, onCopyToken}) {
@@ -46,10 +52,11 @@ export function TokenKeyHider ({value, onCopyToken}) {
         cursor: 'pointer',
         marginRight: '16px'
       }}
-    >{hidden ? '*'.repeat(value.length) : value}</span>
+    >{hidden ? '**********************************************' : value}</span>
     <Button
       size="small"
       type="primary"
+      variant="filled"
       width={60}
       onClick={() => setHidden(!hidden)}
     >{hidden ? 'Show' : 'Hide'}</Button>
@@ -63,12 +70,12 @@ export function AdminDeveloper({
   activeModal,
   onCreateToken,
   onUpdateToken,
+  onSaveToken,
   onDestroyToken,
-  onFilterTokenList,
   onCreateWebhook,
   onUpdateWebhook,
+  onSaveWebhook,
   onDestroyWebhook,
-  onFilterWebhookList,
   onOpenModal,
   onCloseModal,
   onCopyToken,
@@ -77,40 +84,38 @@ export function AdminDeveloper({
 
     {activeModal.name === 'token-create' ? <TokenCreateModal
       visible={activeModal.visible}
-      loading={tokens.loading}
-      error={tokens.error}
+      token={activeModal.data.token}
 
+      onUpdate={onUpdateToken}
       onSubmit={onCreateToken}
       onDismiss={onCloseModal}
     /> : null}
     {activeModal.name === 'token-update' ? <TokenUpdateModal
       visible={activeModal.visible}
-      initialToken={activeModal.data.token}
+      token={activeModal.data.token}
       isDestroying={activeModal.data.isDestroying}
-      loading={tokens.loading}
-      error={tokens.error}
 
-      onSubmit={onUpdateToken}
+      onUpdate={onUpdateToken}
+      onSubmit={onSaveToken}
       onDismiss={onCloseModal}
       onDestroyToken={onDestroyToken}
     /> : null}
 
     {activeModal.name === 'webhook-create' ? <WebhookCreateModal
       visible={activeModal.visible}
-      error={webhooks.error}
-      loading={webhooks.loading}
+      webhook={activeModal.data.webhook}
 
+      onUpdate={onUpdateWebhook}
       onSubmit={onCreateWebhook}
       onDismiss={onCloseModal}
     /> : null}
     {activeModal.name === 'webhook-update' ? <WebhookUpdateModal
       visible={activeModal.visible}
-      initialWebhook={activeModal.data.webhook}
+      webhook={activeModal.data.webhook}
       isDestroying={activeModal.data.isDestroying}
-      error={webhooks.error}
-      loading={webhooks.loading}
 
-      onSubmit={onUpdateWebhook}
+      onUpdate={onUpdateWebhook}
+      onSubmit={onSaveWebhook}
       onDismiss={onCloseModal}
       onDestroyWebhook={onDestroyWebhook}
     /> : null}
@@ -118,12 +123,20 @@ export function AdminDeveloper({
     <AppBar>
       <AppBarSection>
        Looking for more information on our API? Read our&nbsp;
-       <a href="http://docs.density.io" target="_blank">API Docs</a>
+       <a href="http://docs.density.io" target="_blank" rel="noopener noreferrer">API Docs</a>
       </AppBarSection>
       <AppBarSection>
-        <Button type="primary" onClick={() => onOpenModal('token-create')}>Add Token</Button>
+        <Button
+          variant="filled"
+          type="primary"
+          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', tokenType: READONLY}})}
+        >Add token</Button>
         &nbsp;&nbsp;
-        <Button type="primary" onClick={() => onOpenModal('webhook-create')}>Add Webhook</Button>
+        <Button
+          variant="filled"
+          type="primary"
+          onClick={() => onOpenModal('webhook-create', {webhook: {name: '', description: '', endpoint: ''}})}
+        >Add webhook</Button>
       </AppBarSection>
     </AppBar>
 
@@ -131,18 +144,37 @@ export function AdminDeveloper({
       <div className={styles.adminDeveloperTokenList}>
         <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>
-          <ListViewColumn title="Name" template={item => (
-            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
-          )} />
-          <ListViewColumn title="Permissions" template={item => (
-            <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
-          )} />
-          <ListViewColumn title="Token" template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />} />
-          <ListViewColumn flexGrow={1} />
           <ListViewColumn
+            id="Name"
+            width={240}
+            template={item => (
+              <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
+            )}
+          />
+          <ListViewColumn
+            id="Permissions"
+            width={120}
+            template={item => (
+              <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
+            )} />
+          <ListViewColumn
+            id="Token"
+            width={560}
+            template={item => <TokenKeyHider value={item.key} onCopyToken={onCopyToken} />}
+          />
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Edit"
+            title=" "
+            width={60}
+            align="right"
             template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: false})} />
           <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: true})} />
         </ListView>
@@ -150,17 +182,33 @@ export function AdminDeveloper({
       <div className={styles.adminDeveloperWebhookList}>
         <div className={styles.adminDeveloperSectionHeader}>Webhooks</div>
         <ListView data={webhooks.data}>
-          <ListViewColumn title="Name" template={item => (
-            <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
-          )} />
-          <ListViewColumn title="Payload URL" template={item => (
-            <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
-          )} />
-          <ListViewColumn flexGrow={1} />
           <ListViewColumn
+            id="Name"
+            width={240}
+            template={item => (
+              <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
+            )}
+          />
+          <ListViewColumn
+            id="Payload URL"
+            width={680}
+            template={item => (
+              <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
+            )}
+          />
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Edit"
+            title=" "
+            width={60}
+            align="right"
             template={item => <ListViewClickableLink>Edit</ListViewClickableLink>}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: false})} />
           <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
             template={item => <Icons.Trash color={colorVariables.grayDarker} />}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: true})} />
         </ListView>
@@ -185,6 +233,9 @@ export default connect((state: any) => {
       });
     },
     onUpdateToken(token) {
+      dispatch<any>(updateModal({token}));
+    },
+    onSaveToken(token) {
       dispatch<any>(collectionTokensUpdate(token)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());
@@ -211,6 +262,9 @@ export default connect((state: any) => {
       });
     },
     onUpdateWebhook(webhook) {
+      dispatch<any>(updateModal({webhook}));
+    },
+    onSaveWebhook(webhook) {
       dispatch<any>(collectionWebhooksUpdate(webhook)).then(ok => {
         if (ok) {
           dispatch<any>(hideModal());

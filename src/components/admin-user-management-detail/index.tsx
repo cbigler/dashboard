@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
-import React, { Fragment, Component } from 'react';
-import { connect } from 'react-redux';
+import React, { Fragment } from 'react';
+import { useSelector } from 'react-redux';
 import moment from 'moment';
 import classnames from 'classnames';
 
@@ -14,95 +14,65 @@ import { ROLE_INFO } from '../../helpers/permissions';
 
 import showModal from '../../actions/modal/show';
 import showToast from '../../actions/toasts';
-import collectionUsersDestroy from '../../actions/collection/users/destroy';
-import collectionUsersUpdate from '../../actions/collection/users/update';
+import collectionUsersDelete from '../../rx-actions/users/delete';
+import collectionUsersUpdate from '../../rx-actions/users/update';
 
 import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  AppBarContext,
-  Icons,
   Button,
-  ButtonContext,
+  ButtonGroup,
+  Icons,
 } from '@density/ui';
 
-import { DensitySpace, DensityUser } from '../../types';
+import useRxStore from '../../helpers/use-rx-store';
+import usersStore from '../../rx-stores/users';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import { UserActionTypes } from '../../types/users';
 
-type AdminUserManagementDetailProps = {
-  spaces: {
-    loading: boolean,
-    data: Array<DensitySpace>,
-  },
-  spaceHierarchy: {
-    loading: boolean,
-    data: Array<any>,
-  },
-  users: {
-    view: 'LOADING' | 'ERROR' | 'VISIBLE',
-    data: Array<DensityUser>,
-    error: string,
-  },
-  user: {
-    data: DensityUser,
-    loading: boolean,
-    error: boolean,
-  },
-  selectedUser: DensityUser,
-
-  onStartDeleteUser: (DensityUser) => any,
-  onSaveUser: (DensityUser) => any,
-};
-
-type AdminUserManagementDetailState = {
-  waitingForData: boolean,
-  role?: string,
-
-  spaceFilteringActive?: boolean,
-  spaceIds?: string[],
-};
-
-export class AdminUserManagementDetail extends Component<AdminUserManagementDetailProps, AdminUserManagementDetailState> {
-  state = {
-    waitingForData: true,
-    role: '',
-
-    spaceFilteringActive: false,
-    spaceIds: [] as string[],
-  };
-
-  setInitialState = (selectedUser) => {
-    if (this.state.waitingForData && selectedUser) {
-      this.setState({
-        waitingForData: false,
-        role: selectedUser.role,
-
-        spaceFilteringActive: (selectedUser.spaces || []).length > 0,
-        spaceIds: selectedUser.spaces || [],
+function onStartDeleteUser(dispatch, user) {
+  dispatch(showModal('MODAL_CONFIRM', {
+    prompt: 'Are you sure you want to delete this user?',
+    confirmText: 'Delete',
+    callback: () => {
+      collectionUsersDelete(dispatch, user).then(ok => {
+        if (ok) {
+          window.location.href = '#/admin/user-management';
+        }
       });
-    }
+    },
+  }));
+}
+
+async function onSaveUser(dispatch, {id, role, spaceIds, spaceFilteringActive}) {
+  const ok = await collectionUsersUpdate(dispatch, {
+    id,
+    role,
+    spaces: spaceFilteringActive ? spaceIds : [],
+  });
+  if (ok) {
+    dispatch(showToast({ text: 'User updated successfully!' }));
+    window.location.href = '#/admin/user-management';
+  } else {
+    dispatch(showToast({ type: 'error', text: 'Error updating user' }));
   }
+}
 
-  componentDidMount() {
-    this.setInitialState(this.props.selectedUser);
-  }
-  componentWillReceiveProps({selectedUser}) {
-    this.setInitialState(selectedUser);
-  }
+export default function AdminUserManagementDetail() {
 
-  render() {
-    const {
-      spaces,
-      spaceHierarchy,
-      user,
-      users,
-      selectedUser,
+  // DEPRECATED: Pull some state from the Redux store
+  const { spaces, spaceHierarchy, user } = useSelector((state: any) => ({
+    spaces: state.spaces,
+    spaceHierarchy: state.spaceHierarchy,
+    user: state.user,
+  }));
 
-      onStartDeleteUser,
-      onSaveUser,
-    } = this.props;
+  // Connect to the RxJS store and dispatch
+  const users = useRxStore(usersStore);
+  const dispatch = useRxDispatch();
 
-    switch (users.view) {
+  switch (users.view) {
     case 'LOADING':
       return (
         <div className={styles.adminUserManagementDetailLoading}>
@@ -116,9 +86,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
         </div>
       );
     case 'VISIBLE':
-      if (!selectedUser) { return null; }
-
-      const formValid = !this.state.spaceFilteringActive || this.state.spaceIds.length > 0;
+      if (!users.editor.data) { return null; }
+      const selectedUser = users.editor.data || {};
+      const formValid = !users.editor.spaceFilteringActive || (users.editor.spaceIds || []).length > 0;
 
       return (
         <Fragment>
@@ -136,22 +106,24 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
               </AppBarTitle>
 
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  disabled={!formValid}
-                  onClick={() => {
-                    onSaveUser({
-                      id: selectedUser.id,
-                      role: this.state.role,
+                <ButtonGroup>
+                  <Button variant="underline" onClick={() => window.location.hash = '#/admin/user-management'}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    disabled={!formValid}
+                    onClick={() => {
+                      
+                      onSaveUser(dispatch, {
+                        id: selectedUser.id,
+                        role: users.editor.role,
 
-                      spaceFilteringActive: this.state.spaceFilteringActive,
-                      spaceIds: this.state.spaceIds,
-                    });
-                  }}
-                >Save User</Button>
+                        spaceFilteringActive: users.editor.spaceFilteringActive,
+                        spaceIds: users.editor.spaceIds,
+                      });
+                    }}
+                  >Save user</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </div>
@@ -212,11 +184,14 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                   <div className={styles.adminUserManagementDetailCardBody}>
                     <AdminUserManagementRoleRadioList
                       user={user}
-                      value={this.state.role}
-                      onChange={role => this.setState({
-                        role,
-                        spaceFilteringActive: role === 'owner' ? false : this.state.spaceFilteringActive,
-                        spaceIds: role === 'owner' ? [] : this.state.spaceIds,
+                      value={users.editor.role}
+                      onChange={role => dispatch({
+                        type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR,
+                        state: {
+                          role,
+                          spaceFilteringActive: role === 'owner' ? false : users.editor.spaceFilteringActive,
+                          spaceIds: role === 'owner' ? [] : users.editor.spaceIds || []
+                        }
                       })}
                     />
                   </div>
@@ -228,11 +203,17 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                   <AdminSpacePermissionsPicker
                     spaces={spaces}
                     spaceHierarchy={spaceHierarchy}
-                    disabled={this.state.role === 'owner'}
-                    active={this.state.spaceFilteringActive}
-                    onChangeActive={spaceFilteringActive => this.setState({spaceFilteringActive})}
-                    selectedSpaceIds={this.state.spaceIds}
-                    onChange={spaceIds => this.setState({spaceIds})}
+                    disabled={users.editor.role === 'owner'}
+                    active={users.editor.spaceFilteringActive || false}
+                    onChangeActive={spaceFilteringActive => dispatch({
+                      type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR,
+                      state: { spaceFilteringActive }
+                    })}
+                    selectedSpaceIds={users.editor.spaceIds || []}
+                    onChange={spaceIds => dispatch({
+                      type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR,
+                      state: { spaceIds }
+                    })}
                     height={600}
                   />
                 </div>
@@ -249,11 +230,9 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
                         <h4 className={styles.adminUserManagementDetailActionDetailHeader}>Delete this user</h4>
                         <p className={styles.adminUserManagementDetailActionDetailLead}>Once deleted, they will be gone forever. Please be certain.</p>
                       </div>
-                      <ButtonContext.Provider value="USER_MANAGEMENT_DETAIL_DELETE_BUTTON">
-                        <Button onClick={() => onStartDeleteUser(selectedUser)}>
-                          Delete this User
-                        </Button>
-                      </ButtonContext.Provider>
+                      <Button variant="underline" type="danger" onClick={() => onStartDeleteUser(dispatch, selectedUser)}>
+                        Delete this user
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -266,42 +245,4 @@ export class AdminUserManagementDetail extends Component<AdminUserManagementDeta
     default:
       return null;
     }
-  }
 }
-
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    spaceHierarchy: state.spaceHierarchy,
-    users: state.users,
-    user: state.user,
-    selectedUser: state.users.data.find(user => user.id === state.users.selected),
-  };
-}, dispatch => ({
-  onStartDeleteUser(user) {
-    dispatch<any>(showModal('MODAL_CONFIRM', {
-      prompt: 'Are you sure you want to delete this user?',
-      confirmText: 'Delete',
-      callback: () => {
-        dispatch<any>(collectionUsersDestroy(user)).then(ok => {
-          if (ok) {
-            window.location.href = '#/admin/user-management';
-          }
-        });
-      },
-    }));
-  },
-  async onSaveUser({id, role, spaceIds, spaceFilteringActive}) {
-    const ok = await dispatch<any>(collectionUsersUpdate({
-      id,
-      role,
-      spaces: spaceFilteringActive ? spaceIds : [],
-    }));
-    if (ok) {
-      dispatch<any>(showToast({ text: 'User updated successfully!' }));
-      window.location.href = '#/admin/user-management';
-    } else {
-      dispatch<any>(showToast({ type: 'error', text: 'Error updating user' }));
-    }
-  },
-}))(AdminUserManagementDetail);

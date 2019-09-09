@@ -4,18 +4,18 @@ import { connect } from 'react-redux';
 import SetCapacityModal from '../explore-set-capacity-modal/index';
 
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
-import { calculate as calculateTrendsModules } from '../../actions/route-transition/explore-space-trends';
 
 import showModal from '../../actions/modal/show';
 import hideModal from '../../actions/modal/hide';
 
 import styles from './styles.module.scss';
 import cleanSpaceData from '../../helpers/clean-space-data';
+import spaceReportsCalculateReportData from '../../actions/space-reports/calculate-report-data';
 
-export function ExploreSpaceHeader({
+export function ExploreSpaceHeaderRaw({
   space,
   activeModal,
-  spaceFilters,
+  spaceReports,
 
   onOpenModal,
   onCloseModal,
@@ -29,7 +29,7 @@ export function ExploreSpaceHeader({
       {activeModal.name === 'set-capacity' ? <SetCapacityModal
         visible={activeModal.visible}
         space={activeModal.data.space}
-        onSubmit={capacity => onSetCapacity(activeModal.data.space, capacity, spaceFilters)}
+        onSubmit={capacity => onSetCapacity(spaceReports.controllers, activeModal.data.space, capacity)}
         onDismiss={onCloseModal}
       /> : null}
 
@@ -52,11 +52,11 @@ export function ExploreSpaceHeader({
                   onClick={() => {
                     return onOpenModal('set-capacity', {space});
                   }}
-                >Set Capacity</span>
+                >Set capacity</span>
               </span>}
             </div>
             <div className={styles.exploreSpaceHeaderTimeZone}>
-              Time Zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
+              Time zone: <span className={styles.visualizationSpaceDetailHeaderTimeZoneLabel}>
                 {({
                   'America/New_York': 'US Eastern',
                   'America/Chicago': 'US Central',
@@ -78,7 +78,7 @@ export default connect((state: any) => {
   return {
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
     activeModal: state.activeModal,
-    spaceFilters: state.spaces.filters
+    spaceReports: state.spaceReports,
   };
 }, dispatch => {
   return {
@@ -88,13 +88,15 @@ export default connect((state: any) => {
     onCloseModal() {
       dispatch<any>(hideModal());
     },
-    async onSetCapacity(space, capacity, spaceFilters) {
+    async onSetCapacity(controllers, space, capacity) {
       const spaceData = cleanSpaceData({...space, capacity});
       const ok = await dispatch<any>(collectionSpacesUpdate(spaceData));
       if (ok) {
         dispatch<any>(hideModal());
-        dispatch<any>(calculateTrendsModules(space, spaceFilters));
+        controllers.forEach(controller => {
+          dispatch<any>(spaceReportsCalculateReportData(controller, space));
+        });
       }
     },
   };
-})(ExploreSpaceHeader);
+})(React.memo(ExploreSpaceHeaderRaw));

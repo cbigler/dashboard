@@ -5,7 +5,6 @@ import styles from './styles.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import GenericErrorState from '../generic-error-state/index';
-import ListView, { ListViewColumn } from '../list-view/index';
 import AdminLocationsSubheader from '../admin-locations-subheader/index';
 import AdminLocationsRootDetail from '../admin-locations-root-detail/index';
 import AdminLocationsCampusDetail from '../admin-locations-campus-detail/index';
@@ -13,17 +12,17 @@ import AdminLocationsBuildingDetail from '../admin-locations-building-detail/ind
 import AdminLocationsFloorDetail from '../admin-locations-floor-detail/index';
 import AdminLocationsSpaceDetail from '../admin-locations-space-detail/index';
 
-import { DensitySpace } from '../../types';
 import {
   AppFrame,
   AppPane,
   AppSidebar,
   AppBar,
   AppBarSection,
-  AppBarTitle,
   Button,
+  ButtonGroup,
+  ListView,
+  ListViewColumn,
   Skeleton,
-  Icons,
 } from '@density/ui';
 
 import {
@@ -47,55 +46,43 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
   switch (spaceType) {
   case null:
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'campus'); }}
-          >Add a Campus</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-          >Add a Building</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          href={generateCreateRoute(spaceId, 'campus')}
+        >Add a campus</Button>
+        <Button
+          variant="filled"
+          href={generateCreateRoute(spaceId, 'building')}
+        >Add a building</Button>
+      </ButtonGroup>
     );
   case 'campus':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'building'); }}
-        >Add a Building</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        href={generateCreateRoute(spaceId, 'building')}
+      >Add a building</Button>
     );
   case 'building':
     return (
-      <Fragment>
-        <span className={styles.leftButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'floor'); }}
-          >Add a Level</Button>
-        </span>
-        <span className={styles.rightButton}>
-          <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a Room</Button>
-        </span>
-      </Fragment>
+      <ButtonGroup>
+        <Button
+          variant="filled"
+          href={generateCreateRoute(spaceId, 'floor')}
+        >Add a level</Button>
+        <Button
+          variant="filled"
+          href={generateCreateRoute(spaceId, 'space')}
+        >Add a room</Button>
+      </ButtonGroup>
     );
   case 'floor':
     return (
-      <Fragment>
-        <Button
-          type="primary"
-          onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-        >Add a Room</Button>
-      </Fragment>
+      <Button
+        variant="filled"
+        href={generateCreateRoute(spaceId, 'space')}
+      >Add a room</Button>
     );
   case 'space':
     return (
@@ -104,9 +91,9 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         {/* (rooms can only be two levels in depth) */}
         {parentSpaceType !== 'space' ? (
           <Button
-            type="primary"
-            onClick={() => { window.location.href = generateCreateRoute(spaceId, 'space'); }}
-          >Add a Room</Button>
+            variant="filled"
+            href={generateCreateRoute(spaceId, 'space')}
+          >Add a room</Button>
         ) : null}
       </Fragment>
     );
@@ -116,9 +103,6 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
 }
 
 function AdminLocations({user, selectedSpace, spaces}) {
-  const visibleSpaces = spaces.data
-  .filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
-
   let selectedSpaceParentSpaceType = null;
   if (selectedSpace) {
     const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
@@ -169,16 +153,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <Skeleton width={200} height={18} />
             </AppBarSection>
             <AppBarSection>
-              <span className={styles.leftButton}>
-                <Button type="primary">
+              <ButtonGroup>
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
-              <span className={styles.rightButton}>
-                <Button type="primary">
+                <Button variant="filled">
                   <Skeleton width={96} color={colorVariables.grayLight} />
                 </Button>
-              </span>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
           <AppFrame>
@@ -202,14 +184,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="rent"
-                  label="Annual Rent (per square unit):"
+                  label="Annual rent (per square unit):"
                   value={<Skeleton height={8} width={36} />}
                 />
               </AdminLocationsLeftPaneDataRow>
               <AdminLocationsLeftPaneDataRow>
                 <AdminLocationsLeftPaneDataRowItem
                   id="target-capacity"
-                  label="Target Capacity:"
+                  label="Target capacity:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
@@ -242,15 +224,14 @@ function AdminLocations({user, selectedSpace, spaces}) {
               <div className={styles.loadingWrapper}>
                 <ListView data={[1, 2]} keyTemplate={i => i}>
                   <ListViewColumn
-                    title="Info"
-                    flexGrow={1}
-                    flexShrink={1}
+                    id="Info"
+                    width="auto"
                     template={() => (
                       <Skeleton width={200} height={16} />
                     )}
                   />
                   <ListViewColumn
-                    title=""
+                    width={200}
                     template={() => (
                       <Skeleton width={200} height={16} />
                     )}

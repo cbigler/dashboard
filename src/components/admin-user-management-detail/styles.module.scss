@@ -9,6 +9,7 @@
 .adminUserManagementDetail {
   background-color: #fff;
   height: 100%;
+  z-index: -1;
 }
 
 .adminUserManagementDetailLoading,
@@ -66,6 +67,7 @@
   display: flex;
   justify-content: center;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 @media (min-width: 1280px) {
   .adminUserManagementDetailColumn.right {

@@ -20,6 +20,8 @@ export default [
     defaults: {
       'production': 'https://api.density.io/v2',
       'staging': 'https://core-staging.density.io/v2',
+      'dev01': 'https://dev01-us-east-1-core.density.io/v2',
+      'dev02': 'https://dev02-us-east-1-core.density.io/v2',
       'local': 'http://localhost:8000/v2',
       'env (REACT_APP_CORE_API_URL)': process.env.REACT_APP_CORE_API_URL,
     },
@@ -31,6 +33,8 @@ export default [
     defaults: {
       'production': 'https://accounts.density.io/v2',
       'staging': 'https://accounts-staging.density.io/v2',
+      'dev01': 'https://dev01-us-east-1-accounts.density.io/v2',
+      'dev02': 'https://dev02-us-east-1-accounts.density.io/v2',
       'local': 'http://localhost:8000/v2',
       'env (REACT_APP_ACCOUNTS_API_URL)': process.env.REACT_APP_ACCOUNTS_API_URL,
     },

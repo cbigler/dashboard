@@ -1,30 +1,5 @@
 import { DensitySpaceHierarchyItem } from '../../types';
 
-const SPACE_TYPE_SORT_ORDER = [
-  'campus',
-  'building',
-  'floor',
-  'space',
-];
-
-function addZeroItemBeforeFirstSpaceOfType(items, zeroItem, spaceType) {
-  const firstSpaceOfTypeIndex = items.findIndex(i => {
-    return (
-      i.depth === 0 &&
-      i.space.spaceType === spaceType
-    );
-  });
-  if (firstSpaceOfTypeIndex === -1) {
-    return [...items, zeroItem];
-  }
-
-  return [
-    ...items.slice(0, firstSpaceOfTypeIndex),
-    zeroItem,
-    ...items.slice(firstSpaceOfTypeIndex),
-  ];
-}
-
 export type SpaceHierarchyDisplayItem = {
   depth: number, // How far indented this item needs to be
   space: DensitySpaceHierarchyItem & { parentId: string },
@@ -43,7 +18,7 @@ export type SpaceHierarchyDisplayItem = {
 
 const flat = (nestedArray) => nestedArray.reduce((a, b) => [...a, ...b], []);
 
-export default function spaceHierarchyFormatterNew(
+export default function spaceHierarchyFormatter(
   hierarchy: Array<DensitySpaceHierarchyItem>
 ): Array<SpaceHierarchyDisplayItem> {
   function recurseHierarchy(space, ancestry=[] as Array<any>, depth = -1) {

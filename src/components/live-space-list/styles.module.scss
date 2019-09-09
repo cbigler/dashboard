@@ -59,6 +59,7 @@
 
 .liveSpaceList {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 // Header for the space list view. Contians a label and a search box.

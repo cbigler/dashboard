@@ -2,6 +2,7 @@
 
 .scroll {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   height: 100%;
   background-color: $grayLightest;
 }
@@ -18,4 +19,11 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.sidebar {
+  height: 100%;
+  margin-bottom: -1px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }

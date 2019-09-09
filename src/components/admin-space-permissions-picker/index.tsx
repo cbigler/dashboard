@@ -114,7 +114,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
               </Fragment>
             ) : (
               <AppBarSection>
-                Has access to&nbsp;<strong>All Spaces</strong>
+                Has access to&nbsp;<strong>All spaces</strong>
               </AppBarSection>
             )}
           </AppBar>

@@ -1,21 +1,18 @@
 import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import collectionDashboardsSet from '../collection/dashboards/set';
-import collectionDashboardsError from '../collection/dashboards/error';
-import collectionDashboardsSelect from '../collection/dashboards/select';
-import dashboardsError from '../collection/dashboards/error';
-import core from '../../client/core';
-import accounts from '../../client/accounts';
+import dashboardsSet from '../dashboards/set';
+import dashboardsError from '../dashboards/error';
+import dashboardsSelect from '../dashboards/select';
 
-import collectionDispatchSchedulesSet from '../collection/digest-schedules/set';
-import collectionDispatchSchedulesError from '../collection/digest-schedules/error';
+import collectionDigestSchedulesSet from '../collection/digest-schedules/set';
+import collectionDigestSchedulesError from '../collection/digest-schedules/error';
 import setDashboardDate from '../miscellaneous/set-dashboard-date';
 
-import fetchAllPages from '../../helpers/fetch-all-pages/index';
 import { getStartOfWeek } from '../../helpers/space-time-utilities';
 
 import { DensityDashboard, DensityDigestSchedule } from '../../types';
+import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
@@ -24,17 +21,15 @@ function loadDigestSchedules() {
   return async dispatch => {
     let schedules, errorThrown;
     try {
-      schedules = (await fetchAllPages(async page => {
-        return (await core().get(`/digest_schedules?page=${page}&page_size=5000`)).data;
-      })).map(d => objectSnakeToCamel<DensityDigestSchedule>(d));
+      schedules = await fetchAllObjects<DensityDigestSchedule>('/digest_schedules');
     } catch (err) {
       errorThrown = err;
     }
     if (!errorThrown) {
-      dispatch(collectionDispatchSchedulesSet(schedules));
+      dispatch(collectionDigestSchedulesSet(schedules));
     } else {
       console.error(errorThrown);
-      dispatch(collectionDispatchSchedulesError(errorThrown));
+      dispatch(collectionDigestSchedulesError(errorThrown));
     }
   }
 }
@@ -68,7 +63,7 @@ function loadDashboardAndReports(id) {
       // this will show a loading state / remove all dashboards that are already in the collection
       // and that's not desired.
       dashboardSelectionPromise = dispatch(
-        collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+        dashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
       );
     }
 
@@ -80,19 +75,16 @@ function loadDashboardAndReports(id) {
 
     let dashboards;
     try {
-      dashboards = await fetchAllPages(async page => (
-        (await core().get('/dashboards', {params: {page, page_size: 5000}})).data
-      ));
+      dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
     } catch (err) {
-      dispatch(collectionDashboardsError(err));
+      dispatch(dashboardsError(err));
       return;
     }
 
     const results = dashboards.map(d => objectSnakeToCamel<DensityDashboard>(d));
-    dispatch(collectionDashboardsSet(results));
+    dispatch(dashboardsSet(results));
 
     if (results.length === 0) {
-      dispatch(dashboardsError('No dashboards were found, please talk to your Density account representative to create one.'))
       return;
     }
 
@@ -110,15 +102,15 @@ function loadDashboardAndReports(id) {
       // Load the selected dashboard directly, in case it is hidden
       selectedDashboard = dashboards.find(d => d.id === id);
       if (selectedDashboard) {
-        dispatch(collectionDashboardsSet(dashboards));
+        dispatch(dashboardsSet(dashboards));
         dashboardSelectionPromise = dispatch(
-          collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+          dashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
         );
       } else {
         try {
-        selectedDashboard = objectSnakeToCamel<DensityDashboard>((await core().get(`/dashboards/${id}`)).data);
+          selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`);
         } catch (err) {
-          dispatch(collectionDashboardsError(err));
+          dispatch(dashboardsError(err));
           return;
         }
         if (!selectedDashboard) {
@@ -126,9 +118,9 @@ function loadDashboardAndReports(id) {
           return;
         }
         dashboards.push(selectedDashboard);
-        dispatch(collectionDashboardsSet(dashboards));
+        dispatch(dashboardsSet(dashboards));
         dashboardSelectionPromise = dispatch(
-          collectionDashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
+          dashboardsSelect(selectedDashboard, dashboardDate, dashboardWeekStart)
         );
       }
     }
@@ -140,7 +132,7 @@ function loadDashboardAndReports(id) {
 
 export default function routeTransitionDashboardDetail(id) {
   return async dispatch => {
-    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL });
+    dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL, dashboardId: id });
 
     await Promise.all([
       dispatch(loadDigestSchedules()),

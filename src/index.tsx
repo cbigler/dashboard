@@ -1,18 +1,19 @@
-import '@babel/polyfill'; // Polyfills for IE
-import 'react-app-polyfill/ie11'; // For IE 11 support
+// Polyfills for IE
+import 'react-app-polyfill/ie11';
+import 'react-app-polyfill/stable';
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { unregister as unregisterServiceWorker } from './registerServiceWorker';
 
-import core, { config as configCore } from './client/core';
-import accounts, { config as configAccounts } from './client/accounts';
+import accounts from './client/accounts';
 
 import ReactGA from 'react-ga';
-import moment from 'moment';
 import queryString from 'qs';
 
-import { DensityUser } from './types';
+import { DensityUser, DensitySpace } from './types';
 
 // Import @density/ui package for font
 import '@density/ui';
@@ -34,7 +35,7 @@ import IntercomDensity from './components/intercom/index';
 
 // The Environment switcher, used to switch between sets of servers that should be communicated
 // with.
-import EnvironmentSwitcher, { getActiveEnvironments, getGoSlow } from './components/environment-switcher/index';
+import EnvironmentSwitcher from './components/environment-switcher/index';
 
 // Redux is used to manage state.
 import { Provider } from 'react-redux';
@@ -56,6 +57,7 @@ import routeTransitionAccountRegister from './actions/route-transition/account-r
 import routeTransitionAccountForgotPassword from './actions/route-transition/account-forgot-password';
 import routeTransitionDashboardList from './actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './actions/route-transition/dashboard-detail';
+import routeTransitionDashboardEdit from './actions/route-transition/dashboard-edit';
 
 import routeTransitionAdminSpaceMappings from './actions/route-transition/admin-space-mappings';
 import routeTransitionAdminIntegrations from './actions/route-transition/admin-integrations';
@@ -72,6 +74,7 @@ import routeTransitionAdminLocationsEdit from './actions/route-transition/admin-
 import routeTransitionAdminLocationsNew from './actions/route-transition/admin-locations-new';
 
 import sessionTokenSet from './actions/session-token/set';
+import incrementResizeCounter from './actions/miscellaneous/increment-resize-counter';
 import redirectAfterLogin from './actions/miscellaneous/redirect-after-login';
 import collectionSpacesSet from './actions/collection/spaces/set';
 import collectionSpacesCountChange from './actions/collection/spaces/count-change';
@@ -81,30 +84,14 @@ import eventPusherStatusChange from './actions/event-pusher/status-change';
 
 // All the reducer and store code is in a separate file.
 import storeFactory from './store';
-const store = storeFactory();
+import handleVisibilityChange from './helpers/visibility-change';
+import fetchAllObjects from './helpers/fetch-all-objects';
+import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
+import { configureClients } from './helpers/unsafe-configure-app';
 
+export const store = storeFactory();
 
-// ----------------------------------------------------------------------------
-// Set the location of all microservices.
-// Here's how it works:
-// ----------------------------------------------------------------------------
-//
-// 1. All microservice names and cofigurations are defined in `fields`. `setServiceLocations` is
-// called, passing the active environment names. By setting this initially before the react render
-// happens, calls that happen before the render are able to take advantage of the custom
-// environments that have been defined.
-//
-// 2. Developer opens the environment switcher modal, changes an environment variable, then clicks
-// "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
-// `setServiceLocations`. The locations of all the services update.
-//
-function configureClients(environments, goSlow) {
-  const impersonateUser = localStorage.impersonate ?
-    (JSON.parse(localStorage.impersonate).selectedUser || {}).id : undefined;
-  configCore({host: environments.core, impersonateUser, goSlow, store});
-  configAccounts({host: environments.accounts, impersonateUser, store});
-}
-configureClients(getActiveEnvironments(fields), getGoSlow());
+configureClients(store);
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -129,11 +116,15 @@ function trackHashChange() {
     }
   }, {});
 
+  const loggedIn = (store.getState() as any).sessionToken !== null;
+
   // Mixpanel: track url chage
-  mixpanelTrack('Pageview', {
-    ...analyticsParameters,
-    url: window.location.hash,
-  });
+  if (loggedIn) {
+    mixpanelTrack('Pageview', {
+      ...analyticsParameters,
+      url: window.location.hash,
+    });  
+  }
 
   // google analytics: track page view
   if (process.env.REACT_APP_GA_TRACKING_CODE) {
@@ -168,23 +159,30 @@ router.addRoute('access_token=:oauth', () => ({type: 'NOOP'}));
 
 // v I AM DEPRECATED
 router.addRoute('insights/spaces', redirect('spaces/explore')); // DEPRECATED
-router.addRoute('spaces/insights/:id', redirect(id => `spaces/explore/${id}/trends`)); // DEPRECATED
 router.addRoute('spaces/insights', redirect(`spaces/explore`)); // DEPRECATED
+router.addRoute('spaces/insights/:id', redirect(id => `spaces/explore/${id}`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/trends', redirect(id => `spaces/explore/${id}/trends`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/daily', redirect(id => `spaces/explore/${id}/daily`)); // DEPRECATED
 router.addRoute('spaces/insights/:id/data-export', redirect(id => `spaces/explore/${id}/data-export`)); // DEPRECATED
+
+router.addRoute('spaces/explore', redirect(`spaces`)); // DEPRECATED
+router.addRoute('spaces/explore/:id', redirect(id => `spaces/${id}`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/trends', redirect(id => `spaces/${id}/trends`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/daily', redirect(id => `spaces/${id}/daily`)); // DEPRECATED
+router.addRoute('spaces/explore/:id/data-export', redirect(id => `spaces/${id}/data-export`)); // DEPRECATED
 // ^ I AM DEPRECATED
 
 router.addRoute('dashboards', () => routeTransitionDashboardList());
+router.addRoute('dashboards/:id/edit', id => routeTransitionDashboardEdit(id));
 router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(id));
 
-router.addRoute('spaces/explore', () => routeTransitionExplore());
-router.addRoute('spaces/explore/:id/trends', id => routeTransitionExploreSpaceTrends(id));
-router.addRoute('spaces/explore/:id/daily', id => routeTransitionExploreSpaceDaily(id));
-router.addRoute('spaces/explore/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
-router.addRoute('spaces/explore/:id/meetings', id => routeTransitionExploreSpaceMeetings(id, null));
-router.addRoute('spaces/explore/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(id, service));
-
+router.addRoute('spaces', () => routeTransitionExplore());
+router.addRoute('spaces/:id', redirect(id => `spaces/${id}/trends`));
+router.addRoute('spaces/:id/trends', id => routeTransitionExploreSpaceTrends(id));
+router.addRoute('spaces/:id/daily', id => routeTransitionExploreSpaceDaily(id));
+router.addRoute('spaces/:id/data-export', id => routeTransitionExploreSpaceDataExport(id));
+router.addRoute('spaces/:id/meetings', id => routeTransitionExploreSpaceMeetings(id, null));
+router.addRoute('spaces/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(id, service));
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList());
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(id));
 
@@ -199,6 +197,8 @@ router.addRoute('admin/integrations/:service/space-mappings', (service) => route
 router.addRoute('admin/integrations', () => routeTransitionAdminIntegrations());
 router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess());
+router.addRoute('admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
+router.addRoute('admin/integrations/outlook/success', (code) => routeTransitionAdminIntegrationsServiceSuccess());
 router.addRoute('admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure());
 router.addRoute('admin/integrations/teem/:access_token/:expires_in/:refresh_token/:token_type', (access_token, expires_in, refresh_token, token_type) => routeTransitionAdminIntegrationsTeem(access_token, expires_in, refresh_token, token_type));
 router.addRoute('admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(code));
@@ -216,7 +216,7 @@ router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => rout
 (window as any).setSettingsFlag = unsafeSetSettingsFlagConstructor(store);
 
 // Add a handler to debounce & handle window resize events
-(window as any).resizeHandler = unsafeHandleWindowResize(store);
+(window as any).resizeHandler = unsafeHandleWindowResize(() => store.dispatch(incrementResizeCounter()));
 
 // Make sure that the user is logged in prior to going to a page.
 async function preRouteAuthentication() {
@@ -248,10 +248,11 @@ async function preRouteAuthentication() {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}`}
     }).then(response => {
       store.dispatch(impersonateUnset());
+      configureClients();
       store.dispatch<any>(sessionTokenSet(response.data)).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
-      })
+      });
     }).catch(err => {
       window.localStorage.auth0LoginError = err.toString();
       router.navigate('login');
@@ -318,18 +319,20 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = (await core().get('/spaces')).data;
-  store.dispatch(collectionSpacesSet(spaces.results));
+  const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+  store.dispatch(collectionSpacesSet(spaces));
 
-  const spaceEventSets: any = await Promise.all(spaces.results.map(space => {
-    return core().get(`/spaces/${space.id}/events`, { params: {
-      start_time: moment.utc().subtract(1, 'minute').format(),
-      end_time: moment.utc().format(),
-    }});
+  const spaceEventSets: any = await Promise.all(spaces.map(space => {
+    return fetchAllObjects(`/spaces/${space.id}/events`, {
+      params: {
+        start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
+        end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
+      }
+    });
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces.results[index].id] = next.data.results.map(i => ({ 
+    acc[spaces[index].id] = next.map(i => ({ 
       countChange: i.direction,
       timestamp: i.timestamp
     }));
@@ -356,10 +359,20 @@ setInterval(async () => {
   const loggedIn = (store.getState() as any).sessionToken !== null;
 
   if (loggedIn) {
-    const spaces = (await core().get('/spaces')).data;
-    store.dispatch(collectionSpacesSet(spaces.results));
+    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    store.dispatch(collectionSpacesSet(spaces));
   }
 },  5 * 60 * 1000);
+
+// When the page transitions visibility, connect or disconnect the event source
+// This prevents pushed events from piling up and crashing the page when not rendered
+handleVisibilityChange(hidden => {
+  if (hidden) {
+    eventSource.disconnect();
+  } else {
+    eventSource.connect();
+  }
+})
 
 ReactDOM.render(
   <Provider store={store}>

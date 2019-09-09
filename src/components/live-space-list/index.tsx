@@ -20,6 +20,8 @@ import styles from './styles.module.scss';
 
 import { getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
 import filterCollection from '../../helpers/filter-collection/index';
+import autoRefresh from '../../helpers/auto-refresh-hoc';
+import { isDocumentHidden } from '../../helpers/visibility-change';
 const spaceFilter = filterCollection({fields: ['name']});
 
 function filterHierarchy(spaces, parentId) {
@@ -101,7 +103,7 @@ export function LiveSpaceList({
             type="text"
             width={250}
             className={styles.liveSpaceListSearchBox}
-            placeholder="Filter Spaces ..."
+            placeholder="Filter spaces ..."
             value={spaces.filters.search}
             onChange={e => onSpaceSearch(e.target.value)}
           />
@@ -127,6 +129,10 @@ export function LiveSpaceList({
     </div>
   </div>;
 }
+
+const AutoRefreshedLiveSpaceList = autoRefresh({
+  shouldComponentUpdate: () => !isDocumentHidden()
+})(LiveSpaceList);
 
 export default connect((state: any) => {
   return {
@@ -157,4 +163,4 @@ export default connect((state: any) => {
       dispatch<any>(hideModal());
     },
   };
-})(LiveSpaceList);
+})(AutoRefreshedLiveSpaceList);

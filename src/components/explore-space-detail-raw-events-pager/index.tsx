@@ -11,7 +11,13 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
     this.state = { textPage: false };
   }
   shouldComponentUpdate(props, state, context) {
-    return !props.loading;
+    return !props.loading &&
+      (this.props.totalPages !== props.totalPages ||
+        this.props.totalEvents !== props.totalEvents ||
+        this.props.page !== props.page ||
+        this.props.disabled !== props.disabled ||
+        this.props.onChange !== props.onChange ||
+        this.state.textPage !== state.textPage);
   }
   render() {
     const {
@@ -23,7 +29,7 @@ export default class VisualizationSpaceDetailRawEventsPager extends React.Compon
     } = this.props;
     return <div className={classnames(styles.visualizationSpaceDetailRawEventsPager, {[styles.disabled]: disabled})}>
       <div className={styles.visualizationSpaceDetailRawEventsPagerTotal}>
-        {totalEvents || 0} Events...
+        {totalEvents || 0} events...
       </div>
       <div className={styles.visualizationSpaceDetailRawEventsPagerPicker}>
         <span>Page</span>

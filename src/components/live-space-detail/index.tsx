@@ -4,19 +4,13 @@ import { connect } from 'react-redux';
 
 import { DensityMark } from '@density/ui';
 
-import autoRefreshHoc from '../../helpers/auto-refresh-hoc/index';
-
 import { chartAsReactComponent } from '@density/charts';
 
 import styles from './styles.module.scss';
 
 import RealTimeCountFn from '@density/chart-real-time-count';
-const RealTimeCountChart = autoRefreshHoc({
-  interval: 50,
-  shouldComponentUpdate: function (nextProps) {
-    return (this as any).props.events.length || nextProps.events.length;
-  }
-})(chartAsReactComponent(RealTimeCountFn));
+import autoRefresh from '../../helpers/auto-refresh-hoc/index';
+const RealTimeCountChart = chartAsReactComponent(RealTimeCountFn);
 
 export function LiveSpaceDetail({
   space,
@@ -72,6 +66,14 @@ export function LiveSpaceDetail({
   }
 }
 
+const AutoRefreshedLiveSpaceDetail = autoRefresh({
+  shouldComponentUpdate: function (nextProps) {
+    const props = (this as any).props.events[(this as any).props.space.id] ||
+      nextProps.events[nextProps.space.id] || [];
+    return props.length > 0;
+  }
+})(LiveSpaceDetail);
+
 export default connect((state: any) => {
   return {
     space: state.spaces.data.find(space => space.id === state.spaces.selected),
@@ -83,4 +85,4 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
   };
-})(LiveSpaceDetail);
+})(AutoRefreshedLiveSpaceDetail);

@@ -2,14 +2,14 @@ import React, { Fragment } from 'react';
 import uuid from 'uuid';
 import moment from 'moment';
 import { connect } from 'react-redux';
-import styles from './styles.module.scss';
+import styles from './operating-hours.module.scss';
 import classnames from 'classnames';
 
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
+import SpacePicker from '../space-picker';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
-import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 
 import collectionSpacesFilter from '../../actions/collection/spaces/filter';
 import showModal from '../../actions/modal/show';
@@ -28,11 +28,10 @@ import {
   AppBarTitle,
   AppBarContext,
   Button,
-  ButtonContext,
+  ButtonGroup,
   InputBox,
   Icons,
   Modal,
-  RadioButton,
   Switch,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
@@ -56,10 +55,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   onChangeSelectedSpace,
 }) {
   if (activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE') {
-    let formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
-    if (spaces.filters.search) {
-      formattedHierarchy = spaceHierarchySearcher(formattedHierarchy, spaces.filters.search);
-    }
+    const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
 
     return (
       <Modal
@@ -73,80 +69,33 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
           <AppBarTitle>Copy Operating Hours</AppBarTitle>
         </AppBar>
 
-        <div className={styles.operatingHoursCopyFromSpaceModalSearchBar}>
-          <AppBar>
-            <InputBox
-              type="text"
-              leftIcon={<Icons.Search />}
-              placeholder="Search for space name"
-              width="100%"
-              value={spaces.filters.search}
-              onChange={e => onChangeSearchText(e.target.value)}
-            />
-          </AppBar>
-        </div>
+        <SpacePicker
+          value={formattedHierarchy.find(h => h.space.id === selectedSpaceId) || null}
+          onChange={item => onChangeSelectedSpace(item.space.id)}
 
-        <div className={styles.operatingHoursCopyFromSpaceModalContainer}>
-          {formattedHierarchy.map(item => {
+          formattedHierarchy={formattedHierarchy}
+          searchBoxPlaceholder="Search for space name"
+          height={444}
+          isItemDisabled={item => {
             const space = spaces.data.find(s => s.id === item.space.id);
             const spaceHasNoTimeSegments = space ? space.timeSegments.length === 0 : false;
-            const spaceDisabled = !item.space.hasPurview || spaceHasNoTimeSegments;
-            return (
-              <div
-                key={item.space.id}
-                className={classnames(styles.operatingHoursCopyFromSpaceModalItem, {
-                  [styles.depth0]: item.depth === 0,
-                  [styles.disabled]: spaceDisabled,
-                })}
-                style={{marginLeft: item.depth * 24}}
-                onClick={() => {
-                  if (!spaceDisabled) {
-                    onChangeSelectedSpace(item.space.id)
-                  }
-                }}
-              >
-                <RadioButton
-                  disabled={spaceDisabled}
-                  checked={selectedSpaceId === item.space.id}
-                  onChange={() => onChangeSelectedSpace(item.space.id)}
-                />
-
-                {item.space.spaceType === 'building' ? (
-                  <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
-                    <Icons.Building color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                  </span>
-                ) : null}
-                {item.space.spaceType === 'floor' ? (
-                  <span className={styles.operatingHoursCopyFromSpaceModalItemIcon}>
-                    <Icons.Folder color={selectedSpaceId === item.space.id ? colorVariables.grayCinder : colorVariables.grayDarker} />
-                  </span>
-                ) : null}
-
-                <span
-                  className={classnames(styles.operatingHoursCopyFromSpaceModalItemName, {
-                    [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
-                    [styles.disabled]: spaceDisabled,
-                  })}
-                >
-                  {item.space.name}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+            return spaceHasNoTimeSegments;
+          }}
+        />
 
         <AppBarContext.Provider value="BOTTOM_ACTIONS">
           <AppBar>
             <AppBarSection />
             <AppBarSection>
-              <ButtonContext.Provider value="CANCEL_BUTTON">
-                <Button onClick={onCloseModal}>Cancel</Button>
-              </ButtonContext.Provider>
-              <Button
-                type="primary"
-                disabled={selectedSpaceId === null}
-                onClick={() => onSubmitModal(selectedSpaceId)}
-              >Copy Hours</Button>
+              <ButtonGroup>
+                <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
+                <Button
+                  variant="filled"
+                  type="primary"
+                  disabled={selectedSpaceId === null}
+                  onClick={() => onSubmitModal(selectedSpaceId)}
+                >Copy hours</Button>
+              </ButtonGroup>
             </AppBarSection>
           </AppBar>
         </AppBarContext.Provider>
@@ -221,12 +170,13 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
+  const parentTimeSegments = getParentTimeSegmentsForSpace(
+    formState.parentId,
+    spaceManagement.spaceHierarchy,
+  );
   const parentOperatingHours = calculateOperatingHoursFromSpace({
     dailyReset: formState.dailyReset,
-    timeSegments: getParentTimeSegmentsForSpace(
-      formState.parentId,
-      spaceManagement.spaceHierarchy,
-    ),
+    timeSegments: parentTimeSegments,
   });
   const shownOperatingHours = formState.overrideDefault ? (
     formState.operatingHours
@@ -282,15 +232,16 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       <AdminLocationsDetailModule
         title="Operating Hours"
         includePadding={false}
+        hideOverflow={true}
         actions={
           <AppBarSection>
             {!formState.overrideDefaultControlHidden ? (
               <Fragment>
                 <label
-                  className={styles.operatingHoursOverrideDefaultLabel}
+                  className={styles.overrideDefaultLabel}
                   htmlFor="admin-locations-detail-module-operating-hours-override-default"
                 >
-                  Override Default:
+                  Override default:
                 </label>
                 <Switch
                   id="admin-locations-detail-module-operating-hours-override-default"
@@ -301,10 +252,18 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
                     if (switchEnabled) {
                       // Copy operating hours from parent into this space
-                      onChangeField('operatingHours', parentOperatingHours);
+                      const newOperatingHours = parentOperatingHours.map(i => ({
+                        ...i,
+                        operationToPerform: 'CREATE',
+                        id: uuid.v4(),
+                      }));
+
+                      onChangeField('operatingHours', newOperatingHours);
                     } else {
-                      // Remove all operating hour segments when the switch is disabled
+                      // Clear array of operating hours.
                       onChangeField('operatingHours', []);
+                      // NB: The server will remove all the time segments that were previously
+                      // associated with the space when the form is saved.
                     }
                   }}
                 />
@@ -315,9 +274,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       >
         <AppBar>
           <AppBarSection>
-            <div className={styles.operatingHoursLeft}>
+            <div className={styles.left}>
               <label htmlFor="admin-locations-detail-modules-operating-hours-time-zone">
-                Time Zone:
+                Time zone:
               </label>
               <InputBox
                 id="admin-locations-detail-modules-operating-hours-time-zone"
@@ -332,7 +291,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
             </div>
           </AppBarSection>
           <AppBarSection>
-            <div className={styles.operatingHoursRight}>
+            <div className={styles.right}>
               <label htmlFor="admin-locations-detail-modules-operating-hours-reset-time">
                 Reset the count at:
               </label>
@@ -346,8 +305,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   .map(i => ({
                     id: i.value,
                     label: (
-                      <div className={styles.operatingHoursResetTimeChoiceWrapper}>
-                        <div className={styles.operatingHoursResetTimeIconWrapper}>
+                      <div className={styles.resetTimeChoiceWrapper}>
+                        <div className={styles.resetTimeIconWrapper}>
                           <Icons.Reset width={20} height={20} color={colorVariables.gray} />
                         </div>
                         {i.display}
@@ -380,12 +339,12 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         </AppBar>
 
         {shownOperatingHours.filter(i => i.operationToPerform !== 'DELETE').length === 0 ? (
-          <div className={styles.operatingHoursEmptyState}>
-            <div className={styles.operatingHoursEmptyStateInner}>
-              <div className={styles.operatingHoursEmptyStateInnerLeft}>
+          <div className={styles.emptyState}>
+            <div className={styles.emptyStateInner}>
+              <div className={styles.emptyStateInnerLeft}>
                 {HOURGLASS_ICON}
               </div>
-              <div className={styles.operatingHoursEmptyStateInnerRight}>
+              <div className={styles.emptyStateInnerRight}>
                 <h3>
                   You haven't assigned any operating hours to
                   {formState.overrideDefault ? ' this' : ' the parent'} space
@@ -397,9 +356,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         ) : null}
 
         {shownOperatingHours.map((operatingHoursItem, index) => {
-          if (operatingHoursItem.operationToPerform === 'DELETE') { return; }
+          if (operatingHoursItem.operationToPerform === 'DELETE') { return undefined; }
           return (
-            <div key={operatingHoursItem.id} className={styles.operatingHoursTimeSegmentItem}>
+            <div key={operatingHoursItem.id} className={styles.timeSegmentItem}>
               <AppBarContext.Provider value="TRANSPARENT">
                 <AppBar>
                   <AppBarSection>
@@ -437,7 +396,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           label: item.id,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -445,7 +404,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         {
                           id: 'ADD_A_LABEL',
                           label: (
-                            <span className={styles.operatingHoursAddLabel}>
+                            <span className={styles.addLabel}>
                               <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
                               <span>Add a label</span>
                             </span>
@@ -459,7 +418,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     />
                   </AppBarSection>
                   <AppBarSection>
-                    <span className={styles.operatingHoursDayOfWeekLabel}>Days Affected:</span>
+                    <span className={styles.dayOfWeekLabel}>Days affected:</span>
                     <DayOfWeekSelector
                       daysOfWeek={operatingHoursItem.daysAffected}
                       disabled={!formState.overrideDefault}
@@ -468,7 +427,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                         operatingHoursCopy[index] = {
                           ...operatingHoursCopy[index],
                           daysAffected,
-                          operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                          operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                         };
                         onChangeField('operatingHours', operatingHoursCopy);
                       }}
@@ -476,7 +435,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   </AppBarSection>
                 </AppBar>
               </AppBarContext.Provider>
-              <div className={styles.operatingHoursTimeSegmentItemSection}>
+              <div className={styles.timeSegmentItemSection}>
                 <AdminLocationsDetailModulesOperatingHoursSlider
                   timeZone={formState.timeZone}
                   dayStartTime={formState.dailyReset}
@@ -489,7 +448,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ...operatingHoursCopy[index],
                       startTimeSeconds,
                       endTimeSeconds,
-                      operationToPerform: operatingHoursCopy[index].operationToPerform || 'UPDATE',
+                      operationToPerform: operatingHoursCopy[index].operationToPerform === 'CREATE' ? 'CREATE' : 'UPDATE',
                     };
                     onChangeField('operatingHours', operatingHoursCopy);
                   }}
@@ -498,7 +457,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               <AppBarContext.Provider value={formState.overrideDefault ? 'DEFAULT' : 'TRANSPARENT'}>
                 <AppBar>
                   <AppBarSection>
-                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    <div className={classnames(styles.timeRangeBubble, {
                       [styles.disabled]: !formState.overrideDefault,
                     })}>
                       {formatDuration(
@@ -507,10 +466,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       ).slice(0, -1)}
                     </div>
                     <div className={classnames(
-                      styles.operatingHoursTimeRangeBubbleBridge,
+                      styles.timeRangeBubbleBridge,
                       { [styles.disabled]: !formState.overrideDefault }
                     )} />
-                    <div className={classnames(styles.operatingHoursTimeRangeBubble, {
+                    <div className={classnames(styles.timeRangeBubble, {
                       [styles.disabled]: !formState.overrideDefault,
                     })}>
                       {formatDuration(
@@ -521,25 +480,25 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   </AppBarSection>
                   {formState.overrideDefault ? (
                     <AppBarSection>
-                      <ButtonContext.Provider value="DELETE_SEGMENT_BUTTON">
-                        <Button
-                          onClick={async () => {
-                            onConfirmSegmentCanBeDeleted(() => {
-                              const operatingHoursCopy = formState.operatingHours.slice();
-                              if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
-                                // The server has not received the operating hours item yet, so just
-                                // remove it
-                                operatingHoursCopy.splice(index, 1);
-                              } else {
-                                // The server has a copy of the operating hours item, so it must be
-                                // explicitly deleted
-                                operatingHoursCopy[index].operationToPerform = 'DELETE';
-                              }
-                              onChangeField('operatingHours', operatingHoursCopy);
-                            });
-                          }}
-                        >Delete Segment</Button>
-                      </ButtonContext.Provider>
+                      <Button
+                        onClick={async () => {
+                          onConfirmSegmentCanBeDeleted(() => {
+                            const operatingHoursCopy = formState.operatingHours.slice();
+                            if (operatingHoursCopy[index].operationToPerform === 'CREATE') {
+                              // The server has not received the operating hours item yet, so just
+                              // remove it
+                              operatingHoursCopy.splice(index, 1);
+                            } else {
+                              // The server has a copy of the operating hours item, so it must be
+                              // explicitly deleted
+                              operatingHoursCopy[index].operationToPerform = 'DELETE';
+                            }
+                            onChangeField('operatingHours', operatingHoursCopy);
+                          });
+                        }}
+                        variant="underline"
+                        type="danger"
+                      >Delete segment</Button>
                     </AppBarSection>
                   ) : null}
                 </AppBar>
@@ -553,28 +512,28 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <div className={styles.operatingHoursCopyFromSpaceButton}>
-                  <Button onClick={onOpenCopyFromSpace}>Copy from Space</Button>
-                </div>
-                <Button type="primary" onClick={() => {
-                  // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
-                  // the server yet have a unique identifier. This uuid will be discarded after the
-                  // time segment is sent to the server and has a real id.
-                  const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
+                <ButtonGroup>
+                  <Button onClick={onOpenCopyFromSpace}>Copy from space</Button>
+                  <Button variant="filled" onClick={() => {
+                    // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
+                    // the server yet have a unique identifier. This uuid will be discarded after the
+                    // time segment is sent to the server and has a real id.
+                    const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
 
-                  const operatingHoursItem = {
-                    label: null,
-                    startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
-                    endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
-                    daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-                    operationToPerform: 'CREATE',
-                  };
+                    const operatingHoursItem = {
+                      label: null,
+                      startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
+                      endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
+                      daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+                      operationToPerform: 'CREATE',
+                    };
 
-                  onChangeField('operatingHours', [
-                    ...formState.operatingHours,
-                    { ...operatingHoursItem, id },
-                  ]);
-                }}>Add a Segment</Button>
+                    onChangeField('operatingHours', [
+                      ...formState.operatingHours,
+                      { ...operatingHoursItem, id },
+                    ]);
+                  }}>Add a segment</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>

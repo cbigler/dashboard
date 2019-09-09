@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import moment from 'moment';
@@ -83,7 +83,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
   onTouchStart = event => this.onStart(event, event.touches[0].clientX);
 
   onDrag = (event, clientX) => {
-    const { dayStartTime, onChange } = this.props;
+    const { dayStartTime } = this.props;
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
@@ -161,9 +161,6 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
     const { dayStartTime, timeZone, disabled } = this.props;
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
-
-    const startTimeDuration = moment.duration(startTime, 'seconds');
-    const endTimeDuration = moment.duration(endTime, 'seconds');
 
     const sliderStartTimePercentage = (startTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;
     const sliderEndTimePercentage = (endTime - dayStartTimeSeconds) / UTC_DAY_LENGTH_IN_SECONDS * 100;

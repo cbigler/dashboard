@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="46px" height="46px" viewBox="0 0 46 46" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>logo-color</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="12.7108949%" y1="9.32246089%" x2="96.7906615%" y2="107.054627%" id="linearGradient-1">
+            <stop stop-color="#C7017F" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="87.6343458%" y1="90.3205196%" x2="2.82476636%" y2="-6.49734889%" id="linearGradient-2">
+            <stop stop-color="#C7017F" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="8.99867444%" y1="86.7697394%" x2="105.458643%" y2="5.63438351%" id="linearGradient-3">
+            <stop stop-color="#009FE3" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="92.8119363%" y1="12.2093385%" x2="-2.43766578%" y2="91.2844358%" id="linearGradient-4">
+            <stop stop-color="#009FE3" offset="0%"></stop>
+            <stop stop-color="#FFFFFF" stop-opacity="0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="logo-color" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <g>
+                <polygon id="Shape" fill="#C7017F" opacity="0.75" points="15.6295964 31.5643636 40.243722 45.8996364 45.6112108 40.48 22.9632287 27.2821818"></polygon>
+                <polygon id="Shape" fill="#C7017F" opacity="0.75" points="30.305157 14.5527273 5.68273543 0.225818182 0.306950673 5.64545455 22.9632287 18.8265455"></polygon>
+                <polygon id="Shape" fill="url(#linearGradient-1)" points="15.2811659 31.7650909 0.315246637 5.64545455 5.68273543 0.225818182 21.6358744 28.06"></polygon>
+                <polygon id="Shape" fill="url(#linearGradient-2)" points="30.6618834 14.352 45.6112108 40.48 40.235426 45.8996364 24.3071749 18.0654545"></polygon>
+                <polygon id="Shape" fill="#0095DB" opacity="0.7" points="31.4002242 30.4687273 45.6112108 5.64545455 40.235426 0.225818182 27.1609865 23.0585455"></polygon>
+                <polygon id="Shape" fill="#0095DB" opacity="0.7" points="14.5262332 15.6734545 0.315246637 40.48 5.68273543 45.8996364 18.7654709 23.0669091"></polygon>
+                <polygon id="Shape" fill="url(#linearGradient-3)" points="31.5993274 30.8116364 5.68273543 45.8996364 0.306950673 40.48 27.9242152 24.3967273"></polygon>
+                <polygon id="Shape" fill="url(#linearGradient-4)" points="14.335426 15.3221818 40.243722 0.225818182 45.6112108 5.64545455 18.0188341 21.7203636"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

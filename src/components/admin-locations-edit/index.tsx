@@ -5,13 +5,16 @@ import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import collectionSpacesUpdate from '../../actions/collection/spaces/update';
 import showToast from '../../actions/toasts';
+import spaceManagementReset from '../../actions/space-management/reset';
 import spaceManagementFormUpdate from '../../actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
 
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensityTag, DensityAssignedTeam, DensitySpaceHierarchyItem } from '../../types';
+import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
+  AdminLocationsDetailModulesTags,
   AdminLocationsDetailModulesMetadata,
   AdminLocationsDetailModulesAddress,
   AdminLocationsDetailModulesDangerZone,
@@ -25,57 +28,167 @@ import {
   AppBar,
   AppBarTitle,
   AppBarSection,
-  ButtonContext,
   Button,
+  ButtonGroup,
   Icons,
 } from '@density/ui';
 
-import { AdminLocationsFormState } from '../../reducers/space-management';
+type AdminLocationsFormProps = {
+  spaceType: DensitySpace["spaceType"],
+  spaceHierarchy: Array<DensitySpaceHierarchyItem>,
+  formState: { [key: string]: any },
+  tagsCollection: { [key: string]: any },
+  assignedTeamsCollection: { [key: string]: any },
+  onChangeField: (string, any) => any,
+  onSetDoorwayField?: (doorwayId: string, key: string, value: any) => any,
+  operationType: 'CREATE' | 'UPDATE',
+};
 
-// Given the state of the form, convert that state back into fields that can be sent in the body of
-// a PUT to the space.
-export function convertFormStateToSpaceFields(formState: AdminLocationsFormState, spaceType: DensitySpace["spaceType"]) {
-  function parseIntOrNull(string) {
-    const result = parseInt(string, 10);
-    if (isNaN(result)) {
-      return null;
-    } else {
-      return result;
-    }
-  }
-  return {
-    name: formState.name,
-    spaceType: formState.spaceType,
-    'function': formState['function'],
-    parentId: formState.parentId,
-    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
-
-    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
-    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
-    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
-    currencyUnit: formState.currencyUnit,
-    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
-    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
-
-    address: formState.address && formState.address.length > 0 ? formState.address : null,
-    latitude: formState.coordinates ? formState.coordinates[0] : null,
-    longitude: formState.coordinates ? formState.coordinates[1] : null,
-
-    dailyReset: formState.dailyReset,
-    timeZone: formState.timeZone,
-
-    newImageFile: formState.newImageFile,
-    operatingHours: formState.operatingHours,
-
-    inheritsTimeSegments: !formState.overrideDefault,
+// A component that renders all the space management modules for the given space type
+export function SpaceTypeForm({
+  spaceType,
+  spaceHierarchy,
+  formState,
+  tagsCollection,
+  assignedTeamsCollection,
+  onChangeField,
+  onSetDoorwayField,
+  operationType,
+}: AdminLocationsFormProps) {
+  const MODULES = {
+    generalInfo: (
+      <AdminLocationsDetailModulesGeneralInfo
+        spaceType={spaceType}
+        spaceHierarchy={spaceHierarchy}
+        formState={formState}
+        onChangeField={onChangeField}
+      />
+    ),
+    metadata: (
+      <AdminLocationsDetailModulesMetadata
+        spaceType={spaceType}
+        formState={formState}
+        onChangeField={onChangeField}
+      />
+    ),
+    address: (
+      <AdminLocationsDetailModulesAddress
+        spaceType={spaceType}
+        address={formState.address}
+        coordinates={formState.coordinates}
+        onChangeAddress={address => onChangeField('address', address)}
+        onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
+      />
+    ),
+    operatingHours: (
+      <AdminLocationsDetailModulesOperatingHours
+        formState={formState}
+        onChangeField={onChangeField}
+      />
+    ),
+    tags: (
+      <AdminLocationsDetailModulesTags
+        title="Tags"
+        placeholder="Start typing to add a tag"
+        processIntoSlug={true}
+        emptyTagsPlaceholder="No tags have been added to this space yet"
+        tags={formState.tags}
+        tagsCollection={tagsCollection}
+        onChangeTags={tags => onChangeField('tags', tags)}
+      />
+    ),
+    teams: (
+      <AdminLocationsDetailModulesTags
+        title="Teams"
+        placeholder="Start typing to assign a team"
+        processIntoSlug={false}
+        emptyTagsPlaceholder="No teams have been assigned to this space yet"
+        tags={formState.assignedTeams}
+        tagsCollection={assignedTeamsCollection}
+        onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
+      />
+    ),
+    doorways: (
+      <AdminLocationsDetailModulesDoorways
+        formState={formState}
+        onChangeField={onChangeField}
+        onSetDoorwayField={onSetDoorwayField}
+        onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
+      />
+    ),
+    dangerZone: (
+      <Fragment>
+        {operationType === 'UPDATE' ? (
+          <AdminLocationsDetailModulesDangerZone />
+        ) : null}
+      </Fragment>
+    ),
   };
+
+  const MODULES_BY_SPACE_TYPE = {
+    campus: [
+      MODULES.generalInfo,
+      MODULES.address,
+      MODULES.operatingHours,
+      MODULES.tags,
+      MODULES.teams,
+      MODULES.dangerZone,
+    ],
+    building: [
+      MODULES.generalInfo,
+      MODULES.address,
+      MODULES.doorways,
+      MODULES.operatingHours,
+      MODULES.metadata,
+      MODULES.tags,
+      MODULES.teams,
+      MODULES.dangerZone,
+    ],
+    floor: [
+      MODULES.generalInfo,
+      MODULES.doorways,
+      MODULES.operatingHours,
+      MODULES.metadata,
+      MODULES.tags,
+      MODULES.teams,
+      MODULES.dangerZone,
+    ],
+    space: [
+      MODULES.generalInfo,
+      MODULES.metadata,
+      MODULES.doorways,
+      MODULES.operatingHours,
+      MODULES.tags,
+      MODULES.teams,
+      MODULES.dangerZone,
+    ],
+  };
+
+  return (
+    <div className={styles.moduleContainer}>
+      <div className={styles.moduleInner}>
+        {MODULES_BY_SPACE_TYPE[spaceType].map((mod, index) => (
+          // Note: normally using the index would be not optimal as a key, but the order of these
+          // modules in the array is stable / isn't going to change so I think it is preferrable to
+          // adding an explicit key to each one.
+          <div key={index} className={styles.moduleWrapper}>
+            {mod}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 type AdminLocationsEditProps = {
   spaceManagement: any,
   selectedSpace: DensitySpace,
+
+  tagsCollection: Array<DensityTag>,
+  assignedTeamsCollection: Array<DensityAssignedTeam>,
+
   onChangeField: (string, any) => any,
-  onSetDoorwaySelected: (string, boolean) => any,
+  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
   onSave: (spaceId: string, spaceFieldUpdate: any) => any,
 };
 
@@ -117,17 +230,11 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
     const {
       spaceManagement,
       selectedSpace,
+      tagsCollection,
+      assignedTeamsCollection,
       onChangeField,
-      onSetDoorwaySelected
+      onSetDoorwayField,
     } = this.props;
-
-    const FormComponent = {
-      campus: AdminLocationsCampusForm,
-      building: AdminLocationsBuildingForm,
-      floor: AdminLocationsFloorForm,
-      space: AdminLocationsSpaceForm,
-      unknown: AdminLocationsNoopForm,
-    }[selectedSpace ? selectedSpace.spaceType : 'unknown'];
 
     return (
       <AppFrame>
@@ -162,30 +269,34 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                     Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
                   </AppBarTitle>
                   <AppBarSection>
-                    <ButtonContext.Provider value="CANCEL_BUTTON">
+                    <ButtonGroup>
                       <Button
+                        variant="underline"
                         disabled={spaceManagement.view.startsWith('LOADING')}
-                        onClick={() => {
-                          window.location.href = `#/admin/locations/${selectedSpace.id}`;
-                        }}>Cancel</Button>
-                    </ButtonContext.Provider>
-                    <Button
-                      type="primary"
-                      onClick={this.onSave}
-                      disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
-                    >Save</Button>
+                        href={`#/admin/locations/${selectedSpace.id}`}
+                      >Cancel</Button>
+                      <Button
+                        type="primary"
+                        variant="filled"
+                        onClick={this.onSave}
+                        disabled={!this.isFormComplete() || spaceManagement.view.startsWith('LOADING')}
+                      >Save</Button>
+                    </ButtonGroup>
                   </AppBarSection>
                 </AppBar>
               </div>
 
               {/* All the space type components take the same props */}
               {spaceManagement.view === 'VISIBLE' ? (
-                <FormComponent
+                <SpaceTypeForm
                   spaceType={selectedSpace.spaceType}
+                  spaceHierarchy={spaceManagement.spaceHierarchy}
                   formState={spaceManagement.formState}
+                  tagsCollection={tagsCollection}
+                  assignedTeamsCollection={assignedTeamsCollection}
                   operationType="UPDATE"
                   onChangeField={onChangeField}
-                  onSetDoorwaySelected={onSetDoorwaySelected}
+                  onSetDoorwayField={onSetDoorwayField}
                 />
               ) : (
                 // When loading
@@ -205,6 +316,8 @@ export default connect((state: any) => {
   const selectedSpace = state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id);
   return {
     spaceManagement: state.spaceManagement,
+    tagsCollection: state.tags,
+    assignedTeamsCollection: state.assignedTeams,
     selectedSpace,
   };
 }, (dispatch: any) => {
@@ -216,6 +329,7 @@ export default connect((state: any) => {
       }));
       if (!ok) {
         dispatch(showToast({ type: 'error', text: 'Error updating space' }));
+        dispatch(spaceManagementReset());
         return false;
       }
 
@@ -225,197 +339,8 @@ export default connect((state: any) => {
     onChangeField(key, value) {
       dispatch(spaceManagementFormUpdate(key, value));
     },
-    onSetDoorwaySelected(doorwayId, value) {
-      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, 'selected', value));
+    onSetDoorwayField(doorwayId, field, value) {
+      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
     },
   };
 })(AdminLocationsEdit);
-
-// Props that all the below forms take
-type AdminLocationsFormSpaceTypeProps = {
-  spaceType: DensitySpace["spaceType"],
-  formState: { [key: string]: any },
-  onChangeField: (string, any) => any,
-  onSetDoorwaySelected?: (string, boolean) => any,
-  operationType: 'CREATE' | 'UPDATE',
-};
-
-// NOTE: all the below forms are rendered both when creating a new instance and editing an
-// existing instance of a space. Therefore, a space is not specified as when the form is rendered
-// for the "new" state no space exists yet.
-export function AdminLocationsNoopForm(props: AdminLocationsFormSpaceTypeProps) { return null; }
-
-export function AdminLocationsCampusForm({
-  spaceType,
-  formState,
-  onChangeField,
-  operationType,
-}: AdminLocationsFormSpaceTypeProps) {
-  return (
-    <div className={styles.moduleContainer}>
-      <div className={styles.moduleInner}>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesGeneralInfo
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesAddress
-            spaceType={spaceType}
-            address={formState.address}
-            coordinates={formState.coordinates}
-            onChangeAddress={address => onChangeField('address', address)}
-            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesOperatingHours
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        {operationType === 'UPDATE' ? (
-          <div className={styles.moduleWrapper}>
-            <AdminLocationsDetailModulesDangerZone />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-export function AdminLocationsBuildingForm({
-  spaceType,
-  formState,
-  onChangeField,
-  onSetDoorwaySelected,
-  operationType,
-}: AdminLocationsFormSpaceTypeProps) {
-  return (
-    <div className={styles.moduleContainer}>
-      <div className={styles.moduleInner}>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesGeneralInfo
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesAddress
-            spaceType={spaceType}
-            address={formState.address}
-            coordinates={formState.coordinates}
-            onChangeAddress={address => onChangeField('address', address)}
-            onChangeCoordinates={coordinates => onChangeField('coordinates', coordinates)}
-          />
-        </div>
-        {/* <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesDoorways
-            formState={formState}
-            onToggleDoorway={item => onSetDoorwaySelected && onSetDoorwaySelected(item.id, !item._formState.selected)}
-            onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
-          />
-        </div> */}
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesOperatingHours
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesMetadata
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        {operationType === 'UPDATE' ? (
-          <div className={styles.moduleWrapper}>
-            <AdminLocationsDetailModulesDangerZone />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-export function AdminLocationsFloorForm({
-  spaceType,
-  formState,
-  onChangeField,
-  operationType,
-}: AdminLocationsFormSpaceTypeProps) {
-  return (
-    <div className={styles.moduleContainer}>
-      <div className={styles.moduleInner}>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesGeneralInfo
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesOperatingHours
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesMetadata
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        {operationType === 'UPDATE' ? (
-          <div className={styles.moduleWrapper}>
-            <AdminLocationsDetailModulesDangerZone />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}
-
-export function AdminLocationsSpaceForm({
-  spaceType,
-  formState,
-  onChangeField,
-  operationType,
-}: AdminLocationsFormSpaceTypeProps) {
-  return (
-    <div className={styles.moduleContainer}>
-      <div className={styles.moduleInner}>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesGeneralInfo
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesMetadata
-            spaceType={spaceType}
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        <div className={styles.moduleWrapper}>
-          <AdminLocationsDetailModulesOperatingHours
-            formState={formState}
-            onChangeField={onChangeField}
-          />
-        </div>
-        {operationType === 'UPDATE' ? (
-          <div className={styles.moduleWrapper}>
-            <AdminLocationsDetailModulesDangerZone />
-          </div>
-        ) : null}
-      </div>
-    </div>
-  );
-}

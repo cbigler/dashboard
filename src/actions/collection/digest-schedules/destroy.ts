@@ -1,13 +1,13 @@
-export const COLLECTION_DISPATCH_SCHEDULES_DESTROY = 'COLLECTION_DISPATCH_SCHEDULES_DESTROY';
-
 import core from '../../../client/core';
-import collectionDispatchSchedulesError from './error';
-import collectionDispatchSchedulesPush from './push';
-import collectionDispatchSchedulesRemove from './remove';
+import collectionDigestSchedulesError from './error';
+import collectionDigestSchedulesRemove from './remove';
+import showToast from '../../toasts';
 
-export default function collectionDispatchSchedulesDestroy(schedule) {
+export const COLLECTION_DIGEST_SCHEDULES_DESTROY = 'COLLECTION_DIGEST_SCHEDULES_DESTROY';
+
+export default function collectionDigestSchedulesDestroy(schedule) {
   return async dispatch => {
-    dispatch({ type: COLLECTION_DISPATCH_SCHEDULES_DESTROY });
+    dispatch({ type: COLLECTION_DIGEST_SCHEDULES_DESTROY });
 
     let errorThrown;
     try {
@@ -18,11 +18,11 @@ export default function collectionDispatchSchedulesDestroy(schedule) {
 
     if (errorThrown) {
       console.error(errorThrown);
-      dispatch(collectionDispatchSchedulesError(errorThrown));
-      return false;
+      dispatch(collectionDigestSchedulesError(errorThrown));
+      dispatch(showToast({ type: 'error', text: `Whoops! That didn't work.` }));
     } else {
-      dispatch(collectionDispatchSchedulesRemove(schedule));
-      return true;
+      dispatch(collectionDigestSchedulesRemove(schedule));
+      dispatch(showToast({ text: 'Digest deleted.' }));
     }
   }
 }

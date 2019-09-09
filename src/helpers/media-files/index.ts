@@ -1,6 +1,7 @@
 import core from '../../client/core';
 import { sleep } from '../async-tools';
 import objectSnakeToCamel from '../object-snake-to-camel';
+import { fetchObject } from '../fetch-all-objects';
 
 // Convert a file or blob to a data URL
 export async function fileToDataURI(file: File | Blob) {
@@ -30,7 +31,7 @@ export default async function uploadMedia(path: string, file: File, quantity=1, 
   let status: any = null;
   for (let i = 0; i < retries; i++) {
     await sleep(1000);
-    status = objectSnakeToCamel((await core().get(`/uploads/${uploadId}`)).data);
+    status = fetchObject(`/uploads/${uploadId}`, { cache: false });
     if (status.media.length >= quantity) { break; }
   }
 

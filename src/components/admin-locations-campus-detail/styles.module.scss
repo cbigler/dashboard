@@ -2,6 +2,7 @@
 
 .scroll {
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   height: 100%;
   background-color: $grayLightest;
 }
@@ -22,3 +23,10 @@
 }
 
 .leftPaneMap { padding: 24px; }
+
+.sidebar {
+  height: 100%;
+  margin-bottom: -1px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}

@@ -3,12 +3,12 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: medium
+      - image: circleci/node:12.7
+    resource_class: large
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v7
+          key: node_modules-{{checksum "./package.json"}}-v11
       - run:
           name: "Print out versions"
           command: |
@@ -24,18 +24,18 @@ jobs:
           name: "Run tests"
           command: npm test
       - save_cache:
-          key: node_modules-{{checksum "./package.json"}}-v7
+          key: node_modules-{{checksum "./package.json"}}-v11
           paths:
             - "./node_modules"
 
   preview:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: small
+      - image: circleci/node:12.7
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v7
+          key: node_modules-{{checksum "./package.json"}}-v11
       - run:
           name: "Set preview url in package.json"
           command: |
@@ -65,14 +65,43 @@ jobs:
             -H "Authorization: Bearer $GITHUB_MACHINE_USER_TOKEN" \
             https://api.github.com/repos/densityco/dashboard/statuses/${CIRCLE_SHA1}
 
-  staging:
+  preview-storybook:
     docker:
-      - image: circleci/node:10.15.3
+      - image: circleci/node:12.7
     resource_class: small
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v7
+          key: node_modules-{{checksum "./package.json"}}-v11
+      - run:
+          name: "Build preview"
+          command: npm run build-storybook
+      - run:
+          name: "Push preview to the cloud"
+          command: |
+            echo "* Installing amazon's cli..."
+            sudo apt-get install -y python-pip python-dev
+            sudo pip install -U 'awscli>=1.15'
+
+            echo "* Copying to S3..."
+            aws s3 sync storybook-static/ s3://dashboard-storybook.density.rodeo/${CIRCLE_SHA1} --region us-east-1
+      - run:
+          name: "Post preview link to any pull requests commit is part of"
+          command: |
+            echo "* Posting status to commit ${CIRCLE_SHA1}"
+            curl -X POST \
+            -d "{\"state\":\"success\", \"context\": \"Dashboard storybook build\", \"target_url\": \"https://dashboard-storybook.density.rodeo/${CIRCLE_SHA1}\"}" \
+            -H "Authorization: Bearer $GITHUB_MACHINE_USER_TOKEN" \
+            https://api.github.com/repos/densityco/dashboard/statuses/${CIRCLE_SHA1}
+
+  staging:
+    docker:
+      - image: circleci/node:12.7
+    resource_class: medium
+    steps:
+      - checkout
+      - restore_cache:
+          key: node_modules-{{checksum "./package.json"}}-v11
       - run:
           name: "Build staging dashboard"
           command: |
@@ -102,12 +131,12 @@ jobs:
 
   production:
     docker:
-      - image: circleci/node:10.15.3
-    resource_class: small
+      - image: circleci/node:12.7
+    resource_class: medium
     steps:
       - checkout
       - restore_cache:
-          key: node_modules-{{checksum "./package.json"}}-v7
+          key: node_modules-{{checksum "./package.json"}}-v11
       - run:
           name: "Build production dashboard"
           command: |
@@ -150,6 +179,10 @@ workflows:
           filters:
             branches:
               ignore: trunk
+      - preview-storybook:
+          requires:
+            - build
+
       # Trunk is built and deployed to `https://dashboard.density.rodeo`
       - staging:
           requires:

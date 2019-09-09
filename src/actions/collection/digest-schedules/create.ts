@@ -1,12 +1,12 @@
-export const COLLECTION_DISPATCH_SCHEDULES_CREATE = 'COLLECTION_DISPATCH_SCHEDULES_CREATE';
-
 import core from '../../../client/core';
-import collectionDispatchSchedulesError from './error';
-import collectionDispatchSchedulesPush from './push';
+import collectionDigestSchedulesError from './error';
+import collectionDigestSchedulesPush from './push';
 import mixpanelTrack from '../../../helpers/mixpanel-track/index';
+import showToast from '../../toasts';
 
+export const COLLECTION_DIGEST_SCHEDULES_CREATE = 'COLLECTION_DIGEST_SCHEDULES_CREATE';
 
-export default function collectionDispatchSchedulesCreate({
+export default function collectionDigestSchedulesCreate({
   name,
   recipients,
   dashboardId,
@@ -17,7 +17,7 @@ export default function collectionDispatchSchedulesCreate({
   timeZone,
 }) {
   return async dispatch => {
-    dispatch({ type: COLLECTION_DISPATCH_SCHEDULES_CREATE });
+    dispatch({ type: COLLECTION_DIGEST_SCHEDULES_CREATE });
 
     let schedule, errorThrown;
     try {
@@ -43,11 +43,11 @@ export default function collectionDispatchSchedulesCreate({
 
     if (errorThrown) {
       console.error(errorThrown);
-      dispatch(collectionDispatchSchedulesError(errorThrown));
-      return false;
+      dispatch(collectionDigestSchedulesError(errorThrown));
+      dispatch(showToast({ type: 'error', text: `Whoops! That didn't work.` }));
     } else {
-      dispatch(collectionDispatchSchedulesPush(schedule.data));
-      return true;
+      dispatch(collectionDigestSchedulesPush(schedule.data));
+      dispatch(showToast({ text: 'Digest saved.' }));
     }
   }
 }

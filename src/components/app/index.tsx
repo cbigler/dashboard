@@ -7,11 +7,10 @@ import accounts from '../../client/accounts';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 
-import Explore from '../explore/index';
+import Spaces from '../spaces/index';
 import Login from '../login/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
-import AdminLocations from '../admin-locations/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
 import AdminLocationsNew from '../admin-locations-new/index';
 import Account from '../account/index';
@@ -20,6 +19,7 @@ import AccountForgotPassword from '../account-forgot-password/index';
 import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
+import DashboardsEdit from '../dashboard-edit/index';
 import Dialogger from '../dialogger';
 import Toaster from '../toaster';
 
@@ -105,13 +105,13 @@ function ActivePage({activePage, user, settings}) {
     return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
-  case "EXPLORE":
-    return <Explore activePage={activePage} />;
-  case "EXPLORE_SPACE_TRENDS":
-  case "EXPLORE_SPACE_DAILY":
-  case "EXPLORE_SPACE_DATA_EXPORT":
-  case "EXPLORE_SPACE_MEETINGS":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <Explore activePage={activePage} />;
+  case "SPACES":
+    return <Spaces />;
+  case "SPACES_SPACE_TRENDS":
+  case "SPACES_SPACE_DAILY":
+  case "SPACES_SPACE_DATA_EXPORT":
+  case "SPACES_SPACE_MEETINGS":
+    return stringToBoolean(settings.insightsPageLocked) ? null : <Spaces />;
   case "ACCOUNT":
     return <Account />;
   case "ACCOUNT_REGISTRATION":
@@ -122,6 +122,8 @@ function ActivePage({activePage, user, settings}) {
     return <DashboardsList />;
   case "DASHBOARD_DETAIL":
     return <Dashboard />;
+  case "DASHBOARD_EDIT":
+    return <DashboardsEdit />;
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

@@ -5,6 +5,7 @@ import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
 import showToast, { hideToast } from '../../toasts';
+import formatTagName from '../../../helpers/format-tag-name/index';
 
 export const COLLECTION_SPACES_CREATE = 'COLLECTION_SPACES_CREATE';
 
@@ -15,7 +16,7 @@ function convertSecondsIntoTime(seconds) {
 
   return moment.utc()
     .startOf('day')
-    .add(seconds, 'seconds')
+    .add(secondsIntoDay, 'seconds')
     .format('HH:mm:ss');
 }
 
@@ -70,7 +71,7 @@ export default function collectionSpacesCreate(item) {
           case 'DELETE':
             return core().delete(`/time_segments/${operatingHoursItem.id}`);
           default:
-            return;
+            return undefined;
           }
         }));
       }
@@ -85,6 +86,45 @@ export default function collectionSpacesCreate(item) {
         }
       } else {
         response.data.imageUrl = item.newImageData;
+      }
+
+      // When saving the space, create any links that were configured or changed in the doorways
+      // module. Note that the only thing that can happen is that new links can be created -
+      // "updating" or "deleting" isn't really relevant if the space didn't exist yet!
+      if (item.links) {
+        await Promise.all(item.links.map(async linkItem => {
+          switch (linkItem.operationToPerform) {
+          case 'CREATE':
+            return core().post('/links', {
+              space_id: response.data.id,
+              doorway_id: linkItem.doorwayId,
+              sensor_placement: linkItem.sensorPlacement,
+            });
+          default:
+            return;
+          }
+        }));
+      }
+
+      if (item.newTags) {
+        await Promise.all(item.newTags.map(async tag => {
+          const tagName = formatTagName(tag.name);
+          if (tag.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${response.data.id}/tags`, { tag_name: tagName });
+          } else if (tag.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${response.data.id}/tags/${tagName}`);
+          }
+        }));
+      }
+
+      if (item.newAssignedTeams) {
+        await Promise.all(item.newAssignedTeams.map(async assignedTeam => {
+          if (assignedTeam.operationToPerform === 'CREATE') {
+            await core().post(`/spaces/${response.data.id}/assigned_teams`, { team_name: assignedTeam.name });
+          } else if (assignedTeam.operationToPerform === 'DELETE') {
+            await core().delete(`/spaces/${response.data.id}/assigned_teams/${assignedTeam.id}`);
+          }
+        }));
       }
 
       dispatch(collectionSpacesPush(response.data));

@@ -1,13 +1,8 @@
-import incrementResizeCounter from '../../actions/miscellaneous/increment-resize-counter';
-
-export default function unsafeHandleWindowResize(store) {
+export default function unsafeHandleWindowResize(callback, delay = 300) {
   let resizeTimeout: any = false;
-  function resizeDispatch() {
-    store.dispatch(incrementResizeCounter());
-  }
   function resizeHandler() {
     clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(resizeDispatch, 300);
+    resizeTimeout = setTimeout(callback, delay);
   }
   window.addEventListener('resize', resizeHandler);
   return resizeHandler;

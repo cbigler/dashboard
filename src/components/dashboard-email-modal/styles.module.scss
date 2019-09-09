@@ -1,0 +1,30 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+$dashboardEmailModalAppBarHeight: 64px;
+
+.dashboardEmailModal {
+  height: 100%;
+}
+
+.dashboardEmailModalContainer {
+  /* NOTE: there are two app bars, one at the top and one at the bottom */
+  height: calc(100% - (2 * (#{$dashboardEmailModalAppBarHeight} + 24px)));
+  overflow: auto;
+  padding: 24px;
+}
+
+.dashboardEmailModalPrompt {
+  padding-bottom: 24px;
+}
+
+.dashboardEmailModalFooterCancel {
+  margin-right: 24px;
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: all 150ms ease-in-out;
+  user-select: none;
+}
+.dashboardEmailModalFooterCancel:hover { opacity: 0.9; }
+.dashboardEmailModalFooterCancel:active { opacity: 1; }

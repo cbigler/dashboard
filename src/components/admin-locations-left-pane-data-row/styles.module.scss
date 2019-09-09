@@ -9,10 +9,9 @@
   padding-left: 24px;
   padding-right: 24px;
   overflow-x: auto;
-
-  &:last-of-type { border-bottom: 1px solid $gray; }
 }
-.leftPaneDataRow.topBorder { border-top: 1px solid $gray; }
+.leftPaneDataRow.topBorder { border-top: 1px solid $grayLight; }
+.leftPaneDataRow.bottomBorder:last-of-type { border-bottom: 1px solid $grayLight; }
 
 .leftPaneDataRowItem { padding-right: 24px; }
 .leftPaneDataRowItem label {

@@ -45,11 +45,12 @@
 .wrapper { position: relative; }
 
 .target {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   cursor: pointer;
   border: 1px solid transparent;
   padding-left: 8px;
-  padding-right: 8px;
+  padding-right: 2px;
   line-height: 40px;
   transition: all 100ms ease-in-out;
   border-radius: $borderRadiusBase;

@@ -18,8 +18,10 @@ import {
 import mixpanelTrack from '../../helpers/mixpanel-track/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
-const CSV_BASE = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
-const CSV_URL = `${CSV_BASE}/csv`;
+export function getCSVURL() {
+  const baseV1 = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
+  return `${baseV1}/csv`;
+}
 
 export const LOADING_INITIAL = 'LOADING_INITIAL',
       LOADING_PREVIEW = 'LOADING_PREVIEW',
@@ -50,7 +52,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_PREVIEW});
 
     try {
-      const previewData = (await core().get(CSV_URL, { params: {
+      const previewData = (await core().get(getCSVURL(), { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
@@ -102,7 +104,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     this.setState({view: LOADING_CSV});
 
     try {
-      const csvData = (await core().get(CSV_URL, { params: {
+      const csvData = (await core().get(getCSVURL(), { params: {
         space_id: space.id,
         start_time: startDate,
         end_time: endDate,
@@ -112,19 +114,25 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
       // This is a workaround to allow a user to download this csv data, or if that doesn't work,
       // then at least open it in a new tab for them to view and copy to the clipboard.
       // 1. Create a new blob url.
-      // 2. Redirect the user to it in a new tab.
+      // 2a. Redirect the user to it in a new tab.
+      // 2b. Except on IE where we use a .msSaveBlob() function
+      const fileName = `${space.id}_${startDate}_${endDate}.csv`;
       const dataBlob = new Blob([csvData], {type: 'text/csv'});
       const dataURL = URL.createObjectURL(dataBlob);
 
       // Hide the download spinner once csv has been downloaded and blob url has been created.
       this.setState({view: VISIBLE});
 
-      const tempLink = document.createElement('a');
-      document.body.appendChild(tempLink);
-      tempLink.href = dataURL;
-      tempLink.setAttribute('download', `${space.id}: ${startDate} - ${endDate}.csv`);
-      tempLink.click();
-      document.body.removeChild(tempLink);
+      if (navigator && navigator.msSaveBlob) { // IE 10+
+        navigator.msSaveBlob(dataBlob, fileName);
+      } else {
+        const tempLink = document.createElement('a');
+        document.body.appendChild(tempLink);
+        tempLink.href = dataURL;
+        tempLink.setAttribute('download', fileName);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+      }
     } catch (error) {
       this.setState({
         view: ERROR,
@@ -185,7 +193,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
         </CardHeader>
 
         <CardBody className={styles.exploreSpaceDetailRawEventsExportCardSampleRows}>
-          <strong>Sample rows</strong>
+          <strong>Sample Rows</strong>
         </CardBody>
 
         {view === VISIBLE || view === LOADING_CSV ? <CardTable
@@ -219,7 +227,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
             <span>Generating CSV ...</span>
           ) : (
             <span>
-              Download All Events{' '}
+              Download all events{' '}
               ({parseISOTimeAtSpace(startDate, space).format('MM/DD/YYYY')} - {parseISOTimeAtSpace(endDate, space).format('MM/DD/YYYY')})
             </span>
           )}

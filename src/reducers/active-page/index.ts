@@ -12,6 +12,7 @@ import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../actions/route-tra
 
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../actions/route-transition/dashboard-detail';
+import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../actions/route-transition/dashboard-edit';
 
 import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../actions/route-transition/admin-space-mappings';
 import { ROUTE_TRANSITION_ADMIN_INTEGRATIONS } from '../../actions/route-transition/admin-integrations';
@@ -37,15 +38,15 @@ export default function activePage(state=initialState, action) {
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
     return "LIVE_SPACE_DETAIL";
   case ROUTE_TRANSITION_EXPLORE:
-    return "EXPLORE";
+    return "SPACES";
   case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
-    return "EXPLORE_SPACE_TRENDS";
+    return "SPACES_SPACE_TRENDS";
   case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
-    return "EXPLORE_SPACE_DAILY";
+    return "SPACES_SPACE_DAILY";
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
-    return "EXPLORE_SPACE_DATA_EXPORT";
+    return "SPACES_SPACE_DATA_EXPORT";
   case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
-    return "EXPLORE_SPACE_MEETINGS";
+    return "SPACES_SPACE_MEETINGS";
 
   case ROUTE_TRANSITION_ACCOUNT:
     return "ACCOUNT";
@@ -58,6 +59,8 @@ export default function activePage(state=initialState, action) {
     return "DASHBOARD_LIST";
   case ROUTE_TRANSITION_DASHBOARD_DETAIL:
     return "DASHBOARD_DETAIL";
+  case ROUTE_TRANSITION_DASHBOARD_EDIT:
+    return "DASHBOARD_EDIT";
 
   case ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT:
     return "ADMIN_USER_MANAGEMENT";

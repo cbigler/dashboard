@@ -4,7 +4,11 @@
 
 $dashboardDigestBackdropZIndex: 99999;
 
-.dashboardDigestList { position: relative; }
+.dashboardDigestList {
+  position: relative;
+  display: inline-block;
+  margin-right: 8px;
+}
 
 .dashboardDigestBackdrop {
   position: fixed;
@@ -33,8 +37,8 @@ $dashboardDigestBackdropZIndex: 99999;
   background-color: #fff;
   height: 40px;
   padding-top: 2px;
-  padding-left: 16px;
-  padding-right: 16px;
+  padding-left: 13px;
+  padding-right: 11px;
   border: 1px solid $gray;
   border-radius: $borderRadiusBase;
   outline: none;
@@ -58,11 +62,10 @@ $dashboardDigestBackdropZIndex: 99999;
 .dashboardDigestListDropdown {
   position: absolute;
   right: 0px;
-  width: 450px;
+  width: 600px;
   z-index: 999999;
 
   margin-top: 8px;
-
   background-color: #fff;
   border: 1px solid $gray;
   border-radius: $borderRadiusBase;
@@ -86,6 +89,7 @@ $dashboardDigestBackdropZIndex: 99999;
   cursor: pointer;
   outline: none;
   font-size: 14px;
+  margin-left: 16px;
 }
 .dashboardDigestListDropdownCreateButton:hover { opacity: 0.9; }
 .dashboardDigestListDropdownCreateButton:active { opacity: 1; }

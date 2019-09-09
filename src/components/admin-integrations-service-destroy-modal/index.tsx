@@ -3,13 +3,13 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import {
-  Button,
-  ButtonContext,
-  InputBox,
   AppBar,
   AppBarSection,
   AppBarContext,
   AppBarTitle,
+  Button,
+  ButtonGroup,
+  InputBox,
   Modal,
 } from '@density/ui';
 
@@ -23,7 +23,7 @@ export default class IntegrationsServiceDestroyModal extends React.Component<any
   };
 
   render() {
-    const { visible, onDismiss, onDestroyServiceAuthorization } = this.props;
+    const { visible, onDismiss } = this.props;
       
     return (
       <Modal
@@ -57,15 +57,15 @@ export default class IntegrationsServiceDestroyModal extends React.Component<any
             <AppBar>
               <AppBarSection />
               <AppBarSection>
-                <ButtonContext.Provider value="CANCEL_BUTTON">
-                  <Button onClick={this.props.onDismiss}>Cancel</Button>
-                </ButtonContext.Provider>
-                <Button
-                  type="primary"
-                  width="100%"
-                  disabled={"DELETE" !== this.state.destroyConfirmationText}
-                  onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
-                >I understand the consequences. Delete.</Button>
+                <ButtonGroup>
+                  <Button variant="underline" onClick={this.props.onDismiss}>Cancel</Button>
+                  <Button
+                    variant="filled"
+                    type="primary"
+                    disabled={"DELETE" !== this.state.destroyConfirmationText}
+                    onClick={() => this.props.onDestroyServiceAuthorization(this.props.initialServiceAuthorization.id)}
+                  >I understand the consequences. Delete.</Button>
+                </ButtonGroup>
               </AppBarSection>
             </AppBar>
           </AppBarContext.Provider>

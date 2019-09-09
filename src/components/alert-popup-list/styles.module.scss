@@ -1,0 +1,224 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+$alertBackdropZIndex: 99999;
+
+.alertList { position: relative; }
+
+.alertBackdrop {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  z-index: $alertBackdropZIndex;
+  display: none;
+}
+.alertBackdrop.visible { display: block; }
+
+
+.alertListButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+
+  color: $brandPrimary;
+  background-color: #fff;
+  height: 40px;
+  padding-top: 2px;
+  padding-left: 12px;
+  padding-right: 11px;
+  border: 1px solid $inputFieldBorderColor;
+  border-radius: $borderRadiusBase;
+  outline: none;
+}
+@media (max-width: 375px) {
+  // Hide alerts on mobile
+  .alertListButton { display: none; }
+}
+.alertListButton.visible {
+  position: relative;
+  z-index: $alertBackdropZIndex + 1;
+}
+.alertListButton:focus { border-color: $brandPrimary; }
+
+.alertListButtonText {
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+
+.alertListDropdown {
+  position: absolute;
+  right: 0px;
+  width: 450px;
+  z-index: 999999;
+
+  margin-top: 8px;
+
+  background-color: #fff;
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+
+  opacity: 0;
+  transition: all 150ms ease-in-out;
+  pointer-events: none;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+.alertListDropdown.visible {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+
+.alertListDropdownCreateButton {
+  display: flex;
+  align-items: center;
+  color: $brandPrimary;
+  font-weight: bold;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+}
+.alertListDropdownCreateButton:hover { opacity: 0.9; }
+.alertListDropdownCreateButton:active { opacity: 1; }
+.alertListDropdownCreateButtonText { margin-left: 8px; }
+
+
+.alertListDropdownList {
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.alertListDropdownItem {
+  display: flex;
+  flex-direction: column;
+  padding-top: 32px;
+}
+.alertListDropdownItem:first-of-type { padding-top: 24px; }
+.alertListDropdownItem:last-of-type { padding-bottom: 24px; }
+.alertListDropdownItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alertListDropdownItemInfo {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding-left: 16px;
+}
+
+.alertListDropdownItemInfoFirstRow {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-size: 14px;
+  padding-bottom: 8px;
+  color: $grayDarkest;
+  transition: color 200ms ease;
+}
+
+.alertListDropdownItemInfoSecondRow {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  user-select: none;
+  cursor: default;
+  color: $grayCinder;
+  transition: color 200ms ease;
+}
+.alertListDropdownItemInfoSecondRowText {
+  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.alertListDropdownItemInfoEscalationText {
+  display: flex;
+  align-items: center;
+  margin-left: 24px;
+  font-size: 12px;
+  color: $brandWarning;
+  transition: color 200ms ease;
+}
+
+.alertListDropdownItemDisabled .alertListDropdownItemInfoFirstRow,
+.alertListDropdownItemDisabled .alertListDropdownItemInfoSecondRow,
+.alertListDropdownItemDisabled .alertListDropdownItemInfoEscalationText {
+  color: $grayDarker;
+}
+
+.alertListDropdownItemEdit {
+  color: $brandPrimary;
+  text-decoration: underline;
+  cursor: pointer;
+  outline: none;
+  font-size: 14px;
+  font-weight: bold;
+  user-select: none;
+  margin-left: 24px;
+}
+.alertListDropdownItemEdit:hover { opacity: 0.9; }
+.alertListDropdownItemEdit:active { opacity: 1; }
+
+.alertListEmptyContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 240px;
+}
+.alertListEmptyContainerText {
+  margin-left: 24px;
+}
+.alertListEmptyContainerTitle {
+  color: $grayCinder;
+  font-size: $fontSizeBase;
+  font-weight: 400;
+  margin-top: 0px;
+  margin-bottom: 4px;
+}
+.alertListEmptyContainerDesc {
+  color: $grayDark;
+  font-size: 14px;
+}
+
+
+
+.alertListErrorContainer {
+  display: flex;
+  align-items: center;
+  height: 240px;
+}
+.alertListErrorContainerDesc { font-size: $fontSizeBase; }
+
+
+
+.alertListLoadingPlaceholderContainer {
+  height: 210px;
+  padding-top: 30px;
+}
+.alertListLoadingPlaceholderRow.one {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.alertListLoadingPlaceholderRow.two {
+  display: flex;
+  margin-bottom: 21px;
+}
+.alertListLoadingPlaceholder {
+  background-color: $grayLight;
+  border-radius: $borderRadiusSmall;
+  height: 8px;
+}
+.alertListLoadingPlaceholder.dark { background-color: $grayDark; }

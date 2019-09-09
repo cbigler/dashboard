@@ -1,0 +1,38 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+
+.alertManagementModalContainer {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.alertManagementModalBody {
+  flex-grow: 1;
+  padding: 24px;
+}
+
+.alertManagementModalFormRow {
+  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.alertManagementModalFormRow:last-of-type {
+  margin-bottom: 0;
+}
+
+.escalationDescription {
+  font-size: 14px;
+  border-top: 1px solid #EEEEEE;
+  margin-top: 10px;
+  padding: 20px 0 5px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #909090;
+}

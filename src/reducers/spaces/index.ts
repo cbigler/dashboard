@@ -38,8 +38,6 @@ import {
   formatInISOTime,
 } from '../../helpers/space-time-utilities/index';
 
-import moment from 'moment';
-
 import { DensitySpace } from '../../types';
 
 // Store at maximum 500 events per space
@@ -96,6 +94,10 @@ function getTimeSegmentLabelForRouteChange(currentSelectedSpace, currentTimeSegm
 }
 
 export default function spaces(state=initialState, action) {
+  var currentSelectedSpace: any,
+      timeSegmentLabel: any,
+      newTimeSegmentLabel: any;
+
   switch (action.type) {
 
   // Update the whole space collection.
@@ -167,9 +169,9 @@ export default function spaces(state=initialState, action) {
 
   // When the user changes the active space, update it in the store.
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
-    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
-    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
+    currentSelectedSpace = state.data.find((space: any) => space.id === action.id);
+    timeSegmentLabel = state.filters.timeSegmentLabel;
+    newTimeSegmentLabel = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
@@ -181,9 +183,9 @@ export default function spaces(state=initialState, action) {
       }
     };
   case ROUTE_TRANSITION_EXPLORE:
-    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
-    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
+    currentSelectedSpace = state.data.find((space: any) => space.id === action.id);
+    timeSegmentLabel = state.filters.timeSegmentLabel;
+    newTimeSegmentLabel = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
@@ -198,9 +200,9 @@ export default function spaces(state=initialState, action) {
   case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
   case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
   case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
-    var currentSelectedSpace: any = state.data.find((space: any) => space.id === action.id);
-    var timeSegmentLabel: any = state.filters.timeSegmentLabel;
-    var newTimeSegmentLabel: any = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
+    currentSelectedSpace = state.data.find((space: any) => space.id === action.id);
+    timeSegmentLabel = state.filters.timeSegmentLabel;
+    newTimeSegmentLabel = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
 
     return {
       ...state, 
