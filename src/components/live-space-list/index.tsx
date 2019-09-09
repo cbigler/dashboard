@@ -27,7 +27,7 @@ const spaceFilter = filterCollection({fields: ['name']});
 function filterHierarchy(spaces, parentId) {
   return spaces.filter(space => {
     return (
-      space.doorways.length != 0 && /* must have doorways */
+      space.doorways.length !== 0 && /* must have doorways */
       getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
     );
   });
@@ -56,7 +56,7 @@ export function LiveSpaceList({
   }
 
   // Remove campuses, buildings, and floors before rendering.
-  filteredSpaces = filteredSpaces.filter(i => i.doorways.length != 0);
+  filteredSpaces = filteredSpaces.filter(i => i.doorways.length !== 0);
 
   console.log(filteredSpaces);
 
