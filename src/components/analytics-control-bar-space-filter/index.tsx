@@ -48,7 +48,7 @@ type AnalyticsSpaceSelectorProps = {
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
   'function': 'Add by Function',
-  spaceType: 'Add by Type',
+  space_type: 'Add by Type',
   id: 'Add by Space Name',
 };
 
@@ -57,7 +57,7 @@ const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: stri
     const choice = SPACE_FUNCTION_CHOICES.find(i => i.id === spaceFunction);
     return choice ? choice.label : '(unknown function)';
   },
-  spaceType: spaceType => ({
+  space_type: spaceType => ({
     campus: 'Campus',
     building: 'Building',
     floor: 'Floor',
@@ -254,7 +254,7 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
           </Fragment>
         ) : null}
 
-        {workingFilter.field === 'spaceType' ? (
+        {workingFilter.field === 'space_type' ? (
           <div className={styles.popupBody}>
             <MultipleSelectItemList
               choices={[
