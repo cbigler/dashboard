@@ -74,31 +74,37 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
         />
       </div>
       <div className={styles.analyticsControlBarSection}>
-        <Button variant="filled">
-          <div className={styles.saveButtonWrapper}>
-            <Icons.Save color="#fff" />
-            <span className={styles.saveButtonText}>Save</span>
-          </div>
-        </Button>
-        <button disabled className={styles.iconButton}>
-          <Icons.AddReport />
-        </button>
-        <button className={styles.iconButton}>
-          <Icons.Download />
-        </button>
-        <button className={styles.iconButton}>
-          <Icons.Share />
-        </button>
-        <button className={styles.iconButton}>
-          <Icons.Code />
-        </button>
-        <button className={styles.iconButton}>
-          <Icons.More />
-        </button>
+        <AnalyticsControlBarButtons />
       </div>
     </div>
   );
 }
+
+export const AnalyticsControlBarButtons: React.FunctionComponent<{disabled?: boolean}> = ({ disabled = false }) => (
+  <Fragment>
+    <Button disabled={disabled} variant="filled">
+      <div className={styles.saveButtonWrapper}>
+        <Icons.Save color="currentColor" />
+        <span className={styles.saveButtonText}>Save</span>
+      </div>
+    </Button>
+    <button disabled={true} className={styles.iconButton}>
+      <Icons.AddReport />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Download />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Share />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Code />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.More />
+    </button>
+  </Fragment>
+);
 
 type AnalyticsSpaceFilterBuilderProps = {
   filters: Array<AnalyticsSpaceFilter>,
