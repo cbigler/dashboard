@@ -89,6 +89,6 @@
     "not op_mini all"
   ],
   "engines": {
-    "node": ">=12.4.0"
+    "node": ">=12.7.0"
   }
 }
