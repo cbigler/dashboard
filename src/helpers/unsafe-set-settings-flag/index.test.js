@@ -56,8 +56,8 @@ describe('set-settings-flag', function() {
 
     // Update a setting, and verify that the helper fails with an error.
     const setSettingsFlag = setSettingsFlagConstructor(store);
-    assert.throws(() => {
+    expect(() => {
       setSettingsFlag('key', 'value');
-    }, new Error('Please wait for the user collection to load before changing settings flags.'));
+    }).toThrowError('Please wait for the user collection to load before changing settings flags.')
   });
 });
