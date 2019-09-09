@@ -53,8 +53,10 @@ export function LiveSpaceList({
     filteredSpaces = spaceFilter(filteredSpaces, spaces.filters.search);
   }
 
+  console.log(filteredSpaces);
+
   // Remove campuses, buildings, and floors before rendering.
-  filteredSpaces = filteredSpaces.filter(i => i.spaceType === 'space');
+  filteredSpaces = filteredSpaces.filter(i => i.doorways.length != 0);
 
 
   return <div className={styles.liveSpaceList}>
