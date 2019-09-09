@@ -28,9 +28,9 @@ describe('filter-hierarchy', function() {
     });
     it('should throw an error if a node in the tree cannot be found', function() {
       const peaches = hierarchy.find(i => i.name === 'Peaches');
-      assert.throws(() => {
+      expect(() => {
         getParentsOfSpace(hierarchy, peaches);
-      }, new Error('No such space found with id 999999999'));
+      }).toThrowError('No such space found with id 999999999');
     });
     it('should only return the root node when given the root node', function() {
       const food = hierarchy.find(i => i.name === 'Food');
@@ -40,9 +40,9 @@ describe('filter-hierarchy', function() {
       );
     });
     it('should throw an error if an invalid space is passed to the function', function() {
-      assert.throws(() => {
+      expect(() => {
         getParentsOfSpace(hierarchy, null);
-      }, new Error('Invalid space passed to getParentsOfSpace'));
+      }).toThrowError('Invalid space passed to getParentsOfSpace')
     });
     it('should not infinitely loop if given bad data', function() {
       assert.deepEqual(
