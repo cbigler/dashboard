@@ -14,7 +14,7 @@ import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-ra
 import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
 import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 
-import { Icons } from '@density/ui';
+import { Button, Icons } from '@density/ui';
 
 import { AddButton } from '../analytics-control-bar-utilities';
 
@@ -74,12 +74,27 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
         />
       </div>
       <div className={styles.analyticsControlBarSection}>
-        {/* FIXME: put actual icons and  buttons here, point this out in a review! */}
-        <span style={{marginRight: 8}}><Icons.Star /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.AddReport /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Download /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Share /></span>
-        <span style={{marginLeft: 8}}><Icons.Code /></span>
+        <Button variant="filled">
+          <div className={styles.saveButtonWrapper}>
+            <Icons.Save color="#fff" />
+            <span className={styles.saveButtonText}>Save</span>
+          </div>
+        </Button>
+        <button disabled className={styles.iconButton}>
+          <Icons.AddReport />
+        </button>
+        <button className={styles.iconButton}>
+          <Icons.Download />
+        </button>
+        <button className={styles.iconButton}>
+          <Icons.Share />
+        </button>
+        <button className={styles.iconButton}>
+          <Icons.Code />
+        </button>
+        <button className={styles.iconButton}>
+          <Icons.More />
+        </button>
       </div>
     </div>
   );
