@@ -79,6 +79,7 @@ export type AnalyticsReport = {
   hiddenSpaceIds: Array<DensitySpace["id"]>,
   selectedMetric: AnalyticsFocusedMetric,
   lastRunTimestamp?: string,
+  isSaved: boolean,
 };
 
 // REVIEW: should typings for Resource be somewhere else?
