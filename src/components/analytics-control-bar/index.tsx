@@ -1,24 +1,27 @@
 import React, { useState, Fragment } from 'react';
-import PropTypes from 'prop-types';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import { DensitySpace } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
 
+import AnalyticsFocusedMetricSelector from '../analytics-control-bar-metric-filter';
 import AnalyticsControlBarSpaceFilter, {
   AnalyticsSpaceFilter,
   EMPTY_FILTER,
 } from '../analytics-control-bar-space-filter';
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
 import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
-import { QueryInterval } from '../../types/analytics';
+import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 
-import { Icons } from '@density/ui';
+import { Button, Icons } from '@density/ui';
 
 import { AddButton } from '../analytics-control-bar-utilities';
 
 type AnalyticsControlBarProps = {
+  metric: AnalyticsFocusedMetric,
+  onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
+
   filters: Array<AnalyticsSpaceFilter>,
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
 
@@ -33,6 +36,9 @@ type AnalyticsControlBarProps = {
 }
 
 const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = function AnalyticsControlBar({
+  metric,
+  onChangeMetric,
+
   filters,
   onChangeFilters,
 
@@ -48,6 +54,10 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
   return (
     <div className={styles.analyticsControlBar}>
       <div className={styles.analyticsControlBarSectionWrap}>
+        <AnalyticsFocusedMetricSelector
+          value={metric}
+          onChange={onChangeMetric}
+        />
         <AnalyticsSpaceFilterBuilder
           filters={filters}
           onChange={onChangeFilters}
@@ -64,16 +74,37 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
         />
       </div>
       <div className={styles.analyticsControlBarSection}>
-        {/* FIXME: put actual icons and  buttons here, point this out in a review! */}
-        <span style={{marginRight: 8}}><Icons.Star /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.AddReport /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Download /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Share /></span>
-        <span style={{marginLeft: 8}}><Icons.Code /></span>
+        <AnalyticsControlBarButtons />
       </div>
     </div>
   );
 }
+
+export const AnalyticsControlBarButtons: React.FunctionComponent<{disabled?: boolean}> = ({ disabled = false }) => (
+  <Fragment>
+    <Button disabled={disabled} variant="filled">
+      <div className={styles.saveButtonWrapper}>
+        <Icons.Save color="currentColor" />
+        <span className={styles.saveButtonText}>Save</span>
+      </div>
+    </Button>
+    <button disabled={true} className={styles.iconButton}>
+      <Icons.AddReport />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Download />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Share />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.Code />
+    </button>
+    <button disabled={disabled} className={styles.iconButton}>
+      <Icons.More />
+    </button>
+  </Fragment>
+);
 
 type AnalyticsSpaceFilterBuilderProps = {
   filters: Array<AnalyticsSpaceFilter>,
@@ -90,7 +121,9 @@ function AnalyticsSpaceFilterBuilder({
   formattedHierarchy,
 }: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
-  const [ emptyFilterVisible, setEmptyFilterVisible ] = useState(filters.length === 0);
+
+  const isAdding = openedFilterIndex > filters.length - 1;
+  const emptyFilterVisible = filters.length === 0 || isAdding;
 
   const filtersIncludingEmpty = [ ...filters, ...(emptyFilterVisible ? [EMPTY_FILTER] : []) ];
 
@@ -102,11 +135,6 @@ function AnalyticsSpaceFilterBuilder({
             filter={filter}
             deletable={filters.length > 1 || filter.field !== ''}
             onDelete={() => {
-              if (filters.length === 1) {
-                // If the last filter is being deleted, then replace it with an empty filter.
-                setEmptyFilterVisible(true);
-              }
-
               const filtersCopy = filters.slice();
               filtersCopy.splice(index, 1);
               onChange(filtersCopy);
@@ -124,10 +152,6 @@ function AnalyticsSpaceFilterBuilder({
               if (!fieldIsEmpty) {
                 filtersCopy[index] = filter;
                 onChange(filtersCopy);
-              }
-              // Hide the empty filter if a filter was added
-              if (filtersCopy.length !== 0) {
-                setEmptyFilterVisible(false);
               }
             }}
             spaces={spaces}
@@ -150,7 +174,6 @@ function AnalyticsSpaceFilterBuilder({
       }, null)}
       <AddButton onClick={() => {
         let openedFilterIndex = filters.length;
-        setEmptyFilterVisible(true);
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed ans so that the animation to open is

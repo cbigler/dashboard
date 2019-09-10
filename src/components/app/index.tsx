@@ -20,6 +20,7 @@ import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
 import DashboardsEdit from '../dashboard-edit/index';
+import Analytics from '../analytics';
 import Dialogger from '../dialogger';
 import Toaster from '../toaster';
 
@@ -124,6 +125,8 @@ function ActivePage({activePage, user, settings}) {
     return <Dashboard />;
   case "DASHBOARD_EDIT":
     return <DashboardsEdit />;
+  case "ANALYTICS":
+    return <Analytics />;
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

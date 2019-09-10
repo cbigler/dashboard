@@ -115,3 +115,7 @@
 // see https://stackoverflow.com/a/45191208/4115328
 .submitButton:focus, .submitButton .inner { outline: none; }
 .submitButton:focus > .inner { text-decoration: underline; }
+
+.multipleSelectListItem {
+  margin-left: 16px;
+}

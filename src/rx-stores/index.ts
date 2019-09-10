@@ -8,11 +8,6 @@ const storeLog = debug('rx:store');
 const actionLog = debug('rx:action');
 const legacyActionLog = debug('rx:legacy-action');
 
-// LEGACY: "define rules that ... enforce a strict interface between existing
-// and modern code so it [is] easy to understand their relationship"
-// From https://slack.engineering/rebuilding-slack-on-the-desktop-308d6fe94ae4
-let reduxStore;
-
 // StoreSubject is a BehaviorSubject that obfuscates the "value" accessor
 export class StoreSubject<S> extends BehaviorSubject<S> {
   public imperativelyGetValue = () => {
@@ -27,6 +22,16 @@ export class StoreSubject<S> extends BehaviorSubject<S> {
     );
   }
 }
+
+// LEGACY: "define rules that ... enforce a strict interface between existing
+// and modern code so it [is] easy to understand their relationship"
+// From https://slack.engineering/rebuilding-slack-on-the-desktop-308d6fe94ae4
+let reduxStore;
+
+// LEGACY: get the redux store as an observable that emits state updates
+let rxStoreSubscriptionUnsubscribe;
+export type ReduxState = Any<FixInRefactor>;
+export let RxReduxStore = new StoreSubject<ReduxState>({});
 
 // Global action stream for the dashboard
 export const actions = new Subject<GlobalAction>();
@@ -61,7 +66,6 @@ export default function createRxStore<T>(
 
 // Helper to dispatch (wrapped by useDispatch hook)
 export function rxDispatch(action: GlobalAction) {
-
   // Don't dispatch thunks to RxJS
   if (typeof action === 'function') {
     infoLog('RxJS ignoring thunk action...', action);
@@ -71,7 +75,10 @@ export function rxDispatch(action: GlobalAction) {
   }
 
   // LEGACY: dispatch every action to redux too
-  reduxStore.dispatch(action);
+  if (reduxStore) {
+    const reduxAction = { ...action, legacyReduxAction: true };
+    reduxStore.dispatch(reduxAction as (GlobalAction & {legacyReduxAction: true}));
+  }
 }
 
 
@@ -80,12 +87,18 @@ export function rxDispatch(action: GlobalAction) {
 export function rxLegacyReduxMiddleware() {
   return next => action => {
     legacyActionLog(action.type, action);
-    actions.next(action);
+    if (!action.legacyReduxAction) {
+      actions.next(action);
+    }
     return next(action);
   };
 }
 
 // LEGACY: save the redux store for interop
 export function rxLegacyReduxSetStore(store) {
+  if (rxStoreSubscriptionUnsubscribe) { rxStoreSubscriptionUnsubscribe(); }
   reduxStore = store;
+  rxStoreSubscriptionUnsubscribe = reduxStore.subscribe(() => {
+    RxReduxStore.next(reduxStore.getState());
+  });
 }

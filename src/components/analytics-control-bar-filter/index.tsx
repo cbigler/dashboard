@@ -1,5 +1,4 @@
 import React, { Fragment, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
@@ -41,19 +40,19 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
     if (!wrapperRef.current) { return; }
 
     if (open && !isElementInside(wrapperRef.current, document.activeElement)) {
-      (wrapperRef.current as HTMLElement).focus()
+      (wrapperRef.current as HTMLElement).focus();
+    } else if (!open && document.activeElement === wrapperRef.current) {
+      (wrapperRef.current as HTMLElement).blur();
     }
   }, [open]);
 
   return (
     <Fragment>
       {open ? (
-        ReactDOM.createPortal(
-          <div
-            className={styles.backdrop}
-            onClick={onClose}
-          />
-        , document.body)
+        <div
+          className={styles.backdrop}
+          onClick={onClose}
+        />
       ) : null}
 
       <span
