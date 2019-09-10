@@ -2,7 +2,14 @@ import React, { Fragment, useState } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics } from '../../types';
+import {
+  ResourceStatus,
+  Resource,
+  AnalyticsFocusedMetric,
+  QueryInterval,
+} from '../../types/analytics';
 import { formatSpaceFunction } from '../../helpers/space-function-choices';
+import { DateRange } from '../../helpers/space-time-utilities';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
 import { ascending, descending } from '../../helpers/natural-sorting';
 
@@ -15,10 +22,6 @@ import {
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import Checkbox from '../checkbox';
-import {
-  ResourceStatus,
-  AnalyticsFocusedMetric,
-} from '../../types/analytics';
 
 type TableDataItem = {
   space: DensitySpace,
@@ -53,8 +56,16 @@ function formatSpaceType(spaceType: DensitySpaceTypes) {
   }
 }
 
-function sum(acc: number, n: number): number {
-  return acc + n;
+function sum(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
+  return tableData.map(extractor).reduce((a, b) => a + b);
+}
+
+function average(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
+  return tableData.map(extractor).reduce((a, b) => a + b) / tableData.length;
+}
+
+function max(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
+  return Math.max(...tableData.map(extractor));
 }
 
 function Header({label, value, spaceSortDirection, spaceSortColumn, right=false}) {
@@ -76,7 +87,6 @@ function Header({label, value, spaceSortDirection, spaceSortColumn, right=false}
     </div>
   );
 }
-// {Math.max(...tableData.map(x => x.metricData.count.max.value))}
 
 export default function AnalyticsTable({
   spaces,
@@ -258,7 +268,7 @@ export default function AnalyticsTable({
                   title={
                     <Header
                       label="Max"
-                      value={formatMetricNumber(Math.max(...tableData.map(x => x.metricData.count.max.value)))}
+                      value={formatMetricNumber(max(tableData, x => x.metricData.count.max.value))}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
                       right
@@ -274,7 +284,7 @@ export default function AnalyticsTable({
                   title={
                     <Header
                       label="Average"
-                      value={formatMetricNumber(tableData.map(x => x.metricData.entrances.average).reduce(sum) / tableData.length)}
+                      value={formatMetricNumber(average(tableData, x => x.metricData.entrances.average))}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
                       right
@@ -290,7 +300,7 @@ export default function AnalyticsTable({
                   title={
                     <Header
                       label="Total"
-                      value={formatMetricNumber(tableData.map(x => x.metricData.entrances.total).reduce(sum))}
+                      value={formatMetricNumber(sum(tableData, x => x.metricData.entrances.total))}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
                       right
@@ -312,7 +322,7 @@ export default function AnalyticsTable({
                   title={
                     <Header
                       label="Max"
-                      value={formatMetricNumber(Math.max(...tableData.map(x => x.metricData.count.max.value)))}
+                      value={formatMetricNumber(max(tableData, x => x.metricData.count.max.value))}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
                       right
@@ -328,7 +338,7 @@ export default function AnalyticsTable({
                   title={
                     <Header
                       label="Average"
-                      value={formatMetricNumber(tableData.map(x => x.metricData.count.average).reduce(sum) / tableData.length)}
+                      value={formatMetricNumber(average(tableData, x => x.metricData.count.average))}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
                       right
@@ -349,7 +359,7 @@ export default function AnalyticsTable({
                     <Header
                       label="Max"
                       value={<Fragment>
-                        {formatMetricNumber(Math.max(...tableData.map(x => x.metricData.targetUtilization.max.value)))}%
+                        {formatMetricNumber(max(tableData, x => x.metricData.targetUtilization.max.value))}%
                       </Fragment>}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
@@ -367,7 +377,7 @@ export default function AnalyticsTable({
                     <Header
                       label="Average"
                       value={<Fragment>
-                        {formatMetricNumber(tableData.map(x => x.metricData.targetUtilization.average).reduce(sum) / tableData.length)}%
+                        {formatMetricNumber(average(tableData, x => x.metricData.targetUtilization.average))}%
                       </Fragment>}
                       spaceSortDirection={spaceSortDirection}
                       spaceSortColumn={spaceSortColumn}
