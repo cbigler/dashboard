@@ -1,8 +1,6 @@
 import React from 'react';
 import styles from './styles.module.scss';
-import { Skeleton, Icons } from '@density/ui';
-
-import colorVariables from '@density/ui/variables/colors.json';
+import { Skeleton } from '@density/ui';
 
 import AnalyticsTabs from '../analytics-tabs';
 import { AnalyticsControlBarButtons } from '../analytics-control-bar';
