@@ -90,19 +90,19 @@ const QueryTabList: React.FunctionComponent<{
           <Icons.LightningFill color="currentColor" />
         </div>
       </div>
-      {reports.map(openQuery => {
+      {reports.map(report => {
         return (
           <TabTarget
-            key={openQuery.id}
-            isActive={openQuery.id === activeReportId}
-            isSaved={openQuery.isSaved}
+            key={report.id}
+            isActive={report.id === activeReportId}
+            isSaved={report.isSaved}
             onClick={() => {
-              if (openQuery.id !== activeReportId) {
-                onChangeActiveReport(openQuery.id)
+              if (report.id !== activeReportId) {
+                onChangeActiveReport(report.id)
               }
             }}
-            onClose={() => onCloseReport(openQuery.id)}
-            title={openQuery.name || 'Untitled Report'}
+            onClose={() => onCloseReport(report.id)}
+            title={report.name || 'Untitled Report'}
           />
         )
       })}
