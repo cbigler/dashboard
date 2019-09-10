@@ -4,8 +4,9 @@ import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import AnalyticsTable, { AnalyticsFocusedMetric, ResourceStatus } from './index';
+import AnalyticsTable from './index';
 import { RangeType } from '../../helpers/space-time-utilities';
+import { AnalyticsFocusedMetric, ResourceStatus } from '../../types/analytics';
 
 import spaces from './spaces.json';
 const SPACES = spaces.map(objectSnakeToCamel);
@@ -31,12 +32,12 @@ function random() {
 }
 
 const QUERY = {
-  timeframe: {
+  dateRange: {
     type: RangeType.ABSOLUTE,
     startDate: '2019-01-01',
     endDate: '2019-02-01',
   },
-  granularity: '5m',
+  interval: '5m',
   filters: [
     {
       field: 'id',

@@ -12,7 +12,7 @@ const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
 import AnalyticsControlBar from './index';
-import { AnalyticsInterval } from '../analytics-control-bar-interval-filter';
+import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
 function State({ initialState, children }) {
@@ -34,29 +34,70 @@ function State({ initialState, children }) {
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
     <State initialState={{
-      interval: AnalyticsInterval.HOUR,
+      metric: AnalyticsFocusedMetric.ENTRANCES,
+      interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
       filters: [],
     }}>
       {(state, setState) => (
-        <AnalyticsControlBar
-          filters={state.filters}
-          onChangeFilters={filters => setState({ ...state, filters })}
+      <AnalyticsControlBar
+        metric={state.metric}
+        onChangeMetric={metric => setState({ ...state, metric })}
 
-          interval={state.interval}
-          onChangeInterval={interval => setState({ ...state, interval })}
+        filters={state.filters}
+        onChangeFilters={filters => setState({ ...state, filters })}
 
-          dateRange={state.dateRange}
-          onChangeDateRange={dateRange => setState({ ...state, dateRange })}
+        interval={state.interval}
+        onChangeInterval={interval => setState({ ...state, interval })}
 
-          spaces={SPACES}
-          formattedHierarchy={FORMATTED_HIERARCHY}
-        />
+        dateRange={state.dateRange}
+        onChangeDateRange={dateRange => setState({ ...state, dateRange })}
+
+        spaces={SPACES}
+        formattedHierarchy={FORMATTED_HIERARCHY}
+      />
       )}
     </State>
   ))
+  .add('With actions', () => (
+    <State initialState={{
+      metric: AnalyticsFocusedMetric.ENTRANCES,
+      filters: [],
+      interval: QueryInterval.ONE_HOUR,
+      dateRange: DATE_RANGES.LAST_30_DAYS,
+    }}>
+      {(state, setState) => (
+      <AnalyticsControlBar
+        metric={state.metric}
+        onChangeMetric={metric => setState({ ...state, metric })}
+
+        filters={state.filters}
+        onChangeFilters={filters => {
+          action('onChangeFilters')(filters)
+          setState({ ...state, filters })
+        }}
+
+        interval={state.interval}
+        onChangeInterval={interval => {
+          action('onChangeInterval')(interval)
+          setState({ ...state, interval })
+        }}
+
+        dateRange={state.dateRange}
+        onChangeDateRange={dateRange => {
+          action('onChangeDateRange')(dateRange)
+          setState({ ...state, dateRange })
+        }}
+
+        spaces={SPACES}
+        formattedHierarchy={FORMATTED_HIERARCHY}
+      />
+      )}
+    </State>  
+  ))
   .add('With a lot of space filters', () => (
     <State initialState={{
+      metric: AnalyticsFocusedMetric.ENTRANCES,
       filters: [
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
@@ -70,11 +111,14 @@ storiesOf('Analytics Control Bar', module)
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
       ],
-      interval: AnalyticsInterval.HOUR,
+      interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
+          metric={state.metric}
+          onChangeMetric={metric => setState({ ...state, metric })}
+
           filters={state.filters}
           onChangeFilters={filters => setState({ ...state, filters })}
 

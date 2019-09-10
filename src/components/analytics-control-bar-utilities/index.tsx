@@ -9,7 +9,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 export const ARROW_TEMPLATE = choice => {
   return <div className={styles.itemListDefaultTemplateRow}>
     {choice.label}
-    <Icons.ChevronRight width={12} height={12} />
+    <Icons.ChevronRight />
   </div>
 };
 
@@ -21,7 +21,7 @@ type ItemListProps = {
 };
 
 const DEFAULT_TEMPLATE = choice => choice.label;
-export function ItemList(props: ItemListProps) {
+export const ItemList: React.FunctionComponent<ItemListProps> = function ItemList(props) {
   const { choices, template = DEFAULT_TEMPLATE, onClick } = props;
   return (
     <ul className={styles.itemList}>
@@ -71,7 +71,7 @@ type MultipleSelectItemListProps = {
   onChange: (choices: Array<ItemListChoice["id"]>) => void,
 };
 
-export function MultipleSelectItemList({ choices, value, onChange }: MultipleSelectItemListProps) {
+export const MultipleSelectItemList: React.FunctionComponent<MultipleSelectItemListProps> = function MultipleSelectItemList({ choices, value, onChange }) {
   return (
     <ItemList
       choices={choices}
@@ -88,7 +88,7 @@ export function MultipleSelectItemList({ choices, value, onChange }: MultipleSel
               }
             }}
           />
-          {choice.label}
+          <span className={styles.multipleSelectListItem}>{choice.label}</span>
         </Fragment>
       )}
       onClick={(choice, e) => {
@@ -105,7 +105,9 @@ export function MultipleSelectItemList({ choices, value, onChange }: MultipleSel
   );
 }
 
-export function BackButton({ onClick }) {
+export const BackButton: React.FC<{
+  onClick?: (evt: React.MouseEvent<HTMLButtonElement>) => void, 
+}> = function BackButton({ onClick }) {
   return (
     <button className={styles.backButton} onClick={onClick} aria-label="Back to filter list">
       <Icons.ArrowLeft />
@@ -113,15 +115,21 @@ export function BackButton({ onClick }) {
   );
 }
 
-export function AddButton({ onClick }) {
+export const AddButton: React.FC<{
+  onClick?: (evt: React.MouseEvent<HTMLButtonElement>) => void,
+}> = function AddButton({ onClick }) {
   return (
     <button className={styles.addButton} onClick={onClick} aria-label="Add new filter">
-      <Icons.Plus width={12} height={12} />
+      <Icons.Plus />
     </button>
   );
 }
 
-export function FilterDeleteButton({ onClick, onFocus, onBlur }) {
+export const FilterDeleteButton: React.FC<{
+  onClick?: (evt: React.MouseEvent<HTMLButtonElement>) => void,
+  onFocus?: (evt: React.FocusEvent<HTMLButtonElement>) => void,
+  onBlur?: (evt: React.FocusEvent<HTMLButtonElement>) => void,
+}> = function FilterDeleteButton({ onClick, onFocus, onBlur }) {
   return (
     <button
       className={styles.deleteButton}
@@ -131,14 +139,17 @@ export function FilterDeleteButton({ onClick, onFocus, onBlur }) {
     >
       <Icons.Close
         color={colorVariables.brandDanger}
-        width={8}
-        height={8}
+        width={16}
+        height={16}
       />
     </button>
   );
 }
 
-export function SubmitButton({ onClick, disabled, children }) {
+export const SubmitButton: React.FC<{
+  onClick?: (evt: React.MouseEvent<HTMLButtonElement>) => void,
+  disabled?: boolean
+}> = function SubmitButton({ onClick, disabled, children }) {
   return (
     <button className={styles.submitButton} onClick={onClick} disabled={disabled}>
       {/* hack so that focus styles only show when keyboard focuses the control:

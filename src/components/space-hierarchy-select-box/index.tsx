@@ -80,7 +80,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
           <span className={styles.spaceHierarchySelectBoxItemHighlight}>Default</span>
         </span>}
         <div className={styles.inputBoxCaret}>
-          <Icons.ChevronDown color="primary" width={12} height={12} />
+          <Icons.ChevronDown />
         </div>
       </div>
 

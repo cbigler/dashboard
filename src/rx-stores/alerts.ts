@@ -9,7 +9,7 @@ const initialState: AlertState = {
   data: [],
 };
 
-export default createRxStore<AlertState>(initialState, (state, action) => {
+export default createRxStore<AlertState>('alertsStore', initialState, (state, action) => {
   switch (action.type) {
     case AlertActionTypes.COLLECTION_ALERTS_SET:
       return {

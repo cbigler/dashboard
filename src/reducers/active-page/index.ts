@@ -26,6 +26,8 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../actions/route-transi
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../actions/route-transition/logout';
 
+import { AnalyticsActionType } from '../../types/analytics';
+
 const initialState = "BLANK";
 
 export default function activePage(state=initialState, action) {
@@ -80,6 +82,9 @@ export default function activePage(state=initialState, action) {
     return "ADMIN_LOCATIONS_EDIT";
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return "ADMIN_LOCATIONS_NEW";
+
+  case AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS:
+    return "ANALYTICS";
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

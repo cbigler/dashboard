@@ -45,7 +45,7 @@
   transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
 
   padding-left: 24px;
-  padding-right: 24px;
+  padding-right: 19px;
   border-bottom: 1px solid $grayLight;
 }
 .dashboardListItem:hover { background-color: $grayLightest; }
@@ -180,8 +180,8 @@
   cursor: pointer;
   user-select: none;
 }
-.dashboardDropdownChevron {
-  margin-left: 12px;
+.dashboardDropdownName {
+  margin-right: 8px;
 }
 .dashboardDropdownPopup {
   position: absolute;

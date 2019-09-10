@@ -48,7 +48,7 @@ type AnalyticsSpaceSelectorProps = {
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
   'function': 'Add by Function',
-  spaceType: 'Add by Type',
+  space_type: 'Add by Type',
   id: 'Add by Space Name',
 };
 
@@ -57,7 +57,7 @@ const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: stri
     const choice = SPACE_FUNCTION_CHOICES.find(i => i.id === spaceFunction);
     return choice ? choice.label : '(unknown function)';
   },
-  spaceType: spaceType => ({
+  space_type: spaceType => ({
     campus: 'Campus',
     building: 'Building',
     floor: 'Floor',
@@ -79,9 +79,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     const valueList = (
       <Fragment>
         {filter.values.slice(0, 2).reduce((acc: React.ReactNode, name) => {
-          if (!name) {
-            return null;
-          } else if (!acc) {
+          if (!acc) {
             return (
               <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
             );
@@ -130,7 +128,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
   return text;
 }
 
-export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
+const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = function SpaceFilter(props) {
   const {
     filter,
 
@@ -165,22 +163,24 @@ export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
   const filterBeingCreated = filter.field === '' && filter.values.length === 0;
 
   return (
-    <div className={styles.spaceSelectorWrapper}>
+    <div>
       {/* A delete button is visible to the left of this filter */}
       {deletable ? (
-        <div
-          ref={deleteButtonWrapperRef}
-          className={classnames(
-            styles.deleteButtonWrapper,
-            {[styles.visible]: deleteButtonVisible}
-          )}
-          onMouseLeave={() => setDeleteButtonVisible(false)}
-        >
-          <FilterDeleteButton
-            onClick={onDelete}
-            onFocus={() => setDeleteButtonVisible(true)}
-            onBlur={() => setDeleteButtonVisible(false)}
-          />
+        <div style={{position: 'relative'}}>
+          <div
+            ref={deleteButtonWrapperRef}
+            className={classnames(
+              styles.deleteButtonWrapper,
+              {[styles.visible]: deleteButtonVisible}
+            )}
+            onMouseLeave={() => setDeleteButtonVisible(false)}
+          >
+            <FilterDeleteButton
+              onClick={onDelete}
+              onFocus={() => setDeleteButtonVisible(true)}
+              onBlur={() => setDeleteButtonVisible(false)}
+            />
+          </div>
         </div>
       ) : null}
 
@@ -254,7 +254,7 @@ export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
           </Fragment>
         ) : null}
 
-        {workingFilter.field === 'spaceType' ? (
+        {workingFilter.field === 'space_type' ? (
           <div className={styles.popupBody}>
             <MultipleSelectItemList
               choices={[
@@ -297,3 +297,5 @@ export default function SpaceFilter(props: AnalyticsSpaceSelectorProps) {
     </div>
   );
 }
+
+export default SpaceFilter;

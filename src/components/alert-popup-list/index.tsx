@@ -34,11 +34,11 @@ export default function AlertPopupList({ selectedSpace }) {
         className={classnames(styles.alertListButton, {[styles.visible]: visible})}
         onClick={() => setVisible(!visible)}
       >
-        <Icons.Notification
+        <Icons.Alert
           color={colorVariables.brandPrimary}
           accentColor={alertsForSelectedSpace.find(x => x.enabled) ? colorVariables.brandDanger : colorVariables.brandPrimary} />
         <span className={styles.alertListButtonText}>Alerts</span>
-        <Icons.ChevronDown width={12} height={12} color={colorVariables.brandPrimary} />
+        <Icons.ChevronDown color={colorVariables.brandPrimary} />
       </button>
 
       <div className={classnames(styles.alertListDropdown, {[styles.visible]: visible})}>

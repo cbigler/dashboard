@@ -162,8 +162,8 @@ function DashboardListItem({selected, id, name, reportSet, onClick}) {
         </span>
         <Icons.ChevronRight
           color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
-          width={8}
-          height={8}
+          width={16}
+          height={16}
         />
       </div>
     </a>
@@ -181,10 +181,10 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
       <div className={styles.dashboardDropdownWrapper}>
         <div className={styles.dashboardDropdownValue} onClick={() => setOpened(!opened)}>
           <AppBarTitle>
-            {selectedDashboard ? selectedDashboard.name : ""}
-            <span className={styles.dashboardDropdownChevron}>
-              <Icons.ChevronDown width={12} height={12} />
+            <span className={styles.dashboardDropdownName}>
+              {selectedDashboard ? selectedDashboard.name : ""}
             </span>
+            <Icons.ChevronDown />
           </AppBarTitle>
         </div>
 
@@ -316,9 +316,9 @@ export class Dashboard extends React.Component<any, any> {
 
                     {/* TODO: Replace this with better report time navigation (like MixPanel) */}
                     {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
-                      <div style={{width: 50}}>
+                      <div style={{width: 58}}>
                         <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
-                        <div style={{paddingTop: 4}}>
+                        <div style={{paddingTop: 6, paddingLeft: 1}}>
                           <Icons.ChevronLeft color={colorVariables.brandPrimary} />
                         </div>
                         </Button>
@@ -327,12 +327,12 @@ export class Dashboard extends React.Component<any, any> {
                         Reported on{' '}
                         <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
                       </div>
-                      <div style={{width: 50}}>
+                      <div style={{width: 58}}>
                         <Button
                           onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
                           disabled={moment(date).add(1, 'week') > moment()}
                         >
-                          <div style={{paddingTop: 4}}>
+                          <div style={{paddingTop: 6, paddingLeft: 1}}>
                             <Icons.ChevronRight
                               color={moment(date).add(1, 'week') > moment() ?
                                 colorVariables.gray :
