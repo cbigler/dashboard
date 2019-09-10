@@ -19,11 +19,15 @@ function State({ initialState, children }) {
       <br />
       <strong>State:</strong>
       <br />
-      <pre style={{height: 100, overflow: 'auto', padding: 8, background: '#eee'}}>
+      <pre style={{height: 300, overflow: 'auto', padding: 8, background: '#eee'}}>
         {JSON.stringify(state, null, 2)}
       </pre>
     </Fragment>
   )
+}
+
+function random() {
+  return Math.floor(Math.random() * 100);
 }
 
 const QUERY = {
@@ -47,34 +51,34 @@ const QUERY_RESULT = {
   metrics: {
     'spc_631284005076992363': {
       count: {
-        average: 10,
+        average: random(),
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
       entrances: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       exits: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       targetUtilization: {
-        average: 10,
+        average: random(),
         durations: {
           0: 'not sure what this is',
           40: 'not sure what this is',
@@ -82,45 +86,45 @@ const QUERY_RESULT = {
           100: 'not sure what this is',
         },
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
     },
     'spc_631245341374546129': {
       count: {
-        average: 10,
+        average: random(),
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
       entrances: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       exits: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       targetUtilization: {
-        average: 10,
+        average: random(),
         durations: {
           0: 'not sure what this is',
           40: 'not sure what this is',
@@ -128,45 +132,45 @@ const QUERY_RESULT = {
           100: 'not sure what this is',
         },
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
     },
     'spc_631011907855188085': {
       count: {
-        average: 10,
+        average: random(),
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
       entrances: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       exits: {
-        average: 10,
+        average: random(),
         peak: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
-        total: 100,
+        total: random(),
       },
       targetUtilization: {
-        average: 10,
+        average: random(),
         durations: {
           0: 'not sure what this is',
           40: 'not sure what this is',
@@ -174,11 +178,11 @@ const QUERY_RESULT = {
           100: 'not sure what this is',
         },
         max: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
         min: {
-          value: 10,
+          value: random(),
           timestamp: '2019-01-01T00:00:00Z',
         },
       },
@@ -192,13 +196,41 @@ const ANALYTICS_REPORT = {
   query: QUERY,
   queryResult: {status: ResourceStatus.COMPLETE, data: QUERY_RESULT},
   hiddenSpaceIds: [],
-  selectedMetric: AnalyticsFocusedMetric.ENTRANCES,
+  /* selectedMetric */
   lastRunTimestamp: '2019-01-01T00:00:00Z',
 };
 
+const ANALYTICS_REPORT_ENTRANCES = { ...ANALYTICS_REPORT, selectedMetric: AnalyticsFocusedMetric.ENTRANCES },
+      ANALYTICS_REPORT_MAX = { ...ANALYTICS_REPORT, selectedMetric: AnalyticsFocusedMetric.MAX },
+      ANALYTICS_REPORT_UTILIZATION = { ...ANALYTICS_REPORT, selectedMetric: AnalyticsFocusedMetric.UTILIZATION };
+
 storiesOf('Analytics Table', module)
-  .add('Default', () => (
-    <State initialState={ANALYTICS_REPORT}>
+  .add('With visits data', () => (
+    <State initialState={ANALYTICS_REPORT_ENTRANCES}>
+      {(state, setState) => (
+        <AnalyticsTable
+          spaces={SPACES}
+          analyticsReport={state}
+
+          onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
+        />
+    )}
+    </State>
+  ))
+  .add('With max count data', () => (
+    <State initialState={ANALYTICS_REPORT_MAX}>
+      {(state, setState) => (
+        <AnalyticsTable
+          spaces={SPACES}
+          analyticsReport={state}
+
+          onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
+        />
+    )}
+    </State>
+  ))
+  .add('With utiization data', () => (
+    <State initialState={ANALYTICS_REPORT_UTILIZATION}>
       {(state, setState) => (
         <AnalyticsTable
           spaces={SPACES}

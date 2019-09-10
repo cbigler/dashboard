@@ -1,18 +1,19 @@
 @import "@density/ui/variables/fonts.scss";
 
-.tableName {
+.tableSpace {
   display: flex;
   align-items: center;
   font-weight: 500;
   width: 100%;
 }
-.tableNameHeader {
+.tableSpaceHeader {
   display: flex;
   align-items: center;
   font-weight: bold;
 }
-.tableNameLabel {
-  display: inline-block;
+.tableSpaceLabel {
+  display: flex;
+  align-items: center;
   width: 100%;
   overflow: hidden;
   text-align: left;
@@ -21,4 +22,26 @@
   user-select: none;
   margin-left: 16px;
   font-size: 14px;
+}
+
+
+.header {
+  height: 56px;
+  text-align: left;
+}
+.header + div svg { opacity: 0; }
+.header.right { text-align: right; }
+.headerLabel {
+  display: flex;
+  align-items: center;
+}
+.headerFakeRowText {
+  margin-top: 4px;
+  font-weight: 500;
+  font-size: 20px;
+}
+.headerFakeRowText.all {
+  margin-left: 36px;
+  font-size: 14px;
+  margin-top: 8px;
 }
