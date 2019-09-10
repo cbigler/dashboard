@@ -109,7 +109,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
         </Fragment>
       );
       break;
-    case 'spaceType':
+    case 'space_type':
       text = (
         <Fragment>
           <FilterBold>Type</FilterBold> is {valueList}
