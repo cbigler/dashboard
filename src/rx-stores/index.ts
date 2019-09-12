@@ -76,9 +76,10 @@ export function rxDispatch(action: GlobalAction) {
 
   // LEGACY: dispatch every action to redux too
   if (reduxStore) {
-    const reduxAction = typeof action === 'object' ?
-      { ...action, legacyReduxAction: true } : action;
-    reduxStore.dispatch(reduxAction as (GlobalAction & {legacyReduxAction: true}));
+    if (['object', 'function'].includes(typeof action)) {
+      (action as Any<FixInRefactor>).legacyReduxAction = true;
+    }
+    reduxStore.dispatch(action as (GlobalAction & {legacyReduxAction: true}));
   }
 }
 
