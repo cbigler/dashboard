@@ -471,7 +471,9 @@ function DoorwayList({
                   className={styles.itemContainer}
                   onClick={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 >
-                  <Icons.Doorway color={colorVariables.grayDarkest} />
+                  <div className={styles.icon}>
+                    <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
+                  </div>
                   <span className={styles.name}>{item.name}</span>
                 </div>
               </Fragment>
@@ -483,18 +485,19 @@ function DoorwayList({
           id="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
-            if (spacesOtherThanSelectedSpace.length > 1) {
+            if (spacesOtherThanSelectedSpace.length >= 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
-                  <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace.length} Linked spaces</span>
-                </div>
-              );
-            } else if (spacesOtherThanSelectedSpace.length === 1) {
-              return (
-                <div className={styles.linkedSpacesTag}>
-                  <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace[0].name}</span>
+                  <div className={styles.linkedSpacesIcon}>
+                    <Icons.Link width={20} height={20} />
+                  </div>
+                  <span className={styles.linkedSpacesText}>
+                    {
+                      spacesOtherThanSelectedSpace.length > 1 ?
+                      `${spacesOtherThanSelectedSpace.length} Linked Spaces` :
+                      spacesOtherThanSelectedSpace[0].name
+                    }
+                  </span>
                 </div>
               );
             } else {
