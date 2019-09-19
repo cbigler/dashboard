@@ -237,7 +237,7 @@ export function AdminIntegrations({
             template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {
               if (!item.serviceAuthorization.id) {
-                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
+                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=bot,chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
               }
             }}
           />
