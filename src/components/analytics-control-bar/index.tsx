@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
-import { DensitySpace } from '../../types';
+import { DensitySpace, DensityUser } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import mixpanelTrack from '../../helpers/mixpanel-track';
@@ -26,8 +26,10 @@ import { Button, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { AddButton } from '../analytics-control-bar-utilities';
+import can, { PERMISSION_CODES } from '../../helpers/permissions';
 
 type AnalyticsControlBarProps = {
+  userState: { loading: boolean, data: DensityUser, error: any },
   metric: AnalyticsFocusedMetric,
   onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
 
@@ -51,6 +53,8 @@ type AnalyticsControlBarProps = {
 }
 
 const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = function AnalyticsControlBar({
+  userState,
+
   metric,
   onChangeMetric,
 
@@ -105,14 +109,16 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
           <Icons.Refresh color={refreshEnabled ? colorVariables.brandPrimary : colorVariables.gray} />
         </button>
       </div>
-      <div className={styles.analyticsControlBarSection}>
-        <AnalyticsControlBarButtons
-          saveButtonState={saveButtonState}
-          onSave={onSave}
-          onUpdateReportName={onUpdateReportName}
-          moreMenuVisible={moreMenuVisible}
-        />
-      </div>
+      {can(userState, PERMISSION_CODES.coreWrite) ?
+        <div className={styles.analyticsControlBarSection}>
+          <AnalyticsControlBarButtons
+            saveButtonState={saveButtonState}
+            onSave={onSave}
+            onUpdateReportName={onUpdateReportName}
+            moreMenuVisible={moreMenuVisible}
+          />
+        </div>
+      : null}
     </div>
   );
 }

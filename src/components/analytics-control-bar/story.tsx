@@ -5,6 +5,7 @@ import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DATE_RANGES } from '../../helpers/space-time-utilities';
+import user from './user.json';
 import spaces from './spaces.json';
 import hierarchy from './hierarchy.json';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
@@ -34,6 +35,7 @@ function State({ initialState, children }) {
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
     <State initialState={{
+      user: user,
       metric: AnalyticsFocusedMetric.ENTRANCES,
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
@@ -41,6 +43,7 @@ storiesOf('Analytics Control Bar', module)
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
+        userState={{ loading: false, error: null, data: state.user }}
         metric={state.metric}
         onChangeMetric={metric => setState({ ...state, metric })}
 
@@ -73,6 +76,7 @@ storiesOf('Analytics Control Bar', module)
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
+        userState={{ loading: false, error: null, data: state.user }}
         metric={state.metric}
         onChangeMetric={metric => setState({ ...state, metric })}
 
@@ -107,6 +111,7 @@ storiesOf('Analytics Control Bar', module)
   ))
   .add('With a lot of space filters', () => (
     <State initialState={{
+      user: user,
       metric: AnalyticsFocusedMetric.ENTRANCES,
       filters: [
         {field: 'spaceType', values: ['space']},
@@ -126,6 +131,7 @@ storiesOf('Analytics Control Bar', module)
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
+          userState={{ loading: false, error: null, data: state.user }}
           metric={state.metric}
           onChangeMetric={metric => setState({ ...state, metric })}
 

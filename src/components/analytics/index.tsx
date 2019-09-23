@@ -210,6 +210,7 @@ export default function Analytics() {
             {activeReport ? (
               <Fragment>
                 <AnalyticsControlBar
+                  userState={userState}
                   metric={activeReport.selectedMetric}
                   onChangeMetric={metric => {
                     mixpanelTrack('Analytics Switched Metric Selection', {
