@@ -170,26 +170,49 @@ export function realizeDateRange(
   }
 }
 
-function realizeRelativeDuration(
+export function realizeRelativeDuration(
   relativeDuration: RelativeDuration,
   now: moment.Moment,
   organizationalWeekStartDay: DaysOfWeek,
 ): moment.Moment {
   let timestamp = now.clone().add(relativeDuration.magnitude, relativeDuration.unit);
-
-  switch (relativeDuration.round) {
-  case RelativeDurationRound.START:
-    timestamp = timestamp.startOf(relativeDuration.unit);
-    break;
-  case RelativeDurationRound.END:
-    timestamp = timestamp.endOf(relativeDuration.unit);
-    break;
-  }
-
+  
   // Weeks are a special case because of "organization days of week start day" being a a concept
   // that can effect what day a week starts on
   if (relativeDuration.unit === RelativeUnit.WEEKS) {
-    timestamp = timestamp.add(DAYS_OF_WEEK.indexOf(organizationalWeekStartDay), 'days');
+    let targetDay = DAYS_OF_WEEK.indexOf(organizationalWeekStartDay);
+    // FIXME: this shouldn't be possible, but default to Sunday if input is bad/undefined
+    if (targetDay === -1) { targetDay = 0; }
+    
+    // Week should start on the target day, and end at the end of 1 before the target day
+    //  eg. [Wednesday @ 00:00, Tuesday @ 23:59] if target day is Wednesday
+    let targetDayWeekStart = targetDay;
+    // silly JavaScript modulo of negative numbers, but this is basically just mod(7)
+    let targetDayWeekEnd = (((targetDay - 1) % 7) + 7) % 7;
+
+    switch(relativeDuration.round) {
+      case RelativeDurationRound.START:
+        while (timestamp.day() !== targetDayWeekStart) {
+          timestamp.subtract(1, 'day')
+        }
+        timestamp = timestamp.startOf('day')
+        break;
+      case RelativeDurationRound.END:
+        while (timestamp.day() !== targetDayWeekEnd) {
+          timestamp.add(1, 'day')
+        }
+        timestamp = timestamp.endOf('day')
+        break;
+    }
+  } else {
+    switch (relativeDuration.round) {
+      case RelativeDurationRound.START:
+        timestamp = timestamp.startOf(relativeDuration.unit);
+        break;
+      case RelativeDurationRound.END:
+        timestamp = timestamp.endOf(relativeDuration.unit);
+        break;
+    }
   }
   return timestamp;
 }

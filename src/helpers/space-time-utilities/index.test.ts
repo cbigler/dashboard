@@ -3,9 +3,11 @@ import assert from 'assert';
 import {
   DATE_RANGES,
   realizeDateRange,
+  realizeRelativeDuration,
   RangeType,
   splitTimeRangeIntoSubrangesWithSameOffset,
 } from './index';
+import { DaysOfWeek } from '../../types';
 
 const NYC_SPACE = { name: 'New York Space', timeZone: 'America/New_York' };
 const LA_SPACE = { name: 'Los Angeles Space', timeZone: 'America/Los_Angeles' };
@@ -284,7 +286,7 @@ describe('time-conversions', function() {
   });
 });
 
-describe('Realization of relative ranges', () => {
+describe('Realization of relative ranges, with now being Friday 9/20/2019', () => {
 
   const tz = 'America/Chicago';
   const now = moment.tz('2019-09-20T20:33:57', tz);
@@ -371,6 +373,112 @@ describe('Realization of relative ranges', () => {
       expect(endDate.second()).toBe(59)
       expect(endDate.millisecond()).toBe(999)
     })
+  })
+
+})
+
+describe('Realization of relative ranges, with now being Monday 9/23/2019 and weeks starting Wednesday', () => {
+
+  const tz = 'America/New_York';
+  const now = moment.tz('2019-09-23T13:48:31', tz);
+  const organizationalWeekStartDay = 'Wednesday';
+
+  expect(now.format('dddd')).toBe('Monday');
+  expect(now.date()).toBe(23)
+  expect(now.hour()).toBe(13)
+  expect(now.minute()).toBe(48)
+  expect(now.second()).toBe(31)
+
+  describe('WEEK_TO_DATE', () => {
+
+    const { startDate, endDate } = realizeDateRange(DATE_RANGES.WEEK_TO_DATE, tz, {
+      organizationalWeekStartDay,
+      now
+    });
+
+    it('Should start at midnight on the previous organizationalWeekStartDay', () => {
+      expect(startDate.format('dddd')).toBe('Wednesday')
+      expect(startDate.date()).toBe(18)
+      expect(startDate.hour()).toBe(0)
+      expect(startDate.minute()).toBe(0)
+      expect(startDate.second()).toBe(0)
+      expect(startDate.millisecond()).toBe(0)
+    })
+
+    it('Should end just before midnight tonight, eg. 23:59:59.999', () => {
+      expect(endDate.format('dddd')).toBe('Monday')
+      expect(endDate.date()).toBe(23)
+      expect(endDate.hour()).toBe(23)
+      expect(endDate.minute()).toBe(59)
+      expect(endDate.second()).toBe(59)
+      expect(endDate.millisecond()).toBe(999)
+    })
+  })
+
+  describe('LAST_7_DAYS', () => {
+
+    const { startDate, endDate } = realizeDateRange(DATE_RANGES.LAST_7_DAYS, tz, {
+      organizationalWeekStartDay,
+      now
+    });
+
+    it('Should start at midnight 7 days before 00:00:00 today', () => {
+      expect(startDate.format('dddd')).toBe('Monday')
+      expect(startDate.date()).toBe(16)
+      expect(startDate.hour()).toBe(0)
+      expect(startDate.minute()).toBe(0)
+      expect(startDate.second()).toBe(0)
+      expect(startDate.millisecond()).toBe(0)
+    })
+
+    it('Should end just before midnight tonight, eg. 23:59:59.999', () => {
+      expect(endDate.format('dddd')).toBe('Monday')
+      expect(endDate.date()).toBe(23)
+      expect(endDate.hour()).toBe(23)
+      expect(endDate.minute()).toBe(59)
+      expect(endDate.second()).toBe(59)
+      expect(endDate.millisecond()).toBe(999)
+    })
+  })
+
+  describe('LAST_WEEK', () => {
+
+    const { startDate, endDate } = realizeDateRange(DATE_RANGES.LAST_WEEK, tz, {
+      organizationalWeekStartDay,
+      now
+    });
+
+    it('Should start at the 2nd organizationalWeekStartDay midnight backward from now', () => {
+      expect(startDate.format('dddd')).toBe('Wednesday')
+      expect(startDate.date()).toBe(11)
+      expect(startDate.hour()).toBe(0)
+      expect(startDate.minute()).toBe(0)
+      expect(startDate.second()).toBe(0)
+      expect(startDate.millisecond()).toBe(0)
+    })
+
+    it('Should end just before midnight on the previous day before organizationalWeekStartDay', () => {
+      expect(endDate.format('dddd')).toBe('Tuesday')
+      expect(endDate.date()).toBe(17)
+      expect(endDate.hour()).toBe(23)
+      expect(endDate.minute()).toBe(59)
+      expect(endDate.second()).toBe(59)
+      expect(endDate.millisecond()).toBe(999)
+    })
+  })
+
+})
+
+describe('realization of relative durations', () => {
+  // testing a weird case for RoundedCo
+  const organizationalWeekStartDay: DaysOfWeek = 'Wednesday';
+  const now = moment.tz('2019-09-23T14:17:45', 'America/New_York');
+
+  test('realizing the start of the current org week', () => {
+    const realized = realizeRelativeDuration(DATE_RANGES.WEEK_TO_DATE.start, now, organizationalWeekStartDay);
+    // Expecting Wednesday 9/18/2019
+    expect(realized.format('dddd')).toBe('Wednesday')
+    expect(realized.date()).toBe(18)
   })
 
 })
