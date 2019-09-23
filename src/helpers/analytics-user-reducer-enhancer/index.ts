@@ -12,11 +12,14 @@ function isUserImpersonating() {
 }
 
 export default function analyticsUserReducerEnhancer(reducer) {
+  let previousState = null;
   return (state, props) => {
     const result = reducer(state, props);
 
-    if (!isUserImpersonating()) {
+    if (state !== previousState && !isUserImpersonating()) {
       // Not impersonating, so tracking is on
+
+      previousState = state;
 
       if (process.env.REACT_APP_HOTJAR_SITE_ID) {
         setupHotjar(process.env.REACT_APP_HOTJAR_SITE_ID, 6);  

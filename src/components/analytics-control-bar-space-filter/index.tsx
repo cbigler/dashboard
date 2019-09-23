@@ -105,21 +105,21 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     case 'function':
       text = (
         <Fragment>
-          <FilterBold>Function</FilterBold> is {valueList}
+          <FilterBold>Function:</FilterBold> {valueList}
         </Fragment>
       );
       break;
     case 'space_type':
       text = (
         <Fragment>
-          <FilterBold>Type</FilterBold> is {valueList}
+          <FilterBold>Type:</FilterBold> {valueList}
         </Fragment>
       );
       break;
     case 'id':
       text = (
         <Fragment>
-          <FilterBold>Space</FilterBold> is {valueList}
+          <FilterBold>Space:</FilterBold> {valueList}
         </Fragment>
       );
       break;
@@ -244,7 +244,13 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
                   choiceFilter(SPACE_FUNCTION_CHOICES, searchText)
                   .map(choice => ({
                     ...choice,
-                    label: `${choice.label} (${spaces.filter(s => s['function'] === choice.id).length})`,
+                    spaceCount: spaces.filter(s => s['function'] === choice.id).length,
+                  }))
+                  .filter(i => i.spaceCount > 0)
+                  .sort((a, b) => b.spaceCount - a.spaceCount)
+                  .map(choice => ({
+                    id: choice.id,
+                    label: `${choice.label} (${choice.spaceCount})`,
                   }))
                 }
                 value={workingFilter.values}

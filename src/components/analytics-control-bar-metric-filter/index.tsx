@@ -8,8 +8,7 @@ import styles from './styles.module.scss';
 
 const METRIC_CHOICES = [
   { id: AnalyticsFocusedMetric.ENTRANCES, label: 'Visits' },
-  { id: AnalyticsFocusedMetric.MAX, label: 'Max' },
-  { id: AnalyticsFocusedMetric.UTILIZATION, label: 'Utilization' },
+  { id: AnalyticsFocusedMetric.MAX, label: 'Occupancy' },
 ];
 
 type AnalyticsFocusedMetricSelectorProps = {

@@ -1,0 +1,27 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 4px;
+  border-radius: $borderRadiusBase;
+  overflow: hidden;
+  background-color: $grayDark;
+}
+
+.inner {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 25%;
+  height: 100%;
+  background-color: $brandPrimary;
+  animation: loadingBar 0.8s infinite ease-in-out;
+}
+
+@keyframes loadingBar {
+  0% { left: 0%; }
+  50% { left: 75%; }
+  100% { left: 0%; }
+}

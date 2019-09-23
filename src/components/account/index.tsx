@@ -21,6 +21,8 @@ import {
 } from '@density/ui';
 // import AppBar, { AppBarSection, AppBarTitle } from '@density/ui';
 
+import { rxDispatch } from '../../rx-stores/index';
+
 import FormLabel from '../form-label/index';
 import ErrorBar from '../error-bar/index';
 import InputBoxInfo from '../input-box-info';
@@ -465,7 +467,7 @@ export default connect((state: any) => {
 }, dispatch => {
   return {
     async onUpdateAlert(alert) {
-      await collectionAlertsUpdate(dispatch, alert);
+      await collectionAlertsUpdate(rxDispatch, alert);
       dispatch<any>(showToast({
         text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
         timeout: 1000

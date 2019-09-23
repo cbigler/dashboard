@@ -13,6 +13,8 @@ export default async function createReport(dispatch) {
   const newReport: AnalyticsReport = {
     id: uuid.v4(),
     name: 'Untitled Report',
+    type: 'LINE_CHART',
+    settings: {},
     query: {
       dateRange: DATE_RANGES.LAST_WEEK,
       interval: QueryInterval.ONE_HOUR,
@@ -25,6 +27,8 @@ export default async function createReport(dispatch) {
     selectedMetric: AnalyticsFocusedMetric.MAX,
     lastRunTimestamp: undefined,
     isSaved: false,
+    isCurrentlySaving: false,
+    isOpen: true,
   };
 
   dispatch({

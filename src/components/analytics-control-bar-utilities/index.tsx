@@ -30,7 +30,7 @@ export const ItemList: React.FunctionComponent<ItemListProps> = function ItemLis
           tabIndex={0}
           key={choice.id}
           onClick={e => onClick(choice, e)}
-          onKeyDown={e => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLLIElement>) => {
             switch (e.key) {
             // Enter will select the current item
             case 'Enter':
@@ -40,14 +40,14 @@ export const ItemList: React.FunctionComponent<ItemListProps> = function ItemLis
               return;
             // Arrow keys will move up and down
             case 'ArrowUp':
-              const previousElementSibling = (e.target as HTMLLIElement).previousElementSibling;
+              const previousElementSibling = e.currentTarget.previousElementSibling;
               if (previousElementSibling) {
                 e.preventDefault();
                 (previousElementSibling as HTMLElement).focus();
               }
               return;
             case 'ArrowDown':
-              const nextElementSibling = (e.target as HTMLLIElement).nextElementSibling;
+              const nextElementSibling = e.currentTarget.nextElementSibling;
               if (nextElementSibling) {
                 e.preventDefault();
                 (nextElementSibling as HTMLElement).focus();

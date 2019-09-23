@@ -11,6 +11,7 @@ import {
   Modal,
   PhoneInputBox,
 } from '@density/ui';
+import { DispatchType } from '../../types/rx-actions';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label';
 import { connect } from 'react-redux';
@@ -224,15 +225,15 @@ export default connect(
         }
       }
       if (alert.id) {
-        collectionAlertsUpdate(dispatch, alert);
+        collectionAlertsUpdate(dispatch as DispatchType, alert);
       } else {
-        collectionAlertsCreate(dispatch, alert);
+        collectionAlertsCreate(dispatch as DispatchType, alert);
       }
       dispatch<any>(showToast({ text: 'Alert saved' }));
       dispatch<any>(hideModal());
     },
     onDeleteAlert: async alert => {
-      collectionAlertsDelete(dispatch, alert);
+      collectionAlertsDelete(dispatch as DispatchType, alert);
       dispatch<any>(showToast({ text: 'Alert deleted' }));
       dispatch<any>(hideModal());
     },

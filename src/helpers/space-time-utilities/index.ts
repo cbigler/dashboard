@@ -1,9 +1,10 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import 'moment-timezone';
 
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
 import { DaysOfWeek } from '../../types';
+import { QueryInterval } from '../../types/analytics';
 
 // ----------------------------------------------------------------------------
 // DATE STRING RELATED OPERATIONS
@@ -245,7 +246,7 @@ export function getStartOfWeek(timestamp, weekStart) {
 }
 
 // Given a formatted interval string, return it as a moment duration
-export function parseIntervalAsDuration(interval) {
+export function parseIntervalAsDuration(interval: QueryInterval) {
   const durationUnits = { w: 'week', d: 'day', h: 'hour', m: 'minute', s: 'second' };
   const suffix = interval.slice(-1);
   const amount = parseInt(interval.slice(0, -1), 10);

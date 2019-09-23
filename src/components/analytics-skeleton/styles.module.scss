@@ -2,6 +2,11 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
+.wrapper {
+  height: 100%;
+  width: 100%;
+}
+
 .controlBar {
   display: flex;
   align-items: center;

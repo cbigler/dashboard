@@ -1,39 +1,67 @@
-import moment from 'moment';
-import { of, from, merge, combineLatest } from 'rxjs';
+import moment, { Moment } from 'moment';
+import { of, from, merge, combineLatest, partition, Subject } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
   catchError,
+  tap,
+  flatMap,
+  share,
+  distinctUntilChanged,
 } from 'rxjs/operators';
+import changeCase from 'change-case';
 
-import createRxStore, { rxDispatch, actions, skipUpdate, RxReduxStore } from './index';
-import { DensitySpace, DensitySpaceHierarchyItem, DaysOfWeek } from '../types';
+import core from '../client/core';
+import createRxStore, { rxDispatch, actions, skipUpdate, RxReduxStore, ReduxState } from './index';
+import {
+  DensityReport,
+  DensitySpace,
+  DensitySpaceHierarchyItem,
+  DensitySpaceCountBucket,
+  DensitySpaceCountMetrics,
+  DaysOfWeek,
+} from '../types';
 import {
   AnalyticsState,
   AnalyticsStateRaw,
   AnalyticsActionType,
   AnalyticsReport,
+  AnalyticsFocusedMetric,
+  AnalyticsDatapoint,
+  AnalyticsMetrics,
+  Query,
   QueryInterval,
+  QuerySelectionType,
+  SpaceSelection,
 
   ResourceStatus,
   ResourceComplete,
   RESOURCE_IDLE,
+  RESOURCE_LOADING,
 } from '../types/analytics';
 import fetchAllObjects from '../helpers/fetch-all-objects';
-import { DateRange, realizeDateRange } from '../helpers/space-time-utilities';
+import { DATE_RANGES, DateRange, realizeDateRange } from '../helpers/space-time-utilities';
+import objectSnakeToCamel from '../helpers/object-snake-to-camel';
+import { createDatapoint } from '../helpers/analytics-datapoint';
 
 import collectionSpacesError from '../actions/collection/spaces/error';
 import collectionSpacesSet from '../actions/collection/spaces/set';
 import collectionSpaceHierarchySet from '../actions/collection/space-hierarchy/set';
+import { StoreSubject } from '.';
+import { GlobalAction } from '../types/rx-actions';
+import mixpanelTrack from '../helpers/mixpanel-track';
+
+
+const USER_TIME_ZONE = moment.tz.guess();
 
 const initialState = RESOURCE_IDLE;
 
 // A helper to allow the reducer to update the state of an individual report easily.
 function updateReport(
   state: ResourceComplete<AnalyticsStateRaw>,
-  reportId: AnalyticsReport["id"],
+  reportId: AnalyticsReport["id"] | null,
   callback: (input: AnalyticsReport) => AnalyticsReport,
 ) {
   const reportIndex = state.data.reports.findIndex(report => report.id === reportId);
@@ -47,10 +75,9 @@ function updateReport(
 }
 
 function recommendQueryInterval(dateRange: DateRange, organizationalWeekStartDay: DaysOfWeek) {
-  const userTimeZone = moment.tz.guess();
   const { startDate, endDate } = realizeDateRange(
     dateRange,
-    userTimeZone,
+    USER_TIME_ZONE,
     { organizationalWeekStartDay },
   );
 
@@ -64,7 +91,32 @@ function recommendQueryInterval(dateRange: DateRange, organizationalWeekStartDay
   }
 }
 
-const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialState, (state, action) => {
+// FIXME: move this function somewhere else, point this out in a review!
+type ConvertDensityReportToAnalyticsReportOptions = { isSaved?: boolean, isOpen?: boolean };
+function convertDensityReportToAnalyticsReport(
+  report: DensityReport,
+  opts: ConvertDensityReportToAnalyticsReportOptions = {},
+): AnalyticsReport {
+  return {
+    ...report,
+    // FIXME: this query needs to somehow come from the density report? Point this out in a review!
+    query: report.settings.query || {
+      dateRange: DATE_RANGES.LAST_WEEK,
+      interval: QueryInterval.ONE_HOUR,
+      selections: [],
+      filters: [],
+    },
+    queryResult: RESOURCE_IDLE,
+    hiddenSpaceIds: [],
+    selectedMetric: AnalyticsFocusedMetric.MAX,
+    isSaved: typeof opts.isSaved !== 'undefined' ? opts.isSaved : true,
+    isCurrentlySaving: false,
+    isOpen: typeof opts.isOpen !== 'undefined' ? opts.isOpen : false,
+  };
+}
+
+
+export function analyticsReducer(state: AnalyticsState, action: GlobalAction): AnalyticsState | typeof skipUpdate {
   // ----------------------------------------------------------------------------
   // ACTIONS THAT WORK ALWAYS
   // ----------------------------------------------------------------------------
@@ -95,40 +147,98 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
   // ----------------------------------------------------------------------------
   switch (action.type) {
 
-  case AnalyticsActionType.ANALYTICS_OPEN_REPORT:
+  case AnalyticsActionType.ANALYTICS_OPEN_REPORT: {
+    const reportIsInStore = (
+      state.data.reports
+        .map(r => r.id)
+        .includes(action.report.id)
+    );
+
     return {
       ...state,
       data: {
-        reports: [ ...state.data.reports, action.report ],
+        reports: [
+          // Open the report if it's already in the store
+          ...state.data.reports.map(r => {
+            if (r.id === action.report.id) {
+              return { ...r, isOpen: true };
+            } else {
+              return r;
+            }
+          }),
+          // If the report isn't in the store, add it and open it
+          ...(!reportIsInStore ? [{...action.report, isOpen: true}] : []),
+        ],
         activeReportId: action.report.id,
       },
     };
+  }
 
   case AnalyticsActionType.ANALYTICS_CLOSE_REPORT:
     let newActiveReportId: string | null = null;
-    const newReports = state.data.reports.filter(r => r.id !== action.reportId);
+    const newOpenReports = state.data.reports.filter(r => r.isOpen && r.id !== action.reportId);
 
     // Determine which report should be switched to when a given report is closed.
-    if (newReports.length === 0) {
+    if (newOpenReports.length === 0) {
       newActiveReportId = null;
-    } else if (newReports.length === 1) {
-      newActiveReportId = newReports[0].id;
+    } else if (newOpenReports.length === 1) {
+      newActiveReportId = newOpenReports[0].id;
     } else {
       const reportIndex = state.data.reports.findIndex(r => r.id === action.reportId);
       let previousReportIndex = reportIndex - 1;
       // Check to ensure the previous report index is within the bounds of the new report list
       if (previousReportIndex < 0) { previousReportIndex = 0; }
-      if (previousReportIndex > newReports.length-1) { previousReportIndex = newReports.length-1; }
-      newActiveReportId = newReports[previousReportIndex].id;
+      if (previousReportIndex > newOpenReports.length-1) { previousReportIndex = newOpenReports.length-1; }
+      newActiveReportId = newOpenReports[previousReportIndex].id;
     }
 
     return {
       ...state,
-      data: { ...state.data, reports: newReports, activeReportId: newActiveReportId },
+      data: {
+        ...state.data,
+        reports: state.data.reports.map(r => {
+          if (r.id === action.reportId) {
+            return { ...r, isOpen: false };
+          } else {
+            return r;
+          }
+        }),
+        activeReportId: newActiveReportId
+      },
     };
 
   case AnalyticsActionType.ANALYTICS_FOCUS_REPORT:
     return { ...state, data: { ...state.data, activeReportId: action.reportId } };
+
+  case AnalyticsActionType.ANALYTICS_UPDATE_REPORT:
+    return {
+      ...state,
+      data: {
+        ...state.data,
+        // If the active report is the report that is being updated, and if `action.report.id` and
+        // `action.reportId` are different, then update the active report id to be the new report
+        // id.
+        activeReportId: state.data.activeReportId === action.reportId ? action.report.id : state.data.activeReportId,
+        reports: state.data.reports.map(r => {
+          if (r.id === action.reportId) {
+            return action.report;
+          } else {
+            return r;
+          }
+        }),
+      },
+    };
+
+  case AnalyticsActionType.ANALYTICS_DELETE_REPORT:
+    return {
+      ...state,
+      data: {
+        ...state.data,
+        // If the report that is being deleted is the active report, unselect it.
+        activeReportId: state.data.activeReportId === action.reportId ? null : state.data.activeReportId,
+        reports: state.data.reports.filter(r => r.id !== action.reportId),
+      },
+    };
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC:
     return updateReport(state, action.reportId, report => ({
@@ -158,10 +268,51 @@ const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialSt
       },
     }));
 
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      hiddenSpaceIds: action.hiddenSpaceIds,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_QUERY_IDLE:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      queryResult: RESOURCE_IDLE,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_QUERY_LOADING:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      queryResult: RESOURCE_LOADING,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_QUERY_ERROR:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      queryResult: { status: ResourceStatus.ERROR, error: action.error },
+    }));
+
+  case AnalyticsActionType.ANALYTICS_QUERY_COMPLETE:
+    return updateReport(state, action.reportId, report => {
+      return {
+        ...report,
+        queryResult: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            selectedSpaceIds: action.selectedSpaceIds,
+            datapoints: action.datapoints,
+            metrics: action.metrics,
+          },
+        },
+      };
+    });
+
   default:
     return skipUpdate;
   }
-});
+}
+
+const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialState, analyticsReducer);
 export default AnalyticsStore;
 
 // ----------------------------------------------------------------------------
@@ -170,11 +321,21 @@ export default AnalyticsStore;
 
 const routeTransitionStream = actions.pipe(
   filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
-  switchMap(() => RxReduxStore.pipe(take(1))),
+  switchMap(() => combineLatest(
+    RxReduxStore.pipe(take(1)),
+    AnalyticsStore.pipe(take(1)),
+  )),
+);
+
+const whileInitialDataNotPopulated = () => source => source.pipe(
+  filter(([reduxState, analyticsState]) => (
+    analyticsState.status !== ResourceStatus.COMPLETE
+  )),
 );
 
 const spacesLoadStream = routeTransitionStream.pipe(
-  switchMap(reduxState => {
+  whileInitialDataNotPopulated(),
+  switchMap(([reduxState, analyticsState]) => {
     if (reduxState.spaces.view !== 'VISIBLE' && reduxState.spaces.data.length > 1) {
       return of();
     } else {
@@ -185,7 +346,8 @@ const spacesLoadStream = routeTransitionStream.pipe(
 );
 
 const spaceHierarchyLoadStream = routeTransitionStream.pipe(
-  switchMap(reduxState => {
+  whileInitialDataNotPopulated(),
+  switchMap(([reduxState, analyticsState]) => {
     if (reduxState.spaceHierarchy.view !== 'VISIBLE' && reduxState.spaceHierarchy.data.length > 1) {
       return of();
     } else {
@@ -195,18 +357,36 @@ const spaceHierarchyLoadStream = routeTransitionStream.pipe(
   map(spaces => collectionSpaceHierarchySet(spaces)),
 );
 
+const reportsLoadStream = routeTransitionStream.pipe(
+  whileInitialDataNotPopulated(),
+  switchMap(([reduxState, analyticsState]) => {
+    return fetchAllObjects<DensityReport>('/reports');
+  }),
+);
+
 merge(
-  of({ type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING }),
+  routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    map(() => ({ type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING })),
+  ),
 
   // Dispatch actions as data is loaded
   spacesLoadStream.pipe(catchError(e => of())),
   spaceHierarchyLoadStream.pipe(catchError(e => of())),
 
-  // When both are done loading, mark the analytics page as done loading
-  combineLatest(spacesLoadStream, spaceHierarchyLoadStream).pipe(
-    map(() => ({
+  // When all resources are done loading, mark the analytics page as done loading
+  combineLatest(
+    spacesLoadStream,
+    spaceHierarchyLoadStream,
+    reportsLoadStream,
+  ).pipe(
+    map(([spaces, hierarchy, reports]) => ({
       type: AnalyticsActionType.ANALYTICS_RESOURCE_COMPLETE,
-      data: [],
+      data: (
+        reports
+          .filter(r => r.type === 'LINE_CHART')
+          .map(r => convertDensityReportToAnalyticsReport(r))
+      ),
       activeReportId: null,
     })),
     catchError(error => from([
@@ -215,3 +395,216 @@ merge(
     ])),
   ),
 ).subscribe(action => rxDispatch(action as Any<InAHurry>));
+
+// ----------------------------------------------------------------------------
+// RUN REPORT QUERY WHEN IT CHANGES
+// ----------------------------------------------------------------------------
+
+function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: Query): Array<DensitySpace> {
+  return spaces.filter(space => {
+    const spaceMatchesQuery = query.selections.some(selection => {
+      switch (selection.type) {
+      case QuerySelectionType.SPACE:
+        const spaceSelection = selection as SpaceSelection;
+        return spaceSelection.values.includes(space[changeCase.camelCase(spaceSelection.field)]);
+      default:
+        return false;
+      }
+    });
+    return Boolean(spaceMatchesQuery);
+  });
+}
+
+export function isQueryRunnable(query: Query): boolean {
+  return (
+    query.selections.length > 0
+  );
+}
+
+export type QueryDependencies = {
+  activeReport: AnalyticsReport,
+  startDate: Moment,
+  endDate: Moment,
+  selectedSpaces: DensitySpace[],
+}
+
+async function runQuery(deps: QueryDependencies) {
+  const { activeReport, startDate, endDate, selectedSpaces } = deps;
+
+  mixpanelTrack('Analytics Run Query', {
+    'Start Time': startDate.format(),
+    'End Time': endDate.format(),
+    'Metric': activeReport.selectedMetric,
+    'Interval': activeReport.query.interval,
+    'Space ID List': selectedSpaces.map(s => s.id).join(','),
+  });
+
+  return await core().get('/spaces/counts', {
+    params: {
+      // NOTE: using this date format to avoid sending up the TZ offset (eg. -04:00)
+      //       so that the backend interprets the date in the space's local time
+      start_time: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+      end_time: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+      space_list: selectedSpaces.map(s => s.id).join(','),
+      interval: activeReport.query.interval,
+      page_size: '5000',
+    },
+  })
+}
+
+registerSideEffects(actions, AnalyticsStore, RxReduxStore, rxDispatch, runQuery);
+
+type RawBatchCountsResponse = Any<FixInRefactor>;
+
+export function registerSideEffects(
+  actionStream: Subject<GlobalAction>,
+  analyticsStore: StoreSubject<AnalyticsState>,
+  reduxStore: StoreSubject<ReduxState>,
+  dispatch: (action: GlobalAction) => void,
+  runQuery: (deps: QueryDependencies) => Promise<RawBatchCountsResponse>,
+) {
+
+  const activeReportUpdates = actionStream.pipe(
+    // Filter only the actions that should cause the query to be rerun
+    filter(action => {
+      switch (action.type) {
+        case AnalyticsActionType.ANALYTICS_OPEN_REPORT:
+        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS:
+        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL:
+        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE:
+        case AnalyticsActionType.ANALYTICS_REPORT_REFRESH:
+          return true;
+        default:
+          return false;
+      }
+    }),
+
+    switchMap(() => combineLatest(
+      analyticsStore.pipe(take(1)),
+      reduxStore.pipe(take(1)),
+    )),
+
+    filter(([reportsState, reduxState]) => reportsState.status === ResourceStatus.COMPLETE),
+
+    // Extract the activeReport from the store and filter out changes if no active report is selected.
+    map(([reportsState, reduxState]) => {
+      const reportsStateComplete = reportsState as ResourceComplete<AnalyticsStateRaw>;
+      const activeReport: AnalyticsReport | undefined = reportsStateComplete.data.reports.find(
+        report => report.id === reportsStateComplete.data.activeReportId
+      );
+      return [activeReport, reduxState];
+    }),
+    filter(([activeReport, reduxState]) => typeof activeReport !== 'undefined'),
+
+    // REVIEW: do we need this? what does it do?
+    distinctUntilChanged(),
+    share(),
+  );
+
+  const [activeReportUpdatesValidQuery, activeReportUpdatesInvalidQuery] = partition(
+    activeReportUpdates,
+    ([activeReport, reduxState]) => isQueryRunnable(activeReport.query),
+  );
+
+  // If the query is not able to be run then the ui should indicate this explicitly to the user
+  activeReportUpdatesInvalidQuery.subscribe(([activeReport, reduxState]) => {
+    // FIXME: I think we should be more explicit about the invalid query than status IDLE
+    dispatch({
+      type: AnalyticsActionType.ANALYTICS_QUERY_IDLE,
+      reportId: activeReport.id,
+    });
+  });
+
+  activeReportUpdatesValidQuery.pipe(
+    map(([activeReport, reduxState]) => {
+      const spaces = realizeSpacesFromQuery(
+        reduxState.spaces.data,
+        activeReport.query,
+      );
+
+      const organizationalWeekStartDay = reduxState.user.data.organization.settings.dashboardWeekStart || 'Sunday';
+      const { startDate, endDate } = realizeDateRange(
+        activeReport.query.dateRange,
+        USER_TIME_ZONE,
+        { organizationalWeekStartDay },
+      );
+
+      return {
+        reduxState,
+        startDate,
+        endDate,
+        activeReport,
+        selectedSpaces: spaces,
+      };
+    }),
+
+    tap(({ activeReport }) => {
+      dispatch({
+        type: AnalyticsActionType.ANALYTICS_QUERY_LOADING,
+        reportId: activeReport.id,
+      });
+    }),
+
+    flatMap(async queryContext => {
+      const {
+        reduxState,
+        startDate,
+        endDate,
+        activeReport,
+        selectedSpaces,
+      } = queryContext;
+
+      let results;
+      try {
+        results = await runQuery({
+          activeReport,
+          startDate,
+          endDate,
+          selectedSpaces,
+        });
+      } catch (error) {
+        dispatch({
+          type: AnalyticsActionType.ANALYTICS_QUERY_ERROR,
+          error,
+          reportId: activeReport.id,
+        });
+        return null;
+      }
+
+      return [activeReport, selectedSpaces, results, reduxState];
+    }),
+  ).subscribe(args => {
+    if (args === null) { return; }
+
+    const activeReport: AnalyticsReport = args[0],
+      selectedSpaces: Array<DensitySpace> = args[1],
+      response: any = args[2].data,
+      reduxState: ReduxState = args[3];
+
+    // Process the space count data for each space and concat them all together
+    const datapoints = Object.keys(response.results).reduce((acc, next) => {
+      const space = reduxState.spaces.data.find(space => space.id === next);
+      if (!space) { return acc; }
+      const currentBuckets = response.results[next].map(
+        bucket => objectSnakeToCamel<DensitySpaceCountBucket>(bucket)
+      );
+      const localBuckets = currentBuckets.map(c => createDatapoint(c, space))
+      return acc.concat(localBuckets);
+    }, [] as AnalyticsDatapoint[]);
+
+    const metrics = Object.entries(response.metrics).reduce((acc, next) => {
+      const [spaceId, value] = next;
+      acc[spaceId] = objectSnakeToCamel<DensitySpaceCountMetrics>(value);
+      return acc;
+    }, {} as AnalyticsMetrics);
+
+    dispatch({
+      type: AnalyticsActionType.ANALYTICS_QUERY_COMPLETE,
+      reportId: activeReport.id,
+      datapoints,
+      metrics,
+      selectedSpaceIds: selectedSpaces.map(i => i.id),
+    });
+  });
+
+}

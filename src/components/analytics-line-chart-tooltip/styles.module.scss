@@ -1,0 +1,86 @@
+.hoverOverlay {
+  z-index: 100;
+  // max-height: 168px;
+  width: 286px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 16px;
+  padding-right: 16px;
+  white-space: nowrap;
+  background: #FFFFFF;
+  border: 1px solid #EDEDED;
+  overflow: hidden;
+  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+.hoverOverlayHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #0D183A;
+}
+
+.hoverOverlayActiveMetric {
+  color: #0D183A;
+}
+
+.hoverOverlayHeaderLabel {
+  color: #0D183A;
+}
+
+.hoverOverlaySpaceList {
+  // max-height: 270px;
+  overflow: hidden;
+}
+
+.hoverOverlaySpaceListItem {
+  display: flex;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.hoverOverlayColorIndicator {
+  flex-grow: 0;
+  flex-shrink: 0;
+  height: 16px;
+  width: 4px;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+
+.hoverOverlaySpaceName {
+  flex-grow: 1;
+  white-space: nowrap; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #0D183A;
+  opacity: 0.5;
+
+  &.active { opacity: 1.0;}
+}
+
+.hoverOverlayMetric {
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: 60px;
+  text-align: right;
+  color: #0D183A;
+  opacity: 0.5;
+
+  &.active { opacity: 1.0;}
+}
+
+.hoverOverlaySpaceListOverflowLabel {
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 12px;
+  color: #ccc;
+}

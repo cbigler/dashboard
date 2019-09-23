@@ -1,6 +1,6 @@
 import React, { ReactNode, Fragment } from 'react';
 import changeCase from 'change-case';
-import debounce from 'lodash.debounce';
+import debounce from 'lodash/debounce';
 import { connect } from 'react-redux';
 import moment from 'moment';
 import styles from './styles.module.scss';

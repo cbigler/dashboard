@@ -81,9 +81,11 @@ export function Dialogger({
               <AppBarTitle>{activeModal.data.title || 'Prompt'}</AppBarTitle>
             </AppBar>
             <div className={styles.dashboardModalPromptContent}>
-              <div className={styles.dashboardModalPromptLabel}>
-                {activeModal.data.prompt || 'Enter data:'}
-              </div>
+              {activeModal.data.prompt ? (
+                <div className={styles.dashboardModalPromptLabel}>
+                  {activeModal.data.prompt}
+                </div>
+              ) : null}
               <InputBox
                 type="text"
                 value={activeModal.data.text || ''}

@@ -11,7 +11,7 @@ import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
-import AnalyticsControlBar from './index';
+import AnalyticsControlBar, { AnalyticsControlBarSaveButtonState } from './index';
 import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
@@ -55,6 +55,11 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+        saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+        onSave={action('Save')}
+        refreshEnabled={true}
+        onRefresh={action('Refresh')}
+        moreMenuVisible={true}
       />
       )}
     </State>
@@ -91,6 +96,11 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+        saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+        onSave={action('Save')}
+        refreshEnabled={true}
+        onRefresh={action('Refresh')}
+        moreMenuVisible={true}
       />
       )}
     </State>  
@@ -130,6 +140,11 @@ storiesOf('Analytics Control Bar', module)
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
+          saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+          onSave={action('Save')}
+          refreshEnabled={true}
+          onRefresh={action('Refresh')}
+          moreMenuVisible={true}
         />
       )}
     </State>

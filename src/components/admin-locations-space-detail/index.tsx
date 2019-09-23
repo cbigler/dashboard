@@ -76,7 +76,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
       <div className={styles.wrapper}>
         <div className={styles.card}>
           <AppBar>
-            <AppBarTitle>{selectedSpace.name}</AppBarTitle>
+            <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
             <AppBarSection>
               {user.data.permissions.includes('core_write') ? (
                 <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>

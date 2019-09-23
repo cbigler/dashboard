@@ -31,6 +31,19 @@
   padding-left: 16px;
 }
 
+.refreshButton {
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 0px;
+  outline: none;
+  cursor: pointer;
+}
+.refreshButton:hover { opacity: 0.7; }
+.refreshButton:active, .refreshButton:focus { opacity: 1; }
+.refreshButton.disabled { cursor: default; }
+.refreshButton.disabled:hover { opacity: 1; }
+
 .saveButtonWrapper {
   display: flex;
   align-items: center;
@@ -52,6 +65,7 @@
   border: 1px solid transparent;
   cursor: pointer;
   user-select: none;
+  margin-left: 16px;
 }
 .iconButton:nth-child(2) { margin-left: 8px; }
 .iconButton:hover, .iconButton:focus { opacity: 0.75; }

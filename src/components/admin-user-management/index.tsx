@@ -36,8 +36,8 @@ import deduplicate from '../../helpers/deduplicate';
 import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 import updateModal from '../../actions/modal/update';
 
 import collectionUsersCreate from '../../rx-actions/users/create';
@@ -95,8 +95,8 @@ export function AdminUserManagement({
         <Modal
           visible={activeModal.visible}
           width={783}
-          onBlur={() => dispatch(hideModal() as any)}
-          onEscape={() => dispatch(hideModal() as any)}
+          onBlur={() => hideModal(dispatch)}
+          onEscape={() => hideModal(dispatch)}
         >
           <AppBar>
             <AppBarTitle>New User</AppBarTitle>
@@ -153,7 +153,7 @@ export function AdminUserManagement({
               <AppBarSection></AppBarSection>
               <AppBarSection>
                 <ButtonGroup>
-                  <Button variant="underline" onClick={() => dispatch(hideModal() as any)}>Cancel</Button>
+                  <Button variant="underline" onClick={() => hideModal(dispatch)}>Cancel</Button>
                   <Button
                     variant="filled"
                     type="primary"
@@ -164,7 +164,7 @@ export function AdminUserManagement({
                         activeModal.data.spaceIds.length > 0)
                     )}
                     onClick={() => {
-                      dispatch(hideModal() as any);
+                      hideModal(dispatch);
                       collectionUsersCreate(dispatch, activeModal.data);
                     }}
                   >
@@ -193,14 +193,14 @@ export function AdminUserManagement({
           />
         </AppBarSection>
         <AppBarSection>
-          <Button type="primary" variant="filled" onClick={() => dispatch(
-            showModal('MODAL_ADMIN_USER_ADD', {
+          <Button type="primary" variant="filled" onClick={() => {
+            showModal(dispatch, 'MODAL_ADMIN_USER_ADD', {
               email: '',
               role: null,
               spaceFilteringActive: false,
               spaceIds: [],
-            }) as any
-          )}>Add user</Button>
+            });
+          }}>Add user</Button>
         </AppBarSection>
       </AppBar>
 

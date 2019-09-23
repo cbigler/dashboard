@@ -1,4 +1,11 @@
 @import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/colors.scss";
+
+.wrapper {
+  margin-left: 21px;
+  margin-right: 21px;
+  margin-top: 16px;
+}
 
 .tableSpace {
   display: flex;
@@ -21,7 +28,11 @@
   white-space: nowrap;
   user-select: none;
   margin-left: 16px;
-  font-size: 14px;
+}
+
+.denominator {
+  color: $gray;
+  margin-left: 4px;
 }
 
 
@@ -44,4 +55,16 @@
   margin-left: 36px;
   font-size: 14px;
   margin-top: 8px;
+}
+.headerFakeRowDenominator {
+  color: $gray;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ellipsis {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
