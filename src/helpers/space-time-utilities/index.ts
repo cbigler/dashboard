@@ -1,6 +1,7 @@
 import moment, { Moment } from 'moment';
 import 'moment-timezone';
 
+import { mod } from '../math';
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
 import { DaysOfWeek } from '../../types';
@@ -187,8 +188,7 @@ export function realizeRelativeDuration(
     // Week should start on the target day, and end at the end of 1 before the target day
     //  eg. [Wednesday @ 00:00, Tuesday @ 23:59] if target day is Wednesday
     let targetDayWeekStart = targetDay;
-    // silly JavaScript modulo of negative numbers, but this is basically just mod(7)
-    let targetDayWeekEnd = (((targetDay - 1) % 7) + 7) % 7;
+    let targetDayWeekEnd = mod(targetDay-1, 7)
 
     switch(relativeDuration.round) {
       case RelativeDurationRound.START:
