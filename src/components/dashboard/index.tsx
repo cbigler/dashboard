@@ -345,7 +345,7 @@ export class Dashboard extends React.Component<any, any> {
 
                     {selectedDashboard ? (
                       <AppBarSection>
-                        {!isDemoUser ? (
+                        {!isDemoUser && !isReadOnlyUser ? (
                           <DashboardDigestPopupList
                             selectedDashboard={selectedDashboard}
                             onEditDigest={digest => {
