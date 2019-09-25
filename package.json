@@ -61,7 +61,7 @@
     "@types/node": "^12.7.7",
     "@types/qs": "^6.5.1",
     "@types/react": "^16.9.3",
-    "@types/react-dom": "^16.9.0",
+    "@types/react-dom": "^16.9.1",
     "@types/react-redux": "^7.1",
     "@types/webpack-env": "^1.14.0",
     "enzyme": "^3.8.0",
