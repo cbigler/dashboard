@@ -135,8 +135,8 @@
 .modalSection {
   padding-left: 24px;
   padding-right: 24px;
-  padding-bottom: 24px;
-  padding-top: 4px;
+  padding-bottom: 16px;
+  padding-top: 16px;
 }
 .modalSectionHorizontalForm {
   display: flex;
@@ -183,6 +183,6 @@
 .dpuPositionButton.active { border-color: $brandPrimary; }
 .dpuPositionButton svg { margin-bottom: 24px; }
 
-.updateHistoricCheckbox {
-  padding-top: 8px;
+.dpuPositionUpdateHistoricCheckbox {
+  padding-top: 16px;
 }

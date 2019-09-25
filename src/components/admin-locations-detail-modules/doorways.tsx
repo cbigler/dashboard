@@ -56,7 +56,13 @@ function processModalData(data) {
   };
 }
 
-function DpuPosition({spaceName, value, onChange}) {
+type DpuPositionProps = {
+  spaceName: string,
+  value: 1 | -1,
+  onChange: (value: 1 | -1) => void,
+};
+
+function DpuPosition({ spaceName, value, onChange }: DpuPositionProps) {
   return (
     <div className={styles.dpuPositionWrapper}>
       <p>
@@ -91,6 +97,25 @@ function DpuPosition({spaceName, value, onChange}) {
   );
 }
 
+type UpdateHistoricCountsProps = {
+  value: boolean,
+  onChange: (value: boolean) => void,
+}
+function UpdateHistoricCounts({value, onChange}) {
+  return (
+    <div className={styles.dpuPositionUpdateHistoricCheckbox}>
+      <Checkbox
+        label="Update historic space counts"
+        checked={value}
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          onChange(target.checked)
+        }}
+      />
+    </div>
+  );
+}
+
 function AdminLocationsDetailModulesDoorwayDpuPositionModal({
   visible,
   spaceName,
@@ -118,13 +143,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
           value={sensorPlacement}
           onChange={onUpdateSensorPlacement}
         />
-        <div className={styles.updateHistoricCheckbox}>
-          <Checkbox
-            label="Update historic space counts"
-            checked={updateHistoricCounts}
-            onChange={() => onUpdateHistoricCounts(!updateHistoricCounts)}
-          />
-        </div>
+        <UpdateHistoricCounts value={updateHistoricCounts} onChange={onUpdateHistoricCounts} />
       </div>
 
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
@@ -223,17 +242,12 @@ function AdminLocationsDetailModulesDoorwayModal({
           spaceName={spaceName}
           onChange={sensorPlacement => onChangeField('sensorPlacement', sensorPlacement)}
         />
-        {!createMode && <>
-          <div className={styles.updateHistoricCheckbox}>
-            <Checkbox
-              label="Update historic space counts"
-              checked={modalState.data.updateHistoricCounts}
-              onChange={() => onChangeField('updateHistoricCounts', !modalState.data.updateHistoricCounts)}
-            />
-          </div>
-        </>
-        }
-
+        {!createMode ? (
+          <UpdateHistoricCounts
+            value={modalState.data.updateHistoricCounts}
+            onChange={value => onChangeField('updateHistoricCounts', value)}
+          />
+        ) : null}
       </div>
 
       <AppBarContext.Provider value="CARD_SUBHEADER">

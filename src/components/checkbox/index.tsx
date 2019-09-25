@@ -63,8 +63,6 @@ export default function Checkbox({ id, color, checked, disabled=false, onChange,
           color: color,
           backgroundColor: lightenDarkenColor(color, 40),
           borderColor: lightenDarkenColor(color, -20),
-          borderStyle: 'solid',
-          borderWidth: 1,
         } : {}}
       >{label}</label>
     </div>
