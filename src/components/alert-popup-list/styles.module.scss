@@ -97,6 +97,8 @@ $alertBackdropZIndex: 99999;
   margin-bottom: 0px;
   padding-left: 24px;
   padding-right: 24px;
+  max-height: 500px;
+  overflow-y: auto;
 }
 .alertListDropdownItem {
   display: flex;
