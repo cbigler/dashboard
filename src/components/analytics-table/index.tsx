@@ -102,6 +102,15 @@ function Header({label, value, denominator='', spaceSortDirection, spaceSortColu
   );
 }
 
+function getHighestAncestorName(space: DensitySpace): string {
+  if (space.ancestry.length > 0) {
+    return space.ancestry[space.ancestry.length-1].name;
+  } else {
+    // Highest ancestor is the space itself
+    return space.name;
+  }
+}
+
 export default function AnalyticsTable({
   spaces,
   analyticsReport,
@@ -158,7 +167,8 @@ export default function AnalyticsTable({
           column: spaceSortColumn,
           direction: spaceSortDirection
         }]}
-        onClickHeader={(column: string, template: Function) => {
+        onClickHeader={(column: string, template: Function | undefined) => {
+          if (!template) { return; }
           const lastSortDirection = column === spaceSortColumn ? spaceSortDirection : 'none';
           const sortDirection = getNextSortDirection(lastSortDirection);
           const sortFunction = (() => {
@@ -230,9 +240,10 @@ export default function AnalyticsTable({
               spaceSortColumn={spaceSortColumn}
             />
           }
+          valueTemplate={(x: TableDataItem) => getHighestAncestorName(x.space)}
           template={(x: TableDataItem) => (
             <span className={styles.ellipsis}>
-              {x.space.ancestry.length > 0 ? x.space.ancestry[0].name : x.space.name}
+              {getHighestAncestorName(x.space)}
             </span>
           )}
         />

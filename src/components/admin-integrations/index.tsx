@@ -176,7 +176,11 @@ export function AdminIntegrations({
             title=" "
             width={150}
             template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
-            onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
+            onClick={item => {
+              if (item.serviceAuthorization.id) {
+                window.location.href = `#/admin/integrations/${item.name}/space-mappings`
+              }
+            }}
           />
           <ListViewColumn
             id="Activate/Edit"
