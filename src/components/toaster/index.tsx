@@ -16,7 +16,7 @@ export function Toaster({
     <div className={styles.toaster}>
       {toasts.map((toast, index) => {
         const type = toast.type || 'default';
-        return <div key={index} style={{marginBottom: 10}}>
+        return <div key={index} style={{marginBottom: 10}} data-label={`toast-${type}`}>
           <Toast type={type} visible={toast.visible} onDismiss={() => onDismiss(toast.id)}>
             {toast.text}
           </Toast>

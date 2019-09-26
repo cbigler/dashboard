@@ -54,10 +54,15 @@ export function Dialogger({
                 <AppBarSection></AppBarSection>
                 <AppBarSection>
                   <ButtonGroup>
-                    <Button variant="underline" onClick={onCancel}>Cancel</Button>
+                    <Button
+                      variant="underline"
+                      onClick={onCancel}
+                      data-label="dialog-cancel"
+                    >Cancel</Button>
                     <Button
                       variant="filled"
                       type="primary"
+                      data-label="dialog-submit"
                       onClick={() => onConfirm(activeModal.data.callback)}
                     >
                       {activeModal.data.confirmText || 'Confirm'}
@@ -92,6 +97,7 @@ export function Dialogger({
                 onChange={e => onUpdateModal({text: e.target.value})}
                 placeholder={activeModal.data.placeholder}
                 width="100%"
+                data-label="dialog-inputbox"
                 onKeyDown={e => {
                   if (e.key === 'Enter') {
                     onSubmit(activeModal.data.callback, activeModal.data.text);
@@ -105,11 +111,16 @@ export function Dialogger({
                 <AppBarSection></AppBarSection>
                 <AppBarSection>
                   <ButtonGroup>
-                    <Button variant="underline" onClick={onCancel}>Cancel</Button>
+                    <Button
+                      variant="underline"
+                      onClick={onCancel}
+                      data-label="dialog-cancel"
+                    >Cancel</Button>
                     <Button
                       variant="filled"
                       type="primary"
                       onClick={() => onSubmit(activeModal.data.callback, activeModal.data.text)}
+                      data-label="dialog-submit"
                     >
                       {activeModal.data.confirmText || 'Submit'}
                     </Button>

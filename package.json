@@ -64,6 +64,7 @@
     "@types/react-dom": "^16.9.1",
     "@types/react-redux": "^7.1",
     "@types/webpack-env": "^1.14.0",
+    "cypress": "^3.4.1",
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.9.1",
     "jest-resolve": "^24.9.0",
@@ -86,7 +87,8 @@
     "make-reducer": "./utilities/make-reducer",
     "storybook": "start-storybook -p 4004",
     "story": "npm run storybook",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "cypress": "cypress open"
   },
   "browserslist": [
     ">0.2%",

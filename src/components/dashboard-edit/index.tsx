@@ -234,6 +234,7 @@ export function DashboardEdit({
                         variant="underline"
                         type="danger"
                         onClick={() => onShowDeleteConfirm(selectedDashboard)}
+                        data-label="dashboard-delete"
                       >Delete this dashboard</Button>
                     </div>
                   </div>

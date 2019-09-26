@@ -179,7 +179,11 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
         onClick={() => setOpened(false)}
       />
       <div className={styles.dashboardDropdownWrapper}>
-        <div className={styles.dashboardDropdownValue} onClick={() => setOpened(!opened)}>
+        <div
+          data-label="dashboard-dropdown"
+          className={styles.dashboardDropdownValue}
+          onClick={() => setOpened(!opened)}
+        >
           <AppBarTitle>
             <span className={styles.dashboardDropdownName}>
               {selectedDashboard ? selectedDashboard.name : ""}
@@ -197,10 +201,11 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
                   setOpened(false);
                   onCreateDashboard();
                 }}
+                data-label="dashboard-add"
               >Add a dashboard</Button>
             </AppBarSection>
           </AppBar>
-          {dashboards.loading ? null : <div className={styles.dashboardDropdownPopupScroll}>
+          {dashboards.loading ? null : <div className={styles.dashboardDropdownPopupScroll} data-label="dashboard-list">
             {dashboards.data.sort((a, b) => {
               // Sort alphabetically by name
               return a.name.toLowerCase().localeCompare(b.name.toLowerCase());
@@ -360,7 +365,10 @@ export class Dashboard extends React.Component<any, any> {
                           />
                         ) : null}
                         {!isReadOnlyUser ? (
-                          <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+                          <Button
+                            href={`#/dashboards/${selectedDashboard.id}/edit`}
+                            data-label="dashboard-edit"
+                          >Edit dashboard</Button>
                         ) : null}
                       </AppBarSection>
                     ) : null}

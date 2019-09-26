@@ -147,6 +147,7 @@ export class Login extends React.Component<any, any> {
           onChange={e => this.setState({email: e.target.value})}
           onKeyPress={this.onEnter}
           value={this.state.email}
+          data-label="login-email"
         />
         <InputStackItem
           type="password"
@@ -154,6 +155,7 @@ export class Login extends React.Component<any, any> {
           onChange={e => this.setState({password: e.target.value})}
           onKeyPress={this.onEnter}
           value={this.state.password}
+          data-label="login-password"
         />
       </InputStackGroup>
 
@@ -165,6 +167,7 @@ export class Login extends React.Component<any, any> {
           variant="filled"
           onClick={this.onLogin}
           disabled={!this.isLoginFormValid()}
+          data-label="login-submit"
         >Login</Button>
       </div>
 
