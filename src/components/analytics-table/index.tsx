@@ -167,7 +167,8 @@ export default function AnalyticsTable({
           column: spaceSortColumn,
           direction: spaceSortDirection
         }]}
-        onClickHeader={(column: string, template: Function) => {
+        onClickHeader={(column: string, template: Function | undefined) => {
+          if (!template) { return; }
           const lastSortDirection = column === spaceSortColumn ? spaceSortDirection : 'none';
           const sortDirection = getNextSortDirection(lastSortDirection);
           const sortFunction = (() => {
