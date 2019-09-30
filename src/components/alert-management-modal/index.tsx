@@ -31,7 +31,7 @@ export const TRIGGER_TYPE_CHOICES = [
 ];
 
 export const COOLDOWN_CHOICES = [
-  {id: -1, label: 'Once'},
+  {id: 0, label: 'Once'},
   {id: 30, label: 'Every 30 minutes'},
   {id: 60, label: 'Every 60 minutes'},
   {id: 120, label: 'Every 2 hours'},
@@ -51,8 +51,11 @@ export function AlertManagementModalRaw({
   onCloseModal
 }) {
 
+  const phoneNumberInvalid = !alert.meta.toNum;
+  const cooldownInvalid = parseInt(alert.cooldown) < 0;
   const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
   const escalationDeltaInvalid = alert.meta.escalationDelta && isNaN(parseInt(alert.meta.escalationDelta));
+
   return <Modal
     visible={visible}
     width={480}
@@ -130,7 +133,7 @@ export function AlertManagementModalRaw({
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) !== -1 ?
+        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) > 0 ?
           <Fragment>
             <div className={styles.alertManagementModalFormRow}>
               <div className={styles.escalationDescription}>
@@ -175,7 +178,7 @@ export function AlertManagementModalRaw({
               <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
               <Button
                 variant="filled"
-                disabled={!alert.meta.toNum || triggerValueInvalid || escalationDeltaInvalid}
+                disabled={phoneNumberInvalid || cooldownInvalid || triggerValueInvalid || escalationDeltaInvalid}
                 onClick={() => onSaveAlert(alert)}
               >Save</Button>
             </ButtonGroup>
@@ -212,17 +215,12 @@ export default connect(
       }));
     },
     onSaveAlert: async alert => {
+      alert.cooldown = parseInt(alert.cooldown);
+      alert.isOneShot = alert.cooldown === 0;
       if (!alert.meta.escalationDelta || alert.triggerType !== GREATER_THAN) {
         alert.meta.escalationDelta = null;
       } else {
         alert.meta.escalationDelta = parseInt(alert.meta.escalationDelta);
-      }
-      if (alert.cooldown) {
-        alert.cooldown = parseInt(alert.cooldown);
-        if (alert.cooldown === -1) {
-          alert.cooldown = 0;
-          alert.isOneShot = true;
-        }
       }
       if (alert.id) {
         collectionAlertsUpdate(dispatch as DispatchType, alert);

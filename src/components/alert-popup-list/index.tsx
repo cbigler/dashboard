@@ -55,7 +55,7 @@ export default function AlertPopupList({ selectedSpace }) {
                   alert: {
                     spaceId: selectedSpace.id,
                     enabled: true,
-                    isOneShot: true,
+                    isOneShot: false,
                     notificationType: 'sms',
                     triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
                     triggerType: 'greater_than',

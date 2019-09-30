@@ -27,7 +27,7 @@ export default async function collectionAlertsLoad(dispatch: DispatchType) {
     // Only load SMS notifications right now
     dispatch({
       type: AlertActionTypes.COLLECTION_ALERTS_SET,
-      alerts: alerts.filter(x => x.notificationType === 'sms')
+      alerts: alerts.filter(x => x.notificationType === 'sms'),
     });
   }
 }
