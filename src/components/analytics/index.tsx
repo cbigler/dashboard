@@ -11,7 +11,7 @@ import AnalyticsTable from '../analytics-table';
 import AnalyticsHome from '../analytics-home';
 import GenericErrorState from '../generic-error-state';
 
-import { DensitySpace, DensitySpaceFunction, DaysOfWeek, DensitySpaceHierarchyItem, DensityUser } from '../../types';
+import { DensitySpace, DensitySpaceFunction, DaysOfWeek, DensitySpaceHierarchyItem } from '../../types';
 import {
   ResourceStatus,
   AnalyticsActionType,
@@ -24,7 +24,6 @@ import {
 import { DATE_RANGES, realizeDateRange } from '../../helpers/space-time-utilities';
 import { groupBy } from '../../helpers/array-utilities';
 
-import { RxReduxStore, ReduxState } from '../../rx-stores';
 import AnalyticsStore from '../../rx-stores/analytics';
 import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
@@ -34,17 +33,17 @@ import openPartialReport from '../../rx-actions/analytics/open-partial-report';
 import updateReport from '../../rx-actions/analytics/update-report';
 import deleteReport from '../../rx-actions/analytics/delete-report';
 import { isQueryRunnable } from '../../rx-stores/analytics';
-import mixpanelTrack from '../../helpers/mixpanel-track';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
-// FIXME: The below should be switched to use the new rx-actinos based modal interface,
-// point this out in a review!
-import showModal from '../../actions/modal/show';
+import showModal from '../../rx-actions/modal/show';
 
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
 import { AppFrame, AppPane } from '@density/ui';
+import UserStore from '../../rx-stores/user';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 
-// FIXME: are all these space functions correct?? Point this out in a review!
 export function spaceFunctionToRecommendedMetric(spaceFunction: DensitySpaceFunction): AnalyticsFocusedMetric {
   switch (spaceFunction) {
   case DensitySpaceFunction.CONFERENCE_ROOM:
@@ -117,18 +116,22 @@ const saveDismissalOfIntroToStorage = () => {
 }
 
 export default function Analytics() {
-  // NOTE: renaming these to more easily type assert their `data`, see below
-  const {
-    spaces: spacesState,
-    spaceHierarchy: spaceHierarchyState,
-    user: userState,
-  } = useRxStore<ReduxState>(RxReduxStore);
+  
+  const userState = useRxStore(UserStore)
+  const spacesState = useRxStore(SpacesStore);
+  const spaceHierarchyState = useRxStore(SpaceHierarchyStore);
 
   // FIXME: the redux store shape needs to be typed
   // for now, just trying to force some basic typing here via assertion...
   const spaces = spacesState.data as DensitySpace[]
   const spaceHierarchy = spaceHierarchyState.data as DensitySpaceHierarchyItem[]
-  const user = userState.data as DensityUser
+  
+  const user = userState.data;
+
+  // FIXME: helping the typings along for now...
+  if (!user) {
+    throw new Error('This should not be possible')
+  }
 
   // FIXME: settings.dashboardWeekStart should be typed as DaysOfWeek, not string
   const organizationalWeekStartDay: DaysOfWeek = user.organization.settings.dashboardWeekStart as DaysOfWeek || 'Sunday';
@@ -260,23 +263,23 @@ export default function Analytics() {
                   onSave={() => {
                     if (activeReport.isSaved) {
                       // Report already has been saved so a new name doesn't need to be provided.
-                      updateReport(activeReport)
+                      updateReport(dispatch, activeReport)
                     } else {
                       // Report has not been saved, so prompt the user for a name.
 
                       // FIXME: The below should be switched to use the new rx-actinos based modal interface,
                       // point this out in a review!
-                      showModal('MODAL_PROMPT', {
+                      showModal(dispatch, 'MODAL_PROMPT', {
                         title: `Save As...`,
                         placeholder: 'Enter a name for this report',
                         confirmText: 'Save',
                         callback: name => {
-                          updateReport({...activeReport, name});
+                          updateReport(dispatch, {...activeReport, name});
                         },
-                      })(dispatch);
+                      });
                     }
                   }}
-                  onUpdateReportName={(name) => updateReport({ ...activeReport, name })}
+                  onUpdateReportName={(name) => updateReport(dispatch, { ...activeReport, name })}
                   refreshEnabled={activeReport.queryResult.status === ResourceStatus.COMPLETE}
                   onRefresh={() => dispatch({
                     type: AnalyticsActionType.ANALYTICS_REPORT_REFRESH,
@@ -319,8 +322,8 @@ export default function Analytics() {
                   });
                   openPartialReport(dispatch, partialReport);
                 }}
-                onUpdateReportName={(report, name) => updateReport({ ...report, name })}
-                onDeleteReport={report => deleteReport(report)}
+                onUpdateReportName={(report, name) => updateReport(dispatch, { ...report, name })}
+                onDeleteReport={report => deleteReport(dispatch, report)}
               />
             )}
           </div>

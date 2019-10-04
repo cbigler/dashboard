@@ -1,12 +1,15 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import ExploreSpaceHeader from '../explore-space-header/index';
 import RawEventsExportCard from '../explore-space-detail-raw-events-export-card/index';
 
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+// import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import useRxStore from '../../helpers/use-rx-store';
+// import ActiveModalStore from '../../rx-stores/active-modal';
+import SpacesStore from '../../rx-stores/spaces';
+// import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 function ExploreSpaceDataExportRaw({
   spaces,
@@ -35,16 +38,32 @@ function ExploreSpaceDataExportRaw({
   }
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onChangeSpaceFilter(key, value) {
-      dispatch(collectionSpacesFilter(key, value));
-    },
-  };
-})(React.memo(ExploreSpaceDataExportRaw));
+
+const ConnectedExploreSpaceDataExport: React.FC<Any<FixInRefactor>> = (connectedProps) => {
+
+  // const dispatch = useRxDispatch();
+  const spaces = useRxStore(SpacesStore);
+  // const activeModal = useRxStore(ActiveModalStore);
+
+  // FIXME: the spaces store should handle this one too
+  const space = spaces.data.find(s => s.id === spaces.selected);
+
+  // FIXME: these props were previously provided by "connect" but aren't being used:
+  //  - activeModal
+  //  - onChangeSpaceFilter
+  
+  // const onChangeSpaceFilter = (key, value) => {
+  //   dispatch(collectionSpacesFilter(key, value) as Any<FixInRefactor>);
+  // }
+
+  return (
+    <ExploreSpaceDataExportRaw
+      spaces={spaces}
+      space={space}
+      // activeModal={activeModal}
+      // onChangeSpaceFilter={onChangeSpaceFilter}
+    />
+  )
+}
+
+export default ConnectedExploreSpaceDataExport;

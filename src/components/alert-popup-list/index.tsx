@@ -9,9 +9,9 @@ import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import alertsStore from '../../rx-stores/alerts';
 
-import showModal from '../../actions/modal/show';
+import showModal from '../../rx-actions/modal/show';
 import collectionAlertsUpdate from '../../rx-actions/alerts/update';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 
 export default function AlertPopupList({ selectedSpace }) {
   const { view, data } = useRxStore(alertsStore);
@@ -51,7 +51,7 @@ export default function AlertPopupList({ selectedSpace }) {
               className={styles.alertListDropdownCreateButton}
               role="button"
               onClick={() => {
-                dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
+                showModal(dispatch, 'MODAL_ALERT_MANAGEMENT', {
                   alert: {
                     spaceId: selectedSpace.id,
                     enabled: true,
@@ -65,7 +65,7 @@ export default function AlertPopupList({ selectedSpace }) {
                       escalationDelta: null,
                     }
                   }
-                }) as any);
+                });
                 setVisible(false);
               }}
               tabIndex={visible ? 0 : -1}
@@ -97,10 +97,10 @@ export default function AlertPopupList({ selectedSpace }) {
                       const enabled = e.target.checked;
                       const updated = {...alert, enabled};
                       await collectionAlertsUpdate(dispatch, updated);
-                      dispatch(showToast({
+                      showToast(dispatch, {
                         text: enabled ? 'Alert enabled' : 'Alert disabled',
                         timeout: 1000
-                      }) as any);
+                      });
                     }}
                   />
                   <div className={styles.alertListDropdownItemInfo}>
@@ -130,9 +130,9 @@ export default function AlertPopupList({ selectedSpace }) {
                     role="button"
                     className={styles.alertListDropdownItemEdit}
                     onClick={() => {
-                      dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
+                      showModal(dispatch, 'MODAL_ALERT_MANAGEMENT', {
                         alert: { meta: {}, ...alert }
-                      }) as any);
+                      });
                       setVisible(false);
                     }}
                     tabIndex={visible ? 0 : -1}

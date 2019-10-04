@@ -1,4 +1,5 @@
-import { TRANSITION_TO_SHOW_MODAL, SHOW_MODAL } from '../../actions/modal/show';
+export const TRANSITION_TO_SHOW_MODAL = 'TRANSITION_TO_SHOW_MODAL';
+export const SHOW_MODAL = 'SHOW_MODAL';
 
 export default function showModal(dispatch, name, data={}) {
   // First, ensure the modal is rendered.

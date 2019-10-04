@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import uuid from 'uuid';
 import moment from 'moment';
-import { connect } from 'react-redux';
 import styles from './operating-hours.module.scss';
 import classnames from 'classnames';
 
@@ -11,12 +10,12 @@ import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/
 import SpacePicker from '../space-picker';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
 
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
-import showModal from '../../actions/modal/show';
-import updateModal from '../../actions/modal/update';
-import hideModal from '../../actions/modal/hide';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import showModal from '../../rx-actions/modal/show';
+import updateModal from '../../rx-actions/modal/update';
+import hideModal from '../../rx-actions/modal/hide';
 
-import { calculateOperatingHoursFromSpace } from '../../reducers/space-management';
+import SpaceManagementStore, { calculateOperatingHoursFromSpace } from '../../rx-stores/space-management';
 import {
   getParentTimeSegmentsForSpace,
   getAllTimeSegmentLabelsForSpace,
@@ -40,6 +39,13 @@ import DayOfWeekSelector from '../day-of-week-selector/index';
 import AdminLocationsDetailModule from './index';
 
 import AdminLocationsDetailModulesOperatingHoursSlider from '../admin-locations-detail-modules-operating-hours-slider/index';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import UserStore from '../../rx-stores/user';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+
 
 function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   activeModal,
@@ -543,55 +549,94 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   );
 }
 
-export default connect(
-  (state: any) => ({
-    activeModal: state.activeModal,
-    spaceManagement: state.spaceManagement,
-    spaceHierarchy: state.spaceHierarchy,
-    spaces: state.spaces,
-    selectedSpaceParentId: state.spaceManagement.spaces.selected ? (
-      state.spaceManagement.spaces.data.find(s => s.id === state.spaceManagement.spaces.selected).parentId
-    ) : state.spaceManagement.formParentSpaceId,
-    user: state.user,
-  }),
-  (dispatch) => ({
-    async onClickAddLabel() {
-      const newLabelName = await (new Promise(resolve => {
-        dispatch<any>(showModal('MODAL_PROMPT', {
-          title: 'Add a label',
-          prompt: 'Please enter a name for this label:',
-          placeholder: 'ex. Breakfast hours',
-          callback: data => resolve(data),
-        }));
-      }));
+// FIXME: apparently there are additional props expected to be passed to the connected component
+const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-      return newLabelName;
-    },
-    async onConfirmSegmentCanBeDeleted(callback) {
-      dispatch<any>(showModal('MODAL_CONFIRM', {
-        prompt: 'Are you sure you want to delete this time segment?',
-        callback,
-      }));
-    },
-    async onConfirmResetTimeChange(callback) {
-      dispatch<any>(showModal('MODAL_CONFIRM', {
-        prompt: `Changing this space's reset time will remove this space's time segments. Are you sure?`,
-        callback,
-      }));
-    },
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaceManagement = useRxStore(SpaceManagementStore);
 
-    // The below are all used by the "copy from space" modal
-    onOpenCopyFromSpace() {
-      dispatch<any>(showModal('OPERATING_HOURS_COPY_FROM_SPACE', { selectedSpaceId: null }));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-    onChangeSearchText(text) {
-      dispatch<any>(collectionSpacesFilter('search', text));
-    },
-    onChangeSelectedSpace(selectedSpaceId) {
-      dispatch<any>(updateModal({ selectedSpaceId }));
-    },
-  }),
-)(AdminLocationsDetailModulesOperatingHoursUnconnected);
+  // formerly mapStateToProps
+
+  // FIXME: this is pretty terrible
+  const selectedSpaceParentId = (() => {
+    if (spaceManagement.spaces.selected) {
+      const selectedSpace = spaces.data.find(s => s.id === spaceManagement.spaces.selected);
+      if (!selectedSpace) {
+        // FIXME: previous code did not handle this case, is this what should happen here?
+        return spaceManagement.formParentSpaceId
+      }
+      return selectedSpace.parentId || spaceManagement.formParentSpaceId;
+
+    }
+    return spaceManagement.formParentSpaceId;
+  })()
+
+  // formerly mapDispatchToProps
+  const onClickAddLabel = async () => {
+    const newLabelName = await (new Promise(resolve => {
+      showModal(dispatch, 'MODAL_PROMPT', {
+        title: 'Add a label',
+        prompt: 'Please enter a name for this label:',
+        placeholder: 'ex. Breakfast hours',
+        callback: data => resolve(data),
+      });
+    }));
+
+    return newLabelName;
+  }
+
+  const onConfirmSegmentCanBeDeleted = (callback) => {
+    showModal(dispatch, 'MODAL_CONFIRM', {
+      prompt: 'Are you sure you want to delete this time segment?',
+      callback,
+    });
+  }
+
+  const onConfirmResetTimeChange = (callback) => {
+    showModal(dispatch, 'MODAL_CONFIRM', {
+      prompt: `Changing this space's reset time will remove this space's time segments. Are you sure?`,
+      callback,
+    });
+  }
+
+  // The below are all used by the "copy from space" modal
+  const onOpenCopyFromSpace = () => {
+    showModal(dispatch, 'OPERATING_HOURS_COPY_FROM_SPACE', { selectedSpaceId: null });
+  }
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+  const onChangeSearchText = (text) => {
+    dispatch(collectionSpacesFilter('search', text) as Any<FixInRefactor>);
+  }
+  const onChangeSelectedSpace = (selectedSpaceId) => {
+    updateModal(dispatch, { selectedSpaceId });
+  }
+
+  return (
+    <AdminLocationsDetailModulesOperatingHoursUnconnected
+      
+      {...externalProps}
+
+      user={user}
+      spaces={spaces}
+      spaceHierarchy={spaceHierarchy}
+      spaceManagement={spaceManagement}
+      selectedSpaceParentId={selectedSpaceParentId}
+      activeModal={activeModal}
+      
+      onClickAddLabel={onClickAddLabel}
+      onConfirmSegmentCanBeDeleted={onConfirmSegmentCanBeDeleted}
+      onConfirmResetTimeChange={onConfirmResetTimeChange}
+      onOpenCopyFromSpace={onOpenCopyFromSpace}
+      onCloseModal={onCloseModal}
+      onChangeSearchText={onChangeSearchText}
+      onChangeSelectedSpace={onChangeSelectedSpace}
+    />
+  )
+}
+export default ConnectedAdminLocationsDetailModulesOperatingHours;

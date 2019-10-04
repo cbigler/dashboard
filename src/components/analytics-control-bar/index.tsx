@@ -3,10 +3,10 @@ import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
-import { DensitySpace, DensityUser } from '../../types';
+import { DensitySpace } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import mixpanelTrack from '../../helpers/mixpanel-track';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
 import AnalyticsFocusedMetricSelector from '../analytics-control-bar-metric-filter';
 import AnalyticsControlBarSpaceFilter, {
@@ -20,16 +20,17 @@ import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 
 // FIXME: The below should be switched to use the new rx-actinos based modal interface,
 // point this out in a review!
-import showModal from '../../actions/modal/show';
+import showModal from '../../rx-actions/modal/show';
 
 import { Button, Icons } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { AddButton } from '../analytics-control-bar-utilities';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
+import { UserState } from '../../rx-stores/user';
 
 type AnalyticsControlBarProps = {
-  userState: { loading: boolean, data: DensityUser, error: any },
+  userState: UserState,
   metric: AnalyticsFocusedMetric,
   onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
 
@@ -175,12 +176,12 @@ export const AnalyticsControlBarButtons: React.FunctionComponent<AnalyticsContro
                 });
                 // FIXME: The below should be switched to use the new rx-actinos based modal interface,
                 // point this out in a review!
-                showModal('MODAL_PROMPT', {
+                showModal(rxDispatch, 'MODAL_PROMPT', {
                   title: `Rename Report`,
                   placeholder: 'Enter a new name',
                   confirmText: 'Save',
                   callback: onUpdateReportName,
-                })(rxDispatch);
+                });
               }
             }}
           />

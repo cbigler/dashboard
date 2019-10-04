@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import ExploreSpaceHeader from '../explore-space-header/index';
 import FootTrafficCard from '../explore-space-detail-foot-traffic-card/index';
@@ -11,6 +10,11 @@ import ErrorBar from '../error-bar/index';
 import {
   getShownTimeSegmentsForSpace,
 } from '../../helpers/time-segments/index';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+// import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 export function ExploreSpaceDailyRaw ({
   spaces,
@@ -62,12 +66,24 @@ export function ExploreSpaceDailyRaw ({
   }
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    spaceHierarchy: state.spaceHierarchy,
-    activeModal: state.activeModal,
-    resizeCounter: state.resizeCounter,
-  };
-})(React.memo(ExploreSpaceDailyRaw));
+const ConnectedExploreSpaceDaily: React.FC = () => {
+
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+  // const resizeCounter = useRxStore(ResizeCounterStore);
+  
+  // FIXME: spaces store should handle this
+  const space = spaces.data.find(s => s.id === spaces.selected)
+
+  return (
+    <ExploreSpaceDailyRaw
+      spaces={spaces}
+      spaceHierarchy={spaceHierarchy}
+      space={space}
+      activeModal={activeModal}
+      // resizeCounter={resizeCounter}
+    />
+  )
+}
+export default ConnectedExploreSpaceDaily;

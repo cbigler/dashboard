@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 
 import { DensityMark } from '@density/ui';
 
@@ -10,6 +9,8 @@ import styles from './styles.module.scss';
 
 import RealTimeCountFn from '@density/chart-real-time-count';
 import autoRefresh from '../../helpers/auto-refresh-hoc/index';
+import useRxStore from '../../helpers/use-rx-store';
+import SpacesStore from '../../rx-stores/spaces';
 const RealTimeCountChart = chartAsReactComponent(RealTimeCountFn);
 
 export function LiveSpaceDetail({
@@ -74,15 +75,26 @@ const AutoRefreshedLiveSpaceDetail = autoRefresh({
   }
 })(LiveSpaceDetail);
 
-export default connect((state: any) => {
-  return {
-    space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    events: state.spaces.events,
 
-    spacesLoading: state.spaces.loading,
-    spacesError: state.spaces.error,
-  };
-}, dispatch => {
-  return {
-  };
-})(AutoRefreshedLiveSpaceDetail);
+// FIXME: are there any actual external props needed?
+const ConnectedAutoRefreshedLiveSpaceDetail: React.FC<Any<FixInRefactor>> = (externalProps) => {
+
+  const spaces = useRxStore(SpacesStore);
+
+  // FIXME: this again
+  const space = spaces.data.find(s => s.id === spaces.selected);
+  const events = spaces.events;
+  const spacesLoading = spaces.loading;
+  const spacesError = spaces.error;
+
+  return (
+    <AutoRefreshedLiveSpaceDetail
+      {...externalProps}
+      space={space}
+      events={events}
+      spacesLoading={spacesLoading}
+      spacesError={spacesError}
+    />
+  )
+}
+export default ConnectedAutoRefreshedLiveSpaceDetail;

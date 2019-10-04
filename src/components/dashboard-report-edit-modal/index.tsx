@@ -1,7 +1,6 @@
 import React, { ReactNode, Fragment } from 'react';
 import changeCase from 'change-case';
 import debounce from 'lodash/debounce';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import styles from './styles.module.scss';
 import Report, { REPORTS, TIME_RANGES } from '@density/reports';
@@ -35,7 +34,7 @@ import {
   DateRangePickerContext,
 } from '@density/ui';
 
-import updateModal from '../../actions/modal/update';
+import updateModal from '../../rx-actions/modal/update';
 import {
   rerenderReportInReportModal,
   clearPreviewReportData,
@@ -50,13 +49,13 @@ import {
   OPERATION_UPDATE,
 
   extractCalculatedReportDataFromDashboardsReducer,
-} from '../../actions/dashboards/report-modal';
+} from '../../rx-actions/dashboards/report-modal';
 
 import GenericLoadingState from '../generic-loading-state';
 import { SpacePickerDropdown } from '../space-picker';
 import FormLabel from '../form-label';
 
-import spaceHierarchyFormatter, { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
+import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 import filterCollection from '../../helpers/filter-collection';
 import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices';
 import {
@@ -64,11 +63,18 @@ import {
   parseFromReactDates,
   parseISOTimeAtSpace,
 } from '../../helpers/space-time-utilities';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
+import { getUserDashboardWeekStart } from '../../helpers/legacy';
+import UserStore from '../../rx-stores/user';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import DashboardsStore from '../../rx-stores/dashboards';
+import MiscellaneousStore from '../../rx-stores/miscellaneous';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 
 type DashboardReportModalProps = {
-  activeModal: {
-    name: string,
-    visible: boolean,
+  activeModal: ActiveModalState & {
     data: {
       page: ReportModalPages,
       operationType: ReportOperationType,
@@ -91,14 +97,22 @@ type DashboardReportModalProps = {
     data: any,
   },
   timeSegmentLabels: Array<DensityTimeSegmentLabel>,
+  dashboardDate: string,
+  dashboardWeekStart: string,
   onSaveReportModal: (object) => void,
   onCloseModal: () => void,
   onUpdateModal: (key: string, value: any) => void,
   // Causes the report to rerun calculations and rerender
-  onReportSettingsUpdated: (DensityReport, invokeImmediately: boolean) => void,
+  onReportSettingsUpdated: (
+    report: DensityReport,
+    dashboardDate: string,
+    dashboardWeekStart: string,
+    invokeImmediately: boolean,
+  ) => void,
   onReportModalMovedToReportConfigurationPage: (
     report: DensityReport,
-    hierarchy: Array<SpaceHierarchyDisplayItem>,
+    dashboardDate: string,
+    dashboardWeekStart: string,
   ) => void,
   onAddReportToDashboard: (DensityReport) => void,
   onReportShowDeletePopup: (DensityReport) => void,
@@ -138,6 +152,8 @@ function DashboardReportEditModal({
   reportsInSelectedDashboard,
   calculatedReportDataForPreviewedReport,
   timeSegmentLabels,
+  dashboardDate,
+  dashboardWeekStart,
 
   onUpdateModal,
   onCloseModal,
@@ -402,7 +418,7 @@ function DashboardReportEditModal({
                         onUpdateModal('report', report);
 
                         // Called so that the report calculations can be rerun
-                        onReportSettingsUpdated(report, false);
+                        onReportSettingsUpdated(report, dashboardDate, dashboardWeekStart, false);
                       }}
                     />}
                   />
@@ -420,7 +436,7 @@ function DashboardReportEditModal({
 
                       // Called so that the report calculations can be rerun
                       if (getEmptyRequiredFields(report).length === 0) {
-                        onReportSettingsUpdated(report, false);
+                        onReportSettingsUpdated(report, dashboardDate, dashboardWeekStart, false);
                       }
                     }
 
@@ -714,7 +730,7 @@ function DashboardReportEditModal({
                               };
                               onUpdateModal('report', report);
                             }}
-                            onMouseUp={() => onReportSettingsUpdated(activeModal.data.report, false)}
+                            onMouseUp={() => onReportSettingsUpdated(activeModal.data.report, dashboardDate, dashboardWeekStart, false)}
                           />
                           <div className={styles.percentageRangeLabel}>
                             {Math.floor(activeModal.data.report.settings[fieldName] * 100)}%
@@ -836,7 +852,12 @@ function DashboardReportEditModal({
                         <Button
                           variant="underline"
                           type="muted"
-                          onClick={() => onReportSettingsUpdated(activeModal.data.report, true)}
+                          onClick={() => onReportSettingsUpdated(
+                            activeModal.data.report,
+                            dashboardDate,
+                            dashboardWeekStart,
+                            true,
+                          )}
                           disabled={requiredControlsThatAreEmpty.length > 0}
                         >Refresh Report</Button>
                       </AppBarSection>
@@ -928,7 +949,8 @@ function DashboardReportEditModal({
                         // Run report calculations with the values specified
                         onReportModalMovedToReportConfigurationPage(
                           activeModal.data.report,
-                          formattedHierarchy,
+                          dashboardDate,
+                          dashboardWeekStart,
                         );
                         onUpdateModal('page', PAGE_NEW_REPORT_CONFIGURATION);
                       }}
@@ -961,23 +983,48 @@ function DashboardReportEditModal({
   }
 }
 
-export default connect((state: any) => ({
-  spaces: state.spaces,
-  activeModal: state.activeModal,
-  spaceHierarchy: state.spaceHierarchy,
+// Helper to debounce report updating
+// TODO: Handle this with RxJS streams!
+const debouncedReportUpdate = debounce((dispatch, report, dashboardDate, dashboardWeekStart) => {
+  rerenderReportInReportModal(
+    dispatch,
+    report,
+    dashboardDate,
+    dashboardWeekStart
+  );
+}, 500);
+
+
+// FIXME: figure out what external props are required
+const ConnectedDashboardReportEditModal: React.FC<Any<FixInRefactor>> = (externalProps) => {
+
+  const dispatch = useRxDispatch();
+
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const dashboards = useRxStore(DashboardsStore);
+  const miscellaneous = useRxStore(MiscellaneousStore);
+
+  const dashboardWeekStart = getUserDashboardWeekStart(user);
+
   // List of all reports from the server (ie, the response of GET /v2/reports)
-  reportList: state.dashboards.reportList,
+  const reportList = dashboards.reportList;
   // List of all reports in the working copy of the selected dashboard
   // (ie, `report_set` from GET /v2/dashboards/:id)
-  reportsInSelectedDashboard: state.dashboards.formState ? state.dashboards.formState.reportSet : [],
-  calculatedReportDataForPreviewedReport: extractCalculatedReportDataFromDashboardsReducer(state.dashboards),
-  timeSegmentLabels: state.dashboards.timeSegmentLabels,
-}), dispatch => ({
-  onUpdateModal(key, value) {
-    dispatch<any>(updateModal({[key]: value}));
-  },
+  const reportsInSelectedDashboard = dashboards.formState ? dashboards.formState.reportSet : [];
+  const timeSegmentLabels = dashboards.timeSegmentLabels;
+  const calculatedReportDataForPreviewedReport = extractCalculatedReportDataFromDashboardsReducer(dashboards)
 
-  onReportModalMovedToReportConfigurationPage: (report, formattedHierarchy) => {
+  // Needed for rendering the report
+  const dashboardDate = miscellaneous.dashboardDate;
+
+  const onUpdateModal = (key, value) => {
+    updateModal(dispatch, {[key]: value})
+  }
+
+  const onReportModalMovedToReportConfigurationPage = (report, dashboardDate, dashboardWeekStart) => {
     // Set default parameters for a newly created report
     const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
     const initialReportSettings = reportType.metadata.controls.reduce((acc, control) => {
@@ -1038,26 +1085,56 @@ export default connect((state: any) => ({
     // Reset report data back to LOADING state, this is done so that when the a new report type is
     // immediately loaded its not trying to render it with report data made for a different type of
     // report
-    dispatch<any>(clearPreviewReportData());
+    clearPreviewReportData(dispatch);
 
-    dispatch<any>(updateModal({ report: reportWithInitialSettings }));
+    updateModal(dispatch, { report: reportWithInitialSettings });
 
     if (getEmptyRequiredFields(reportWithInitialSettings).length === 0) {
-      dispatch<any>(rerenderReportInReportModal(reportWithInitialSettings));
+      rerenderReportInReportModal(
+        dispatch,
+        reportWithInitialSettings,
+        dashboardDate,
+        dashboardWeekStart
+      );
     }
-  },
+  }
+  const onReportSettingsUpdated = (report, dashboardDate, dashboardWeekStart, invokeImmediately) => {
+    if (invokeImmediately) {
+      rerenderReportInReportModal(
+        dispatch,
+        report,
+        dashboardDate,
+        dashboardWeekStart
+      );
+    } else {
+      debouncedReportUpdate(
+        dispatch,
+        report,
+        dashboardDate,
+        dashboardWeekStart
+      );
+    }
+  }
 
-  onReportSettingsUpdated: (() => {
-    const debouncedUpdate = debounce(report => {
-      dispatch<any>(rerenderReportInReportModal(report));
-    }, 500);
+  return (
+    <DashboardReportEditModal
 
-    return (report, invokeImmediately?: boolean) => {
-      if (invokeImmediately) {
-        dispatch<any>(rerenderReportInReportModal(report));
-      } else {
-        debouncedUpdate(report);
-      }
-    };
-  })(),
-}))(DashboardReportEditModal);
+      {...externalProps}
+
+      spaces={spaces}
+      spaceHierarchy={spaceHierarchy}
+      activeModal={activeModal}
+      reportList={reportList}
+      reportsInSelectedDashboard={reportsInSelectedDashboard}
+      timeSegmentLabels={timeSegmentLabels}
+      calculatedReportDataForPreviewedReport={calculatedReportDataForPreviewedReport}
+      dashboardWeekStart={dashboardWeekStart}
+      dashboardDate={dashboardDate}
+      onUpdateModal={onUpdateModal}
+      onReportModalMovedToReportConfigurationPage={onReportModalMovedToReportConfigurationPage}
+      onReportSettingsUpdated={onReportSettingsUpdated}
+    />
+  )
+}
+
+export default ConnectedDashboardReportEditModal;

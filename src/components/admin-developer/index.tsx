@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment, useState } from 'react';
-import { connect } from 'react-redux';
 
 import {
   AppBar,
@@ -22,18 +21,23 @@ import TokenUpdateModal from '../admin-token-update-modal';
 import WebhookCreateModal from '../admin-webhook-create-modal';
 import WebhookUpdateModal from '../admin-webhook-update-modal';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
-import showToast from '../../actions/toasts';
-import collectionTokensCreate from '../../actions/collection/tokens/create';
-import collectionTokensUpdate from '../../actions/collection/tokens/update';
-import collectionTokensFilter from '../../actions/collection/tokens/filter';
-import collectionTokensDestroy from '../../actions/collection/tokens/destroy';
-import collectionWebhooksCreate from '../../actions/collection/webhooks/create';
-import collectionWebhooksFilter from '../../actions/collection/webhooks/filter';
-import collectionWebhooksUpdate from '../../actions/collection/webhooks/update';
-import collectionWebhooksDestroy from '../../actions/collection/webhooks/destroy';
-import updateModal from '../../actions/modal/update';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
+import { showToast } from '../../rx-actions/toasts';
+import collectionTokensCreate from '../../rx-actions/collection/tokens/create';
+import collectionTokensUpdate from '../../rx-actions/collection/tokens/update';
+// import collectionTokensFilter from '../../rx-actions/collection/tokens/filter';
+import collectionTokensDestroy from '../../rx-actions/collection/tokens/destroy';
+import collectionWebhooksCreate from '../../rx-actions/collection/webhooks/create';
+// import collectionWebhooksFilter from '../../rx-actions/collection/webhooks/filter';
+import collectionWebhooksUpdate from '../../rx-actions/collection/webhooks/update';
+import collectionWebhooksDestroy from '../../rx-actions/collection/webhooks/destroy';
+import updateModal from '../../rx-actions/modal/update';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import WebhooksStore from '../../rx-stores/webhooks';
+import TokensStore from '../../rx-stores/tokens';
 
 
 const READONLY = 'readonly', READWRITE = 'readwrite';
@@ -217,86 +221,96 @@ export function AdminDeveloper({
   </Fragment>;
 }
 
-export default connect((state: any) => {
-  return {
-    tokens: state.tokens,
-    webhooks: state.webhooks,
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onCreateToken(token) {
-      dispatch<any>(collectionTokensCreate(token)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onUpdateToken(token) {
-      dispatch<any>(updateModal({token}));
-    },
-    onSaveToken(token) {
-      dispatch<any>(collectionTokensUpdate(token)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onDestroyToken(token) {
-      dispatch<any>(collectionTokensDestroy(token)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
 
-    onFilterTokenList(value) {
-      dispatch(collectionTokensFilter('search', value));
-    },
+const ConnectedAdminDeveloper: React.FC = () => {
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const webhooks = useRxStore(WebhooksStore);
+  const tokens = useRxStore(TokensStore);
 
-    onCreateWebhook(webhook) {
-      dispatch<any>(collectionWebhooksCreate(webhook)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onUpdateWebhook(webhook) {
-      dispatch<any>(updateModal({webhook}));
-    },
-    onSaveWebhook(webhook) {
-      dispatch<any>(collectionWebhooksUpdate(webhook)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onDestroyWebhook(webhook) {
-      dispatch<any>(collectionWebhooksDestroy(webhook)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onFilterWebhookList(value) {
-      dispatch<any>(collectionWebhooksFilter('search', value));
-    },
-
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-
-    onCopyToken(value) {
-      const element = document.createElement('input');
-      element.value = value;
-      document.body.appendChild(element);
-      element.select();
-      document.execCommand('copy');
-      document.body.removeChild(element);
-      dispatch<any>(showToast({ text: 'Copied token to clipboard'}));
-    }
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
   }
-})(AdminDeveloper);
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+
+  const onCreateToken = async (token) => {
+    const ok = await collectionTokensCreate(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onUpdateToken = (token) => {
+    updateModal(dispatch, { token });
+  }
+  const onSaveToken = async (token) => {
+    const ok = await collectionTokensUpdate(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onDestroyToken = async (token) => {
+    const ok = await collectionTokensDestroy(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onCopyToken = (value) => {
+    const element = document.createElement('input');
+    element.value = value;
+    document.body.appendChild(element);
+    element.select();
+    document.execCommand('copy');
+    document.body.removeChild(element);
+    showToast(dispatch, { text: 'Copied token to clipboard' });
+  }
+
+  const onCreateWebhook = async (webhook) => {
+    const ok = await collectionWebhooksCreate(dispatch, webhook);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onUpdateWebhook = (webhook) => {
+    updateModal(dispatch, { webhook });
+  }
+  const onSaveWebhook = async (webhook) => {
+    const ok = await collectionWebhooksUpdate(dispatch, webhook);
+    if (ok) { await hideModal(dispatch); }
+  }
+  const onDestroyWebhook = async (webhook) => {
+    const ok = await collectionWebhooksDestroy(dispatch, webhook);
+    if (ok) { await hideModal(dispatch); }
+  }
+
+  // FIXME: these don't appear to be used, but they were provided by "connect" previously
+  // const onFilterTokenList = (value) => {
+  //   dispatch(collectionTokensFilter('search', value) as Any<FixInRefactor>);
+  // }
+  // const onFilterWebhookList = (value) => {
+  //   dispatch(collectionWebhooksFilter('search', value) as Any<FixInRefactor>);
+  // }
+
+  return (
+    <AdminDeveloper
+      tokens={tokens}
+      activeModal={activeModal}
+      webhooks={webhooks}
+      
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+
+      onCreateToken={onCreateToken}
+      onSaveToken={onSaveToken}
+      onUpdateToken={onUpdateToken}
+      onDestroyToken={onDestroyToken}
+
+      onCreateWebhook={onCreateWebhook}
+      onSaveWebhook={onSaveWebhook}
+      onUpdateWebhook={onUpdateWebhook}
+      onDestroyWebhook={onDestroyWebhook}
+
+      // onFilterTokenList={onFilterTokenList}
+      // onFilterWebhookList={onFilterWebhookList}
+
+      onCopyToken={onCopyToken}
+
+    />
+  )
+}
+
+export default ConnectedAdminDeveloper;
+

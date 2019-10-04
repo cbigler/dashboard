@@ -1,4 +1,4 @@
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 import accounts from '../../client/accounts';
 
 import { UserActionTypes } from '../../types/users';
@@ -12,17 +12,17 @@ export default async function collectionUsersDelete(dispatch: DispatchType, user
     await accounts().delete(`/users/${user.id}`);
   } catch (error) {
     dispatch({ type: UserActionTypes.USER_MANAGEMENT_ERROR, error });
-    dispatch(showToast({
+    showToast(dispatch, {
       text: 'Error deleting user',
       type: 'error',
-    }) as any);
+    });
     console.error(error);
     return false;
   }
 
   dispatch({ type: UserActionTypes.USER_MANAGEMENT_USERS_REMOVE, user });
-  dispatch(showToast({
+  showToast(dispatch, {
     text: 'User deleted successfully',
-  }) as any);
+  });
   return true;
 }

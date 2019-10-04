@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import styles from './doorways.module.scss';
@@ -29,12 +28,12 @@ import AdminLocationsDetailModule from './index';
 import filterCollection from '../../helpers/filter-collection';
 import { fileToDataURI } from '../../helpers/media-files';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
-import updateModal from '../../actions/modal/update';
-import spaceManagementCreateDoorway from '../../actions/space-management/create-doorway';
-import spaceManagementUpdateDoorway from '../../actions/space-management/update-doorway';
-import spaceManagementDeleteDoorway from '../../actions/space-management/delete-doorway';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
+import updateModal from '../../rx-actions/modal/update';
+import spaceManagementCreateDoorway from '../../rx-actions/space-management/create-doorway';
+import spaceManagementUpdateDoorway from '../../rx-actions/space-management/update-doorway';
+import spaceManagementDeleteDoorway from '../../rx-actions/space-management/delete-doorway';
 
 import {
   DOORWAY_ICON,
@@ -42,6 +41,10 @@ import {
   INSIDE_THE_SPACE_GLYPH,
   OUTSIDE_THE_SPACE_GLYPH
 } from './doorway_glyphs';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import useRxStore from '../../helpers/use-rx-store';
+import SpaceManagementStore from '../../rx-stores/space-management';
 
 const AC_OUTLET = 'AC_OUTLET',
       POWER_OVER_ETHERNET = 'POWER_OVER_ETHERNET';
@@ -779,27 +782,51 @@ function AdminLocationsDetailModulesDoorways({
   );
 }
 
-export default connect((state: any) => ({
-  activeModal: state.activeModal,
-  selectedSpaceIdOrNull: state.spaceManagement.spaces.selected,
-}), dispatch => ({
-  onHideModal() {
-    dispatch<any>(hideModal());
-  },
-  onShowModal(modalName, data={}) {
-    dispatch<any>(showModal(modalName, data))
-  },
-  onUpdateModalData(data) {
-    dispatch<any>(updateModal(data));
-  },
+// FIXME: apparently there are external props also passed to this connected component
+const ConnectedAdminLocationsDetailModulesDoorways: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-  onCreateDoorway(data) {
-    dispatch<any>(spaceManagementCreateDoorway(data));
-  },
-  onUpdateDoorway(data) {
-    dispatch<any>(spaceManagementUpdateDoorway(data));
-  },
-  onDeleteDoorway(doorwayId) {
-    dispatch<any>(spaceManagementDeleteDoorway(doorwayId));
-  },
-}))(AdminLocationsDetailModulesDoorways);
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaceManagement = useRxStore(SpaceManagementStore);
+
+  const selectedSpaceIdOrNull = spaceManagement.spaces.selected
+
+
+  // formerly mapDispatchToProps
+  const onHideModal = async () => {
+    await hideModal(dispatch);
+  }
+  const onShowModal = (modalName, data = {}) => {
+    showModal(dispatch, modalName, data);
+  }
+  const onUpdateModalData = (data: Any<FixInRefactor>) => {
+    updateModal(dispatch, data);
+  }
+  const onCreateDoorway = async (data: Any<FixInRefactor>) => {
+    await spaceManagementCreateDoorway(dispatch, data);
+  }
+  const onUpdateDoorway = async (data: Any<FixInRefactor>) => {
+    await spaceManagementUpdateDoorway(dispatch, data);
+  }
+  const onDeleteDoorway = async (doorwayId) => {
+    await spaceManagementDeleteDoorway(dispatch, doorwayId);
+  }
+
+  return (
+    <AdminLocationsDetailModulesDoorways
+
+      {...externalProps}
+
+      activeModal={activeModal}
+      selectedSpaceIdOrNull={selectedSpaceIdOrNull}
+      
+      onHideModal={onHideModal}
+      onShowModal={onShowModal}
+      onUpdateModalData={onUpdateModalData}
+      onCreateDoorway={onCreateDoorway}
+      onUpdateDoorway={onUpdateDoorway}
+      onDeleteDoorway={onDeleteDoorway}
+    />
+  )
+}
+export default ConnectedAdminLocationsDetailModulesDoorways;

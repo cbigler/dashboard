@@ -3,20 +3,18 @@ import { errorHandler } from './index';
 
 let _client = axios.create();
 let _slow = false;
-let _store = null;
 
-export function config({
+export function config(dispatch, {
   host = undefined as string | undefined,
   token = undefined as string | undefined,
   impersonateUser = undefined as string | undefined,
   goSlow = undefined as boolean | undefined,
-  store = undefined as any,
 }) {
   if (host !== undefined) {
     _client = axios.create({ baseURL: host });
     _client.interceptors.response.use(
       response => response,
-      error => errorHandler(error, _store)
+      error => errorHandler(dispatch, error)
     );
   }
   if (token !== undefined) {
@@ -28,9 +26,6 @@ export function config({
   }
   if (goSlow !== undefined) {
     _slow = goSlow;
-  }
-  if (store !== undefined) {
-    _store = store;
   }
 }
 

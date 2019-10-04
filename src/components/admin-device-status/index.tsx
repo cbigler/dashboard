@@ -1,11 +1,13 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 import moment from 'moment';
 
 import { AppScrollView, ListView, ListViewColumn, ListViewColumnSpacer } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
+import useRxStore from '../../helpers/use-rx-store';
+import SpacesStore from '../../rx-stores/spaces';
+import SensorsStore from '../../rx-stores/sensors';
 
 function getStatusColor(status) {
   switch (status) {
@@ -98,11 +100,18 @@ export function AdminDeviceStatus({
   </AppScrollView>;
 }
 
-export default connect((state: any) => {
-  return {
-    sensors: state.sensors,
-    spaces: state.spaces
-  };
-}, dispatch => {
-  return {};
-})(AdminDeviceStatus);
+
+const ConnectedAdminDeviceStatus: React.FC = () => {
+  
+  const spaces = useRxStore(SpacesStore);
+  const sensors = useRxStore(SensorsStore);
+
+  return (
+    <AdminDeviceStatus
+      spaces={spaces}
+      sensors={sensors}
+    />
+  )
+}
+
+export default ConnectedAdminDeviceStatus;

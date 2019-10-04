@@ -13,9 +13,9 @@ animations can be properly orchestrated by the helpers, etc.
 
 To show a toast, dispatch the `showToast` action:
 ```javascript
-import { showToast } from './src/actions/toasts';
+import { showToast } from './src/rx-actions/toasts';
 
-dispatch(showToast({
+showToast(dispatch, {
   type: 'default', // Or 'error' to render an error toast
   text: 'Text inside of toast',
   title: 'Optional toast title',
@@ -32,11 +32,11 @@ dispatch(showToast({
 
 To hide a toast, dispatch the `hideToast` action:
 ```javascript
-import { hideToast } from './src/actions/toasts';
+import { hideToast } from './src/rx-actions/toasts';
 
 // NOTE: for a toast to be hidden, the toast id needs to be specified manually when showing the
 // toast!
 const id = 'toast id'; // From the last example
 
-dispatch(hideToast(id));
+hideToast(dispatch, id);
 ```

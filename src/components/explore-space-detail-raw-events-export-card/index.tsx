@@ -15,7 +15,7 @@ import {
   InfoPopup,
 } from '@density/ui';
 
-import mixpanelTrack from '../../helpers/mixpanel-track/index';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
 export function getCSVURL() {

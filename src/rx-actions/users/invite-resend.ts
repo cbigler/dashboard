@@ -1,4 +1,4 @@
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 import accounts from '../../client/accounts';
 
 import { UserActionTypes } from '../../types/users';
@@ -12,16 +12,16 @@ export default async function usersInviteResend(dispatch: DispatchType, user: De
     await accounts().put(`/users/invite/resend/${user.id}`);
     user.invitationStatus = 'pending';
     dispatch({ type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH, user });
-    dispatch(showToast({
+    showToast(dispatch, {
       text: 'Invite sent successfully',
-    }) as any);
+    });
     return user;
   } catch (err) {
     dispatch({type: UserActionTypes.USER_MANAGEMENT_ERROR, error: err});
-    dispatch(showToast({
+    showToast(dispatch, {
       text: 'Error sending invite',
       type: 'error',
-    }) as any);
+    });
     return false;
   }
 }

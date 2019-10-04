@@ -1,9 +1,13 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import Intercom from 'react-intercom';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
 
-export function IntercomDensity({ user }) {
+export function IntercomDensity() {
+
+  const user = useRxStore(UserStore);
+
   let intercomUser = {};
   if (user.data && user.data.hasOwnProperty("id")) {
     intercomUser = {
@@ -26,8 +30,4 @@ export function IntercomDensity({ user }) {
   
 }
 
-export default connect((state: any) => {
-  return { user: state.user };
-}, (dispatch: any) => {
-  return {};
-})(IntercomDensity);
+export default IntercomDensity;

@@ -7,7 +7,7 @@ import { PartialAnalyticsReportWithQuery } from '../../rx-actions/analytics/open
 
 // FIXME: The below should be switched to use the new rx-actinos based modal interface,
 // point this out in a review!
-import showModal from '../../actions/modal/show';
+import showModal from '../../rx-actions/modal/show';
 
 import AnalyticsPopup, { AnalyticsPopupPinCorner, ItemList } from '../analytics-popup';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
@@ -20,7 +20,7 @@ import {
   Skeleton,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
-import mixpanelTrack from '../../helpers/mixpanel-track';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
 import analyticsIntroImage from '../../assets/images/analytics-intro.svg';
 
@@ -60,25 +60,23 @@ function MoreButton({reportName, onUpdateReportName, onDeleteReport}: MoreButton
             });
             // FIXME: The below should be switched to use the new rx-actinos based modal interface,
             // point this out in a review!
-            showModal('MODAL_PROMPT', {
+            showModal(dispatch, 'MODAL_PROMPT', {
               title: `Rename '${reportName}'`,
               placeholder: 'Enter a new name',
               confirmText: 'Save',
               callback: onUpdateReportName,
-            })(dispatch);
+            });
             break;
           case MoreButtonChoices.DELETE:
             mixpanelTrack('Analytics Report Delete', {
               'Location': 'Home',
             });
-            // FIXME: The below should be switched to use the new rx-actinos based modal interface,
-            // point this out in a review!
-            showModal('MODAL_CONFIRM', {
+            showModal(dispatch, 'MODAL_CONFIRM', {
               title: `Delete Report`,
               prompt: `Are you sure you want to delete ${reportName}?`,
               confirmText: 'Delete',
               callback: onDeleteReport,
-            })(dispatch);
+            });
             break;
           }
         }}

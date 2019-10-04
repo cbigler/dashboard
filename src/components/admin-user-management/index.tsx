@@ -2,7 +2,6 @@ import styles from './styles.module.scss';
 
 import React, { Fragment, useState } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import moment from 'moment';
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';
 import AdminUserManagementRoleRadioList from '../admin-user-management-role-radio-list/index';
@@ -38,13 +37,18 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
-import updateModal from '../../actions/modal/update';
+import updateModal from '../../rx-actions/modal/update';
 
 import collectionUsersCreate from '../../rx-actions/users/create';
 import collectionUsersInviteResend from '../../rx-actions/users/invite-resend';
 import usersStore from '../../rx-stores/users';
 
 import FormLabel from '../form-label';
+import UserStore from '../../rx-stores/user';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 export const INVITATION_STATUS_LABELS = {
   'unsent': 'Unsent',
@@ -116,7 +120,7 @@ export function AdminUserManagement({
                     id="admin-user-management-new-user-email"
                     value={activeModal.data.email}
                     placeholder="ex: stuart.little@density.io"
-                    onChange={e => dispatch(updateModal({email: e.target.value}) as any)}
+                    onChange={e => updateModal(dispatch, {email: e.target.value})}
                   />}
                 />
               </div>
@@ -127,11 +131,11 @@ export function AdminUserManagement({
                 <AdminUserManagementRoleRadioList
                   user={user}
                   value={activeModal.data.role}
-                  onChange={role => dispatch(updateModal({
+                  onChange={role => updateModal(dispatch, {
                     role,
                     spaceFilteringActive: role === 'owner' ? false : activeModal.data.spaceFilteringActive,
                     spaceIds: role === 'owner' ? [] : activeModal.data.spaceIds,
-                  }) as any)}
+                  })}
                 />
               </div>
             </div>
@@ -141,9 +145,9 @@ export function AdminUserManagement({
                 spaceHierarchy={spaceHierarchy}
                 disabled={activeModal.data.role === 'owner'}
                 active={activeModal.data.spaceFilteringActive}
-                onChangeActive={spaceFilteringActive => dispatch(updateModal({spaceFilteringActive}) as any)}
+                onChangeActive={spaceFilteringActive => updateModal(dispatch, {spaceFilteringActive})}
                 selectedSpaceIds={activeModal.data.spaceIds}
-                onChange={spaceIds => dispatch(updateModal({spaceIds}) as any)}
+                onChange={spaceIds => updateModal(dispatch, {spaceIds})}
                 height={556}
               />
             </div>
@@ -368,12 +372,23 @@ function AdminUserManagementInfo({width=400, anchor='left', children }: AdminUse
   );
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    spaceHierarchy: state.spaceHierarchy,
-    user: state.user,
-    activeModal: state.activeModal,
-    resizeCounter: state.resizeCounter,
-  };
-})(AdminUserManagement);
+const ConnectedAdminUserManagement: React.FC = () => {
+  
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const resizeCounter = useRxStore(ResizeCounterStore);
+
+  return (
+    <AdminUserManagement
+      user={user}
+      spaces={spaces}
+      spaceHierarchy={spaceHierarchy}
+      activeModal={activeModal}
+      resizeCounter={resizeCounter}
+    />
+  )
+}
+
+export default ConnectedAdminUserManagement;

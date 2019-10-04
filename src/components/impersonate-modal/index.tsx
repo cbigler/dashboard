@@ -1,5 +1,4 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
 import { DensityUser } from '../../types';
@@ -25,24 +24,37 @@ import accounts from '../../client/accounts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import filterCollection from '../../helpers/filter-collection';
 
-import hideModal from '../../actions/modal/hide';
-import updateModal from '../../actions/modal/update';
-import impersonateSet from '../../actions/impersonate';
+import hideModal from '../../rx-actions/modal/hide';
+import updateModal from '../../rx-actions/modal/update';
+import impersonateSet from '../../rx-actions/impersonate';
 
 import styles from './styles.module.scss';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
 
 const orgFilterHelper = filterCollection({fields: ['name']});
 const userFilterHelper = filterCollection({fields: ['email', 'fullName']});
 
-export function ImpersonateModal({
-  activeModal,
-  onSaveImpersonate,
-  onCancelImpersonate,
-  onSetImpersonateEnabled,
-  onSetImpersonateFilters,
-  onSelectImpersonateOrganization,
-  onSelectImpersonateUser,
-}) {
+function onSelectImpersonateOrganization(dispatch, org) {
+  updateModal(dispatch, {
+    loading: true,
+    selectedOrganization: org,
+    selectedUser: null
+  });
+
+  // Don't use a configured axios client here as it will pass the impersonate header
+  fetch(`${accounts().defaults.baseURL}/users?organization_id=${org.id}`, {
+    headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
+  }).then(response => response.json()).then(data => {
+    updateModal(dispatch, {loading: false, users: data.map(u => objectSnakeToCamel<DensityUser>(u))});
+  });
+}
+
+export default function ImpersonateModal() {
+  const activeModal = useRxStore(ActiveModalStore);
+  const dispatch = useRxDispatch();
+
   const loading = !!activeModal.data.loading;
   const enabled = !!activeModal.data.enabled;
 
@@ -59,8 +71,8 @@ export function ImpersonateModal({
     width={800}
     height={600}
     visible={activeModal.visible}
-    onBlur={onCancelImpersonate}
-    onEscape={onCancelImpersonate}
+    onBlur={() => hideModal(dispatch)}
+    onEscape={() => hideModal(dispatch)}
   >
     <AppBar>
       <AppBarSection>
@@ -69,7 +81,14 @@ export function ImpersonateModal({
       <AppBarSection>
         <Switch
           value={enabled}
-          onChange={event => onSetImpersonateEnabled(event.target.checked)}
+          onChange={event => {
+            updateModal(dispatch, {
+              enabled: event.target.checked,
+              selectedOrganization: null,
+              users: [],
+              selectedUser: null,
+            });
+          }}
         />
       </AppBarSection>
     </AppBar>
@@ -90,7 +109,12 @@ export function ImpersonateModal({
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             disabled={!enabled}
             value={activeModal.data.organizationFilter}
-            onChange={e => onSetImpersonateFilters(e.target.value, activeModal.data.userFilter)} />
+            onChange={e => {
+              updateModal(dispatch, {
+                organizationFilter: e.target.value,
+                userFilter: activeModal.data.userFilter
+              });
+            }} />
         </AppBar>
         <div style={{
           flexGrow: 1,
@@ -102,6 +126,7 @@ export function ImpersonateModal({
               width="auto"
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
+                dispatch,
                 activeModal.data.organizations.find(x => x.id === item.id)
               )}
               template={item => <div style={{opacity: enabled ? 1.0 : 0.25}}>
@@ -133,7 +158,12 @@ export function ImpersonateModal({
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             disabled={!enabled}
             value={activeModal.data.userFilter}
-            onChange={e => onSetImpersonateFilters(activeModal.data.organizationFilter, e.target.value)} />
+            onChange={e => {
+              updateModal(dispatch, {
+                organizationFilter: activeModal.data.organizationFilter,
+                userFilter: e.target.value
+              });
+            }} />
         </AppBar>
         <div style={{
           flexGrow: 1,
@@ -152,9 +182,10 @@ export function ImpersonateModal({
                 cursor: enabled ? 'pointer' : undefined,
                 color: selected ? colorVariables.brandPrimary: undefined,
               }}
-              onClick={event => onSelectImpersonateUser(
-                activeModal.data.users.find(x => x.id === item.id)
-              )}
+              onClick={() => {
+                const user = activeModal.data.users.find(x => x.id === item.id);
+                updateModal(dispatch, {selectedUser: user});
+              }}
             >
               <div className={styles.impersonateUserIcon}>{
                 (item.fullName || '')
@@ -185,12 +216,16 @@ export function ImpersonateModal({
         <AppBarSection></AppBarSection>
         <AppBarSection>
           <ButtonGroup>
-            <Button variant="underline" onClick={onCancelImpersonate}>Cancel</Button>
+            <Button variant="underline" onClick={() => hideModal(dispatch)}>Cancel</Button>
             <Button
               variant="filled"
               type="primary"
               disabled={loading || (enabled && !activeModal.data.selectedUser)}
-              onClick={() => onSaveImpersonate(activeModal.data)}
+              onClick={() => {
+                const impersonate = activeModal.data;
+                dispatch(impersonateSet(impersonate.enabled ? impersonate : null));
+                hideModal(dispatch);
+              }}
             >Save settings</Button>
           </ButtonGroup>
         </AppBarSection>
@@ -198,51 +233,3 @@ export function ImpersonateModal({
     </AppBarContext.Provider>
   </Modal>;
 }
-
-export default connect((state: any) => {
-  return {
-    activeModal: state.activeModal
-  };
-}, (dispatch: any) => {
-  return {
-    onSaveImpersonate(impersonate) {
-      dispatch(impersonateSet(impersonate.enabled ? impersonate : null));
-      dispatch(hideModal());
-    },
-    onCancelImpersonate() {
-      dispatch(hideModal());
-    },
-
-    onSetImpersonateEnabled(value) {
-      dispatch(updateModal({
-        enabled: value,
-        selectedOrganization: null,
-        users: [],
-        selectedUser: null,
-      }));
-    },
-    onSetImpersonateFilters(organizationFilter, userFilter) {
-      dispatch(updateModal({
-        organizationFilter: organizationFilter,
-        userFilter: userFilter
-      }));
-    },
-    onSelectImpersonateOrganization(org) {
-      dispatch(updateModal({
-        loading: true,
-        selectedOrganization: org,
-        selectedUser: null
-      }));
-
-      // Don't use a configured axios client here as it will pass the impersonate header
-      fetch(`${accounts().defaults.baseURL}/users?organization_id=${org.id}`, {
-        headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
-      }).then(response => response.json()).then(data => {
-        dispatch(updateModal({loading: false, users: data.map(u => objectSnakeToCamel<DensityUser>(u))}));
-      });
-    },
-    onSelectImpersonateUser(user) {
-      dispatch(updateModal({selectedUser: user}));
-    }
-  };
-})(ImpersonateModal);

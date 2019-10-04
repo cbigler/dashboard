@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment, useRef } from 'react';
-import { connect } from 'react-redux';
 import fuzzy from 'fuzzy';
 
 import {
@@ -18,7 +17,7 @@ import {
 
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
 
 import AlertPopupList from '../alert-popup-list/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';
@@ -30,10 +29,18 @@ import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import SpacePicker, { SelectControlTypes } from '../space-picker';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import ExploreControlBar from '../explore-control-bar';
-import spacesUpdateReportController from '../../actions/space-reports/update-report-controller';
-import spaceReportsCalculateReportData from '../../actions/space-reports/calculate-report-data';
+import spacesUpdateReportController from '../../rx-actions/space-reports/update-report-controller';
+import spaceReportsCalculateReportData from '../../rx-actions/space-reports/calculate-report-data';
 import { ExpandedReportModal } from '../report';
-import hideModal from '../../actions/modal/hide';
+import hideModal from '../../rx-actions/modal/hide';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import ActivePageStore from '../../rx-stores/active-page';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import SpaceReportsStore from '../../rx-stores/space-reports';
+// import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
 
@@ -267,21 +274,49 @@ export function SpacesRaw ({
   );
 }
 
-export default connect((state: any) => ({
-  spaces: state.spaces,
-  spaceHierarchy: state.spaceHierarchy,
-  spaceReports: state.spaceReports,
-  selectedSpace: state.spaces.data.find(d => d.id === state.spaces.selected),
-  activePage: state.activePage,
-  activeModal: state.activeModal,
-  resizeCounter: state.resizeCounter,
-}), (dispatch: any) => ({
-  onCloseModal: () => dispatch(hideModal()),
-  onFilterSpaces: e => dispatch(collectionSpacesFilter('search', e.target.value)),
-  onUpdateReportController: (selectedSpace, updated) => (
-    dispatch(spacesUpdateReportController(selectedSpace, updated))
-  ),
-  onCalculateReportData: (selectedSpace, updated) => (
-    dispatch(spaceReportsCalculateReportData(updated, selectedSpace))
-  ),
-}))(SpacesRaw);
+
+const ConnectedSpaces: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activePage = useRxStore(ActivePageStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+  const spaceReports = useRxStore(SpaceReportsStore);
+  // const resizeCounter = useRxStore(ResizeCounterStore);
+
+  // FIXME: This could probably just be handled by the spaces store
+  const selectedSpace = spaces.data.find(d => d.id === spaces.selected);
+
+  const onCloseModal = async () => {
+    await hideModal(dispatch)
+  }
+
+  const onFilterSpaces = (e) => {
+    dispatch(collectionSpacesFilter('search', e.target.value) as Any<FixInRefactor>)
+  }
+  const onUpdateReportController = (selectedSpace, updated) => {
+    dispatch(spacesUpdateReportController(selectedSpace, updated) as Any<FixInRefactor>)
+  }
+  const onCalculateReportData = async (selectedSpace, updated) => (
+    await spaceReportsCalculateReportData(dispatch, updated, selectedSpace)
+  )
+
+  return (
+    <SpacesRaw
+      activePage={activePage}
+      activeModal={activeModal}
+      // resizeCounter={resizeCounter}
+      onCloseModal={onCloseModal}
+      spaces={spaces}
+      spaceHierarchy={spaceHierarchy}
+      spaceReports={spaceReports}
+      selectedSpace={selectedSpace}
+      onFilterSpaces={onFilterSpaces}
+      onUpdateReportController={onUpdateReportController}
+      onCalculateReportData={onCalculateReportData}
+    />
+  )
+}
+
+export default ConnectedSpaces;

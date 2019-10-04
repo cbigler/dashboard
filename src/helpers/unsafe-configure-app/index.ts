@@ -20,13 +20,13 @@ import { config as configAccounts } from '../../client/accounts';
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-export function configureClients(store?) {
+export function configureClients(dispatch) {
   const goSlow = getGoSlow();
   const environments: any = getActiveEnvironments(fields);
   const token = localStorage.sessionToken !== undefined ?
     JSON.parse(localStorage.sessionToken) : null;
   const impersonateUser = localStorage.impersonate ?
     (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({ host: environments.core, token, impersonateUser, goSlow, store });
-  configAccounts({ host: environments.accounts, token, impersonateUser, store });
+  configCore(dispatch, { host: environments.core, token, impersonateUser, goSlow });
+  configAccounts(dispatch, { host: environments.accounts, token, impersonateUser });
 }

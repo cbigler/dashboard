@@ -15,11 +15,11 @@ import {
 
 import core from '../../client/core';
 import collectionUsersRead from '../../rx-actions/users/read';
-import hideModal from '../../actions/modal/hide';
+import hideModal from '../../rx-actions/modal/hide';
 
 import { DensityDashboard } from '../../types';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 import { DispatchType } from '../../types/rx-actions';
 
 type DashboardEmailModalProps = {
@@ -34,15 +34,15 @@ async function onCreateEmail(dispatch: DispatchType, email: {
   dashboardId: string,
   recipient: string
 }) {
-  dispatch(hideModal() as Any<FixInRefactor>);
+  hideModal(dispatch);
   try {
     await core().post(`/dashboards/${email.dashboardId}/email`, {
       recipient_email: email.recipient
     });
-    dispatch(showToast({ text: 'Email sent' }) as Any<FixInRefactor>);
+    showToast(dispatch, { text: 'Email sent' });
   } catch (error) {
     console.error(error);
-    dispatch(showToast({ text: 'Error sending email' }) as Any<FixInRefactor>);
+    showToast(dispatch, { text: 'Error sending email' });
   }
 }
 

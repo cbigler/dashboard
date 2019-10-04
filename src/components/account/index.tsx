@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 
 import {
   InputBox,
@@ -27,19 +26,23 @@ import FormLabel from '../form-label/index';
 import ErrorBar from '../error-bar/index';
 import InputBoxInfo from '../input-box-info';
 
-import userResetPassword from '../../actions/user/reset-password';
-import userUpdate from '../../actions/user/update';
+import userResetPassword from '../../rx-actions/user/reset-password';
+import userUpdate from '../../rx-actions/user/update';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 
 import colors from '@density/ui/variables/colors.json';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 import collectionAlertsUpdate from '../../rx-actions/alerts/update';
 
 import AlertManagementModal, { COOLDOWN_CHOICES } from '../alert-management-modal';
 import useRxStore from '../../helpers/use-rx-store';
 import alertsStore from '../../rx-stores/alerts';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import UserStore from '../../rx-stores/user';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import SpacesStore from '../../rx-stores/spaces';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -151,7 +154,8 @@ const GeneralInfoSection = props => {
 
 const PasswordSection = props => {
 
-  const { onSubmitPassword } = props;
+  const { email, onSubmitPassword } = props;
+  const dispatch = useRxDispatch();
 
   const [mode, setMode] = useState(DISPLAY);
 
@@ -185,9 +189,9 @@ const PasswordSection = props => {
   }
 
   const handleSaveButtonClick = () => {
-    return onSubmitPassword(currentPassword, newPassword)
+    return onSubmitPassword(email, currentPassword, newPassword)
       .then(() => setMode(DISPLAY))
-      .catch(error => showToast({ text: error, type: 'danger' }));
+      .catch(error => showToast(dispatch, { text: error, type: 'danger' }));
   }
 
   const handleCancelButtonClick = evt => {
@@ -431,6 +435,7 @@ export class Account extends React.Component<any, any> {
               {/* PASSWORD */}
               {canChangePassword ? (
                 <PasswordSection
+                  email={user.data.email}
                   onSubmitPassword={onSubmitPassword}
                   setErrorText={this.setErrorText}
                 />
@@ -457,35 +462,50 @@ export class Account extends React.Component<any, any> {
   }
 }
 
-export default connect((state: any) => {
-  return {
-    user: state.user,
-    spaces: state.spaces,
-    activeModal: state.activeModal,
-    loading: state.user.loading,
-  };
-}, dispatch => {
-  return {
-    async onUpdateAlert(alert) {
-      await collectionAlertsUpdate(rxDispatch, alert);
-      dispatch<any>(showToast({
-        text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
-        timeout: 1000
-      }));
-    },
-    onShowModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onSubmitPassword(currentPassword, password) {
-      return dispatch<any>(userResetPassword(currentPassword, password)).then(() => {
-        dispatch<any>(showModal('account-password-reset'));
-      });
-    },
-    onSubmitUserUpdate(fullName, phoneNumber) {
-      return dispatch<any>(userUpdate(fullName, phoneNumber));
-    },
-    onHideSuccessToast() {
-      dispatch<any>(hideModal());
-    },
-  };
-})(Account);
+
+const ConnectedAccount: React.FC = () => {
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+  const activeModal = useRxStore(ActiveModalStore)
+  const loading = user.loading;
+
+  // formerly from mapDispatchToProps
+  const onUpdateAlert = async (alert) => {
+    await collectionAlertsUpdate(rxDispatch, alert);
+    showToast(dispatch, {
+      text: alert.enabled ? 'Alert enabled' : 'Alert disabled',
+      timeout: 1000
+    });
+  }
+  const onShowModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+  const onSubmitPassword = async (email, currentPassword, password) => {
+    await userResetPassword(dispatch, email, currentPassword, password)
+    showModal(dispatch, 'account-password-reset');
+  }
+  const onSubmitUserUpdate = async (fullName, phoneNumber) => {
+    await userUpdate(dispatch, fullName, phoneNumber);
+  }
+  const onHideSuccessToast = async () => {
+    await hideModal(dispatch);
+  }
+
+  return (
+    <Account
+      user={user}
+      spaces={spaces}
+      activeModal={activeModal}
+      loading={loading}
+
+      onUpdateAlert={onUpdateAlert}
+      onShowModal={onShowModal}
+      onSubmitPassword={onSubmitPassword}
+      onSubmitUserUpdate={onSubmitUserUpdate}
+      onHideSuccessToast={onHideSuccessToast}
+    />
+  )
+}
+
+export default ConnectedAccount;

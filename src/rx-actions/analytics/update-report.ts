@@ -5,13 +5,12 @@ import {
 } from '../../types/analytics';
 import core from '../../client/core';
 
-import { rxDispatch } from '../../rx-stores';
-import { showToast } from '../../rx-actions/toasts';
+import { showToast } from '../toasts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import mixpanelTrack from '../../helpers/mixpanel-track';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
-export default async function updateReport(analyticsReport: AnalyticsReport) {
-  rxDispatch({
+export default async function updateReport(dispatch, analyticsReport: AnalyticsReport) {
+  dispatch({
     type: AnalyticsActionType.ANALYTICS_UPDATE_REPORT,
     reportId: analyticsReport.id,
     report: { ...analyticsReport, isCurrentlySaving: true },
@@ -32,7 +31,7 @@ export default async function updateReport(analyticsReport: AnalyticsReport) {
       },
     });
   } catch (error) {
-    showToast(rxDispatch, { type: 'error', text: 'Error updating toast.' })
+    showToast(dispatch, { type: 'error', text: 'Error updating toast.' })
     return
   }
 
@@ -43,8 +42,8 @@ export default async function updateReport(analyticsReport: AnalyticsReport) {
     'Report Name': reportResponse.name,
   });
 
-  showToast(rxDispatch, { text: analyticsReport.isSaved ? 'Updated Report': 'Created Report' });
-  rxDispatch({
+  showToast(dispatch, { text: analyticsReport.isSaved ? 'Updated Report': 'Created Report' });
+  dispatch({
     type: AnalyticsActionType.ANALYTICS_UPDATE_REPORT,
     reportId: analyticsReport.id,
     report: {

@@ -4,21 +4,20 @@ import {
 } from '../../types/analytics';
 import core from '../../client/core';
 
-import { rxDispatch } from '../../rx-stores';
-import { showToast } from '../../rx-actions/toasts';
+import { showToast } from '../toasts';
 
 type SavedAnalyticsReport = AnalyticsReport;//& { isSaved: true };
 
-export default async function deleteReport(analyticsReport: SavedAnalyticsReport) {
+export default async function deleteReport(dispatch, analyticsReport: SavedAnalyticsReport) {
   try {
     await core().delete(`/reports/${analyticsReport.id}`);
   } catch (error) {
-    showToast(rxDispatch, { type: 'error', text: 'Error deleting report.' })
+    showToast(dispatch, { type: 'error', text: 'Error deleting report.' });
     return
   }
 
-  showToast(rxDispatch, { text: 'Deleted report.' });
-  rxDispatch({
+  showToast(dispatch, { text: 'Deleted report.' });
+  dispatch({
     type: AnalyticsActionType.ANALYTICS_DELETE_REPORT,
     reportId: analyticsReport.id,
   });

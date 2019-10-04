@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import {
   AppBar,
@@ -22,8 +21,8 @@ import outlookIcon from '../../assets/images/icon-outlook.svg';
 import condecoIcon from '../../assets/images/icon-condeco.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 
 import { DensityService } from '../../types';
 
@@ -31,12 +30,16 @@ import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-mod
 import IntegrationsRobinUpdateModal from '../admin-integrations-robin-update-modal';
 import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
 
-import collectionServiceAuthorizationCreate from '../../actions/collection/service-authorizations/create';
-import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../actions/collection/service-authorizations/update';
-import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
+import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
+import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
+import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
 
-import doGoogleCalendarAuthRedirect from '../../actions/integrations/google-calendar';
-import doOutlookAuthRedirect from '../../actions/integrations/outlook';
+import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import IntegrationsStore from '../../rx-stores/integrations';
 
 
 function iconForIntegration(serviceName: string) {
@@ -260,42 +263,51 @@ export function AdminIntegrations({
   </Fragment>;
 }
 
-export default connect((state: any) => {
-  return {
-    integrations: state.integrations,
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-    onCreateServiceAuthorizationRobin(serviceAuthorization) {
-      dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onUpdateServiceAuthorizationRobin(serviceAuthorization) {
-      dispatch<any>(collectionServiceAuthorizationUpdate('robin', serviceAuthorization)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onDestroyServiceAuthorization(serviceAuthorizationId) {
-      dispatch<any>(collectionServiceAuthorizationDestroy(serviceAuthorizationId)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onMakeServiceAuthorizationDefault(serviceAuthorizationId) {
-      dispatch<any>(collectionServiceAuthorizationMakeDefault(serviceAuthorizationId));
-    },
+
+const ConnectedAdminIntegrations: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const integrations = useRxStore(IntegrationsStore);
+
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
   }
-})(AdminIntegrations);
+
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+
+  const onCreateServiceAuthorizationRobin = async (serviceAuthorization) => {
+    const ok = await collectionServiceAuthorizationCreate(dispatch, 'robin', serviceAuthorization);
+    if (ok) { hideModal(dispatch); }
+  }
+
+  const onUpdateServiceAuthorizationRobin = async (serviceAuthorization) => {
+    const ok = await collectionServiceAuthorizationUpdate(dispatch, 'robin', serviceAuthorization);
+    if (ok) { hideModal(dispatch); }
+  }
+
+  const onDestroyServiceAuthorization = async (serviceAuthorizationId) => {
+    const ok = await collectionServiceAuthorizationDestroy(dispatch, serviceAuthorizationId);
+    if (ok) { hideModal(dispatch); }
+  }
+
+  const onMakeServiceAuthorizationDefault = async (serviceAuthorizationId) => {
+    await collectionServiceAuthorizationMakeDefault(dispatch, serviceAuthorizationId);
+  }
+
+  return (
+    <AdminIntegrations
+      activeModal={activeModal}
+      integrations={integrations}
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+      onCreateServiceAuthorizationRobin={onCreateServiceAuthorizationRobin}
+      onUpdateServiceAuthorizationRobin={onUpdateServiceAuthorizationRobin}
+      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
+      onMakeServiceAuthorizationDefault={onMakeServiceAuthorizationDefault}
+    />
+  )
+}
+export default ConnectedAdminIntegrations;

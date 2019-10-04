@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import {
   AppBar,
@@ -19,15 +18,20 @@ import colorVariables from '@density/ui/variables/colors.json';
 import { DensitySpace } from '../../types';
 import Toaster from '../toaster/index';
 
-import integrationServicesList from '../../actions/integrations/services';
-import collectionSpaceMappingsCreate from '../../actions/collection/space-mappings/create-update';
-import collectionSpaceMappingsDestroy from '../../actions/collection/space-mappings/destroy';
+import integrationServicesList from '../../rx-actions/integrations/services';
+import collectionSpaceMappingsCreate from '../../rx-actions/collection/space-mappings/create-update';
+import collectionSpaceMappingsDestroy from '../../rx-actions/collection/space-mappings/destroy';
 
 import SpaceMappingsCreateUpdateModal from '../admin-space-mappings-create-update-modal/index';
 import SpaceMappingsDestroyModal from '../admin-space-mappings-destroy-modal/index';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import SpacesStore from '../../rx-stores/spaces';
+import IntegrationsStore from '../../rx-stores/integrations';
 
 
 
@@ -122,7 +126,10 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 id="Density Conference Room"
                 width={360}
                 template={space => (
-                  <span className={styles.adminIntegrationsListviewValue}>{space.ancestry[0].name} > <strong>{space.name}</strong></span>
+                  <span className={styles.adminIntegrationsListviewValue}>
+                    {space.ancestry.length ? <Fragment>{space.ancestry[0].name} > </Fragment> : null}
+                    <strong>{space.name}</strong>
+                  </span>
                 )}
               />
               <ListViewColumnSpacer />
@@ -182,38 +189,53 @@ export class AdminSpaceMappings extends React.Component<any, any> {
   }
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces.data,
-    spaceMappingsPage: state.integrations.spaceMappingsPage,
-    currentService: state.integrations.spaceMappingsPage.service,
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-    onSaveSpaceMapping(serviceMappingData) {
-      const { serviceSpaceId, spaceId, serviceId } = serviceMappingData;
-      dispatch<any>(collectionSpaceMappingsCreate(serviceSpaceId, spaceId, serviceId)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onDestroySpaceMapping(spaceMappingId) {
-      dispatch<any>(collectionSpaceMappingsDestroy(spaceMappingId)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onCheckForIntegrationLastSync() {
-      dispatch<any>(integrationServicesList());
-    }
+
+const ConnectedAdminSpaceMappings: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore)
+  const spacesState = useRxStore(SpacesStore);
+  const integrations = useRxStore(IntegrationsStore);
+
+  // FIXME: the state shape could be improved...
+  const spaceMappingsPage = integrations.spaceMappingsPage;
+  const currentService = integrations.spaceMappingsPage.service;
+
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
   }
-})(AdminSpaceMappings);
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+  const onSaveSpaceMapping = async (serviceMappingData) => {
+    const { serviceSpaceId, spaceId, serviceId } = serviceMappingData;
+    const ok = await collectionSpaceMappingsCreate(dispatch, serviceSpaceId, spaceId, serviceId);
+    if (ok) { await hideModal(dispatch); }
+  }
+  const onDestroySpaceMapping = async (spaceMappingId) => {
+    const ok = await collectionSpaceMappingsDestroy(dispatch, spaceMappingId);
+    if (ok) { await hideModal(dispatch); }
+  }
+
+  const onCheckForIntegrationLastSync = async () => {
+    await integrationServicesList(dispatch);
+  }
+
+  return (
+    <AdminSpaceMappings
+      
+      spaces={spacesState.data}
+      spaceMappingsPage={spaceMappingsPage}
+      currentService={currentService}
+
+      activeModal={activeModal}
+      
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+      onSaveSpaceMapping={onSaveSpaceMapping}
+      onDestroySpaceMapping={onDestroySpaceMapping}
+      onCheckForIntegrationLastSync={onCheckForIntegrationLastSync}
+    />
+  )
+}
+export default ConnectedAdminSpaceMappings;

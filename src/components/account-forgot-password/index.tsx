@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { Button } from '@density/ui';
 import { InputStackItem, InputStackGroup } from '../input-stack/index';
@@ -10,6 +9,8 @@ import logoDensityBlack from '../../assets/images/logo-black.svg';
 import ErrorBar from '../error-bar/index';
 
 import accounts from '../../client/accounts';
+import rxConnect from '../../helpers/rx-connect-hoc';
+import AccountStore from '../../rx-stores/account';
 
 export class AccountForgotPassword extends React.Component<any, any> {
   constructor(props) {
@@ -79,8 +80,8 @@ export class AccountForgotPassword extends React.Component<any, any> {
   }
 }
 
-export default connect((state: any) => {
-  return {forgotPasswordToken: state.accountForgotPassword};
+export default rxConnect(AccountStore, state => {
+  return {forgotPasswordToken: state.passwordResetToken};
 }, dispatch => {
   return {
     onUserLoggedIn() {

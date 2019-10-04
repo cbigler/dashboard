@@ -1,17 +1,16 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import { REPORTS } from '@density/reports';
 
-import showModal from '../../actions/modal/show';
-import dashboardsUpdateFormState from '../../actions/dashboards/update-form-state';
-import dashboardsUpdate from '../../actions/dashboards/update';
-import dashboardsDestroy from '../../actions/dashboards/destroy';
-import showToast from '../../actions/toasts'; 
+import showModal from '../../rx-actions/modal/show';
+import dashboardsUpdateFormState from '../../rx-actions/dashboards/update-form-state';
+import dashboardsUpdate from '../../rx-actions/dashboards/update';
+import dashboardsDestroy from '../../rx-actions/dashboards/destroy';
+import { showToast } from '../../rx-actions/toasts';
 
 import GenericLoadingState from '../generic-loading-state';
 import GenericErrorState from '../generic-error-state';
-import mixpanelTrack from '../../helpers/mixpanel-track';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
 import {
   openReportModal,
@@ -25,10 +24,10 @@ import {
   OPERATION_UPDATE,
 
   extractCalculatedReportDataFromDashboardsReducer,
-} from '../../actions/dashboards/report-modal';
-import reportCreate from '../../actions/dashboards/report-create';
-import reportUpdate from '../../actions/dashboards/report-update';
-import reportDelete from '../../actions/dashboards/report-delete';
+} from '../../rx-actions/dashboards/report-modal';
+import reportCreate from '../../rx-actions/dashboards/report-create';
+import reportUpdate from '../../rx-actions/dashboards/report-update';
+import reportDelete from '../../rx-actions/dashboards/report-delete';
 
 
 import {
@@ -50,12 +49,22 @@ import DetailModule from '../admin-locations-detail-modules';
 import FormLabel from '../form-label';
 
 import DashboardReportEditModal from '../dashboard-report-edit-modal';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import UserStore from '../../rx-stores/user';
+import { getUserDashboardWeekStart } from '../../helpers/legacy';
+import DashboardsStore from '../../rx-stores/dashboards';
+import MiscellaneousStore from '../../rx-stores/miscellaneous';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export function DashboardEdit({
   activeModal,
   selectedDashboard,
   spaceHierarchy,
   dashboards,
+  dashboardDate,
+  dashboardWeekStart,
   calculatedReportDataForPreviewedReport,
 
   onUpdateFormState,
@@ -144,10 +153,10 @@ export function DashboardEdit({
                 <DetailModule title="Reports" actions={(
                   <AppBarSection>
                     <ButtonGroup>
-                      <Button onClick={onAddExistingReport}>
+                      <Button onClick={() => onAddExistingReport(dashboardDate, dashboardWeekStart)}>
                         Add saved report
                       </Button>
-                      <Button variant="filled" onClick={onCreateReport}>
+                      <Button variant="filled" onClick={() => onCreateReport(dashboardDate, dashboardWeekStart)}>
                         Create new report
                       </Button>
                     </ButtonGroup>
@@ -213,7 +222,7 @@ export function DashboardEdit({
                           <ButtonGroup>
                             <Button
                               variant="underline"
-                              onClick={() => onEditReport(item)}
+                              onClick={() => onEditReport(item, dashboardDate, dashboardWeekStart)}
                             >Edit</Button>
                           </ButtonGroup>
                         )}
@@ -247,20 +256,33 @@ export function DashboardEdit({
   );
 }
 
-export default connect((state: any) => ({
-  activeModal: state.activeModal,
-  selectedDashboard: state.dashboards.data.find(dashboard => dashboard.id === state.dashboards.selected),
-  spaceHierarchy: state.spaceHierarchy,
-  dashboards: state.dashboards,
-  calculatedReportDataForPreviewedReport: extractCalculatedReportDataFromDashboardsReducer(state.dashboards),
-}), dispatch => ({
-  onCloseModal() {
-    dispatch<any>(closeReportModal());
-  },
-  onUpdateFormState(key, value) {
-    dispatch(dashboardsUpdateFormState(key, value));
-  },
-  onRelativeReportMove(formState, report, relativeMove) {
+
+const ConnectedDashboardEdit: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const dashboards = useRxStore(DashboardsStore);
+  const user = useRxStore(UserStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
+
+  const miscellaneous = useRxStore(MiscellaneousStore);
+
+  const dashboardDate = miscellaneous.dashboardDate;
+
+  const dashboardWeekStart = getUserDashboardWeekStart(user);
+  // FIXME: this seems kinda convoluted for this...
+  const selectedDashboard = dashboards.data.find(d => d.id === dashboards.selected)
+  const calculatedReportDataForPreviewedReport = extractCalculatedReportDataFromDashboardsReducer(dashboards);
+
+
+  // formerly mapDispatchToProps
+  const onCloseModal = async () => {
+    await closeReportModal(dispatch);
+  }
+  const onUpdateFormState = (key, value) => {
+    dispatch(dashboardsUpdateFormState(key, value) as Any<FixInRefactor>);
+  }
+  const onRelativeReportMove = (formState, report, relativeMove) => {
     const reportIndex = formState.reportSet.findIndex(r => r.id === report.id);
     if (reportIndex === -1) { return; }
 
@@ -268,82 +290,91 @@ export default connect((state: any) => ({
     // Move the report `relativeMove` places in the report set array
     reportSet.splice(reportIndex, 1);
     reportSet.splice(reportIndex+relativeMove, 0, report);
-    dispatch(dashboardsUpdateFormState('reportSet', reportSet));
-  },
-  async onSaveDashboard(dashboard) {
-    const ok = await dispatch<any>(dashboardsUpdate(dashboard));
+    dispatch(dashboardsUpdateFormState('reportSet', reportSet) as Any<FixInRefactor>);
+  }
+  const onSaveDashboard = async (dashboard) => {
+    const ok = await dashboardsUpdate(dispatch, dashboard);
     if (ok) {
-      dispatch<any>(showToast({text: 'Successfully saved dashboard.'}));
+      showToast(dispatch, {text: 'Successfully saved dashboard.'});
       window.location.href = `#/dashboards/${dashboard.id}`;
     } else {
-      dispatch<any>(showToast({text: 'Error saving dashboard.', type: 'error'}));
+      showToast(dispatch, {text: 'Error saving dashboard.', type: 'error'});
     }
-  },
-  async onShowDeleteConfirm(dashboard) {
-    dispatch<any>(showModal('MODAL_CONFIRM', {
+  }
+  const onShowDeleteConfirm = async (dashboard) => {
+    showModal(dispatch, 'MODAL_CONFIRM', {
       prompt: 'Are you sure you want to delete this dashboard?',
       confirmText: 'Delete',
       callback: async () => {
-        const ok = await dispatch<any>(dashboardsDestroy(dashboard));
+        const ok = await dashboardsDestroy(dispatch, dashboard);
         if (ok) {
           window.location.href = `#/dashboards`;
-          dispatch<any>(showToast({ text: 'Dashboard deleted successfully' }));
+          showToast(dispatch, { text: 'Dashboard deleted successfully' });
         } else {
-          dispatch<any>(showToast({ type: 'error', text: 'Error deleting dashboard' }));
+          showToast(dispatch, { type: 'error', text: 'Error deleting dashboard' });
         }
       }
-    }));
-  },
-  onCreateReport() {
-    dispatch<any>(openReportModal(
+    });
+  }
+  const onCreateReport = async (dashboardDate, dashboardWeekStart) => {
+    await openReportModal(
+      dispatch,
       { name: '', type: '', settings: {}, creatorEmail: '' },
       PAGE_NEW_REPORT_TYPE,
       OPERATION_CREATE,
-    ));
-  },
-  onAddExistingReport() {
-    dispatch<any>(openReportModal(
+      dashboardDate,
+      dashboardWeekStart,
+    );
+  }
+  const onAddExistingReport = async (dashboardDate, dashboardWeekStart) => {
+    await openReportModal(
+      dispatch,
       { name: '', type: '', settings: {}, creatorEmail: '' },
       PAGE_PICK_SAVED_REPORT,
       OPERATION_CREATE,
-    ));
-  },
-  onEditReport(report) {
-    dispatch<any>(openReportModal(
+      dashboardDate,
+      dashboardWeekStart,
+    );
+  }
+  const onEditReport = async (report, dashboardDate, dashboardWeekStart) => {
+    await openReportModal(
+      dispatch,
       report,
       PAGE_NEW_REPORT_CONFIGURATION,
       OPERATION_UPDATE,
-    ));
-  },
-  async onSaveReportModal(formState, report) {
+      dashboardDate,
+      dashboardWeekStart,
+    );
+  }
+  const onSaveReportModal = async (formState, report) => {
     const shouldCreateReport = typeof report.id === 'undefined';
     let result;
     if (shouldCreateReport) {
-      result = await dispatch<any>(reportCreate(report));
+      result = await reportCreate(dispatch, report);
     } else {
-      result = await dispatch<any>(reportUpdate(report));
+      result = await reportUpdate(dispatch, report);
     }
 
     if (!result) {
-      dispatch<any>(showToast({ text: 'Error creating report.', type: 'error' }));
+      showToast(dispatch, { text: 'Error creating report.', type: 'error' });
       return;
     } 
 
-    dispatch<any>(showToast({text: 'Saved report.'}));
+    showToast(dispatch, {text: 'Saved report.'});
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch<any>(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]));
+      dispatch(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]) as Any<FixInRefactor>);
     }
 
-    dispatch<any>(closeReportModal());
-  },
-  async onReportShowDeletePopup(formState, report) {
-    await dispatch<any>(closeReportModal());
+    await closeReportModal(dispatch);
+  }
+  const onReportShowDeletePopup = async (formState, report) => {
+    await closeReportModal(dispatch);
 
     // Show a popup to allow the user to pick if they want to delete the link or also the report if
     // this is the last instance if this report in a dashboard.
-    dispatch<any>(showModal('MODAL_CONFIRM', {
+    showModal(dispatch, 'MODAL_CONFIRM', {
       prompt: [
         'Are you sure you want to delete this report? This will delete the report from the system',
         `${report.dashboardCount > 1 ? ` and also remove it from ${report.dashboardCount-1} other ${report.dashboardCount-1 === 1 ? 'dashboard' : 'dashboards'}` : 'and any dashboards it is part of'}.`,
@@ -352,32 +383,58 @@ export default connect((state: any) => ({
       callback: async () => {
         // Delete the report from all dashboards. This also cascades to delete all report
         // dashboard links too on the server.
-        const ok = await dispatch<any>(reportDelete(report));
+        const ok = await reportDelete(dispatch, report);
 
         if (ok) {
           // Remove report from dashboard locally
           dispatch(dashboardsUpdateFormState(
             'reportSet',
             formState.reportSet.filter(r => r.id !== report.id),
-          ));
+          ) as Any<FixInRefactor>);
 
-          dispatch<any>(showToast({text: 'Successfully deleted report from dashboard.'}));
+          showToast(dispatch, {text: 'Successfully deleted report from dashboard.'});
         } else {
-          dispatch<any>(showToast({text: 'Error deleting report from dashboard.', type: 'error'}));
+          showToast(dispatch, {text: 'Error deleting report from dashboard.', type: 'error'});
         }
 
-        dispatch<any>(closeReportModal());
+        await closeReportModal(dispatch);
       },
-    }));
-  },
-  onRemoveReportFromDashboard(formState, report) {
+    });
+  }
+  const onRemoveReportFromDashboard = async (formState, report) => {
     // Only delete the link, not the report itself
     dispatch(dashboardsUpdateFormState(
       'reportSet',
       formState.reportSet.filter(r => r.id !== report.id),
-    ));
+    ) as Any<FixInRefactor>);
 
-    dispatch<any>(showToast({text: 'Removed report from dashboard.'}));
-    dispatch<any>(closeReportModal());
-  },
-}))(DashboardEdit);
+    showToast(dispatch, {text: 'Removed report from dashboard.'});
+    await closeReportModal(dispatch);
+  }
+
+  return (
+    <DashboardEdit
+      activeModal={activeModal}
+      spaceHierarchy={spaceHierarchy}
+      dashboards={dashboards}
+      selectedDashboard={selectedDashboard}
+      calculatedReportDataForPreviewedReport={calculatedReportDataForPreviewedReport}
+      dashboardWeekStart={dashboardWeekStart}
+      dashboardDate={dashboardDate}
+
+      onCloseModal={onCloseModal}
+      onUpdateFormState={onUpdateFormState}
+      onRelativeReportMove={onRelativeReportMove}
+      onSaveDashboard={onSaveDashboard}
+      onShowDeleteConfirm={onShowDeleteConfirm}
+      onCreateReport={onCreateReport}
+      onAddExistingReport={onAddExistingReport}
+      onEditReport={onEditReport}
+      onSaveReportModal={onSaveReportModal}
+      onReportShowDeletePopup={onReportShowDeletePopup}
+      onRemoveReportFromDashboard={onRemoveReportFromDashboard}
+    />
+  )
+}
+
+export default ConnectedDashboardEdit;

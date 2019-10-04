@@ -3,9 +3,9 @@ import { UserActionTypes } from '../../types/users';
 
 import accounts from '../../client/accounts';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 
-import mixpanelTrack from '../../helpers/mixpanel-track/index';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 import getBackendErrorDetail from '../../helpers/get-backend-error-detail';
 import { DispatchType } from '../../types/rx-actions';
 
@@ -26,15 +26,15 @@ export default async function userManagementCreate(dispatch: DispatchType, user)
       err.response.status === 400 &&
       getBackendErrorDetail(err) === 'User with this email already invited'
     ) {
-      dispatch(showToast({
+      showToast(dispatch, {
         text: 'User with this email already exists',
         type: 'error',
-      }) as any);
+      });
     } else {
-      dispatch(showToast({
+      showToast(dispatch, {
         text: 'Error creating user',
         type: 'error',
-      }) as any);
+      });
     }
     return false;
   }
@@ -43,9 +43,9 @@ export default async function userManagementCreate(dispatch: DispatchType, user)
     type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH,
     user: objectSnakeToCamel<DensityUser>(response.data)
   });
-  dispatch(showToast({
+  showToast(dispatch, {
     text: 'User successfully created',
-  }) as any);
+  });
 
   mixpanelTrack('User Invited', {
     email: user.email,

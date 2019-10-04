@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
 import { AppBar, AppBarSection, AppBarTitle, AppBarContext, Icons } from '@density/ui';
@@ -7,7 +6,9 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
 
-import { DensityDashboard, DensityDigestSchedule } from '../../types';
+import { DensityDashboard } from '../../types';
+import DigestSchedulesStore, { DigestSchedulesState } from '../../rx-stores/digest-schedules';
+import useRxStore from '../../helpers/use-rx-store';
 
 function generateHumanReadableFrequency(digest) {
   /* NOTE: the below is in local time. */
@@ -38,11 +39,7 @@ function generateHumanReadableFrequency(digest) {
 }
 
 type DashboardDigestPopupListProps = {
-  digestSchedules: {
-    view: 'VISIBLE' | 'LOADING' | 'ERROR',
-    data: Array<DensityDigestSchedule>,
-    error: string | null,
-  },
+  digestSchedules: DigestSchedulesState,
   selectedDashboard: DensityDashboard,
   onEditDigest: (DensityDigestSchedule) => any,
   onCreateDigest: () => any,
@@ -225,10 +222,20 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
   }
 }
 
-export default connect(
-  state => ({ digestSchedules: (state as any).digestSchedules }),
-  digest => ({}),
-)(DashboardDigestPopupList);
+
+const ConnectedDashboardDigestPopupList: React.FC<Omit<DashboardDigestPopupListProps, 'digestSchedules'>> = (externalProps) => {
+  
+  const digestSchedules = useRxStore(DigestSchedulesStore);
+
+  return (
+    <DashboardDigestPopupList
+      {...externalProps}
+      digestSchedules={digestSchedules}
+    />
+  )
+}
+
+export default ConnectedDashboardDigestPopupList;
 
 function Letter() {
   return (

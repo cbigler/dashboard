@@ -1,4 +1,4 @@
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
 import accounts from '../../client/accounts';
 import { UserActionTypes } from '../../types/users';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
@@ -18,10 +18,10 @@ export default async function collectionUsersLoad(dispatch: DispatchType) {
   if (errorThrown) {
     console.error(errorThrown);
     dispatch({ type: UserActionTypes.USER_MANAGEMENT_ERROR, error: errorThrown });
-    dispatch(showToast({
+    showToast(dispatch, {
       text: 'Error loading users',
       type: 'error',
-    }) as any);
+    });
   } else {
     dispatch({
       type: UserActionTypes.USER_MANAGEMENT_USERS_SET,

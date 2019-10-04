@@ -1,13 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { connect } from 'react-redux';
 
-import { hideToast } from '../../actions/toasts';
+import { hideToast } from '../../rx-actions/toasts';
 
 import { Toast } from '@density/ui';
 
 import styles from './styles.module.scss';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import useRxStore from '../../helpers/use-rx-store';
+import ToastsStore from '../../rx-stores/toasts';
 
+// FIXME: does anything import this (unconnected) component directly?
 export function Toaster({
   toasts,
   onDismiss,
@@ -27,12 +30,15 @@ export function Toaster({
   );
 }
 
-export default connect((state: any) => ({
-  toasts: state.toasts,
-}), dispatch => {
-  return {
-    onDismiss(id) {
-      dispatch<any>(hideToast(id));
-    },
-  };
-})(Toaster);
+// FIXME: this is just a direct conversion of "connect", can probably be removed soon
+export default () => {
+  const toasts = useRxStore(ToastsStore)
+  const dispatch = useRxDispatch();
+
+  return (
+    <Toaster
+      toasts={toasts}
+      onDismiss={id => { hideToast(dispatch, id); }}
+    />
+  )
+}

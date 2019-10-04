@@ -1,6 +1,5 @@
 import React, { ReactNode, Fragment } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -31,6 +30,9 @@ import {
 } from '../admin-locations-left-pane-data-row/index';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import SpacesStore from '../../rx-stores/spaces';
 
 function generateCreateRoute(parentId, type) {
   if (parentId) {
@@ -273,13 +275,20 @@ function AdminLocations({user, selectedSpace, spaces}) {
   );
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
-    user: state.user,
-  };
-}, (dispatch: any) => {
-  return {
-  };
-})(AdminLocations);
+const ConnectedAdminLocations: React.FC = () => {
+
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+
+  // FIXME: this again
+  const selectedSpace = spaces.data.find(s => s.id === spaces.selected)
+
+  return (
+    <AdminLocations
+      user={user}
+      spaces={spaces}
+      selectedSpace={selectedSpace}
+    />
+  )
+}
+export default ConnectedAdminLocations;
