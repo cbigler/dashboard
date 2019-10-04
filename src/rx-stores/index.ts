@@ -6,7 +6,6 @@ import debug from 'debug';
 const infoLog = debug('rx:info');
 const storeLog = debug('rx:store');
 const actionLog = debug('rx:action');
-const legacyActionLog = debug('rx:legacy-action');
 
 // StoreSubject is a BehaviorSubject that obfuscates the "value" accessor
 export class StoreSubject<S> extends BehaviorSubject<S> {
@@ -22,16 +21,6 @@ export class StoreSubject<S> extends BehaviorSubject<S> {
     );
   }
 }
-
-// LEGACY: "define rules that ... enforce a strict interface between existing
-// and modern code so it [is] easy to understand their relationship"
-// From https://slack.engineering/rebuilding-slack-on-the-desktop-308d6fe94ae4
-let reduxStore;
-
-// LEGACY: get the redux store as an observable that emits state updates
-let rxStoreSubscriptionUnsubscribe;
-export type ReduxState = Any<FixInRefactor>;
-export let RxReduxStore = new StoreSubject<ReduxState>({});
 
 // Global action stream for the dashboard
 export const actions = new Subject<GlobalAction>();
@@ -73,34 +62,4 @@ export function rxDispatch(action: GlobalAction) {
     actionLog(action.type, action);
     actions.next(action);
   }
-
-  // LEGACY: dispatch every action to redux too
-  if (reduxStore) {
-    if (['object', 'function'].includes(typeof action)) {
-      (action as Any<FixInRefactor>).legacyReduxAction = true;
-    }
-    reduxStore.dispatch(action as (GlobalAction & {legacyReduxAction: true}));
-  }
-}
-
-
-// LEGACY: redux middleware to listen for "old" actions
-// These might be thunks! But the .type property will be null
-export function rxLegacyReduxMiddleware() {
-  return next => action => {
-    legacyActionLog(action.type, action);
-    if (!action.legacyReduxAction) {
-      actions.next(action);
-    }
-    return next(action);
-  };
-}
-
-// LEGACY: save the redux store for interop
-export function rxLegacyReduxSetStore(store) {
-  if (rxStoreSubscriptionUnsubscribe) { rxStoreSubscriptionUnsubscribe(); }
-  reduxStore = store;
-  rxStoreSubscriptionUnsubscribe = reduxStore.subscribe(() => {
-    RxReduxStore.next(reduxStore.getState());
-  });
 }
