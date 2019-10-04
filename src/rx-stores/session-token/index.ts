@@ -5,7 +5,7 @@ import {
 } from 'rxjs/operators';
 import { SessionTokenActionTypes, SessionTokenState } from '../../types/session-token';
 import { configureClients } from '../../helpers/unsafe-configure-app';
-import createRxStore, { actions, rxDispatch, skipUpdate } from '..';
+import createRxStore, { actions, skipUpdate } from '..';
 
 const localStorage = window.localStorage || (global as any).localStorage || {};
 
@@ -33,5 +33,5 @@ actions.pipe(
   distinctUntilChanged(),
 ).subscribe(state => {
   localStorage.sessionToken = JSON.stringify(state);
-  configureClients(rxDispatch);
+  configureClients();
 });

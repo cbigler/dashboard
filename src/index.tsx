@@ -91,7 +91,7 @@ import SessionTokenStore from './rx-stores/session-token';
 import { SessionTokenState } from './types/session-token';
 import { rxDispatch } from './rx-stores';
 
-configureClients(rxDispatch);
+configureClients();
 
 
 // Send metrics to google analytics and mixpanel when the page url changes.
@@ -246,7 +246,7 @@ async function preRouteAuthentication() {
       headers: { 'Authorization': `JWT ${accessTokenMatch[1]}` }
     }).then(response => {
       (rxDispatch as Any<FixInReview>)(impersonateUnset());
-      configureClients(rxDispatch);
+      configureClients();
       sessionTokenSet(rxDispatch, response.data).then(data => {
         const user: any = objectSnakeToCamel(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);

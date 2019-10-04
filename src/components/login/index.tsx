@@ -100,7 +100,11 @@ export class Login extends React.Component<any, any> {
       this.setState({loading: false, error: null});
       this.props.onUserSuccessfullyLoggedIn(response.data, this.props.redirectAfterLogin);
     }).catch(error => {
-      this.setState({loading: false, error: error.toString()});
+      const errorText = error.toString();
+      this.setState({
+        loading: false,
+        error: errorText.endsWith('403') ? 'Invalid username or password' : errorText
+      });
     });
   }
 
