@@ -1,11 +1,6 @@
 import { DensitySpace } from '.';
-import { ReduxState } from '../rx-stores';
 // import { COLLECTION_SPACES_SET } from '../actions/collection/spaces/set';
 // import { COLLECTION_SPACES_ERROR } from '../actions/collection/spaces/error';
-
-export type LegacyThunkAction<T extends any = void> = (dispatch: LegacyReduxDispatch<T>, getState: () => ReduxState) => T;
-export type LegacyReduxDispatch<T extends any = void> = (action: ReduxAction | LegacyThunkAction<T>) => typeof action extends ReduxAction ? void : T
-
 
 // FIXME: The below 'COLLECTION_SPACES_SET' and 'COLLECTION_SPACES_ERROR' should use the constants
 // imported above, but if I do that, it types it as `string` and not the constant string it is set

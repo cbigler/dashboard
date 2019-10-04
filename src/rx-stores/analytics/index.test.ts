@@ -1,7 +1,7 @@
 import { Subject } from 'rxjs';
 
 import { AnalyticsState, ResourceStatus, AnalyticsActionType, QuerySelectionType } from '../../types/analytics';
-import { StoreSubject, skipUpdate, ReduxState } from '..';
+import { StoreSubject, skipUpdate } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 
 import { analyticsReducer, registerSideEffects, QueryDependencies } from '../analytics';
@@ -36,7 +36,7 @@ describe('AnalyticsStore', () => {
       activeReportId: null,
     }
   }
-  const initialReduxState: ReduxState = {
+  const initialReduxState: Any<FixInRefactor> = {
     spaces: {
       data: [{
         id: '123',
@@ -58,7 +58,7 @@ describe('AnalyticsStore', () => {
   let actionStream: Subject<GlobalAction>;
   let dispatch: (action: GlobalAction) => void;
   let analyticsStore: StoreSubject<AnalyticsState>;
-  let reduxStore: StoreSubject<ReduxState>;
+  let reduxStore: StoreSubject<Any<FixInRefactor>>;
   let userStore: StoreSubject<UserState>;
 
   beforeEach(() => {
