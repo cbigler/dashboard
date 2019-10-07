@@ -67,7 +67,7 @@ export async function rerenderReportInReportModal(
   clearPreviewReportData(dispatch);
 
   const currentDate = getStartOfWeek(
-    moment(dashboardDate),
+    moment(dashboardDate || undefined),
     dashboardWeekStart,
   ).format('YYYY-MM-DD');
 
