@@ -103,7 +103,7 @@ export class Login extends React.Component<any, any> {
       const errorText = error.toString();
       this.setState({
         loading: false,
-        error: errorText.endsWith('403') ? 'Invalid username or password' : errorText
+        error: errorText.endsWith('403') ? 'This email and password combination doesn\'t match our records' : errorText
       });
     });
   }
