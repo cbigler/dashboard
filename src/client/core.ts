@@ -17,15 +17,15 @@ export function config(dispatch, {
       error => errorHandler(dispatch, error)
     );
   }
-  if (token !== undefined) {
-    _client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  }
   if (impersonateUser !== undefined) {
     if (impersonateUser) { _client.defaults.headers['X-Impersonate-User'] = impersonateUser; }
     else { delete _client.defaults.headers['X-Impersonate-User']; }
   }
   if (goSlow !== undefined) {
     _slow = goSlow;
+  }
+  if (token) {
+    _client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   }
 }
 
