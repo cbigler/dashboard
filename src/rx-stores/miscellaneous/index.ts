@@ -13,9 +13,11 @@ export type MiscellaneousState = {
   dashboardSidebarVisible: boolean,
 }
 
+const getCurrentDate = () => moment().format('YYYY-MM-DD')
+
 export const initialState: MiscellaneousState = {
   redirectAfterLogin: null,
-  dashboardDate: null,
+  dashboardDate: getCurrentDate(),
   dashboardSidebarVisible: true,
 };
 
@@ -33,8 +35,10 @@ export function miscellaneousReducer(state: MiscellaneousState, action: Any<FixI
     case HIDE_DASHBOARDS_SIDEBAR:
       return { ...state, dashboardSidebarVisible: false };
     case SET_DASHBOARD_DATE:
-      return { ...state, dashboardDate: action.date };
+      // NOTE: skipping all direct updates of dashboard date for now
+      return state;
     case SCRUB_DASHBOARD_DATE:
+      // NOTE: scrubbing still affects dashboard date (this is only for one customer)
       return { ...state, dashboardDate: shiftDateByWeeks(state, action.weeks) };
     default:
       return state;
