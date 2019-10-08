@@ -304,16 +304,16 @@ export default function AnalyticsTable({
                 <Header
                   label="Max"
                   denominator={formatQueryInterval(analyticsReport.query.interval)}
-                  value={formatMetricNumber(max(tableData, x => x.metricData.count.max.value))}
+                  value={formatMetricNumber(max(tableData, x => x.metricData.entrances.peak.value))}
                   spaceSortDirection={spaceSortDirection}
                   spaceSortColumn={spaceSortColumn}
                   right
                 />
               }
-              valueTemplate={(x: TableDataItem) => x.metricData.count.max.value}
+              valueTemplate={(x: TableDataItem) => x.metricData.entrances.peak.value}
               template={(x: TableDataItem) => (
                 <Fragment>
-                  {formatMetricNumber(x.metricData.count.max.value)}
+                  {formatMetricNumber(x.metricData.entrances.peak.value)}
                   <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
                 </Fragment>
               )}
