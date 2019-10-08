@@ -22,6 +22,9 @@ import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAU
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
+import { ActivePageState } from '../../rx-stores/active-page';
+import { DensitySpace } from '../../types';
+import { SpaceHierarchyState } from '../../rx-stores/space-hierarchy';
 
 export function ExploreControlBarRaw({
   selectedSpace,
@@ -170,9 +173,28 @@ export function ExploreControlBarRaw({
   }
 }
 
+// FIXME
+type TemporaryExternalProps = {
+  spaceHierarchy: SpaceHierarchyState,
+  activePage: ActivePageState,
+  selectedSpace: DensitySpace,
+  filters: {
+    dailyRawEventsPage: number,
+    dataDuration: Any<FixInRefactor>,
+    date: string | null,
+    startDate: string | null,
+    endDate: string | null,
+    doorwayId: string | null,
+    parent: Any<FixInRefactor>,
+    search: string,
+    sort: Any<FixInRefactor>,
+    timeSegmentLabel: Any<FixInRefactor>,
+    metricToDisplay: Any<FixInRefactor>,
+  }
+}
 
 // FIXME: external props
-const ConnectedExploreControlBar: React.FC<Any<FixInRefactor>> = (externalProps) => {
+const ConnectedExploreControlBar: React.FC<TemporaryExternalProps> = (externalProps) => {
 
   const dispatch = useRxDispatch();
 

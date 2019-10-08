@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_SPACES_SET } from '../../rx-actions/collection/spaces/set';
 import { COLLECTION_SPACES_PUSH } from '../../rx-actions/collection/spaces/push';
@@ -31,12 +33,6 @@ import { SHOW_MODAL } from '../../rx-actions/modal/show';
 import { HIDE_MODAL } from '../../rx-actions/modal/hide';
 
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
-
-import {
-  getCurrentLocalTimeAtSpace,
-  convertDateToLocalTimeAtSpace,
-  formatInISOTime,
-} from '../../helpers/space-time-utilities/index';
 
 import { DensitySpace } from '../../types';
 import createRxStore from '..';
@@ -262,21 +258,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
 
   case COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE:
     if (state.selected && state.filters.date && state.filters.startDate && state.filters.endDate) {
-      return {
-        ...state,
-        filters: {
-          ...state.filters,
-          date: formatInISOTime(
-            convertDateToLocalTimeAtSpace(state.filters.date, action.space)
-          ),
-          startDate: formatInISOTime(
-            convertDateToLocalTimeAtSpace(state.filters.startDate, action.space)
-          ),
-          endDate: formatInISOTime(
-            convertDateToLocalTimeAtSpace(state.filters.endDate, action.space)
-          ),
-        }
-      };
+      return state;
     } else {
       return {
         ...state,
@@ -284,18 +266,12 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
           ...state.filters,
 
           // For single date pages like the daily page, default to today
-          date: formatInISOTime(
-            getCurrentLocalTimeAtSpace(action.space).startOf('day')
-          ),
+          date: moment().startOf('day').format('YYYY-MM-DD'),
 
           // For date range pages like the trends or raw events page, default to the last full week of
           // data
-          startDate: formatInISOTime(
-            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').startOf('week')
-          ),
-          endDate: formatInISOTime(
-            getCurrentLocalTimeAtSpace(action.space).subtract(1, 'week').endOf('week')
-          ),
+          startDate: moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
+          endDate: moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
         },
       };
     }
