@@ -182,8 +182,8 @@ function DashboardReportEditModal({
 
     const requiredControlsThatAreEmpty = selectedReportType ? getEmptyRequiredFields(activeModal.data.report) : [];
 
-    let modalWidth = 1024,
-        modalHeight = 800;
+    let modalWidth = 960,
+        modalHeight = 640;
     if (activeModal.data.page === PAGE_PICK_SAVED_REPORT) {
       modalWidth = 756;
     }
@@ -192,8 +192,8 @@ function DashboardReportEditModal({
       activeModal.data.page === PAGE_NEW_REPORT_CONFIGURATION &&
       activeModal.data.report.type === 'HEADER'
     ) {
-      modalWidth = 580;
-      modalHeight = 350;
+      modalWidth = 640;
+      modalHeight = 480;
     }
 
     return (
@@ -373,7 +373,7 @@ function DashboardReportEditModal({
                     <div className={styles.reportImageBackdrop}>
                       <img
                         src={selectedReportType.metadata.imageUrl}
-                        style={{width: 250}}
+                        style={{maxHeight: 200, maxWidth: 540}}
                         alt=""
                       />
                     </div>

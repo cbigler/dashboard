@@ -14,7 +14,7 @@
   display: flex;
   flex-grow: 1;
   flex-shrink: 1;
-  overflow-y: hidden;
+  height: 100%;
 }
 .left {
   display: flex;
@@ -59,10 +59,13 @@
   border-bottom: 1px solid $grayLight;
   user-select: none;
   outline: none;
-  height: 120px;
+  height: 140px;
 }
 .reportTypeItem:focus {
   background-color: $grayLightest;
+}
+.reportTypeItem:last-of-type {
+  border-bottom: none;
 }
 
 .nameRow {
@@ -73,31 +76,34 @@
 .name {
   margin-left: 16px;
   font-weight: 500;
-  height: 16px;
 }
 
 .reportTypeItemDescription {
-  margin-top: 8px;
+  margin-top: 12px;
   margin-right: 24px;
+  font-size: 14px;
 }
 
 .reportTypeImage {
   width: 80px;
-  height: 60px;
+  height: auto;
 }
 
 .reportImageBackdrop {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  height: 300px;
+  height: 244px;
   width: 100%;
   background-color: $grayLightest;
 }
 
 .reportFullDescription {
+  flex-shrink: 1;
   padding: 24px;
   white-space: pre-wrap;
+  overflow-y: scroll;
 }
 
 .reportConfigurationParent {
