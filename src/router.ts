@@ -1,5 +1,5 @@
 // Altered version of conduit
-import pathToRegexp, { Path, PathRegExp, PathFunction } from 'path-to-regexp';
+import pathToRegexp, { Path, PathFunction } from 'path-to-regexp';
 import debounce from 'lodash/debounce';
 
 
@@ -7,7 +7,7 @@ export type RouteResolver = (...params: string[]) => Promise<void>
 
 type Route = {
   path: Path,
-  regexp: PathRegExp,
+  regexp: RegExp,
   generate: PathFunction,
   resolve: RouteResolver,
 }
