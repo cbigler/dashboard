@@ -133,6 +133,7 @@ export function SpaceTypeForm({
     campus: [
       MODULES.generalInfo,
       MODULES.address,
+      MODULES.doorways,
       MODULES.operatingHours,
       MODULES.tags,
       MODULES.teams,
