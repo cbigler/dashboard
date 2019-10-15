@@ -27,7 +27,6 @@ import hideModal from '../../rx-actions/modal/hide';
 import { DensityService } from '../../types';
 
 import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-modal';
-import IntegrationsRobinUpdateModal from '../admin-integrations-robin-update-modal';
 import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
 
 import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
@@ -55,35 +54,23 @@ function iconForIntegration(serviceName: string) {
   return iconMap[serviceName] || "";
 }
 
-function activateEditLink(item, onClick) {
+function activateLink(item, onClick) {
   if (!item.serviceAuthorization.id && item.name !== 'condeco') {
     return <ListViewClickableLink onClick={onClick}>Activate</ListViewClickableLink>;
   }
-  if (item.name === "robin") {
-    return <ListViewClickableLink onClick={onClick}>Edit</ListViewClickableLink>;
-  }
 }
 
-function handleActivateEditClick(item, onOpenModal) {
+function handleActivateClick(item, onOpenModal) {
   if (item.name === "teem" && !item.serviceAuthorization.id) {
      window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
   } else if (item.name === "google_calendar" && !item.serviceAuthorization.id) {
     return doGoogleCalendarAuthRedirect();
   } else if (item.name === "outlook" && !item.serviceAuthorization.id) {
     return doOutlookAuthRedirect();
-  } else {
-    onOpenModal(!item.serviceAuthorization.id ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
+  } else if (item.name === "robin" && !item.serviceAuthorization.id) {
+    onOpenModal('integrations-robin-create', {serviceAuthorization: item.serviceAuthorization})
   }
 }
-
-function handleDeleteClick(item, onOpenModal) {
-  if (["teem", "google_calendar", "outlook", "condeco"].includes(item.name)) {
-    onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
-  } else {
-    onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});
-  }
-}
-
 
 export function AdminIntegrations({
   activeModal,
@@ -91,7 +78,6 @@ export function AdminIntegrations({
   onOpenModal,
   onMakeServiceAuthorizationDefault,
   onCreateServiceAuthorizationRobin,
-  onUpdateServiceAuthorizationRobin,
   onDestroyServiceAuthorization,
   onCloseModal,
 }) {
@@ -103,18 +89,6 @@ export function AdminIntegrations({
 
       onSubmit={onCreateServiceAuthorizationRobin}
       onDismiss={onCloseModal}
-    /> : null}
-
-    {activeModal.name === 'integrations-robin-update' ? <IntegrationsRobinUpdateModal
-      visible={activeModal.visible}
-      initialServiceAuthorization={activeModal.data.serviceAuthorization}
-      isDestroying={activeModal.data.isDestroying}
-      error={integrations.error}
-      loading={integrations.loading}
-
-      onSubmit={onUpdateServiceAuthorizationRobin}
-      onDismiss={onCloseModal}
-      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
     /> : null}
 
     {activeModal.name === 'integrations-service-destroy' ? <IntegrationsServiceDestroyModal
@@ -190,9 +164,9 @@ export function AdminIntegrations({
             title=" "
             width={90}
             align="right"
-            template={item => activateEditLink(
+            template={item => activateLink(
               item,
-              () => handleActivateEditClick(item, onOpenModal)
+              () => handleActivateClick(item, onOpenModal)
             )}
           />
           <ListViewColumn
@@ -203,7 +177,7 @@ export function AdminIntegrations({
             template={item => (
               !item.serviceAuthorization.id ?
                 null :
-                <ListViewClickableLink onClick={() => handleDeleteClick(item, onOpenModal)}>
+                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}>
                   <Icons.Trash color={colorVariables.grayDarker} />
                 </ListViewClickableLink>
             )}
@@ -283,11 +257,6 @@ const ConnectedAdminIntegrations: React.FC = () => {
     if (ok) { hideModal(dispatch); }
   }
 
-  const onUpdateServiceAuthorizationRobin = async (serviceAuthorization) => {
-    const ok = await collectionServiceAuthorizationUpdate(dispatch, 'robin', serviceAuthorization);
-    if (ok) { hideModal(dispatch); }
-  }
-
   const onDestroyServiceAuthorization = async (serviceAuthorizationId) => {
     const ok = await collectionServiceAuthorizationDestroy(dispatch, serviceAuthorizationId);
     if (ok) { hideModal(dispatch); }
@@ -304,7 +273,6 @@ const ConnectedAdminIntegrations: React.FC = () => {
       onOpenModal={onOpenModal}
       onCloseModal={onCloseModal}
       onCreateServiceAuthorizationRobin={onCreateServiceAuthorizationRobin}
-      onUpdateServiceAuthorizationRobin={onUpdateServiceAuthorizationRobin}
       onDestroyServiceAuthorization={onDestroyServiceAuthorization}
       onMakeServiceAuthorizationDefault={onMakeServiceAuthorizationDefault}
     />
