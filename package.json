@@ -45,7 +45,7 @@
     "uuid": "^3.3.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.6.2",
+    "@babel/core": "^7.6.4",
     "@storybook/addon-actions": "^5.2.4",
     "@storybook/addon-notes": "^5.2.4",
     "@storybook/addon-storysource": "^5.2.4",
