@@ -30,7 +30,7 @@ import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-mod
 import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
 
 import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
-import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
+import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
 import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
 
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
