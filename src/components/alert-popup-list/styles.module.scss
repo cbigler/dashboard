@@ -129,6 +129,10 @@ $alertBackdropZIndex: 99999;
   color: $grayDarkest;
   transition: color 200ms ease;
 }
+.alertListDropdownItemInfoNumber {
+  color: $brandPrimary;
+  font-weight: 500;
+}
 
 .alertListDropdownItemInfoSecondRow {
   display: flex;
@@ -156,6 +160,7 @@ $alertBackdropZIndex: 99999;
 
 .alertListDropdownItemDisabled .alertListDropdownItemInfoFirstRow,
 .alertListDropdownItemDisabled .alertListDropdownItemInfoSecondRow,
+.alertListDropdownItemDisabled .alertListDropdownItemInfoNumber,
 .alertListDropdownItemDisabled .alertListDropdownItemInfoEscalationText {
   color: $grayDarker;
 }

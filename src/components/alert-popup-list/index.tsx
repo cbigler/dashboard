@@ -13,6 +13,14 @@ import showModal from '../../rx-actions/modal/show';
 import collectionAlertsUpdate from '../../rx-actions/alerts/update';
 import { showToast } from '../../rx-actions/toasts';
 
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { DensityNotification } from '../../types';
+
+function formatAlertPhoneNumber(alert: DensityNotification) {
+  const phoneNumber = parsePhoneNumberFromString((alert.meta || {}).toNum || '');
+  return phoneNumber ? phoneNumber.formatNational() : 'Invalid Number';
+}
+
 export default function AlertPopupList({ selectedSpace }) {
   const { view, data } = useRxStore(alertsStore);
   const dispatch = useRxDispatch();
@@ -105,10 +113,13 @@ export default function AlertPopupList({ selectedSpace }) {
                   />
                   <div className={styles.alertListDropdownItemInfo}>
                     <div className={styles.alertListDropdownItemInfoFirstRow}>
-                      Text me when occupancy {alert.triggerType === 'greater_than' ? 'exceeds' : 'drops below'}
+                      Text <span className={styles.alertListDropdownItemInfoNumber}>
+                        {formatAlertPhoneNumber(alert)}
+                      </span> when
                     </div>
                     <div className={styles.alertListDropdownItemInfoSecondRow}>
                       <span className={styles.alertListDropdownItemInfoSecondRowText}>
+                        Occupancy {alert.triggerType === 'greater_than' ? '>' : '<'}{' '}
                         {alert.triggerValue} {alert.triggerValue === 1 ? 'person' : 'people'}
                         {alert.isOneShot ? null :
                           <span className={styles.alertListDropdownItemInfoEscalationText}>
