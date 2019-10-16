@@ -65,7 +65,6 @@ export function AdminDeviceStatus({
       <InputBox
         type="text"
         width={250}
-        className={'hey'}
         placeholder="Filter dpus ..."
         value={sensorsFilterText}
         onChange={e => setSensorsFilterText(e.target.value)}
