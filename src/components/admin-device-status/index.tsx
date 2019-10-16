@@ -106,7 +106,7 @@ export function AdminDeviceStatus({
           <ListViewColumn
             id="Firmware Version"
             width={360}
-            template={item => item.firmwareVersion || "4825-5e0ddc1-stable-hicksville-s5_1g-release"} />
+            template={item => item.firmwareVersion} />
           <ListViewColumn
             id="Ethernet"
             width={280}
