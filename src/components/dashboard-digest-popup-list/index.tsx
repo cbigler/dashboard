@@ -70,7 +70,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
 
     return (
       <div className={styles.dashboardDigestList}>
-				<div
+        <div
           className={classnames(styles.dashboardDigestBackdrop, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: false})}
         />

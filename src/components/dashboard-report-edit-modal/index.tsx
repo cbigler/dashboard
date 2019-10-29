@@ -254,18 +254,18 @@ function DashboardReportEditModal({
                           }
 
                           return (
-														<div className={styles.savedReportNameWrapper}>
-															<RadioButton
-																checked={item.id === activeModal.data.pickSavedReportSelectedReportId}
-																onChange={() => onUpdateModal('pickSavedReportSelectedReportId', item.id)}
-																// Cannot select reports that are already in the dashboard
-																disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
-															/>
-															<div className={styles.savedReportNameWrapperColumn}>
-																<h5>{item.name}</h5>
-																<span>{reportType}</span>
-															</div>
-														</div>
+                            <div className={styles.savedReportNameWrapper}>
+                              <RadioButton
+                                checked={item.id === activeModal.data.pickSavedReportSelectedReportId}
+                                onChange={() => onUpdateModal('pickSavedReportSelectedReportId', item.id)}
+                                // Cannot select reports that are already in the dashboard
+                                disabled={Boolean(reportsInSelectedDashboard.find(report => report.id === item.id))}
+                              />
+                              <div className={styles.savedReportNameWrapperColumn}>
+                                <h5>{item.name}</h5>
+                                <span>{reportType}</span>
+                              </div>
+                            </div>
                           );
                         }}
                         onClick={item => {

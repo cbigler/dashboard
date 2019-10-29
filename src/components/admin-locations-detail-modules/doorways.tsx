@@ -344,7 +344,7 @@ function AdminLocationsDetailModulesDoorwayModal({
                 onChange={e => onChangeField('clearance', !e.target.checked)}
               />
             </div>
-						{MOUNTING_SPACE_GLYPH}
+            {MOUNTING_SPACE_GLYPH}
           </div>
         </div>
         <FormLabel
@@ -565,14 +565,12 @@ function DoorwayList({
         />
         <ListViewColumn
           id={null}
-          template={i => i.selected ? (
-            <div
-              className={styles.editLink}
-              onClick={() => onEditDoorway(i)}
-            >
-              Edit
-            </div>
-          ): null}
+          template={i => <div
+            className={styles.editLink}
+            onClick={() => onEditDoorway(i)}
+          >
+            Edit
+          </div>}
           width={50}
         />
       </ListView>
@@ -599,8 +597,8 @@ function AdminLocationsDetailModulesDoorways({
   const doorwaysFilter = filterCollection({fields: ['name']});
   const filteredDoorways = doorwaysFilter(formState.doorways, formState.doorwaysFilter);
 
-	const topDoorways = filteredDoorways.filter(x => x.list === 'TOP');
-	const bottomDoorways = filteredDoorways.filter(x => x.list === 'BOTTOM');
+  const topDoorways = filteredDoorways.filter(x => x.list === 'TOP');
+  const bottomDoorways = filteredDoorways.filter(x => x.list === 'BOTTOM');
 
   function onSelectDoorway(doorway, state) {
     if (state) {

@@ -22,3 +22,10 @@
   white-space: nowrap;
 }
 .leftPaneDataRowItem span { font-size: 18px; }
+
+
+.listViewName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

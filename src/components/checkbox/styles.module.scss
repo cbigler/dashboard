@@ -22,8 +22,8 @@ $check-dark-image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
   background-color: transparent;
 }
 .checkbox:disabled + label {
-	cursor: default;
-	color: $grayDarker;
+  cursor: default;
+  color: $grayDarker;
 }
 .checkbox + label:before {
   content: ' ';

@@ -27,7 +27,7 @@ import {
 import {
   AdminLocationsLeftPaneDataRow,
   AdminLocationsLeftPaneDataRowItem,
-} from '../admin-locations-left-pane-data-row/index';
+} from '../admin-locations-snippets/index';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
 import useRxStore from '../../helpers/use-rx-store';
