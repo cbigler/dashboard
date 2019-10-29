@@ -50,7 +50,7 @@
     "@storybook/addon-actions": "^5.2.5",
     "@storybook/addon-notes": "^5.2.5",
     "@storybook/addon-storysource": "^5.2.5",
-    "@storybook/react": "^5.2.4",
+    "@storybook/react": "^5.2.5",
     "@types/jest": "^24.0.19",
     "@types/lodash": "^4.14.144",
     "@types/mixpanel": "^2.14.2",
