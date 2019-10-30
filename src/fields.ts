@@ -19,6 +19,7 @@ export default [
     slug: 'core',
     defaults: {
       'production': 'https://api.density.io/v2',
+      'dr': 'https://agitated-lemur-api.density.io/v2',
       'staging': 'https://core-staging.density.io/v2',
       'dev01': 'https://dev01-us-east-1-api.density.io/v2',
       'dev02': 'https://dev02-us-east-1-api.density.io/v2',
@@ -32,6 +33,7 @@ export default [
     slug: 'accounts',
     defaults: {
       'production': 'https://accounts.density.io/v2',
+      'dr': 'https://agitated-lemur-accounts.density.io/v2',
       'staging': 'https://accounts-staging.density.io/v2',
       'dev01': 'https://dev01-us-east-1-accounts.density.io/v2',
       'dev02': 'https://dev02-us-east-1-accounts.density.io/v2',
