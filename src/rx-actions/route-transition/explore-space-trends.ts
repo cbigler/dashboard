@@ -29,8 +29,8 @@ export default async function routeTransitionExploreSpaceTrends(dispatch, id) {
   // this view unrfortunately.
   let spaces, spaceHierarchy, selectedSpace;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-    spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
   } catch (err) {
     dispatch(collectionSpacesError(`Error loading data: ${err.message}`));
     return;

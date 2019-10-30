@@ -27,10 +27,12 @@ import {
   AdminLocationsListCapacity,
   AdminLocationsListDPUsTotal,
   AdminLocationsListRightArrow,
-  AdminLocationsListRoomsTotal
+  AdminLocationsListRoomsTotal,
+  AdminLocationsDoorwayList,
+  AdminLocationsOperatingHours,
 } from '../admin-locations-snippets';
 
-export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace }) {
+export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace, spaceManagement }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
 
   return (
@@ -52,6 +54,8 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace 
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailDPUsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
+          <AdminLocationsOperatingHours space={selectedSpace} />
+          <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
         </div>
       </AppSidebar>
       <AppPane>

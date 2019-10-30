@@ -32,7 +32,9 @@ import {
   AdminLocationsListCapacity,
   AdminLocationsListDPUsTotal,
   AdminLocationsListRightArrow,
-  AdminLocationsListLevelsTotal
+  AdminLocationsListLevelsTotal,
+  AdminLocationsDoorwayList,
+  AdminLocationsOperatingHours,
 } from '../admin-locations-snippets';
 
 function SpaceList({ user, spaces, renderedSpaces }) {
@@ -55,7 +57,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
   );
 }
 
-export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpace }) {
+export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpace, spaceManagement }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
   const floors = visibleSpaces.filter(space => space.spaceType === 'floor');
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
@@ -95,6 +97,8 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailDPUsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
+          <AdminLocationsOperatingHours space={selectedSpace} />
+          <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
         </div>
       </AppSidebar>
       <AppPane>

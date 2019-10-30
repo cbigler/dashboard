@@ -11,8 +11,8 @@ export default async function routeTransitionAdminUserManagement(dispatch) {
 
   await userManagementRead(dispatch);
 
-  const hierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-  const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+  const hierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+  const spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
 
   dispatch(collectionSpaceHierarchySet(hierarchy));
   dispatch(collectionSpacesSet(spaces));

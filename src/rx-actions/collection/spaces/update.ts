@@ -119,18 +119,18 @@ export default async function collectionSpacesUpdate(dispatch, item) {
       await Promise.all(item.links.map(async linkItem => {
         switch (linkItem.operationToPerform) {
         case 'CREATE':
-          return core().post('/links', {
+          return await core().post('/links', {
             space_id: item.id,
             doorway_id: linkItem.doorwayId,
             sensor_placement: linkItem.sensorPlacement,
           });
         case 'UPDATE':
-          return core().post(`/links/${linkItem.id}/set_placement`, {
+          return await core().post(`/links/${linkItem.id}/set_placement`, {
             sensor_placement: linkItem.sensorPlacement,
             update_historical: linkItem.updateHistoricCounts,
           });
         case 'DELETE':
-          return core().delete(`/links/${linkItem.id}`);
+          return await core().delete(`/links/${linkItem.id}`);
         default:
           return;
         }

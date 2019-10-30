@@ -19,6 +19,7 @@ export default async function routeTransitionLiveSpaceList(dispatch) {
 
   const spaceEventSets: any = await Promise.all(spaces.map(space => {
     return fetchAllObjects(`/spaces/${space.id}/events`, {
+      cache: false,
       params: {
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
         end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),

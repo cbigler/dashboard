@@ -17,10 +17,10 @@ export default async function routeTransitionDashboardEdit(dispatch, dashboardId
   let dashboard, reportList, spaceHierarchy, timeSegmentLabels;
   try {
     [dashboard, reportList, spaceHierarchy, timeSegmentLabels] = await Promise.all([
-      fetchObject<DensityDashboard>(`/dashboards/${dashboardId}`),
-      fetchAllObjects<DensityReport>('/reports'),
-      fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy'),
-      fetchAllObjects<any>('/time_segments/labels'),
+      fetchObject<DensityDashboard>(`/dashboards/${dashboardId}`, { cache: false }),
+      fetchAllObjects<DensityReport>('/reports', { cache: false }),
+      fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false }),
+      fetchAllObjects<any>('/time_segments/labels', { cache: false }),
     ]);
   } catch (err) {
     dispatch(dashboardsError(err));

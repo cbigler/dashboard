@@ -19,8 +19,8 @@ export default async function routeTransitionAdminUserManagementDetail(dispatch,
 
   let hierarchy, spaces, errorThrown = null;
   try {
-    hierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-    spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    hierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
   } catch (e) {
     errorThrown = e;
   }

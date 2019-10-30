@@ -30,10 +30,12 @@ import {
   AdminLocationsListDPUsTotal,
   AdminLocationsListRightArrow,
   AdminLocationsListLevelsTotal,
-  AdminLocationsListAnnualRent
+  AdminLocationsListAnnualRent,
+  AdminLocationsDoorwayList,
+  AdminLocationsOperatingHours,
 } from '../admin-locations-snippets';
 
-export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace }) {
+export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace, spaceManagement }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
@@ -65,6 +67,8 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailDPUsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
+          <AdminLocationsOperatingHours space={selectedSpace} />
+          <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
         </div>
       </AppSidebar>
       <AppPane>

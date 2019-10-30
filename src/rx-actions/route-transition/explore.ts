@@ -37,8 +37,8 @@ export default async function routeTransitionExplore(dispatch) {
   errorThrown = false;
   let spaces, spaceHierarchy;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-    spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
   } catch (err) {
     errorThrown = true;
     dispatch(collectionSpacesError(`Error loading spaces: ${err}`));

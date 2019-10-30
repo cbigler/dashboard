@@ -23,7 +23,7 @@ export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DET
 async function loadDigestSchedules(dispatch) {
   let schedules, errorThrown;
   try {
-    schedules = await fetchAllObjects<DensityDigestSchedule>('/digest_schedules');
+    schedules = await fetchAllObjects<DensityDigestSchedule>('/digest_schedules', { cache: false });
   } catch (err) {
     errorThrown = err;
   }
@@ -91,7 +91,7 @@ async function loadDashboardAndReports(dispatch, id) {
 
   let dashboards;
   try {
-    dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
+    dashboards = await fetchAllObjects<DensityDashboard>('/dashboards', { cache: false });
   } catch (err) {
     dispatch(dashboardsError(err));
     return;
@@ -127,7 +127,7 @@ async function loadDashboardAndReports(dispatch, id) {
       );
     } else {
       try {
-        selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`);
+        selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`, { cache: false });
       } catch (err) {
         dispatch(dashboardsError(err));
         return;

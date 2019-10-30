@@ -15,10 +15,6 @@ import collectionAssignedTeamsSet from '../collection/assigned-teams/set';
 
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
 
-async function getHierarchy() {
-  return await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-}
-
 export async function loadData(dispatch) {
   let hierarchy: Array<DensitySpaceHierarchyItem>,
     spaces: Array<DensitySpace>,
@@ -28,12 +24,12 @@ export async function loadData(dispatch) {
     assignedTeams: Array<DensityAssignedTeam>;
   try {
     [hierarchy, spaces, doorways, labels, tags, assignedTeams] = await Promise.all([
-      getHierarchy(),
-      await fetchAllObjects<DensitySpace>('/spaces'),
-      await fetchAllObjects<DensityDoorway>('/doorways'),
-      await fetchAllObjects<DensityTimeSegmentLabel>('/time_segments/labels'),
-      await fetchAllObjects<DensityTag>('/tags'),
-      await fetchAllObjects<DensityAssignedTeam>('/assigned_teams'),
+      await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false }),
+      await fetchAllObjects<DensitySpace>('/spaces', { cache: false }),
+      await fetchAllObjects<DensityDoorway>('/doorways', { cache: false }),
+      await fetchAllObjects<DensityTimeSegmentLabel>('/time_segments/labels', { cache: false }),
+      await fetchAllObjects<DensityTag>('/tags', { cache: false }),
+      await fetchAllObjects<DensityAssignedTeam>('/assigned_teams', { cache: false }),
     ]);
   } catch (err) {
     console.error(err);

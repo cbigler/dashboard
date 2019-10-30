@@ -333,9 +333,11 @@ const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps
       ...spaceFieldUpdate,
       id: spaceId,
     });
+
+    dispatch(spaceManagementReset() as Any<FixInRefactor>);
+
     if (!ok) {
       showToast(dispatch, { type: 'error', text: 'Error updating space' });
-      dispatch(spaceManagementReset() as Any<FixInRefactor>);
       return false;
     }
 

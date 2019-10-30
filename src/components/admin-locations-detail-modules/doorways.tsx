@@ -511,7 +511,7 @@ function DoorwayList({
                   <span className={styles.linkedSpacesText}>
                     {
                       spacesOtherThanSelectedSpace.length > 1 ?
-                      `${spacesOtherThanSelectedSpace.length} Linked Spaces` :
+                      `${spacesOtherThanSelectedSpace.length} other spaces` :
                       spacesOtherThanSelectedSpace[0].name
                     }
                   </span>
@@ -519,7 +519,7 @@ function DoorwayList({
               );
             } else {
               return (
-                <Fragment>Not linked</Fragment>
+                <Fragment>No other spaces</Fragment>
               )
             }
           }}

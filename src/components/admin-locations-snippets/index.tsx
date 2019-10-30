@@ -1,15 +1,18 @@
 import React, { Fragment } from 'react';
 import classnames from 'classnames';
 import commaNumber from 'comma-number';
-import { Icons, ListViewColumn } from '@density/ui';
+
+import { Icons, ListView, ListViewColumn } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
 
 import { SpacesState } from '../../rx-stores/spaces';
-import { DensitySpace, DensitySpaceTypes } from '../../types';
+import { DensitySpace, DensitySpaceTypes, DensityDoorway } from '../../types';
 import { UserState } from '../../rx-stores/user';
 import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
+import moment from 'moment';
 
 
 /********************
@@ -151,7 +154,7 @@ export function AdminLocationsListInfo() {
     template={(item: DensitySpace) => (
       <Fragment>
         <AdminLocationsListViewImage space={item} />
-        <span className={styles.listViewName}>{item.name}</span>
+        <span className={styles.listViewSpaceName}>{item.name}</span>
       </Fragment>
     )}
   />;
@@ -231,4 +234,133 @@ export function AdminLocationsListRightArrow() {
       <Icons.ArrowRight width={17} height={17} />
     </span>}
   />
+}
+
+
+/********************
+Larger items to render in sidebar
+*********************/
+
+function AdminLocationsOperatingHoursSegment({segment}) {
+  const start = moment(segment.start, 'HH:mm:ss');
+  const end = moment(segment.end, 'HH:mm:ss');
+  // if (start.diff(end) === 0 && start.hour() === 0) {
+  //   end.add(1, 'day').subtract(1, 'minute'); 
+  // }
+  const isNextDay = end <= start;
+
+  return <div className={styles.operatingHoursSegment}>
+    {start.format('h:mma').slice(0, -1)}
+    {' - '}
+    {end.format('h:mma').slice(0, -1)}
+    {isNextDay ? ' (next day)' : ''}
+  </div>;
+} 
+
+export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
+  const DEFAULT_OPERATING_HOURS_BY_DAY = {
+    'Sunday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Monday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Tuesday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Wednesday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Thursday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Friday': [{ start: '00:00:00', end: '00:00:00' }],
+    'Saturday': [{ start: '00:00:00', end: '00:00:00' }],
+  };
+
+  const operatingHoursByDay = space.timeSegments.length === 0 ?
+    DEFAULT_OPERATING_HOURS_BY_DAY :
+    space.timeSegments.reduce((acc, next) => {
+      next.days.forEach(day => {
+        acc[day] = acc[day] || [];
+        acc[day].push({ start: next.start, end: next.end });
+        acc[day].sort((a, b) => moment(a.start, 'HH:mm:ss').diff(moment(b.start, 'HH:mm:ss')));
+      });
+      return acc;
+    }, {} as typeof DEFAULT_OPERATING_HOURS_BY_DAY);
+
+  return <AdminLocationsLeftPaneDataRow>
+    <div className={styles.operatingHoursContainer}>
+      <div className={styles.operatingHoursTitle}>Operating Hours</div>
+      <div className={styles.operatingHoursCard}>
+        {Object.keys(operatingHoursByDay).map(day => {
+          const segments = operatingHoursByDay[day];
+          return <div className={styles.operatingHoursDayRow}>
+            <div className={styles.operatingHoursDayName}>{moment(day, 'dddd').format('ddd')}:</div>
+            {segments.map((segment, index) => <Fragment>
+              <AdminLocationsOperatingHoursSegment segment={segment} />
+              {index < segments.length - 1 ? <div style={{ marginRight: 4 }}>, </div> : null}
+            </Fragment>)}
+          </div>;
+        })}
+      </div>
+    </div>
+  </AdminLocationsLeftPaneDataRow>;
+}
+
+export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpace, doorways: Array<DensityDoorway>}) {
+  const linkedDoorways = doorways.filter(doorway => doorway.spaces.map(s => s.id).indexOf(space.id) > -1);
+  return linkedDoorways.length > 0 ? (
+    <AdminLocationsLeftPaneDataRow>
+      <div className={classnames(styles.doorwayList, {[styles.shaded]: true})}>
+        <ListView data={linkedDoorways} padOuterColumns={false}>
+          <ListViewColumn
+            id="Doorways"
+            template={item => <Fragment>
+              <div className={styles.doorwayContainer}>
+                <div className={styles.doorwayIcon}>
+                  <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
+                </div>
+                <span className={styles.doorwayName}>{item.name}</span>
+              </div>
+            </Fragment>}
+            width={220}
+          />
+          <ListViewColumn
+            id="Linked spaces"
+            template={i => {
+              const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== space.id);
+              if (spacesOtherThanSelectedSpace.length >= 1) {
+                return (
+                  <div className={styles.doorwayLinkedSpacesTag}>
+                    <div className={styles.doorwayLinkedSpacesIcon}>
+                      <Icons.Link width={20} height={20} />
+                    </div>
+                    <span className={styles.doorwayLinkedSpacesText}>
+                      {
+                        spacesOtherThanSelectedSpace.length > 1 ?
+                        `${spacesOtherThanSelectedSpace.length} other spaces` :
+                        spacesOtherThanSelectedSpace[0].name
+                      }
+                    </span>
+                  </div>
+                );
+              } else {
+                return (
+                  <Fragment>No other spaces</Fragment>
+                )
+              }
+            }}
+            width={200}
+          />
+          <ListViewColumn
+            id="DPU position"
+            align="right"
+            template={i => <Fragment>
+              {i.sensorPlacement !== null ? (
+                <Fragment>
+                  <span className={styles.doorwayDpuPosition}>
+                    {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
+                  </span>
+                </Fragment>
+              ) : (
+                <Fragment>&mdash;</Fragment>
+              )}
+            </Fragment>}
+            width={80}
+          />
+        </ListView>
+      </div>
+    </AdminLocationsLeftPaneDataRow>
+  ) : null;
 }

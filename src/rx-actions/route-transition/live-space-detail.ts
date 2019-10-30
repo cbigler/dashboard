@@ -15,7 +15,7 @@ export const ROUTE_TRANSITION_LIVE_SPACE_DETAIL = 'ROUTE_TRANSITION_LIVE_SPACE_D
 
 export default async function routeTransitionLiveSpaceDetail(dispatch, id) {
   try {
-    const space = await fetchObject<DensitySpace>(`/spaces/${id}`);
+    const space = await fetchObject<DensitySpace>(`/spaces/${id}`, { cache: false });
     dispatch(collectionSpacesPush(space));
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
     dispatch(collectionSpacesSetDefaultTimeRange(space));
@@ -24,6 +24,7 @@ export default async function routeTransitionLiveSpaceDetail(dispatch, id) {
     // This is used to populate this space's events collection with all the events from the last
     // minute so that the real time event charts all display as "full" when the page reloads.
     const spaceEventSet = await fetchAllObjects(`/spaces/${space.id}/events`, {
+      cache: false,
       params: {
         id: space.id,
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),

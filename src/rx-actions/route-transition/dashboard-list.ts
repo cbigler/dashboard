@@ -11,7 +11,7 @@ export default async function routeTransitionDashboardList(dispatch) {
 
   let dashboards;
   try {
-    dashboards = await fetchAllObjects<DensityDashboard>('/dashboards');
+    dashboards = await fetchAllObjects<DensityDashboard>('/dashboards', { cache: false });
   } catch (err) {
     dispatch(dashboardsError(err));
     return;

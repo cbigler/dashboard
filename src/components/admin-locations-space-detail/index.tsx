@@ -26,10 +26,12 @@ import {
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
   AdminLocationsListDPUsTotal,
-  AdminLocationsListRightArrow
+  AdminLocationsListRightArrow,
+  AdminLocationsDoorwayList,
+  AdminLocationsOperatingHours,
 } from '../admin-locations-snippets';
 
-export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace }) {
+export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace, spaceManagement }) {
   const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
 
   const leftPaneDataItemContents = (
@@ -80,6 +82,8 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace 
             <AdminLocationsLeftPaneDataRow includeTopBorder={false}>
               {leftPaneDataItemContents}
             </AdminLocationsLeftPaneDataRow>
+            <AdminLocationsOperatingHours space={selectedSpace} />
+            <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
           </div>
         </AppSidebar>
         <AppPane>

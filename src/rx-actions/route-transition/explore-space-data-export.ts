@@ -12,8 +12,8 @@ export default async function routeTransitionExploreSpaceDataExport(dispatch, id
   dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT, id });
 
   try {
-    const spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    const spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+    const spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
     const selectedSpace = spaces.find(s => s.id === id);
 
     await collectionAlertsRead(dispatch);

@@ -40,8 +40,8 @@ export default async function routeTransitionExploreSpaceDaily(dispatch, id) {
   // this view unfortunately.
   let spaces, spaceHierarchy, selectedSpace;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy');
-    spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
     selectedSpace = spaces.find(s => s.id === id);
   } catch (err) {
     dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
@@ -81,6 +81,7 @@ export async function calculateFootTraffic(dispatch, space) {
   let data;
   try {
     data = (await fetchAllObjects(`/spaces/${space.id}/counts`, {
+      cache: false,
       params: {
         interval: '5m',
         time_segment_labels: timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? undefined : timeSegmentLabel,
@@ -159,7 +160,7 @@ export async function calculateDailyRawEvents(dispatch, space) {
   // already known.
   const doorwayRequests = uniqueArrayOfDoorways.map(async doorwayId => {
     try {
-      return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`);
+      return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, { cache: false });
     } catch (error) {
       dispatch(exploreDataCalculateDataError('dailyRawEvents', error));
       return;

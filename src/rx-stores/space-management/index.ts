@@ -12,6 +12,7 @@ import { USER_PUSH } from '../../rx-actions/user/push';
 import { SPACE_MANAGEMENT_FORM_UPDATE } from '../../rx-actions/space-management/form-update';
 import { SPACE_MANAGEMENT_FORM_DOORWAY_PUSH } from '../../rx-actions/space-management/form-doorway-push';
 import { SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE } from '../../rx-actions/space-management/form-doorway-update';
+import { SPACE_MANAGEMENT_SET_DOORWAYS } from '../../rx-actions/space-management/set-doorways';
 import { SPACE_MANAGEMENT_SET_DATA } from '../../rx-actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../rx-actions/space-management/error';
 import { SPACE_MANAGEMENT_RESET } from '../../rx-actions/space-management/reset';
@@ -383,6 +384,12 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
     }
   }
 
+  case SPACE_MANAGEMENT_SET_DOORWAYS:
+    return {
+      ...state,
+      doorways: action.doorways,
+    };
+
   case SPACE_MANAGEMENT_SET_DATA:
     const newState: SpaceManagementState = {
       ...state,
@@ -472,13 +479,6 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       error: action.error.message || action.error,
     };
 
-  case SPACE_MANAGEMENT_RESET:
-    return {
-      ...state,
-      view: 'VISIBLE',
-      error: null,
-    };
-
   case SPACE_MANAGEMENT_FORM_UPDATE:
     return {
       ...state,
@@ -519,6 +519,9 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
         })
       }
     };
+  
+  case SPACE_MANAGEMENT_RESET:
+    return initialState;
 
   default:
     return state;
