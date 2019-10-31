@@ -11,7 +11,6 @@ import {
   Toast,
   ToastContext,
 } from '@density/ui';
-import colorVariables from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';
 import { impersonateUnset } from '../../actions/impersonate';
