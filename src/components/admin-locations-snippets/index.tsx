@@ -285,9 +285,9 @@ export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
       <div className={styles.operatingHoursCard}>
         {Object.keys(operatingHoursByDay).map(day => {
           const segments = operatingHoursByDay[day];
-          return <div className={styles.operatingHoursDayRow}>
+          return <div key={day} className={styles.operatingHoursDayRow}>
             <div className={styles.operatingHoursDayName}>{moment(day, 'dddd').format('ddd')}:</div>
-            {segments.map((segment, index) => <Fragment>
+            {segments.map((segment, index) => <Fragment key={index}>
               <AdminLocationsOperatingHoursSegment segment={segment} />
               {index < segments.length - 1 ? <div style={{ marginRight: 4 }}>, </div> : null}
             </Fragment>)}
@@ -346,17 +346,20 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpac
           <ListViewColumn
             id="DPU position"
             align="right"
-            template={i => <Fragment>
-              {i.sensorPlacement !== null ? (
-                <Fragment>
-                  <span className={styles.doorwayDpuPosition}>
-                    {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
-                  </span>
-                </Fragment>
-              ) : (
-                <Fragment>&mdash;</Fragment>
-              )}
-            </Fragment>}
+            template={i => {
+              const link = i.spaces.find(x => x.id === space.id);
+              return <Fragment>
+                {link.sensorPlacement !== null ? (
+                  <Fragment>
+                    <span className={styles.doorwayDpuPosition}>
+                      {link.sensorPlacement === 1 ? 'Inside' : 'Outside'}
+                    </span>
+                  </Fragment>
+                ) : (
+                  <Fragment>&mdash;</Fragment>
+                )}
+              </Fragment>
+            }}
             width={80}
           />
         </ListView>
