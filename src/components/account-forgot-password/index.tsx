@@ -36,7 +36,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
   }
 
   render() {
-    return <div className={styles.accountForgotPassword}>
+    return <div className={styles.accountForgotPasswordView}>
       <div className={styles.accountForgotPasswordSection}>
         <ErrorBar message={this.state.error} showRefresh />
 

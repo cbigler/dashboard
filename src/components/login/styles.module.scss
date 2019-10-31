@@ -4,28 +4,40 @@
 
 // Variables
 // ---------------------------------
-$loginSectionWidth: 468px;
+$loginSectionWidth: 560px;
 $zIndexToast: 2000;
 
 
 // Scaffolding
 // ---------------------------------
 
-.login {
+.loginView {
+  display: flex;
+  justify-content: center;
   height: 100%;
+  background-color: #fff;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .loginSection {
+  flex-grow: 0;
+  box-sizing: border-box;
   height: 100%;
-  margin: 0px auto;
   padding-top: 64px;
   padding-bottom: 64px;
   padding-left: 24px;
   padding-right: 24px;
+  background-color: #fff;
 }
 
+// TODO: Add sectino to the right that shows a product blog post
+// .loginPostSection {
+//   flex-grow: 1;
+//   flex-shrink: 1;
+//   height: 100%;
+//   background-color: #DDE6FF;
+// }
 
 // Banner
 // ---------------------------------
@@ -41,9 +53,9 @@ $zIndexToast: 2000;
 }
 
 .loginLead {
-  margin-bottom: 40px;
-  font-size: 18px;
-  color: $grayDarker;
+  margin-bottom: 80px;
+  color: $grayCinder;
+  font-weight: bold;
 }
 
 
@@ -51,78 +63,139 @@ $zIndexToast: 2000;
 // ---------------------------------
 
 .loginSubmitButton {
-  margin-top: 30px;
+  margin-top: 16px;
   width: 100%;
 }
 
-// Hacking the Google SSO button
-.loginSubmitButton.google {
-  margin-top: 0;
+.loginSsoSectionHeading {
+  font-size: 14px;
+  font-weight: bold;
+  color: $grayCinder;
+  margin-bottom: 4px;
 }
-.loginSubmitButton.google button {
+
+.loginSsoButtonGroup {
   display: flex;
+}
+
+// Hacking the provider SSO button
+.loginSubmitButton.sso {
+  flex-grow: 0;
+  width: 50%;
+  margin-top: 0;
+  margin-right: 16px;
+
+  &:last-child { margin-right: 0;}
+}
+.loginSubmitButton.google {
+  flex-grow: 1;
+}
+
+.loginSubmitButton.sso button {
   display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
   display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 43px;
   box-sizing: border-box;
-  padding-top: 2px;
-  padding-bottom: 0;
+  height: 40px;
+  width: 100%;
+  padding-bottom: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
   background-color: #fff;
-  border: 1px solid $grayCinder;
+  border: 1px solid $gray;
   text-align: center;
   line-height: normal;
   color: $grayCinder;
 }
-.loginSubmitButton .iconGoogleLogin {
-  margin-top: -4px;
+.loginSubmitButton .iconSsoLogin {
+  margin-bottom: -1px;
   padding-right: 8px;
   vertical-align: middle;
+  height: 18px;
 }
-.loginSubmitButton.google button:hover {
-  border-color: $brandPrimary;
+.loginSubmitButton.sso button:hover {
+  border-color: #DDE6FF;
+  background-color: #DDE6FF;
+  color: $grayCinder;
+  box-shadow: none;
+}
+.loginSubmitButton.sso button:active,
+.loginSubmitButton.sso button:focus {
+  border-color: #5581FF;
+  background-color: #DDE6FF;
+  color: $grayCinder;
+  box-shadow: none;
+  box-shadow: 0 0 0 1px #5581FF;
 }
 
 // Divider for SSO and standard auth
 .loginSsoDivider {
   padding-top: 16px;
   padding-bottom: 16px;
-  font-size: $fontSizeBase;
+  font-size: 12px;
+  font-weight: bold;  
   text-align: center;
 }
 
 .loginActionSecondary {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   margin-top: 40px;
   font-size: 14px;
+  font-weight: bold;
   text-decoration: underline;
-  color: $brandPrimary;
+  color: $grayCinder;
   cursor: pointer;
+
+  svg { margin-right: 8px; }
+
+  &:hover {
+    color: $brandPrimary;
+  }
 }
 
+.loginOktaAlert {
+  display: none;
+  padding: 16px;
+  margin-top: 24px;
+  background-color: #FFEED6;
+  border-radius: 4px;
+}
+
+.loginOktaAlert svg {
+  margin-bottom: 8px;
+}
+
+.loginOktaAlertText {
+  font-size: 14px;
+}
 
 // Footer
 // ---------------------------------
 
 .loginTermsAndPrivacy {
-  padding-top: 80px;
+  padding-top: 100px;
   padding-bottom: 64px;
+  font-size: 14px;
+  font-weight: bold;
   color: $grayDarker;
 
-  a {
-    color: $grayDarkest;
-  }
+  a { color: $grayDark; }
+  a:hover { color: $brandPrimary; }
 }
 
 // Log in toast
 // ---------------------------------
 .loginToast {
   position: absolute;
-  top: 61px;
+  bottom: 32px;
+  left: 50%;
   z-index: $zIndexToast;
   box-sizing: border-box;
   width: $loginSectionWidth - 48px;
+  margin-left: -($loginSectionWidth - 48px)/2;
 }
 .loginToastHeader {
   color: $brandDanger;
@@ -162,18 +235,8 @@ $zIndexToast: 2000;
 @media (min-width: 450px) {
   // anything above mobile
   .loginSection {
-    box-sizing: border-box;
     width: $loginSectionWidth;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  // Wrapper for the login form
-  .loginFormContainer {
-    padding: 32px;
-    background-color: #fff;
-    border: 1px solid $grayLight;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
-    border-radius: $borderRadiusBase;
+    padding-left: 88px;
+    padding-right: 88px;
   }
 }

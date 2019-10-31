@@ -11,6 +11,7 @@ import {
   Toast,
   ToastContext,
 } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';
 import { impersonateUnset } from '../../actions/impersonate';
@@ -22,6 +23,7 @@ import { InputStackItem, InputStackGroup } from '../input-stack/index';
 
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import logoGoogleG from '../../assets/images/logo-google-g.svg';
+import logoOktaO from '../../assets/images/logo-okta-o.png';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import webAuth from "../../auth0";
@@ -113,32 +115,56 @@ export class Login extends React.Component<any, any> {
 
   renderLoginForm() {
     return <div className={styles.loginFormContainer}>
-      {/* Input stack used to enter login info */}
-      <div className={classnames(styles.loginSubmitButton, styles.google, {[styles.loading]: this.state.loading})}>
-        <Button
-          variant="filled"
-          width="100%"
-          onClick={() => {
-            // Store the orginating origin in localStorage from the oauth request. This is used so
-            // that we can redirect to the login route on the correct version of the dashboard as
-            // soon as possible in the oauth callback. For example, a user tried to login via oauth
-            // on a preview link, and normally, it would redirect to the staging dashboard, not the
-            // preview link. Store the current url so we can redirect back to here after logging in.
-            const hashIndex = window.location.href.indexOf('#');
-            window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+      <div className={styles.loginSsoButtonGroup}>
+        <div className={classnames(styles.loginSubmitButton, styles.sso, styles.google, {[styles.loading]: this.state.loading})}>
+          <Button
+            variant="filled"
+            onClick={() => {
+              // Store the orginating origin in localStorage from the oauth request. This is used so
+              // that we can redirect to the login route on the correct version of the dashboard as
+              // soon as possible in the oauth callback. For example, a user tried to login via oauth
+              // on a preview link, and normally, it would redirect to the staging dashboard, not the
+              // preview link. Store the current url so we can redirect back to here after logging in.
+              const hashIndex = window.location.href.indexOf('#');
+              window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
 
-            webAuth.authorize({
-              connection: 'google-oauth2',
-            });
-          }}
-        >
-          <img className={styles.iconGoogleLogin} src={logoGoogleG} alt="Google Logo" />
-          Log in with Google
-        </Button>
+              webAuth.authorize({
+                connection: 'google-oauth2',
+              });
+            }}
+          >
+            <img className={styles.iconSsoLogin} src={logoGoogleG} alt="Google Logo" />
+            Log in with Google
+          </Button>
+        </div>
+
+        <div className={classnames(styles.loginSubmitButton, styles.sso, {[styles.loading]: this.state.loading})}>
+          <Button
+            variant="filled"
+            onClick={() => {
+              // Store the orginating origin in localStorage from the oauth request. This is used so
+              // that we can redirect to the login route on the correct version of the dashboard as
+              // soon as possible in the oauth callback. For example, a user tried to login via oauth
+              // on a preview link, and normally, it would redirect to the staging dashboard, not the
+              // preview link. Store the current url so we can redirect back to here after logging in.
+              const hashIndex = window.location.href.indexOf('#');
+              window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+
+              webAuth.authorize({
+                connection: 'okta',
+              });
+            }}
+          >
+            <img className={styles.iconSsoLogin} src={logoOktaO} alt="OKTA Logo" />
+            OKTA
+          </Button>
+        </div>
       </div>
+      {/* /loginSsoSection */}
 
       <p className={styles.loginSsoDivider}>or</p>
 
+      {/* Input stack used to enter login info */}
       <InputStackGroup>
         <InputStackItem
           type="email"
@@ -168,11 +194,17 @@ export class Login extends React.Component<any, any> {
         >Login</Button>
       </div>
 
+      {/* OKTA Alert */}
+      <div className={styles.loginOktaAlert}>
+        <Icons.Security4 color={'#F4AB4E'} />
+        <p className={styles.loginOktaAlertText}>You’re organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
+      </div>
+
       {/* Move to forgot password view */}
       <div
         className={classnames(styles.loginActionSecondary, styles.loginForgotPasswordLink)}
         onClick={() => this.setState({view: FORGOT_PASSWORD, error: null})}
-      >Forgot Password</div>
+      >Forgot Password?</div>
     </div>;
   }
 
@@ -203,12 +235,12 @@ export class Login extends React.Component<any, any> {
       <div
         className={styles.loginActionSecondary}
         onClick={() => this.setState({view: LOGIN, error: null})}
-      >Back to login</div>
+      ><Icons.ArrowLeft /> Back to login</div>
     </div>;
   }
 
   render() {
-    return <div className={styles.login}>
+    return <div className={styles.loginView}>
 
       { this.state.loading ? <CardLoading indeterminate={true} /> : null }
 
@@ -287,6 +319,11 @@ export class Login extends React.Component<any, any> {
           <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
           and <a href="https://www.density.io/docs/msa.pdf" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
         </p>
+      </div>
+      {/* Login Section */}
+
+      <div className={styles.loginPostSection}>
+        
       </div>
     </div>;
   }
