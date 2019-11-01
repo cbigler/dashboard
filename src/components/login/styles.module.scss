@@ -92,7 +92,7 @@ $zIndexToast: 2000;
   margin-bottom: 16px;
   opacity: 1;
   pointer-events: auto;
-  transition: height 200ms ease-in-out, opacity 300ms ease-in-out;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
 
   &.hide { display: none; }
 
@@ -101,7 +101,7 @@ $zIndexToast: 2000;
     opacity: 0;
     pointer-events: none;
     overflow: hidden;
-    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
   }
   
   &.slide {
