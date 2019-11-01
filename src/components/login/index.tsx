@@ -147,8 +147,8 @@ export class Login extends React.Component<any, any> {
     return <div className={styles.loginFormContainer}>
 
       {/* Input stack used to enter login info */}
-      <label className={styles.loginFormLabel}>Your Email</label>
       <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== LOGIN})}>
+        <label className={styles.loginFormLabel}>Your Email</label>
         <InputStackItem
           type="email"
           placeholder="ex: bonnie.raitt@density.io"
@@ -156,10 +156,12 @@ export class Login extends React.Component<any, any> {
           onChange={e => this.setState({email: e.target.value})}
           onKeyPress={this.onEnter}
           value={this.state.email}
+          tabindex={this.state.view === LOGIN ? 0 : -1}
         />
       </div>
 
       <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== STANDARD})}>
+        <label className={styles.loginFormLabel}>Your Email</label>
         <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
           {this.state.email}
           {/* Move to back to login page */}
@@ -167,7 +169,7 @@ export class Login extends React.Component<any, any> {
         </div>
       </div>
 
-      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== STANDARD})}>
+      <div className={classnames(styles.loginFormControl, styles.loginFormControlPassword, {[styles.slide]: this.state.view !== STANDARD})}>
         <label className={styles.loginFormLabel}>Your Password</label>
         <div className={classnames(styles.loginInputContainer)}>
           <InputStackItem
@@ -176,6 +178,7 @@ export class Login extends React.Component<any, any> {
             onChange={e => this.setState({password: e.target.value})}
             onKeyPress={this.onEnter}
             value={this.state.password}
+            tabindex={this.state.view === STANDARD ? 0 : -1}
           />
         </div>
       </div>
