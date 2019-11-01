@@ -88,6 +88,12 @@ $zIndexToast: 2000;
   width: 100%;
 }
 
+.loginFormControl {
+  &.hide {
+    display: none;
+  }
+}
+
 .loginInputDisabled {
   position: relative;
   display: flex;

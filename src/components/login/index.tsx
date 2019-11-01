@@ -148,23 +148,46 @@ export class Login extends React.Component<any, any> {
 
       {/* Input stack used to enter login info */}
       <label className={styles.loginFormLabel}>Your Email</label>
-      <InputStackItem
-        type="email"
-        placeholder="ex: bonnie.raitt@density.io"
-        invalid={this.state.email.length > 0 && this.state.email.indexOf('@') === -1}
-        onChange={e => this.setState({email: e.target.value})}
-        onKeyPress={this.onEnter}
-        value={this.state.email}
-      />
+      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== LOGIN})}>
+        <InputStackItem
+          type="email"
+          placeholder="ex: bonnie.raitt@density.io"
+          invalid={this.state.email.length > 0 && this.state.email.indexOf('@') === -1}
+          onChange={e => this.setState({email: e.target.value})}
+          onKeyPress={this.onEnter}
+          value={this.state.email}
+        />
+      </div>
 
-      {/* Check for OKTA! */}
-      <div className={classnames(styles.loginSubmitButton, styles.active, styles.email, {[styles.loading]: this.state.loading})}>
+      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== STANDARD})}>
+        <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
+          {this.state.email}
+          {/* Move to back to login page */}
+          <div className={styles.loginInputDisabledIcon}><Icons.PencilOutline /></div>
+        </div>
+      </div>
+
+      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== STANDARD})}>
+        <label className={styles.loginFormLabel}>Your Password</label>
+        <div className={classnames(styles.loginInputContainer)}>
+          <InputStackItem
+            type="password"
+            placeholder="Password"
+            onChange={e => this.setState({password: e.target.value})}
+            onKeyPress={this.onEnter}
+            value={this.state.password}
+          />
+        </div>
+      </div>
+
+      {/* Check for OKTA or submit the form! */}
+      <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
         <Button
           width="100%"
           type="primary"
           variant="filled"
-          onClick={this.onOktaCheck}
-        >Continue</Button>
+          onClick={this.state.view === LOGIN ? this.onOktaCheck : this.onLogin}
+        >{this.state.view === LOGIN ? 'Continue' : 'Login'}</Button>
       </div>
 
       <p className={styles.loginSsoDivider}>or</p>
@@ -213,7 +236,7 @@ export class Login extends React.Component<any, any> {
         <div className={styles.loginInputDisabledIcon}><Icons.PencilOutline /></div>
       </div>
 
-      <div className={classnames(styles.loginSubmitButton, styles.sso, {[styles.loading]: this.state.loading}, {[styles.active]: this.state.isOkta})}>
+      <div className={classnames(styles.loginSubmitButton, styles.sso, {[styles.loading]: this.state.loading})}>
         <Button
           variant="filled"
           onClick={() => {
@@ -239,37 +262,6 @@ export class Login extends React.Component<any, any> {
       <div className={styles.loginOktaAlert}>
         <Icons.Security4 color={'#F4AB4E'} />
         <p className={styles.loginOktaAlertText}>You’re organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
-      </div>
-    </div>;
-  }
-
-  renderStandardForm() {
-    return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
-      <label className={styles.loginFormLabel}>Your Email</label>
-      <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
-        {this.state.email}
-        {/* Move to back to login page */}
-        <div className={styles.loginInputDisabledIcon}><Icons.PencilOutline /></div>
-      </div>
-
-      <label className={styles.loginFormLabel}>Your Password</label>
-      <InputStackItem
-        type="password"
-        placeholder="Password"
-        onChange={e => this.setState({password: e.target.value})}
-        onKeyPress={this.onEnter}
-        value={this.state.password}
-        focused={this.state.view === STANDARD}
-      />
-
-      {/* Submit the form! */}
-      <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
-        <Button
-          width="100%"
-          type="primary"
-          variant="filled"
-          onClick={this.onLogin}
-        >Login</Button>
       </div>
     </div>;
   }
@@ -380,10 +372,9 @@ export class Login extends React.Component<any, any> {
         </p>
 
         {/* Login inputs */}
-        {this.state.view === LOGIN ? this.renderLoginForm()
-        : this.state.view === OKTA ? this.renderOktaForm()
-        : this.state.view === STANDARD ? this.renderStandardForm()
-        : this.renderForgotPasswordForm()}
+        {this.state.view === OKTA ? this.renderOktaForm()
+        : this.state.view === FORGOT_PASSWORD ? this.renderForgotPasswordForm()
+        : this.renderLoginForm()}
 
         <p className={styles.loginTermsAndPrivacy}>
           <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
