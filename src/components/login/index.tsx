@@ -28,8 +28,10 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import webAuth from "../../auth0";
 import styles from './styles.module.scss';
 
-export const LOGIN = 'LOGIN',
-             FORGOT_PASSWORD = 'FORGOT_PASSWORD';
+export const  LOGIN = 'LOGIN',
+              OKTA = 'OKTA',
+              STANDARD = 'STANDARD',
+              FORGOT_PASSWORD = 'FORGOT_PASSWORD';
 
 export class Login extends React.Component<any, any> {
   constructor(props) {
@@ -65,8 +67,14 @@ export class Login extends React.Component<any, any> {
     }
   }
 
-  isLoginFormValid = () => {
+  isEmailFieldValid = () => {
     return this.state.view === LOGIN &&
+      this.state.email.indexOf('@') >= 0 &&
+      !this.state.loading;
+  }
+
+  isLoginFormValid = () => {
+    return this.state.view === STANDARD &&
       this.state.email.indexOf('@') >= 0 &&
       this.state.password.length > 0 &&
       !this.state.loading;
@@ -80,25 +88,48 @@ export class Login extends React.Component<any, any> {
 
   onEnter = e => {
     if (e.key === 'Enter') {
-      if (this.isLoginFormValid()) {
-        this.onLogin();
-      } else if (this.isForgotPasswordFormValid()) {
-        this.onForgotPassword();
+      if (this.state.view === LOGIN) {
+        if (this.isEmailFieldValid()) {
+          this.onOktaCheck();
+        }
+      } else if (this.state.view === STANDARD) {
+          this.onLogin();
+      } else if (this.state.view === FORGOT_PASSWORD) {
+        if (this.isForgotPasswordFormValid()) {
+          this.onForgotPassword();
+        }
       }
+    }
+  }
+
+  onOktaCheck = () => {
+    this.setState({loading: true, error: null});
+    if (this.isEmailFieldValid()) {
+      if (/@linkedin.com\s*$/.test(this.state.email)) {
+        this.setState({view: OKTA, loading: false, error: null})
+      } else {
+        this.setState({view: STANDARD, loading: false, error: null})
+      }
+    } else {
+      this.setState({loading: false, error: 'Whoops. Can you try that again?' });
     }
   }
 
   onLogin = () => {
     this.setState({loading: true, error: null});
-    return accounts().post('/login', {
-      email: this.state.email,
-      password: this.state.password,
-    }).then(response => {
-      this.setState({loading: false, error: null});
-      this.props.onUserSuccessfullyLoggedIn(response.data, this.props.redirectAfterLogin);
-    }).catch(error => {
-      this.setState({loading: false, error: error.toString()});
-    });
+    if (this.isLoginFormValid()) {
+      return accounts().post('/login', {
+        email: this.state.email,
+        password: this.state.password,
+      }).then(response => {
+        this.setState({loading: false, error: null});
+        this.props.onUserSuccessfullyLoggedIn(response.data, this.props.redirectAfterLogin);
+      }).catch(error => {
+        this.setState({loading: false, error: error.toString()});
+      });
+    } else {
+      this.setState({loading: false, error: 'Whoops. Can you try that again?' });
+    }
   }
 
   onForgotPassword = () => {
@@ -114,6 +145,30 @@ export class Login extends React.Component<any, any> {
 
   renderLoginForm() {
     return <div className={styles.loginFormContainer}>
+
+      {/* Input stack used to enter login info */}
+      <label className={styles.loginFormLabel}>Your Email</label>
+      <InputStackItem
+        type="email"
+        placeholder="ex: bonnie.raitt@density.io"
+        invalid={this.state.email.length > 0 && this.state.email.indexOf('@') === -1}
+        onChange={e => this.setState({email: e.target.value})}
+        onKeyPress={this.onEnter}
+        value={this.state.email}
+      />
+
+      {/* Check for OKTA! */}
+      <div className={classnames(styles.loginSubmitButton, styles.active, styles.email, {[styles.loading]: this.state.loading})}>
+        <Button
+          width="100%"
+          type="primary"
+          variant="filled"
+          onClick={this.onOktaCheck}
+        >Continue</Button>
+      </div>
+
+      <p className={styles.loginSsoDivider}>or</p>
+
       <div className={styles.loginSsoButtonGroup}>
         <div className={classnames(styles.loginSubmitButton, styles.sso, styles.google, {[styles.loading]: this.state.loading})}>
           <Button
@@ -136,51 +191,76 @@ export class Login extends React.Component<any, any> {
             Log in with Google
           </Button>
         </div>
-
-        <div className={classnames(styles.loginSubmitButton, styles.sso, {[styles.loading]: this.state.loading})}>
-          <Button
-            variant="filled"
-            onClick={() => {
-              // Store the orginating origin in localStorage from the oauth request. This is used so
-              // that we can redirect to the login route on the correct version of the dashboard as
-              // soon as possible in the oauth callback. For example, a user tried to login via oauth
-              // on a preview link, and normally, it would redirect to the staging dashboard, not the
-              // preview link. Store the current url so we can redirect back to here after logging in.
-              const hashIndex = window.location.href.indexOf('#');
-              window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
-
-              webAuth.authorize({
-                connection: 'okta',
-              });
-            }}
-          >
-            <img className={styles.iconSsoLogin} src={logoOktaO} alt="OKTA Logo" />
-            OKTA
-          </Button>
-        </div>
       </div>
       {/* /loginSsoSection */}
 
-      <p className={styles.loginSsoDivider}>or</p>
 
-      {/* Input stack used to enter login info */}
-      <InputStackGroup>
-        <InputStackItem
-          type="email"
-          placeholder="Email Address"
-          invalid={this.state.email.length > 0 && this.state.email.indexOf('@') === -1}
-          onChange={e => this.setState({email: e.target.value})}
-          onKeyPress={this.onEnter}
-          value={this.state.email}
-        />
-        <InputStackItem
-          type="password"
-          placeholder="Password"
-          onChange={e => this.setState({password: e.target.value})}
-          onKeyPress={this.onEnter}
-          value={this.state.password}
-        />
-      </InputStackGroup>
+      {/* Move to forgot password view */}
+      <div
+        className={classnames(styles.loginActionSecondary, styles.loginForgotPasswordLink)}
+        onClick={() => this.setState({view: FORGOT_PASSWORD, error: null})}
+      >Forgot Password?</div>
+    </div>;
+  }
+
+  renderOktaForm() {
+    return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
+
+      <label className={styles.loginFormLabel}>Your Email</label>
+      <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
+        {this.state.email}
+        {/* Move to back to login page */}
+        <div className={styles.loginInputDisabledIcon}><Icons.PencilOutline /></div>
+      </div>
+
+      <div className={classnames(styles.loginSubmitButton, styles.sso, {[styles.loading]: this.state.loading}, {[styles.active]: this.state.isOkta})}>
+        <Button
+          variant="filled"
+          onClick={() => {
+            // Store the orginating origin in localStorage from the oauth request. This is used so
+            // that we can redirect to the login route on the correct version of the dashboard as
+            // soon as possible in the oauth callback. For example, a user tried to login via oauth
+            // on a preview link, and normally, it would redirect to the staging dashboard, not the
+            // preview link. Store the current url so we can redirect back to here after logging in.
+            const hashIndex = window.location.href.indexOf('#');
+            window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+
+            webAuth.authorize({
+              connection: 'okta',
+            });
+          }}
+        >
+          <img className={styles.iconSsoLogin} src={logoOktaO} alt="OKTA Logo" />
+          Log in with OKTA
+        </Button>
+      </div>
+
+      {/* OKTA Alert */}
+      <div className={styles.loginOktaAlert}>
+        <Icons.Security4 color={'#F4AB4E'} />
+        <p className={styles.loginOktaAlertText}>You’re organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
+      </div>
+    </div>;
+  }
+
+  renderStandardForm() {
+    return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
+      <label className={styles.loginFormLabel}>Your Email</label>
+      <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
+        {this.state.email}
+        {/* Move to back to login page */}
+        <div className={styles.loginInputDisabledIcon}><Icons.PencilOutline /></div>
+      </div>
+
+      <label className={styles.loginFormLabel}>Your Password</label>
+      <InputStackItem
+        type="password"
+        placeholder="Password"
+        onChange={e => this.setState({password: e.target.value})}
+        onKeyPress={this.onEnter}
+        value={this.state.password}
+        focused={this.state.view === STANDARD}
+      />
 
       {/* Submit the form! */}
       <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
@@ -189,21 +269,8 @@ export class Login extends React.Component<any, any> {
           type="primary"
           variant="filled"
           onClick={this.onLogin}
-          disabled={!this.isLoginFormValid()}
         >Login</Button>
       </div>
-
-      {/* OKTA Alert */}
-      <div className={styles.loginOktaAlert}>
-        <Icons.Security4 color={'#F4AB4E'} />
-        <p className={styles.loginOktaAlertText}>You’re organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
-      </div>
-
-      {/* Move to forgot password view */}
-      <div
-        className={classnames(styles.loginActionSecondary, styles.loginForgotPasswordLink)}
-        onClick={() => this.setState({view: FORGOT_PASSWORD, error: null})}
-      >Forgot Password?</div>
     </div>;
   }
 
@@ -313,7 +380,11 @@ export class Login extends React.Component<any, any> {
         </p>
 
         {/* Login inputs */}
-        {this.state.view === LOGIN ? this.renderLoginForm() : this.renderForgotPasswordForm()}
+        {this.state.view === LOGIN ? this.renderLoginForm()
+        : this.state.view === OKTA ? this.renderOktaForm()
+        : this.state.view === STANDARD ? this.renderStandardForm()
+        : this.renderForgotPasswordForm()}
+
         <p className={styles.loginTermsAndPrivacy}>
           <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
           and <a href="https://www.density.io/docs/msa.pdf" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
