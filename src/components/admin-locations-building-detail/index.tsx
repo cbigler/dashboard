@@ -35,6 +35,7 @@ import {
   AdminLocationsListLevelsTotal,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
+  AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
 
 function SpaceList({ user, spaces, renderedSpaces }) {
@@ -75,7 +76,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             ) : null}
           </AppBarSection>
         </AppBar>
-        <div className={styles.sidebar}>
+        <AdminLocationsLeftPane>
           {mapShown ? (
             <div className={styles.leftPaneMap}>
               <AdminLocationsSpaceMap
@@ -99,7 +100,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
-        </div>
+        </AdminLocationsLeftPane>
       </AppSidebar>
       <AppPane>
         {visibleSpaces.length > 0 ? (

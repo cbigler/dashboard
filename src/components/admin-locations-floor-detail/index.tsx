@@ -30,6 +30,7 @@ import {
   AdminLocationsListRoomsTotal,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
+  AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
 
 export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace, spaceManagement }) {
@@ -46,7 +47,7 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace,
             ) : null}
           </AppBarSection>
         </AppBar>
-        <div className={styles.sidebar}>
+        <AdminLocationsLeftPane>
           <AdminLocationsLeftPaneDataRow includeTopBorder={false}>
             <AdminLocationsDetailSizeArea user={user} space={selectedSpace} />
             <AdminLocationsDetailTargetCapacity space={selectedSpace} />
@@ -56,7 +57,7 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace,
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
-        </div>
+        </AdminLocationsLeftPane>
       </AppSidebar>
       <AppPane>
         {visibleSpaces.length > 0 ? (

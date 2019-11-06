@@ -33,6 +33,7 @@ import {
   AdminLocationsListAnnualRent,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
+  AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
 
 export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace, spaceManagement }) {
@@ -50,7 +51,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
             ) : null}
           </AppBarSection>
         </AppBar>
-        <div className={styles.sidebar}>
+        <AdminLocationsLeftPane>
           {mapShown ? (
             <div className={styles.leftPaneMap}>
               <AdminLocationsSpaceMap
@@ -69,7 +70,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
-        </div>
+        </AdminLocationsLeftPane>
       </AppSidebar>
       <AppPane>
         {visibleSpaces.length > 0 ? (

@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import classnames from 'classnames';
 import commaNumber from 'comma-number';
 
-import { Icons, ListView, ListViewColumn } from '@density/ui';
+import { Icons, ListView, ListViewColumn, InfoPopup } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -18,6 +18,10 @@ import moment from 'moment';
 /********************
 Space detail wrappers for left pane items
 *********************/
+
+export function AdminLocationsLeftPane({ children }) {
+  return <div className={styles.leftPane}>{children}</div>
+}
 
 export function AdminLocationsLeftPaneDataRow({
   includeTopBorder = true,
@@ -298,6 +302,60 @@ export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
   </AdminLocationsLeftPaneDataRow>;
 }
 
+export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: DensitySpace, doorway: DensityDoorway}) {
+  const spacesOtherThanSelectedSpace = doorway.spaces.filter(s => s.id !== space.id);
+  if (spacesOtherThanSelectedSpace.length > 1) {
+    return (
+      <InfoPopup
+        target={<div className={styles.doorwayLinkedSpacesTag}>
+          <div className={styles.doorwayLinkedSpacesIcon}>
+            <Icons.Link width={20} height={20} />
+          </div>
+          <span className={styles.doorwayLinkedSpacesText}>
+            {
+              spacesOtherThanSelectedSpace.length > 1 ?
+              `${spacesOtherThanSelectedSpace.length} other spaces` :
+              spacesOtherThanSelectedSpace[0].name
+            }
+          </span>
+        </div>}
+        popupAnchor="left"
+        popupWidth="auto"
+        popupBackground={colorVariables.grayCinder}
+        popupBorder={colorVariables.grayCinder}
+      >
+        {spacesOtherThanSelectedSpace.map(space => (
+          <div className={styles.doorwayLinkedSpacesPopoverTag}>
+            <div className={styles.doorwayLinkedSpacesIcon}>
+              <Icons.Link width={20} height={20} color={colorVariables.grayLight} />
+            </div>
+            <span className={styles.doorwayLinkedSpacesText}>{space.name}</span>
+          </div>
+        ))}
+      </InfoPopup>
+    );
+  } else if (spacesOtherThanSelectedSpace.length === 1) {
+    return (
+      <div className={styles.doorwayLinkedSpacesTag}>
+        <div className={styles.doorwayLinkedSpacesIcon}>
+          <Icons.Link width={20} height={20} />
+        </div>
+        <span className={styles.doorwayLinkedSpacesText}>
+          {
+            spacesOtherThanSelectedSpace.length > 1 ?
+            `${spacesOtherThanSelectedSpace.length} other spaces` :
+            spacesOtherThanSelectedSpace[0].name
+          }
+        </span>
+      </div>
+    );
+  } else {
+    return (
+      <Fragment>No other spaces</Fragment>
+    );
+  }
+}
+
 export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpace, doorways: Array<DensityDoorway>}) {
   const linkedDoorways = doorways.filter(doorway => doorway.spaces.map(s => s.id).indexOf(space.id) > -1);
   return linkedDoorways.length > 0 ? (
@@ -318,29 +376,7 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpac
           />
           <ListViewColumn
             id="Linked spaces"
-            template={i => {
-              const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== space.id);
-              if (spacesOtherThanSelectedSpace.length >= 1) {
-                return (
-                  <div className={styles.doorwayLinkedSpacesTag}>
-                    <div className={styles.doorwayLinkedSpacesIcon}>
-                      <Icons.Link width={20} height={20} />
-                    </div>
-                    <span className={styles.doorwayLinkedSpacesText}>
-                      {
-                        spacesOtherThanSelectedSpace.length > 1 ?
-                        `${spacesOtherThanSelectedSpace.length} other spaces` :
-                        spacesOtherThanSelectedSpace[0].name
-                      }
-                    </span>
-                  </div>
-                );
-              } else {
-                return (
-                  <Fragment>No other spaces</Fragment>
-                )
-              }
-            }}
+            template={i => <AdminLocationsOtherLinkedDoorways space={space} doorway={i} />}
             width={200}
           />
           <ListViewColumn

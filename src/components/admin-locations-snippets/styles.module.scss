@@ -1,6 +1,13 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/spacing.scss";
 
+.leftPane {
+  height: 100%;
+  margin-bottom: -1px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .leftPaneDataRow {
   display: flex;
   flex-direction: row;
@@ -84,6 +91,18 @@
   height: 56px;
   user-select: none;
   width: 100%;
+}
+.doorwayLinkedSpacesPopoverTag {
+  display: flex;
+  align-items: center;
+  color: $grayLight;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
 }
 .doorwayLinkedSpacesTag {
   display: flex;
