@@ -47,8 +47,9 @@ export function digestSchedulesReducer(state: DigestSchedulesState, action: Any<
       data: [
         // Update existing items
         ...state.data.map((item: Any<FixInRefactor>) => {
+          const newItem = objectSnakeToCamel(action.item);
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel(action.item)};
+            return {...item, ...newItem};
           } else {
             return item;
           }

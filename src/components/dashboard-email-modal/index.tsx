@@ -14,7 +14,6 @@ import {
 } from '@density/ui';
 
 import core from '../../client/core';
-import collectionUsersRead from '../../rx-actions/users/read';
 import hideModal from '../../rx-actions/modal/hide';
 
 import { DensityDashboard } from '../../types';
@@ -29,6 +28,7 @@ type DashboardEmailModalProps = {
 };
 
 type DashboardEmailModalState = { recipient: string };
+const initialState: DashboardEmailModalState = { recipient: '' };
 
 async function onCreateEmail(dispatch: DispatchType, email: {
   dashboardId: string,
@@ -51,13 +51,10 @@ export default function DashboardEmailModal({
   visible,
   onCloseModal,
 }: DashboardEmailModalProps) {
+  const [state, setState] = useState(initialState);
   const dispatch = useRxDispatch();
 
-  const [state, setState] = useState({
-    recipient: '',
-  } as DashboardEmailModalState);
-
-  useEffect(() => { collectionUsersRead(dispatch); }, [dispatch]);
+  useEffect(() => { setState(initialState); }, [visible]);
 
   return (
     <Modal

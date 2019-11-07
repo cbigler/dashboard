@@ -46,6 +46,7 @@ const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
     showModal(dispatch, 'MODAL_CONFIRM', {
       prompt: 'Are you sure you want to delete this space?',
       confirmText: 'Delete',
+      optimistic: true,
       callback: async () => {
         const ok = await collectionSpacesDestroy(dispatch, space);
         if (ok) {
@@ -53,8 +54,8 @@ const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
         } else {
           showToast(dispatch, { type: 'error', text: 'Error deleting space' });
         }
+        // FIXME: this seems like a bad idea to have this just chilling in this callback
         window.location.href = `#/admin/locations/${space.parentId}`;
-        window.location.reload();
       }
     });
   }

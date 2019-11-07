@@ -33,9 +33,10 @@ export default class SpaceCard extends React.Component<{
   }
 
   shouldComponentUpdate(nextProps) {
+    const countChanged = this.props.space.currentCount !== nextProps.space.currentCount;
     const hasEvents = this.props.events &&
       (this.props.events.length > 0 || nextProps.events.length > 0);
-    if (!hasEvents) {
+    if (!countChanged && !hasEvents) {
       return false;
     }
 

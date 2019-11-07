@@ -148,7 +148,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.item.id === item.id) {
-          return {...item, ...objectSnakeToCamel<DensitySpace>(action.item)};
+            return {...item, ...objectSnakeToCamel<DensitySpace>(action.item)};
           } else {
             return item;
           }

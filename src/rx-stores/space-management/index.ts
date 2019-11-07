@@ -21,6 +21,7 @@ import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces/upd
 import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../rx-actions/space-management/push-doorway';
 import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../rx-actions/space-management/delete-doorway';
 import createRxStore from '..';
+import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces/destroy';
 
 
 export type SpaceManagementState = {
@@ -78,7 +79,7 @@ export type AdminLocationsFormState = {
   'function': string | null | undefined,
   annualRent: any,
   sizeArea: any,
-  sizeAreaUnit: 'feet' | 'meters',
+  sizeAreaUnit: 'square_feet' | 'square_meters',
   currencyUnit: 'USD',
   capacity: string,
   targetCapacity: string,
@@ -362,6 +363,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
     };
 
   case COLLECTION_SPACES_CREATE:
+  case COLLECTION_SPACES_DESTROY:
   case COLLECTION_SPACES_UPDATE:
     return {
       ...state,

@@ -133,19 +133,24 @@ export default () => {
   const dispatch = useRxDispatch();
 
   const onUpdateModal = (newModalData) => {
-    updateModal(dispatch, newModalData)
-  }
+    updateModal(dispatch, newModalData);
+  };
+
   const onCancel = () => {
-    hideModal(dispatch)
-  }
+    hideModal(dispatch);
+  };
+
   const onConfirm = async (callback) => {
-    await hideModal(dispatch)
-    callback()
-  }
+    if (activeModal.data.optimistic === true) { hideModal(dispatch); }
+    else { await hideModal(dispatch); }
+    callback();
+  };
+
   const onSubmit = async (callback, data) => {
-    await hideModal(dispatch)
-    callback(data)
-  }
+    if (activeModal.data.optimistic === true) { hideModal(dispatch); }
+    else { await hideModal(dispatch); }
+    callback(data);
+  };
 
   return (
     <Dialogger 

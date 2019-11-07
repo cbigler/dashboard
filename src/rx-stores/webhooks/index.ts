@@ -52,8 +52,9 @@ export function webhooksReducer(state: WebhooksState, action: Any<FixInRefactor>
       data: [
         // Update existing items
         ...state.data.map((item: any) => {
+          const newItem = objectSnakeToCamel(action.item);
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel(action.item)};
+            return {...item, ...newItem};
           } else {
             return item;
           }

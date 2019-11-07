@@ -10,7 +10,7 @@ import styles from './styles.module.scss';
 import { SpacesState } from '../../rx-stores/spaces';
 import { DensitySpace, DensitySpaceTypes, DensityDoorway } from '../../types';
 import { UserState } from '../../rx-stores/user';
-import convertUnit, { UNIT_NAMES } from '../../helpers/convert-unit';
+import convertUnit, { UNIT_NAMES, SQUARE_FEET } from '../../helpers/convert-unit';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
 import moment from 'moment';
 
@@ -77,9 +77,9 @@ export function AdminLocationsDetailDPUsTotal({space}: {space: DensitySpace}) {
 }
 
 export function sizeAreaConverted(user: UserState, space: DensitySpace) {
-  return user.data && space.sizeArea && space.sizeAreaUnit ? convertUnit(
+  return (user.data && space.sizeArea) ? convertUnit(
     space.sizeArea,
-    space.sizeAreaUnit,
+    space.sizeAreaUnit || user.data.sizeAreaDisplayUnit || SQUARE_FEET,
     user.data.sizeAreaDisplayUnit,
   ) : null;
 }

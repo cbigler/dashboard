@@ -98,6 +98,7 @@ export default async function collectionSpacesCreate(dispatch, item) {
             space_id: response.data.id,
             doorway_id: linkItem.doorwayId,
             sensor_placement: linkItem.sensorPlacement,
+            update_historical: linkItem.updateHistoricCounts,
           });
         default:
           return;

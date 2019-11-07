@@ -197,7 +197,6 @@ const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps)
     showToast(dispatch, { text: 'Space created!' });
     // FIXME: this seems like a bad idea to have this just chilling in this callback
     window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
-    window.location.reload();
   }
   const onChangeField = (key, value) => {
     dispatch(spaceManagementFormUpdate(key, value) as Any<FixInRefactor>);

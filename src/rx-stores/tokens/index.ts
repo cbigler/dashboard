@@ -50,8 +50,9 @@ export function tokensReducer(state: TokensState, action: Any<FixInRefactor>): T
       data: [
         // Update existing items
         ...state.data.map((item: any) => {
+          const newItem = objectSnakeToCamel(action.item);
           if (action.item.key === item.key) {
-            return {...item, ...objectSnakeToCamel(action.item)};
+            return {...item, ...newItem};
           } else {
             return item;
           }

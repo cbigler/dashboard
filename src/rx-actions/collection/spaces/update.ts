@@ -123,6 +123,7 @@ export default async function collectionSpacesUpdate(dispatch, item) {
             space_id: item.id,
             doorway_id: linkItem.doorwayId,
             sensor_placement: linkItem.sensorPlacement,
+            update_historical: linkItem.updateHistoricCounts,
           });
         case 'UPDATE':
           return await core().post(`/links/${linkItem.id}/set_placement`, {
