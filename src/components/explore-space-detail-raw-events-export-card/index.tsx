@@ -36,7 +36,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
     headers: null,
 
     data: [],
-    error: '',
+    error: null as Any<FixInRefactor>,
 
     dataSpaceId: null,
     startDate: null,
@@ -211,7 +211,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
         {view === ERROR ? <div className={styles.exploreSpaceDetailRawEventsExportCardBodyError}>
           <span>
             <span className={styles.exploreSpaceDetailRawEventsExportCardBodyErrorIcon}>&#xe91a;</span>
-            {error.toString()}
+            {(error.response || {}).data || error.toString()}
           </span>
         </div> : null}
 
@@ -221,7 +221,7 @@ export default class VisualizationSpaceDetailRawEventsExportCard extends React.C
             loading: view === LOADING_CSV,
           })}
           role="button"
-          onClick={() => view !== LOADING_CSV && this.downloadCSV()}
+          onClick={() => view !== ERROR && view !== LOADING_CSV && this.downloadCSV()}
         >
           { view === LOADING_CSV || view === LOADING_INITIAL ? (
             <span>Generating CSV ...</span>
