@@ -264,7 +264,7 @@ export class Login extends React.Component<any, any> {
       {/* OKTA Alert */}
       <div className={styles.loginOktaAlert}>
         <Icons.Security4 color={'#F4AB4E'} />
-        <p className={styles.loginOktaAlertText}>You’re organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
+        <p className={styles.loginOktaAlertText}>Your organization has enabled OKTA for access control. Log in to OKTA to access Density.</p>
       </div>
     </div>;
   }
