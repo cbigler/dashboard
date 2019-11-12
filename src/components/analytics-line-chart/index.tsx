@@ -242,20 +242,20 @@ const ChartView: React.FunctionComponent<{
     isHovered: false
   });
 
-  const endOfCurrentHour = moment.utc().endOf('hour').valueOf();
+  const endOfCurrentMinute = moment.utc().endOf('minute').valueOf();
 
   // This filters out hidden spaces (table checkboxes) and also removes datapoints in the future (API bug)
   const visibleDatapoints = useMemo(() => {
     return report.queryResult.data.datapoints
       .filter(datapoint => {
         const isCheckedInTable = !report.hiddenSpaceIds.includes(datapoint.spaceId);
-        const isNotInTheFuture = datapoint.startActualEpochTime < endOfCurrentHour;
+        const isNotInTheFuture = datapoint.startActualEpochTime < endOfCurrentMinute;
         return isCheckedInTable && isNotInTheFuture;
       })
   }, [
     report.queryResult.data.datapoints,
     report.hiddenSpaceIds,
-    endOfCurrentHour,
+    endOfCurrentMinute,
   ])  
 
   const LEGEND_TOOLTIP = hoverState.isHovered ? (
