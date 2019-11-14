@@ -26,8 +26,8 @@ function getSpaceTypeLabel(spaceType) {
   return {
     campus: 'Campus',
     building: 'Building',
-    floor: 'Level',
-    space: 'Room',
+    floor: 'Floor',
+    space: 'Space',
   }[spaceType] || 'Unknown';
 }
 
