@@ -1,12 +1,11 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import ErrorBar from '../error-bar/index';
 
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
-import spaceResetCount from '../../actions/collection/spaces/reset-count';
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import spaceResetCount from '../../rx-actions/collection/spaces/reset-count';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 
 import { InputBox } from '@density/ui';
 import SpaceCard from '../live-space-card/index';
@@ -22,12 +21,17 @@ import { getParentsOfSpace } from '../../helpers/filter-hierarchy/index';
 import filterCollection from '../../helpers/filter-collection/index';
 import autoRefresh from '../../helpers/auto-refresh-hoc';
 import { isDocumentHidden } from '../../helpers/visibility-change';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import SpacesStore from '../../rx-stores/spaces';
+import EventPusherStatusStore from '../../rx-stores/event-pusher-status';
 const spaceFilter = filterCollection({fields: ['name']});
 
 function filterHierarchy(spaces, parentId) {
   return spaces.filter(space => {
     return (
-      space.spaceType === 'space' && /* must be of type space */
+      space.doorways.length !== 0 && /* must have doorways */
       getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
     );
   });
@@ -55,8 +59,8 @@ export function LiveSpaceList({
     filteredSpaces = spaceFilter(filteredSpaces, spaces.filters.search);
   }
 
-  // Remove campuses, buildings, and floors before rendering.
-  filteredSpaces = filteredSpaces.filter(i => i.spaceType === 'space');
+  // Remove any spaces that don't have doorways
+  filteredSpaces = filteredSpaces.filter(i => i.doorways.length !== 0);
 
 
   return <div className={styles.liveSpaceList}>
@@ -132,33 +136,43 @@ const AutoRefreshedLiveSpaceList = autoRefresh({
   shouldComponentUpdate: () => !isDocumentHidden()
 })(LiveSpaceList);
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    eventPusherStatus: state.eventPusherStatus,
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onSpaceSearch(searchQuery) {
-      dispatch(collectionSpacesFilter('search', searchQuery));
-    },
-    onSpaceChangeParent(parentId) {
-      dispatch(collectionSpacesFilter('parent', parentId));
-    },
-    onResetSpace(space, newCount) {
-      dispatch<any>(spaceResetCount(space, newCount)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
 
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-  };
-})(AutoRefreshedLiveSpaceList);
+const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaces = useRxStore(SpacesStore);
+  const eventPusherStatus = useRxStore(EventPusherStatusStore);
+
+  const onResetSpace = async (space, newCount) => {
+    const ok = await spaceResetCount(dispatch, space, newCount);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+  const onSpaceSearch = (searchQuery) => {
+    dispatch(collectionSpacesFilter('search', searchQuery) as Any<FixInRefactor>);
+  }
+  const onSpaceChangeParent = (parentId) => {
+    dispatch(collectionSpacesFilter('parent', parentId) as Any<FixInRefactor>);
+  }
+
+  return (
+    <AutoRefreshedLiveSpaceList
+      activeModal={activeModal}
+      spaces={spaces}
+      onResetSpace={onResetSpace}
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+      eventPusherStatus={eventPusherStatus}
+      onSpaceSearch={onSpaceSearch}
+      onSpaceChangeParent={onSpaceChangeParent}
+    />
+  )
+}
+
+export default ConnectedAutoRefreshedLiveSpaceList;

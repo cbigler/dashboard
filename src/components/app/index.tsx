@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import accounts from '../../client/accounts';
 
@@ -20,28 +19,44 @@ import LiveSpaceList from '../live-space-list/index';
 import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
 import DashboardsEdit from '../dashboard-edit/index';
+import Analytics from '../analytics';
 import Dialogger from '../dialogger';
 import Toaster from '../toaster';
 
-import showModal from '../../actions/modal/show';
-import updateModal from '../../actions/modal/update';
-import impersonateSet from '../../actions/impersonate';
-import { defaultState as impersonateDefaultState } from '../../reducers/impersonate';
+import showModal from '../../rx-actions/modal/show';
+import updateModal from '../../rx-actions/modal/update';
+import impersonateSet from '../../rx-actions/impersonate';
+import { defaultState as impersonateDefaultState } from '../../rx-stores/impersonate';
 
 import Dashboard from '../dashboard';
 import AppNavbar from '../app-navbar';
 import UnknownPage from '../unknown-page';
 import ImpersonateModal from '../impersonate-modal';
+import useRxStore from '../../helpers/use-rx-store';
+import ImpersonateStore from '../../rx-stores/impersonate';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import UserStore, { UserState } from '../../rx-stores/user';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
+import ActivePageStore, { ActivePageState } from '../../rx-stores/active-page';
+import { getUserOrgSettings } from '../../helpers/legacy';
+import { ImpersonateState } from '../../types/impersonate';
+import { DensityUser } from '../../types';
 
-function App({
+const App: React.FunctionComponent<{
+  activePage: ActivePageState,
+  activeModal: ActiveModalState,
+  impersonate: ImpersonateState,
+  user: UserState,
+  settings: DensityUser['organization']['settings']
+}> = function App({
   activePage,
   activeModal,
-  user,
   impersonate,
+  user,
   settings,
-  
-  onShowImpersonate,
 }) {
+  const dispatch = useRxDispatch();
+
   return (
     <div className={styles.app}>
       {/* Impersonation modal */}
@@ -69,7 +84,25 @@ function App({
               user={user}
               settings={settings}
               impersonate={impersonate}
-              onClickImpersonate={() => onShowImpersonate(impersonate)}
+              onClickImpersonate={async () => {
+                const value = impersonate || impersonateDefaultState;
+                showModal(dispatch, 'MODAL_IMPERSONATE', {
+                  ...value,
+                  organizationFilter: '',
+                  userFilter: '',
+                  enabled: true
+                });
+          
+                let organizations;
+                if (value.enabled) {
+                  organizations = value.organizations;
+                } else {
+                  organizations = (await accounts().get('/organizations')).data;
+                  dispatch(impersonateSet({...value, organizations}));
+                }
+          
+                updateModal(dispatch, {organizations, loading: false});
+              }}
             />;
         }
       })(activePage)}
@@ -124,6 +157,8 @@ function ActivePage({activePage, user, settings}) {
     return <Dashboard />;
   case "DASHBOARD_EDIT":
     return <DashboardsEdit />;
+  case "ANALYTICS":
+    return <Analytics />;
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.
@@ -137,39 +172,22 @@ function ActivePage({activePage, user, settings}) {
 }
 
 
-export default connect((state: any) => {
-  return {
-    activePage: state.activePage,
-    activeModal: state.activeModal,
-    user: state.user,
-    impersonate: state.impersonate,
-    settings: (
-      state.user &&
-      state.user.data &&
-      state.user.data.organization &&
-      state.user.data.organization.settings
-    ) || {}
-  };
-}, (dispatch: any) => {
-  return {
-    async onShowImpersonate(impersonate) {
-      impersonate = impersonate || impersonateDefaultState;
-      dispatch(showModal('MODAL_IMPERSONATE', {
-        ...impersonate,
-        organizationFilter: '',
-        userFilter: '',
-        enabled: true
-      }));
+const ConnectedApp: React.FC = () => {
+  const user = useRxStore(UserStore);
+  const activePage = useRxStore(ActivePageStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const impersonate = useRxStore(ImpersonateStore);
 
-      let organizations;
-      if (impersonate.enabled) {
-        organizations = impersonate.organizations;
-      } else {
-        organizations = (await accounts().get('/organizations')).data;
-        dispatch(impersonateSet({...impersonate, organizations}));
-      }
+  const settings = getUserOrgSettings(user);
+  return (
+    <App
+      user={user}
+      activePage={activePage}
+      activeModal={activeModal}
+      impersonate={impersonate}
+      settings={settings}
+    />
+  )
+}
 
-      dispatch(updateModal({organizations, loading: false}));
-    },
-  };
-})(App);
+export default ConnectedApp;

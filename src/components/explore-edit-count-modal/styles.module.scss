@@ -42,6 +42,10 @@
   &:focus { border-color: $brandPrimary; }
 }
 .exploreEditCountModalCountButton {
+  display: flex;
+  justify-content: center;
+  align-items:center;
+
   width: 54px;
   height: 54px;
   font-size: $fontSize2;

@@ -58,8 +58,8 @@
 
   background-color: #fff;
   border-radius: 50%;
-	border: 1px solid $gray;
-	box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
+  border: 1px solid $gray;
+  box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
   cursor: pointer;
   outline: none;
 }
@@ -115,3 +115,7 @@
 // see https://stackoverflow.com/a/45191208/4115328
 .submitButton:focus, .submitButton .inner { outline: none; }
 .submitButton:focus > .inner { text-decoration: underline; }
+
+.multipleSelectListItem {
+  margin-left: 16px;
+}

@@ -131,7 +131,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
     ),
     SIZE: (
       <FormLabel
-        label={`Size (${UNIT_NAMES[formState.sizeAreaUnit]})`}
+        label={`Size (${UNIT_NAMES[formState.sizeAreaUnit || SQUARE_FEET]})`}
         htmlFor="admin-locations-detail-modules-general-info-size"
         input={
           <InputBox

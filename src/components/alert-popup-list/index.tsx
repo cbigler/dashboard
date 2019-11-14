@@ -9,9 +9,17 @@ import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import alertsStore from '../../rx-stores/alerts';
 
-import showModal from '../../actions/modal/show';
+import showModal from '../../rx-actions/modal/show';
 import collectionAlertsUpdate from '../../rx-actions/alerts/update';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
+
+import { parsePhoneNumberFromString } from 'libphonenumber-js';
+import { DensityNotification } from '../../types';
+
+function formatAlertPhoneNumber(alert: DensityNotification) {
+  const phoneNumber = parsePhoneNumberFromString((alert.meta || {}).toNum || '');
+  return phoneNumber ? phoneNumber.formatNational() : 'Invalid Number';
+}
 
 export default function AlertPopupList({ selectedSpace }) {
   const { view, data } = useRxStore(alertsStore);
@@ -51,11 +59,11 @@ export default function AlertPopupList({ selectedSpace }) {
               className={styles.alertListDropdownCreateButton}
               role="button"
               onClick={() => {
-                dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
+                showModal(dispatch, 'MODAL_ALERT_MANAGEMENT', {
                   alert: {
                     spaceId: selectedSpace.id,
                     enabled: true,
-                    isOneShot: true,
+                    isOneShot: false,
                     notificationType: 'sms',
                     triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
                     triggerType: 'greater_than',
@@ -65,7 +73,7 @@ export default function AlertPopupList({ selectedSpace }) {
                       escalationDelta: null,
                     }
                   }
-                }) as any);
+                });
                 setVisible(false);
               }}
               tabIndex={visible ? 0 : -1}
@@ -97,18 +105,21 @@ export default function AlertPopupList({ selectedSpace }) {
                       const enabled = e.target.checked;
                       const updated = {...alert, enabled};
                       await collectionAlertsUpdate(dispatch, updated);
-                      dispatch(showToast({
+                      showToast(dispatch, {
                         text: enabled ? 'Alert enabled' : 'Alert disabled',
                         timeout: 1000
-                      }) as any);
+                      });
                     }}
                   />
                   <div className={styles.alertListDropdownItemInfo}>
                     <div className={styles.alertListDropdownItemInfoFirstRow}>
-                      Text me when occupancy {alert.triggerType === 'greater_than' ? 'exceeds' : 'drops below'}
+                      Text <span className={styles.alertListDropdownItemInfoNumber}>
+                        {formatAlertPhoneNumber(alert)}
+                      </span> when
                     </div>
                     <div className={styles.alertListDropdownItemInfoSecondRow}>
                       <span className={styles.alertListDropdownItemInfoSecondRowText}>
+                        Occupancy {alert.triggerType === 'greater_than' ? '>' : '<'}{' '}
                         {alert.triggerValue} {alert.triggerValue === 1 ? 'person' : 'people'}
                         {alert.isOneShot ? null :
                           <span className={styles.alertListDropdownItemInfoEscalationText}>
@@ -130,9 +141,9 @@ export default function AlertPopupList({ selectedSpace }) {
                     role="button"
                     className={styles.alertListDropdownItemEdit}
                     onClick={() => {
-                      dispatch(showModal('MODAL_ALERT_MANAGEMENT', {
+                      showModal(dispatch, 'MODAL_ALERT_MANAGEMENT', {
                         alert: { meta: {}, ...alert }
-                      }) as any);
+                      });
                       setVisible(false);
                     }}
                     tabIndex={visible ? 0 : -1}

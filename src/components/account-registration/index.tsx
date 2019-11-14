@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { DensityUser } from '../../types';
 
@@ -10,12 +9,14 @@ import { Button, InputBox } from '@density/ui';
 import ErrorBar from '../error-bar/index';
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 
-import { impersonateUnset } from '../../actions/impersonate';
-import sessionTokenSet from '../../actions/session-token/set';
+import { impersonateUnset } from '../../rx-actions/impersonate';
+import sessionTokenSet from '../../rx-actions/session-token/set';
 import accounts from '../../client/accounts';
 
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
+import rxConnect from '../../helpers/rx-connect-hoc';
+import AccountStore from '../../rx-stores/account';
 
 export class AccountRegistration extends React.Component<any, any> {
   constructor(props) {
@@ -149,15 +150,15 @@ export class AccountRegistration extends React.Component<any, any> {
   }
 }
 
-export default connect((state: any) => {
+export default rxConnect(AccountStore, state => {
   return {
-    invitationData: state.accountRegistration,
+    invitationData: state.invitationData,
   };
 }, dispatch => {
   return {
     onUserLoggedIn(token) {
       dispatch(impersonateUnset());
-      dispatch<any>(sessionTokenSet(token)).then(data => {
+      sessionTokenSet(dispatch, token).then(data => {
         const user: any = objectSnakeToCamel<DensityUser>(data);
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
       });

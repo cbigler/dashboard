@@ -11,15 +11,19 @@ import {
   Modal,
   PhoneInputBox,
 } from '@density/ui';
+import { DispatchType } from '../../types/rx-actions';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label';
-import { connect } from 'react-redux';
-import updateModal from '../../actions/modal/update';
-import hideModal from '../../actions/modal/hide';
+import updateModal from '../../rx-actions/modal/update';
+import hideModal from '../../rx-actions/modal/hide';
 import collectionAlertsCreate from '../../rx-actions/alerts/create';
 import collectionAlertsUpdate from '../../rx-actions/alerts/update';
 import collectionAlertsDelete from '../../rx-actions/alerts/delete';
-import showToast from '../../actions/toasts';
+import { showToast } from '../../rx-actions/toasts';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export const  GREATER_THAN = 'greater_than',
               LESS_THAN = 'less_than';
@@ -30,7 +34,7 @@ export const TRIGGER_TYPE_CHOICES = [
 ];
 
 export const COOLDOWN_CHOICES = [
-  {id: -1, label: 'Once'},
+  {id: 0, label: 'Once'},
   {id: 30, label: 'Every 30 minutes'},
   {id: 60, label: 'Every 60 minutes'},
   {id: 120, label: 'Every 2 hours'},
@@ -50,8 +54,11 @@ export function AlertManagementModalRaw({
   onCloseModal
 }) {
 
+  const phoneNumberInvalid = !alert.meta.toNum;
+  const cooldownInvalid = parseInt(alert.cooldown) < 0;
   const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
   const escalationDeltaInvalid = alert.meta.escalationDelta && isNaN(parseInt(alert.meta.escalationDelta));
+
   return <Modal
     visible={visible}
     width={480}
@@ -129,7 +136,7 @@ export function AlertManagementModalRaw({
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) !== -1 ?
+        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) > 0 ?
           <Fragment>
             <div className={styles.alertManagementModalFormRow}>
               <div className={styles.escalationDescription}>
@@ -174,7 +181,7 @@ export function AlertManagementModalRaw({
               <Button variant="underline" onClick={onCloseModal}>Cancel</Button>
               <Button
                 variant="filled"
-                disabled={!alert.meta.toNum || triggerValueInvalid || escalationDeltaInvalid}
+                disabled={phoneNumberInvalid || cooldownInvalid || triggerValueInvalid || escalationDeltaInvalid}
                 onClick={() => onSaveAlert(alert)}
               >Save</Button>
             </ButtonGroup>
@@ -185,59 +192,69 @@ export function AlertManagementModalRaw({
   </Modal>
 }
 
-export default connect(
-  (state: any) => ({
-    visible: state.activeModal.visible,
-    alert: state.activeModal.data && state.activeModal.data.alert,
-    user: state.user,
-  }),
-  dispatch => ({
-    onUpdateAlert: async (current, key, value) => {
-      const alert = {
+// FIXME: this is basically "connect"
+export default () => {
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const activeModal = useRxStore(ActiveModalStore);
+
+  const visible = activeModal.visible
+  const alert = activeModal.data && activeModal.data.alert
+
+  // formerly mapDispatchToProps
+  const onUpdateAlert = async (current, key, value) => {
+    const alert = {
+      ...current,
+      [key]: value
+    };
+    updateModal(dispatch, { alert });
+  }
+  const onUpdateAlertMeta = async (current, key, value) => {
+    updateModal(dispatch, {
+      alert: {
         ...current,
-        [key]: value
-      };
-      dispatch<any>(updateModal({ alert }));
-    },
-    onUpdateAlertMeta: async (current, key, value) => {
-      dispatch<any>(updateModal({
-        alert: {
-          ...current,
-          meta: {
-            ...current.meta,
-            [key]: value
-          }
-        }
-      }));
-    },
-    onSaveAlert: async alert => {
-      if (!alert.meta.escalationDelta || alert.triggerType !== GREATER_THAN) {
-        alert.meta.escalationDelta = null;
-      } else {
-        alert.meta.escalationDelta = parseInt(alert.meta.escalationDelta);
-      }
-      if (alert.cooldown) {
-        alert.cooldown = parseInt(alert.cooldown);
-        if (alert.cooldown === -1) {
-          alert.cooldown = 0;
-          alert.isOneShot = true;
+        meta: {
+          ...current.meta,
+          [key]: value
         }
       }
-      if (alert.id) {
-        collectionAlertsUpdate(dispatch, alert);
-      } else {
-        collectionAlertsCreate(dispatch, alert);
-      }
-      dispatch<any>(showToast({ text: 'Alert saved' }));
-      dispatch<any>(hideModal());
-    },
-    onDeleteAlert: async alert => {
-      collectionAlertsDelete(dispatch, alert);
-      dispatch<any>(showToast({ text: 'Alert deleted' }));
-      dispatch<any>(hideModal());
-    },
-    onCloseModal: async alert => {
-      dispatch<any>(hideModal());
+    });
+  }
+  const onSaveAlert = async (alert) => {
+    alert.cooldown = parseInt(alert.cooldown);
+    alert.isOneShot = alert.cooldown === 0;
+    if (!alert.meta.escalationDelta || alert.triggerType !== GREATER_THAN) {
+      alert.meta.escalationDelta = null;
+    } else {
+      alert.meta.escalationDelta = parseInt(alert.meta.escalationDelta);
     }
-  }),
-)(React.memo(AlertManagementModalRaw));
+    if (alert.id) {
+      collectionAlertsUpdate(dispatch as DispatchType, alert);
+    } else {
+      collectionAlertsCreate(dispatch as DispatchType, alert);
+    }
+    showToast(dispatch, { text: 'Alert saved' });
+    await hideModal(dispatch);
+  }
+  const onDeleteAlert = async (alert) => {
+    collectionAlertsDelete(dispatch as DispatchType, alert);
+    showToast(dispatch, { text: 'Alert deleted' });
+    await hideModal(dispatch);
+  }
+  const onCloseModal = async (alert) => {
+    await hideModal(dispatch);
+  }
+
+  return (
+    <AlertManagementModalRaw
+      user={user}
+      visible={visible}
+      alert={alert}
+      onUpdateAlert={onUpdateAlert}
+      onUpdateAlertMeta={onUpdateAlertMeta}
+      onSaveAlert={onSaveAlert}
+      onDeleteAlert={onDeleteAlert}
+      onCloseModal={onCloseModal}
+    />
+  )
+}

@@ -1,16 +1,15 @@
 import React, { Fragment, Component } from 'react';
-import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
-import collectionSpacesUpdate from '../../actions/collection/spaces/update';
-import showToast from '../../actions/toasts';
-import spaceManagementReset from '../../actions/space-management/reset';
-import spaceManagementFormUpdate from '../../actions/space-management/form-update';
-import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
+import collectionSpacesUpdate from '../../rx-actions/collection/spaces/update';
+import { showToast } from '../../rx-actions/toasts';
+import spaceManagementReset from '../../rx-actions/space-management/reset';
+import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';
+import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';
 
 import { DensitySpace, DensityTag, DensityAssignedTeam, DensitySpaceHierarchyItem } from '../../types';
-import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
+import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
@@ -32,6 +31,11 @@ import {
   ButtonGroup,
   Icons,
 } from '@density/ui';
+import useRxStore from '../../helpers/use-rx-store';
+import TagsStore from '../../rx-stores/tags';
+import AssignedTeamsStore from '../../rx-stores/assigned-teams';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+
 
 type AdminLocationsFormProps = {
   spaceType: DensitySpace["spaceType"],
@@ -129,6 +133,7 @@ export function SpaceTypeForm({
     campus: [
       MODULES.generalInfo,
       MODULES.address,
+      MODULES.doorways,
       MODULES.operatingHours,
       MODULES.tags,
       MODULES.teams,
@@ -312,35 +317,55 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
   }
 }
 
-export default connect((state: any) => {
-  const selectedSpace = state.spaceManagement.spaces.data.find(space => state.spaceManagement.spaces.selected === space.id);
-  return {
-    spaceManagement: state.spaceManagement,
-    tagsCollection: state.tags,
-    assignedTeamsCollection: state.assignedTeams,
-    selectedSpace,
-  };
-}, (dispatch: any) => {
-  return {
-    async onSave(spaceId, spaceFieldUpdate) {
-      const ok = await dispatch(collectionSpacesUpdate({
-        ...spaceFieldUpdate,
-        id: spaceId,
-      }));
-      if (!ok) {
-        dispatch(showToast({ type: 'error', text: 'Error updating space' }));
-        dispatch(spaceManagementReset());
-        return false;
-      }
 
-      dispatch(showToast({ text: 'Space updated successfully' }));
-      window.location.href = `#/admin/locations/${spaceId}`;
-    },
-    onChangeField(key, value) {
-      dispatch(spaceManagementFormUpdate(key, value));
-    },
-    onSetDoorwayField(doorwayId, field, value) {
-      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
-    },
-  };
-})(AdminLocationsEdit);
+// FIXME: figure out what external props are needed
+const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps) => {
+
+  const dispatch = useRxDispatch();
+  const spaceManagement = useRxStore(SpaceManagementStore);
+  const tags = useRxStore(TagsStore);
+  const assignedTeams = useRxStore(AssignedTeamsStore);
+
+  const selectedSpace = spaceManagement.spaces.data.find(s => s.id === spaceManagement.spaces.selected)
+
+  const onSave = async (spaceId, spaceFieldUpdate) => {
+    const ok = await collectionSpacesUpdate(dispatch, {
+      ...spaceFieldUpdate,
+      id: spaceId,
+    });
+
+    dispatch(spaceManagementReset() as Any<FixInRefactor>);
+
+    if (!ok) {
+      showToast(dispatch, { type: 'error', text: 'Error updating space' });
+      return false;
+    }
+
+    showToast(dispatch, { text: 'Space updated successfully' });
+    // FIXME: just a little inline url swapping, what could go wrong...
+    window.location.href = `#/admin/locations/${spaceId}`;
+  }
+  const onChangeField = (key, value) => {
+    dispatch(spaceManagementFormUpdate(key, value) as Any<FixInRefactor>);
+  }
+  const onSetDoorwayField = (doorwayId, field, value) => {
+    dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value) as Any<FixInRefactor>);
+  }
+
+  return (
+    <AdminLocationsEdit
+      {...externalProps}
+
+      tagsCollection={tags}
+      assignedTeamsCollection={assignedTeams}
+      spaceManagement={spaceManagement}
+      selectedSpace={selectedSpace}
+
+      onSave={onSave}
+      onChangeField={onChangeField}
+      onSetDoorwayField={onSetDoorwayField}
+    />
+  )
+}
+
+export default ConnectedAdminLocationsEdit;

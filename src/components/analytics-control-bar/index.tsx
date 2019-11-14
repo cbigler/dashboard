@@ -1,24 +1,39 @@
 import React, { useState, Fragment } from 'react';
-import PropTypes from 'prop-types';
+import classnames from 'classnames';
 import styles from './styles.module.scss';
 
 import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
 import { DensitySpace } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
+import AnalyticsFocusedMetricSelector from '../analytics-control-bar-metric-filter';
 import AnalyticsControlBarSpaceFilter, {
   AnalyticsSpaceFilter,
   EMPTY_FILTER,
 } from '../analytics-control-bar-space-filter';
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
 import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
-import { QueryInterval } from '../../types/analytics';
+import AnalyticsPopup, { AnalyticsPopupPinCorner, ItemList } from '../analytics-popup';
+import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 
-import { Icons } from '@density/ui';
+// FIXME: The below should be switched to use the new rx-actinos based modal interface,
+// point this out in a review!
+import showModal from '../../rx-actions/modal/show';
+
+import { Button, Icons } from '@density/ui';
+import colorVariables from '@density/ui/variables/colors.json';
 
 import { AddButton } from '../analytics-control-bar-utilities';
+import can, { PERMISSION_CODES } from '../../helpers/permissions';
+import { UserState } from '../../rx-stores/user';
 
 type AnalyticsControlBarProps = {
+  userState: UserState,
+  metric: AnalyticsFocusedMetric,
+  onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
+
   filters: Array<AnalyticsSpaceFilter>,
   onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
 
@@ -30,9 +45,20 @@ type AnalyticsControlBarProps = {
   
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+  saveButtonState: AnalyticsControlBarSaveButtonState,
+  onSave?: () => void,
+  onUpdateReportName?: (name: string) => void,
+  refreshEnabled: boolean,
+  moreMenuVisible: boolean,
+  onRefresh: () => void,
 }
 
 const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = function AnalyticsControlBar({
+  userState,
+
+  metric,
+  onChangeMetric,
+
   filters,
   onChangeFilters,
 
@@ -44,10 +70,21 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
 
   spaces,
   formattedHierarchy,
+
+  saveButtonState,
+  onSave,
+  onUpdateReportName,
+  onRefresh,
+  refreshEnabled,
+  moreMenuVisible,
 }) {
   return (
     <div className={styles.analyticsControlBar}>
       <div className={styles.analyticsControlBarSectionWrap}>
+        <AnalyticsFocusedMetricSelector
+          value={metric}
+          onChange={onChangeMetric}
+        />
         <AnalyticsSpaceFilterBuilder
           filters={filters}
           onChange={onChangeFilters}
@@ -62,18 +99,97 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
           value={interval}
           onChange={onChangeInterval}
         />
+        <button
+          className={classnames(styles.refreshButton, {[styles.disabled]: !refreshEnabled})}
+          onClick={() => {
+            if (refreshEnabled) {
+              onRefresh();
+            }
+          }}
+        >
+          <Icons.Refresh color={refreshEnabled ? colorVariables.brandPrimary : colorVariables.gray} />
+        </button>
       </div>
-      <div className={styles.analyticsControlBarSection}>
-        {/* FIXME: put actual icons and  buttons here, point this out in a review! */}
-        <span style={{marginRight: 8}}><Icons.Star /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.AddReport /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Download /></span>
-        <span style={{marginLeft: 8, marginRight: 8}}><Icons.Share /></span>
-        <span style={{marginLeft: 8}}><Icons.Code /></span>
-      </div>
+      {can(userState, PERMISSION_CODES.coreWrite) ?
+        <div className={styles.analyticsControlBarSection}>
+          <AnalyticsControlBarButtons
+            saveButtonState={saveButtonState}
+            onSave={onSave}
+            onUpdateReportName={onUpdateReportName}
+            moreMenuVisible={moreMenuVisible}
+          />
+        </div>
+      : null}
     </div>
   );
 }
+
+
+export enum AnalyticsControlBarSaveButtonState {
+  NORMAL = 'NORMAL',
+  DISABLED = 'DISABLED',
+  LOADING = 'LOADING',
+}
+type AnalyticsControlBarButtonsProps = {
+  saveButtonState: AnalyticsControlBarSaveButtonState,
+  onSave?: () => void,
+  moreMenuVisible: boolean,
+  onUpdateReportName?: (name: string) => void,
+}
+export const AnalyticsControlBarButtons: React.FunctionComponent<AnalyticsControlBarButtonsProps> = ({ saveButtonState, onSave, moreMenuVisible, onUpdateReportName }) => {
+  const [moreOpen, setMoreOpen] = useState(false);
+  const rxDispatch = useRxDispatch();
+  return (
+    <Fragment>
+      <Button
+        disabled={saveButtonState !== AnalyticsControlBarSaveButtonState.NORMAL}
+        variant="filled"
+        onClick={() => onSave ? onSave() : null}
+      >
+        {saveButtonState === AnalyticsControlBarSaveButtonState.LOADING ? (
+          <div className={styles.saveButtonWrapper}>
+            Loading...
+          </div>
+        ) : (
+          <div className={styles.saveButtonWrapper}>
+            <Icons.Save color="currentColor" />
+            <span className={styles.saveButtonText}>Save</span>
+          </div>
+        )}
+      </Button>
+      {moreMenuVisible ? (
+        <AnalyticsPopup
+          target={<button className={styles.iconButton}><Icons.More /></button>}
+          open={moreOpen}
+          onOpen={() => setMoreOpen(true)}
+          onClose={() => setMoreOpen(false)}
+          pinCorner={AnalyticsPopupPinCorner.RIGHT}
+        >
+          <ItemList
+            choices={[{ id: '', label: 'Rename' }]}
+            onClick={choice => {
+              setMoreOpen(false);
+
+              if (onUpdateReportName) {
+                mixpanelTrack('Analytics Report Rename', {
+                  'Location': 'Control Bar',
+                });
+                // FIXME: The below should be switched to use the new rx-actinos based modal interface,
+                // point this out in a review!
+                showModal(rxDispatch, 'MODAL_PROMPT', {
+                  title: `Rename Report`,
+                  placeholder: 'Enter a new name',
+                  confirmText: 'Save',
+                  callback: onUpdateReportName,
+                });
+              }
+            }}
+          />
+        </AnalyticsPopup>
+      ) : null}
+    </Fragment>
+  );
+};
 
 type AnalyticsSpaceFilterBuilderProps = {
   filters: Array<AnalyticsSpaceFilter>,
@@ -90,7 +206,9 @@ function AnalyticsSpaceFilterBuilder({
   formattedHierarchy,
 }: AnalyticsSpaceFilterBuilderProps) {
   const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
-  const [ emptyFilterVisible, setEmptyFilterVisible ] = useState(filters.length === 0);
+
+  const isAdding = openedFilterIndex > filters.length - 1;
+  const emptyFilterVisible = filters.length === 0 || isAdding;
 
   const filtersIncludingEmpty = [ ...filters, ...(emptyFilterVisible ? [EMPTY_FILTER] : []) ];
 
@@ -102,11 +220,6 @@ function AnalyticsSpaceFilterBuilder({
             filter={filter}
             deletable={filters.length > 1 || filter.field !== ''}
             onDelete={() => {
-              if (filters.length === 1) {
-                // If the last filter is being deleted, then replace it with an empty filter.
-                setEmptyFilterVisible(true);
-              }
-
               const filtersCopy = filters.slice();
               filtersCopy.splice(index, 1);
               onChange(filtersCopy);
@@ -117,17 +230,12 @@ function AnalyticsSpaceFilterBuilder({
               // Close the currently open filter
               setOpenedFilterIndex(-1);
 
-              const filtersCopy = filters.slice();
-
               // Update the filter if its not the empty filter
               const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
-              if (!fieldIsEmpty) {
+              if (!fieldIsEmpty && filters[index] !== filter) {
+                const filtersCopy = filters.slice();
                 filtersCopy[index] = filter;
                 onChange(filtersCopy);
-              }
-              // Hide the empty filter if a filter was added
-              if (filtersCopy.length !== 0) {
-                setEmptyFilterVisible(false);
               }
             }}
             spaces={spaces}
@@ -140,7 +248,7 @@ function AnalyticsSpaceFilterBuilder({
             <Fragment>
               {acc}
               <div className={styles.listItemWrapper}>
-                <div>and</div> {i}
+                <div>or</div> {i}
               </div>
             </Fragment>
           );
@@ -150,7 +258,6 @@ function AnalyticsSpaceFilterBuilder({
       }, null)}
       <AddButton onClick={() => {
         let openedFilterIndex = filters.length;
-        setEmptyFilterVisible(true);
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed ans so that the animation to open is

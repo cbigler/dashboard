@@ -4,8 +4,6 @@ import React, { useState, Fragment } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
 
-import { connect } from 'react-redux';
-
 import colorVariables from '@density/ui/variables/colors.json';
 
 import {
@@ -29,13 +27,21 @@ import DashboardEmailModal from '../dashboard-email-modal';
 import GenericErrorState from '../generic-error-state/index';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
-import { scrubDashboardDate } from '../../actions/miscellaneous/set-dashboard-date';
-import routeTransitionDashboardDetail from '../../actions/route-transition/dashboard-detail';
-import createDashboard from '../../actions/dashboards/create-dashboard';
-import showToast from '../../actions/toasts';
+import { scrubDashboardDate } from '../../rx-actions/miscellaneous/set-dashboard-date';
+import routeTransitionDashboardDetail from '../../rx-actions/route-transition/dashboard-detail';
+import createDashboard from '../../rx-actions/dashboards/create-dashboard';
+import { showToast } from '../../rx-actions/toasts';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import DashboardsStore from '../../rx-stores/dashboards';
+import { getSelectedDashboard } from '../../helpers/legacy';
+import MiscellaneousStore from '../../rx-stores/miscellaneous';
+import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 function DashboardMainScrollViewContent({
   dashboards,
@@ -221,202 +227,216 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
   )
 }
 
-export class Dashboard extends React.Component<any, any> {
-  private pageContainerRef: React.RefObject<HTMLInputElement>;
+const Dashboard: React.FunctionComponent<{
+  dashboards: Any<FixInRefactor>,
+  selectedDashboard: Any<FixInRefactor>,
+  activeModal: Any<FixInRefactor>,
 
-  constructor(props) {
-    super(props);
-    this.pageContainerRef = React.createRef();
-    this.state = {
-      pageSize: 0,
-    };
-  }
+  date: Any<FixInRefactor>,
+  resizeCounter: Any<FixInRefactor>,
+  settings: Any<FixInRefactor>,
+  isDemoUser: Any<FixInRefactor>,
+  isReadOnlyUser: Any<FixInRefactor>,
 
-  componentDidMount() {
-    window.addEventListener('resize', this.onResize);
-    this.onResize();
-  }
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.onResize);
-  }
+  onDashboardChangeWeek: Any<FixInRefactor>,
+  onCloseModal: Any<FixInRefactor>,
+  onShowModal: Any<FixInRefactor>,
+  onCreateDashboard: Any<FixInRefactor>,
+  onCsvExportError: Any<FixInRefactor>,
+}> = function Dashboard(props) {
 
-  onResize = () => {
-    if (this.pageContainerRef) {
-      const div: any = this.pageContainerRef.current;
-      this.setState({
-        pageSize: div.clientWidth,
-      });
-    }
-  }
+  const {
+    dashboards,
+    selectedDashboard,
+    activeModal,
 
-  render() {
-    const {
-      dashboards,
-      selectedDashboard,
-      activeModal,
+    date,
+    resizeCounter,
+    settings,
+    isDemoUser,
+    isReadOnlyUser,
 
-      date,
-      resizeCounter,
-      settings,
-      isDemoUser,
-      isReadOnlyUser,
+    onDashboardChangeWeek,
+    onCloseModal,
+    onShowModal,
+    onCreateDashboard,
+    onCsvExportError,
+  } = props;
 
-      onDashboardChangeWeek,
-      onCloseModal,
-      onShowModal,
-      onCreateDashboard,
-      onCsvExportError,
-    } = this.props;
+  return (
+    <Fragment>
+      {/* If an expanded report modal is visible, then render it above the view */}
+      {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
+        <ExpandedReportModal
+          visible={activeModal.visible}
+          report={activeModal.data.report}
+          reportData={activeModal.data.reportData}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
-    return (
-      <Fragment>
-        {/* If an expanded report modal is visible, then render it above the view */}
-        {activeModal.name === 'MODAL_REPORT_EXPANDED' ? (
-          <ExpandedReportModal
-            visible={activeModal.visible}
-            report={activeModal.data.report}
-            reportData={activeModal.data.reportData}
-            onCloseModal={onCloseModal}
-          />
-        ) : null}
+      {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
+        <DashboardDigestManagementModal
+          visible={activeModal.visible}
+          selectedDashboard={activeModal.data.selectedDashboard}
+          initialDigestSchedule={activeModal.data.digest}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
-        {activeModal.name === 'MODAL_DIGEST_MANAGEMENT' ? (
-          <DashboardDigestManagementModal
-            visible={activeModal.visible}
-            selectedDashboard={activeModal.data.selectedDashboard}
-            initialDigestSchedule={activeModal.data.digest}
-            onCloseModal={onCloseModal}
-          />
-        ) : null}
+      {activeModal.name === 'MODAL_DASHBOARD_EMAIL' ? (
+        <DashboardEmailModal
+          visible={activeModal.visible}
+          selectedDashboard={activeModal.data.selectedDashboard}
+          onCloseModal={onCloseModal}
+        />
+      ) : null}
 
-        {activeModal.name === 'MODAL_DASHBOARD_EMAIL' ? (
-          <DashboardEmailModal
-            visible={activeModal.visible}
-            selectedDashboard={activeModal.data.selectedDashboard}
-            onCloseModal={onCloseModal}
-          />
-        ) : null}
+      {/* Main application */}
+      <div className={styles.appFrameWrapper}>
+        <AppFrame>
+          <AppPane>
+            {selectedDashboard || dashboards.loading ? (
+              <AppBarContext.Provider value="CARD_HEADER">
+                <AppBar>
+                  {selectedDashboard ? (
+                    <AppBarSection>
+                      <DashboardDropdown
+                        selectedDashboard={selectedDashboard}
+                        dashboards={dashboards}
+                        onCreateDashboard={onCreateDashboard}
+                      />
+                    </AppBarSection>
+                  ) : null}
 
-        {/* Main application */}
-        <div ref={this.pageContainerRef} className={styles.appFrameWrapper}>
-          <AppFrame>
-            <AppPane>
-              {selectedDashboard || dashboards.loading ? (
-                <AppBarContext.Provider value="CARD_HEADER">
-                  <AppBar>
-                    {selectedDashboard ? (
-                      <AppBarSection>
-                        <DashboardDropdown
-                          selectedDashboard={selectedDashboard}
-                          dashboards={dashboards}
-                          onCreateDashboard={onCreateDashboard}
-                        />
-                      </AppBarSection>
-                    ) : null}
-
-                    {/* TODO: Replace this with better report time navigation (like MixPanel) */}
-                    {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
-                      <div style={{width: 58}}>
-                        <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                  {/* TODO: Replace this with better report time navigation (like MixPanel) */}
+                  {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
+                    <div style={{width: 58}}>
+                      <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                      <div style={{paddingTop: 6, paddingLeft: 1}}>
+                        <Icons.ChevronLeft color={colorVariables.brandPrimary} />
+                      </div>
+                      </Button>
+                    </div>
+                    <div style={{padding: 13}}>
+                      Reported on{' '}
+                      <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
+                    </div>
+                    <div style={{width: 58}}>
+                      <Button
+                        onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                        disabled={moment(date).add(1, 'week') > moment()}
+                      >
                         <div style={{paddingTop: 6, paddingLeft: 1}}>
-                          <Icons.ChevronLeft color={colorVariables.brandPrimary} />
-                        </div>
-                        </Button>
-                      </div>
-                      <div style={{padding: 13}}>
-                        Reported on{' '}
-                        <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-                      </div>
-                      <div style={{width: 58}}>
-                        <Button
-                          onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-                          disabled={moment(date).add(1, 'week') > moment()}
-                        >
-                          <div style={{paddingTop: 6, paddingLeft: 1}}>
-                            <Icons.ChevronRight
-                              color={moment(date).add(1, 'week') > moment() ?
-                                colorVariables.gray :
-                                colorVariables.brandPrimary}
-                            />
-                          </div>
-                        </Button>
-                      </div>
-                    </AppBarSection> : null}
-
-                    {selectedDashboard ? (
-                      <AppBarSection>
-                        {!isDemoUser ? (
-                          <DashboardDigestPopupList
-                            selectedDashboard={selectedDashboard}
-                            onEditDigest={digest => {
-                              onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
-                            }}
-                            onCreateDigest={() => {
-                              onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
-                            }}
-                            onCreateEmail={() => {
-                              onShowModal('MODAL_DASHBOARD_EMAIL', { selectedDashboard })
-                            }}
+                          <Icons.ChevronRight
+                            color={moment(date).add(1, 'week') > moment() ?
+                              colorVariables.gray :
+                              colorVariables.brandPrimary}
                           />
-                        ) : null}
-                        {!isReadOnlyUser ? (
-                          <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
-                        ) : null}
-                      </AppBarSection>
-                    ) : null}
-                  </AppBar>
-                </AppBarContext.Provider>
-              ) : null}
-              <AppScrollView backgroundColor={colorVariables.grayLightest}>
-                <DashboardMainScrollViewContent
-                  dashboards={dashboards}
-                  selectedDashboard={selectedDashboard}
-                  resizeCounter={resizeCounter}
-                  isReadOnlyUser={isReadOnlyUser}
-                  onCsvExportError={onCsvExportError}
-                />
-              </AppScrollView>
-            </AppPane>
-          </AppFrame>
-        </div>
-      </Fragment>
-    );
-  }
+                        </div>
+                      </Button>
+                    </div>
+                  </AppBarSection> : null}
+
+                  {selectedDashboard ? (
+                    <AppBarSection>
+                      {!isDemoUser && !isReadOnlyUser ? (
+                        <DashboardDigestPopupList
+                          selectedDashboard={selectedDashboard}
+                          onEditDigest={digest => {
+                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest });
+                          }}
+                          onCreateDigest={() => {
+                            onShowModal('MODAL_DIGEST_MANAGEMENT', { selectedDashboard, digest: null });
+                          }}
+                          onCreateEmail={() => {
+                            onShowModal('MODAL_DASHBOARD_EMAIL', { selectedDashboard })
+                          }}
+                        />
+                      ) : null}
+                      {!isReadOnlyUser ? (
+                        <Button href={`#/dashboards/${selectedDashboard.id}/edit`}>Edit dashboard</Button>
+                      ) : null}
+                    </AppBarSection>
+                  ) : null}
+                </AppBar>
+              </AppBarContext.Provider>
+            ) : null}
+            <AppScrollView backgroundColor={colorVariables.grayLightest}>
+              <DashboardMainScrollViewContent
+                dashboards={dashboards}
+                selectedDashboard={selectedDashboard}
+                resizeCounter={resizeCounter}
+                isReadOnlyUser={isReadOnlyUser}
+                onCsvExportError={onCsvExportError}
+              />
+            </AppScrollView>
+          </AppPane>
+        </AppFrame>
+      </div>
+    </Fragment>
+  );
 }
 
-export default connect((state: any) => {
-  const selectedDashboard = state.dashboards.data.find(d => d.id === state.dashboards.selected);
-  return {
-    dashboards: state.dashboards,
-    selectedDashboard,
-    activeModal: state.activeModal,
+// FIXME: apparently there are additional external props 
+const ConnectedDashboard: React.FC<Any<FixInRefactor>> = (externalProps) => {
+  const dispatch = useRxDispatch();
 
-    isDemoUser: state.user && state.user.data && state.user.data.isDemo,
-    isReadOnlyUser: state.user && state.user.data && !state.user.data.permissions.includes('core_write'),
+  const userState = useRxStore(UserStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const dashboards = useRxStore(DashboardsStore);
+  const miscellaneous = useRxStore(MiscellaneousStore);
+  const resizeCounter = useRxStore(ResizeCounterStore);
 
-    date: state.miscellaneous.dashboardDate,
-    sidebarVisible: state.miscellaneous.dashboardSidebarVisible,
-    resizeCounter: state.resizeCounter,
-    settings: state.user.data && state.user.data.organization.settings,
-  };
-}, (dispatch: any) => {
-  return {
-    onDashboardChangeWeek(dashboard, weeks) {
-      dispatch(scrubDashboardDate(weeks));
-      dispatch(routeTransitionDashboardDetail(dashboard.id));
-    },
-    onCreateDashboard() {
-      dispatch(createDashboard());
-    },
+  const selectedDashboard = getSelectedDashboard(dashboards);
 
-    onCloseModal() {
-      dispatch(hideModal());
-    },
-    onShowModal(name, data) {
-      dispatch(showModal(name, data));
-    },
-    onCsvExportError() {
-      dispatch(showToast({ type: 'error', text: 'Error exporting CSV' }));
-    },
-  };
-})(Dashboard);
+  // formerly mapStateToProps
+  const isDemoUser = userState && userState.data && userState.data.isDemo;
+  const isReadOnlyUser = userState && userState.data && !userState.data.permissions.includes('core_write')
+  const settings = userState && userState.data && userState.data.organization.settings;
+  const date = miscellaneous.dashboardDate;
+  const sidebarVisible = miscellaneous.dashboardSidebarVisible;
+
+  // formerly mapDispatchToProps
+  const onCsvExportError = () => {
+    showToast(dispatch, { type: 'error', text: 'Error exporting CSV' });
+  }
+  const onCloseModal = () => {
+    hideModal(dispatch);
+  }
+  const onShowModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+  const onDashboardChangeWeek = async (dashboard, weeks) => {
+    dispatch(scrubDashboardDate(weeks) as Any<FixInRefactor>);
+    await routeTransitionDashboardDetail(dispatch, dashboard.id);
+  }
+  const onCreateDashboard = async () => {
+    await createDashboard(dispatch);
+  }
+  return (
+    <Dashboard
+
+      {...externalProps}
+
+      dashboards={dashboards}
+      selectedDashboard={selectedDashboard}
+
+      activeModal={activeModal}
+      resizeCounter={resizeCounter}
+
+      isDemoUser={isDemoUser}
+      isReadOnlyUser={isReadOnlyUser}
+      settings={settings}
+      date={date}
+      sidebarVisible={sidebarVisible}
+
+      onCloseModal={onCloseModal}
+      onShowModal={onShowModal}
+      onCsvExportError={onCsvExportError}
+      onDashboardChangeWeek={onDashboardChangeWeek}
+      onCreateDashboard={onCreateDashboard}
+    />
+  )
+}
+export default ConnectedDashboard;

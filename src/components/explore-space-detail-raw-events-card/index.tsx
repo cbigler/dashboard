@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 
 import styles from './styles.module.scss';
 
@@ -14,10 +13,14 @@ import {
 } from '@density/ui';
 
 import RawEventsPager from '../explore-space-detail-raw-events-pager/index';
-import { calculateDailyRawEvents, DAILY_RAW_EVENTS_PAGE_SIZE } from '../../actions/route-transition/explore-space-daily';
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
+import { calculateDailyRawEvents, DAILY_RAW_EVENTS_PAGE_SIZE } from '../../rx-actions/route-transition/explore-space-daily';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
 
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
+import useRxStore from '../../helpers/use-rx-store';
+import ExploreDataStore from '../../rx-stores/explore-data';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import SpacesStore from '../../rx-stores/spaces';
 
 export const LOADING = 'LOADING',
       EMPTY = 'EMPTY',
@@ -98,16 +101,33 @@ export function ExploreSpaceDetailRawEventsCardRaw({
   );
 }
 
-export default connect((state: any) => ({
-  spaces: state.spaces,
-  calculatedData: state.exploreData.calculations.dailyRawEvents,
-}), dispatch => ({
-  onRefresh(space) {
-    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-    dispatch<any>(calculateDailyRawEvents(space));
-  },
-  onChangePage(space, page) {
-    dispatch(collectionSpacesFilter('dailyRawEventsPage', page));
-    dispatch<any>(calculateDailyRawEvents(space));
-  },
-}))(React.memo(ExploreSpaceDetailRawEventsCardRaw));
+
+// FIXME: these props come from wherever this gets used
+const ConnectedExploreSpaceDetailRawEventsCard: React.FC<Any<FixInRefactor>> = (externalProps) => {
+  
+  const dispatch = useRxDispatch();
+  const spaces = useRxStore(SpacesStore);
+  const exploreData = useRxStore(ExploreDataStore);
+
+  const calculatedData = exploreData.calculations.dailyRawEvents;
+
+  const onRefresh = async (space) => {
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1) as Any<FixInRefactor>);
+    await calculateDailyRawEvents(dispatch, space);
+  };
+  const onChangePage = async (space, page) => {
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', page) as Any<FixInRefactor>);
+    await calculateDailyRawEvents(dispatch, space);
+  }
+  
+  return (
+    <ExploreSpaceDetailRawEventsCardRaw
+      {...externalProps}
+      spaces={spaces}
+      calculatedData={calculatedData}
+      onRefresh={onRefresh}
+      onChangePage={onChangePage}
+    />
+  )
+}
+export default ConnectedExploreSpaceDetailRawEventsCard;

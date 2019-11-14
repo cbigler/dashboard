@@ -1,10 +1,14 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Button } from '@density/ui';
 
-import createDashboard from '../../actions/dashboards/create-dashboard';
+import createDashboard from '../../rx-actions/dashboards/create-dashboard';
 
 import styles from './styles.module.scss';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import { getIsReadOnlyUser } from '../../helpers/legacy';
+import DashboardsStore from '../../rx-stores/dashboards';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export function DashboardsList({ dashboards, isReadOnlyUser, onCreateDashboard }) {
   if (dashboards.error) {
@@ -36,15 +40,25 @@ export function DashboardsList({ dashboards, isReadOnlyUser, onCreateDashboard }
   }
 }
 
-export default connect((state: any) => {
-  return {
-    dashboards: state.dashboards,
-    isReadOnlyUser: state.user && state.user.data && !state.user.data.permissions.includes('core_write'),
-  };
-}, dispatch => {
-  return {
-    async onCreateDashboard() {
-      dispatch<any>(createDashboard());
-    },
-  };
-})(DashboardsList);
+
+const ConnectedDashboardsList: React.FC = () => {
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const dashboards = useRxStore(DashboardsStore);
+
+  const isReadOnlyUser = getIsReadOnlyUser(user);
+
+  const onCreateDashboard = async () => {
+    await createDashboard(dispatch)
+  }
+
+  return (
+    <DashboardsList
+      dashboards={dashboards}
+      onCreateDashboard={onCreateDashboard}
+      isReadOnlyUser={isReadOnlyUser}
+    />
+  )
+}
+
+export default ConnectedDashboardsList;

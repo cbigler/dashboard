@@ -1,9 +1,11 @@
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import 'moment-timezone';
 
+import { mod } from '../math';
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
 import { DaysOfWeek } from '../../types';
+import { QueryInterval } from '../../types/analytics';
 
 // ----------------------------------------------------------------------------
 // DATE STRING RELATED OPERATIONS
@@ -169,26 +171,48 @@ export function realizeDateRange(
   }
 }
 
-function realizeRelativeDuration(
+export function realizeRelativeDuration(
   relativeDuration: RelativeDuration,
   now: moment.Moment,
   organizationalWeekStartDay: DaysOfWeek,
 ): moment.Moment {
   let timestamp = now.clone().add(relativeDuration.magnitude, relativeDuration.unit);
-
-  switch (relativeDuration.round) {
-  case RelativeDurationRound.START:
-    timestamp = timestamp.startOf(relativeDuration.unit);
-    break;
-  case RelativeDurationRound.END:
-    timestamp = timestamp.endOf(relativeDuration.unit);
-    break;
-  }
-
+  
   // Weeks are a special case because of "organization days of week start day" being a a concept
   // that can effect what day a week starts on
   if (relativeDuration.unit === RelativeUnit.WEEKS) {
-    timestamp = timestamp.add(DAYS_OF_WEEK.indexOf(organizationalWeekStartDay), 'days');
+    let targetDay = DAYS_OF_WEEK.indexOf(organizationalWeekStartDay);
+    // FIXME: this shouldn't be possible, but default to Sunday if input is bad/undefined
+    if (targetDay === -1) { targetDay = 0; }
+    
+    // Week should start on the target day, and end at the end of 1 before the target day
+    //  eg. [Wednesday @ 00:00, Tuesday @ 23:59] if target day is Wednesday
+    let targetDayWeekStart = targetDay;
+    let targetDayWeekEnd = mod(targetDay-1, 7)
+
+    switch(relativeDuration.round) {
+      case RelativeDurationRound.START:
+        while (timestamp.day() !== targetDayWeekStart) {
+          timestamp.subtract(1, 'day')
+        }
+        timestamp = timestamp.startOf('day')
+        break;
+      case RelativeDurationRound.END:
+        while (timestamp.day() !== targetDayWeekEnd) {
+          timestamp.add(1, 'day')
+        }
+        timestamp = timestamp.endOf('day')
+        break;
+    }
+  } else {
+    switch (relativeDuration.round) {
+      case RelativeDurationRound.START:
+        timestamp = timestamp.startOf(relativeDuration.unit);
+        break;
+      case RelativeDurationRound.END:
+        timestamp = timestamp.endOf(relativeDuration.unit);
+        break;
+    }
   }
   return timestamp;
 }
@@ -245,7 +269,7 @@ export function getStartOfWeek(timestamp, weekStart) {
 }
 
 // Given a formatted interval string, return it as a moment duration
-export function parseIntervalAsDuration(interval) {
+export function parseIntervalAsDuration(interval: QueryInterval) {
   const durationUnits = { w: 'week', d: 'day', h: 'hour', m: 'minute', s: 'second' };
   const suffix = interval.slice(-1);
   const amount = parseInt(interval.slice(0, -1), 10);

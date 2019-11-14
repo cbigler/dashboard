@@ -1,0 +1,120 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.home {
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  display: flex;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: #fff;
+}
+.homeMain {
+  width: 100%;
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding-top: 24px;
+  padding-right: 24px;
+  overflow-y: auto;
+}
+.homeRecommended {
+  width: 450px;
+  height: 100%;
+  flex-grow: 1;
+  flex-shrink: 0;
+  border-left: 1px solid $grayLight;
+  padding-top: 24px;
+  padding-left: 24px;
+  overflow-y: auto;
+}
+
+.homeHeader {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  height: 36px;
+}
+.homeHeaderIcon { margin-right: 8px; }
+
+.homeSavedReportsEmpty {
+  width: 320px;
+  margin-top: 120px;
+}
+.homeSavedReportsEmpty p {
+  margin-bottom: 18px;
+  font-size: $fontSizeBase;
+}
+
+.homeRecommendedReportsEmpty {
+  background-color: #FFF5E7; /* FIXME: what color is this? Point this out in a review. */
+  width: 100%;
+  padding: 24px;
+  border-radius: $borderRadiusBase;
+  margin-top: 16px;
+  box-sizing: border-box;
+}
+.homeRecommendedReportsEmpty h3 {
+  font-size: $fontSizeBase;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: $grayCinder;
+}
+.homeRecommendedReportsEmpty p {
+  font-size: $fontSizeBase;
+  color: $grayCinder;
+}
+
+
+
+
+.analyticsIntro {
+  display: flex;
+  justify-content: space-between;
+  background-color: #F3F6FF; /* FIXME: what color is this? Point this out in a review. */
+  border-radius: $borderRadiusBase;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.analyticsIntroLeft {
+  padding-left: 40px;
+  padding-top: 46px;
+  padding-bottom: 46px;
+  width: 50%;
+  max-width: 400px;
+}
+
+.analyticsIntroLeft h1 { font-size: 24px; }
+.analyticsIntroLeft sup {
+  display: inline-block;
+  font-size: $fontSizeSmall;
+  margin-left: 4px;
+}
+
+.analyticsIntroRight {
+  padding-top: 12px;
+  padding-right: 24px;
+}
+
+.analyticsIntroImage {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  @media screen and (max-width: 1800px) {
+    right: auto;
+    left: 50%;
+  }
+}
+
+.dismissButton {
+  display: flex;
+  align-items: center;
+}
+.dismissButtonText {
+  margin-left: 8px;
+}
+

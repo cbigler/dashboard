@@ -69,11 +69,11 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
   color: $grayCinder;
 }
 .adminSpacePermissionsPickerListItemCheckbox:disabled + label {
-	cursor: default;
-	color: $grayDarker;
+  cursor: default;
+  color: $grayDarker;
 }
 .adminSpacePermissionsPickerListItemCheckbox.active:checked:disabled + label {
-	color: $grayCinder;
+  color: $grayCinder;
 }
 .adminSpacePermissionsPickerListItemCheckbox + label:before {
   content: ' ';

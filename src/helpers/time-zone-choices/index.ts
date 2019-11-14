@@ -10,10 +10,14 @@ export const startTimezones = [
 ];
 
 const TIMEZONE_CHOICES = startTimezones.concat(
-  moment.tz.names().filter(x => startTimezones.indexOf(x) === -1)
+  moment.tz.names().filter(x => {
+    const notStartTz = startTimezones.indexOf(x) === -1;
+    const isCommon = x.match(/^(((Africa|America|Antarctica|Asia|Australia|Europe|Arctic|Atlantic|Indian|Pacific)\/.+)|(UTC))$/);
+    return notStartTz && isCommon;
+  })
 ).map(zone => ({
   id: zone,
-  label: zone.replace(/_/g, ' ').replace(/\//g, ' - '),
+  label: zone,
 }));
 
 export default TIMEZONE_CHOICES;

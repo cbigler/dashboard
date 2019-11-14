@@ -1,10 +1,10 @@
 export type DaysOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
 
 export enum DensitySpaceTypes {
-	SPACE = 'space',
-	FLOOR = 'floor',
-	BUILDING = 'building',
-	CAMPUS = 'campus',
+  SPACE = 'space',
+  FLOOR = 'floor',
+  BUILDING = 'building',
+  CAMPUS = 'campus',
 };
 
 export enum DensitySpaceFunction {
@@ -28,6 +28,11 @@ export enum DensitySpaceFunction {
   // Note, "OTHER" is not in here since typescript does not allow "null" in enums
 }
 
+export enum DensitySizeAreaUnitTypes {
+  SQUARE_FEET = 'square_feet',
+  SQUARE_METERS = 'square_meters',
+};
+
 export type DensitySpace = {
   id: string,
   name: string,
@@ -37,7 +42,11 @@ export type DensitySpace = {
   timeZone: string,
   dailyReset: string,
   currentCount: number,
-  capacity: number,
+  capacity: number | null,
+  targetCapacity: number | null,
+  annualRent: number | null,
+  sizeArea: number | null,
+  sizeAreaUnit: DensitySizeAreaUnitTypes,
   createdAt: string,
   ancestry: Array<DensitySpaceAncestryItem>,
   doorways: Array<{
@@ -126,7 +135,7 @@ export type DensityTimeSegmentGroup = {
 
 export type DensitySensorType = 's5' | 'r60' | 'r56' | 'virtual';
 export type DensitySensor = {
-	serialNumber: string,
+  serialNumber: string,
   doorwayId: string,
   doorwayName: string,
   sensorType: DensitySensorType,
@@ -325,7 +334,7 @@ export type DensityService = {
   name: string,
   displayName: string,
   category: string,
-	serviceAuthorization: DensityServiceAuthorization,
+  serviceAuthorization: DensityServiceAuthorization,
 };
 
 // ServiceAuthorization

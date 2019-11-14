@@ -273,8 +273,8 @@ export class SpacePickerDropdown extends Component<SpacePickerDropdownProps, {op
                 {placeholder || `No ${canSelectMultiple ? 'spaces' : 'space'} selected`}
               </span>
             )}
-            <span className={classnames(styles.chevron, {[styles.flip]: opened})}>
-              <Icons.ChevronDown color="primary" />
+            <span className={classnames(styles.chevron)}>
+              <Icons.ChevronDown />
             </span>
           </div>
 

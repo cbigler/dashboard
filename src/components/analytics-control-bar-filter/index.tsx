@@ -1,14 +1,14 @@
 import React, { Fragment, useRef, useEffect } from 'react';
-import ReactDOM from 'react-dom';
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
-function isElementInside(parentElement, element) {
-  while (element) {
-    if (element === parentElement) {
+function isElementInside(parentElement: Element, element: Element) {
+  let currentElement: Element | null = element;
+  while (currentElement) {
+    if (currentElement === parentElement) {
       return true;
     }
-    element = element.parentElement;
+    currentElement = currentElement.parentElement;
   }
   return false;
 }
@@ -39,21 +39,22 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
   // When the filter is focused, focus the wrapper div
   useEffect(() => {
     if (!wrapperRef.current) { return; }
+    if (!document.activeElement) { return; }
 
     if (open && !isElementInside(wrapperRef.current, document.activeElement)) {
-      (wrapperRef.current as HTMLElement).focus()
+      (wrapperRef.current as HTMLElement).focus();
+    } else if (!open && document.activeElement === wrapperRef.current) {
+      (wrapperRef.current as HTMLElement).blur();
     }
   }, [open]);
 
   return (
     <Fragment>
       {open ? (
-        ReactDOM.createPortal(
-          <div
-            className={styles.backdrop}
-            onClick={onClose}
-          />
-        , document.body)
+        <div
+          className={styles.backdrop}
+          onClick={onClose}
+        />
       ) : null}
 
       <span
@@ -61,8 +62,9 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
         className={styles.wrapper}
         tabIndex={0}
         onFocus={e => {
-          const focusedTarget = e.target;
-          const bluredTarget = e.relatedTarget;
+          const focusedTarget = e.target as Element | null;
+          const bluredTarget  = e.relatedTarget as Element | null;
+          if (wrapperRef.current === null || focusedTarget === null || bluredTarget === null) { return; }
           if (
             isElementInside(wrapperRef.current, focusedTarget) &&
             !isElementInside(wrapperRef.current, bluredTarget)
@@ -71,8 +73,9 @@ const Filter: React.FunctionComponent<FilterProps> = function Filter(props) {
           }
         }}
         onBlur={e => {
-          const bluredTarget = e.target;
-          const focusedTarget = e.relatedTarget;
+          const bluredTarget = e.target as Element | null;
+          const focusedTarget = e.relatedTarget as Element | null;
+          if (wrapperRef.current === null || focusedTarget === null || bluredTarget === null) { return; }
           if (
             !isElementInside(wrapperRef.current, focusedTarget) &&
             isElementInside(wrapperRef.current, bluredTarget)

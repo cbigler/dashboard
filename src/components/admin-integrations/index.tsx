@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import {
   AppBar,
@@ -22,21 +21,24 @@ import outlookIcon from '../../assets/images/icon-outlook.svg';
 import condecoIcon from '../../assets/images/icon-condeco.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 
 import { DensityService } from '../../types';
 
 import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-modal';
-import IntegrationsRobinUpdateModal from '../admin-integrations-robin-update-modal';
 import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
 
-import collectionServiceAuthorizationCreate from '../../actions/collection/service-authorizations/create';
-import { collectionServiceAuthorizationUpdate, collectionServiceAuthorizationMakeDefault } from '../../actions/collection/service-authorizations/update';
-import collectionServiceAuthorizationDestroy from '../../actions/collection/service-authorizations/destroy';
+import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
+import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
+import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
 
-import doGoogleCalendarAuthRedirect from '../../actions/integrations/google-calendar';
-import doOutlookAuthRedirect from '../../actions/integrations/outlook';
+import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import IntegrationsStore from '../../rx-stores/integrations';
 
 
 function iconForIntegration(serviceName: string) {
@@ -52,35 +54,23 @@ function iconForIntegration(serviceName: string) {
   return iconMap[serviceName] || "";
 }
 
-function activateEditLink(item, onClick) {
+function activateLink(item, onClick) {
   if (!item.serviceAuthorization.id && item.name !== 'condeco') {
     return <ListViewClickableLink onClick={onClick}>Activate</ListViewClickableLink>;
   }
-  if (item.name === "robin") {
-    return <ListViewClickableLink onClick={onClick}>Edit</ListViewClickableLink>;
-  }
 }
 
-function handleActivateEditClick(item, onOpenModal) {
+function handleActivateClick(item, onOpenModal) {
   if (item.name === "teem" && !item.serviceAuthorization.id) {
      window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
   } else if (item.name === "google_calendar" && !item.serviceAuthorization.id) {
     return doGoogleCalendarAuthRedirect();
   } else if (item.name === "outlook" && !item.serviceAuthorization.id) {
     return doOutlookAuthRedirect();
-  } else {
-    onOpenModal(!item.serviceAuthorization.id ? 'integrations-robin-create' : 'integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: false})
+  } else if (item.name === "robin" && !item.serviceAuthorization.id) {
+    onOpenModal('integrations-robin-create', {serviceAuthorization: item.serviceAuthorization})
   }
 }
-
-function handleDeleteClick(item, onOpenModal) {
-  if (["teem", "google_calendar", "outlook", "condeco"].includes(item.name)) {
-    onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization});
-  } else {
-    onOpenModal('integrations-robin-update', {serviceAuthorization: item.serviceAuthorization, isDestroying: true});
-  }
-}
-
 
 export function AdminIntegrations({
   activeModal,
@@ -88,7 +78,6 @@ export function AdminIntegrations({
   onOpenModal,
   onMakeServiceAuthorizationDefault,
   onCreateServiceAuthorizationRobin,
-  onUpdateServiceAuthorizationRobin,
   onDestroyServiceAuthorization,
   onCloseModal,
 }) {
@@ -100,18 +89,6 @@ export function AdminIntegrations({
 
       onSubmit={onCreateServiceAuthorizationRobin}
       onDismiss={onCloseModal}
-    /> : null}
-
-    {activeModal.name === 'integrations-robin-update' ? <IntegrationsRobinUpdateModal
-      visible={activeModal.visible}
-      initialServiceAuthorization={activeModal.data.serviceAuthorization}
-      isDestroying={activeModal.data.isDestroying}
-      error={integrations.error}
-      loading={integrations.loading}
-
-      onSubmit={onUpdateServiceAuthorizationRobin}
-      onDismiss={onCloseModal}
-      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
     /> : null}
 
     {activeModal.name === 'integrations-service-destroy' ? <IntegrationsServiceDestroyModal
@@ -176,16 +153,20 @@ export function AdminIntegrations({
             title=" "
             width={150}
             template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
-            onClick={item => window.location.href = `#/admin/integrations/${item.name}/space-mappings`}
+            onClick={item => {
+              if (item.serviceAuthorization.id) {
+                window.location.href = `#/admin/integrations/${item.name}/space-mappings`
+              }
+            }}
           />
           <ListViewColumn
             id="Activate/Edit"
             title=" "
             width={90}
             align="right"
-            template={item => activateEditLink(
+            template={item => activateLink(
               item,
-              () => handleActivateEditClick(item, onOpenModal)
+              () => handleActivateClick(item, onOpenModal)
             )}
           />
           <ListViewColumn
@@ -196,7 +177,7 @@ export function AdminIntegrations({
             template={item => (
               !item.serviceAuthorization.id ?
                 null :
-                <ListViewClickableLink onClick={() => handleDeleteClick(item, onOpenModal)}>
+                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}>
                   <Icons.Trash color={colorVariables.grayDarker} />
                 </ListViewClickableLink>
             )}
@@ -237,7 +218,7 @@ export function AdminIntegrations({
             template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {
               if (!item.serviceAuthorization.id) {
-                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=channels:read chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
+                window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=bot,chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
               }
             }}
           />
@@ -256,42 +237,45 @@ export function AdminIntegrations({
   </Fragment>;
 }
 
-export default connect((state: any) => {
-  return {
-    integrations: state.integrations,
-    activeModal: state.activeModal,
-  };
-}, dispatch => {
-  return {
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-    onCreateServiceAuthorizationRobin(serviceAuthorization) {
-      dispatch<any>(collectionServiceAuthorizationCreate('robin', serviceAuthorization)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onUpdateServiceAuthorizationRobin(serviceAuthorization) {
-      dispatch<any>(collectionServiceAuthorizationUpdate('robin', serviceAuthorization)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onDestroyServiceAuthorization(serviceAuthorizationId) {
-      dispatch<any>(collectionServiceAuthorizationDestroy(serviceAuthorizationId)).then(ok => {
-        if (ok) {
-          dispatch<any>(hideModal());
-        }
-      });
-    },
-    onMakeServiceAuthorizationDefault(serviceAuthorizationId) {
-      dispatch<any>(collectionServiceAuthorizationMakeDefault(serviceAuthorizationId));
-    },
+
+const ConnectedAdminIntegrations: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const integrations = useRxStore(IntegrationsStore);
+
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
   }
-})(AdminIntegrations);
+
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+
+  const onCreateServiceAuthorizationRobin = async (serviceAuthorization) => {
+    const ok = await collectionServiceAuthorizationCreate(dispatch, 'robin', serviceAuthorization);
+    if (ok) { hideModal(dispatch); }
+  }
+
+  const onDestroyServiceAuthorization = async (serviceAuthorizationId) => {
+    const ok = await collectionServiceAuthorizationDestroy(dispatch, serviceAuthorizationId);
+    if (ok) { hideModal(dispatch); }
+  }
+
+  const onMakeServiceAuthorizationDefault = async (serviceAuthorizationId) => {
+    await collectionServiceAuthorizationMakeDefault(dispatch, serviceAuthorizationId);
+  }
+
+  return (
+    <AdminIntegrations
+      activeModal={activeModal}
+      integrations={integrations}
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+      onCreateServiceAuthorizationRobin={onCreateServiceAuthorizationRobin}
+      onDestroyServiceAuthorization={onDestroyServiceAuthorization}
+      onMakeServiceAuthorizationDefault={onMakeServiceAuthorizationDefault}
+    />
+  )
+}
+export default ConnectedAdminIntegrations;

@@ -1,28 +1,28 @@
 import React from "react";
 
 export const DOORWAY_ICON = (
-	<svg width="93px" height="108px" viewBox="0 0 93 108">
-			<g id="Admin:-Locations-(release)" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
-					<g id="org.locations.space.edit" transform="translate(-479.000000, -1561.000000)">
-							<g id="doorways" transform="translate(298.000000, 1358.000000)">
-									<g id="empty-message" transform="translate(182.000000, 204.000000)">
-											<g id="alarm-thing">
-													<circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="73" cy="31" r="3"></circle>
-													<g id="chat" transform="translate(64.000000, 0.000000)">
-															<path d="M0,18 L4,14 L4,2 C4,0.8954305 4.8954305,2.02906125e-16 6,0 L25,0 C26.1045695,-2.02906125e-16 27,0.8954305 27,2 L27,16 C27,17.1045695 26.1045695,18 25,18 L6,18 L0,18 Z" id="Path" stroke="#D7D7D7" strokeWidth="2" strokeLinejoin="round"></path>
-															<text id="+1" fontFamily="Aeonik-Medium, Aeonik" fontSize="12" fontWeight="400" fill="#BFBFBF">
-																	<tspan x="8" y="13">+1</tspan>
-															</text>
-													</g>
-													<path d="M19.3796296,105.526012 L19.3796296,32 L58.6388889,32 L58.6388889,105.526012 L70.4166667,105.526012 L7.60185185,105.526012 L19.3796296,105.526012 Z M29,76 C30.6568542,76 32,74.6568542 32,73 C32,71.3431458 30.6568542,70 29,70 C27.3431458,70 26,71.3431458 26,73 C26,74.6568542 27.3431458,76 29,76 Z" id="Combined-Shape" stroke="#D7D7D7" strokeWidth="2"></path>
-													<circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="3" cy="21" r="3"></circle>
-													<circle id="Oval" fill="#D8D8D8" cx="30.5" cy="24.5" r="1.5"></circle>
-											</g>
-									</g>
-							</g>
-					</g>
-			</g>
-	</svg>
+  <svg width="93px" height="108px" viewBox="0 0 93 108">
+      <g id="Admin:-Locations-(release)" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
+          <g id="org.locations.space.edit" transform="translate(-479.000000, -1561.000000)">
+              <g id="doorways" transform="translate(298.000000, 1358.000000)">
+                  <g id="empty-message" transform="translate(182.000000, 204.000000)">
+                      <g id="alarm-thing">
+                          <circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="73" cy="31" r="3"></circle>
+                          <g id="chat" transform="translate(64.000000, 0.000000)">
+                              <path d="M0,18 L4,14 L4,2 C4,0.8954305 4.8954305,2.02906125e-16 6,0 L25,0 C26.1045695,-2.02906125e-16 27,0.8954305 27,2 L27,16 C27,17.1045695 26.1045695,18 25,18 L6,18 L0,18 Z" id="Path" stroke="#D7D7D7" strokeWidth="2" strokeLinejoin="round"></path>
+                              <text id="+1" fontFamily="Aeonik-Medium, Aeonik" fontSize="12" fontWeight="400" fill="#BFBFBF">
+                                  <tspan x="8" y="13">+1</tspan>
+                              </text>
+                          </g>
+                          <path d="M19.3796296,105.526012 L19.3796296,32 L58.6388889,32 L58.6388889,105.526012 L70.4166667,105.526012 L7.60185185,105.526012 L19.3796296,105.526012 Z M29,76 C30.6568542,76 32,74.6568542 32,73 C32,71.3431458 30.6568542,70 29,70 C27.3431458,70 26,71.3431458 26,73 C26,74.6568542 27.3431458,76 29,76 Z" id="Combined-Shape" stroke="#D7D7D7" strokeWidth="2"></path>
+                          <circle id="Oval" stroke="#D7D7D7" strokeWidth="2" cx="3" cy="21" r="3"></circle>
+                          <circle id="Oval" fill="#D8D8D8" cx="30.5" cy="24.5" r="1.5"></circle>
+                      </g>
+                  </g>
+              </g>
+          </g>
+      </g>
+  </svg>
 );
 
 export const MOUNTING_SPACE_GLYPH = (
@@ -73,28 +73,28 @@ export const INSIDE_THE_SPACE_GLYPH = (
 );
 
 export const OUTSIDE_THE_SPACE_GLYPH = (
-	<svg width="101" height="78" viewBox="0 0 101 78" xmlns="http://www.w3.org/2000/svg">
-			<g id="-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
-					<g id="org.locations.building.edit.doorway" transform="translate(-786 -374)">
-							<g id="Group-4-Copy-2" transform="translate(786 375)">
-									<g id="Group-2" transform="translate(0 74.333)" fill="#FFF" stroke="#BFBFBF"
-									strokeWidth="2">
-											<rect id="Rectangle-Copy-12" transform="matrix(-1 0 0 1 53.333 0)" x="1"
-											y="1" width="51.333" height="1" />
-									</g>
-									<path d="M35.8212414,15.6944916 C35.8198978,15.6948464 35.8198978,15.6948464 35.8185569,15.6952111 C35.685393,15.7316944 35.607018,15.8692207 35.6435013,16.0023845 L36.3849412,18.7086339 C36.4211381,18.8407522 36.5569177,18.9191348 36.6894302,18.8844089 L45.8134618,16.4933872 C45.8148054,16.4930324 45.8148054,16.4930324 45.8161463,16.4926677 C45.9493102,16.4561844 46.0276852,16.3186581 45.9912019,16.1854942 L45.249762,13.4792449 C45.2135651,13.3471266 45.0777855,13.268744 44.945273,13.3034699 L35.8212414,15.6944916 Z"
-									id="Rectangle" stroke="#2E51B6" strokeWidth="1.5" fill="#FFF" transform="matrix(-1 0 0 1 81.635 0)"
-									/>
-									<path d="M100,75.3333333 L54,75.3333333 C51.790861,75.3333333 50,73.5424723 50,71.3333333 L50,4 C50,1.790861 51.790861,4.05812251e-16 54,0 L100,0 L100,24.330303"
-									id="Path" stroke="#BFBFBF" strokeWidth="2" transform="matrix(-1 0 0 1 150 0)"
-									/>
-									<rect id="Rectangle-Copy-13" stroke="#EDEDED" strokeWidth="2" fill="#F0F0F0"
-									transform="matrix(0 -1 -1 0 99.29 99.29)" x="25.96" y="49.33" width="48"
-									height="1" />
-									<path d="M49.0365297,17.8060606 L47.6809892,18.1194524 C47.0466889,18.2074997 46.6333754,18.7248068 46.4410487,19.6713737 C46.248722,20.6179407 46.248722,21.3658666 46.4410487,21.9151515"
-									id="Path-4" stroke="#2E51B6" transform="matrix(-1 0 0 1 95.333 0)" />
-							</g>
-					</g>
-			</g>
-	</svg>
+  <svg width="101" height="78" viewBox="0 0 101 78" xmlns="http://www.w3.org/2000/svg">
+      <g id="-Admin:-Locations-(release)" fill="none" fillRule="evenodd">
+          <g id="org.locations.building.edit.doorway" transform="translate(-786 -374)">
+              <g id="Group-4-Copy-2" transform="translate(786 375)">
+                  <g id="Group-2" transform="translate(0 74.333)" fill="#FFF" stroke="#BFBFBF"
+                  strokeWidth="2">
+                      <rect id="Rectangle-Copy-12" transform="matrix(-1 0 0 1 53.333 0)" x="1"
+                      y="1" width="51.333" height="1" />
+                  </g>
+                  <path d="M35.8212414,15.6944916 C35.8198978,15.6948464 35.8198978,15.6948464 35.8185569,15.6952111 C35.685393,15.7316944 35.607018,15.8692207 35.6435013,16.0023845 L36.3849412,18.7086339 C36.4211381,18.8407522 36.5569177,18.9191348 36.6894302,18.8844089 L45.8134618,16.4933872 C45.8148054,16.4930324 45.8148054,16.4930324 45.8161463,16.4926677 C45.9493102,16.4561844 46.0276852,16.3186581 45.9912019,16.1854942 L45.249762,13.4792449 C45.2135651,13.3471266 45.0777855,13.268744 44.945273,13.3034699 L35.8212414,15.6944916 Z"
+                  id="Rectangle" stroke="#2E51B6" strokeWidth="1.5" fill="#FFF" transform="matrix(-1 0 0 1 81.635 0)"
+                  />
+                  <path d="M100,75.3333333 L54,75.3333333 C51.790861,75.3333333 50,73.5424723 50,71.3333333 L50,4 C50,1.790861 51.790861,4.05812251e-16 54,0 L100,0 L100,24.330303"
+                  id="Path" stroke="#BFBFBF" strokeWidth="2" transform="matrix(-1 0 0 1 150 0)"
+                  />
+                  <rect id="Rectangle-Copy-13" stroke="#EDEDED" strokeWidth="2" fill="#F0F0F0"
+                  transform="matrix(0 -1 -1 0 99.29 99.29)" x="25.96" y="49.33" width="48"
+                  height="1" />
+                  <path d="M49.0365297,17.8060606 L47.6809892,18.1194524 C47.0466889,18.2074997 46.6333754,18.7248068 46.4410487,19.6713737 C46.248722,20.6179407 46.248722,21.3658666 46.4410487,21.9151515"
+                  id="Path-4" stroke="#2E51B6" transform="matrix(-1 0 0 1 95.333 0)" />
+              </g>
+          </g>
+      </g>
+  </svg>
 );

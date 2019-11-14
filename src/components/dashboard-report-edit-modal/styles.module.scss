@@ -14,7 +14,7 @@
   display: flex;
   flex-grow: 1;
   flex-shrink: 1;
-  overflow-y: hidden;
+  height: 100%;
 }
 .left {
   display: flex;
@@ -59,10 +59,13 @@
   border-bottom: 1px solid $grayLight;
   user-select: none;
   outline: none;
-  height: 120px;
+  height: 140px;
 }
 .reportTypeItem:focus {
   background-color: $grayLightest;
+}
+.reportTypeItem:last-of-type {
+  border-bottom: none;
 }
 
 .nameRow {
@@ -73,31 +76,34 @@
 .name {
   margin-left: 16px;
   font-weight: 500;
-  height: 16px;
 }
 
 .reportTypeItemDescription {
-  margin-top: 8px;
+  margin-top: 12px;
   margin-right: 24px;
+  font-size: 14px;
 }
 
 .reportTypeImage {
   width: 80px;
-  height: 60px;
+  height: auto;
 }
 
 .reportImageBackdrop {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  height: 300px;
+  height: 244px;
   width: 100%;
   background-color: $grayLightest;
 }
 
 .reportFullDescription {
+  flex-shrink: 1;
   padding: 24px;
   white-space: pre-wrap;
+  overflow-y: scroll;
 }
 
 .reportConfigurationParent {
@@ -147,73 +153,73 @@
 .percentageRangeBar {
   flex-grow: 1;
   flex-shrink: 1;
-	width: 100%;
-	height: 24px;
-	-webkit-appearance: none;
-	margin: 10px 0;
+  width: 100%;
+  height: 24px;
+  -webkit-appearance: none;
+  margin: 10px 0;
 
-	&:focus { outline: none; }
-	&::-webkit-slider-runnable-track {
-		width: 100%;
-		height: 5px;
-		cursor: pointer;
-		animate: 0.2s;
-		background-color: $gray;
-		border: 0px solid #010101;
-	}
-	&::-webkit-slider-thumb {
-		height: 16px;
-		width: 16px;
-		border-radius: 15px;
-		background-color: $brandPrimary;
-		cursor: pointer;
-		-webkit-appearance: none;
-		margin-top: -6px;
-	}
-	&:focus::-webkit-slider-runnable-track { background-color: $gray; }
-	&::-moz-range-track {
-		width: 100%;
-		height: 5px;
-		cursor: pointer;
-		animate: 0.2s;
-		background-color: $gray;
-		border: 0px solid #010101;
-	}
-	&::-moz-range-thumb {
-		height: 16px;
-		width: 16px;
-		border-radius: 15px;
-		background: $brandPrimary;
-		cursor: pointer;
-	}
-	&::-ms-track {
-		width: 100%;
-		height: 5px;
-		cursor: pointer;
-		animate: 0.2s;
-		background: transparent;
-		border-color: transparent;
-		color: transparent;
-	}
-	&::-ms-fill-lower {
-		background-color: $gray;
-		border: 0px solid #010101;
-	}
-	&::-ms-fill-upper {
-		background-color: $gray;
-		border: 0px solid #010101;
-	}
-	&::-ms-thumb {
-		margin-top: 1px;
-		border: 1px solid #00001E;
-		height: 16px;
-		width: 16px;
-		border-radius: 15px;
-		background-color: $brandPrimary;
-		cursor: pointer;
-	}
-	&:focus::-ms-fill-lower { background-color: $gray; }
-	&:focus::-ms-fill-upper { background-color: $gray; }
+  &:focus { outline: none; }
+  &::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background-color: $gray;
+    border: 0px solid #010101;
+  }
+  &::-webkit-slider-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 15px;
+    background-color: $brandPrimary;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -6px;
+  }
+  &:focus::-webkit-slider-runnable-track { background-color: $gray; }
+  &::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background-color: $gray;
+    border: 0px solid #010101;
+  }
+  &::-moz-range-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 15px;
+    background: $brandPrimary;
+    cursor: pointer;
+  }
+  &::-ms-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    animate: 0.2s;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+  }
+  &::-ms-fill-lower {
+    background-color: $gray;
+    border: 0px solid #010101;
+  }
+  &::-ms-fill-upper {
+    background-color: $gray;
+    border: 0px solid #010101;
+  }
+  &::-ms-thumb {
+    margin-top: 1px;
+    border: 1px solid #00001E;
+    height: 16px;
+    width: 16px;
+    border-radius: 15px;
+    background-color: $brandPrimary;
+    cursor: pointer;
+  }
+  &:focus::-ms-fill-lower { background-color: $gray; }
+  &:focus::-ms-fill-upper { background-color: $gray; }
 }
 .percentageRangeLabel {
   flex-grow: 0;
@@ -232,19 +238,19 @@
 }
 .savedReportNameWrapperColumn { margin-left: 20px; }
 .savedReportNameWrapperColumn > h5 {
-	margin-top: 0px;
-	margin-bottom: 4px;
-	font-size: 16px;
-	font-weight: bold;
-	color: #445158;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  margin-top: 0px;
+  margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #445158;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .savedReportNameWrapperColumn > span {
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .savedReportSpaces { line-height: 24px; }
 

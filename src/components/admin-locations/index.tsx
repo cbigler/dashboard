@@ -1,6 +1,5 @@
 import React, { ReactNode, Fragment } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
 
@@ -28,9 +27,13 @@ import {
 import {
   AdminLocationsLeftPaneDataRow,
   AdminLocationsLeftPaneDataRowItem,
-} from '../admin-locations-left-pane-data-row/index';
+} from '../admin-locations-snippets/index';
 
 import Breadcrumb from '../admin-locations-breadcrumb/index';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceManagementStore from '../../rx-stores/space-management';
 
 function generateCreateRoute(parentId, type) {
   if (parentId) {
@@ -102,7 +105,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
   }
 }
 
-function AdminLocations({user, selectedSpace, spaces}) {
+function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
   let selectedSpaceParentSpaceType = null;
   if (selectedSpace) {
     const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
@@ -115,22 +118,22 @@ function AdminLocations({user, selectedSpace, spaces}) {
   switch (selectedSpace ? selectedSpace.spaceType : null) {
   case 'campus':
     content = (
-      <AdminLocationsCampusDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsCampusDetail user={user} spaces={spaces} selectedSpace={selectedSpace} spaceManagement={spaceManagement} />
     );
     break;
   case 'building':
     content = (
-      <AdminLocationsBuildingDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsBuildingDetail user={user} spaces={spaces} selectedSpace={selectedSpace} spaceManagement={spaceManagement} />
     );
     break;
   case 'floor':
     content = (
-      <AdminLocationsFloorDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsFloorDetail user={user} spaces={spaces} selectedSpace={selectedSpace} spaceManagement={spaceManagement} />
     );
     break;
   case 'space':
     content = (
-      <AdminLocationsSpaceDetail user={user} spaces={spaces} selectedSpace={selectedSpace} />
+      <AdminLocationsSpaceDetail user={user} spaces={spaces} selectedSpace={selectedSpace} spaceManagement={spaceManagement} />
     );
     break;
   case null:
@@ -273,13 +276,22 @@ function AdminLocations({user, selectedSpace, spaces}) {
   );
 }
 
-export default connect((state: any) => {
-  return {
-    spaces: state.spaces,
-    selectedSpace: state.spaces.data.find(space => state.spaces.selected === space.id),
-    user: state.user,
-  };
-}, (dispatch: any) => {
-  return {
-  };
-})(AdminLocations);
+const ConnectedAdminLocations: React.FC = () => {
+
+  const user = useRxStore(UserStore);
+  const spaces = useRxStore(SpacesStore);
+  const spaceManagement = useRxStore(SpaceManagementStore);
+
+  // FIXME: this again
+  const selectedSpace = spaces.data.find(s => s.id === spaces.selected)
+
+  return (
+    <AdminLocations
+      user={user}
+      spaces={spaces}
+      selectedSpace={selectedSpace}
+      spaceManagement={spaceManagement}
+    />
+  )
+}
+export default ConnectedAdminLocations;

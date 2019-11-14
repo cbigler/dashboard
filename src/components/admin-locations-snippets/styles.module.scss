@@ -1,0 +1,143 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+
+.leftPane {
+  height: 100%;
+  margin-bottom: -1px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.leftPaneDataRow {
+  display: flex;
+  flex-direction: row;
+
+  padding-top: 16px;
+  padding-bottom: 16px;
+  padding-left: 24px;
+  padding-right: 24px;
+  overflow-x: auto;
+}
+.leftPaneDataRow.topBorder { border-top: 1px solid $grayLight; }
+.leftPaneDataRow.bottomBorder:last-of-type { border-bottom: 1px solid $grayLight; }
+
+.leftPaneDataRowItem { padding-right: 24px; }
+.leftPaneDataRowItem label {
+  display: block;
+  color: $grayDarker;
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+}
+.leftPaneDataRowItem span { font-size: 18px; }
+
+
+.operatingHoursContainer {
+  width: 100%;
+  margin-bottom: 8px;
+}
+.operatingHoursTitle {
+  font-size: 14px;
+  font-weight: bold;
+  height: 32px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+}
+.operatingHoursCard {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border-radius: $borderRadiusBase;
+  border: 1px solid $grayLight;
+  overflow-x: auto;
+}
+.operatingHoursDayRow {
+  display: flex;
+  font-size: 14px;
+  margin-bottom: 4px;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+.operatingHoursDayName {
+  width: 60px;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.operatingHoursSegment {
+  flex-shrink: 0;
+}
+
+
+.doorwayList {
+  margin-bottom: -12px;
+}
+.doorwayName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.doorwayIcon {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+.doorwayContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 56px;
+  user-select: none;
+  width: 100%;
+}
+.doorwayLinkedSpacesPopoverTag {
+  display: flex;
+  align-items: center;
+  color: $grayLight;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  white-space: nowrap;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+}
+.doorwayLinkedSpacesTag {
+  display: flex;
+  align-items: center;
+  background-color: $grayLight;
+  height: 28px;
+  padding-left: 8px;
+  padding-right: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: $borderRadiusBase;
+
+  max-width: 200px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.doorwayLinkedSpacesTag .doorwayLinkedSpacesText {
+  font-size: 14px;
+}
+.doorwayLinkedSpacesIcon {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+.doorwayDpuPosition {
+  color: $grayDarker;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+.listViewSpaceName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -1,17 +1,16 @@
 import React, { Component, Fragment } from 'react';
-import { connect } from 'react-redux';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import { SpaceTypeForm } from '../admin-locations-edit/index';
-import { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../reducers/space-management';
+import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
 import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
-import showToast from '../../actions/toasts';
-import collectionSpacesCreate from '../../actions/collection/spaces/create';
-import spaceManagementReset from '../../actions/space-management/reset';
-import spaceManagementFormUpdate from '../../actions/space-management/form-update';
-import spaceManagementFormDoorwayUpdate from '../../actions/space-management/form-doorway-update';
+import { showToast } from '../../rx-actions/toasts';
+import collectionSpacesCreate from '../../rx-actions/collection/spaces/create';
+import spaceManagementReset from '../../rx-actions/space-management/reset';
+import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';
+import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';
 
 import {
   AppFrame,
@@ -23,6 +22,11 @@ import {
   ButtonGroup,
   Icons,
 } from '@density/ui';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import TagsStore from '../../rx-stores/tags';
+import AssignedTeamsStore from '../../rx-stores/assigned-teams';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 type AdminLocationsNewProps = {
   user: any,
@@ -168,38 +172,55 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
   }
 };
 
-export default connect((state: any) => {
-  return {
-    user: state.user,
-    spaceManagement: state.spaceManagement,
-    tagsCollection: state.tags,
-    assignedTeamsCollection: state.assignedTeams,
 
-    // Figure out the type of the new space, and its parent
-    newSpaceType: state.spaceManagement.formSpaceType,
-    newSpaceParent: state.spaceManagement.spaces.data.find(
-      space => space.id === state.spaceManagement.formParentSpaceId
-    ),
-  };
-}, (dispatch: any) => {
-  return {
-    async onSave(space, parentSpaceId) {
-      const newSpace = await dispatch(collectionSpacesCreate(space));
-      if (!newSpace) {
-        dispatch(showToast({ type: 'error', text: 'Error creating space' }));
-        dispatch(spaceManagementReset());
-        return false;
-      }
+// FIXME: figure out what props this requires be provided externally
+const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-      dispatch(showToast({ text: 'Space created!' }));
-      window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
-      window.location.reload();
-    },
-    onChangeField(key, value) {
-      dispatch(spaceManagementFormUpdate(key, value));
-    },
-    onSetDoorwayField(doorwayId, field, value) {
-      dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value));
-    },
-  };
-})(AdminLocationsNewUnconnected);
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const spaceManagement = useRxStore(SpaceManagementStore);
+  const tags = useRxStore(TagsStore);
+  const assignedTeams = useRxStore(AssignedTeamsStore);
+
+  // Figure out the type of the new space, and its parent
+  const newSpaceType = spaceManagement.formSpaceType;
+  const newSpaceParent = spaceManagement.spaces.data.find(s => s.id === spaceManagement.formParentSpaceId)
+
+  const onSave = async (space, parentSpaceId) => {
+    const newSpace = await collectionSpacesCreate(dispatch, space);
+    if (!newSpace) {
+      showToast(dispatch, { type: 'error', text: 'Error creating space' });
+      dispatch(spaceManagementReset() as Any<FixInRefactor>);
+      return false;
+    }
+
+    showToast(dispatch, { text: 'Space created!' });
+    // FIXME: this seems like a bad idea to have this just chilling in this callback
+    window.location.href = `#/admin/locations/${parentSpaceId || ''}`;
+  }
+  const onChangeField = (key, value) => {
+    dispatch(spaceManagementFormUpdate(key, value) as Any<FixInRefactor>);
+  }
+  const onSetDoorwayField = (doorwayId, field, value) => {
+    dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value) as Any<FixInRefactor>);
+  }
+
+  return (
+    <AdminLocationsNewUnconnected
+      {...externalProps}
+
+      user={user}
+      assignedTeamsCollection={assignedTeams}
+      tagsCollection={tags}
+      spaceManagement={spaceManagement}
+      newSpaceType={newSpaceType}
+      newSpaceParent={newSpaceParent}
+
+      onSave={onSave}
+      onChangeField={onChangeField}
+      onSetDoorwayField={onSetDoorwayField}
+    />
+  )
+}
+
+export default ConnectedAdminLocationsNew;

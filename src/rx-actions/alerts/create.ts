@@ -1,5 +1,5 @@
 import core from '../../client/core';
-import mixpanelTrack from '../../helpers/mixpanel-track/index';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityNotification } from '../../types';
 import { getNotificationsURL } from './read';

@@ -26,6 +26,11 @@
   padding-left: 10px;
   padding-right: 10px;
 }
+.icon {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
 .itemContainer {
   display: flex;
   flex-direction: row;
@@ -33,11 +38,15 @@
   height: 56px;
   user-select: none;
   cursor: pointer;
+  width: 100%;
+  margin-left: 8px;
 }
 
 .linkedSpacesTag {
+  display: flex;
+  align-items: center;
   background-color: $grayLight;
-  line-height: 28px;
+  height: 28px;
   padding-left: 8px;
   padding-right: 8px;
   font-size: 14px;
@@ -49,7 +58,13 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.linkedSpacesTag span { margin-left: 8px; }
+.linkedSpacesTag .linkedSpacesText { font-size: 14px; }
+.linkedSpacesIcon {
+  display: flex;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 8px;
+}
 
 
 .dpuPosition {
@@ -120,8 +135,8 @@
 .modalSection {
   padding-left: 24px;
   padding-right: 24px;
-  padding-bottom: 24px;
-  padding-top: 4px;
+  padding-bottom: 16px;
+  padding-top: 16px;
 }
 .modalSectionHorizontalForm {
   display: flex;
@@ -168,6 +183,6 @@
 .dpuPositionButton.active { border-color: $brandPrimary; }
 .dpuPositionButton svg { margin-bottom: 24px; }
 
-.updateHistoricCheckbox {
-  padding-top: 8px;
+.dpuPositionUpdateHistoricCheckbox {
+  padding-top: 16px;
 }

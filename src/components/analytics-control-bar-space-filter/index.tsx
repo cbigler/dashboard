@@ -48,7 +48,7 @@ type AnalyticsSpaceSelectorProps = {
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
   'function': 'Add by Function',
-  spaceType: 'Add by Type',
+  space_type: 'Add by Type',
   id: 'Add by Space Name',
 };
 
@@ -57,7 +57,7 @@ const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: stri
     const choice = SPACE_FUNCTION_CHOICES.find(i => i.id === spaceFunction);
     return choice ? choice.label : '(unknown function)';
   },
-  spaceType: spaceType => ({
+  space_type: spaceType => ({
     campus: 'Campus',
     building: 'Building',
     floor: 'Floor',
@@ -79,9 +79,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     const valueList = (
       <Fragment>
         {filter.values.slice(0, 2).reduce((acc: React.ReactNode, name) => {
-          if (!name) {
-            return null;
-          } else if (!acc) {
+          if (!acc) {
             return (
               <FilterBold>{nameFormattingFunction(name, formattedHierarchy)}</FilterBold>
             );
@@ -107,21 +105,21 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     case 'function':
       text = (
         <Fragment>
-          <FilterBold>Function</FilterBold> is {valueList}
+          <FilterBold>Function:</FilterBold> {valueList}
         </Fragment>
       );
       break;
-    case 'spaceType':
+    case 'space_type':
       text = (
         <Fragment>
-          <FilterBold>Type</FilterBold> is {valueList}
+          <FilterBold>Type:</FilterBold> {valueList}
         </Fragment>
       );
       break;
     case 'id':
       text = (
         <Fragment>
-          <FilterBold>Space</FilterBold> is {valueList}
+          <FilterBold>Space:</FilterBold> {valueList}
         </Fragment>
       );
       break;
@@ -165,22 +163,24 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
   const filterBeingCreated = filter.field === '' && filter.values.length === 0;
 
   return (
-    <div className={styles.spaceSelectorWrapper}>
+    <div>
       {/* A delete button is visible to the left of this filter */}
       {deletable ? (
-        <div
-          ref={deleteButtonWrapperRef}
-          className={classnames(
-            styles.deleteButtonWrapper,
-            {[styles.visible]: deleteButtonVisible}
-          )}
-          onMouseLeave={() => setDeleteButtonVisible(false)}
-        >
-          <FilterDeleteButton
-            onClick={onDelete}
-            onFocus={() => setDeleteButtonVisible(true)}
-            onBlur={() => setDeleteButtonVisible(false)}
-          />
+        <div style={{position: 'relative'}}>
+          <div
+            ref={deleteButtonWrapperRef}
+            className={classnames(
+              styles.deleteButtonWrapper,
+              {[styles.visible]: deleteButtonVisible}
+            )}
+            onMouseLeave={() => setDeleteButtonVisible(false)}
+          >
+            <FilterDeleteButton
+              onClick={onDelete}
+              onFocus={() => setDeleteButtonVisible(true)}
+              onBlur={() => setDeleteButtonVisible(false)}
+            />
+          </div>
         </div>
       ) : null}
 
@@ -244,7 +244,13 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
                   choiceFilter(SPACE_FUNCTION_CHOICES, searchText)
                   .map(choice => ({
                     ...choice,
-                    label: `${choice.label} (${spaces.filter(s => s['function'] === choice.id).length})`,
+                    spaceCount: spaces.filter(s => s['function'] === choice.id).length,
+                  }))
+                  .filter(i => i.spaceCount > 0)
+                  .sort((a, b) => b.spaceCount - a.spaceCount)
+                  .map(choice => ({
+                    id: choice.id,
+                    label: `${choice.label} (${choice.spaceCount})`,
                   }))
                 }
                 value={workingFilter.values}
@@ -254,7 +260,7 @@ const SpaceFilter: React.FunctionComponent<AnalyticsSpaceSelectorProps> = functi
           </Fragment>
         ) : null}
 
-        {workingFilter.field === 'spaceType' ? (
+        {workingFilter.field === 'space_type' ? (
           <div className={styles.popupBody}>
             <MultipleSelectItemList
               choices={[

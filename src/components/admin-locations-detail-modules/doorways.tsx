@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import styles from './doorways.module.scss';
@@ -29,12 +28,12 @@ import AdminLocationsDetailModule from './index';
 import filterCollection from '../../helpers/filter-collection';
 import { fileToDataURI } from '../../helpers/media-files';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
-import updateModal from '../../actions/modal/update';
-import spaceManagementCreateDoorway from '../../actions/space-management/create-doorway';
-import spaceManagementUpdateDoorway from '../../actions/space-management/update-doorway';
-import spaceManagementDeleteDoorway from '../../actions/space-management/delete-doorway';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
+import updateModal from '../../rx-actions/modal/update';
+import spaceManagementCreateDoorway from '../../rx-actions/space-management/create-doorway';
+import spaceManagementUpdateDoorway from '../../rx-actions/space-management/update-doorway';
+import spaceManagementDeleteDoorway from '../../rx-actions/space-management/delete-doorway';
 
 import {
   DOORWAY_ICON,
@@ -42,6 +41,10 @@ import {
   INSIDE_THE_SPACE_GLYPH,
   OUTSIDE_THE_SPACE_GLYPH
 } from './doorway_glyphs';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import useRxStore from '../../helpers/use-rx-store';
+import SpaceManagementStore from '../../rx-stores/space-management';
 
 const AC_OUTLET = 'AC_OUTLET',
       POWER_OVER_ETHERNET = 'POWER_OVER_ETHERNET';
@@ -56,7 +59,13 @@ function processModalData(data) {
   };
 }
 
-function DpuPosition({spaceName, value, onChange}) {
+type DpuPositionProps = {
+  spaceName: string,
+  value: 1 | -1,
+  onChange: (value: 1 | -1) => void,
+};
+
+function DpuPosition({ spaceName, value, onChange }: DpuPositionProps) {
   return (
     <div className={styles.dpuPositionWrapper}>
       <p>
@@ -91,6 +100,25 @@ function DpuPosition({spaceName, value, onChange}) {
   );
 }
 
+type UpdateHistoricCountsProps = {
+  value: boolean,
+  onChange: (value: boolean) => void,
+}
+function UpdateHistoricCounts({value, onChange}) {
+  return (
+    <div className={styles.dpuPositionUpdateHistoricCheckbox}>
+      <Checkbox
+        label="Update historic space counts"
+        checked={value}
+        onChange={(e) => {
+          const target = e.target as HTMLInputElement;
+          onChange(target.checked)
+        }}
+      />
+    </div>
+  );
+}
+
 function AdminLocationsDetailModulesDoorwayDpuPositionModal({
   visible,
   spaceName,
@@ -118,13 +146,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
           value={sensorPlacement}
           onChange={onUpdateSensorPlacement}
         />
-        <div className={styles.updateHistoricCheckbox}>
-          <Checkbox
-            label="Update historic space counts"
-            checked={updateHistoricCounts}
-            onChange={() => onUpdateHistoricCounts(!updateHistoricCounts)}
-          />
-        </div>
+        <UpdateHistoricCounts value={updateHistoricCounts} onChange={onUpdateHistoricCounts} />
       </div>
 
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
@@ -223,17 +245,12 @@ function AdminLocationsDetailModulesDoorwayModal({
           spaceName={spaceName}
           onChange={sensorPlacement => onChangeField('sensorPlacement', sensorPlacement)}
         />
-        {!createMode && <>
-          <div className={styles.updateHistoricCheckbox}>
-            <Checkbox
-              label="Update historic space counts"
-              checked={modalState.data.updateHistoricCounts}
-              onChange={() => onChangeField('updateHistoricCounts', !modalState.data.updateHistoricCounts)}
-            />
-          </div>
-        </>
-        }
-
+        {!createMode ? (
+          <UpdateHistoricCounts
+            value={modalState.data.updateHistoricCounts}
+            onChange={value => onChangeField('updateHistoricCounts', value)}
+          />
+        ) : null}
       </div>
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
@@ -327,7 +344,7 @@ function AdminLocationsDetailModulesDoorwayModal({
                 onChange={e => onChangeField('clearance', !e.target.checked)}
               />
             </div>
-						{MOUNTING_SPACE_GLYPH}
+            {MOUNTING_SPACE_GLYPH}
           </div>
         </div>
         <FormLabel
@@ -471,7 +488,9 @@ function DoorwayList({
                   className={styles.itemContainer}
                   onClick={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 >
-                  <Icons.Doorway color={colorVariables.grayDarkest} />
+                  <div className={styles.icon}>
+                    <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
+                  </div>
                   <span className={styles.name}>{item.name}</span>
                 </div>
               </Fragment>
@@ -483,23 +502,24 @@ function DoorwayList({
           id="Linked spaces"
           template={i => {
             const spacesOtherThanSelectedSpace = i.spaces.filter(s => s.id !== selectedSpaceId);
-            if (spacesOtherThanSelectedSpace.length > 1) {
+            if (spacesOtherThanSelectedSpace.length >= 1) {
               return (
                 <div className={styles.linkedSpacesTag}>
-                  <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace.length} Linked spaces</span>
-                </div>
-              );
-            } else if (spacesOtherThanSelectedSpace.length === 1) {
-              return (
-                <div className={styles.linkedSpacesTag}>
-                  <Icons.Link />
-                  <span>{spacesOtherThanSelectedSpace[0].name}</span>
+                  <div className={styles.linkedSpacesIcon}>
+                    <Icons.Link width={20} height={20} />
+                  </div>
+                  <span className={styles.linkedSpacesText}>
+                    {
+                      spacesOtherThanSelectedSpace.length > 1 ?
+                      `${spacesOtherThanSelectedSpace.length} other spaces` :
+                      spacesOtherThanSelectedSpace[0].name
+                    }
+                  </span>
                 </div>
               );
             } else {
               return (
-                <Fragment>Not linked</Fragment>
+                <Fragment>No other spaces</Fragment>
               )
             }
           }}
@@ -545,14 +565,12 @@ function DoorwayList({
         />
         <ListViewColumn
           id={null}
-          template={i => i.selected ? (
-            <div
-              className={styles.editLink}
-              onClick={() => onEditDoorway(i)}
-            >
-              Edit
-            </div>
-          ): null}
+          template={i => <div
+            className={styles.editLink}
+            onClick={() => onEditDoorway(i)}
+          >
+            Edit
+          </div>}
           width={50}
         />
       </ListView>
@@ -579,8 +597,8 @@ function AdminLocationsDetailModulesDoorways({
   const doorwaysFilter = filterCollection({fields: ['name']});
   const filteredDoorways = doorwaysFilter(formState.doorways, formState.doorwaysFilter);
 
-	const topDoorways = filteredDoorways.filter(x => x.list === 'TOP');
-	const bottomDoorways = filteredDoorways.filter(x => x.list === 'BOTTOM');
+  const topDoorways = filteredDoorways.filter(x => x.list === 'TOP');
+  const bottomDoorways = filteredDoorways.filter(x => x.list === 'BOTTOM');
 
   function onSelectDoorway(doorway, state) {
     if (state) {
@@ -762,27 +780,51 @@ function AdminLocationsDetailModulesDoorways({
   );
 }
 
-export default connect((state: any) => ({
-  activeModal: state.activeModal,
-  selectedSpaceIdOrNull: state.spaceManagement.spaces.selected,
-}), dispatch => ({
-  onHideModal() {
-    dispatch<any>(hideModal());
-  },
-  onShowModal(modalName, data={}) {
-    dispatch<any>(showModal(modalName, data))
-  },
-  onUpdateModalData(data) {
-    dispatch<any>(updateModal(data));
-  },
+// FIXME: apparently there are external props also passed to this connected component
+const ConnectedAdminLocationsDetailModulesDoorways: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-  onCreateDoorway(data) {
-    dispatch<any>(spaceManagementCreateDoorway(data));
-  },
-  onUpdateDoorway(data) {
-    dispatch<any>(spaceManagementUpdateDoorway(data));
-  },
-  onDeleteDoorway(doorwayId) {
-    dispatch<any>(spaceManagementDeleteDoorway(doorwayId));
-  },
-}))(AdminLocationsDetailModulesDoorways);
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaceManagement = useRxStore(SpaceManagementStore);
+
+  const selectedSpaceIdOrNull = spaceManagement.spaces.selected
+
+
+  // formerly mapDispatchToProps
+  const onHideModal = async () => {
+    await hideModal(dispatch);
+  }
+  const onShowModal = (modalName, data = {}) => {
+    showModal(dispatch, modalName, data);
+  }
+  const onUpdateModalData = (data: Any<FixInRefactor>) => {
+    updateModal(dispatch, data);
+  }
+  const onCreateDoorway = async (data: Any<FixInRefactor>) => {
+    await spaceManagementCreateDoorway(dispatch, data);
+  }
+  const onUpdateDoorway = async (data: Any<FixInRefactor>) => {
+    await spaceManagementUpdateDoorway(dispatch, data);
+  }
+  const onDeleteDoorway = async (doorwayId) => {
+    await spaceManagementDeleteDoorway(dispatch, doorwayId);
+  }
+
+  return (
+    <AdminLocationsDetailModulesDoorways
+
+      {...externalProps}
+
+      activeModal={activeModal}
+      selectedSpaceIdOrNull={selectedSpaceIdOrNull}
+      
+      onHideModal={onHideModal}
+      onShowModal={onShowModal}
+      onUpdateModalData={onUpdateModalData}
+      onCreateDoorway={onCreateDoorway}
+      onUpdateDoorway={onUpdateDoorway}
+      onDeleteDoorway={onDeleteDoorway}
+    />
+  )
+}
+export default ConnectedAdminLocationsDetailModulesDoorways;

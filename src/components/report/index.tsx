@@ -1,10 +1,10 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { AppBar, AppBarContext, AppBarSection, Button, Modal } from '@density/ui';
-import showModal from '../../actions/modal/show'; 
+import showModal from '../../rx-actions/modal/show'; 
 
 import Report from '@density/reports';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export function ExpandedReportModal({visible, report, reportData, onCloseModal}) {
   return <Modal
@@ -32,13 +32,22 @@ export function ExpandedReportModal({visible, report, reportData, onCloseModal})
   </Modal>
 }
 
-const ConnectedReport = connect(state => ({}), dispatch => {
-  return {
-    // When a user clicks "expand" on a report, call this function to set the currently open modal.
-    onOpenReportExpandedModal(report, reportData) {
-      dispatch<any>(showModal('MODAL_REPORT_EXPANDED', {report, reportData}));
-    },
-  };
-})(Report);
+// FIXME: what external props are required?
+const ConnectedReport: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-export default (ConnectedReport as React.ComponentClass<any, any>);
+  const dispatch = useRxDispatch();
+
+  // When a user clicks "expand" on a report, call this function to set the currently open modal.
+  const onOpenReportExpandedModal = (report, reportData) => {
+    showModal(dispatch, 'MODAL_REPORT_EXPANDED', {report, reportData});
+  }
+    
+  return (
+    <Report
+      {...externalProps}
+      onOpenReportExpandedModal={onOpenReportExpandedModal}
+    />
+  )
+}
+
+export default ConnectedReport;

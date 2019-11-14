@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, Fragment } from 'react';
-import { connect } from 'react-redux';
 
 import styles from './styles.module.scss';
 
@@ -14,8 +13,11 @@ import {
   InputBox,
 } from '@density/ui';
 
-import hideModal from '../../actions/modal/hide';
-import updateModal from '../../actions/modal/update';
+import hideModal from '../../rx-actions/modal/hide';
+import updateModal from '../../rx-actions/modal/update';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export function Dialogger({
   activeModal,
@@ -81,9 +83,11 @@ export function Dialogger({
               <AppBarTitle>{activeModal.data.title || 'Prompt'}</AppBarTitle>
             </AppBar>
             <div className={styles.dashboardModalPromptContent}>
-              <div className={styles.dashboardModalPromptLabel}>
-                {activeModal.data.prompt || 'Enter data:'}
-              </div>
+              {activeModal.data.prompt ? (
+                <div className={styles.dashboardModalPromptLabel}>
+                  {activeModal.data.prompt}
+                </div>
+              ) : null}
               <InputBox
                 type="text"
                 value={activeModal.data.text || ''}
@@ -122,25 +126,40 @@ export function Dialogger({
   );
 }
 
-export default connect((state: any) => {
-  return {
-    activeModal: state.activeModal,
+// FIXME: connect logic
+export default () => {
+
+  const activeModal = useRxStore(ActiveModalStore);
+  const dispatch = useRxDispatch();
+
+  const onUpdateModal = (newModalData) => {
+    updateModal(dispatch, newModalData);
   };
-}, dispatch => {
-  return {
-    onUpdateModal(newModalData) {
-      dispatch(updateModal(newModalData));
-    },
-    onCancel() {
-      (dispatch as any)(hideModal());
-    },
-    onConfirm(callback) {
-      (dispatch as any)(hideModal());
-      callback();
-    },
-    onSubmit(callback, data) {
-      (dispatch as any)(hideModal());
-      callback(data);
-    },
+
+  const onCancel = () => {
+    hideModal(dispatch);
   };
-})(Dialogger);
+
+  const onConfirm = async (callback) => {
+    if (activeModal.data.optimistic === true) { hideModal(dispatch); }
+    else { await hideModal(dispatch); }
+    callback();
+  };
+
+  const onSubmit = async (callback, data) => {
+    if (activeModal.data.optimistic === true) { hideModal(dispatch); }
+    else { await hideModal(dispatch); }
+    callback(data);
+  };
+
+  return (
+    <Dialogger 
+      activeModal={activeModal}
+      onUpdateModal={onUpdateModal}
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+      onSubmit={onSubmit}
+    />
+  )
+
+}

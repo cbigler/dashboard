@@ -51,7 +51,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
                 disabled={this.state.count <= 0}
                 className={`${styles.exploreEditCountModalCountButton} ${styles.subtract}`}
               >
-                <div>
+                <div style={{width: 24, height: 24, marginTop: 12}}>
                   <Icons.Minus color={colorVariables.grayDarker} />
                 </div>
               </button>
@@ -79,7 +79,9 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
                 onClick={() => this.setState({count: this.state.count + 1})}
                 className={`${styles.exploreEditCountModalCountButton} ${styles.add}`}
               >
-                <Icons.Plus color={colorVariables.grayDarker} />
+                <div style={{width: 24, height: 24}}>
+                  <Icons.Plus color={colorVariables.grayDarker} />
+                </div>
               </button>
             </div>
 

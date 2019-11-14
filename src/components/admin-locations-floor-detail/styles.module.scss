@@ -15,15 +15,8 @@
   overflow-x: auto;
 }
 
-.name {
+.title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.sidebar {
-  height: 100%;
-  margin-bottom: -1px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }

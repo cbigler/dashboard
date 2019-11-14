@@ -1,16 +1,20 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import SetCapacityModal from '../explore-set-capacity-modal/index';
 
-import collectionSpacesUpdate from '../../actions/collection/spaces/update';
+import collectionSpacesUpdate from '../../rx-actions/collection/spaces/update';
 
-import showModal from '../../actions/modal/show';
-import hideModal from '../../actions/modal/hide';
+import showModal from '../../rx-actions/modal/show';
+import hideModal from '../../rx-actions/modal/hide';
 
 import styles from './styles.module.scss';
 import cleanSpaceData from '../../helpers/clean-space-data';
-import spaceReportsCalculateReportData from '../../actions/space-reports/calculate-report-data';
+import spaceReportsCalculateReportData from '../../rx-actions/space-reports/calculate-report-data';
+import useRxStore from '../../helpers/use-rx-store';
+import ActiveModalStore from '../../rx-stores/active-modal';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceReportsStore from '../../rx-stores/space-reports';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 export function ExploreSpaceHeaderRaw({
   space,
@@ -74,29 +78,47 @@ export function ExploreSpaceHeaderRaw({
   }
 }
 
-export default connect((state: any) => {
-  return {
-    space: state.spaces.data.find(space => space.id === state.spaces.selected),
-    activeModal: state.activeModal,
-    spaceReports: state.spaceReports,
-  };
-}, dispatch => {
-  return {
-    onOpenModal(name, data) {
-      dispatch<any>(showModal(name, data));
-    },
-    onCloseModal() {
-      dispatch<any>(hideModal());
-    },
-    async onSetCapacity(controllers, space, capacity) {
-      const spaceData = cleanSpaceData({...space, capacity});
-      const ok = await dispatch<any>(collectionSpacesUpdate(spaceData));
-      if (ok) {
-        dispatch<any>(hideModal());
-        controllers.forEach(controller => {
-          dispatch<any>(spaceReportsCalculateReportData(controller, space));
-        });
-      }
-    },
-  };
-})(React.memo(ExploreSpaceHeaderRaw));
+
+const ConnectedExploreSpaceHeader: React.FC = () => {
+
+  const dispatch = useRxDispatch();
+  const spaces = useRxStore(SpacesStore);
+  const activeModal = useRxStore(ActiveModalStore);
+  const spaceReports = useRxStore(SpaceReportsStore);
+
+  // FIXME: spaces store should handle
+  const space = spaces.data.find(s => s.id === spaces.selected)
+
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+
+  const onCloseModal = async () => {
+    await hideModal(dispatch)
+  }
+
+  const onSetCapacity = async (controllers, space, capacity) => {
+    const spaceData = cleanSpaceData({ ...space, capacity });
+    const ok = await collectionSpacesUpdate(dispatch, spaceData);
+    // FIXME: do any of the promises below need to be awaited?
+    if (ok) {
+      hideModal(dispatch);
+      controllers.forEach(controller => {
+        spaceReportsCalculateReportData(dispatch, controller, space);
+      });
+    }
+  }
+
+  return (
+    <ExploreSpaceHeaderRaw
+      space={space}
+      spaceReports={spaceReports}
+      activeModal={activeModal}
+
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
+      onSetCapacity={onSetCapacity}
+    />
+  )
+}
+export default ConnectedExploreSpaceHeader;

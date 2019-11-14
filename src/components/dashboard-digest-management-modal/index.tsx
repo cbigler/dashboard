@@ -20,11 +20,11 @@ import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
 import filterCollection from '../../helpers/filter-collection/index';
 
 import collectionUsersRead from '../../rx-actions/users/read';
-import collectionDigestSchedulesCreate from '../../actions/collection/digest-schedules/create';
-import collectionDigestSchedulesUpdate from '../../actions/collection/digest-schedules/update';
-import collectionDigestSchedulesDestroy from '../../actions/collection/digest-schedules/destroy';
+import collectionDigestSchedulesCreate from '../../rx-actions/collection/digest-schedules/create';
+import collectionDigestSchedulesUpdate from '../../rx-actions/collection/digest-schedules/update';
+import collectionDigestSchedulesDestroy from '../../rx-actions/collection/digest-schedules/destroy';
 
-import hideModal from '../../actions/modal/hide';
+import hideModal from '../../rx-actions/modal/hide';
 
 import { DensityDigestSchedule, DensityDashboard } from '../../types';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
@@ -87,18 +87,18 @@ function isFormValid({ daysOfWeek, recipients, time }) {
 }
 
 async function onCreateDigest(dispatch, digest) {
-  dispatch(hideModal());
-  dispatch(collectionDigestSchedulesCreate(digest));
+  hideModal(dispatch);
+  collectionDigestSchedulesCreate(dispatch, digest);
 }
 
 async function onUpdateDigest(dispatch, digest) {
-  dispatch(hideModal());
-  dispatch(collectionDigestSchedulesUpdate(digest));
+  hideModal(dispatch);
+  collectionDigestSchedulesUpdate(dispatch, digest);
 }
 
 async function onDeleteDigest(dispatch, digest) {
-  dispatch(hideModal());
-  dispatch(collectionDigestSchedulesDestroy(digest));
+  hideModal(dispatch);
+  collectionDigestSchedulesDestroy(dispatch, digest);
 }
 
 export default function DashboardDigestManagementModal({

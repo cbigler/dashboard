@@ -1,18 +1,27 @@
 @import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/colors.scss";
 
-.tableName {
+.wrapper {
+  margin-left: 21px;
+  margin-right: 21px;
+  margin-top: 16px;
+  margin-bottom: 100px;
+}
+
+.tableSpace {
   display: flex;
   align-items: center;
   font-weight: 500;
   width: 100%;
 }
-.tableNameHeader {
+.tableSpaceHeader {
   display: flex;
   align-items: center;
   font-weight: bold;
 }
-.tableNameLabel {
-  display: inline-block;
+.tableSpaceLabel {
+  display: flex;
+  align-items: center;
   width: 100%;
   overflow: hidden;
   text-align: left;
@@ -20,5 +29,43 @@
   white-space: nowrap;
   user-select: none;
   margin-left: 16px;
+}
+
+.denominator {
+  color: $gray;
+  margin-left: 4px;
+}
+
+
+.header {
+  height: 56px;
+  text-align: left;
+}
+.header + div svg { opacity: 0; }
+.header.right { text-align: right; }
+.headerLabel {
+  display: flex;
+  align-items: center;
+}
+.headerFakeRowText {
+  margin-top: 4px;
+  font-weight: 500;
+  font-size: 20px;
+}
+.headerFakeRowText.all {
+  margin-left: 36px;
   font-size: 14px;
+  margin-top: 8px;
+}
+.headerFakeRowDenominator {
+  color: $gray;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.ellipsis {
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }

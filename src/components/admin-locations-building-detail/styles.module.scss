@@ -10,11 +10,10 @@
 
 .section { margin-bottom: 32px; }
 
-.name {
+.title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 300px;
 }
 
 .scroll {
@@ -26,10 +25,3 @@
 
 
 .leftPaneMap { padding: 24px; }
-
-.sidebar {
-  height: 100%;
-  margin-bottom: -1px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}

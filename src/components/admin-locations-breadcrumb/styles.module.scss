@@ -8,14 +8,16 @@
 }
 
 .item {
-  font-size: 16px;
+  font-size: 18px;
   margin-left: 16px;
   margin-right: 16px;
   font-weight: 500;
   color: $grayDarker;
   text-decoration: none;
   user-select: none;
-  max-width: 150px;
+  max-width: 180px;
+  padding-bottom: 4px;
+  padding-top: 4px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -29,10 +31,16 @@
 .item:first-child { margin-left: 0px; }
 
 .finalText {
-  margin-right: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
-
+.finalChevron {
+  width: 24px;
+  height: 24px;
+  margin-left: 4px;
+  margin-right: 2px;
+  margin-top: -3px;
+}
 
 .backdrop {
   position: fixed;
@@ -51,6 +59,7 @@
   border: 1px solid transparent;
   padding-left: 8px;
   padding-right: 2px;
+  max-width: 170px;
   line-height: 40px;
   transition: all 100ms ease-in-out;
   border-radius: $borderRadiusBase;

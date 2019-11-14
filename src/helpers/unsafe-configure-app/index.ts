@@ -4,6 +4,8 @@ import fields from '../../fields';
 import { config as configCore } from '../../client/core';
 import { config as configAccounts } from '../../client/accounts';
 
+import { rxDispatch } from '../../rx-stores/index';
+
 
 
 // ----------------------------------------------------------------------------
@@ -20,13 +22,13 @@ import { config as configAccounts } from '../../client/accounts';
 // "ok". The `EnvironmentSwitcher` component's `onChange` is fired, which calls
 // `setServiceLocations`. The locations of all the services update.
 //
-export function configureClients(store?) {
+export function configureClients() {
   const goSlow = getGoSlow();
   const environments: any = getActiveEnvironments(fields);
   const token = localStorage.sessionToken !== undefined ?
     JSON.parse(localStorage.sessionToken) : null;
   const impersonateUser = localStorage.impersonate ?
     (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
-  configCore({ host: environments.core, token, impersonateUser, goSlow, store });
-  configAccounts({ host: environments.accounts, token, impersonateUser, store });
+  configCore(rxDispatch, { host: environments.core, token, impersonateUser, goSlow });
+  configAccounts(rxDispatch, { host: environments.accounts, token, impersonateUser });
 }

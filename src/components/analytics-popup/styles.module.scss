@@ -1,0 +1,84 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.backdrop {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 1;
+}
+
+.wrapper {
+  position: relative;
+  outline: none;
+  color: $grayDarkest;
+}
+
+.target {
+  font-size: $fontSizeBase;
+  font-weight: 500;
+  color: $gray;
+  padding-bottom: 2px;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+.popup {
+  position: absolute;
+  top: 24px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 150ms ease-in-out;
+
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
+  background-color: #fff;
+  z-index: 3;
+  overflow: hidden;
+}
+.popup.open {
+  opacity: 1;
+  top: 44px;
+  pointer-events: auto;
+}
+.popup.pinLeft { left: 0px; }
+.popup.pinRight { right: 0px; }
+
+
+
+.itemList {
+  padding: 0px;
+  margin: 0px;
+  list-style: none;
+  padding: 8px;
+}
+
+.itemList li {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+  white-space: nowrap;
+
+  border-radius: $borderRadiusBase;
+  padding-left: 16px;
+  padding-right: 16px;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  color: $grayDarkest;
+}
+.itemList li:hover,
+.itemList li:focus { background-color: $grayLighter; }
+.itemList li.disabled {
+  color: $gray;
+  background-color: $grayLightest;
+  cursor: default;
+}

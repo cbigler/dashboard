@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import classnames from 'classnames';
 
@@ -12,8 +11,8 @@ import GenericLoadingState from '../generic-loading-state/index';
 
 import { ROLE_INFO } from '../../helpers/permissions';
 
-import showModal from '../../actions/modal/show';
-import showToast from '../../actions/toasts';
+import showModal from '../../rx-actions/modal/show';
+import { showToast } from '../../rx-actions/toasts';
 import collectionUsersDelete from '../../rx-actions/users/delete';
 import collectionUsersUpdate from '../../rx-actions/users/update';
 
@@ -30,9 +29,12 @@ import useRxStore from '../../helpers/use-rx-store';
 import usersStore from '../../rx-stores/users';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import { UserActionTypes } from '../../types/users';
+import UserStore from '../../rx-stores/user';
+import SpacesStore from '../../rx-stores/spaces';
+import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 
 function onStartDeleteUser(dispatch, user) {
-  dispatch(showModal('MODAL_CONFIRM', {
+  showModal(dispatch, 'MODAL_CONFIRM', {
     prompt: 'Are you sure you want to delete this user?',
     confirmText: 'Delete',
     callback: () => {
@@ -42,7 +44,7 @@ function onStartDeleteUser(dispatch, user) {
         }
       });
     },
-  }));
+  });
 }
 
 async function onSaveUser(dispatch, {id, role, spaceIds, spaceFilteringActive}) {
@@ -52,24 +54,21 @@ async function onSaveUser(dispatch, {id, role, spaceIds, spaceFilteringActive}) 
     spaces: spaceFilteringActive ? spaceIds : [],
   });
   if (ok) {
-    dispatch(showToast({ text: 'User updated successfully!' }));
+    showToast(dispatch, { text: 'User updated successfully!' });
     window.location.href = '#/admin/user-management';
   } else {
-    dispatch(showToast({ type: 'error', text: 'Error updating user' }));
+    showToast(dispatch, { type: 'error', text: 'Error updating user' });
   }
 }
 
 export default function AdminUserManagementDetail() {
 
-  // DEPRECATED: Pull some state from the Redux store
-  const { spaces, spaceHierarchy, user } = useSelector((state: any) => ({
-    spaces: state.spaces,
-    spaceHierarchy: state.spaceHierarchy,
-    user: state.user,
-  }));
+  const user = useRxStore(UserStore);
+  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
 
   // Connect to the RxJS store and dispatch
   const users = useRxStore(usersStore);
+  const spaces = useRxStore(SpacesStore);
   const dispatch = useRxDispatch();
 
   switch (users.view) {

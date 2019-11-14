@@ -1,6 +1,5 @@
 import React from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 
 import { DensityUser } from '../../types';
 
@@ -13,9 +12,8 @@ import {
 } from '@density/ui';
 
 import accounts from '../../client/accounts';
-import { impersonateUnset } from '../../actions/impersonate';
-import redirectAfterLogin from '../../actions/miscellaneous/redirect-after-login';
-import sessionTokenSet from '../../actions/session-token/set';
+import { impersonateUnset } from '../../rx-actions/impersonate';
+import sessionTokenSet from '../../rx-actions/session-token/set';
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 
 import { InputStackItem, InputStackGroup } from '../input-stack/index';
@@ -27,6 +25,12 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import webAuth from "../../auth0";
 import styles from './styles.module.scss';
+import useRxStore from '../../helpers/use-rx-store';
+import UserStore from '../../rx-stores/user';
+import MiscellaneousStore from '../../rx-stores/miscellaneous';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import redirectAfterLogin from '../../rx-actions/miscellaneous/redirect-after-login';
+
 
 export const  LOGIN = 'LOGIN',
               OKTA = 'OKTA',
@@ -125,7 +129,11 @@ export class Login extends React.Component<any, any> {
         this.setState({loading: false, error: null});
         this.props.onUserSuccessfullyLoggedIn(response.data, this.props.redirectAfterLogin);
       }).catch(error => {
-        this.setState({loading: false, error: error.toString()});
+        const errorText = error.toString();
+        this.setState({
+          loading: false,
+          error: errorText.endsWith('403') ? 'This email and password combination doesn\'t match our records' : errorText
+        });
       });
     } else {
       this.setState({loading: false, error: 'Whoops. Can you try that again?' });
@@ -394,18 +402,29 @@ export class Login extends React.Component<any, any> {
 }
 
 
-export default connect((state: any) => ({
-  user: state.user,
-  redirectAfterLogin: state.miscellaneous.redirectAfterLogin,
-}), dispatch => {
-  return {
-    onUserSuccessfullyLoggedIn(token, redirect) {
-      dispatch(impersonateUnset());
-      dispatch<any>(sessionTokenSet(token)).then(data => {
-        const user: any = objectSnakeToCamel<DensityUser>(data);
-        unsafeNavigateToLandingPage(user.organization.settings, redirect);
-        dispatch(redirectAfterLogin(null));
-      });
-    },
+const ConnectedLogin: React.FunctionComponent = () => {
+  const dispatch = useRxDispatch();
+  const user = useRxStore(UserStore);
+  const miscellaneous = useRxStore(MiscellaneousStore);
+
+  const redirectAfterLoginState: Any<FixInRefactor> = miscellaneous.redirectAfterLogin;
+
+  const onUserSuccessfullyLoggedIn = (token, redirect) => {
+    dispatch(impersonateUnset());
+    sessionTokenSet(dispatch, token).then(data => {
+      const user = objectSnakeToCamel<DensityUser>(data);
+      unsafeNavigateToLandingPage(user.organization.settings, redirect);
+      dispatch(redirectAfterLogin(null) as Any<FixInRefactor>);
+    });
   };
-})(Login);
+
+  return (
+    <Login
+      user={user}
+      redirectAfterLogin={redirectAfterLoginState}
+      onUserSuccessfullyLoggedIn={onUserSuccessfullyLoggedIn}
+    />
+  )
+}
+
+export default ConnectedLogin;

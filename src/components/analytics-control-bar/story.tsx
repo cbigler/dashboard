@@ -5,14 +5,15 @@ import { action } from '@storybook/addon-actions';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DATE_RANGES } from '../../helpers/space-time-utilities';
+import user from './user.json';
 import spaces from './spaces.json';
 import hierarchy from './hierarchy.json';
 import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
 const SPACES = spaces.map(objectSnakeToCamel);
 const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToCamel));
 
-import AnalyticsControlBar from './index';
-import { QueryInterval } from '../../types/analytics';
+import AnalyticsControlBar, { AnalyticsControlBarSaveButtonState } from './index';
+import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
 
 function State({ initialState, children }) {
@@ -34,12 +35,18 @@ function State({ initialState, children }) {
 storiesOf('Analytics Control Bar', module)
   .add('Default', () => (
     <State initialState={{
+      user: user,
+      metric: AnalyticsFocusedMetric.ENTRANCES,
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
       filters: [],
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
+        userState={{ loading: false, error: null, data: state.user }}
+        metric={state.metric}
+        onChangeMetric={metric => setState({ ...state, metric })}
+
         filters={state.filters}
         onChangeFilters={filters => setState({ ...state, filters })}
 
@@ -51,18 +58,28 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+        saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+        onSave={action('Save')}
+        refreshEnabled={true}
+        onRefresh={action('Refresh')}
+        moreMenuVisible={true}
       />
       )}
     </State>
   ))
   .add('With actions', () => (
     <State initialState={{
+      metric: AnalyticsFocusedMetric.ENTRANCES,
       filters: [],
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
+        userState={{ loading: false, error: null, data: state.user }}
+        metric={state.metric}
+        onChangeMetric={metric => setState({ ...state, metric })}
+
         filters={state.filters}
         onChangeFilters={filters => {
           action('onChangeFilters')(filters)
@@ -83,12 +100,19 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+        saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+        onSave={action('Save')}
+        refreshEnabled={true}
+        onRefresh={action('Refresh')}
+        moreMenuVisible={true}
       />
       )}
     </State>  
   ))
   .add('With a lot of space filters', () => (
     <State initialState={{
+      user: user,
+      metric: AnalyticsFocusedMetric.ENTRANCES,
       filters: [
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
@@ -107,6 +131,10 @@ storiesOf('Analytics Control Bar', module)
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
+          userState={{ loading: false, error: null, data: state.user }}
+          metric={state.metric}
+          onChangeMetric={metric => setState({ ...state, metric })}
+
           filters={state.filters}
           onChangeFilters={filters => setState({ ...state, filters })}
 
@@ -118,6 +146,11 @@ storiesOf('Analytics Control Bar', module)
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
+          saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
+          onSave={action('Save')}
+          refreshEnabled={true}
+          onRefresh={action('Refresh')}
+          moreMenuVisible={true}
         />
       )}
     </State>

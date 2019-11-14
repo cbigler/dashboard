@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import classnames from 'classnames';
-import { connect } from 'react-redux';
 
 import moment from 'moment';
 
@@ -21,7 +20,7 @@ import {
 } from '../../helpers/time-segments/index';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 
-import { calculateFootTraffic } from '../../actions/route-transition/explore-space-daily';
+import { calculateFootTraffic } from '../../rx-actions/route-transition/explore-space-daily';
 
 import lineChart, { dataWaterline } from '@density/chart-line-chart';
 import { xAxisDailyTick, yAxisMinMax } from '@density/chart-line-chart/dist/axes';
@@ -32,6 +31,11 @@ import {
 } from '@density/chart-line-chart/dist/overlays';
 import { chartAsReactComponent } from '@density/charts';
 import { useAutoWidth } from '../../helpers/use-auto-width';
+import useRxStore from '../../helpers/use-rx-store';
+import ExploreDataStore from '../../rx-stores/explore-data';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+
+
 const LineChartComponent = chartAsReactComponent(lineChart);
 
 const CHART_HEIGHT = 350;
@@ -259,10 +263,24 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
   }
 }
 
-export default connect((state: any) => ({
-  calculatedData: state.exploreData.calculations.footTraffic,
-}), dispatch => ({
-  onRefresh(space) {
-    dispatch<any>(calculateFootTraffic(space));
-  },
-}))(React.memo(ExploreSpaceDetailFootTrafficCardRaw));
+// FIXME: the other props come from somewhere...
+const ConnectedExploreSpaceDetailFootTrafficCard: React.FC<Any<FixInRefactor>> = (externalProps) => {
+
+  const dispatch = useRxDispatch();
+  const exploreData = useRxStore(ExploreDataStore);
+
+  const calculatedData = exploreData.calculations.footTraffic;
+
+  const onRefresh = async (space) => {
+    await calculateFootTraffic(dispatch, space)
+  }
+
+  return (
+    <ExploreSpaceDetailFootTrafficCardRaw
+      {...externalProps}
+      calculatedData={calculatedData}
+      onRefresh={onRefresh}
+    />
+  )
+}
+export default ConnectedExploreSpaceDetailFootTrafficCard;

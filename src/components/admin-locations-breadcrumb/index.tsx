@@ -101,7 +101,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
             onClick={() => visible ? this.onHide() : this.onShow()}
           >
             <span className={styles.finalText}>{selectedSpace.name}</span>
-            <Icons.ChevronDown />
+            <div className={styles.finalChevron}><Icons.ChevronDown /></div>
           </span>
           <div className={styles.popup} style={{
             opacity: visible ? 1 : 0,

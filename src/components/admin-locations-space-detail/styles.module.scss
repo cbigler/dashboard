@@ -16,7 +16,7 @@
   overflow-x: auto;
 }
 
-.name {
+.title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -32,11 +32,4 @@
   margin-top: 65px;
   margin-left: auto;
   margin-right: auto;
-}
-
-.sidebar {
-  height: 100%;
-  margin-bottom: -1px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
 }

@@ -1,7 +1,6 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { connect } from 'react-redux';
 
 import gridVariables from '@density/ui/variables/grid.json';
 
@@ -17,11 +16,15 @@ import { isInclusivelyBeforeDay } from '@density/react-dates';
 
 import { formatForReactDates, parseISOTimeAtSpace, formatInISOTime, parseFromReactDates, getCurrentLocalTimeAtSpace, prettyPrintHoursMinutes } from '../../helpers/space-time-utilities';
 
-import collectionSpacesFilter from '../../actions/collection/spaces/filter';
-import { calculate as calculateDailyModules } from '../../actions/route-transition/explore-space-daily';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import { calculate as calculateDailyModules } from '../../rx-actions/route-transition/explore-space-daily';
 import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
+import useRxDispatch from '../../helpers/use-rx-dispatch';
+import { ActivePageState } from '../../rx-stores/active-page';
+import { DensitySpace } from '../../types';
+import { SpaceHierarchyState } from '../../rx-stores/space-hierarchy';
 
 export function ExploreControlBarRaw({
   selectedSpace,
@@ -170,30 +173,62 @@ export function ExploreControlBarRaw({
   }
 }
 
+// FIXME
+type TemporaryExternalProps = {
+  spaceHierarchy: SpaceHierarchyState,
+  activePage: ActivePageState,
+  selectedSpace: DensitySpace,
+  filters: {
+    dailyRawEventsPage: number,
+    dataDuration: Any<FixInRefactor>,
+    date: string | null,
+    startDate: string | null,
+    endDate: string | null,
+    doorwayId: string | null,
+    parent: Any<FixInRefactor>,
+    search: string,
+    sort: Any<FixInRefactor>,
+    timeSegmentLabel: Any<FixInRefactor>,
+    metricToDisplay: Any<FixInRefactor>,
+  }
+}
 
-export default connect(() => ({}), dispatch => {
-  return {
-    onChangeSpaceFilter(key, value) {
-      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      dispatch(collectionSpacesFilter(key, value));
-    },
-    onChangeDate(activePage, space, value) {
-      dispatch(collectionSpacesFilter('date', value));
-      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      if (activePage === 'SPACES_SPACE_DAILY') {
-        dispatch<any>(calculateDailyModules(space));
-      }
-    },
-    onChangeTimeSegmentLabel(activePage, space, spaceFilters, value) {
-      dispatch(collectionSpacesFilter('timeSegmentLabel', value));
-      dispatch(collectionSpacesFilter('dailyRawEventsPage', 1));
-      if (activePage === 'SPACES_SPACE_DAILY') {
-        dispatch<any>(calculateDailyModules(space));
-      }
-    },
-    onChangeDateRange(activePage, space, spaceFilters, startDate, endDate) {
-      dispatch(collectionSpacesFilter('startDate', startDate));
-      dispatch(collectionSpacesFilter('endDate', endDate));
-    },
-  };
-})(React.memo(ExploreControlBarRaw));
+// FIXME: external props
+const ConnectedExploreControlBar: React.FC<TemporaryExternalProps> = (externalProps) => {
+
+  const dispatch = useRxDispatch();
+
+  const onChangeSpaceFilter = (key, value) => {
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter(key, value) as Any<FixInRefactor>);
+  }
+  const onChangeDate = async (activePage, space, value) => {
+    dispatch(collectionSpacesFilter('date', value) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1) as Any<FixInRefactor>);
+    if (activePage === 'SPACES_SPACE_DAILY') {
+      await calculateDailyModules(dispatch, space);
+    }
+  }
+  const onChangeTimeSegmentLabel = async (activePage, space, spaceFilters, value) => {
+    dispatch(collectionSpacesFilter('timeSegmentLabel', value) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter('dailyRawEventsPage', 1) as Any<FixInRefactor>);
+    if (activePage === 'SPACES_SPACE_DAILY') {
+      await calculateDailyModules(dispatch, space);
+    }
+  }
+  const onChangeDateRange = (activePage, space, spaceFilters, startDate, endDate) => {
+    dispatch(collectionSpacesFilter('startDate', startDate) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter('endDate', endDate) as Any<FixInRefactor>);
+  }
+
+  return (
+    <ExploreControlBarRaw
+      {...externalProps}
+      onChangeSpaceFilter={onChangeSpaceFilter}
+      onChangeDate={onChangeDate}
+      onChangeTimeSegmentLabel={onChangeTimeSegmentLabel}
+      onChangeDateRange={onChangeDateRange}
+    />
+  )
+}
+export default ConnectedExploreControlBar;

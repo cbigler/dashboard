@@ -9,7 +9,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 export const ARROW_TEMPLATE = choice => {
   return <div className={styles.itemListDefaultTemplateRow}>
     {choice.label}
-    <Icons.ChevronRight width={12} height={12} />
+    <Icons.ChevronRight />
   </div>
 };
 
@@ -30,7 +30,7 @@ export const ItemList: React.FunctionComponent<ItemListProps> = function ItemLis
           tabIndex={0}
           key={choice.id}
           onClick={e => onClick(choice, e)}
-          onKeyDown={e => {
+          onKeyDown={(e: React.KeyboardEvent<HTMLLIElement>) => {
             switch (e.key) {
             // Enter will select the current item
             case 'Enter':
@@ -40,14 +40,14 @@ export const ItemList: React.FunctionComponent<ItemListProps> = function ItemLis
               return;
             // Arrow keys will move up and down
             case 'ArrowUp':
-              const previousElementSibling = (e.target as HTMLLIElement).previousElementSibling;
+              const previousElementSibling = e.currentTarget.previousElementSibling;
               if (previousElementSibling) {
                 e.preventDefault();
                 (previousElementSibling as HTMLElement).focus();
               }
               return;
             case 'ArrowDown':
-              const nextElementSibling = (e.target as HTMLLIElement).nextElementSibling;
+              const nextElementSibling = e.currentTarget.nextElementSibling;
               if (nextElementSibling) {
                 e.preventDefault();
                 (nextElementSibling as HTMLElement).focus();
@@ -88,7 +88,7 @@ export const MultipleSelectItemList: React.FunctionComponent<MultipleSelectItemL
               }
             }}
           />
-          {choice.label}
+          <span className={styles.multipleSelectListItem}>{choice.label}</span>
         </Fragment>
       )}
       onClick={(choice, e) => {
@@ -120,7 +120,7 @@ export const AddButton: React.FC<{
 }> = function AddButton({ onClick }) {
   return (
     <button className={styles.addButton} onClick={onClick} aria-label="Add new filter">
-      <Icons.Plus width={12} height={12} />
+      <Icons.Plus />
     </button>
   );
 }
@@ -139,8 +139,8 @@ export const FilterDeleteButton: React.FC<{
     >
       <Icons.Close
         color={colorVariables.brandDanger}
-        width={8}
-        height={8}
+        width={16}
+        height={16}
       />
     </button>
   );
