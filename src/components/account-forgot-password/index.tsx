@@ -50,13 +50,17 @@ export class AccountForgotPassword extends React.Component<any, any> {
 
         <div className={styles.accountForgotPasswordFormContainer}>
           <div className={styles.accountForgotPasswordForm}>
-            <InputStackGroup>
+            <div className={styles.formControl}>
+            <label className={styles.formControlLabel}>Your New Password</label>
               <InputStackItem
                 type="password"
                 placeholder="New Password"
                 value={this.state.password}
                 onChange={e => this.setState({password: e.target.value})}
               />
+            </div>
+            <div className={styles.formControl}>
+              <label className={styles.formControlLabel}>Confirm Password</label>
               <InputStackItem
                 type="password"
                 placeholder="Confirm Password"
@@ -64,7 +68,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
                 value={this.state.passwordConfirmation}
                 onChange={e => this.setState({passwordConfirmation: e.target.value})}
               />
-            </InputStackGroup>
+            </div>
           </div>
 
           <div className={styles.accountForgotPasswordSubmitButton}>

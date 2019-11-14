@@ -39,8 +39,35 @@ $accountRegistrationSectionWidth: 560px;
   font-weight: bold;
 }
 
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
+}
+
 // The header that is above each input box
-.accountRegistrationLabel {
+.formControlLabel {
   display: block;
   font-size: 12px;
   color: $grayCinder;
@@ -48,7 +75,7 @@ $accountRegistrationSectionWidth: 560px;
   margin-top: 0;
   margin-bottom: 4px;
 }
-.accountRegistrationLabelRequired {
+.formControlLabelRequired {
   color: $brandPrimary;
   margin-left: 3px;
 }

@@ -70,15 +70,6 @@ $zIndexToast: 2000;
   margin-bottom: 4px;
 }
 
-.loginFormLabel {
-  display: block;
-  font-size: 12px;
-  color: $grayCinder;
-  font-weight: bold;
-  margin-top: 0;
-  margin-bottom: 4px;
-}
-
 .loginSsoButtonGroup {
   display: flex;
 }
@@ -87,7 +78,7 @@ $zIndexToast: 2000;
   width: 100%;
 }
 
-.loginFormControl {
+.formControl {
   height: 57px;
   margin-bottom: 16px;
   opacity: 1;
@@ -112,6 +103,15 @@ $zIndexToast: 2000;
     overflow: hidden;
     transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
   }
+}
+
+.formControlLabel {
+  display: block;
+  font-size: 12px;
+  color: $grayCinder;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 .loginInputDisabled {

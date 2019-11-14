@@ -51,6 +51,42 @@ $accountForgotPasswordSectionWidth: 560px;
   margin-bottom: 20px;
 }
 
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
+}
+
+.formControlLabel {
+  display: block;
+  font-size: 12px;
+  color: $grayCinder;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
 .accountForgotPasswordSubmitButton {
   margin-top: 30px;
   width: 100%;

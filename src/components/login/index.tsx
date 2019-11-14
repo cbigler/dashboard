@@ -155,8 +155,8 @@ export class Login extends React.Component<any, any> {
     return <div className={styles.loginFormContainer}>
 
       {/* Input stack used to enter login info */}
-      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== LOGIN})}>
-        <label className={styles.loginFormLabel}>Your Email</label>
+      <div className={classnames(styles.formControl, {[styles.hide]: this.state.view !== LOGIN})}>
+        <label className={styles.formControlLabel}>Your Email</label>
         <InputStackItem
           type="email"
           placeholder="ex: bonnie.raitt@density.io"
@@ -168,8 +168,8 @@ export class Login extends React.Component<any, any> {
         />
       </div>
 
-      <div className={classnames(styles.loginFormControl, {[styles.hide]: this.state.view !== STANDARD})}>
-        <label className={styles.loginFormLabel}>Your Email</label>
+      <div className={classnames(styles.formControl, {[styles.hide]: this.state.view !== STANDARD})}>
+        <label className={styles.formControlLabel}>Your Email</label>
         <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
           {this.state.email}
           {/* Move to back to login page */}
@@ -177,8 +177,8 @@ export class Login extends React.Component<any, any> {
         </div>
       </div>
 
-      <div className={classnames(styles.loginFormControl, styles.loginFormControlPassword, {[styles.slide]: this.state.view !== STANDARD})}>
-        <label className={styles.loginFormLabel}>Your Password</label>
+      <div className={classnames(styles.formControl, styles.formControlPassword, {[styles.slide]: this.state.view !== STANDARD})}>
+        <label className={styles.formControlLabel}>Your Password</label>
         <div className={classnames(styles.loginInputContainer)}>
           <InputStackItem
             type="password"
@@ -240,7 +240,7 @@ export class Login extends React.Component<any, any> {
   renderOktaForm() {
     return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
 
-      <label className={styles.loginFormLabel}>Your Email</label>
+      <label className={styles.formControlLabel}>Your Email</label>
       <div className={styles.loginInputDisabled} onClick={() => this.setState({view: LOGIN, error: null})}>
         {this.state.email}
         {/* Move to back to login page */}
@@ -280,7 +280,7 @@ export class Login extends React.Component<any, any> {
   renderForgotPasswordForm() {
     return <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
       <p className={styles.loginFormResetHeader}>We'll send a recovery link to:</p>
-      <InputStackGroup>
+      <div className={styles.formControl}>
         <InputStackItem
           type="email"
           placeholder="Email Address"
@@ -289,7 +289,7 @@ export class Login extends React.Component<any, any> {
           onKeyPress={this.onEnter}
           value={this.state.email}
         />
-      </InputStackGroup>
+      </div>
 
       {/* Submit the form! */}
       <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>

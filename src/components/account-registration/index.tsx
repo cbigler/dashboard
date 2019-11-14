@@ -65,9 +65,10 @@ export class AccountRegistration extends React.Component<any, any> {
 
         <div className={styles.accountRegistrationFormContainer}>
           <div className={styles.accountRegistrationForm}>
-            <label className={styles.accountRegistrationLabel} htmlFor="account-registration-full-name">
+            <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-full-name">
               Full Name
-              <span className={styles.accountRegistrationLabelRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="text"
@@ -78,10 +79,12 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.fullName}
               width="100%"
             />
-
-            <label className={styles.accountRegistrationLabel} htmlFor="account-registration-password">
+            </div>
+              
+          <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-password">
               Password
-              <span className={styles.accountRegistrationLabelRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="password"
@@ -92,10 +95,12 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.password}
               width="100%"
             />
-
-            <label className={styles.accountRegistrationLabel} htmlFor="account-registration-confirm-password">
+          </div>
+            
+          <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-confirm-password">
               Confirm Password
-              <span className={styles.accountRegistrationLabelRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="password"
@@ -106,6 +111,8 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.passwordConfirmation}
               width="100%"
             />
+          </div>
+            
 
             <div className={styles.accountRegistrationConsentContainer}>
               <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-core-consent">
