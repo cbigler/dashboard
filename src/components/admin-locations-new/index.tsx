@@ -44,7 +44,7 @@ const SPACE_TYPE_TO_NAME = {
   campus: 'Campus',
   building: 'Building',
   floor: 'Level',
-  space: 'Room',
+  space: 'Space',
 };
 
 // This datastructure contains all space types that can be created if a specified space type is

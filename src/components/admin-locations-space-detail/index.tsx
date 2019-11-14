@@ -91,7 +91,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
           {visibleSpaces.length > 0 ? (
             <div className={styles.scroll}>
               <AdminLocationsSubheader
-                title="Rooms"
+                title="Spaces"
                 supportsHover={false}
               />
 
@@ -110,7 +110,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
               </div>
             </div>
             ) : (
-              <AdminLocationsDetailEmptyState text="You haven't added any rooms inside this room yet."/>
+              <AdminLocationsDetailEmptyState heading="There are no spaces nested beneath this space." text="You can add some by clicking “Add a space” above."/>
             )}
         </AppPane>
       </AppFrame>

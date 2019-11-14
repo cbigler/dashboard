@@ -73,11 +73,11 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         <Button
           variant="filled"
           href={generateCreateRoute(spaceId, 'floor')}
-        >Add a level</Button>
+        >Add a floor</Button>
         <Button
           variant="filled"
           href={generateCreateRoute(spaceId, 'space')}
-        >Add a room</Button>
+        >Add a space</Button>
       </ButtonGroup>
     );
   case 'floor':
@@ -85,18 +85,18 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
       <Button
         variant="filled"
         href={generateCreateRoute(spaceId, 'space')}
-      >Add a room</Button>
+      >Add a space</Button>
     );
   case 'space':
     return (
       <Fragment>
-        {/* Only show the add a room button when we are not in a room that is within a room */}
-        {/* (rooms can only be two levels in depth) */}
+        {/* Only show the add a space button when we are not in a space that is within a space */}
+        {/* (spaces can only be two levels in depth) */}
         {parentSpaceType !== 'space' ? (
           <Button
             variant="filled"
             href={generateCreateRoute(spaceId, 'space')}
-          >Add a room</Button>
+          >Add a space</Button>
         ) : null}
       </Fragment>
     );
@@ -203,8 +203,8 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
-                  id="levels"
-                  label="Levels"
+                  id="floors"
+                  label="Floors"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem

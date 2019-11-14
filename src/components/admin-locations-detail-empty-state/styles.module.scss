@@ -12,17 +12,25 @@
 }
 
 .emptyState {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  background-color: #fff;
-
-  height: 72px;
-  border: 1px solid $gray;
-  border-radius: $borderRadiusBase;
-  white-space: nowrap;
+  // display: flex;
+  // align-items: center;
+  // justify-content: center;
   width: 500px;
+  padding: 24px;
   margin-left: 24px;
   margin-right: 24px;
+  background-color: rgba(0,0,0,0.05);
+  border-radius: $borderRadiusBase;
+}
+
+.emptyStateHeading {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: $grayDarkest;
+}
+
+.emptyStateText {
+  display: block;
+  color: $grayDarker;
 }
