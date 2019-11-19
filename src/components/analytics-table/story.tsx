@@ -78,7 +78,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',
@@ -124,7 +124,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',
@@ -170,7 +170,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',

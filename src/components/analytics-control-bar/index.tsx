@@ -8,13 +8,13 @@ import { DateRange } from '../../helpers/space-time-utilities';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
-import AnalyticsFocusedMetricSelector from '../analytics-control-bar-metric-filter';
-import AnalyticsControlBarSpaceFilter, {
-  AnalyticsSpaceFilter,
-  EMPTY_FILTER,
-} from '../analytics-control-bar-space-filter';
-import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-filter';
-import AnalyticsIntervalSelector from '../analytics-control-bar-interval-filter';
+import AnalyticsFocusedMetricSelector from '../analytics-control-bar-metric-selector';
+import AnalyticsControlBarSpaceSelector, {
+  AnalyticsSpaceSelection,
+  EMPTY_SELECTION,
+} from '../analytics-control-bar-space-selector';
+import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-selector';
+import AnalyticsIntervalSelector from '../analytics-control-bar-interval-selector';
 import AnalyticsPopup, { AnalyticsPopupPinCorner, ItemList } from '../analytics-popup';
 import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
 
@@ -28,20 +28,25 @@ import colorVariables from '@density/ui/variables/colors.json';
 import { AddButton } from '../analytics-control-bar-utilities';
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import { UserState } from '../../rx-stores/user';
+import AnalyticsControlBarTimeFilter from '../analytics-control-bar-time-filter';
+import { TimeFilter } from '../../types/datetime';
 
 type AnalyticsControlBarProps = {
   userState: UserState,
   metric: AnalyticsFocusedMetric,
   onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
 
-  filters: Array<AnalyticsSpaceFilter>,
-  onChangeFilters: (filters: Array<AnalyticsSpaceFilter>) => void,
+  selections: Array<AnalyticsSpaceSelection>,
+  onChangeSelections: (filters: Array<AnalyticsSpaceSelection>) => void,
 
   interval: QueryInterval,
   onChangeInterval: (interval: QueryInterval) => void,
 
   dateRange: DateRange | null,
   onChangeDateRange: (dateRange: DateRange | null) => void,
+
+  timeFilter?: TimeFilter,
+  onChangeTimeFilter: (timeFilter: TimeFilter) => void,
   
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
@@ -59,14 +64,17 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
   metric,
   onChangeMetric,
 
-  filters,
-  onChangeFilters,
+  selections,
+  onChangeSelections,
 
   interval,
   onChangeInterval,
 
   dateRange,
   onChangeDateRange,
+
+  timeFilter,
+  onChangeTimeFilter,
 
   spaces,
   formattedHierarchy,
@@ -85,15 +93,19 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
           value={metric}
           onChange={onChangeMetric}
         />
-        <AnalyticsSpaceFilterBuilder
-          filters={filters}
-          onChange={onChangeFilters}
+        <AnalyticsSpaceSelectionBuilder
+          selections={selections}
+          onChange={onChangeSelections}
           spaces={spaces}
           formattedHierarchy={formattedHierarchy}
         />
         <AnalyticsControlBarDateRangeFilter
           value={dateRange}
           onChange={onChangeDateRange}
+        />
+        <AnalyticsControlBarTimeFilter
+          timeFilter={timeFilter}
+          onApply={onChangeTimeFilter}
         />
         <AnalyticsIntervalSelector
           value={interval}
@@ -191,51 +203,51 @@ export const AnalyticsControlBarButtons: React.FunctionComponent<AnalyticsContro
   );
 };
 
-type AnalyticsSpaceFilterBuilderProps = {
-  filters: Array<AnalyticsSpaceFilter>,
-  onChange: (filters: Array<AnalyticsSpaceFilter>) => void,
+type AnalyticsSpaceSelectionBuilderProps = {
+  selections: Array<AnalyticsSpaceSelection>,
+  onChange: (filters: Array<AnalyticsSpaceSelection>) => void,
 
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
 }
 
-function AnalyticsSpaceFilterBuilder({
-  filters,
+function AnalyticsSpaceSelectionBuilder({
+  selections,
   onChange,
   spaces,
   formattedHierarchy,
-}: AnalyticsSpaceFilterBuilderProps) {
-  const [ openedFilterIndex, setOpenedFilterIndex ] = useState(-1);
+}: AnalyticsSpaceSelectionBuilderProps) {
+  const [ openedSelectionIndex, setOpenedSelectionIndex ] = useState(-1);
 
-  const isAdding = openedFilterIndex > filters.length - 1;
-  const emptyFilterVisible = filters.length === 0 || isAdding;
+  const isAdding = openedSelectionIndex > selections.length - 1;
+  const emptySelectionVisible = selections.length === 0 || isAdding;
 
-  const filtersIncludingEmpty = [ ...filters, ...(emptyFilterVisible ? [EMPTY_FILTER] : []) ];
+  const selectionsIncludingEmpty = [ ...selections, ...(emptySelectionVisible ? [EMPTY_SELECTION] : []) ];
 
   return (
     <Fragment>
-      {filtersIncludingEmpty.map((filter, index) => (
-        <div className={styles.listItem} aria-label="Space filter">
-          <AnalyticsControlBarSpaceFilter
-            filter={filter}
-            deletable={filters.length > 1 || filter.field !== ''}
+      {selectionsIncludingEmpty.map((selection, index) => (
+        <div className={styles.listItem} aria-label="Space selection">
+          <AnalyticsControlBarSpaceSelector
+            selection={selection}
+            deletable={selections.length > 1 || selection.field !== ''}
             onDelete={() => {
-              const filtersCopy = filters.slice();
-              filtersCopy.splice(index, 1);
-              onChange(filtersCopy);
+              const selectionsCopy = selections.slice();
+              selectionsCopy.splice(index, 1);
+              onChange(selectionsCopy);
             }}
-            open={openedFilterIndex === index}
-            onOpen={() => setOpenedFilterIndex(index)}
-            onClose={filter => {
-              // Close the currently open filter
-              setOpenedFilterIndex(-1);
+            open={openedSelectionIndex === index}
+            onOpen={() => setOpenedSelectionIndex(index)}
+            onClose={selection => {
+              // Close the currently open selection
+              setOpenedSelectionIndex(-1);
 
-              // Update the filter if its not the empty filter
-              const fieldIsEmpty = filter.field === '' || filter.values.length === 0;
-              if (!fieldIsEmpty && filters[index] !== filter) {
-                const filtersCopy = filters.slice();
-                filtersCopy[index] = filter;
-                onChange(filtersCopy);
+              // Update the selection if its not the empty selection
+              const fieldIsEmpty = selection.field === '' || selection.values.length === 0;
+              if (!fieldIsEmpty && selections[index] !== selection) {
+                const selectionsCopy = selections.slice();
+                selectionsCopy[index] = selection;
+                onChange(selectionsCopy);
               }
             }}
             spaces={spaces}
@@ -257,13 +269,14 @@ function AnalyticsSpaceFilterBuilder({
         }
       }, null)}
       <AddButton onClick={() => {
-        let openedFilterIndex = filters.length;
+        // FIXME: why is this symbol being overridden in this scope?
+        let openedSelectionIndex = selections.length;
 
         // Focus the last space filter that is visible, it is delayed so that it will happen on the
         // next render after the above onChange is processed ans so that the animation to open is
         // shown.
         setTimeout(() => {
-          setOpenedFilterIndex(openedFilterIndex);
+          setOpenedSelectionIndex(openedSelectionIndex);
         }, 100);
       }} />
     </Fragment>

@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 
 import { DensityUser } from '../../types';
 import { AnalyticsReport } from '../../types/analytics';
-import { PartialAnalyticsReportWithQuery } from '../../rx-actions/analytics/open-partial-report';
+import { PartialAnalyticsReportWithQuery } from '../../rx-actions/analytics/operations/open-partial-report';
 
 // FIXME: The below should be switched to use the new rx-actinos based modal interface,
 // point this out in a review!
@@ -113,7 +113,6 @@ export default function AnalyticsHomePage({
   onDeleteReport,
 }: AnalyticsHomePageProps) {
   const savedReports = reports.filter(r => (
-    r.type === 'LINE_CHART' &&
     r.isSaved &&
     r.creatorEmail === user.email
   )).sort((a, b) => a.name.localeCompare(b.name));

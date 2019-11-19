@@ -1,4 +1,5 @@
-export type DaysOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+import { DayOfWeek } from './datetime';
+
 
 export enum DensitySpaceTypes {
   SPACE = 'space',
@@ -37,7 +38,7 @@ export type DensitySpace = {
   id: string,
   name: string,
   description: string,
-  parentId: string,
+  parentId: string | null,
   spaceType: DensitySpaceTypes,
   timeZone: string,
   dailyReset: string,
@@ -57,12 +58,20 @@ export type DensitySpace = {
   }>,
   function: DensitySpaceFunction | null,
   tags: Array<string>,
-  addressLine1: string | null,
-  addressLine2: string | null,
-  city: string | null,
-  stateProvince: string | null,
-  postalCode: string | null,
-  countryCode: string | null,
+  address: string | null,
+  annualRentCurrency: string | null,
+  assignedTeams: DensityAssignedTeam[],
+  city?: string | null,
+  stateProvince?: string | null,
+  postalCode?: string | null,
+  countryCode?: string | null,
+  imageUrl: string | null,
+  floorLevel: number | string | null,
+  notes: string,
+  spaceMappings: Array<{
+    id: string,
+    serviceId: string
+  }>,
   latitude: number | null,
   longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
@@ -72,6 +81,7 @@ export type DensitySpace = {
   }>,
   sensorsTotal: number,
   inheritsTimeSegments: boolean,
+  updatedAt: string | null,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -116,10 +126,10 @@ export type DensityTimeSegment = {
   start: string,
   end: string,
   spaces: Array<{
-    id: string,
-    spaceName: string,
+    spaceId: string,
+    name: string,
   }>,
-  days: Array<string>,
+  days: Array<DayOfWeek>,
 };
 
 export type DensityTimeSegmentLabel = string;
@@ -184,7 +194,7 @@ export type DensityDigestSchedule = {
   },
   dashboardId: string,
   frequency: 'WEEKLY' | 'MONTHLY',
-  daysOfWeek: Array<DaysOfWeek>,
+  daysOfWeek: Array<DayOfWeek>,
   dayNumber: number,
   time: string,
   timeZone: string,
@@ -279,6 +289,7 @@ export type DensitySpaceCountBucketIntervalAnalytics = {
   entrances: number,
   exits: number,
   utilization: number,
+  targetUtilization: number,
 };
 
 export type DensitySpaceCountMetrics = {
@@ -309,7 +320,7 @@ export type DensitySpaceCountMetrics = {
     },
     total: number,
   },
-  targetUtilization: {
+  target_utilization: {
     average: number,
     durations: {
       0: string,

@@ -14,7 +14,7 @@ const FORMATTED_HIERARCHY = spaceHierarchyFormatter(hierarchy.map(objectSnakeToC
 
 import AnalyticsControlBar, { AnalyticsControlBarSaveButtonState } from './index';
 import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
-import AnalyticsSpaceSelector from '../analytics-control-bar-space-filter';
+import AnalyticsSpaceSelector from '../analytics-control-bar-space-selector';
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);
@@ -39,7 +39,8 @@ storiesOf('Analytics Control Bar', module)
       metric: AnalyticsFocusedMetric.ENTRANCES,
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
-      filters: [],
+      timeFilter: [],
+      selections: [],
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
@@ -47,14 +48,17 @@ storiesOf('Analytics Control Bar', module)
         metric={state.metric}
         onChangeMetric={metric => setState({ ...state, metric })}
 
-        filters={state.filters}
-        onChangeFilters={filters => setState({ ...state, filters })}
+        selections={state.selections}
+        onChangeSelections={selections => setState({ ...state, selections })}
 
         interval={state.interval}
         onChangeInterval={interval => setState({ ...state, interval })}
 
         dateRange={state.dateRange}
         onChangeDateRange={dateRange => setState({ ...state, dateRange })}
+
+        timeFilter={state.timeFilter}
+        onChangeTimeFilter={timeFilter => setState({ ...state, timeFilter })}
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
@@ -70,9 +74,10 @@ storiesOf('Analytics Control Bar', module)
   .add('With actions', () => (
     <State initialState={{
       metric: AnalyticsFocusedMetric.ENTRANCES,
-      filters: [],
+      selections: [],
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
+      timeFilter: [],
     }}>
       {(state, setState) => (
       <AnalyticsControlBar
@@ -80,10 +85,10 @@ storiesOf('Analytics Control Bar', module)
         metric={state.metric}
         onChangeMetric={metric => setState({ ...state, metric })}
 
-        filters={state.filters}
-        onChangeFilters={filters => {
-          action('onChangeFilters')(filters)
-          setState({ ...state, filters })
+        selections={state.selections}
+        onChangeSelections={selections => {
+          action('onChangeSelections')(selections)
+          setState({ ...state, selections })
         }}
 
         interval={state.interval}
@@ -97,6 +102,9 @@ storiesOf('Analytics Control Bar', module)
           action('onChangeDateRange')(dateRange)
           setState({ ...state, dateRange })
         }}
+
+        timeFilter={state.timeFilter}
+        onChangeTimeFilter={timeFilter => setState({ ...state, timeFilter })}
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
@@ -113,7 +121,7 @@ storiesOf('Analytics Control Bar', module)
     <State initialState={{
       user: user,
       metric: AnalyticsFocusedMetric.ENTRANCES,
-      filters: [
+      selections: [
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
         {field: 'spaceType', values: ['space']},
@@ -128,6 +136,7 @@ storiesOf('Analytics Control Bar', module)
       ],
       interval: QueryInterval.ONE_HOUR,
       dateRange: DATE_RANGES.LAST_30_DAYS,
+      timeFilter: [],
     }}>
       {(state, setState) => (
         <AnalyticsControlBar
@@ -135,14 +144,17 @@ storiesOf('Analytics Control Bar', module)
           metric={state.metric}
           onChangeMetric={metric => setState({ ...state, metric })}
 
-          filters={state.filters}
-          onChangeFilters={filters => setState({ ...state, filters })}
+          selections={state.selections}
+          onChangeSelections={selections => setState({ ...state, selections })}
 
           interval={state.interval}
           onChangeInterval={interval => setState({ ...state, interval })}
 
           dateRange={state.dateRange}
           onChangeDateRange={dateRange => setState({ ...state, dateRange })}
+
+          timeFilter={state.timeFilter}
+          onChangeTimeFilter={timeFilter => setState({ ...state, timeFilter })}
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
@@ -158,7 +170,7 @@ storiesOf('Analytics Control Bar', module)
 
 storiesOf('Analytics Control Bar / Space Selector', module)
   .add('Default', () => (
-    <State initialState={{open: false, filter: {field: '', values: []}}}>
+    <State initialState={{open: false, selection: {field: '', values: []}}}>
       {(state, setState) => (
         <Fragment>
           <p>Note: Try selecting the button below and tabbing to test keyboard interactivity.</p>
@@ -166,11 +178,11 @@ storiesOf('Analytics Control Bar / Space Selector', module)
           <br/>
           <br/>
           <AnalyticsSpaceSelector
-            filter={state.filter}
+            selection={state.selection}
 
             open={state.open}
             onOpen={() => setState({...state, open: true})}
-            onClose={filter => setState({...state, filter, open: false})}
+            onClose={selection => setState({...state, selection, open: false})}
 
             spaces={SPACES}
             formattedHierarchy={FORMATTED_HIERARCHY}
@@ -183,10 +195,10 @@ storiesOf('Analytics Control Bar / Space Selector', module)
     </State>
   ))
   .add('Starting with spaceType=space selected', () => (
-    <State initialState={{open: false, filter: {field: 'spaceType', values: ['space']}}}>
+    <State initialState={{open: false, selection: {field: 'spaceType', values: ['space']}}}>
       {(state, setState) => (
         <AnalyticsSpaceSelector
-          filter={state.filter}
+          selection={state.selection}
 
           open={state.open}
           onOpen={() => setState({...state, open: true})}
@@ -199,11 +211,11 @@ storiesOf('Analytics Control Bar / Space Selector', module)
     </State>
   ))
   .add('With delete button shown and onDelete callback attached', () => (
-    <State initialState={{open: false, filter: {field: 'spaceType', values: ['space']}}}>
+    <State initialState={{open: false, selection: {field: 'spaceType', values: ['space']}}}>
       {(state, setState) => (
         <div style={{padding: 20}}>
           <AnalyticsSpaceSelector
-            filter={state.filter}
+            selection={state.selection}
 
             open={state.open}
             onOpen={() => setState({...state, open: true})}

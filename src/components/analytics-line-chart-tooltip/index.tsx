@@ -2,9 +2,8 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { descending } from '../../helpers/natural-sorting';
-import { AnalyticsDatapoint, AnalyticsFocusedMetric } from '../../types/analytics';
+import { AnalyticsFocusedMetric } from '../../types/analytics';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
-import formatMetricName from '../../helpers/analytics-formatters/metric-name';
 import styles from './styles.module.scss';
 import { findLeast } from '../../helpers/array-utilities';
 
@@ -79,11 +78,19 @@ const TooltipEntries: React.FunctionComponent<{
   )
 }
 
+type TooltipDatapoint = {
+  spaceId: string,
+  spaceName: string,
+  value: number
+}
+
 const AnalyticsLineChartTooltip: React.FunctionComponent<{
-  datapoints: AnalyticsDatapoint[],
+  datetimeLabel: string,
+  datapoints: TooltipDatapoint[],
   selectedMetric: AnalyticsFocusedMetric,
   targetValue: number,
 }> = function AnalyticsLineChartTooltip({
+  datetimeLabel,
   datapoints,
   selectedMetric,
   targetValue,
@@ -102,8 +109,8 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
     return {
       title: datapoint.spaceName,
       color: analyticsColorScale(datapoint.spaceId),
-      value: datapoint[selectedMetric],
-      displayValue: formatMetricValue(datapoint[selectedMetric]),
+      value: datapoint.value,
+      displayValue: formatMetricValue(datapoint.value),
     }
   })
 
@@ -111,8 +118,7 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
   return (
     <div className={styles.hoverOverlay}>
       <div className={styles.hoverOverlayHeader}>
-        <div className={styles.hoverOverlayActiveMetric}>{formatMetricName(selectedMetric)}</div>
-        <div className={styles.hoverOverlayHeaderLabel}>Totals</div>
+        <div className={styles.hoverOverlayDatetimeLabel}>{datetimeLabel}</div>
       </div>
 
       <TooltipEntries

@@ -1,0 +1,24 @@
+.chartContainer {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 300px;
+  background-color: #FAFBFC;
+}
+
+
+// Empty State
+// --------------------------
+.emptyStateText {
+  font-weight: 500;
+}
+
+.analyticsIntroImage {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  opacity: 0.2;
+}

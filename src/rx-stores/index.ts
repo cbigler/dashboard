@@ -28,11 +28,13 @@ export const actions = new Subject<GlobalAction>();
 // Reducer functions can return this symbol to skip updating
 export const skipUpdate = Symbol('skipUpdate');
 
+export type Reducer<T, A> = (state: T, action: A) => T | typeof skipUpdate
+
 // Helper to create stores for this application
 export default function createRxStore<T>(
   displayName: string,
   initialState: T,
-  reducer: (state: T, action: GlobalAction) => T | typeof skipUpdate,
+  reducer: Reducer<T, GlobalAction>,
 ) {
 
   // StoreSubject is a special variant of an RxJS BehaviorSubject

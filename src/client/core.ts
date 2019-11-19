@@ -4,12 +4,21 @@ import { errorHandler } from './index';
 let _client = axios.create();
 let _slow = false;
 
-export function config(dispatch, {
-  host = undefined as string | undefined,
-  token = undefined as string | undefined,
-  impersonateUser = undefined as string | undefined,
-  goSlow = undefined as boolean | undefined,
-}) {
+type CoreClientConfigOptions = {
+  host?: string,
+  token?: string,
+  impersonateUser?: string,
+  goSlow?: boolean
+}
+
+export function config(dispatch: Any<FixInRefactor>, options: CoreClientConfigOptions) {
+  const {
+    host,
+    token,
+    impersonateUser,
+    goSlow,
+  } = options;
+
   if (host !== undefined) {
     _client = axios.create({ baseURL: host });
     _client.interceptors.response.use(

@@ -71,19 +71,38 @@
   justify-content: center;
   flex-grow: 0;
   flex-shrink: 0;
-
-  background-color: #fff;
-  border: 1px solid $gray;
-  box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
-  border-radius: 50%;
+  box-sizing: border-box;
   width: 32px;
   height: 32px;
   padding: 0px;
+  margin-right: 16px;
+  background-color: #fff;
+  border: 1px solid $gray;
+  // box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
+  border-radius: 50%;
   outline: none;
   cursor: pointer;
-  margin-right: 16px;
+
+  &:hover {
+    background-color: #DDE6FF;
+    border-color: #DDE6FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
+
+  &.active,
+  &:active,
+  &:focus {
+    background-color: #DDE6FF;
+    border-color: #5581FF;
+    box-shadow: 0 0 0 1px #5581FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
 }
-.addButton:focus { border-color: $brandPrimary; }
+
 
 
 

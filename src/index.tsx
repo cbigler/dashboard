@@ -68,7 +68,7 @@ import routeTransitionAdminDeviceStatus from './rx-actions/route-transition/admi
 import routeTransitionAdminLocations from './rx-actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './rx-actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './rx-actions/route-transition/admin-locations-new';
-import { AnalyticsActionType } from './types/analytics';
+import { AnalyticsActionType } from './rx-actions/analytics';
 
 import sessionTokenSet from './rx-actions/session-token/set';
 import incrementResizeCounter from './rx-actions/miscellaneous/increment-resize-counter';

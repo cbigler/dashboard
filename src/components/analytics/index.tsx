@@ -6,32 +6,32 @@ import * as d3Array from 'd3-array';
 import AnalyticsControlBar, { AnalyticsControlBarSaveButtonState } from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
 import AnalyticsSkeleton from '../analytics-skeleton';
-import AnalyticsLineChart from '../analytics-line-chart';
+import AnalyticsChart from '../analytics-chart';
 import AnalyticsTable from '../analytics-table';
 import AnalyticsHome from '../analytics-home';
 import GenericErrorState from '../generic-error-state';
 
-import { DensitySpace, DensitySpaceFunction, DaysOfWeek, DensitySpaceHierarchyItem } from '../../types';
+import { DensitySpace, DensitySpaceFunction, DensitySpaceHierarchyItem } from '../../types';
+import { AnalyticsActionType } from '../../rx-actions/analytics';
 import {
   ResourceStatus,
-  AnalyticsActionType,
-  QuerySelectionType,
-  SpaceSelection,
+  QuerySelection,
   AnalyticsFocusedMetric,
   AnalyticsReport,
   QueryInterval,
+  QuerySelectionType,
 } from '../../types/analytics';
-import { DATE_RANGES, realizeDateRange } from '../../helpers/space-time-utilities';
+import { DATE_RANGES } from '../../helpers/space-time-utilities';
 import { groupBy } from '../../helpers/array-utilities';
 
 import AnalyticsStore from '../../rx-stores/analytics';
 import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
-import createReport from '../../rx-actions/analytics/create-report';
-import openPartialReport from '../../rx-actions/analytics/open-partial-report';
-import updateReport from '../../rx-actions/analytics/update-report';
-import deleteReport from '../../rx-actions/analytics/delete-report';
+import createReport from '../../rx-actions/analytics/operations/create-report';
+import openPartialReport from '../../rx-actions/analytics/operations/open-partial-report';
+import updateReport from '../../rx-actions/analytics/operations/update-report';
+import deleteReport from '../../rx-actions/analytics/operations/delete-report';
 import { isQueryRunnable } from '../../rx-stores/analytics';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
@@ -43,6 +43,7 @@ import { AppFrame, AppPane } from '@density/ui';
 import UserStore from '../../rx-stores/user';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import { getUserDashboardWeekStart } from '../../helpers/legacy';
 
 export function spaceFunctionToRecommendedMetric(spaceFunction: DensitySpaceFunction): AnalyticsFocusedMetric {
   switch (spaceFunction) {
@@ -90,8 +91,7 @@ export function getRecommendedReports(spaces: DensitySpace[]): Array<Partial<Ana
           type: QuerySelectionType.SPACE,
           field: 'function',
           values: [ spaceFunction ],
-        } as SpaceSelection],
-        filters: [],
+        }],
       },
       selectedMetric: spaceFunctionToRecommendedMetric(spaceFunction),
     }));
@@ -115,16 +115,26 @@ const saveDismissalOfIntroToStorage = () => {
   )
 }
 
+
+function mapSpacesById(spaces: DensitySpace[]): ReadonlyMap<string, DensitySpace> {
+  const map = new Map();
+  spaces.forEach(space => {
+    map.set(space.id, space);
+  })
+  return map;
+}
+
 export default function Analytics() {
   
-  const userState = useRxStore(UserStore)
+  const userState = useRxStore(UserStore);
   const spacesState = useRxStore(SpacesStore);
   const spaceHierarchyState = useRxStore(SpaceHierarchyStore);
 
-  // FIXME: the redux store shape needs to be typed
   // for now, just trying to force some basic typing here via assertion...
-  const spaces = spacesState.data as DensitySpace[]
+  const spaces = spacesState.data
   const spaceHierarchy = spaceHierarchyState.data as DensitySpaceHierarchyItem[]
+
+  const spacesById = mapSpacesById(spaces);
   
   const user = userState.data;
 
@@ -133,8 +143,7 @@ export default function Analytics() {
     throw new Error('This should not be possible')
   }
 
-  // FIXME: settings.dashboardWeekStart should be typed as DaysOfWeek, not string
-  const organizationalWeekStartDay: DaysOfWeek = user.organization.settings.dashboardWeekStart as DaysOfWeek || 'Sunday';
+  const organizationalWeekStartDay = getUserDashboardWeekStart(userState);
 
   const state = useRxStore(AnalyticsStore);
   const dispatch = useRxDispatch();
@@ -226,17 +235,14 @@ export default function Analytics() {
                       metric,
                     });
                   }}
-                  filters={
-                    activeReport.query.selections
-                    .filter(s => s.type === QuerySelectionType.SPACE) as Array<SpaceSelection>
-                  }
-                  onChangeFilters={selections => dispatch({
+                  selections={activeReport.query.selections.filter(s => s.type === 'SPACE')}
+                  onChangeSelections={selections => dispatch({
                     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
                     reportId: activeReport.id,
                     selections: selections.map(s => ({
-                      type: QuerySelectionType.SPACE,
+                      type: 'SPACE',
                       ...s,
-                    })) as Array<SpaceSelection>,
+                    })) as Array<QuerySelection>,
                   })}
 
                   interval={activeReport.query.interval}
@@ -255,6 +261,15 @@ export default function Analytics() {
                       dateRange,
                       organizationalWeekStartDay,
                     });
+                  }}
+
+                  timeFilter={activeReport.query.timeFilter}
+                  onChangeTimeFilter={timeFilter => {
+                    dispatch({
+                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_TIME_FILTER,
+                      reportId: activeReport.id,
+                      timeFilter,
+                    })
                   }}
 
                   spaces={spaces}
@@ -288,9 +303,9 @@ export default function Analytics() {
                   moreMenuVisible={activeReport.isSaved}
                 />
                 <div className={styles.analyticsBody}>
-                  <AnalyticsLineChart
+                  <AnalyticsChart
                     report={activeReport}
-                    {...realizeDateRange(activeReport.query.dateRange, 'utc', {organizationalWeekStartDay})}
+                    spacesById={spacesById}
                   />
                   <AnalyticsTable
                     spaces={spaces}

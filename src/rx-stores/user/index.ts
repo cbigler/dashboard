@@ -16,11 +16,11 @@ export type UserState = {
   error: unknown,
 }
 
-const initialState = {
+export const initialState: UserState = {
   data: null,
   loading: true,
   error: false,
-};
+} as const;
 
 // FIXME: UserActions need to be defined and added to GlobalAction
 export function userReducer(state: UserState, action: Any<FixInRefactor>) {

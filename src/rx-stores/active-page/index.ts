@@ -24,8 +24,8 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-tra
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../rx-actions/route-transition/logout';
 
+import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { AccountActionTypes } from '../../types/account';
-import { AnalyticsActionType } from '../../types/analytics';
 import createRxStore from '..';
 
 
