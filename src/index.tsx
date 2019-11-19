@@ -20,7 +20,7 @@ import './styles.scss';
 import userSet from './rx-actions/user/set';
 
 import objectSnakeToCamel from './helpers/object-snake-to-camel/index';
-import WebsocketEventPusher from './helpers/websocket-event-pusher/index';
+import WebsocketEventPusher, { CONNECTION_STATES } from './helpers/websocket-event-pusher/index';
 import mixpanelTrack from './helpers/tracking/mixpanel-track';
 import unsafeHandleWindowResize from './helpers/unsafe-handle-window-resize';
 import unsafeNavigateToLandingPage from './helpers/unsafe-navigate-to-landing-page/index';
@@ -87,6 +87,8 @@ import { configureClients } from './helpers/unsafe-configure-app';
 import SessionTokenStore from './rx-stores/session-token';
 import { SessionTokenState } from './types/session-token';
 import { rxDispatch } from './rx-stores';
+import ActivePageStore, { ActivePage } from './rx-stores/active-page';
+import { combineLatest } from 'rxjs/operators';
 
 configureClients();
 
@@ -296,11 +298,16 @@ preRouteAuthentication().then(async () => await router.handle());
 // ----------------------------------------------------------------------------
 const eventSource = new WebsocketEventPusher();
 
-// Reconnect to the socket when the token changes.
+// Connect to the socket whenever the token changes AND user is on a "live" page.
 let currentToken: SessionTokenState = null;
-SessionTokenStore.subscribe(value => {
-  if (value !== currentToken) {
-    currentToken = value;
+let onLivePage: boolean = false;
+SessionTokenStore.pipe(combineLatest(ActivePageStore)).subscribe(([token, page]) => {
+  onLivePage = [ActivePage.LIVE_SPACE_LIST, ActivePage.LIVE_SPACE_DETAIL].indexOf(page) > -1;
+  if (!onLivePage && eventSource.connectionState !== CONNECTION_STATES.CLOSED) {
+    eventSource.disconnect();
+  }
+  if (onLivePage && currentToken !== token) {
+    currentToken = token;
     eventSource.connect();
   }
 });
@@ -363,7 +370,7 @@ setInterval(async () => {
 handleVisibilityChange(hidden => {
   if (hidden) {
     eventSource.disconnect();
-  } else {
+  } else if (onLivePage) {
     eventSource.connect();
   }
 });
