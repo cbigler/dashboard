@@ -298,9 +298,16 @@ const TimeFilterControls: React.FC<{
 }) {
 
   const [state, dispatch] = useReducer(reducer, getInitialState(value));
+  const [valueHasChanged, setValueHasChanged] = useState<boolean>(false);
+ 
+  // HACK: only allow applying when the value is dirty
   useEffect(() => {
-    
-  }, [state])
+    if (!isEqual(getInitialState(value), state)) {
+      setValueHasChanged(true);
+    } else {
+      setValueHasChanged(false);
+    }
+  }, [state, value])
 
   const onClickApply = () => {
     const [start, end] = realizeRangeSliderValue(state.sliderValue, state.isOvernight);
@@ -352,7 +359,7 @@ const TimeFilterControls: React.FC<{
           <Icons.Reset color={'#0D183A'}/>
           <span>Reset</span>
         </div>
-        <Button type="primary" variant="filled" onClick={onClickApply}>Apply</Button>
+        <Button disabled={!valueHasChanged} type="primary" variant="filled" onClick={onClickApply}>Apply</Button>
       </div>
        
     </div>
