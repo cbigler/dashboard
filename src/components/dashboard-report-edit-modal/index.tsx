@@ -285,13 +285,14 @@ function DashboardReportEditModal({
                             spaceIds = item.settings.spaceIds;
                           }
 
-                          let spaceText = spaceIds.slice(0, 2).map(id => {
-                            const space = spaces.data.find(space => space.id === id);
-                            return space ? space.name : '';
-                          }).join(', ');
+                          let spaceNames = spaceIds.map(id => {
+                            const match = formattedHierarchy.find(x => x.space.id === id);
+                            return match ? match.space.name : null;
+                          }).filter(x => x);
 
-                          if (spaceIds.length > 2) {
-                            spaceText += ` (+${spaceIds.length-2} more)`;
+                          let spaceText = spaceNames.slice(0, 2).join(', ');
+                          if (spaceNames.length > 2) {
+                            spaceText += ` (+${spaceNames.length-2} more)`;
                           }
 
                           return (

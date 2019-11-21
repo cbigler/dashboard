@@ -7,6 +7,7 @@ import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import { DensityUser } from '../../types';
 import createRxStore, { skipUpdate } from '..';
+import registerSideEffects from './effects';
 
 
 // FIXME: the typings here can't infer presence of DensityUser based on loading state
@@ -46,6 +47,6 @@ export function userReducer(state: UserState, action: Any<FixInRefactor>) {
 }
 
 const UserStore = createRxStore('UserStore', initialState, userReducer);
-
-
 export default UserStore;
+
+registerSideEffects(UserStore);
