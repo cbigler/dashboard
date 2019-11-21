@@ -1,11 +1,7 @@
 import mixpanelInitialize from '../../helpers/tracking/mixpanel-initialize';
 import setupHotjar from '../../helpers/tracking/hotjar';
 
-import UserStore, { UserState } from '.'
-import { actions } from '..';
-import { filter, switchMap, take } from 'rxjs/operators';
-import { USER_SET } from '../../rx-actions/user/set';
-
+import UserStore, { UserState } from '.';
 
 function isUserImpersonating() {
   try {
@@ -17,17 +13,7 @@ function isUserImpersonating() {
 }
 
 // NOTE: USER_SET not yet added to GlobalAction types, hence the Any<FixInRefactor>
-actions.pipe(
-  filter(action => {
-    switch(action.type) {
-      case USER_SET as Any<FixInRefactor>:
-        return true;
-      default:
-        return false;
-    }
-  }),
-  switchMap(() => UserStore.pipe(take(1)))
-).subscribe((userState: UserState) => {
+UserStore.subscribe((userState: UserState) => {
 
   // skip tracking if user is impersonating
   if (isUserImpersonating()) return;
