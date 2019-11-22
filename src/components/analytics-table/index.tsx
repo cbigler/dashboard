@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import * as d3Array from 'd3-array';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics } from '../../types';
@@ -70,17 +71,11 @@ function formatQueryInterval(interval: QueryInterval): string {
   }
 }
 
-function sum(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return tableData.map(extractor).reduce((a, b) => a + b);
-}
+type AccessorFunction = (d: TableDataItem) => number | null | undefined;
 
-function average(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return tableData.map(extractor).reduce((a, b) => a + b) / tableData.length;
-}
-
-function max(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return Math.max(...tableData.map(extractor));
-}
+const sum = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.sum(tableData, accessor);
+const average = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.mean(tableData, accessor);
+const max = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.max(tableData, accessor);
 
 function Header({label, value, denominator='', spaceSortDirection, spaceSortColumn, right=false}) {
   const chevronColor = spaceSortColumn === label && spaceSortDirection !== SortDirection.NONE ? ACTIVE_CHEVRON_COLOR : INACTIVE_CHEVRON_COLOR;
