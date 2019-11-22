@@ -5,13 +5,19 @@ import Selector, { QueryTextBold } from '../analytics-control-bar-selector';
 import { ItemList } from '../analytics-control-bar-utilities';
 
 import styles from './styles.module.scss';
+import formatMetricName from '../../helpers/analytics-formatters/metric-name';
 
 const METRIC_CHOICES = [
-  { id: AnalyticsFocusedMetric.MAX, label: 'Occupancy' },
-  { id: AnalyticsFocusedMetric.UTILIZATION, label: 'Utilization' },
-  { id: AnalyticsFocusedMetric.ENTRANCES, label: 'Entrances' },
-  { id: AnalyticsFocusedMetric.EXITS, label: 'Exits' },
-];
+  AnalyticsFocusedMetric.MAX,
+  AnalyticsFocusedMetric.UTILIZATION,
+  AnalyticsFocusedMetric.ENTRANCES,
+  AnalyticsFocusedMetric.EXITS,
+].map(metric => {
+  return {
+    id: metric,
+    label: formatMetricName(metric),
+  }
+});
 
 type AnalyticsFocusedMetricSelectorProps = {
   value: AnalyticsFocusedMetric,
