@@ -1,4 +1,21 @@
+@import "@density/ui/variables/colors.scss";
+
 .adminDeviceList {
   padding: 24px;
   padding-bottom: 64px;
+}
+
+.lowPowerWarningSection {
+  padding: 24px;
+  background-color: $grayLightest;
+}
+
+.lowPowerWarningAlert {
+  border-radius : 4px;
+  background-color: #ffeed6;
+  padding: 16px;
+}
+
+.lowPowerWarningTitle {
+  color: #f4ab4e;
 }
