@@ -104,13 +104,13 @@ export function AdminDeviceStatus({
     <div className={styles.lowPowerWarningSection}>
       <div className={styles.lowPowerWarningAlert}>
         <Icons.Danger color='#f4ab4e'/>
-        <h3 className={styles.lowPowerWarningTitle}>
+        <h4 className={styles.lowPowerWarningTitle}>
           {numLowPowerSensors} DPUs are not counting due to insufficient power. Please&nbsp;
           <span
             className={styles.lowPowerWarningLink}
             onClick={openIntercom}>reach out to customer support.
           </span>
-        </h3>
+        </h4>
       </div>
     </div>
   ) : null;
