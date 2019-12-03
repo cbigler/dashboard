@@ -80,10 +80,6 @@ export function AdminDeviceStatus({
   sensors,
   spaces
 }) {
-
-  if (sensors.data.length){
-    sensors.data[0].status = 'low_power';
-  }
   const [ sensorsFilterText, setSensorsFilterText ] = useState('');
   let sortedSensors = sensorsFilter(sensors.data, sensorsFilterText).sort(function(a, b){
     if (a.status === 'low_power') {
