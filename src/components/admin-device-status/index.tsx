@@ -9,7 +9,8 @@ import {
   InputBox,
   ListView,
   ListViewColumn,
-  ListViewColumnSpacer
+  ListViewColumnSpacer,
+  Icons
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import useRxStore from '../../helpers/use-rx-store';
@@ -17,6 +18,8 @@ import SpacesStore from '../../rx-stores/spaces';
 import SensorsStore from '../../rx-stores/sensors';
 import filterCollection from '../../helpers/filter-collection/index';
 import { ItemList } from '../analytics-control-bar-utilities';
+// @ts-ignore
+import { IntercomAPI } from 'react-intercom';
 
 
 const sensorsFilter = filterCollection({ fields: ['serialNumber', 'doorwayName'] });
@@ -48,6 +51,10 @@ function getStatusText(status) {
   }
 }
 
+function openIntercom(e) {
+  IntercomAPI('show');
+}
+
 
 export function NetworkAddressElement({
   item,
@@ -74,15 +81,21 @@ export function AdminDeviceStatus({
   sensors,
   spaces
 }) {
+
+  if (sensors.data.length){
+    sensors.data[0].status = 'low_power';
+  }
   const [ sensorsFilterText, setSensorsFilterText ] = useState('');
   let sortedSensors = sensorsFilter(sensors.data, sensorsFilterText).sort(function(a, b){
     if (a.status === 'low_power') {
       return -1;
     }
-    if (a.status < b.status)
+    if (a.status < b.status) {
       return -1;
-    if (a.status > b.status)
+    }
+    if (a.status > b.status) {
       return 1;
+    }
     return 0;
   });
 
@@ -90,19 +103,14 @@ export function AdminDeviceStatus({
   const lowPowerAlert = numLowPowerSensors > 0 ? (
     <div className={styles.lowPowerWarningSection}>
       <div className={styles.lowPowerWarningAlert}>
-        <h3 className={styles.lowPowerWarningTitle}>{numLowPowerSensors} DPUs are not counting due to insufficient power</h3>
-        <p>To get your DPUs up and running, we recommend the following:</p>
-        <ul>
-          <li>
-            Confirm the ethernet cords are fully plugged into each DPU and attached power source.
-          </li>
-          <li>
-            If using a power injector: try swapping with a new injector, if available.
-          </li>
-          <li>
-            If using a switch: confirm that the switch is PoE+ with a capacity of 30W for each port and a total switch capacity of 30W * # of DPUs. E.g. if you have 3 DPUs attached to 1 switch, you'll need at least a 90W capacity switch.
-          </li>
-        </ul>
+        <Icons.Danger color='#f4ab4e'/>
+        <h3 className={styles.lowPowerWarningTitle}>
+          {numLowPowerSensors} DPUs are not counting due to insufficient power. Please&nbsp;
+          <span
+            className={styles.lowPowerWarningLink}
+            onClick={openIntercom}>reach out to customer support.
+          </span>
+        </h3>
       </div>
     </div>
   ) : null;

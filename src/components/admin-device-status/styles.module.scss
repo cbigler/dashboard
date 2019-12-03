@@ -14,8 +14,17 @@
   border-radius : 4px;
   background-color: #ffeed6;
   padding: 16px;
+  display: flex;
 }
 
 .lowPowerWarningTitle {
+  margin-bottom: 0;
+  margin-left: 8px;
   color: #f4ab4e;
 }
+
+.lowPowerWarningLink {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
