@@ -17,7 +17,6 @@ import useRxStore from '../../helpers/use-rx-store';
 import SpacesStore from '../../rx-stores/spaces';
 import SensorsStore from '../../rx-stores/sensors';
 import filterCollection from '../../helpers/filter-collection/index';
-import { ItemList } from '../analytics-control-bar-utilities';
 // @ts-ignore
 import { IntercomAPI } from 'react-intercom';
 
