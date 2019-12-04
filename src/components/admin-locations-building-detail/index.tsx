@@ -46,7 +46,6 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         onClickRow={item => window.location.href = `#/admin/locations/${item.id}`}
       >
         <AdminLocationsListInfo />
-        <AdminLocationsListLevelsTotal spaces={spaces} />
         <AdminLocationsListRoomsTotal spaces={spaces} />
         <AdminLocationsListSize user={user} />
         <AdminLocationsListTargetCapacity />

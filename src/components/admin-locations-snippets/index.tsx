@@ -169,7 +169,7 @@ export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesState}) {
     id="Floors"
     width={80}
     template={(item: DensitySpace) => commaNumber(spaces.data.filter(
-      space => space.spaceType === DensitySpaceTypes.SPACE && space.ancestry.map(a => a.id).includes(item.id)).length
+      space => space.spaceType === DensitySpaceTypes.FLOOR && space.ancestry.map(a => a.id).includes(item.id)).length
     )}
   />;
 }
