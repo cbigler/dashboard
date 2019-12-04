@@ -32,7 +32,6 @@ import {
   AdminLocationsListCapacity,
   AdminLocationsListDPUsTotal,
   AdminLocationsListRightArrow,
-  AdminLocationsListLevelsTotal,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
   AdminLocationsLeftPane,

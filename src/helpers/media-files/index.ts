@@ -30,8 +30,8 @@ export default async function uploadMedia(path: string, file: File, quantity=1, 
   // Poll `retries` times (default 10) until at least `quantity` uploads are done (default 1)
   let status: any = null;
   for (let i = 0; i < retries; i++) {
-    await sleep(1000);
-    status = fetchObject(`/uploads/${uploadId}`, { cache: false });
+    await sleep(2000);
+    status = await fetchObject(`/uploads/${uploadId}`, { cache: false });
     if (status.media.length >= quantity) { break; }
   }
 
