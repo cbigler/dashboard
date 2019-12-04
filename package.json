@@ -10,7 +10,7 @@
     "@density/chart-real-time-count": "1.6.2",
     "@density/charts": "^1.2.0",
     "@density/react-dates": "^12.6.0",
-    "@density/reports": "^10.0.1",
+    "@density/reports": "^11.0.0",
     "@density/ui": "20.2.3",
     "@mapbox/mapbox-gl-geocoder": "^4.5.0",
     "@material-ui/core": "^4.6.1",
