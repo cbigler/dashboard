@@ -24,6 +24,7 @@ export enum DensitySpaceFunction {
   PHONE_BOOTH = 'phone_booth',
   RECEPTION = 'reception',
   RESTROOM = 'restroom',
+  RETAIL = 'retail',
   THEATER = 'theater',
   WELLNESS_ROOM = 'wellness_room',
   // Note, "OTHER" is not in here since typescript does not allow "null" in enums
