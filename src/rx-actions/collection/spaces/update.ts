@@ -86,10 +86,13 @@ export default async function collectionSpacesUpdate(dispatch, item) {
     // Upload any new image data for this space
     // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
     if (item.newImageFile) {
-      const id = uuid.v4();
+      const id = uuid();
       showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
-      await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
+      const upload = await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
       await hideToast(dispatch, id);
+      if (upload instanceof Error) {
+        showToast(dispatch, {text: 'Image must be JPG or PNG', type: 'error'});
+      }
     }
 
     if (item.newTags) {

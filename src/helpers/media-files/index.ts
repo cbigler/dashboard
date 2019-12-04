@@ -16,9 +16,13 @@ export async function fileToDataURI(file: File | Blob) {
 export default async function uploadMedia(path: string, file: File, quantity=1, retries=10) {
   
   // Request a new signed S3 link
-  const { uploadId, uploadUrl } = objectSnakeToCamel(
-    (await core().post(path, {'content_type': file.type, 'file_name': file.name})).data
-  );
+  let request;
+  try {
+    request = await core().post(path, {'content_type': file.type, 'file_name': file.name});
+  } catch (e) {
+    return e;
+  }
+  const { uploadId, uploadUrl } = objectSnakeToCamel(request.data);
 
   // PUT the data to S3 directly
   await fetch(uploadUrl, {
@@ -30,7 +34,7 @@ export default async function uploadMedia(path: string, file: File, quantity=1, 
   // Poll `retries` times (default 10) until at least `quantity` uploads are done (default 1)
   let status: any = null;
   for (let i = 0; i < retries; i++) {
-    await sleep(2000);
+    await sleep(1000);
     status = await fetchObject(`/uploads/${uploadId}`, { cache: false });
     if (status.media.length >= quantity) { break; }
   }
