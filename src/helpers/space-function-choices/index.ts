@@ -16,6 +16,7 @@ const SPACE_FUNCTION_FORMATS = {
   [DensitySpaceFunction.PHONE_BOOTH]: 'Phone Booth',
   [DensitySpaceFunction.RECEPTION]: 'Reception',
   [DensitySpaceFunction.RESTROOM]: 'Restroom',
+  [DensitySpaceFunction.RETAIL]: 'Retail',
   [DensitySpaceFunction.THEATER]: 'Theater',
   [DensitySpaceFunction.WELLNESS_ROOM]: 'Wellness Room',
 };
