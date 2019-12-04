@@ -5,6 +5,7 @@ import {
   AnalyticsFocusedMetric,
   RESOURCE_IDLE,
   AnalyticsReportUnsaved,
+  SortDirection,
 } from '../../../types/analytics';
 import { DispatchType } from '../../../types/rx-actions';
 
@@ -20,6 +21,11 @@ export default async function openPartialReport(dispatch: DispatchType, partialR
     queryResult: RESOURCE_IDLE,
 
     hiddenSpaceIds: [],
+    columnSort: {
+      column: null,
+      direction: SortDirection.NONE,
+    },
+
     selectedMetric: AnalyticsFocusedMetric.MAX,
     lastRunTimestamp: undefined,
     isSaved: false,

@@ -67,6 +67,7 @@ export type AnalyticsDatapoint = {
   spaceId: string,
   spaceName: string,
   millisecondsSinceUnixEpoch: number,
+  timeZone: string,
   localDay: string,
   localTime: string,
   localBucketDay: string,
@@ -98,6 +99,7 @@ export type AnalyticsReport = {
   creatorEmail?: string,
   query: SpaceCountQuery,
   queryResult: Resource<QueryResult>,
+  columnSort: TableColumnSort,
   hiddenSpaceIds: Array<DensitySpace['id']>,
   selectedMetric: AnalyticsFocusedMetric,
   lastRunTimestamp?: string,
@@ -124,6 +126,45 @@ export type StoredAnalyticsReport = Omit<DensityReport, 'type' | 'settings'> & {
     selectedMetric: AnalyticsFocusedMetric,
   },
 };
+
+export enum SortDirection {
+  ASCENDING = 'asc',
+  DESCENDING = 'desc',
+  NONE = 'none',
+}
+
+export function nextSortDirection(sortDirection: SortDirection) {
+  switch (sortDirection) {
+    case SortDirection.NONE:
+      return SortDirection.DESCENDING;
+    case SortDirection.DESCENDING:
+      return SortDirection.ASCENDING;
+    case SortDirection.ASCENDING:
+      return SortDirection.NONE;
+  }
+}
+
+export type TableColumnSort = {
+  column: string | null,
+  direction: SortDirection,
+}
+
+export enum TableColumn {
+  SPACE_NAME = 'Space',
+  SPACE_LOCATION = 'Location',
+  SPACE_TYPE = 'Type',
+  SPACE_FUNCTION = 'Function',
+  SPACE_CAPACITY = 'Capacity',
+  METRIC_PEAK = 'Peak',
+  METRIC_AVERAGE = 'Average',
+  METRIC_TOTAL = 'Total',
+}
+
+export enum AnalyticsDataExportType {
+  TIME_SERIES = 'Time-series',
+  SUMMARY = 'Summary',
+  BOTH = 'Both',
+}
 
 // REVIEW: should typings for Resource be somewhere else?
 export enum ResourceStatus {

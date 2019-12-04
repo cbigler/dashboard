@@ -19,6 +19,8 @@ import { realizeDateRange, getBrowserLocalTimeZone } from '../../helpers/space-t
 import { runQuery } from '.';
 import { DensitySpace } from '../../types';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
+import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
+import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
 
 
 type RunQueryFunction = typeof runQuery;
@@ -32,6 +34,16 @@ export function registerSideEffects(
   dispatch: (action: GlobalAction) => void,
   runQuery: RunQueryFunction,
 ) {
+
+  actionStream.subscribe(action => {
+    if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT) {
+      const { datapoints, interval, selectedMetric, hiddenSpaceIds } = action;
+      exportAnalyticsChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
+    } else if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT) {
+      const { report, spaces } = action;
+      exportAnalyticsTableData(report, spaces);
+    }
+  })
 
   const activeReportUpdates = actionStream.pipe(
     // Filter only the actions that should cause the query to be rerun

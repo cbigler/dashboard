@@ -33,6 +33,7 @@ import {
   RESOURCE_LOADING,
   StoredAnalyticsReport,
   AnalyticsMetrics,
+  SortDirection,
 } from '../../types/analytics';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DATE_RANGES } from '../../helpers/space-time-utilities';
@@ -78,6 +79,11 @@ function convertStoredAnalyticsReportToAnalyticsReport(
     creatorEmail: report.creatorEmail || '',
 
     hiddenSpaceIds: [],
+    columnSort: {
+      column: null,
+      direction: SortDirection.NONE,
+    },
+
     selectedMetric: report.settings.selectedMetric || AnalyticsFocusedMetric.MAX,
 
     isSaved: typeof opts.isSaved !== 'undefined' ? opts.isSaved : true,
@@ -262,6 +268,15 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
     return updateReport(state, action.reportId, report => ({
       ...report,
       hiddenSpaceIds: action.hiddenSpaceIds,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      columnSort: {
+        column: action.column,
+        direction: action.direction,
+      },
     }));
 
   case AnalyticsActionType.ANALYTICS_QUERY_IDLE:

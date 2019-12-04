@@ -16,7 +16,7 @@ import AnalyticsControlBarSpaceSelector, {
 import AnalyticsControlBarDateRangeFilter from '../analytics-control-bar-date-range-selector';
 import AnalyticsIntervalSelector from '../analytics-control-bar-interval-selector';
 import AnalyticsPopup, { AnalyticsPopupPinCorner, ItemList } from '../analytics-popup';
-import { QueryInterval, AnalyticsFocusedMetric } from '../../types/analytics';
+import { QueryInterval, AnalyticsFocusedMetric, AnalyticsDataExportType } from '../../types/analytics';
 
 // FIXME: The below should be switched to use the new rx-actinos based modal interface,
 // point this out in a review!
@@ -50,9 +50,15 @@ type AnalyticsControlBarProps = {
   
   spaces: Array<DensitySpace>,
   formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+
+  onRequestDataExport: (exportType: AnalyticsDataExportType) => void,
+
   saveButtonState: AnalyticsControlBarSaveButtonState,
   onSave?: () => void,
+
+  reportName: string,
   onUpdateReportName?: (name: string) => void,
+
   refreshEnabled: boolean,
   moreMenuVisible: boolean,
   onRefresh: () => void,
@@ -79,9 +85,14 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
   spaces,
   formattedHierarchy,
 
+  onRequestDataExport,
+
   saveButtonState,
   onSave,
+
+  reportName,
   onUpdateReportName,
+
   onRefresh,
   refreshEnabled,
   moreMenuVisible,
@@ -121,17 +132,19 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
         >
           <Icons.Refresh color={refreshEnabled ? colorVariables.brandPrimary : colorVariables.gray} />
         </button>
+
       </div>
-      {can(userState, PERMISSION_CODES.coreWrite) ?
-        <div className={styles.analyticsControlBarSection}>
-          <AnalyticsControlBarButtons
-            saveButtonState={saveButtonState}
-            onSave={onSave}
-            onUpdateReportName={onUpdateReportName}
-            moreMenuVisible={moreMenuVisible}
-          />
-        </div>
-      : null}
+      <div className={styles.analyticsControlBarSection}>
+        <AnalyticsControlBarButtons
+          userHasWritePermissions={can(userState, PERMISSION_CODES.coreWrite)}
+          onRequestDataExport={onRequestDataExport}
+          saveButtonState={saveButtonState}
+          onSave={onSave}
+          reportName={reportName}
+          onUpdateReportName={onUpdateReportName}
+          moreMenuVisible={moreMenuVisible}
+        />
+      </div>
     </div>
   );
 }
@@ -143,62 +156,101 @@ export enum AnalyticsControlBarSaveButtonState {
   LOADING = 'LOADING',
 }
 type AnalyticsControlBarButtonsProps = {
+  userHasWritePermissions: boolean,
+  onRequestDataExport: (exportType: AnalyticsDataExportType) => void,
   saveButtonState: AnalyticsControlBarSaveButtonState,
   onSave?: () => void,
   moreMenuVisible: boolean,
+  reportName: string,
   onUpdateReportName?: (name: string) => void,
 }
-export const AnalyticsControlBarButtons: React.FunctionComponent<AnalyticsControlBarButtonsProps> = ({ saveButtonState, onSave, moreMenuVisible, onUpdateReportName }) => {
+export const AnalyticsControlBarButtons: React.FunctionComponent<AnalyticsControlBarButtonsProps> = ({
+  userHasWritePermissions,
+  onRequestDataExport,
+  saveButtonState,
+  onSave,
+  moreMenuVisible,
+  reportName,
+  onUpdateReportName,
+}) => {
   const [moreOpen, setMoreOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
   const rxDispatch = useRxDispatch();
   return (
     <Fragment>
-      <Button
-        disabled={saveButtonState !== AnalyticsControlBarSaveButtonState.NORMAL}
-        variant="filled"
-        onClick={() => onSave ? onSave() : null}
-      >
-        {saveButtonState === AnalyticsControlBarSaveButtonState.LOADING ? (
-          <div className={styles.saveButtonWrapper}>
-            Loading...
-          </div>
-        ) : (
-          <div className={styles.saveButtonWrapper}>
-            <Icons.Save color="currentColor" />
-            <span className={styles.saveButtonText}>Save</span>
-          </div>
-        )}
-      </Button>
-      {moreMenuVisible ? (
+      {userHasWritePermissions ? (
+      <Fragment>
+        <Button
+          disabled={saveButtonState !== AnalyticsControlBarSaveButtonState.NORMAL}
+          variant="filled"
+          onClick={() => onSave ? onSave() : null}
+        >
+          {saveButtonState === AnalyticsControlBarSaveButtonState.LOADING ? (
+            <div className={styles.saveButtonWrapper}>
+              Loading...
+            </div>
+          ) : (
+            <div className={styles.saveButtonWrapper}>
+              <Icons.Save color="currentColor" />
+              <span className={styles.saveButtonText}>Save</span>
+            </div>
+          )}
+        </Button>
         <AnalyticsPopup
-          target={<button className={styles.iconButton}><Icons.More /></button>}
-          open={moreOpen}
-          onOpen={() => setMoreOpen(true)}
-          onClose={() => setMoreOpen(false)}
+          target={<button className={classnames(styles.iconButton, styles.exportButton, {[styles.active]: exportOpen})}><Icons.Download /></button>}
+          open={exportOpen}
+          onOpen={() => setExportOpen(true)}
+          onClose={() => setExportOpen(false)}
           pinCorner={AnalyticsPopupPinCorner.RIGHT}
         >
-          <ItemList
-            choices={[{ id: '', label: 'Rename' }]}
-            onClick={choice => {
-              setMoreOpen(false);
-
-              if (onUpdateReportName) {
-                mixpanelTrack('Analytics Report Rename', {
-                  'Location': 'Control Bar',
-                });
-                // FIXME: The below should be switched to use the new rx-actinos based modal interface,
-                // point this out in a review!
-                showModal(rxDispatch, 'MODAL_PROMPT', {
-                  title: `Rename Report`,
-                  placeholder: 'Enter a new name',
-                  confirmText: 'Save',
-                  callback: onUpdateReportName,
-                });
-              }
-            }}
-          />
+          <div className={styles.exportPopoverInner}>
+            <div className={styles.popoverHeader}>Export CSV</div>
+            <ItemList
+              choices={[
+                { id: AnalyticsDataExportType.TIME_SERIES, label: 'Time-series' },
+                { id: AnalyticsDataExportType.SUMMARY, label: 'Summary' },
+                { id: AnalyticsDataExportType.BOTH, label: 'Both' },
+              ]}
+              onClick={(choice) => {
+                // FIXME: typing of ItemList choices is broken
+                onRequestDataExport(choice.id as AnalyticsDataExportType);
+                setExportOpen(false);
+              }}
+            />
+          </div>
         </AnalyticsPopup>
-      ) : null}
+        {moreMenuVisible ? (
+          <AnalyticsPopup
+            target={<button className={classnames(styles.iconButton, {[styles.active]: moreOpen})}><Icons.More /></button>}
+            open={moreOpen}
+            onOpen={() => setMoreOpen(true)}
+            onClose={() => setMoreOpen(false)}
+            pinCorner={AnalyticsPopupPinCorner.RIGHT}
+          >
+            <ItemList
+              choices={[{ id: '', label: 'Rename' }]}
+              onClick={choice => {
+                setMoreOpen(false);
+                if (onUpdateReportName) {
+                  mixpanelTrack('Analytics Report Rename', {
+                    'Location': 'Control Bar',
+                  });
+                  // FIXME: The below should be switched to use the new rx-actinos based modal interface,
+                  // point this out in a review!
+                  showModal(rxDispatch, 'MODAL_PROMPT', {
+                    title: `Rename Report`,
+                    text: reportName,
+                    placeholder: 'Enter a new name',
+                    confirmText: 'Save',
+                    callback: onUpdateReportName,
+                  });
+                }
+              }}
+            />
+          </AnalyticsPopup>
+        ) : null}
+      </Fragment>
+    ) : null}
     </Fragment>
   );
 };

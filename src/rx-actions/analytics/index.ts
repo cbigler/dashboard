@@ -1,4 +1,4 @@
-import { AnalyticsReport, AnalyticsFocusedMetric, QuerySelection, QueryInterval, AnalyticsDatapoint, AnalyticsMetrics } from "../../types/analytics";
+import { AnalyticsReport, AnalyticsFocusedMetric, QuerySelection, QueryInterval, AnalyticsDatapoint, AnalyticsMetrics, TableColumn, SortDirection } from "../../types/analytics";
 import { DateRange } from "../../helpers/space-time-utilities";
 import { DayOfWeek, TimeFilter } from "../../types/datetime";
 import { DensitySpace } from "../../types";
@@ -16,12 +16,16 @@ export enum AnalyticsActionType {
   ANALYTICS_UPDATE_REPORT = 'ANALYTICS_UPDATE_REPORT',
   ANALYTICS_DELETE_REPORT = 'ANALYTICS_DELETE_REPORT',
 
+  ANALYTICS_REQUEST_CHART_DATA_EXPORT = 'ANALYTICS_REQUEST_CHART_DATA_EXPORT',
+  ANALYTICS_REQUEST_TABLE_DATA_EXPORT = 'ANALYTICS_REQUEST_TABLE_DATA_EXPORT',
+
   ANALYTICS_REPORT_CHANGE_SELECTED_METRIC = 'ANALYTICS_REPORT_CHANGE_SELECTED_METRIC',
   ANALYTICS_REPORT_CHANGE_SELECTIONS = 'ANALYTICS_REPORT_CHANGE_SELECTIONS',
   ANALYTICS_REPORT_CHANGE_INTERVAL = 'ANALYTICS_REPORT_CHANGE_INTERVAL',
   ANALYTICS_REPORT_CHANGE_DATE_RANGE = 'ANALYTICS_REPORT_CHANGE_DATE_RANGE',
   ANALYTICS_REPORT_CHANGE_TIME_FILTER = 'ANALYTICS_REPORT_CHANGE_TIME_FILTER',
   ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES = 'ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES',
+  ANALYTICS_REPORT_CHANGE_COLUMN_SORT = 'ANALYTICS_REPORT_CHANGE_COLUMN_SORT',
   ANALYTICS_REPORT_REFRESH = 'ANALYTICS_REPORT_REFRESH',
 
   ANALYTICS_QUERY_IDLE = 'ANALYTICS_QUERY_IDLE',
@@ -51,6 +55,20 @@ export type AnalyticsAction = (
   { type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT, reportId: AnalyticsReport["id"] | null } |
   { type: AnalyticsActionType.ANALYTICS_UPDATE_REPORT, reportId: AnalyticsReport["id"] | null, report: AnalyticsReport } |
   { type: AnalyticsActionType.ANALYTICS_DELETE_REPORT, reportId: AnalyticsReport["id"] | null } |
+
+  { 
+    type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
+    datapoints: AnalyticsDatapoint[],
+    interval: QueryInterval,
+    selectedMetric: AnalyticsFocusedMetric,
+    hiddenSpaceIds: string[],
+  } |
+
+  {
+    type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
+    report: AnalyticsReport,
+    spaces: DensitySpace[],
+  } |
 
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC,
@@ -83,6 +101,13 @@ export type AnalyticsAction = (
     reportId: AnalyticsReport["id"],
     hiddenSpaceIds: Array<DensitySpace["id"]>,
   } |
+  {
+    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT,
+    reportId: AnalyticsReport["id"],
+    column: TableColumn,
+    direction: SortDirection,
+  } |
+
   { type: AnalyticsActionType.ANALYTICS_REPORT_REFRESH, reportId: AnalyticsReport["id"] } |
 
   { type: AnalyticsActionType.ANALYTICS_QUERY_IDLE, reportId: AnalyticsReport["id"] | null } |

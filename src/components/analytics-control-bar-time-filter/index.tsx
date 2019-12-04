@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { TimeFilter, DayOfWeek } from '../../types/datetime';
 import { Button, Checkbox, Icons } from '@density/ui';
-import { Popover } from '@material-ui/core';
 import isEqual from 'lodash/isEqual'; 
 
 import Slider from '../slider';
@@ -17,6 +16,7 @@ import {
 } from '../../helpers/datetime-utilities/time-string';
 import { QueryInterval } from '../../types/analytics';
 import { TimeOfDay } from '../../types/datetime';
+import AnalyticsPopup from '../analytics-popup';
 
 /**
  * The API supports multiple time filter objects but the control bar UI
@@ -378,14 +378,6 @@ const AnalyticsControlBarTimeFilter: React.FC<{
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const anchorElement = useRef<HTMLDivElement>(null);
 
-  const onTriggerClick = (evt: React.MouseEvent<HTMLDivElement>) => {
-    setIsOpen(true);
-  }
-
-  const onPopoverClose = () => {
-    setIsOpen(false);
-  }
-
   const firstTimeFilter = (timeFilter || []).slice(0, 1);
   let filterValue: TimeFilter[0];
   if (firstTimeFilter.length) {
@@ -403,21 +395,18 @@ const AnalyticsControlBarTimeFilter: React.FC<{
 
   return (
     <div className={styles.wrapper} ref={anchorElement}>
-      <div className={classNames(styles.timeFilterControlsToggleButton, {[styles.active]: isFilterActive})} onClick={onTriggerClick}>
-        <Icons.Clock color={'#0D183A'}/>
-      </div>
-      <Popover
+      <AnalyticsPopup
         open={isOpen}
-        onClose={onPopoverClose}
-        anchorEl={anchorElement.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
+        onOpen={() => setIsOpen(true)}
+        onClose={() => setIsOpen(false)}
+        target={(
+          <div className={classNames(styles.timeFilterControlsToggleButton, {
+            [styles.active]: isOpen,
+            [styles.filterActive]: isFilterActive,
+          })}>
+            <Icons.Clock color={'#0D183A'}/>
+          </div>
+        )}
       >
         <div className={styles.timeFilterControlsOpenWrapper}>
           <TimeFilterControls
@@ -426,7 +415,7 @@ const AnalyticsControlBarTimeFilter: React.FC<{
             onApply={onTimeFilterApply}
           />
         </div>
-      </Popover>
+      </AnalyticsPopup>
     </div>
   );
 }

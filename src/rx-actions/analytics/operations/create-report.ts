@@ -5,6 +5,7 @@ import {
   QueryInterval,
   AnalyticsFocusedMetric,
   RESOURCE_IDLE,
+  SortDirection,
 } from '../../../types/analytics'
 import { DATE_RANGES } from '../../../helpers/space-time-utilities';
 
@@ -21,6 +22,11 @@ export default async function createReport(dispatch) {
     queryResult: RESOURCE_IDLE,
 
     hiddenSpaceIds: [],
+    columnSort: {
+      column: null,
+      direction: SortDirection.NONE,
+    },
+    
     selectedMetric: AnalyticsFocusedMetric.MAX,
     lastRunTimestamp: undefined,
     isSaved: false,

@@ -51,30 +51,61 @@
 .saveButtonText { margin-left: 8px; }
 
 .iconButton {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   box-sizing: border-box;
   white-space: nowrap;
-  text-align: center;
   width: 40px;
   height: 40px;
-  line-height: 38px;
-  text-decoration: none;
-  outline: none;
+  margin-right: 1px;
+  background-color: #fff;
   border-radius: 4px;
   border: 1px solid transparent;
+  outline: none;
+  text-align: center;
+  line-height: 38px;
+  text-decoration: none;
   cursor: pointer;
   user-select: none;
-  margin-left: 16px;
+  
+  &:hover {
+    background-color: #DDE6FF;
+    color: #5581FF;
+
+    path { fill: #5581FF; }
+  }
+  &.active {
+    background-color: #DDE6FF;
+    border: 1px solid #5581FF;
+    box-shadow: 0 0 0 1px #5581FF;
+    cursor: pointer;
+
+    path { fill: #5581FF; }
+  }
 }
-.iconButton:nth-child(2) { margin-left: 8px; }
-.iconButton:hover, .iconButton:focus { opacity: 0.75; }
-.iconButton:active { opacity: 1; }
 .iconButton[disabled] {
   opacity: 0.25;
   cursor: default;
 }
+.exportButton {
+  margin-left: 8px;
+}
 
+.exportPopoverInner {
+  width: 200px;
+}
+
+.popoverHeader {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border-bottom: 1px solid #ccc;
+  font-size: 12px;
+  font-weight: bold;
+}
 
 .analyticsSpaceFilterList {
   display: flex;

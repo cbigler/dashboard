@@ -41,9 +41,18 @@ $newDarkColor: #0d183a;
 
     path { fill: #5581ff}
   }
+
+  &.filterActive {
+    background-color: #5581FF;
+    border-color: transparent;
+    color: #ffffff;
+
+    path { fill: #ffffff}
+  }
 }
 
 .timeFilterControlsOpenWrapper {
+  width: 300px;
   padding: 16px;
 }
 

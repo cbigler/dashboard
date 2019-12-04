@@ -62,6 +62,11 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+
+        onRequestDataExport={() => {}}
+
+        reportName="" 
+        
         saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
         onSave={action('Save')}
         refreshEnabled={true}
@@ -108,6 +113,11 @@ storiesOf('Analytics Control Bar', module)
 
         spaces={SPACES}
         formattedHierarchy={FORMATTED_HIERARCHY}
+
+        onRequestDataExport={() => {}}
+
+        reportName=""
+
         saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
         onSave={action('Save')}
         refreshEnabled={true}
@@ -158,6 +168,11 @@ storiesOf('Analytics Control Bar', module)
 
           spaces={SPACES}
           formattedHierarchy={FORMATTED_HIERARCHY}
+
+          onRequestDataExport={() => { }}
+
+          reportName=""
+          
           saveButtonState={AnalyticsControlBarSaveButtonState.NORMAL}
           onSave={action('Save')}
           refreshEnabled={true}

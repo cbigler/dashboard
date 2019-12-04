@@ -20,6 +20,10 @@ import {
   AnalyticsReport,
   QueryInterval,
   QuerySelectionType,
+  SortDirection,
+  TableColumn,
+  nextSortDirection,
+  AnalyticsDataExportType,
 } from '../../types/analytics';
 import { DATE_RANGES } from '../../helpers/space-time-utilities';
 import { groupBy } from '../../helpers/array-utilities';
@@ -274,6 +278,27 @@ export default function Analytics() {
 
                   spaces={spaces}
                   formattedHierarchy={formattedHierarchy}
+
+                  onRequestDataExport={(exportType: AnalyticsDataExportType) => {
+                    if (activeReport.queryResult.status !== ResourceStatus.COMPLETE) return;
+                    if (exportType === AnalyticsDataExportType.BOTH || exportType ===  AnalyticsDataExportType.TIME_SERIES) {
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
+                        datapoints: activeReport.queryResult.data.datapoints,
+                        interval: activeReport.query.interval,
+                        selectedMetric: activeReport.selectedMetric,
+                        hiddenSpaceIds: activeReport.hiddenSpaceIds,
+                      })
+                    }
+                    if (exportType === AnalyticsDataExportType.BOTH || exportType === AnalyticsDataExportType.SUMMARY) {
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
+                        report: activeReport,
+                        spaces: spaces,
+                      })
+                    }
+                  }}
+
                   saveButtonState={saveButtonState}
                   onSave={() => {
                     if (activeReport.isSaved) {
@@ -294,7 +319,10 @@ export default function Analytics() {
                       });
                     }
                   }}
+
+                  reportName={activeReport.name}
                   onUpdateReportName={(name) => updateReport(dispatch, { ...activeReport, name })}
+
                   refreshEnabled={activeReport.queryResult.status === ResourceStatus.COMPLETE}
                   onRefresh={() => dispatch({
                     type: AnalyticsActionType.ANALYTICS_REPORT_REFRESH,
@@ -310,11 +338,27 @@ export default function Analytics() {
                   <AnalyticsTable
                     spaces={spaces}
                     analyticsReport={activeReport}
-                    onChangeHiddenSpaceIds={hiddenSpaceIds => dispatch({
-                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES,
-                      reportId: activeReport.id,
-                      hiddenSpaceIds,
-                    })}
+                    onClickColumnHeader={(column: TableColumn) => {
+                      let direction: SortDirection;
+                      if (column === activeReport.columnSort.column) {
+                        direction = nextSortDirection(activeReport.columnSort.direction);
+                      } else {
+                        direction = nextSortDirection(SortDirection.NONE);
+                      }
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT,
+                        reportId: activeReport.id,
+                        column,
+                        direction,
+                      })
+                    }}
+                    onChangeHiddenSpaceIds={(hiddenSpaceIds) => {
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES,
+                        reportId: activeReport.id,
+                        hiddenSpaceIds,
+                      })
+                    }}
                   />
                 </div>
               </Fragment>

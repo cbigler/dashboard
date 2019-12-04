@@ -172,6 +172,7 @@ export function processAnalyticsChartData(
         spaceId,
         spaceName: space.name,
         millisecondsSinceUnixEpoch,
+        timeZone: space.timeZone,
         localDay,
         localTime,
         localBucketDay,

@@ -8,7 +8,7 @@ type CheckboxProps = {
   color: string
   checked: boolean,
   disabled: boolean,
-  onChange?: (event: React.SyntheticEvent) => void,
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void,
   label?: React.ReactNode,
 };
 
