@@ -54,7 +54,7 @@ function getRowsForDailyInterval(datapoints: AnalyticsDatapoint[], selectedMetri
     (d: AnalyticsDatapoint) => d.localBucketDay,
   )
   const rows: DailyDataRow[] = [];
-  const metricColumnName = startCase(selectedMetric);
+  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : startCase(selectedMetric);
   mapping.forEach((groupedByDay, spaceId) => {
     groupedByDay.forEach((group, date) => {
       rows.push({
@@ -75,7 +75,7 @@ function getRowsForNonDailyInterval(datapoints: AnalyticsDatapoint[], selectedMe
     (d: AnalyticsDatapoint) => d.localBucketTime,
   )
   const rows: TimestampedDataRow[] = [];
-  const metricColumnName = startCase(selectedMetric);
+  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : startCase(selectedMetric);
   mapping.forEach((groupedByDate) => {
     groupedByDate.forEach((groupedByTime) => {
       groupedByTime.forEach((group) => {
@@ -106,11 +106,14 @@ export function exportAnalyticsChartData(inputDatapoints: AnalyticsDatapoint[], 
  
   if (interval === QueryInterval.ONE_DAY) {
     const rows = getRowsForDailyInterval(datapoints, selectedMetric);
+    console.log('rows', rows)
     csvData = d3Dsv.csvFormat(rows, ['Space', 'Date', metricColumnName])
   } else {
     const rows = getRowsForNonDailyInterval(datapoints, selectedMetric);
+    console.log('rows', rows) 
     csvData = d3Dsv.csvFormat(rows, ['Space', 'Timestamp', 'Local Time', metricColumnName])
   }
+
 
   downloadFile(fileName, csvData, 'text/csv;charset=utf8;');
 }
