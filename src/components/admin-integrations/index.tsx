@@ -215,20 +215,7 @@ export function AdminIntegrations({
               <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
             }
           />
-          <ListViewColumn
-            id="Default service"
-            width={120}
-            template={item => {
-              if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
-                return <span className={styles.adminIntegrationsListviewValue}>Default</span>
-              } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
-                return <ListViewClickableLink>Make default</ListViewClickableLink>
-              } else {
-                return null;
-              }
-            }} 
-            onClick={item => onMakeServiceAuthorizationDefault(item.serviceAuthorization.id)}
-          />
+          
           <ListViewColumnSpacer />
           <ListViewColumn
             id="Doorway Mappings"
