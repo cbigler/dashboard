@@ -56,6 +56,7 @@ import routeTransitionDashboardDetail from './rx-actions/route-transition/dashbo
 import routeTransitionDashboardEdit from './rx-actions/route-transition/dashboard-edit';
 
 import routeTransitionAdminSpaceMappings from './rx-actions/route-transition/admin-space-mappings';
+import routeTransitionAdminBrivoMappings from './rx-actions/route-transition/admin-brivo-mappings';
 import routeTransitionAdminIntegrations from './rx-actions/route-transition/admin-integrations';
 import routeTransitionAdminIntegrationsTeem from './rx-actions/route-transition/admin-integrations-teem';
 import routeTransitionAdminIntegrationsServiceFailure from './rx-actions/route-transition/admin-integrations-service-failure';
@@ -193,7 +194,10 @@ router.addRoute('account/forgot-password/:token', async (token) => { (rxDispatch
 
 // Advanced account management (Administration)
 router.addRoute('admin/integrations/:service/space-mappings', async (service) => { routeTransitionAdminSpaceMappings(rxDispatch, service) });
+router.addRoute('admin/integrations/brivo/doorway-mappings', async (service) => { routeTransitionAdminBrivoMappings(rxDispatch) });
 router.addRoute('admin/integrations', async () => await routeTransitionAdminIntegrations(rxDispatch));
+router.addRoute('admin/integrations/brivo/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('admin/integrations/brivo/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
 router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
 router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
 router.addRoute('admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
