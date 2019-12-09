@@ -343,6 +343,29 @@ export type DensitySpaceCountMetrics = {
   },
 };
 
+export type DensityDoorwayMapping = {
+  id: string,
+  serviceId: string,
+  doorwayId: string,
+  serviceDoorwayId: string,
+}
+
+// Data structure returned by the Brivo API (access points response is optionally nested in sites response)
+export type BrivoAccessPoint = {
+  id: number,
+  name: string,
+  controlPanelId: number,
+  siteId: number,
+  siteName: string,
+  activationEnabled: boolean
+}
+
+export type DensityBrivoSite = {
+  id: number,
+  siteName: string,
+  accessPoints: Array<BrivoAccessPoint>,
+  eventSubscriptionId: string | null,
+}
 
 // Service
 export type DensityService = {

@@ -1,12 +1,9 @@
 @import "@density/ui/variables/colors.scss";
 
-.adminIntegrationsRoomBookingList {
+.adminIntegrationsListSection {
   padding: 24px;
-}
 
-.adminIntegrationsChatList {
-  padding: 24px;
-  padding-bottom: 64px;
+  &:last-child { padding-bottom: 64px; }
 }
 
 .adminIntegrationsSectionHeader {
