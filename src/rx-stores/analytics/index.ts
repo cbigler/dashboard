@@ -86,6 +86,8 @@ function convertStoredAnalyticsReportToAnalyticsReport(
 
     selectedMetric: report.settings.selectedMetric || AnalyticsFocusedMetric.MAX,
 
+    opportunityCostPerPerson: report.settings.opportunityCostPerPerson || 300,
+
     isSaved: typeof opts.isSaved !== 'undefined' ? opts.isSaved : true,
     isCurrentlySaving: false,
     isOpen: typeof opts.isOpen !== 'undefined' ? opts.isOpen : false,
@@ -268,6 +270,12 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
     return updateReport(state, action.reportId, report => ({
       ...report,
       hiddenSpaceIds: action.hiddenSpaceIds,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_OPPORTUNITY_PARAMETERS:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      opportunityCostPerPerson: action.opportunityCostPerPerson,
     }));
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT:

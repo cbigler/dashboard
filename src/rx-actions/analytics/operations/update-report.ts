@@ -28,6 +28,7 @@ export default async function updateReport(dispatch, analyticsReport: AnalyticsR
       settings: {
         query: analyticsReport.query,
         selectedMetric: analyticsReport.selectedMetric,
+        opportunityCostPerPerson: analyticsReport.opportunityCostPerPerson,
       }
     }
     response = await core()[method](analyticsReport.isSaved ? `/reports/${analyticsReport.id}` : '/reports', update);

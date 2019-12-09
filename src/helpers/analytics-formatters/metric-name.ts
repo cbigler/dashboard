@@ -15,6 +15,8 @@ export default function formatMetricName(metric: AnalyticsFocusedMetric) {
       return 'Exits';
     case AnalyticsFocusedMetric.EVENTS:
       return 'Events';
+    case AnalyticsFocusedMetric.OPPORTUNITY:
+      return 'Available Capacity';
   }
   // if we change the enum members for AnalyticsFocusedMetric this will error if not all cases are handled
   assertNever(metric);

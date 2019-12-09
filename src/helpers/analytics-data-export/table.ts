@@ -31,6 +31,7 @@ function getPeakMetricValue(tableDataItem: TableDataItem, selectedMetric: Analyt
     case AnalyticsFocusedMetric.EXITS:
       return getInObject(tableDataItem.metricData, 'exits.peak.value', null);
     case AnalyticsFocusedMetric.EVENTS:
+    case AnalyticsFocusedMetric.OPPORTUNITY:
       return null;
   }
 }
@@ -46,6 +47,7 @@ function getAverageMetricValue(tableDataItem: TableDataItem, selectedMetric: Ana
     case AnalyticsFocusedMetric.EXITS:
       return getInObject(tableDataItem.metricData, 'exits.average', null);
     case AnalyticsFocusedMetric.EVENTS:
+    case AnalyticsFocusedMetric.OPPORTUNITY:
       return null;
   }
 }
@@ -54,6 +56,7 @@ function getTotalMetricValue(tableDataItem: TableDataItem, selectedMetric: Analy
   switch (selectedMetric) {
     case AnalyticsFocusedMetric.MAX:
     case AnalyticsFocusedMetric.UTILIZATION:
+    case AnalyticsFocusedMetric.OPPORTUNITY:
       return null;
     case AnalyticsFocusedMetric.ENTRANCES:
       return getInObject(tableDataItem.metricData, 'entrances.total', null);
@@ -64,31 +67,54 @@ function getTotalMetricValue(tableDataItem: TableDataItem, selectedMetric: Analy
   }
 }
   
-export function getTableValues(tableData: TableDataItem[], selectedMetric: AnalyticsFocusedMetric) {
+export function getTableValues(tableData: TableDataItem[], selectedMetric: AnalyticsFocusedMetric, opportunityCostPerPerson: number) {
+  
+  const withRounding = (x: number | null | undefined) => {
+    if (x == null) return null;
+    return Math.ceil(x);
+  }
+
+  const withMultiplier = (x: number | null | undefined, multiplier: number) => {
+    if (x == null) return null;
+    return x * multiplier;
+  }
+  
   const columnHeaders = getTableColumnKeys(selectedMetric);
   const rows: Array<RowData> = [];
   // header row (aggregations)
   const headerRow: Omit<RowData, 'spaceId'> = {
-    'Space': 'All',
-    'Location': null,
-    'Type': null,
-    'Function': null,
-    'Capacity': null,
-    'Peak': max(tableData, d => getPeakMetricValue(d, selectedMetric)),
-    'Average': average(tableData, d => getAverageMetricValue(d, selectedMetric)),
-    'Total': sum(tableData, d => getTotalMetricValue(d, selectedMetric)),
+    [TableColumn.SPACE_NAME]: 'Summary',
+    [TableColumn.SPACE_LOCATION]: null,
+    [TableColumn.SPACE_TYPE]: null,
+    [TableColumn.SPACE_FUNCTION]: null,
+    [TableColumn.SPACE_CAPACITY]: sum(tableData, d => d.space.targetCapacity),
+    [TableColumn.METRIC_PEAK_UTILIZATION]: average(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.UTILIZATION)),
+    [TableColumn.METRIC_AVERAGE_UTILIZATION]: average(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.UTILIZATION)),
+    [TableColumn.METRIC_PEAK]: max(tableData, d => getPeakMetricValue(d, selectedMetric)),
+    [TableColumn.METRIC_AVERAGE]: average(tableData, d => getAverageMetricValue(d, selectedMetric)),
+    [TableColumn.METRIC_TOTAL]: sum(tableData, d => getTotalMetricValue(d, selectedMetric)),
+    [TableColumn.METRIC_OPPORTUNITY]: sum(tableData, d => getInObject(d.metricData, 'peakOpportunity')),
+    [TableColumn.METRIC_AVERAGE_OPPORTUNITY]: withRounding(sum(tableData, d => getInObject(d.metricData, 'averageOpportunity'))),
+    [TableColumn.METRIC_OPPORTUNITY_COST]: withMultiplier(sum(tableData, d => getInObject(d.metricData, 'peakOpportunity')), opportunityCostPerPerson),
+    [TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]: withMultiplier(withRounding(sum(tableData, d => getInObject(d.metricData, 'averageOpportunity'))), opportunityCostPerPerson),
     isChecked: tableData.some(d => d.isVisible),
   };
   tableData.forEach(tableDataItem => {
     rows.push({
-      'Space': tableDataItem.space.name,
-      'Location': getHighestAncestorName(tableDataItem.space),
-      'Type': formatSpaceType(tableDataItem.space.spaceType),
-      'Function': formatSpaceFunction(tableDataItem.space.function),
-      'Capacity': tableDataItem.space.targetCapacity,
-      'Peak': getPeakMetricValue(tableDataItem, selectedMetric),
-      'Average': getAverageMetricValue(tableDataItem, selectedMetric),
-      'Total': getTotalMetricValue(tableDataItem, selectedMetric),
+      [TableColumn.SPACE_NAME]: tableDataItem.space.name,
+      [TableColumn.SPACE_LOCATION]: getHighestAncestorName(tableDataItem.space),
+      [TableColumn.SPACE_TYPE]: formatSpaceType(tableDataItem.space.spaceType),
+      [TableColumn.SPACE_FUNCTION]: formatSpaceFunction(tableDataItem.space.function),
+      [TableColumn.SPACE_CAPACITY]: tableDataItem.space.targetCapacity,
+      [TableColumn.METRIC_PEAK_UTILIZATION]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.UTILIZATION),
+      [TableColumn.METRIC_AVERAGE_UTILIZATION]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.UTILIZATION),
+      [TableColumn.METRIC_PEAK]: getPeakMetricValue(tableDataItem, selectedMetric),
+      [TableColumn.METRIC_AVERAGE]: getAverageMetricValue(tableDataItem, selectedMetric),
+      [TableColumn.METRIC_TOTAL]: getTotalMetricValue(tableDataItem, selectedMetric),
+      [TableColumn.METRIC_OPPORTUNITY]: getInObject(tableDataItem.metricData, 'peakOpportunity'),
+      [TableColumn.METRIC_AVERAGE_OPPORTUNITY]: withRounding(getInObject(tableDataItem.metricData, 'averageOpportunity')),
+      [TableColumn.METRIC_OPPORTUNITY_COST]: withMultiplier(getInObject(tableDataItem.metricData, 'peakOpportunity'), opportunityCostPerPerson),
+      [TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]: withMultiplier(withRounding(getInObject(tableDataItem.metricData, 'averageOpportunity')), opportunityCostPerPerson),
       isChecked: tableDataItem.isVisible,
       spaceId: tableDataItem.space.id,
     })
@@ -113,7 +139,7 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: Densit
   const metricColumnName = formatMetricName(report.selectedMetric);
   const interval = report.query.interval;
 
-  const fileName = `density_summary_${interval}_${metricColumnName.toLowerCase()}_${startDate}_${endDate}.csv`;
+  const fileName = `density_summary_${interval}_${metricColumnName.replace(' ', '_').toLowerCase()}_${startDate}_${endDate}.csv`;
 
   // rows that are toggled off are not included in export
   const enabledRows = rawTableData.rows.filter(row => !report.hiddenSpaceIds.includes(row.spaceId))
@@ -135,6 +161,18 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: Densit
           if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION) {
             row[column] = `${row[column]}%`;
           }
+          break;
+        case TableColumn.METRIC_AVERAGE_OPPORTUNITY:
+          row[column] = Math.ceil(Number(rawValue));
+          break;
+        case TableColumn.METRIC_OPPORTUNITY_COST:
+        case TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST:
+          // round up to nearest dollar and prefix with dollar sign
+          row[column] = `$${Math.ceil(Number(rawValue))}`;
+          break;
+        case TableColumn.METRIC_PEAK_UTILIZATION:
+        case TableColumn.METRIC_AVERAGE_UTILIZATION:
+          row[column] = `${Math.ceil(Number(rawValue))}%`;
           break;
         default:
           row[column] = rawValue;

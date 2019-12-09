@@ -9,13 +9,15 @@
 }
 
 .dateSelector {
-  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 20px;
   margin-right: 8px;
-  margin-top: 8px;
-  margin-bottom: 8px;
+  white-space: nowrap;
 }
 .dateSelectorLabel {
-  color: $gray;
+  color: $grayDark;
   padding-right: 16px;
 }
 

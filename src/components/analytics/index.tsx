@@ -2,6 +2,7 @@ import React, { Fragment, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import startCase from 'lodash/startCase';
 import * as d3Array from 'd3-array';
+import getInObject from 'lodash/get';
 
 import AnalyticsControlBar, { AnalyticsControlBarSaveButtonState } from '../analytics-control-bar';
 import AnalyticsTabs from '../analytics-tabs';
@@ -48,6 +49,7 @@ import UserStore from '../../rx-stores/user';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
+import { AnalyticsFeatureFlagsContext } from '../../helpers/analytics-feature-flags';
 
 export function spaceFunctionToRecommendedMetric(spaceFunction: DensitySpaceFunction): AnalyticsFocusedMetric {
   switch (spaceFunction) {
@@ -119,7 +121,6 @@ const saveDismissalOfIntroToStorage = () => {
   )
 }
 
-
 function mapSpacesById(spaces: DensitySpace[]): ReadonlyMap<string, DensitySpace> {
   const map = new Map();
   spaces.forEach(space => {
@@ -146,6 +147,8 @@ export default function Analytics() {
   if (!user) {
     throw new Error('This should not be possible')
   }
+
+  const opportunityMetricEnabled = Boolean(getInObject(user.organization, 'settings.opportunityMetricEnabled', false));
 
   const organizationalWeekStartDay = getUserDashboardWeekStart(userState);
 
@@ -207,187 +210,198 @@ export default function Analytics() {
     }
 
     return (
-      <AppFrame>
-        <AppPane>
-          <div className={styles.analytics}>
-            <AnalyticsTabs
-              reports={state.data.reports.filter(r => r.isOpen)}
-              activeReportId={state.data.activeReportId}
-              onChangeActiveReport={reportId => dispatch({
-                type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT,
-                reportId,
-              })}
-              onCloseReport={reportId => dispatch({
-                type: AnalyticsActionType.ANALYTICS_CLOSE_REPORT,
-                reportId,
-              })}
-              onAddNewReport={() => createReport(dispatch)}
-            />
-            {activeReport ? (
-              <Fragment>
-                <AnalyticsControlBar
-                  userState={userState}
-                  metric={activeReport.selectedMetric}
-                  onChangeMetric={metric => {
-                    mixpanelTrack('Analytics Switched Metric Selection', {
-                      'Old Metric': activeReport.selectedMetric,
-                      'New Metric': metric,
-                    });
-                    dispatch({
-                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC,
-                      reportId: activeReport.id,
-                      metric,
-                    });
-                  }}
-                  selections={activeReport.query.selections.filter(s => s.type === 'SPACE')}
-                  onChangeSelections={selections => dispatch({
-                    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
-                    reportId: activeReport.id,
-                    selections: selections.map(s => ({
-                      type: 'SPACE',
-                      ...s,
-                    })) as Array<QuerySelection>,
-                  })}
-
-                  interval={activeReport.query.interval}
-                  onChangeInterval={interval => dispatch({
-                    type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL,
-                    reportId: activeReport.id,
-                    interval,
-                  })}
-
-                  dateRange={activeReport.query.dateRange}
-                  onChangeDateRange={dateRange => {
-                    if (dateRange === null) { return; }
-                    dispatch({
-                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
-                      reportId: activeReport.id,
-                      dateRange,
-                      organizationalWeekStartDay,
-                    });
-                  }}
-
-                  timeFilter={activeReport.query.timeFilter}
-                  onChangeTimeFilter={timeFilter => {
-                    dispatch({
-                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_TIME_FILTER,
-                      reportId: activeReport.id,
-                      timeFilter,
-                    })
-                  }}
-
-                  spaces={spaces}
-                  formattedHierarchy={formattedHierarchy}
-
-                  onRequestDataExport={(exportType: AnalyticsDataExportType) => {
-                    if (activeReport.queryResult.status !== ResourceStatus.COMPLETE) return;
-                    if (exportType === AnalyticsDataExportType.BOTH || exportType ===  AnalyticsDataExportType.TIME_SERIES) {
-                      dispatch({
-                        type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
-                        datapoints: activeReport.queryResult.data.datapoints,
-                        interval: activeReport.query.interval,
-                        selectedMetric: activeReport.selectedMetric,
-                        hiddenSpaceIds: activeReport.hiddenSpaceIds,
-                      })
-                    }
-                    if (exportType === AnalyticsDataExportType.BOTH || exportType === AnalyticsDataExportType.SUMMARY) {
-                      dispatch({
-                        type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
-                        report: activeReport,
-                        spaces: spaces,
-                      })
-                    }
-                  }}
-
-                  saveButtonState={saveButtonState}
-                  onSave={() => {
-                    if (activeReport.isSaved) {
-                      // Report already has been saved so a new name doesn't need to be provided.
-                      updateReport(dispatch, activeReport)
-                    } else {
-                      // Report has not been saved, so prompt the user for a name.
-
-                      // FIXME: The below should be switched to use the new rx-actinos based modal interface,
-                      // point this out in a review!
-                      showModal(dispatch, 'MODAL_PROMPT', {
-                        title: `Save As...`,
-                        placeholder: 'Enter a name for this report',
-                        confirmText: 'Save',
-                        callback: name => {
-                          updateReport(dispatch, {...activeReport, name});
-                        },
-                      });
-                    }
-                  }}
-
-                  reportName={activeReport.name}
-                  onUpdateReportName={(name) => updateReport(dispatch, { ...activeReport, name })}
-
-                  refreshEnabled={activeReport.queryResult.status === ResourceStatus.COMPLETE}
-                  onRefresh={() => dispatch({
-                    type: AnalyticsActionType.ANALYTICS_REPORT_REFRESH,
-                    reportId: activeReport.id,
-                  })}
-                  moreMenuVisible={activeReport.isSaved}
-                />
-                <div className={styles.analyticsBody}>
-                  <AnalyticsChart
-                    report={activeReport}
-                    spacesById={spacesById}
-                  />
-                  <AnalyticsTable
-                    spaces={spaces}
-                    analyticsReport={activeReport}
-                    onClickColumnHeader={(column: TableColumn) => {
-                      let direction: SortDirection;
-                      if (column === activeReport.columnSort.column) {
-                        direction = nextSortDirection(activeReport.columnSort.direction);
-                      } else {
-                        direction = nextSortDirection(SortDirection.NONE);
-                      }
-                      dispatch({
-                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT,
-                        reportId: activeReport.id,
-                        column,
-                        direction,
-                      })
-                    }}
-                    onChangeHiddenSpaceIds={(hiddenSpaceIds) => {
-                      dispatch({
-                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES,
-                        reportId: activeReport.id,
-                        hiddenSpaceIds,
-                      })
-                    }}
-                  />
-                </div>
-              </Fragment>
-            ) : (
-              <AnalyticsHome
-                user={user}
-                reports={state.data.reports}
-                recommendedReports={getRecommendedReports(spaces)}
-                introVisible={introVisible}
-                // FIXME: I think `isVisible` below can only be false, so this is misleading
-                onChangeIntroVisible={(isVisible) => {
-                  if (!isVisible) onDismissIntro();
-                }}
-                onCreateReport={() => createReport(dispatch)}
-                onOpenReport={report => dispatch({ type: AnalyticsActionType.ANALYTICS_OPEN_REPORT, report })}
-                onOpenPartialReport={partialReport => {
-                  mixpanelTrack('Analytics Click Recommended Report', {
-                    'Location': 'Home',
-                    'Recommended Report Name': partialReport.name,
-                  });
-                  openPartialReport(dispatch, partialReport);
-                }}
-                onUpdateReportName={(report, name) => updateReport(dispatch, { ...report, name })}
-                onDeleteReport={report => deleteReport(dispatch, report)}
+      <AnalyticsFeatureFlagsContext.Provider value={{opportunityMetricEnabled}}>
+        <AppFrame>
+          <AppPane>
+            <div className={styles.analytics}>
+              <AnalyticsTabs
+                reports={state.data.reports.filter(r => r.isOpen)}
+                activeReportId={state.data.activeReportId}
+                onChangeActiveReport={reportId => dispatch({
+                  type: AnalyticsActionType.ANALYTICS_FOCUS_REPORT,
+                  reportId,
+                })}
+                onCloseReport={reportId => dispatch({
+                  type: AnalyticsActionType.ANALYTICS_CLOSE_REPORT,
+                  reportId,
+                })}
+                onAddNewReport={() => createReport(dispatch)}
               />
-            )}
-          </div>
-        </AppPane>
-      </AppFrame>
+              {activeReport ? (
+                <Fragment>
+                  <AnalyticsControlBar
+
+                    userState={userState}
+                    metric={activeReport.selectedMetric}
+                    onChangeMetric={metric => {
+                      mixpanelTrack('Analytics Switched Metric Selection', {
+                        'Old Metric': activeReport.selectedMetric,
+                        'New Metric': metric,
+                      });
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC,
+                        reportId: activeReport.id,
+                        metric,
+                      });
+                    }}
+                    opportunityCostPerPerson={activeReport.opportunityCostPerPerson}
+                    onChangeOpportunityCostPerPerson={(opportunityCostPerPerson: number) => {
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_OPPORTUNITY_PARAMETERS,
+                        reportId: activeReport.id,
+                        opportunityCostPerPerson,
+                      })
+                    }}
+                    selections={activeReport.query.selections.filter(s => s.type === 'SPACE')}
+                    onChangeSelections={selections => dispatch({
+                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
+                      reportId: activeReport.id,
+                      selections: selections.map(s => ({
+                        type: 'SPACE',
+                        ...s,
+                      })) as Array<QuerySelection>,
+                    })}
+
+                    interval={activeReport.query.interval}
+                    onChangeInterval={interval => dispatch({
+                      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL,
+                      reportId: activeReport.id,
+                      interval,
+                    })}
+
+                    dateRange={activeReport.query.dateRange}
+                    onChangeDateRange={dateRange => {
+                      if (dateRange === null) { return; }
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE,
+                        reportId: activeReport.id,
+                        dateRange,
+                        organizationalWeekStartDay,
+                      });
+                    }}
+
+                    timeFilter={activeReport.query.timeFilter}
+                    onChangeTimeFilter={timeFilter => {
+                      dispatch({
+                        type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_TIME_FILTER,
+                        reportId: activeReport.id,
+                        timeFilter,
+                      })
+                    }}
+
+                    spaces={spaces}
+                    formattedHierarchy={formattedHierarchy}
+
+                    onRequestDataExport={(exportType: AnalyticsDataExportType) => {
+                      if (activeReport.queryResult.status !== ResourceStatus.COMPLETE) return;
+                      if (exportType === AnalyticsDataExportType.BOTH || exportType ===  AnalyticsDataExportType.TIME_SERIES) {
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
+                          datapoints: activeReport.queryResult.data.datapoints,
+                          interval: activeReport.query.interval,
+                          selectedMetric: activeReport.selectedMetric,
+                          hiddenSpaceIds: activeReport.hiddenSpaceIds,
+                        })
+                      }
+                      if (exportType === AnalyticsDataExportType.BOTH || exportType === AnalyticsDataExportType.SUMMARY) {
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
+                          report: activeReport,
+                          spaces: spaces,
+                        })
+                      }
+                    }}
+
+                    saveButtonState={saveButtonState}
+                    onSave={() => {
+                      if (activeReport.isSaved) {
+                        // Report already has been saved so a new name doesn't need to be provided.
+                        updateReport(dispatch, activeReport)
+                      } else {
+                        // Report has not been saved, so prompt the user for a name.
+
+                        // FIXME: The below should be switched to use the new rx-actinos based modal interface,
+                        // point this out in a review!
+                        showModal(dispatch, 'MODAL_PROMPT', {
+                          title: `Save As...`,
+                          placeholder: 'Enter a name for this report',
+                          confirmText: 'Save',
+                          callback: name => {
+                            updateReport(dispatch, {...activeReport, name});
+                          },
+                        });
+                      }
+                    }}
+
+                    reportName={activeReport.name}
+                    onUpdateReportName={(name) => updateReport(dispatch, { ...activeReport, name })}
+
+                    refreshEnabled={activeReport.queryResult.status === ResourceStatus.COMPLETE}
+                    onRefresh={() => dispatch({
+                      type: AnalyticsActionType.ANALYTICS_REPORT_REFRESH,
+                      reportId: activeReport.id,
+                    })}
+                    moreMenuVisible={activeReport.isSaved}
+                  />
+                  <div className={styles.analyticsBody}>
+                    <AnalyticsChart
+                      report={activeReport}
+                      spacesById={spacesById}
+                    />
+                    <AnalyticsTable
+                      spaces={spaces}
+                      analyticsReport={activeReport}
+                      onClickColumnHeader={(column: TableColumn) => {
+                        let direction: SortDirection;
+                        if (column === activeReport.columnSort.column) {
+                          direction = nextSortDirection(activeReport.columnSort.direction);
+                        } else {
+                          direction = nextSortDirection(SortDirection.NONE);
+                        }
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT,
+                          reportId: activeReport.id,
+                          column,
+                          direction,
+                        })
+                      }}
+                      onChangeHiddenSpaceIds={(hiddenSpaceIds) => {
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES,
+                          reportId: activeReport.id,
+                          hiddenSpaceIds,
+                        })
+                      }}
+                    />
+                  </div>
+                </Fragment>
+              ) : (
+                <AnalyticsHome
+                  user={user}
+                  reports={state.data.reports}
+                  recommendedReports={getRecommendedReports(spaces)}
+                  introVisible={introVisible}
+                  // FIXME: I think `isVisible` below can only be false, so this is misleading
+                  onChangeIntroVisible={(isVisible) => {
+                    if (!isVisible) onDismissIntro();
+                  }}
+                  onCreateReport={() => createReport(dispatch)}
+                  onOpenReport={report => dispatch({ type: AnalyticsActionType.ANALYTICS_OPEN_REPORT, report })}
+                  onOpenPartialReport={partialReport => {
+                    mixpanelTrack('Analytics Click Recommended Report', {
+                      'Location': 'Home',
+                      'Recommended Report Name': partialReport.name,
+                    });
+                    openPartialReport(dispatch, partialReport);
+                  }}
+                  onUpdateReportName={(report, name) => updateReport(dispatch, { ...report, name })}
+                  onDeleteReport={report => deleteReport(dispatch, report)}
+                />
+              )}
+            </div>
+          </AppPane>
+        </AppFrame>
+      </AnalyticsFeatureFlagsContext.Provider>
     );
   }
 }

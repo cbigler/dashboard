@@ -30,6 +30,8 @@ function rollupMetricValueForGroupedDatapoints(group: AnalyticsDatapoint[], sele
       return d3Array.max(group, d => d.max) || 0;
     case AnalyticsFocusedMetric.UTILIZATION:
       return d3Array.max(group, d => d.targetUtilization) || 0;
+    case AnalyticsFocusedMetric.OPPORTUNITY:
+      return d3Array.min(group, d => d.opportunity) || 0;
     case AnalyticsFocusedMetric.ENTRANCES:
       return d3Array.sum(group, d => d.entrances) || 0;
     case AnalyticsFocusedMetric.EXITS:
@@ -54,7 +56,7 @@ function getRowsForDailyInterval(datapoints: AnalyticsDatapoint[], selectedMetri
     (d: AnalyticsDatapoint) => d.localBucketDay,
   )
   const rows: DailyDataRow[] = [];
-  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : startCase(selectedMetric);
+  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY ? 'Available Capacity' : startCase(selectedMetric);
   mapping.forEach((groupedByDay, spaceId) => {
     groupedByDay.forEach((group, date) => {
       rows.push({
@@ -75,7 +77,7 @@ function getRowsForNonDailyInterval(datapoints: AnalyticsDatapoint[], selectedMe
     (d: AnalyticsDatapoint) => d.localBucketTime,
   )
   const rows: TimestampedDataRow[] = [];
-  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : startCase(selectedMetric);
+  const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY ? 'Available Capacity' : startCase(selectedMetric);
   mapping.forEach((groupedByDate) => {
     groupedByDate.forEach((groupedByTime) => {
       groupedByTime.forEach((group) => {
@@ -99,7 +101,7 @@ export function exportAnalyticsChartData(inputDatapoints: AnalyticsDatapoint[], 
   const [startDate, endDate] = d3Array.extent(datapoints, d => d.localDay);
   const metricColumnName = formatMetricName(selectedMetric);
 
-  const fileName = `density_time-series_${interval}_${metricColumnName.toLowerCase()}_${startDate}_${endDate}.csv`;
+  const fileName = `density_time-series_${interval}_${metricColumnName.replace(' ', '_').toLowerCase()}_${startDate}_${endDate}.csv`;
 
   let csvData: string;
 

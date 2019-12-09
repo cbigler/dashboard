@@ -28,6 +28,7 @@ export default async function createReport(dispatch) {
     },
     
     selectedMetric: AnalyticsFocusedMetric.MAX,
+    opportunityCostPerPerson: 300,
     lastRunTimestamp: undefined,
     isSaved: false,
     isCurrentlySaving: false,

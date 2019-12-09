@@ -2,11 +2,11 @@ type HexColor = string;
 
 // https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
 export const COLORS: HexColor[] = [
-  '#4e79a7', '#f28e2c',
-  '#e15759', '#76b7b2',
-  '#59a14f', '#edc949',
-  '#af7aa1', '#ff9da7',
-  '#9c755f', '#bab0ab'
+  '#5581FF', '#F4AB4E',
+  '#AB67B5', '#FF624D',
+  '#249F70', '#2749AA',
+  '#C07619', '#7A3A84',
+  '#B4301E', '#09613F'
 ];
 
 function randomInt(max: number): number {

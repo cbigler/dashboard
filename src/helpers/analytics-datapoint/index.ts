@@ -117,7 +117,7 @@ export function processAnalyticsChartData(
 
     switch (interval) {
       case QueryInterval.FIVE_MINUTES: {
-        throw new Error('Hahaha, 5 minutes, hahahaha')
+        throw new Error('5m interval is not available')
       }
       case QueryInterval.FIFTEEN_MINUTES: {
         const minute = timeOfDay.minute;
@@ -177,14 +177,17 @@ export function processAnalyticsChartData(
         localTime,
         localBucketDay,
         localBucketTime,
+        
         min: d.analytics.min,
         max: d.analytics.max,
         entrances: d.analytics.entrances,
         exits: d.analytics.exits,
         events: d.analytics.events,
-        // FIXME: these might be null, and probably should be explicitly handled rather than fallback to 0
-        utilization: d.analytics.utilization || 0,
-        targetUtilization: d.analytics.target_utilization || 0,
+
+        utilization: d.analytics.utilization,
+        targetUtilization: d.analytics.target_utilization,
+
+        opportunity: space.targetCapacity ? space.targetCapacity - d.analytics.max : null
       })
       return processed;
     }, []))

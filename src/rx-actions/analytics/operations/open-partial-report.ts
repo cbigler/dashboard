@@ -27,6 +27,7 @@ export default async function openPartialReport(dispatch: DispatchType, partialR
     },
 
     selectedMetric: AnalyticsFocusedMetric.MAX,
+    opportunityCostPerPerson: partialReport.opportunityCostPerPerson || 300,
     lastRunTimestamp: undefined,
     isSaved: false,
     isCurrentlySaving: false,

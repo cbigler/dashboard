@@ -22,7 +22,7 @@ import { QueryInterval, AnalyticsFocusedMetric, AnalyticsDataExportType } from '
 // point this out in a review!
 import showModal from '../../rx-actions/modal/show';
 
-import { Button, Icons } from '@density/ui';
+import { Button, Icons, InputBox } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { AddButton } from '../analytics-control-bar-utilities';
@@ -35,6 +35,9 @@ type AnalyticsControlBarProps = {
   userState: UserState,
   metric: AnalyticsFocusedMetric,
   onChangeMetric: (metric: AnalyticsFocusedMetric) => void,
+
+  opportunityCostPerPerson: number,
+  onChangeOpportunityCostPerPerson: (cost: number) => void,
 
   selections: Array<AnalyticsSpaceSelection>,
   onChangeSelections: (filters: Array<AnalyticsSpaceSelection>) => void,
@@ -70,6 +73,9 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
   metric,
   onChangeMetric,
 
+  opportunityCostPerPerson,
+  onChangeOpportunityCostPerPerson,
+
   selections,
   onChangeSelections,
 
@@ -104,6 +110,13 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
           value={metric}
           onChange={onChangeMetric}
         />
+        {metric === AnalyticsFocusedMetric.OPPORTUNITY ? (
+          <OpportunityParametersMenu
+            opportunityCostPerPerson={opportunityCostPerPerson}
+            onChangeOpportunityCostPerPerson={onChangeOpportunityCostPerPerson}
+          />
+        ): null}
+        <span className={styles.label}>for</span> 
         <AnalyticsSpaceSelectionBuilder
           selections={selections}
           onChange={onChangeSelections}
@@ -147,6 +160,59 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
       </div>
     </div>
   );
+}
+
+export const OpportunityParametersMenu: React.FC<{
+  opportunityCostPerPerson: number,
+  onChangeOpportunityCostPerPerson: (cost: number) => void,
+}> = function OpportunityParametersMenu({
+  opportunityCostPerPerson,
+  onChangeOpportunityCostPerPerson,
+}) {
+
+  const [selectedCostPerPerson, setSelectedCostPerPerson] = useState<number>(opportunityCostPerPerson)
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+
+  return (
+    <div className={styles.opportunityParameters}>
+      <AnalyticsPopup
+        open={isOpen}
+        onOpen={() => setIsOpen(true)}
+        onClose={() => setIsOpen(false)}
+        target={(
+          <button className={classnames(styles.iconButton, styles.opportunityParametersButton, {[styles.active]: isOpen})}>
+            <Icons.Money />
+          </button>
+        )}
+      >
+        <div className={styles.opportunityPopupInner}>
+
+          <label className={styles.opportunityUnitInputLabel}>
+            <Icons.Money height={20} width={20}/> Person/Desk (Monthly)
+          </label>
+          <InputBox
+            type="number"
+            value={selectedCostPerPerson}
+            label="Foo"
+            onChange={evt => {
+              setSelectedCostPerPerson(evt.currentTarget.value)
+            }}
+          />
+          <p className={styles.opportunityUnitInputDescription}>
+            Edit the dollar amount you spend (per person, per month) to estimate potential savings.
+          </p>
+          <div
+            className={styles.opportunityUnitApplyButton}
+            onClick={() => {
+              onChangeOpportunityCostPerPerson(selectedCostPerPerson);
+              setIsOpen(false);
+            }}
+          >Apply</div>
+        </div>
+      </AnalyticsPopup>
+    </div>
+  )
 }
 
 
@@ -279,7 +345,7 @@ function AnalyticsSpaceSelectionBuilder({
   return (
     <Fragment>
       {selectionsIncludingEmpty.map((selection, index) => (
-        <div className={styles.listItem} aria-label="Space selection">
+        <div aria-label="Space selection">
           <AnalyticsControlBarSpaceSelector
             selection={selection}
             deletable={selections.length > 1 || selection.field !== ''}

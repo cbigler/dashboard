@@ -1,7 +1,6 @@
 import {
   DensitySpace,
   DensitySpaceCountMetrics,
-  DensitySpaceCountBucketIntervalAnalytics,
   DensityReport,
   DensitySpaceTypes,
   DensitySpaceFunction,
@@ -72,12 +71,29 @@ export type AnalyticsDatapoint = {
   localTime: string,
   localBucketDay: string,
   localBucketTime: string,
-} & DensitySpaceCountBucketIntervalAnalytics;
+
+  min: number,
+  max: number,
+  entrances: number,
+  exits: number,
+  events: number,
+
+  utilization: number | null,
+  targetUtilization: number | null,
+
+  // targetCapacity - max
+  opportunity: number | null,
+};
 
 export type AnalyticsMetrics = {
   // FIXME: hacking this for right now to avoid redefining this huge type just for a single snake_case change
   [spaceId: string]: Omit<DensitySpaceCountMetrics, 'target_utilization'> & {
-    target_utilization: DensitySpaceCountMetrics['target_utilization']
+    target_utilization: DensitySpaceCountMetrics['target_utilization'],
+    
+    // computed metrics
+    peakOpportunity: number | null,
+    averageOpportunity: number | null,
+    // normalizedOpportunity: number | null,
   }
 } | AnalyticsMetricsEmpty;
 
@@ -91,6 +107,12 @@ export enum AnalyticsFocusedMetric {
   EVENTS = 'events',
   MAX = 'max', // max occupancy/count
   UTILIZATION = 'utilization',
+  OPPORTUNITY = 'opportunity',
+}
+
+export enum AnalyticsMetricOpportunityUnit {
+  PERSONS = 'persons',
+  COST = 'cost',
 }
 
 export type AnalyticsReport = {
@@ -102,6 +124,7 @@ export type AnalyticsReport = {
   columnSort: TableColumnSort,
   hiddenSpaceIds: Array<DensitySpace['id']>,
   selectedMetric: AnalyticsFocusedMetric,
+  opportunityCostPerPerson: number,
   lastRunTimestamp?: string,
   isSaved: boolean,
   isCurrentlySaving: boolean,
@@ -124,6 +147,7 @@ export type StoredAnalyticsReport = Omit<DensityReport, 'type' | 'settings'> & {
   settings: {
     query: SpaceCountQuery,
     selectedMetric: AnalyticsFocusedMetric,
+    opportunityCostPerPerson: number,
   },
 };
 
@@ -158,6 +182,12 @@ export enum TableColumn {
   METRIC_PEAK = 'Peak',
   METRIC_AVERAGE = 'Average',
   METRIC_TOTAL = 'Total',
+  METRIC_OPPORTUNITY = 'Min. Avail. Capacity',
+  METRIC_AVERAGE_OPPORTUNITY = 'Max Avail. Capacity',
+  METRIC_OPPORTUNITY_COST = 'Min. Monthly Pot. Savings ($',
+  METRIC_AVERAGE_OPPORTUNITY_COST = 'Max Monthly Pot. Savings ($)',
+  METRIC_PEAK_UTILIZATION = 'Peak Utilization',
+  METRIC_AVERAGE_UTILIZATION = 'Avg. Utilization',
 }
 
 export enum AnalyticsDataExportType {

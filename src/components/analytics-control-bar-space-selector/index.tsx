@@ -93,7 +93,7 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
         }, null)}
         {filter.values.length > 2 ? (
           <Fragment>
-            , and{' '}
+            , <span className={styles.label}>and</span> {' '}
             <QueryTextBold>
               {filter.values.length-2} {filter.values.length-2 === 1 ? 'other' : 'others'}
             </QueryTextBold>
@@ -105,21 +105,21 @@ function AnalyticsSpaceSelectorText({ filter, formattedHierarchy }) {
     case 'function':
       text = (
         <Fragment>
-          <QueryTextBold>Function:</QueryTextBold> {valueList}
+          <QueryTextBold>Function:&nbsp;</QueryTextBold> {valueList}
         </Fragment>
       );
       break;
     case 'space_type':
       text = (
         <Fragment>
-          <QueryTextBold>Type:</QueryTextBold> {valueList}
+          <QueryTextBold>Type:&nbsp;</QueryTextBold> {valueList}
         </Fragment>
       );
       break;
     case 'id':
       text = (
         <Fragment>
-          <QueryTextBold>Space:</QueryTextBold> {valueList}
+          <QueryTextBold>Space:&nbsp;</QueryTextBold> {valueList}
         </Fragment>
       );
       break;

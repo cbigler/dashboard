@@ -6,6 +6,7 @@ import { AnalyticsFocusedMetric } from '../../types/analytics';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
 import styles from './styles.module.scss';
 import { findLeast } from '../../helpers/array-utilities';
+import { commaFormat } from '../../helpers/format-number';
 
 
 type TooltipEntry = {
@@ -97,12 +98,14 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
 }) {
 
   // scoped helper functions
-  const formatMetricValue = (value: number) => {
-    const rounded = Math.round(value);
-    if (selectedMetric === AnalyticsFocusedMetric.UTILIZATION) {
-      return `${rounded}%`;
+  const formatMetricValue = (metricValue: number) => {
+    const formattedValue = commaFormat(Math.round(metricValue));
+    switch (selectedMetric) {
+      case AnalyticsFocusedMetric.UTILIZATION:
+        return `${formattedValue}%`;
+      default:
+        return formattedValue;
     }
-    return rounded.toString(10);
   }
 
   const entries: TooltipEntry[] = datapoints.map(datapoint => {

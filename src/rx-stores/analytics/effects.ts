@@ -19,6 +19,7 @@ import { realizeDateRange, getBrowserLocalTimeZone } from '../../helpers/space-t
 import { runQuery } from '.';
 import { DensitySpace } from '../../types';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
+import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
 import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
 
@@ -189,11 +190,14 @@ export function registerSideEffects(
       return m;
     })()
 
+    const datapoints = processAnalyticsChartData(chartData, activeReport.query.interval, activeReport.query.timeFilter, spaceLookup);
+    const metrics = processAnalyticsTableData(tableData, datapoints, activeReport.query.interval, spaceLookup);
+
     dispatch({
       type: AnalyticsActionType.ANALYTICS_QUERY_COMPLETE,
       reportId: activeReport.id,
-      datapoints: processAnalyticsChartData(chartData, activeReport.query.interval, activeReport.query.timeFilter, spaceLookup),
-      metrics: tableData,
+      datapoints,
+      metrics,
       selectedSpaceIds: selectedSpaces.map(i => i.id),
     });
   });

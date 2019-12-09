@@ -43,6 +43,7 @@ type ChartSegment = ChartSegmentMultipleDays | ChartSegmentTimesOfSingleDay;
 
 type ChartData = {
   days: string[],
+  minMetricValue: number,
   maxMetricValue: number,
   // Store which dates in the dataset are the start of a new year and month...
   // This will be used to label years/months
@@ -70,6 +71,7 @@ function computeChartData(
   data: AnalyticsDatapoint[],
   interval: QueryInterval,
   selectedMetric: AnalyticsFocusedMetric,
+  opportunityCostPerPerson: number,
   hiddenSpaceIds: string[],
 ): ChartData {
 
@@ -98,6 +100,8 @@ function computeChartData(
             return d3Array.max(v, d => d.max) || 0;
           case AnalyticsFocusedMetric.UTILIZATION:
             return d3Array.max(v, d => d.targetUtilization) || 0;
+          case AnalyticsFocusedMetric.OPPORTUNITY:
+            return d3Array.min(v, d => d.opportunity) || 0;
           case AnalyticsFocusedMetric.ENTRANCES:
             return d3Array.sum(v, d => d.entrances) || 0;
           case AnalyticsFocusedMetric.EXITS:
@@ -116,11 +120,13 @@ function computeChartData(
     const series: ChartSegmentMultipleDays['series'] = [];
     const localBucketDaysWithData = new Set<string>();
     let maxMetricValue = 0;
+    let minMetricValue = 0;
     dataset.forEach((dayValues: Map<string, number>, spaceId: string) => {
       if (hiddenSpaceIdsSet.has(spaceId)) return;
       const data: ChartSegmentMultipleDays['series'][number]['data'] = [];
       dayValues.forEach((value: number, dateString: string) => {
         
+        minMetricValue = value < minMetricValue ? value : minMetricValue;
         maxMetricValue = value > maxMetricValue ? value : maxMetricValue;
         localBucketDaysWithData.add(dateString);
         handleStartDates(dateString);
@@ -144,6 +150,7 @@ function computeChartData(
         days,
         series,
       }],
+      minMetricValue,
       maxMetricValue,
       yearStartDates: Array.from(yearStartDatesMap.values()),
       monthStartDates: Array.from(monthStartDatesMap.values()),
@@ -159,6 +166,8 @@ function computeChartData(
             return d3Array.max(v, d => d.max) || 0;
           case AnalyticsFocusedMetric.UTILIZATION:
             return d3Array.max(v, d => d.targetUtilization) || 0;
+          case AnalyticsFocusedMetric.OPPORTUNITY:
+            return d3Array.min(v, d => d.opportunity) || 0;
           case AnalyticsFocusedMetric.ENTRANCES:
             return d3Array.sum(v, d => d.entrances) || 0;
           case AnalyticsFocusedMetric.EXITS:
@@ -177,6 +186,7 @@ function computeChartData(
 
     const days: string[] = [];
     const segments: ChartSegmentTimesOfSingleDay[] = [];
+    let minMetricValue = 0;
     let maxMetricValue = 0;
     dataset.forEach((dayBreakdown: Map<string, Map<string, number>>, localBucketDay: string) => {
       days.push(localBucketDay);
@@ -187,7 +197,7 @@ function computeChartData(
         if (hiddenSpaceIdsSet.has(spaceId)) return;
         const data: ChartSegmentTimesOfSingleDay['series'][number]['data'] = [];
         spaceBreakdown.forEach((value: number, localBucketTime: string) => {
-          
+          minMetricValue = value < minMetricValue ? value : minMetricValue;
           maxMetricValue = value > maxMetricValue ? value : maxMetricValue;
           dayTimesUsed.add(localBucketTime);
           
@@ -214,6 +224,7 @@ function computeChartData(
     return {
       days,
       segments,
+      minMetricValue,
       maxMetricValue,
       yearStartDates: Array.from(yearStartDatesMap.values()),
       monthStartDates: Array.from(monthStartDatesMap.values()),
@@ -259,6 +270,7 @@ const Chart: React.FC<{
   outerHeight: number,
   interval: QueryInterval,
   selectedMetric: AnalyticsFocusedMetric,
+  opportunityCostPerPerson: number,
   hiddenSpaceIds: string[]
   datapoints: AnalyticsDatapoint[],
   spacesById: ReadonlyMap<string, DensitySpace>,
@@ -267,6 +279,7 @@ const Chart: React.FC<{
   outerHeight,
   interval,
   selectedMetric,
+  opportunityCostPerPerson,
   hiddenSpaceIds,
   datapoints,
   spacesById,
@@ -274,18 +287,26 @@ const Chart: React.FC<{
 
   const [mousePosition, setMousePosition] = React.useState<{ x: number, y: number } | null>(null);
 
+  // TODO: probably need to memoize this result
+  const chartData = computeChartData(datapoints, interval, selectedMetric, opportunityCostPerPerson, hiddenSpaceIds);
+
+  const additionalSpaceNeededForYAxisLabels = (() => {
+    const lengthOfMin = String(chartData.minMetricValue).length;
+    const lengthOfMax = String(chartData.maxMetricValue).length;
+    const worstCase = Math.max(lengthOfMin, lengthOfMax);
+    const additionalCharacters = Math.max(0, worstCase - 2);
+    return 8 * additionalCharacters;
+  })()
+
   const padding = {
     top: 40,
     right: 40,
     bottom: 80,
-    left: 56,
+    left: 54 + additionalSpaceNeededForYAxisLabels,
   }
-
   const width = outerWidth - (padding.left + padding.right);
   const height = outerHeight - (padding.top + padding.bottom);
 
-  // TODO: probably need to memoize this result
-  const chartData = computeChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
 
   const whereIsADayPoint = makeDayPointScale(chartData.days, width);
   const whereDoesADayRegionStart = makeDayRegionScale(chartData.days, width);
@@ -387,13 +408,18 @@ const Chart: React.FC<{
   // always show at least [0, 10], or [0, 100] if UTILIZATION is the metric
   const yScaleMinUpperBound = selectedMetric === AnalyticsFocusedMetric.UTILIZATION ? 100 : 10;
   const yScale = d3Scale.scaleLinear()
-    .domain([0, Math.max(yScaleMinUpperBound, chartData.maxMetricValue || 0)])
+    .domain([chartData.minMetricValue, Math.max(yScaleMinUpperBound, chartData.maxMetricValue || 0)])
     .range([height, 0])
     // this will extend the domain to round-ish values so that the axis reads better
     .nice(TARGET_NUM_Y_TICKS);
 
   const yAxis = ((yScale: d3Scale.ScaleLinear<number, number>) => {
     const ticks = yScale.ticks(TARGET_NUM_Y_TICKS);
+    const suffix = selectedMetric === AnalyticsFocusedMetric.UTILIZATION ? '%' : '';
+    const formatLabel = (value: number) => {
+      const commasDelimitedNumber = String(Math.ceil(value).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+      return `${commasDelimitedNumber}${suffix}`;
+    }
     return (
       <g>
         {ticks.map(tick => {
@@ -405,8 +431,8 @@ const Chart: React.FC<{
                 y1={y}
                 x2={width + 40}
                 y2={y}
-                strokeDasharray="2 4"
-                stroke="#E1E4E8"
+                strokeDasharray={tick === 0 ? '4 2' : '2 4'}
+                stroke={tick === 0 ? '#C1C4C8' : '#E1E4E8'}
               />
               <text
                 x={-16}
@@ -415,7 +441,7 @@ const Chart: React.FC<{
                 fill={'#6A737D'}
                 dominantBaseline="middle"
                 textAnchor="end"
-              >{tick}</text>
+              >{formatLabel(tick)}</text>
             </g>
           )
         })}
@@ -937,6 +963,7 @@ const AnalyticsChart: React.FC<{
               outerHeight={outerHeight}
               interval={report.query.interval}
               selectedMetric={report.selectedMetric}
+              opportunityCostPerPerson={report.opportunityCostPerPerson}
               hiddenSpaceIds={report.hiddenSpaceIds}
               datapoints={report.queryResult.data.datapoints}
               spacesById={spacesById}

@@ -1,10 +1,14 @@
 @import "@density/ui/variables/colors.scss";
 
 .analyticsIntervalSelector {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 20px;
   white-space: nowrap;
   margin-right: 16px;
 }
 .analyticsIntervalLabel {
-  color: $gray;
+  color: $grayDark;
   padding-right: 16px;
 }
