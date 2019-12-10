@@ -122,7 +122,7 @@ export class AccountRegistration extends React.Component<any, any> {
                   className={styles.accountRegistrationCheckbox}
                   onChange={e => this.setState({coreConsent: e.target.checked})}
                 />
-                <p>I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/msa" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</p>
+                <p>I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/terms-of-sale" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</p>
               </label>
     
               {/* <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-marketing-consent">

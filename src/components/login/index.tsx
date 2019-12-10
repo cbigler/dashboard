@@ -389,7 +389,7 @@ export class Login extends React.Component<any, any> {
 
         <p className={styles.loginTermsAndPrivacy}>
           <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
-          and <a href="https://www.density.io/docs/msa.pdf" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
+          and <a href="https://www.density.io/terms-of-sale/" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
         </p>
       </div>
       {/* Login Section */}
