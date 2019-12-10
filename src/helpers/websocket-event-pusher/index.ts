@@ -41,7 +41,6 @@ export default class WebsocketEventPusher extends EventEmitter {
     this.emit('connectionStateChange', this.connectionState);
 
     this.socket = null;
-    this.connect()
   }
 
   async connect(iteration=0) {

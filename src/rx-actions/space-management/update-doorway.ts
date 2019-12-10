@@ -7,9 +7,6 @@ import formDoorwayUpdate from './form-doorway-update';
 
 import core from '../../client/core';
 import uploadMedia from '../../helpers/media-files';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { DensityDoorway } from '../../types';
-import { fetchObject } from '../../helpers/fetch-all-objects';
 
 export const SPACE_MANAGEMENT_UPDATE_DOORWAY = 'SPACE_MANAGEMENT_UPDATE_DOORWAY';
 
@@ -44,14 +41,14 @@ export async function uploadDoorwayImages(dispatch, doorwayId, item) {
       await hideToast(dispatch, id);
       showToast(dispatch, {
         type: 'error',
-        text: 'Processing image failed',
+        text: 'Error processing image(s)',
       });
       return false;
     }
 
     await hideToast(dispatch, id);
 
-    const imagesThatFailedProcessing = mediaUploadResults.filter(i => i.media.length === 0);
+    const imagesThatFailedProcessing = mediaUploadResults.filter(i => i instanceof Error || i.media.length === 0);
     if (imagesThatFailedProcessing.length > 0) {
       showToast(dispatch, {
         type: 'error',
@@ -59,20 +56,6 @@ export async function uploadDoorwayImages(dispatch, doorwayId, item) {
       });
       return false;
     }
-
-    // After uploading, refetch the doorway to get the latest doorway information with the images
-    // inside.
-    let doorwayResponse;
-    try {
-      doorwayResponse = await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, {
-        params: { environment: true }
-      });
-    } catch (err) {
-      showToast(dispatch, {type: 'error', text: 'Error fetching updated doorway'});
-      return false;
-    }
-
-    dispatch(pushDoorway(objectSnakeToCamel<DensityDoorway>(doorwayResponse.data)));
   }
   return true;
 }

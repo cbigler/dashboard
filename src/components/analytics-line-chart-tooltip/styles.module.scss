@@ -26,7 +26,7 @@
   border-bottom: 1px solid #0D183A;
 }
 
-.hoverOverlayActiveMetric {
+.hoverOverlayDatetimeLabel {
   color: #0D183A;
 }
 
@@ -69,7 +69,7 @@
 .hoverOverlayMetric {
   flex-grow: 0;
   flex-shrink: 0;
-  width: 60px;
+  width: 80px;
   text-align: right;
   color: #0D183A;
   opacity: 0.5;

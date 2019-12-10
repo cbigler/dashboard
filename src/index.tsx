@@ -20,7 +20,7 @@ import './styles.scss';
 import userSet from './rx-actions/user/set';
 
 import objectSnakeToCamel from './helpers/object-snake-to-camel/index';
-import WebsocketEventPusher from './helpers/websocket-event-pusher/index';
+import WebsocketEventPusher, { CONNECTION_STATES } from './helpers/websocket-event-pusher/index';
 import mixpanelTrack from './helpers/tracking/mixpanel-track';
 import unsafeHandleWindowResize from './helpers/unsafe-handle-window-resize';
 import unsafeNavigateToLandingPage from './helpers/unsafe-navigate-to-landing-page/index';
@@ -56,6 +56,7 @@ import routeTransitionDashboardDetail from './rx-actions/route-transition/dashbo
 import routeTransitionDashboardEdit from './rx-actions/route-transition/dashboard-edit';
 
 import routeTransitionAdminSpaceMappings from './rx-actions/route-transition/admin-space-mappings';
+import routeTransitionAdminBrivoMappings from './rx-actions/route-transition/admin-brivo-mappings';
 import routeTransitionAdminIntegrations from './rx-actions/route-transition/admin-integrations';
 import routeTransitionAdminIntegrationsTeem from './rx-actions/route-transition/admin-integrations-teem';
 import routeTransitionAdminIntegrationsServiceFailure from './rx-actions/route-transition/admin-integrations-service-failure';
@@ -68,7 +69,7 @@ import routeTransitionAdminDeviceStatus from './rx-actions/route-transition/admi
 import routeTransitionAdminLocations from './rx-actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './rx-actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './rx-actions/route-transition/admin-locations-new';
-import { AnalyticsActionType } from './types/analytics';
+import { AnalyticsActionType } from './rx-actions/analytics';
 
 import sessionTokenSet from './rx-actions/session-token/set';
 import incrementResizeCounter from './rx-actions/miscellaneous/increment-resize-counter';
@@ -87,6 +88,8 @@ import { configureClients } from './helpers/unsafe-configure-app';
 import SessionTokenStore from './rx-stores/session-token';
 import { SessionTokenState } from './types/session-token';
 import { rxDispatch } from './rx-stores';
+import ActivePageStore, { ActivePage } from './rx-stores/active-page';
+import { combineLatest } from 'rxjs/operators';
 
 configureClients();
 
@@ -191,7 +194,10 @@ router.addRoute('account/forgot-password/:token', async (token) => { (rxDispatch
 
 // Advanced account management (Administration)
 router.addRoute('admin/integrations/:service/space-mappings', async (service) => { routeTransitionAdminSpaceMappings(rxDispatch, service) });
+router.addRoute('admin/integrations/brivo/doorway-mappings', async (service) => { routeTransitionAdminBrivoMappings(rxDispatch) });
 router.addRoute('admin/integrations', async () => await routeTransitionAdminIntegrations(rxDispatch));
+router.addRoute('admin/integrations/brivo/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('admin/integrations/brivo/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
 router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
 router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
 router.addRoute('admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
@@ -296,11 +302,16 @@ preRouteAuthentication().then(async () => await router.handle());
 // ----------------------------------------------------------------------------
 const eventSource = new WebsocketEventPusher();
 
-// Reconnect to the socket when the token changes.
+// Connect to the socket whenever the token changes AND user is on a "live" page.
 let currentToken: SessionTokenState = null;
-SessionTokenStore.subscribe(value => {
-  if (value !== currentToken) {
-    currentToken = value;
+let onLivePage: boolean = false;
+SessionTokenStore.pipe(combineLatest(ActivePageStore)).subscribe(([token, page]) => {
+  onLivePage = [ActivePage.LIVE_SPACE_LIST, ActivePage.LIVE_SPACE_DETAIL].indexOf(page) > -1;
+  if (!onLivePage && eventSource.connectionState !== CONNECTION_STATES.CLOSED) {
+    eventSource.disconnect();
+  }
+  if (onLivePage && currentToken !== token) {
+    currentToken = token;
     eventSource.connect();
   }
 });
@@ -363,7 +374,7 @@ setInterval(async () => {
 handleVisibilityChange(hidden => {
   if (hidden) {
     eventSource.disconnect();
-  } else {
+  } else if (onLivePage) {
     eventSource.connect();
   }
 });

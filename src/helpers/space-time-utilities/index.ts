@@ -4,8 +4,15 @@ import 'moment-timezone';
 import { mod } from '../math';
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
-import { DaysOfWeek } from '../../types';
+import { DayOfWeek } from '../../types/datetime';
 import { QueryInterval } from '../../types/analytics';
+
+
+export function getBrowserLocalTimeZone() {
+   // This result will be cached
+   // See: https://momentjs.com/timezone/docs/#/using-timezones/guessing-user-timezone/
+  return moment.tz.guess();
+}
 
 // ----------------------------------------------------------------------------
 // DATE STRING RELATED OPERATIONS
@@ -140,7 +147,7 @@ export const DATE_RANGES: { [key: string]: RelativeDateRange } = {
   },
 };
 
-const DAYS_OF_WEEK: Array<DaysOfWeek> = [
+const DAYS_OF_WEEK: Array<DayOfWeek> = [
   'Sunday',
   'Monday',
   'Tuesday',
@@ -153,7 +160,7 @@ const DAYS_OF_WEEK: Array<DaysOfWeek> = [
 export function realizeDateRange(
   dateRange: DateRange,
   timeZone: string,
-  opts: { organizationalWeekStartDay?: DaysOfWeek, now?: moment.Moment } = {},
+  opts: { organizationalWeekStartDay?: DayOfWeek, now?: moment.Moment } = {},
 ): {startDate: moment.Moment, endDate: moment.Moment} {
   const organizationalWeekStartDay = opts.organizationalWeekStartDay || 'Sunday';
   const now = opts.now || moment.tz(timeZone);
@@ -174,7 +181,7 @@ export function realizeDateRange(
 export function realizeRelativeDuration(
   relativeDuration: RelativeDuration,
   now: moment.Moment,
-  organizationalWeekStartDay: DaysOfWeek,
+  organizationalWeekStartDay: DayOfWeek,
 ): moment.Moment {
   let timestamp = now.clone().add(relativeDuration.magnitude, relativeDuration.unit);
   

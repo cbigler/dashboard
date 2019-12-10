@@ -200,8 +200,8 @@ type AdminLocationsEditProps = {
 const SPACE_TYPE_TO_NAME = {
   campus: 'Campus',
   building: 'Building',
-  floor: 'Level',
-  space: 'Room',
+  floor: 'Floor',
+  space: 'Space',
 };
 
 class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {

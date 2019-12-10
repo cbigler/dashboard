@@ -1,13 +1,19 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment } from 'react';
+import * as d3Array from 'd3-array';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics } from '../../types';
+import { DensitySpaceTypes, DensitySpace, DensitySpaceCountMetrics, DensitySpaceFunction } from '../../types';
+import getInObject from 'lodash/get';
+
 import {
   ResourceStatus,
   AnalyticsFocusedMetric,
   QueryInterval,
+  AnalyticsReport,
+  TableColumn,
+  TableColumnSort,
+  SortDirection,
 } from '../../types/analytics';
-import { formatSpaceFunction } from '../../helpers/space-function-choices';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
 import { ascending, descending } from '../../helpers/natural-sorting';
 
@@ -15,31 +21,162 @@ import {
   Icons,
   ListView,
   ListViewColumn,
-  ListViewColumnSpacer,
-  getNextSortDirection,
 } from '@density/ui';
 import colorVariables from '@density/ui/variables/colors.json';
 import Checkbox from '../checkbox';
+import { getTableValues } from '../../helpers/analytics-data-export/table';
+import { commaFormat } from '../../helpers/format-number';
+import startCase from 'lodash/startCase';
 
-type TableDataItem = {
+
+export type TableDataItem = {
   space: DensitySpace,
   isVisible: boolean,
-  metricData: DensitySpaceCountMetrics,
+  metricData: DensitySpaceCountMetrics | {},
 };
 
-enum SortDirection {
-  ASCENDING = 'asc',
-  DESCENDING = 'desc',
-  NONE = 'none',
+
+
+function getTableColumnHeaderText(tableColumn: TableColumn): string {
+  switch (tableColumn) {
+    case TableColumn.METRIC_OPPORTUNITY:
+      return 'Min. Avail. Capacity';
+    case TableColumn.METRIC_AVERAGE_OPPORTUNITY:
+      return 'Avg. Avail. Capacity';
+    case TableColumn.METRIC_OPPORTUNITY_COST:
+      return 'Min. Monthly Pot. Savings ($)';
+    case TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST:
+      return 'Avg. Monthly Pot. Savings ($)';
+    default:
+      // for now, the enum value will be used as the header text in most cases
+      return String(tableColumn);
+  }
 }
 
-type SortColumn = string | null;
-type SortFunction = (a: any, b: any) => number;
 
-const INACTIVE_CHEVRON_COLOR = colorVariables.gray,
-      ACTIVE_CHEVRON_COLOR = colorVariables.grayCinder;
+const SortIcon: React.FC<{
+  column: TableColumn,
+  columnSort: TableColumnSort,
+}> = function SortIcon({
+  column,
+  columnSort,
+}) {
+  const isSortEnabled = columnSort.column === column && columnSort.direction !== SortDirection.NONE;
+  const sortIconColor = isSortEnabled ? ACTIVE_CHEVRON_COLOR : INACTIVE_CHEVRON_COLOR;
+  return columnSort.direction === SortDirection.DESCENDING || !isSortEnabled ? (
+    <Icons.ChevronDown color={sortIconColor} />
+  ) : (
+    <Icons.ChevronUp color={sortIconColor} />
+  )
+}
 
-function formatSpaceType(spaceType: DensitySpaceTypes) {
+export function getTableColumnKeys(selectedMetric: AnalyticsFocusedMetric) {
+  switch (selectedMetric) {
+    case AnalyticsFocusedMetric.MAX:
+    case AnalyticsFocusedMetric.UTILIZATION:
+      return [
+        TableColumn.SPACE_NAME,
+        TableColumn.SPACE_LOCATION,
+        TableColumn.SPACE_TYPE,
+        TableColumn.SPACE_FUNCTION,
+        TableColumn.SPACE_CAPACITY,
+        TableColumn.METRIC_PEAK,
+        TableColumn.METRIC_AVERAGE,
+        // <- no METRIC_TOTAL column for Occupancy metrics
+      ];
+    case AnalyticsFocusedMetric.ENTRANCES:
+    case AnalyticsFocusedMetric.EXITS:
+    case AnalyticsFocusedMetric.EVENTS:
+      return [
+        TableColumn.SPACE_NAME,
+        TableColumn.SPACE_LOCATION,
+        TableColumn.SPACE_TYPE,
+        TableColumn.SPACE_FUNCTION,
+        TableColumn.SPACE_CAPACITY,
+        TableColumn.METRIC_PEAK,
+        TableColumn.METRIC_AVERAGE,
+        TableColumn.METRIC_TOTAL,
+      ];
+    case AnalyticsFocusedMetric.OPPORTUNITY:
+      return [
+        TableColumn.SPACE_NAME,
+        TableColumn.SPACE_LOCATION,
+        TableColumn.SPACE_CAPACITY,
+        TableColumn.METRIC_PEAK_UTILIZATION,
+        TableColumn.METRIC_AVERAGE_UTILIZATION,
+        TableColumn.METRIC_OPPORTUNITY,
+        TableColumn.METRIC_AVERAGE_OPPORTUNITY,
+        TableColumn.METRIC_OPPORTUNITY_COST,
+        TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST,
+      ]
+  }
+}
+
+export type ColumnKey = ReturnType<typeof getTableColumnKeys>[number];
+export type RowData = {
+  [TableColumn.SPACE_NAME]: string,
+  [TableColumn.SPACE_LOCATION]: string | null,
+  [TableColumn.SPACE_TYPE]: string | null,
+  [TableColumn.SPACE_FUNCTION]: string | null,
+  [TableColumn.SPACE_CAPACITY]: number | null,
+  [TableColumn.METRIC_PEAK]: number | null | undefined,
+  [TableColumn.METRIC_AVERAGE]: number | null | undefined,
+  [TableColumn.METRIC_TOTAL]: number | null | undefined,
+  [TableColumn.METRIC_OPPORTUNITY]: number | null | undefined,
+  [TableColumn.METRIC_AVERAGE_OPPORTUNITY]: number | null | undefined,
+  [TableColumn.METRIC_OPPORTUNITY_COST]: number | null | undefined,
+  [TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]: number | null | undefined,
+  [TableColumn.METRIC_PEAK_UTILIZATION]: number | null | undefined,
+  [TableColumn.METRIC_AVERAGE_UTILIZATION]: number | null | undefined,
+  // FIXME: not great...
+  spaceId: string,
+  isChecked: boolean,
+}
+
+function getSortFunction(columnSort: TableColumnSort) {
+  const unsorted = () => 0;
+  const { column } = columnSort;
+  if (column === null) return unsorted;
+  const accessor = (row: RowData): number | string | null => getInObject(row, column, null);
+  switch (columnSort.direction) {
+    case SortDirection.NONE:
+      return unsorted;
+    case SortDirection.ASCENDING:
+      return (a: RowData, b: RowData) => ascending(accessor(a), accessor(b));
+    case SortDirection.DESCENDING:
+      return (a: RowData, b: RowData) => descending(accessor(a), accessor(b));
+  }
+}
+
+export function computeTableData(analyticsReport: AnalyticsReport, selectedSpaces: DensitySpace[], columnSort: TableColumnSort) {
+  // Skip rendering the table if the analytics query has not been loaded.
+  if (analyticsReport.queryResult.status !== ResourceStatus.COMPLETE) {
+    return null;
+  }
+
+  const tableData: Array<TableDataItem> = selectedSpaces.map(space => {
+    if (analyticsReport.queryResult.status !== ResourceStatus.COMPLETE) throw new Error('Should not be possible');
+    return {
+      space,
+      isVisible: !analyticsReport.hiddenSpaceIds.includes(space.id),
+      metricData: analyticsReport.queryResult.data.metrics[space.id],
+    }
+  });
+
+  const { opportunityCostPerPerson } = analyticsReport;
+
+  const data = getTableValues(tableData, analyticsReport.selectedMetric, opportunityCostPerPerson);
+
+  return {
+    ...data,
+    rows: data.rows.sort(getSortFunction(columnSort)),
+  }
+}
+
+const ACTIVE_CHEVRON_COLOR = colorVariables.grayCinder;
+const INACTIVE_CHEVRON_COLOR = colorVariables.gray;
+
+export function formatSpaceType(spaceType: DensitySpaceTypes) {
   switch (spaceType) {
   case DensitySpaceTypes.BUILDING:
     return 'Building';
@@ -52,6 +189,11 @@ function formatSpaceType(spaceType: DensitySpaceTypes) {
   default:
     return spaceType;
   }
+}
+
+export function formatSpaceFunction(spaceFunction: DensitySpaceFunction | null) {
+  if (spaceFunction == null) return '--';
+  return startCase(spaceFunction);
 }
 
 function formatQueryInterval(interval: QueryInterval): string {
@@ -67,30 +209,33 @@ function formatQueryInterval(interval: QueryInterval): string {
   }
 }
 
-function sum(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return tableData.map(extractor).reduce((a, b) => a + b);
-}
+type AccessorFunction = (d: TableDataItem) => number | null | undefined;
 
-function average(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return tableData.map(extractor).reduce((a, b) => a + b) / tableData.length;
-}
+export const sum = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.sum(tableData, accessor);
+export const average = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.mean(tableData, accessor);
+export const max = (tableData: TableDataItem[], accessor: AccessorFunction) => d3Array.max(tableData, accessor);
 
-function max(tableData: Array<TableDataItem>, extractor: (x: TableDataItem) => number): number {
-  return Math.max(...tableData.map(extractor));
-}
 
-function Header({label, value, denominator='', spaceSortDirection, spaceSortColumn, right=false}) {
-  const chevronColor = spaceSortColumn === label && spaceSortDirection !== SortDirection.NONE ? ACTIVE_CHEVRON_COLOR : INACTIVE_CHEVRON_COLOR;
-  const chevronFlipped = spaceSortColumn === label && spaceSortDirection === SortDirection.ASCENDING
+const Header: React.FC<{
+  label: string,
+  value: number | string,
+  column: TableColumn,
+  columnSort: TableColumnSort,
+  denominator?: string,
+  right?: boolean,
+}> = function Header({
+  label,
+  value,
+  column,
+  columnSort,
+  denominator='',
+  right=false
+}) {
   return (
     <div className={classnames(styles.header, {[styles.right]: right})}>
       <span className={styles.headerLabel}>
         {label}
-        {chevronFlipped ? (
-          <Icons.ChevronUp color={chevronColor} />
-        ) : (
-          <Icons.ChevronDown color={chevronColor} />
-        )}
+        {<SortIcon column={column} columnSort={columnSort} />}
       </span>
       <div className={styles.headerFakeRowText}>
         {value}
@@ -102,7 +247,7 @@ function Header({label, value, denominator='', spaceSortDirection, spaceSortColu
   );
 }
 
-function getHighestAncestorName(space: DensitySpace): string {
+export function getHighestAncestorName(space: DensitySpace): string {
   if (space.ancestry.length > 0) {
     return space.ancestry[space.ancestry.length-1].name;
   } else {
@@ -111,50 +256,52 @@ function getHighestAncestorName(space: DensitySpace): string {
   }
 }
 
-export default function AnalyticsTable({
+const AnalyticsTable: React.FC<{
+  spaces: DensitySpace[],
+  analyticsReport: AnalyticsReport,
+  onClickColumnHeader: (column: TableColumn) => void,
+  onChangeHiddenSpaceIds: (spaceIds: string[]) => void,
+}> = function AnalyticsTable({
   spaces,
   analyticsReport,
-
+  onClickColumnHeader,
   onChangeHiddenSpaceIds,
 }) {
-  const [sorting, setSorting] = useState<[SortDirection, SortColumn, SortFunction]>([SortDirection.NONE, null, () => 0])
-  const [spaceSortDirection, spaceSortColumn, spaceSortFunction] = sorting;
 
-  // Skip rendering the table if the analytics query has not been loaded.
-  if (analyticsReport.queryResult.status !== ResourceStatus.COMPLETE) {
-    return null;
-  }
+  if (analyticsReport.queryResult.status !== ResourceStatus.COMPLETE) return null;
 
-  const selectedSpaces: Array<DensitySpace> = analyticsReport.queryResult.data.selectedSpaceIds
+  const { columnSort } = analyticsReport;
+
+  const selectedSpaces = analyticsReport.queryResult.data.selectedSpaceIds
     .map(id => spaces.find(space => space.id === id))
-    .filter(space => Boolean(space))
+    .filter(space => Boolean(space)) as Array<DensitySpace>
 
-  const tableData: Array<TableDataItem> = selectedSpaces.map(space => ({
-    space,
-    isVisible: !analyticsReport.hiddenSpaceIds.includes(space.id),
-    metricData: analyticsReport.queryResult.data.metrics[space.id],
-  })).sort(spaceSortFunction);
+  // Compute the table from the report
+  const tableData = computeTableData(analyticsReport, selectedSpaces, columnSort);
+  
+  // Render nothing if the data is not ready or invalid
+  if (tableData === null) return null;
 
   const formatMetricNumber = (n: any) => {
-    if (typeof n === 'number') {
-      return String(Math.ceil(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    if (typeof n === 'number' && !isNaN(n)) {
+      return commaFormat(n);
     } else {
       return '--';
     }
   };
 
-  function changeSpaceVisibility(space, visible) {
+  function changeSpaceVisibility(spaceId: string, visible: boolean) {
     const hiddenSpaceIdsWithoutSpace = (
-      analyticsReport.hiddenSpaceIds.filter(id => id !== space.id)
+      analyticsReport.hiddenSpaceIds.filter(id => id !== spaceId)
     );
     if (visible) {
       onChangeHiddenSpaceIds(hiddenSpaceIdsWithoutSpace);
     } else {
-      onChangeHiddenSpaceIds([...hiddenSpaceIdsWithoutSpace, space.id]);
+      onChangeHiddenSpaceIds([...hiddenSpaceIdsWithoutSpace, spaceId]);
     }
   }
 
-  const allSpacesVisible = tableData.every(i => i.isVisible);
+  const allSpacesEnabled = tableData.rows.every(i => i.isChecked);
 
   return (
     <div className={styles.wrapper}>
@@ -162,240 +309,169 @@ export default function AnalyticsTable({
         rowHeight={38}
         headerHeight={56}
         fontSize={14}
-        data={tableData}
-        sort={[{
-          column: spaceSortColumn,
-          direction: spaceSortDirection
-        }]}
-        onClickHeader={(column: string, template: Function | undefined) => {
-          if (!template) { return; }
-          const lastSortDirection = column === spaceSortColumn ? spaceSortDirection : 'none';
-          const sortDirection = getNextSortDirection(lastSortDirection);
-          const sortFunction = (() => {
-            switch (sortDirection) {
-              case SortDirection.ASCENDING:
-                return (a: TableDataItem, b: TableDataItem) => ascending(template(a), template(b))
-              case SortDirection.DESCENDING:
-                return (a: TableDataItem, b: TableDataItem) => descending(template(a), template(b))
-              default:
-                return (a:any, b:any) => 0
-            }
-          })()
-          setSorting([sortDirection, column, sortFunction])
-        }}
+        data={tableData.rows}
+        onClickHeader={onClickColumnHeader}
       >
         <ListViewColumn
-          id="Space"
-          title={
+          id={TableColumn.SPACE_NAME}
+          title={(
             <div className={styles.header}>
               <span className={styles.tableSpaceHeader}>
                 <Checkbox
-                  checked={allSpacesVisible}
-                  onChange={e => onChangeHiddenSpaceIds((e.target as HTMLInputElement).checked ? [] : selectedSpaces.map(i => i.id))}
+                  checked={allSpacesEnabled}
+                  onChange={evt => {
+                    if (evt.target.checked) {
+                      // enable all spaces
+                      onChangeHiddenSpaceIds([]);
+                    } else {
+                      // disable all spaces
+                      onChangeHiddenSpaceIds(selectedSpaces.map(s => s.id));
+                    }
+                  }}
                   color={colorVariables.grayDarker}
                 />
                 <span className={styles.tableSpaceLabel}>
-                  Space
-                  {spaceSortColumn === 'Space' && spaceSortDirection === SortDirection.ASCENDING ? (
-                    <Icons.ChevronUp color={ACTIVE_CHEVRON_COLOR} />
-                  ) : (
-                    <Icons.ChevronDown color={spaceSortColumn === 'Space' && spaceSortDirection === SortDirection.DESCENDING ? ACTIVE_CHEVRON_COLOR : INACTIVE_CHEVRON_COLOR} />
-                  )}
+                  {getTableColumnHeaderText(TableColumn.SPACE_NAME)}
+                  {<SortIcon column={TableColumn.SPACE_NAME} columnSort={columnSort} />}
                 </span>
               </span>
               <div className={classnames(styles.headerFakeRowText, styles.all)}>
-                All
+                {'Summary'}
               </div>
             </div>
-          }
-          onClick={(x: TableDataItem) => changeSpaceVisibility(x.space, !x.isVisible)}
+          )}
+          onClick={(d: RowData) => changeSpaceVisibility(d.spaceId, !d.isChecked)}
           width={240}
-          valueTemplate={(x: TableDataItem) => x.space.name}
-          template={(x: TableDataItem) => (
+          valueTemplate={(d: RowData) => d[TableColumn.SPACE_NAME]}
+          template={(d: RowData) => (
             <span
               className={styles.tableSpace}
-              style={{ color: analyticsColorScale(x.space.id) }}
+              style={{ color: analyticsColorScale(d.spaceId) }}
             >
               <Checkbox
-                id={x.space.id}
-                checked={x.isVisible}
-                color={analyticsColorScale(x.space.id)}
-                onChange={e => {
-                  const visible = (e.target as HTMLInputElement).checked;
-                  changeSpaceVisibility(x.space, visible);
+                id={d.spaceId}
+                checked={d.isChecked}
+                color={analyticsColorScale(d.spaceId)}
+                onChange={evt => {
+                  const visible = evt.target.checked;
+                  changeSpaceVisibility(d.spaceId, visible);
                 }}
               />
-              <span className={styles.tableSpaceLabel}>{x.space.name}</span>
+              <div className={styles.tableSpaceLabel}>
+              <span>{d[TableColumn.SPACE_NAME]}</span>
+              </div>
             </span>
           )}
         />
-        <ListViewColumn
-          id="Location"
-          width="20%"
-          title={
-            <Header
-              label="Location"
-              value="---"
-              spaceSortDirection={spaceSortDirection}
-              spaceSortColumn={spaceSortColumn}
-            />
-          }
-          valueTemplate={(x: TableDataItem) => getHighestAncestorName(x.space)}
-          template={(x: TableDataItem) => (
-            <span className={styles.ellipsis}>
-              {getHighestAncestorName(x.space)}
-            </span>
-          )}
-        />
-        <ListViewColumn
-          id="Type"
-          width={80}
-          title={
-            <Header
-              label="Type"
-              value="---"
-              spaceSortDirection={spaceSortDirection}
-              spaceSortColumn={spaceSortColumn}
-            />
-          }
-          template={(x: TableDataItem) => formatSpaceType(x.space.spaceType)}
-        />
-        <ListViewColumn
-          id="Function"
-          width="15%"
-          title={
-            <Header
-              label="Function"
-              value="---"
-              spaceSortDirection={spaceSortDirection}
-              spaceSortColumn={spaceSortColumn}
-            />
-          }
-          template={(x: TableDataItem) => (
-            <span className={styles.ellipsis}>
-              {x.space['function'] ? formatSpaceFunction(x.space['function']) : '---'}
-            </span>
-          )}
-        />
-        <ListViewColumn
-          id="Capacity"
-          width={72}
-          title={
-            <Header
-              label="Capacity"
-              value="---"
-              spaceSortDirection={spaceSortDirection}
-              spaceSortColumn={spaceSortColumn}
-            />
-          }
-          valueTemplate={(x: TableDataItem) => x.space.capacity}
-          template={(x: TableDataItem) => x.space.capacity ? formatMetricNumber(x.space.capacity) : '---'}
-        />
-        <ListViewColumnSpacer />
-
-        {/* VISITS */}
-        {analyticsReport.selectedMetric === AnalyticsFocusedMetric.ENTRANCES ? (
-          <Fragment>
-            <ListViewColumn
-              id="Max"
-              align="right"
-              width={100}
-              title={
-                <Header
-                  label="Max"
-                  denominator={formatQueryInterval(analyticsReport.query.interval)}
-                  value={formatMetricNumber(max(tableData, x => x.metricData.entrances.peak.value))}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
-                />
-              }
-              valueTemplate={(x: TableDataItem) => x.metricData.entrances.peak.value}
-              template={(x: TableDataItem) => (
-                <Fragment>
-                  {formatMetricNumber(x.metricData.entrances.peak.value)}
-                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
-                </Fragment>
-              )}
-            />
-            <ListViewColumn
-              id="Average"
-              align="right"
-              width={100}
-              title={
-                <Header
-                  label="Average"
-                  denominator={formatQueryInterval(analyticsReport.query.interval)}
-                  value={formatMetricNumber(average(tableData, x => x.metricData.entrances.average))}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
-                />
-              }
-              valueTemplate={(x: TableDataItem) => x.metricData.entrances.average}
-              template={(x: TableDataItem) => (
-                <Fragment>
-                  {formatMetricNumber(x.metricData.entrances.average)}
-                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
-                </Fragment>
-              )}
-            />
-            <ListViewColumn
-              id="Total"
-              width={100}
-              align="right"
-              title={
-                <Header
-                  label="Total"
-                  value={formatMetricNumber(sum(tableData, x => x.metricData.entrances.total))}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
-                />
-              }
-              valueTemplate={(x: TableDataItem) => x.metricData.entrances.total}
-              template={(x: TableDataItem) => formatMetricNumber(x.metricData.entrances.total)}
-            />
-          </Fragment>
+        {analyticsReport.selectedMetric !== AnalyticsFocusedMetric.OPPORTUNITY ? (
+          <ListViewColumn
+            id={TableColumn.SPACE_LOCATION}
+            width="10%"
+            title={
+              <Header
+                label={getTableColumnHeaderText(TableColumn.SPACE_LOCATION)}
+                value="---"
+                column={TableColumn.SPACE_LOCATION}
+                columnSort={columnSort}
+              />
+            }
+            valueTemplate={(d: RowData) => d[TableColumn.SPACE_LOCATION]}
+            template={(d: RowData) => (
+              <span className={styles.ellipsis}>
+                {d[TableColumn.SPACE_LOCATION]}
+              </span>
+            )}
+          />
+        ) : null}
+        {analyticsReport.selectedMetric !== AnalyticsFocusedMetric.OPPORTUNITY ? (
+          <ListViewColumn
+            id={TableColumn.SPACE_TYPE}
+            width={80}
+            title={
+              <Header
+                label={getTableColumnHeaderText(TableColumn.SPACE_TYPE)}
+                value="---"
+                column={TableColumn.SPACE_TYPE}
+                columnSort={columnSort}
+              />
+            }
+            template={(d: RowData) => d[TableColumn.SPACE_TYPE]}
+          />
+        ) : null}
+        
+        {analyticsReport.selectedMetric !== AnalyticsFocusedMetric.OPPORTUNITY ? (
+          <ListViewColumn
+            id={TableColumn.SPACE_FUNCTION}
+            width="10%"
+            title={
+              <Header
+                label={getTableColumnHeaderText(TableColumn.SPACE_FUNCTION)}
+                value="---"
+                column={TableColumn.SPACE_FUNCTION}
+                columnSort={columnSort}
+              />
+            }
+            template={(d: RowData) => (
+              <span className={styles.ellipsis}>
+                {d[TableColumn.SPACE_FUNCTION]}
+              </span>
+            )}
+          />
         ) : null}
 
-        {/* COUNT */}
+        <ListViewColumn
+          id={TableColumn.SPACE_CAPACITY}
+          width={90}
+          title={
+            <Header
+              label={getTableColumnHeaderText(TableColumn.SPACE_CAPACITY)}
+              value={formatMetricNumber(tableData.headerRow[TableColumn.SPACE_CAPACITY])}
+              column={TableColumn.SPACE_CAPACITY}
+              columnSort={columnSort}
+            />
+          }
+          valueTemplate={(d: RowData) => d[TableColumn.SPACE_CAPACITY]}
+          template={(d: RowData) => formatMetricNumber(d[TableColumn.SPACE_CAPACITY])}
+        />
+        {/* <ListViewColumnSpacer /> */}
+
+        {/* OCCUPANCY */}
         {analyticsReport.selectedMetric === AnalyticsFocusedMetric.MAX ? (
           <Fragment>
             <ListViewColumn
-              id="Max"
+              id={TableColumn.METRIC_PEAK}
               align="right"
               width={100}
               title={
                 <Header
-                  label="Max"
-                  value={formatMetricNumber(max(tableData, x => x.metricData.count.max.value))}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
+                  label={getTableColumnHeaderText(TableColumn.METRIC_PEAK)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_PEAK])}
+                  column={TableColumn.METRIC_PEAK}
+                  columnSort={columnSort}
+                  right={true}
                 />
               }
-              valueTemplate={(x: TableDataItem) => x.metricData.count.max.value}
-              template={(x: TableDataItem) => formatMetricNumber(x.metricData.count.max.value)}
+              valueTemplate={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_PEAK])}
+              template={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_PEAK])}
             />
             <ListViewColumn
-              id="Average"
+              id={TableColumn.METRIC_AVERAGE}
               align="right"
               width={100}
               title={
                 <Header
-                  label="Average"
-                  value={formatMetricNumber(average(tableData, x => x.metricData.count.average))}
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE])}
+                  column={TableColumn.METRIC_PEAK}
+                  columnSort={columnSort}
                   denominator={formatQueryInterval(analyticsReport.query.interval)}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
+                  right={true}
                 />
               }
-              valueTemplate={(x: TableDataItem) => x.metricData.count.average}
-              template={(x: TableDataItem) => (
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE]}
+              template={(d: RowData) => (
                 <Fragment>
-                  {formatMetricNumber(x.metricData.count.average)}
+                  {formatMetricNumber(d[TableColumn.METRIC_AVERAGE])}
                   <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
                 </Fragment>
               )}
@@ -407,46 +483,276 @@ export default function AnalyticsTable({
         {analyticsReport.selectedMetric === AnalyticsFocusedMetric.UTILIZATION ? (
           <Fragment>
             <ListViewColumn
-              id="Max"
+              id={TableColumn.METRIC_PEAK}
               title={
                 <Header
-                  label="Max"
-                  value={<Fragment>
-                    {formatMetricNumber(max(tableData, x => x.metricData.targetUtilization.max.value))}%
-                  </Fragment>}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
+                  label={getTableColumnHeaderText(TableColumn.METRIC_PEAK)}
+                  value={`${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_PEAK])}%`}
+                  column={TableColumn.METRIC_PEAK}
+                  columnSort={columnSort}
+                  right={true}
                 />
               }
               width={130}
               align="right"
-              valueTemplate={(x: TableDataItem) => x.metricData.targetUtilization.max.value}
-              template={(x: TableDataItem) => <span>{formatMetricNumber((x.metricData.targetUtilization.max || {}).value)}%</span>}
+              valueTemplate={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_PEAK])}
+              template={(d: RowData) => <span>{formatMetricNumber(d[TableColumn.METRIC_PEAK])}%</span>}
             />
             <ListViewColumn
-              id="Average"
+              id={TableColumn.METRIC_AVERAGE}
               title={
                 <Header
-                  label="Average"
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE)}
                   denominator={formatQueryInterval(analyticsReport.query.interval)}
-                  value={<Fragment>
-                    {formatMetricNumber(average(tableData, x => x.metricData.targetUtilization.average))}%
-                  </Fragment>}
-                  spaceSortDirection={spaceSortDirection}
-                  spaceSortColumn={spaceSortColumn}
-                  right
+                  value={`${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE])}%`}
+                  column={TableColumn.METRIC_AVERAGE}
+                  columnSort={columnSort}
+                  right={true}
                 />
               }
               align="right"
               width={130}
-              valueTemplate={(x: TableDataItem) => x.metricData.targetUtilization.average}
-              template={(x: TableDataItem) => (
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE]}
+              template={(d: RowData) => (
                 <Fragment>
-                  {formatMetricNumber(x.metricData.targetUtilization.average)}%
+                  {formatMetricNumber(d[TableColumn.METRIC_AVERAGE])}%
                   <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
                 </Fragment>
               )}
+            />
+          </Fragment>
+        ) : null}
+
+        {/* OPPORTUNITY */}
+        {analyticsReport.selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY ? (
+          <Fragment>
+            <ListViewColumn
+              id={TableColumn.METRIC_PEAK_UTILIZATION}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_PEAK_UTILIZATION)}
+                  value={`${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_PEAK_UTILIZATION])}%`}
+                  column={TableColumn.METRIC_PEAK_UTILIZATION}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              align="left"
+              width={170}
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_PEAK_UTILIZATION]}
+              template={(d: RowData) => `${formatMetricNumber(d[TableColumn.METRIC_PEAK_UTILIZATION])}%`}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_AVERAGE_UTILIZATION}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE_UTILIZATION)}
+                  value={`${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE_UTILIZATION])}%`}
+                  column={TableColumn.METRIC_AVERAGE_UTILIZATION}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              align="left"
+              width={170}
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE_UTILIZATION]}
+              template={(d: RowData) => `${formatMetricNumber(d[TableColumn.METRIC_AVERAGE_UTILIZATION])}%`}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_OPPORTUNITY}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_OPPORTUNITY)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_OPPORTUNITY])}
+                  column={TableColumn.METRIC_OPPORTUNITY}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              width={160}
+              align="left"
+              valueTemplate={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_OPPORTUNITY])}
+              template={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_OPPORTUNITY])}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_AVERAGE_OPPORTUNITY}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE_OPPORTUNITY)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE_OPPORTUNITY])}
+                  column={TableColumn.METRIC_AVERAGE_OPPORTUNITY}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              align="left"
+              width={170}
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE_OPPORTUNITY]}
+              template={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_AVERAGE_OPPORTUNITY])}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_OPPORTUNITY_COST}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_OPPORTUNITY_COST)}
+                  value={`$${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_OPPORTUNITY_COST])}`}
+                  column={TableColumn.METRIC_OPPORTUNITY_COST}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              width={240}
+              align="left"
+              valueTemplate={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_OPPORTUNITY_COST])}
+              template={(d: RowData) => `$${formatMetricNumber(d[TableColumn.METRIC_OPPORTUNITY_COST])}`}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST)}
+                  value={`$${formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST])}`}
+                  column={TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST}
+                  columnSort={columnSort}
+                  right={false}
+                />
+              }
+              align="left"
+              width={210}
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]}
+              template={(d: RowData) => `$${formatMetricNumber(d[TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST])}`}
+            />
+          </Fragment>
+        ) : null}
+
+        {/* ENTRANCES */}
+        {analyticsReport.selectedMetric === AnalyticsFocusedMetric.ENTRANCES ? (
+          <Fragment>
+            <ListViewColumn
+              id={TableColumn.METRIC_PEAK}
+              align="right"
+              width={100}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_PEAK)}
+                  denominator={formatQueryInterval(analyticsReport.query.interval)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_PEAK])}
+                  column={TableColumn.METRIC_PEAK}
+                  columnSort={columnSort}
+                  right={true}
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_PEAK]}
+              template={(d: RowData) => (
+                <Fragment>
+                  {formatMetricNumber(d[TableColumn.METRIC_PEAK])}
+                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
+                </Fragment>
+              )}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_AVERAGE}
+              align="right"
+              width={100}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE)}
+                  denominator={formatQueryInterval(analyticsReport.query.interval)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE])}
+                  column={TableColumn.METRIC_AVERAGE}
+                  columnSort={columnSort}
+                  right={true}
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE]}
+              template={(d: RowData) => (
+                <Fragment>
+                  {formatMetricNumber(d[TableColumn.METRIC_AVERAGE])}
+                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
+                </Fragment>
+              )}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_TOTAL}
+              width={100}
+              align="right"
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_TOTAL)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_TOTAL])}
+                  column={TableColumn.METRIC_TOTAL}
+                  columnSort={columnSort}
+                  right
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_TOTAL]}
+              template={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_TOTAL])}
+            />
+          </Fragment>
+        ) : null}
+
+        {/* EXITS */}
+        {analyticsReport.selectedMetric === AnalyticsFocusedMetric.EXITS ? (
+          <Fragment>
+            <ListViewColumn
+              id={TableColumn.METRIC_PEAK}
+              align="right"
+              width={100}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_PEAK)}
+                  denominator={formatQueryInterval(analyticsReport.query.interval)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_PEAK])}
+                  column={TableColumn.METRIC_PEAK}
+                  columnSort={columnSort}
+                  right={true}
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_PEAK]}
+              template={(d: RowData) => (
+                <Fragment>
+                  {formatMetricNumber(d[TableColumn.METRIC_PEAK])}
+                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
+                </Fragment>
+              )}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_AVERAGE}
+              align="right"
+              width={100}
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_AVERAGE)}
+                  denominator={formatQueryInterval(analyticsReport.query.interval)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_AVERAGE])}
+                  column={TableColumn.METRIC_AVERAGE}
+                  columnSort={columnSort}
+                  right={true}
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_AVERAGE]}
+              template={(d: RowData) => (
+                <Fragment>
+                  {formatMetricNumber(d[TableColumn.METRIC_AVERAGE])}
+                  <span className={styles.denominator}> / {formatQueryInterval(analyticsReport.query.interval)}</span>
+                </Fragment>
+              )}
+            />
+            <ListViewColumn
+              id={TableColumn.METRIC_TOTAL}
+              width={100}
+              align="right"
+              title={
+                <Header
+                  label={getTableColumnHeaderText(TableColumn.METRIC_TOTAL)}
+                  value={formatMetricNumber(tableData.headerRow[TableColumn.METRIC_TOTAL])}
+                  column={TableColumn.METRIC_TOTAL}
+                  columnSort={columnSort}
+                  right={true}
+                />
+              }
+              valueTemplate={(d: RowData) => d[TableColumn.METRIC_TOTAL]}
+              template={(d: RowData) => formatMetricNumber(d[TableColumn.METRIC_TOTAL])}
             />
           </Fragment>
         ) : null}
@@ -454,3 +760,5 @@ export default function AnalyticsTable({
     </div>
   );
 }
+
+export default AnalyticsTable;

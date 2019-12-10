@@ -32,7 +32,6 @@ import {
   AdminLocationsListCapacity,
   AdminLocationsListDPUsTotal,
   AdminLocationsListRightArrow,
-  AdminLocationsListLevelsTotal,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
   AdminLocationsLeftPane,
@@ -46,7 +45,6 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         onClickRow={item => window.location.href = `#/admin/locations/${item.id}`}
       >
         <AdminLocationsListInfo />
-        <AdminLocationsListLevelsTotal spaces={spaces} />
         <AdminLocationsListRoomsTotal spaces={spaces} />
         <AdminLocationsListSize user={user} />
         <AdminLocationsListTargetCapacity />
@@ -107,7 +105,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <div className={styles.scroll}>
             {spacesNotInFloor.length > 0 ? (
               <Fragment>
-                <AdminLocationsSubheader title="Rooms" supportsHover={false} />
+                <AdminLocationsSubheader title="Spaces" supportsHover={false} />
                 <SpaceList user={user} renderedSpaces={spacesNotInFloor} spaces={spaces} />
               </Fragment>
             ) : null}
@@ -122,7 +120,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             })}
           </div>
         ) : (
-          <AdminLocationsDetailEmptyState text="You haven't added any floors or spaces to this building yet." />
+          <AdminLocationsDetailEmptyState heading="You haven't added any floors or spaces to this building yet." text="You can add some by clicking “Add a floor or “Add a space” above." />
         )}
       </AppPane>
     </AppFrame>

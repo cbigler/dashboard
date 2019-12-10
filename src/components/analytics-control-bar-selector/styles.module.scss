@@ -1,0 +1,57 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.backdrop {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 1;
+}
+
+.wrapper {
+  position: relative;
+  outline: none;
+  color: $grayDarkest;
+}
+
+.selector {
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 20px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid $brandPrimary;
+  font-size: $fontSizeBase;
+  font-weight: 500;
+  color: $gray;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+}
+.queryTextBold { color: #000; }
+.selector:hover .queryTextBold, .wrapper:focus .queryTextBold { color: $brandPrimary; }
+
+.popup {
+  position: absolute;
+  top: 24px;
+  left: 0px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 150ms ease-in-out;
+
+  border: 1px solid $gray;
+  border-radius: $borderRadiusBase;
+  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
+  background-color: #fff;
+  z-index: 3;
+  overflow: hidden;
+}
+.popup.open {
+  opacity: 1;
+  top: 28px;
+  pointer-events: auto;
+}

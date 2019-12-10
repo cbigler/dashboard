@@ -1,0 +1,192 @@
+@import '@density/ui/variables/colors.scss';
+
+$newDarkColor: #0d183a;
+
+
+.wrapper {
+  position: relative;
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+.timeFilterControlsToggleButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  margin-right: 8px;  
+  border-radius: 50%;
+  border: 1px solid #fff;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #DDE6FF;
+    border-color: #DDE6FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
+
+  &.active,
+  &:active,
+  &:focus {
+    background-color: #DDE6FF;
+    border-color: #5581FF;
+    box-shadow: 0 0 0 1px #5581FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
+
+  &.filterActive {
+    background-color: #5581FF;
+    border-color: transparent;
+    color: #ffffff;
+
+    path { fill: #ffffff}
+  }
+}
+
+.timeFilterControlsOpenWrapper {
+  width: 300px;
+  padding: 16px;
+}
+
+.timeFilterControlsOverlayBackdrop {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+// this is the wrapper for the inner part of the popover
+.timeFilterControls {
+  font-size: 14px;
+}
+
+.labeledRow {
+  min-height: 36px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.labeledRowLabel {
+  font-weight: bold;
+}
+
+.timeRangeDisplayRow {
+  margin: 0 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.timeRangeDisplayInput {
+  color: #999;
+  background-color: #efefef;
+  margin: 0 8px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 70px;
+  text-align: center;
+}
+.timeRangeDisplayInputSeparator {
+  font-weight: bold;
+}
+
+.timeFilterDayToggles {
+  margin: 0 8px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.dayOfWeekRow {
+  padding-top: 16px;
+}
+
+.dayOfWeekToggleButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 4px;
+  height: 18px;
+  width: 18px;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 4px;
+  border-color: #ccc;
+  color: #ccc;
+  cursor: pointer;
+  user-select: none;
+
+  &.active {
+    background-color: $brandPrimary;
+    border-color: $brandPrimary;
+    color: white;
+  }
+}
+
+.bottomActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  margin-top: 16px;
+  border-top: 1px solid $grayLight;
+
+  button {
+    flex-grow: 0;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+}
+
+.buttonReset {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 40px;
+  min-width: 40px;
+  padding-left: 10px;
+  padding-right: 16px;
+  border-radius: 4px;
+  border: 1px solid $gray;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+
+  svg { padding-right: 8px; }
+
+  &:hover {
+    background-color: #DDE6FF;
+    border-color: #DDE6FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
+
+  &.active,
+  &:active,
+  &:focus {
+    background-color: #DDE6FF;
+    border-color: #5581FF;
+    box-shadow: 0 0 0 1px #5581FF;
+    color: #5581FF;
+
+    path { fill: #5581ff}
+  }
+}

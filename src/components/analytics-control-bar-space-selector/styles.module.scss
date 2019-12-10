@@ -1,0 +1,41 @@
+@import "@density/ui/variables/colors.scss";
+
+$deleteButtonSpacing: 4px;
+.deleteButtonWrapper {
+  position: absolute;
+  top: -11px;
+  left: (-20px - 12px - $deleteButtonSpacing);
+  width: 20px;
+  height: 20px;
+  padding-right: $deleteButtonSpacing;
+  padding-left: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+
+  opacity: 0;
+  pointer-events: none;
+}
+.deleteButtonWrapper.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.header {
+  width: 370px;
+  background-color: $grayLightest;
+}
+.back {
+  margin-right: 16px;
+}
+
+.popupBody {
+  height: 300px;
+  overflow-y: auto;
+}
+.popupBodySmall { width: 300px; }
+
+.label {
+  display: inline-block;
+  padding-left: 4px;
+  padding-right: 4px;
+}

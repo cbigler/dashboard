@@ -1,31 +1,21 @@
 import { Subject } from 'rxjs';
 
-import { AnalyticsState, ResourceStatus, AnalyticsActionType, QuerySelectionType } from '../../types/analytics';
-import { StoreSubject, skipUpdate } from '..';
+import { AnalyticsActionType } from '../../rx-actions/analytics';
+import { AnalyticsState, ResourceStatus, QuerySelectionType } from '../../types/analytics';
+import { StoreSubject } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 
-import { analyticsReducer, registerSideEffects, QueryDependencies } from '../analytics';
-import createReport from '../../rx-actions/analytics/create-report'
-import { UserState } from '../user';
+import createReport from '../../rx-actions/analytics/operations/create-report'
+import { UserState, userReducer, initialState as initialUserState } from '../user';
+import { SpacesState, spacesReducer, initialState as initialSpacesState } from '../spaces';
+import { createTestStore, createTestActionStream } from '../../helpers/test-utilities/state-management';
 
+import { analyticsReducer } from '.';
+import { registerSideEffects } from './effects';
+import { DensitySpaceFunction } from '../../types';
+import { TimeFilter } from '../../types/datetime';
+import { initialState } from '.';
 
-function createTestActionStream(): [Subject<GlobalAction>, (action: GlobalAction) => void] {
-  const actionStream = new Subject<GlobalAction>();
-  const dispatch = (action: GlobalAction) => actionStream.next(action);
-  return [actionStream, dispatch]
-}
-
-function createTestStore(initialState: AnalyticsState, actionStream: Subject<GlobalAction>): StoreSubject<AnalyticsState> {
-  const store = new StoreSubject<AnalyticsState>(initialState);
-  actionStream.subscribe(action => {
-    const prevState = store.imperativelyGetValue();
-    const nextState = analyticsReducer(prevState, action);
-    if (nextState !== skipUpdate) {
-      store.next(nextState);
-    }
-  })
-  return store;
-}
 
 describe('AnalyticsStore', () => {
 
@@ -36,35 +26,18 @@ describe('AnalyticsStore', () => {
       activeReportId: null,
     }
   }
-  const initialReduxState: Any<FixInRefactor> = {
-    spaces: {
-      data: [{
-        id: '123',
-        name: 'A test space',
-        timeZone: 'America/Chicago',
-      }]
-    },
-    user: {
-      data: {
-        organization: {
-          settings: {
-            dashboardWeekStart: 'Sunday'
-          }
-        }
-      }
-    }
-  }
-
+  
   let actionStream: Subject<GlobalAction>;
   let dispatch: (action: GlobalAction) => void;
   let analyticsStore: StoreSubject<AnalyticsState>;
-  let reduxStore: StoreSubject<Any<FixInRefactor>>;
+  let spacesStore: StoreSubject<SpacesState>;
   let userStore: StoreSubject<UserState>;
 
   beforeEach(() => {
     [actionStream, dispatch] = createTestActionStream();
-    analyticsStore = createTestStore(initialAnalyticsState, actionStream);
-    reduxStore = createTestStore(initialReduxState, actionStream);
+    analyticsStore = createTestStore(initialAnalyticsState, analyticsReducer, actionStream);
+    spacesStore = createTestStore(initialSpacesState, spacesReducer, actionStream);
+    userStore = createTestStore(initialUserState, userReducer, actionStream)
   })
 
   test('Creating a new report', async () => {
@@ -77,11 +50,10 @@ describe('AnalyticsStore', () => {
     expect(state.data.reports.length).toBe(1)
   })
 
-  // FIXME: fix this test
-  xtest('Triggering a query to run by updating the query selections', async () => {
+  test('Triggering a query to run by updating the query selections', async () => {
     
     const mockRunQuery = jest.fn();
-    registerSideEffects(actionStream, analyticsStore, reduxStore, userStore, dispatch, mockRunQuery);
+    registerSideEffects(actionStream, analyticsStore, userStore, spacesStore, dispatch, mockRunQuery);
     await createReport(dispatch);
     
     let state = analyticsStore.imperativelyGetValue();
@@ -95,7 +67,7 @@ describe('AnalyticsStore', () => {
       selections: [{
         type: QuerySelectionType.SPACE,
         field: 'function',
-        values: ['cafe'],
+        values: [DensitySpaceFunction.CAFE],
       }]
     })
     
@@ -105,9 +77,9 @@ describe('AnalyticsStore', () => {
   // FIXME: this test is failing, because it needs a way to know the massive
   //  pipeline has finished, which is going to need some code changes...
   // For now, disabling this test
-  xtest('Handling a bad query response from the API', async () => {
+  xtest('Handling a bad query response from the API', async (done) => {
     const mockRunQuery = jest.fn().mockRejectedValue(new Error('Query failed'));
-    registerSideEffects(actionStream, analyticsStore, reduxStore, userStore, dispatch, mockRunQuery);
+    registerSideEffects(actionStream, analyticsStore, userStore, spacesStore, dispatch, mockRunQuery);
     await createReport(dispatch);
     
     // get state
@@ -123,7 +95,7 @@ describe('AnalyticsStore', () => {
       selections: [{
         type: QuerySelectionType.SPACE,
         field: 'function',
-        values: ['cafe'],
+        values: [DensitySpaceFunction.CAFE],
       }]
     })
 
@@ -139,5 +111,35 @@ describe('AnalyticsStore', () => {
     // the status of the queryResult should be ERROR
     expect(state.data.reports[0].queryResult.status).toBe(ResourceStatus.ERROR);
 
+  })
+})
+
+describe('snapping the TimeFilter to a QueryInterval properly', () => {
+  let state: AnalyticsState;
+  let sampleA: TimeFilter;
+  
+  beforeEach(() => {
+    sampleA = [{
+      start: { hour: 9, minute: 0, second: 0, millisecond: 0 },
+      end: { hour: 17, minute: 0, second: 0, millisecond: 0 },
+      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+    }];
+    state = {
+      status: ResourceStatus.COMPLETE,
+      data: {
+        reports: [{
+          id: '123',
+          name: 'Some Report',
+          type: 'LINE_CHART',
+          settings: {
+            query: {
+
+            }
+          },
+
+        }],
+        activeReportId: '123'
+      }
+    }
   })
 })

@@ -13,6 +13,7 @@ import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../rx-actions/route-transi
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../rx-actions/route-transition/dashboard-edit';
 
 import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../rx-actions/route-transition/admin-space-mappings';
+import { ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS } from '../../rx-actions/route-transition/admin-brivo-mappings';
 import { ROUTE_TRANSITION_ADMIN_INTEGRATIONS } from '../../rx-actions/route-transition/admin-integrations';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../rx-actions/route-transition/admin-user-management';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../rx-actions/route-transition/admin-user-management-detail';
@@ -24,8 +25,8 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-tra
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../rx-actions/route-transition/logout';
 
+import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { AccountActionTypes } from '../../types/account';
-import { AnalyticsActionType } from '../../types/analytics';
 import createRxStore from '..';
 
 
@@ -51,6 +52,7 @@ export enum ActivePage {
   ADMIN_DEVELOPER = 'ADMIN_DEVELOPER',
   ADMIN_DEVICE_STATUS = 'ADMIN_DEVICE_STATUS',
   ADMIN_SPACE_MAPPINGS = 'ADMIN_SPACE_MAPPINGS',
+  ADMIN_BRIVO_MAPPINGS = 'ADMIN_BRIVO_MAPPINGS',
   ADMIN_INTEGRATIONS = 'ADMIN_INTEGRATIONS',
   ADMIN_LOCATIONS = 'ADMIN_LOCATIONS',
   ADMIN_LOCATIONS_EDIT = 'ADMIN_LOCATIONS_EDIT',
@@ -107,6 +109,8 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.ADMIN_DEVICE_STATUS;
   case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
     return ActivePage.ADMIN_SPACE_MAPPINGS;
+  case ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS:
+    return ActivePage.ADMIN_BRIVO_MAPPINGS;
   case ROUTE_TRANSITION_ADMIN_INTEGRATIONS:
     return ActivePage.ADMIN_INTEGRATIONS;
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:

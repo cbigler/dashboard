@@ -1,8 +1,9 @@
 import getInObject from 'lodash/get';
 
-import { UserState } from "../../rx-stores/user";
-import { DaysOfWeek, DensityUser } from "../../types";
+import { DensityUser } from "../../types";
+import { DayOfWeek } from '../../types/datetime';
 import { DashboardsState } from '../../rx-stores/dashboards';
+import { UserState } from "../../rx-stores/user";
 
 
 export function getUserOrgSettings(user: UserState): DensityUser['organization']['settings'] {
@@ -10,9 +11,9 @@ export function getUserOrgSettings(user: UserState): DensityUser['organization']
   return settings;
 }
 
-export function getUserDashboardWeekStart(user: UserState): DaysOfWeek {
+export function getUserDashboardWeekStart(user: UserState): DayOfWeek {
   const settings = getUserOrgSettings(user)
-  const dashboardWeekStart = getInObject(settings, 'dashboardWeekStart', 'Sunday') as DaysOfWeek;
+  const dashboardWeekStart = getInObject(settings, 'dashboardWeekStart', 'Sunday') as DayOfWeek;
   return dashboardWeekStart;
 }
 

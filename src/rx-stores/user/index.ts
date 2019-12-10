@@ -6,7 +6,8 @@ import { SESSION_TOKEN_UNSET } from '../../rx-actions/session-token/unset';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import { DensityUser } from '../../types';
-import createRxStore from '..';
+import createRxStore, { skipUpdate } from '..';
+import registerSideEffects from './effects';
 
 
 // FIXME: the typings here can't infer presence of DensityUser based on loading state
@@ -16,11 +17,11 @@ export type UserState = {
   error: unknown,
 }
 
-const initialState = {
+export const initialState: UserState = {
   data: null,
   loading: true,
   error: false,
-};
+} as const;
 
 // FIXME: UserActions need to be defined and added to GlobalAction
 export function userReducer(state: UserState, action: Any<FixInRefactor>) {
@@ -41,11 +42,11 @@ export function userReducer(state: UserState, action: Any<FixInRefactor>) {
   case SESSION_TOKEN_UNSET:
     return {...state, loading: false, data: null, error: null};
   default:
-    return state;
+    return skipUpdate;
   }
 }
 
 const UserStore = createRxStore('UserStore', initialState, userReducer);
-
-
 export default UserStore;
+
+registerSideEffects(UserStore);

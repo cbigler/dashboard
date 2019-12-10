@@ -19,6 +19,7 @@ import slackIcon from '../../assets/images/icon-slack.svg';
 import teemIcon from '../../assets/images/icon-teem.svg';
 import outlookIcon from '../../assets/images/icon-outlook.svg';
 import condecoIcon from '../../assets/images/icon-condeco.svg';
+import brivoIcon from '../../assets/images/icon-brivo.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import showModal from '../../rx-actions/modal/show';
@@ -40,6 +41,8 @@ import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import IntegrationsStore from '../../rx-stores/integrations';
 
+import core from '../../client/core';
+
 
 function iconForIntegration(serviceName: string) {
   const iconMap = {
@@ -48,7 +51,8 @@ function iconForIntegration(serviceName: string) {
     robin: robinIcon,
     slack: slackIcon,
     teem: teemIcon,
-    condeco: condecoIcon
+    condeco: condecoIcon,
+    brivo: brivoIcon
   };
 
   return iconMap[serviceName] || "";
@@ -109,7 +113,7 @@ export function AdminIntegrations({
     </AppBar>
 
     <AppScrollView backgroundColor={colorVariables.grayLightest}>
-      <div className={styles.adminIntegrationsRoomBookingList}>
+      <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
           <ListViewColumn
@@ -151,7 +155,7 @@ export function AdminIntegrations({
           <ListViewColumn
             id="Space Mappings"
             title=" "
-            width={150}
+            width={180}
             template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
             onClick={item => {
               if (item.serviceAuthorization.id) {
@@ -185,7 +189,74 @@ export function AdminIntegrations({
 
         </ListView>
       </div>
-      <div className={styles.adminIntegrationsChatList}>
+      {/* .adminIntegrationsListSection */}
+
+      <div className={styles.adminIntegrationsListSection}>
+        <div className={styles.adminIntegrationsSectionHeader}>Access Control</div>
+        <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Tailgating') as Array<DensityService>}>
+          <ListViewColumn
+            id="Service"
+            width={80}
+            template={item => (
+              <img src={iconForIntegration(item.name)} className={styles.adminIntegrationsListviewImage} alt="Integration Icon" />
+            )}
+          />
+          <ListViewColumn
+            id="Name"
+            width={170}
+            template={item => (
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+            )}
+          />
+          <ListViewColumn
+            id="Added by"
+            width={170}
+            template={item => item.serviceAuthorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            }
+          />
+          
+          <ListViewColumnSpacer />
+          <ListViewColumn
+            id="Doorway Mappings"
+            title=" "
+            width={180}
+            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Doorway mappings</ListViewClickableLink>}
+            onClick={item => {
+              if (item.serviceAuthorization.id) {
+                window.location.href = `#/admin/integrations/${item.name}/doorway-mappings`
+              }
+            }}
+          />
+          <ListViewColumn
+            id="Activate/Edit"
+            title=" "
+            width={90}
+            align="right"
+            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            onClick={async item => {
+              const authUrl = await core().get(`/integrations/${item.name}/`);
+              window.location.href = authUrl.data;
+            }}
+          />
+          <ListViewColumn
+            id="Delete"
+            title=" "
+            width={30}
+            align="right"
+            template={item => (
+              !item.serviceAuthorization.id ?
+                null :
+                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}>
+                  <Icons.Trash color={colorVariables.grayDarker} />
+                </ListViewClickableLink>
+            )}
+           />
+        </ListView>
+      </div>
+      {/* .adminIntegrationsListSection*/}
+
+      <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
         <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
           <ListViewColumn
@@ -232,6 +303,7 @@ export function AdminIntegrations({
           />
         </ListView>
       </div>
+      {/* .adminIntegrationsListSection */}
       
     </AppScrollView>
   </Fragment>;

@@ -70,7 +70,7 @@ export type SpacesState = {
   }
 }
 
-const initialState: SpacesState = {
+export const initialState: SpacesState = {
   view: 'LOADING',
   data: [],
   loading: true,

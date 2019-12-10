@@ -138,12 +138,12 @@ export function AdminLocationsDetailBuildingsTotal({spaces, space}: {spaces: Spa
 
 export function AdminLocationsDetailLevelsTotal({spaces, space}: {spaces: SpacesState, space: DensitySpace}) {
   return <AdminLocationsDetailDescendantsTotal
-    spaces={spaces} space={space} spaceType={DensitySpaceTypes.FLOOR} label="Levels:" id="floors" />;
+    spaces={spaces} space={space} spaceType={DensitySpaceTypes.FLOOR} label="Floors:" id="floors" />;
 }
 
 export function AdminLocationsDetailRoomsTotal({spaces, space}: {spaces: SpacesState, space: DensitySpace}) {
   return <AdminLocationsDetailDescendantsTotal
-    spaces={spaces} space={space} spaceType={DensitySpaceTypes.SPACE} label="Rooms:" id="spaces" />;
+    spaces={spaces} space={space} spaceType={DensitySpaceTypes.SPACE} label="Spaces:" id="spaces" />;
 }
 
 
@@ -166,17 +166,17 @@ export function AdminLocationsListInfo() {
 
 export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesState}) {
   return <ListViewColumn
-    id="Levels"
+    id="Floors"
     width={80}
     template={(item: DensitySpace) => commaNumber(spaces.data.filter(
-      space => space.spaceType === DensitySpaceTypes.SPACE && space.ancestry.map(a => a.id).includes(item.id)).length
+      space => space.spaceType === DensitySpaceTypes.FLOOR && space.ancestry.map(a => a.id).includes(item.id)).length
     )}
   />;
 }
 
 export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesState}) {
   return <ListViewColumn
-    id="Rooms"
+    id="Spaces"
     width={80}
     template={(item: DensitySpace) => commaNumber(spaces.data.filter(
       space => space.spaceType === DensitySpaceTypes.SPACE && space.ancestry.map(a => a.id).includes(item.id)).length

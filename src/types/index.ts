@@ -1,4 +1,5 @@
-export type DaysOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+import { DayOfWeek } from './datetime';
+
 
 export enum DensitySpaceTypes {
   SPACE = 'space',
@@ -12,17 +13,21 @@ export enum DensitySpaceFunction {
   CAFE = 'cafe',
   COLLABORATION = 'collaboration',
   CONFERENCE_ROOM = 'conference_room',
+  DINING_AREA = 'dining_area',
   EVENT_SPACE = 'event_space',
   FOCUS_QUIET = 'focus_quiet',
   GYM = 'gym',
   KITCHEN = 'kitchen',
+  LAB = 'lab',
   LIBRARY = 'library',
   LOUNGE = 'lounge',
   MEETING_ROOM = 'meeting_room',
   OFFICE = 'office',
   PHONE_BOOTH = 'phone_booth',
+  PLACE_OF_WORSHIP = 'place_of_worship',
   RECEPTION = 'reception',
   RESTROOM = 'restroom',
+  RETAIL = 'retail',
   THEATER = 'theater',
   WELLNESS_ROOM = 'wellness_room',
   // Note, "OTHER" is not in here since typescript does not allow "null" in enums
@@ -37,7 +42,7 @@ export type DensitySpace = {
   id: string,
   name: string,
   description: string,
-  parentId: string,
+  parentId: string | null,
   spaceType: DensitySpaceTypes,
   timeZone: string,
   dailyReset: string,
@@ -57,12 +62,20 @@ export type DensitySpace = {
   }>,
   function: DensitySpaceFunction | null,
   tags: Array<string>,
-  addressLine1: string | null,
-  addressLine2: string | null,
-  city: string | null,
-  stateProvince: string | null,
-  postalCode: string | null,
-  countryCode: string | null,
+  address: string | null,
+  annualRentCurrency: string | null,
+  assignedTeams: DensityAssignedTeam[],
+  city?: string | null,
+  stateProvince?: string | null,
+  postalCode?: string | null,
+  countryCode?: string | null,
+  imageUrl: string | null,
+  floorLevel: number | string | null,
+  notes: string,
+  spaceMappings: Array<{
+    id: string,
+    serviceId: string
+  }>,
   latitude: number | null,
   longitude: number | null,
   timeSegments: Array<DensityTimeSegment>,
@@ -72,6 +85,7 @@ export type DensitySpace = {
   }>,
   sensorsTotal: number,
   inheritsTimeSegments: boolean,
+  updatedAt: string | null,
 };
 
 export type DensitySpaceAncestryItem = {
@@ -116,10 +130,10 @@ export type DensityTimeSegment = {
   start: string,
   end: string,
   spaces: Array<{
-    id: string,
-    spaceName: string,
+    spaceId: string,
+    name: string,
   }>,
-  days: Array<string>,
+  days: Array<DayOfWeek>,
 };
 
 export type DensityTimeSegmentLabel = string;
@@ -184,7 +198,7 @@ export type DensityDigestSchedule = {
   },
   dashboardId: string,
   frequency: 'WEEKLY' | 'MONTHLY',
-  daysOfWeek: Array<DaysOfWeek>,
+  daysOfWeek: Array<DayOfWeek>,
   dayNumber: number,
   time: string,
   timeZone: string,
@@ -279,6 +293,7 @@ export type DensitySpaceCountBucketIntervalAnalytics = {
   entrances: number,
   exits: number,
   utilization: number,
+  targetUtilization: number,
 };
 
 export type DensitySpaceCountMetrics = {
@@ -309,7 +324,7 @@ export type DensitySpaceCountMetrics = {
     },
     total: number,
   },
-  targetUtilization: {
+  target_utilization: {
     average: number,
     durations: {
       0: string,
@@ -328,6 +343,29 @@ export type DensitySpaceCountMetrics = {
   },
 };
 
+export type DensityDoorwayMapping = {
+  id: string,
+  serviceId: string,
+  doorwayId: string,
+  serviceDoorwayId: string,
+}
+
+// Data structure returned by the Brivo API (access points response is optionally nested in sites response)
+export type BrivoAccessPoint = {
+  id: number,
+  name: string,
+  controlPanelId: number,
+  siteId: number,
+  siteName: string,
+  activationEnabled: boolean
+}
+
+export type DensityBrivoSite = {
+  id: number,
+  siteName: string,
+  accessPoints: Array<BrivoAccessPoint>,
+  eventSubscriptionId: string | null,
+}
 
 // Service
 export type DensityService = {

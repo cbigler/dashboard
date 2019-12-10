@@ -7,7 +7,7 @@ import {
   RangeType,
   splitTimeRangeIntoSubrangesWithSameOffset,
 } from './index';
-import { DaysOfWeek } from '../../types';
+import { DayOfWeek } from '../../types/datetime';
 
 const NYC_SPACE = { name: 'New York Space', timeZone: 'America/New_York' };
 const LA_SPACE = { name: 'Los Angeles Space', timeZone: 'America/Los_Angeles' };
@@ -471,7 +471,7 @@ describe('Realization of relative ranges, with now being Monday 9/23/2019 and we
 
 describe('realization of relative durations', () => {
   // testing a weird case for RoundedCo
-  const organizationalWeekStartDay: DaysOfWeek = 'Wednesday';
+  const organizationalWeekStartDay: DayOfWeek = 'Wednesday';
   const now = moment.tz('2019-09-23T14:17:45', 'America/New_York');
 
   test('realizing the start of the current org week', () => {

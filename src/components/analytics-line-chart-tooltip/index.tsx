@@ -2,11 +2,11 @@ import React from 'react';
 import classNames from 'classnames';
 
 import { descending } from '../../helpers/natural-sorting';
-import { AnalyticsDatapoint, AnalyticsFocusedMetric } from '../../types/analytics';
+import { AnalyticsFocusedMetric } from '../../types/analytics';
 import analyticsColorScale from '../../helpers/analytics-color-scale';
-import formatMetricName from '../../helpers/analytics-formatters/metric-name';
 import styles from './styles.module.scss';
 import { findLeast } from '../../helpers/array-utilities';
+import { commaFormat } from '../../helpers/format-number';
 
 
 type TooltipEntry = {
@@ -79,31 +79,41 @@ const TooltipEntries: React.FunctionComponent<{
   )
 }
 
+type TooltipDatapoint = {
+  spaceId: string,
+  spaceName: string,
+  value: number
+}
+
 const AnalyticsLineChartTooltip: React.FunctionComponent<{
-  datapoints: AnalyticsDatapoint[],
+  datetimeLabel: string,
+  datapoints: TooltipDatapoint[],
   selectedMetric: AnalyticsFocusedMetric,
   targetValue: number,
 }> = function AnalyticsLineChartTooltip({
+  datetimeLabel,
   datapoints,
   selectedMetric,
   targetValue,
 }) {
 
   // scoped helper functions
-  const formatMetricValue = (value: number) => {
-    const rounded = Math.round(value);
-    if (selectedMetric === AnalyticsFocusedMetric.UTILIZATION) {
-      return `${rounded}%`;
+  const formatMetricValue = (metricValue: number) => {
+    const formattedValue = commaFormat(Math.round(metricValue));
+    switch (selectedMetric) {
+      case AnalyticsFocusedMetric.UTILIZATION:
+        return `${formattedValue}%`;
+      default:
+        return formattedValue;
     }
-    return rounded.toString(10);
   }
 
   const entries: TooltipEntry[] = datapoints.map(datapoint => {
     return {
       title: datapoint.spaceName,
       color: analyticsColorScale(datapoint.spaceId),
-      value: datapoint[selectedMetric],
-      displayValue: formatMetricValue(datapoint[selectedMetric]),
+      value: datapoint.value,
+      displayValue: formatMetricValue(datapoint.value),
     }
   })
 
@@ -111,8 +121,7 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
   return (
     <div className={styles.hoverOverlay}>
       <div className={styles.hoverOverlayHeader}>
-        <div className={styles.hoverOverlayActiveMetric}>{formatMetricName(selectedMetric)}</div>
-        <div className={styles.hoverOverlayHeaderLabel}>Totals</div>
+        <div className={styles.hoverOverlayDatetimeLabel}>{datetimeLabel}</div>
       </div>
 
       <TooltipEntries

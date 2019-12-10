@@ -80,7 +80,9 @@ export default async function collectionSpacesCreate(dispatch, item) {
       showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
       const upload = await uploadMedia(`/uploads/space_image/${response.data.id}`, item.newImageFile);
       await hideToast(dispatch, id);
-      if (upload.media.length > 0) {
+      if (upload instanceof Error) {
+        showToast(dispatch, {text: 'Image must be JPG or PNG', type: 'error'});
+      } else if (upload.media.length > 0) {
         response.data.imageUrl = upload.media[0].signedUrl;
       }
     } else {

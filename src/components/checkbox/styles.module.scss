@@ -6,13 +6,14 @@ $check-dark-image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 
 .checkbox { display: none; }
 .label {
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   align-items: center;
 
   width: 18px;
   height: 18px;
-  border-radius: $borderRadiusSmall;
+  border-radius: $borderRadiusBase;
 
   cursor: pointer;
   user-select: none;
@@ -37,7 +38,7 @@ $check-dark-image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
 .checkbox:checked + label {
   background-image: url($check-light-image);
   background-size: 16px 16px;
-  background-position: 1px 1px;
+  background-position: 0px 0px;
   background-repeat: no-repeat;
   cursor: pointer;
 }

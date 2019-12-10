@@ -6,7 +6,7 @@ import { action } from '@storybook/addon-actions';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import AnalyticsTable from './index';
 import { RangeType } from '../../helpers/space-time-utilities';
-import { AnalyticsFocusedMetric, ResourceStatus } from '../../types/analytics';
+import { AnalyticsFocusedMetric, ResourceStatus, SortDirection } from '../../types/analytics';
 
 import spaces from './spaces.json';
 const SPACES = spaces.map(objectSnakeToCamel);
@@ -78,7 +78,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',
@@ -124,7 +124,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',
@@ -170,7 +170,7 @@ const QUERY_RESULT = {
         },
         total: random(),
       },
-      targetUtilization: {
+      target_utilization: {
         average: random(),
         durations: {
           0: 'not sure what this is',
@@ -212,7 +212,7 @@ storiesOf('Analytics Table', module)
         <AnalyticsTable
           spaces={SPACES}
           analyticsReport={state}
-
+          onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
         />
     )}
@@ -224,7 +224,7 @@ storiesOf('Analytics Table', module)
         <AnalyticsTable
           spaces={SPACES}
           analyticsReport={state}
-
+          onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
         />
     )}
@@ -236,7 +236,7 @@ storiesOf('Analytics Table', module)
         <AnalyticsTable
           spaces={SPACES}
           analyticsReport={state}
-
+          onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
         />
     )}

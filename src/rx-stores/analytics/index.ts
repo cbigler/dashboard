@@ -1,17 +1,14 @@
-import moment, { Moment } from 'moment';
-import { of, from, merge, combineLatest, partition, Subject } from 'rxjs';
+import { Moment } from 'moment';
+import { of, from, merge, combineLatest } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
   catchError,
-  tap,
-  flatMap,
-  share,
-  distinctUntilChanged,
 } from 'rxjs/operators';
 import changeCase from 'change-case';
+import getInObject from 'lodash/get';
 
 import core from '../../client/core';
 import createRxStore, { rxDispatch, actions, skipUpdate } from '..';
@@ -19,48 +16,42 @@ import {
   DensityReport,
   DensitySpace,
   DensitySpaceHierarchyItem,
-  DensitySpaceCountBucket,
-  DensitySpaceCountMetrics,
-  DaysOfWeek,
 } from '../../types';
+import { TimeFilter } from '../../types/datetime';
+import { AnalyticsActionType } from '../../rx-actions/analytics';
 import {
   AnalyticsState,
   AnalyticsStateRaw,
-  AnalyticsActionType,
   AnalyticsReport,
   AnalyticsFocusedMetric,
-  AnalyticsDatapoint,
-  AnalyticsMetrics,
-  Query,
+  SpaceCountQuery,
   QueryInterval,
   QuerySelectionType,
-  SpaceSelection,
-
   ResourceStatus,
   ResourceComplete,
   RESOURCE_IDLE,
   RESOURCE_LOADING,
+  StoredAnalyticsReport,
+  AnalyticsMetrics,
+  SortDirection,
 } from '../../types/analytics';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
-import { DATE_RANGES, DateRange, realizeDateRange } from '../../helpers/space-time-utilities';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { createDatapoint } from '../../helpers/analytics-datapoint';
+import { DATE_RANGES } from '../../helpers/space-time-utilities';
 
 import collectionSpacesError from '../../rx-actions/collection/spaces/error';
 import collectionSpacesSet from '../../rx-actions/collection/spaces/set';
 import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hierarchy/set';
-import { StoreSubject } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
-import UserStore, { UserState } from '../user';
-import SpacesStore, { SpacesState } from '../spaces';
-import { getUserDashboardWeekStart } from '../../helpers/legacy';
+import UserStore from '../user';
+import SpacesStore from '../spaces';
 import SpaceHierarchyStore from '../space-hierarchy';
+import { registerSideEffects } from './effects';
+import { serializeTimeFilter } from '../../helpers/datetime-utilities';
+import { SpacesCountsAPIResponse, SpacesCountsMetricsAPIResponse } from '../../types/api';
 
 
-const USER_TIME_ZONE = moment.tz.guess();
-
-const initialState = RESOURCE_IDLE;
+export const initialState = RESOURCE_IDLE;
 
 // A helper to allow the reducer to update the state of an individual report easily.
 function updateReport(
@@ -78,45 +69,37 @@ function updateReport(
   }
 }
 
-function recommendQueryInterval(dateRange: DateRange, organizationalWeekStartDay: DaysOfWeek) {
-  const { startDate, endDate } = realizeDateRange(
-    dateRange,
-    USER_TIME_ZONE,
-    { organizationalWeekStartDay },
-  );
-
-  const days = endDate.diff(startDate, 'days');
-  if (days <= 3) {
-    return QueryInterval.FIFTEEN_MINUTES;
-  } else if (days <= 10) {
-    return QueryInterval.ONE_HOUR;
-  } else {
-    return QueryInterval.ONE_DAY;
-  }
-}
-
-// FIXME: move this function somewhere else, point this out in a review!
-type ConvertDensityReportToAnalyticsReportOptions = { isSaved?: boolean, isOpen?: boolean };
-function convertDensityReportToAnalyticsReport(
-  report: DensityReport,
-  opts: ConvertDensityReportToAnalyticsReportOptions = {},
+function convertStoredAnalyticsReportToAnalyticsReport(
+  report: StoredAnalyticsReport,
+  opts: { isSaved?: boolean, isOpen?: boolean } = {},
 ): AnalyticsReport {
   return {
-    ...report,
-    // FIXME: this query needs to somehow come from the density report? Point this out in a review!
+    id: report.id,
+    name: report.name,
+    creatorEmail: report.creatorEmail || '',
+
+    hiddenSpaceIds: [],
+    columnSort: {
+      column: null,
+      direction: SortDirection.NONE,
+    },
+
+    selectedMetric: report.settings.selectedMetric || AnalyticsFocusedMetric.MAX,
+
+    opportunityCostPerPerson: report.settings.opportunityCostPerPerson || 300,
+
+    isSaved: typeof opts.isSaved !== 'undefined' ? opts.isSaved : true,
+    isCurrentlySaving: false,
+    isOpen: typeof opts.isOpen !== 'undefined' ? opts.isOpen : false,
+
     query: report.settings.query || {
       dateRange: DATE_RANGES.LAST_WEEK,
       interval: QueryInterval.ONE_HOUR,
       selections: [],
       filters: [],
     },
-    queryResult: RESOURCE_IDLE,
-    hiddenSpaceIds: [],
-    selectedMetric: AnalyticsFocusedMetric.MAX,
-    isSaved: typeof opts.isSaved !== 'undefined' ? opts.isSaved : true,
-    isCurrentlySaving: false,
-    isOpen: typeof opts.isOpen !== 'undefined' ? opts.isOpen : false,
-  };
+    queryResult: { ...RESOURCE_IDLE },
+  }
 }
 
 
@@ -259,7 +242,10 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL:
     return updateReport(state, action.reportId, report => ({
       ...report,
-      query: { ...report.query, interval: action.interval },
+      query: {
+        ...report.query,
+        interval: action.interval,
+      },
     }));
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE:
@@ -268,7 +254,15 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
       query: {
         ...report.query,
         dateRange: action.dateRange,
-        interval: recommendQueryInterval(action.dateRange, action.organizationalWeekStartDay),
+      },
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_TIME_FILTER:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      query: {
+        ...report.query,
+        timeFilter: action.timeFilter,
       },
     }));
 
@@ -276,6 +270,21 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
     return updateReport(state, action.reportId, report => ({
       ...report,
       hiddenSpaceIds: action.hiddenSpaceIds,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_OPPORTUNITY_PARAMETERS:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      opportunityCostPerPerson: action.opportunityCostPerPerson,
+    }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_COLUMN_SORT:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      columnSort: {
+        column: action.column,
+        direction: action.direction,
+      },
     }));
 
   case AnalyticsActionType.ANALYTICS_QUERY_IDLE:
@@ -390,7 +399,7 @@ merge(
       data: (
         reports
           .filter(r => r.type === 'LINE_CHART')
-          .map(r => convertDensityReportToAnalyticsReport(r))
+          .map((r) => convertStoredAnalyticsReportToAnalyticsReport(r as StoredAnalyticsReport))
       ),
       activeReportId: null,
     })),
@@ -405,13 +414,19 @@ merge(
 // RUN REPORT QUERY WHEN IT CHANGES
 // ----------------------------------------------------------------------------
 
-function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: Query): Array<DensitySpace> {
+export function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: SpaceCountQuery): Array<DensitySpace> {
   return spaces.filter(space => {
     const spaceMatchesQuery = query.selections.some(selection => {
       switch (selection.type) {
-      case QuerySelectionType.SPACE:
-        const spaceSelection = selection as SpaceSelection;
-        return spaceSelection.values.includes(space[changeCase.camelCase(spaceSelection.field)]);
+      case QuerySelectionType.SPACE: {
+        // FIXME: objectSnakeToCamel makes this necessary, and it's confusing
+        const targetField = changeCase.camelCase(selection.field) as ('spaceType' | 'function' | 'id');
+        const targetValue = getInObject(space, targetField)
+        if (!targetValue) return false;
+        // FIXME: I have no idea what's wrong with the below...
+        // @ts-ignore
+        return selection.values.includes(targetValue);
+      }
       default:
         return false;
       }
@@ -420,201 +435,109 @@ function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: Query): Arra
   });
 }
 
-export function isQueryRunnable(query: Query): boolean {
+export function isQueryRunnable(query: SpaceCountQuery): boolean {
   return (
     query.selections.length > 0
   );
 }
 
-export type QueryDependencies = {
-  activeReport: AnalyticsReport,
-  startDate: Moment,
-  endDate: Moment,
-  selectedSpaces: DensitySpace[],
+export type ChartDataFetchingResult = {
+  [spaceId: string]: Array<{
+    start: string,
+    end: string,
+    analytics: {
+      max: number,
+      min: number,
+      entrances: number,
+      exits: number,
+      events: number,
+      utilization: number | null,
+      target_utilization: number | null,
+    }
+  }>
 }
 
-async function runQuery(deps: QueryDependencies) {
-  const { activeReport, startDate, endDate, selectedSpaces } = deps;
+export type TableDataFetchingResult = AnalyticsMetrics;
+
+export async function runQuery(startDate: Moment, endDate: Moment, interval: QueryInterval, selectedSpaceIds: string[], selectedMetric: AnalyticsFocusedMetric, timeFilter?: TimeFilter) {
+
+  let timeFilterString: string;
+  if (timeFilter) {
+    timeFilterString = serializeTimeFilter(timeFilter);
+  } else {
+    timeFilterString = '';
+  }
 
   mixpanelTrack('Analytics Run Query', {
     'Start Time': startDate.format(),
     'End Time': endDate.format(),
-    'Metric': activeReport.selectedMetric,
-    'Interval': activeReport.query.interval,
-    'Space ID List': selectedSpaces.map(s => s.id).join(','),
+    'Metric': selectedMetric,
+    'Interval': interval,
+    'Time Filter': timeFilterString,
+    'Space ID List': selectedSpaceIds.join(','),
   });
 
-  return await core().get('/spaces/counts', {
-    params: {
-      // NOTE: using this date format to avoid sending up the TZ offset (eg. -04:00)
-      //       so that the backend interprets the date in the space's local time
-      start_time: startDate.format('YYYY-MM-DDTHH:mm:ss'),
-      end_time: endDate.format('YYYY-MM-DDTHH:mm:ss'),
-      space_list: selectedSpaces.map(s => s.id).join(','),
-      interval: activeReport.query.interval,
-      page_size: '5000',
-    },
-  })
+  // avoid passing the param altogether if the time filter is empty
+  const tableRequestTimeFilterParams = timeFilter ? {
+    time_filters: timeFilterString
+  } : {};
+  
+  const sharedParams = {
+    // NOTE: using this date format to avoid sending up the TZ offset (eg. -04:00)
+    //       so that the backend interprets the date in the space's local time
+    start_time: startDate.format('YYYY-MM-DDTHH:mm:ss'),
+    end_time: endDate.format('YYYY-MM-DDTHH:mm:ss'),
+    space_list: selectedSpaceIds.join(','),
+    interval: interval,
+    page_size: '10000', 
+  }
+
+  async function getChartData() {
+    const allResponses: SpacesCountsAPIResponse[] = [];
+    const client = core();
+
+    // for the chart data, no time filter is used and always use 15m interval
+    let response = await client.get<SpacesCountsAPIResponse>('/spaces/counts', {
+      params: Object.assign({}, sharedParams, {
+        interval: '15m',
+      })
+    })
+    // superstitiously making a copy of the response data since we're reusing that variable for each page
+    allResponses.push(Object.assign({}, response.data));
+    
+    while (response.data.next) {
+      response = await client.get<SpacesCountsAPIResponse>(response.data.next);
+      allResponses.push(Object.assign({}, response.data));
+    }
+
+    
+
+    return allResponses.reduce<ChartDataFetchingResult>((output, current) => {
+      Object.keys(current.results).forEach(spaceId => {
+        // const buckets = current.results[spaceId].map(d => objectSnakeToCamel<DensitySpaceCountBucketInterval>(d.interval));
+        const buckets = current.results[spaceId].map(d => d.interval);
+        if (!output[spaceId]) {
+          output[spaceId] = buckets;
+        } else {
+          output[spaceId].push(...buckets)
+        }
+      })
+      return output;
+    }, {})
+
+  }
+
+  async function getTableMetrics() {
+    const response = await core().get<SpacesCountsMetricsAPIResponse>('/spaces/counts/metrics', {
+      params: Object.assign({}, sharedParams, tableRequestTimeFilterParams)
+    })
+    return response.data.metrics;
+  }
+  
+  const chartDataPromise = getChartData();
+  const tableDataPromise = getTableMetrics();
+
+  return await Promise.all([chartDataPromise, tableDataPromise]);
 }
 
 registerSideEffects(actions, AnalyticsStore, UserStore, SpacesStore, rxDispatch, runQuery);
-
-type RawBatchCountsResponse = Any<FixInRefactor>;
-
-export function registerSideEffects(
-  actionStream: Subject<GlobalAction>,
-  analyticsStore: StoreSubject<AnalyticsState>,
-  userStore: StoreSubject<UserState>,
-  spacesStore: StoreSubject<SpacesState>,
-  dispatch: (action: GlobalAction) => void,
-  runQuery: (deps: QueryDependencies) => Promise<RawBatchCountsResponse>,
-) {
-
-  const activeReportUpdates = actionStream.pipe(
-    // Filter only the actions that should cause the query to be rerun
-    filter(action => {
-      switch (action.type) {
-        case AnalyticsActionType.ANALYTICS_OPEN_REPORT:
-        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS:
-        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_INTERVAL:
-        case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_DATE_RANGE:
-        case AnalyticsActionType.ANALYTICS_REPORT_REFRESH:
-          return true;
-        default:
-          return false;
-      }
-    }),
-
-    switchMap(() => combineLatest(
-      analyticsStore.pipe(take(1)),
-      userStore.pipe(take(1)),
-      spacesStore.pipe(take(1))
-    )),
-
-    filter(([reportsState, userState, spacesState]) => reportsState.status === ResourceStatus.COMPLETE),
-
-    // Extract the activeReport from the store and filter out changes if no active report is selected.
-    map(([reportsState, userState, spacesState]) => {
-      const reportsStateComplete = reportsState as ResourceComplete<AnalyticsStateRaw>;
-      const activeReport: AnalyticsReport | undefined = reportsStateComplete.data.reports.find(
-        report => report.id === reportsStateComplete.data.activeReportId
-      );
-      return [activeReport, userState, spacesState] as const;
-    }),
-    filter(([activeReport, userState, spacesState]) => typeof activeReport !== 'undefined'),
-    map(([activeReport, userState, spacesState]) => {
-      return [activeReport as AnalyticsReport, userState as UserState, spacesState as SpacesState] as const
-    }),
-
-    // REVIEW: do we need this? what does it do?
-    distinctUntilChanged(),
-    share(),
-  );
-
-  const [activeReportUpdatesValidQuery, activeReportUpdatesInvalidQuery] = partition(
-    activeReportUpdates,
-    ([activeReport, userState, spacesState]) => isQueryRunnable(activeReport.query),
-  );
-
-  // If the query is not able to be run then the ui should indicate this explicitly to the user
-  activeReportUpdatesInvalidQuery.subscribe(([activeReport, userState, spacesState]) => {
-    // FIXME: I think we should be more explicit about the invalid query than status IDLE
-    dispatch({
-      type: AnalyticsActionType.ANALYTICS_QUERY_IDLE,
-      reportId: activeReport.id,
-    });
-  });
-
-  activeReportUpdatesValidQuery.pipe(
-    map(([activeReport, userState, spacesState]) => {
-      const spaces = realizeSpacesFromQuery(
-        spacesState.data,
-        activeReport.query,
-      );
-
-      const organizationalWeekStartDay = getUserDashboardWeekStart(userState);
-      const { startDate, endDate } = realizeDateRange(
-        activeReport.query.dateRange,
-        USER_TIME_ZONE,
-        { organizationalWeekStartDay },
-      );
-
-      return {
-        spacesState,
-        startDate,
-        endDate,
-        activeReport,
-        selectedSpaces: spaces,
-      };
-    }),
-
-    tap(({ activeReport }) => {
-      dispatch({
-        type: AnalyticsActionType.ANALYTICS_QUERY_LOADING,
-        reportId: activeReport.id,
-      });
-    }),
-
-    flatMap(async queryContext => {
-      const {
-        spacesState,
-        startDate,
-        endDate,
-        activeReport,
-        selectedSpaces,
-      } = queryContext;
-
-      let results;
-      try {
-        results = await runQuery({
-          activeReport,
-          startDate,
-          endDate,
-          selectedSpaces,
-        });
-      } catch (error) {
-        dispatch({
-          type: AnalyticsActionType.ANALYTICS_QUERY_ERROR,
-          error,
-          reportId: activeReport.id,
-        });
-        return null;
-      }
-
-      return [activeReport, selectedSpaces, results, spacesState];
-    }),
-  ).subscribe(args => {
-    if (args === null) { return; }
-
-    const activeReport: AnalyticsReport = args[0],
-      selectedSpaces: Array<DensitySpace> = args[1],
-      response: any = args[2].data,
-      spacesState: SpacesState = args[3];
-
-    // Process the space count data for each space and concat them all together
-    const datapoints = Object.keys(response.results).reduce((acc, next) => {
-      const space = spacesState.data.find(space => space.id === next);
-      if (!space) { return acc; }
-      const currentBuckets = response.results[next].map(
-        bucket => objectSnakeToCamel<DensitySpaceCountBucket>(bucket)
-      );
-      const localBuckets = currentBuckets.map(c => createDatapoint(c, space))
-      return acc.concat(localBuckets);
-    }, [] as AnalyticsDatapoint[]);
-
-    const metrics = Object.entries(response.metrics).reduce((acc, next) => {
-      const [spaceId, value] = next;
-      acc[spaceId] = objectSnakeToCamel<DensitySpaceCountMetrics>(value);
-      return acc;
-    }, {} as AnalyticsMetrics);
-
-    dispatch({
-      type: AnalyticsActionType.ANALYTICS_QUERY_COMPLETE,
-      reportId: activeReport.id,
-      datapoints,
-      metrics,
-      selectedSpaceIds: selectedSpaces.map(i => i.id),
-    });
-  });
-
-}

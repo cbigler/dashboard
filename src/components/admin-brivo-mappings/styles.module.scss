@@ -1,0 +1,145 @@
+@import "@density/ui/variables/colors.scss";
+
+// TODO: Density UI -- Move into app bar
+.appContent {
+	position: relative;
+	box-sizing: border-box;
+	height: 100%;
+  padding: 24px;
+}
+
+// TODO: Density UI -- Create an empty state component
+.appContentEmptyBanner {
+	position: absolute;
+	top: 35%;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 320px;
+}
+
+.appContentEmptyBannerTitle { margin-bottom: 16px; }
+
+.appContentEmptyBannerText { margin-bottom: 16px; }
+
+
+// TODO: Density UI -- Move into app bar
+.appBarNavigationIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 24px;
+	width: 24px;
+	border-radius: 50%;
+	cursor: pointer;
+	transition: all 100ms ease-in-out;
+
+	&:hover {
+		background-color: #DDE6FF;
+		box-shadow: 0 0 0 6px #DDE6FF;
+		transition: all 150ms ease-in-out;
+
+		> svg path {
+			fill: #5581FF;
+			transition: all 150ms ease-in-out;
+		}
+	}
+}
+
+// TODO: Density UI -- Move into modal
+.modalBody { padding: 24px; }
+.modalScroller {
+	box-sizing: border-box;
+	height: 320px;
+	overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+}
+
+.modalFooter {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	box-sizing: border-box;
+	height: 64px;
+	padding-left: 24px;
+	padding-right: 24px;
+	border-top: 1px solid rgba(0,0,0,0.08);
+}
+
+// TODO: Density UI -- Move into list view
+.listViewEmptyMessage {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 64px;
+	font-size: 16px;
+	font-style: italic;
+	color: $grayDarker;
+}
+
+// TODO: Density UI -- Move into loading indicator
+.loadingIndicatorBanner {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translateX(-50%);
+	display: flex;
+	align-items: center;
+
+	.loadingIndicatorMessage {
+		margin-left: 16px;
+		font-weight: bold;
+		font-size: 14px;
+	}
+}
+
+
+
+.integrationSettingsAppBarIcon {
+	padding-left: 16px;
+	padding-right: 8px;
+}
+
+.brivoSiteSection {
+	position: relative;
+  margin-bottom: 24px;
+  background-color: #ffff;
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 4px;
+
+  &:last-child { margin-bottom: 64px; }
+}
+
+.brivoSiteSectionHeader {
+	display: flex;
+	align-items: center;
+	height: 64px;
+	padding-left: 24px;
+	padding-right: 24px;
+	border-bottom: 1px solid rgba(0,0,0,0.08);
+
+	.brivoSiteSectionHeaderIcon {
+		flex-grow: 0;
+		flex-shrink: 0;
+		margin-right: 8px;
+	}
+
+	.brivoSiteSectionHeaderName {
+		flex: 1;
+		margin: 0;
+	}
+
+	[class*='button'] {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 0;
+	}
+
+}
+
+.brivoSiteSectionBody {
+	padding-top: 16px;
+	padding-bottom: 8px;
+	padding-left: 24px;
+	padding-right : 24px;
+}

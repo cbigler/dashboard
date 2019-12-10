@@ -1,5 +1,5 @@
 // Altered version of conduit
-import pathToRegexp, { Path, PathFunction } from 'path-to-regexp';
+import { pathToRegexp, compile, Path, PathFunction } from 'path-to-regexp';
 import debounce from 'lodash/debounce';
 
 
@@ -22,7 +22,7 @@ export default function createRouter() {
     const route: Route = {
       path: path,
       regexp: pathToRegexp(path),
-      generate: pathToRegexp.compile(path),
+      generate: compile(path),
       resolve,
     };
     routes.push(route);
