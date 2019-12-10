@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import { Button } from '@density/ui';
-import { InputStackItem, InputStackGroup } from '../input-stack/index';
+import { InputStackItem } from '../input-stack/index';
 
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import ErrorBar from '../error-bar/index';
