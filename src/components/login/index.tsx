@@ -16,7 +16,7 @@ import { impersonateUnset } from '../../rx-actions/impersonate';
 import sessionTokenSet from '../../rx-actions/session-token/set';
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
 
-import { InputStackItem, InputStackGroup } from '../input-stack/index';
+import { InputStackItem } from '../input-stack/index';
 
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import logoGoogleG from '../../assets/images/logo-google-g.svg';
