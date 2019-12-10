@@ -51,7 +51,7 @@ export class AccountRegistration extends React.Component<any, any> {
   }
 
   render() {
-    return <div className={styles.accountRegistration}>
+    return <div className={styles.accountRegistrationView}>
       <div className={styles.accountRegistrationSection}>
 
         <ErrorBar message={this.state.error} showRefresh />
@@ -65,9 +65,10 @@ export class AccountRegistration extends React.Component<any, any> {
 
         <div className={styles.accountRegistrationFormContainer}>
           <div className={styles.accountRegistrationForm}>
-            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-full-name">
+            <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-full-name">
               Full Name
-              <span className={styles.accountRegistrationHeaderRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="text"
@@ -78,10 +79,12 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.fullName}
               width="100%"
             />
-
-            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-password">
+            </div>
+              
+          <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-password">
               Password
-              <span className={styles.accountRegistrationHeaderRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="password"
@@ -92,10 +95,12 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.password}
               width="100%"
             />
-
-            <label className={styles.accountRegistrationHeader} htmlFor="account-registration-confirm-password">
+          </div>
+            
+          <div className={styles.formControl}>
+            <label className={styles.formControlLabel} htmlFor="account-registration-confirm-password">
               Confirm Password
-              <span className={styles.accountRegistrationHeaderRequired}>*</span>
+              <span className={styles.formControlLabelRequired}>*</span>
             </label>
             <InputBox
               type="password"
@@ -106,27 +111,29 @@ export class AccountRegistration extends React.Component<any, any> {
               value={this.state.passwordConfirmation}
               width="100%"
             />
+          </div>
+            
 
             <div className={styles.accountRegistrationConsentContainer}>
-              <div className={styles.accountRegistrationConsent}>
+              <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-core-consent">
                 <input
                   type="checkbox"
                   id="account-registration-core-consent"
                   className={styles.accountRegistrationCheckbox}
                   onChange={e => this.setState({coreConsent: e.target.checked})}
                 />
-                <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-core-consent">I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/msa" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</label>
-              </div>
-
-              <div className={styles.accountRegistrationConsent}>
+                <p>I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/terms-of-sale" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</p>
+              </label>
+    
+              {/* <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-marketing-consent">
                 <input
                   type="checkbox"
                   id="account-registration-marketing-consent"
                   className={styles.accountRegistrationCheckbox}
                   onChange={e => this.setState({marketingConsent: e.target.checked})}
                 />
-                <label className={styles.accountRegistrationConsentLabel} htmlFor="account-registration-marketing-consent">I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</label>
-              </div>
+                <p>I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</p>
+              </label> */}
             </div>
 
             <Button
@@ -134,7 +141,6 @@ export class AccountRegistration extends React.Component<any, any> {
               variant="filled"
               width="100%"
               className={styles.accountRegistrationSubmitButton}
-              size="large"
               onClick={this.onSubmit.bind(this)}
               disabled={!(
                 this.state.password.length > 0 &&

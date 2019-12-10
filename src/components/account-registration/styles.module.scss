@@ -1,21 +1,26 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/fonts.scss";
 @import "@density/ui/variables/spacing.scss";
-$accountRegistrationSectionWidth: 480px;
+$accountRegistrationSectionWidth: 560px;
 
-.accountRegistration {
+.accountRegistrationView {
+  display: flex;
+  justify-content: center;
   height: 100%;
+  background-color: #fff;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .accountRegistrationSection {
-  height: auto;
-  margin: 0px auto;
+  flex-grow: 0;
+  box-sizing: border-box;
+  height: 100%;
   padding-top: 64px;
   padding-bottom: 64px;
   padding-left: 24px;
   padding-right: 24px;
+  background-color: #fff;
 }
 
 .accountRegistrationDensityLogo {
@@ -29,21 +34,48 @@ $accountRegistrationSectionWidth: 480px;
 }
 
 .accountRegistrationLead {
-  margin-bottom: 40px;
-  font-size: 18px;
-  color: $grayDarker;
+  margin-bottom: 64px;
+  color: $grayCinder;
+  font-weight: bold;
+}
+
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
 }
 
 // The header that is above each input box
-.accountRegistrationHeader {
+.formControlLabel {
   display: block;
-  font-size: $fontSize5;
+  font-size: 12px;
   color: $grayCinder;
-
-  margin-top: 20px;
-  margin-bottom: 5px;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
-.accountRegistrationHeaderRequired {
+.formControlLabelRequired {
   color: $brandPrimary;
   margin-left: 3px;
 }
@@ -56,27 +88,38 @@ $accountRegistrationSectionWidth: 480px;
 
 .accountRegistrationConsentContainer {
   display: flex;
-  align-content: center;
   flex-direction: column;
-  margin: 12px 0 24px 0;
-}
-
-.accountRegistrationConsent {
-  display: flex;
-  align-items: center;
-  padding: 4px 0;
-  font-size: $fontSize4;
-  color: $grayDarker;
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 .accountRegistrationConsentLabel {
-  line-height: 20px;
-  margin-top: 10px;
+  display: flex;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid $grayLight;
+  border-radius: 4px;
+  color: $grayDarker;
+
+  p {
+    font-size: $fontSize4;
+    line-height: 20px;
+  }
+
+  &:hover {
+    background-color: $grayLightest;
+    cursor: pointer;
+  }
 }
 
 .accountRegistrationCheckbox {
+  flex-shrink: 0;
+  flex-grow: 0;
+  margin-top: 4px;
   margin-right: 16px;
 }
+
+
 
 // ------------------------------------------------
 // Desktop Styles
@@ -86,16 +129,7 @@ $accountRegistrationSectionWidth: 480px;
   .accountRegistrationSection {
     box-sizing: border-box;
     width: $accountRegistrationSectionWidth;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  // Wrapper for the login form
-  .accountRegistrationFormContainer {
-    padding: 32px;
-    background-color: #fff;
-    border: 1px solid $grayLight;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
-    border-radius: $borderRadiusBase;
+    padding-left: 64px;
+    padding-right: 64px;
   }
 }

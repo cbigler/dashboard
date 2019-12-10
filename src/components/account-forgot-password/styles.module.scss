@@ -5,21 +5,26 @@
 @import "@density/ui/variables/grid.scss";
 @import "@density/ui/variables/fonts.scss";
 @import "@density/ui/variables/spacing.scss";
-$accountForgotPasswordSectionWidth: 468px;
+$accountForgotPasswordSectionWidth: 560px;
 
-.accountForgotPassword {
+.accountForgotPasswordView {
+  display: flex;
+  justify-content: center;
   height: 100%;
+  background-color: #fff;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .accountForgotPasswordSection {
-  height: auto;
-  margin: 0px auto;
+  flex-grow: 0;
+  box-sizing: border-box;
+  height: 100%;
   padding-top: 64px;
   padding-bottom: 64px;
   padding-left: 24px;
   padding-right: 24px;
+  background-color: #fff;
 }
 
 .accountForgotPasswordDensityLogo {
@@ -33,9 +38,9 @@ $accountForgotPasswordSectionWidth: 468px;
 }
 
 .accountForgotPasswordLead {
-  margin-bottom: 40px;
-  font-size: 18px;
-  color: $grayDarker;
+  margin-bottom: 64px;
+  color: $grayCinder;
+  font-weight: bold;
 }
 
 
@@ -44,6 +49,42 @@ $accountForgotPasswordSectionWidth: 468px;
 
 .accountForgotPasswordForm {
   margin-bottom: 20px;
+}
+
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
+}
+
+.formControlLabel {
+  display: block;
+  font-size: 12px;
+  color: $grayCinder;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
 }
 
 .accountForgotPasswordSubmitButton {
@@ -59,16 +100,7 @@ $accountForgotPasswordSectionWidth: 468px;
   .accountForgotPasswordSection {
     box-sizing: border-box;
     width: $accountForgotPasswordSectionWidth;
-    padding-left: 24px;
-    padding-right: 24px;
-  }
-
-  // Wrapper for the login form
-  .accountForgotPasswordFormContainer {
-    padding: 32px;
-    background-color: #fff;
-    border: 1px solid $grayLight;
-    box-shadow: 6px 6px 0 rgba(0,0,0,0.06);
-    border-radius: $borderRadiusBase;
+    padding-left: 64px;
+    padding-right: 64px;
   }
 }

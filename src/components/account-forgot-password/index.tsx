@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import React from 'react';
 
 import { Button } from '@density/ui';
-import { InputStackItem, InputStackGroup } from '../input-stack/index';
+import { InputStackItem } from '../input-stack/index';
 
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import ErrorBar from '../error-bar/index';
@@ -37,7 +37,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
   }
 
   render() {
-    return <div className={styles.accountForgotPassword}>
+    return <div className={styles.accountForgotPasswordView}>
       <div className={styles.accountForgotPasswordSection}>
         <ErrorBar message={this.state.error} showRefresh />
 
@@ -50,13 +50,17 @@ export class AccountForgotPassword extends React.Component<any, any> {
 
         <div className={styles.accountForgotPasswordFormContainer}>
           <div className={styles.accountForgotPasswordForm}>
-            <InputStackGroup>
+            <div className={styles.formControl}>
+            <label className={styles.formControlLabel}>Your New Password</label>
               <InputStackItem
                 type="password"
                 placeholder="New Password"
                 value={this.state.password}
                 onChange={e => this.setState({password: e.target.value})}
               />
+            </div>
+            <div className={styles.formControl}>
+              <label className={styles.formControlLabel}>Confirm Password</label>
               <InputStackItem
                 type="password"
                 placeholder="Confirm Password"
@@ -64,7 +68,7 @@ export class AccountForgotPassword extends React.Component<any, any> {
                 value={this.state.passwordConfirmation}
                 onChange={e => this.setState({passwordConfirmation: e.target.value})}
               />
-            </InputStackGroup>
+            </div>
           </div>
 
           <div className={styles.accountForgotPasswordSubmitButton}>
