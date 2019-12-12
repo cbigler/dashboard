@@ -14,7 +14,10 @@ export async function loadData(dispatch) {
   try {
     [spaces, doorways] = await Promise.all([
       await fetchAllObjects<DensitySpace>('/spaces', { cache: false }),
-      await fetchAllObjects<DensityDoorway>('/doorways', { cache: false }),
+      await fetchAllObjects<DensityDoorway>('/doorways', {
+        cache: false,
+        params: { environment: 'true' }
+      }),
     ]);
   } catch (err) {
     console.error(err);

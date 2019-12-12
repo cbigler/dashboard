@@ -160,7 +160,10 @@ export async function calculateDailyRawEvents(dispatch, space) {
   // already known.
   const doorwayRequests = uniqueArrayOfDoorways.map(async doorwayId => {
     try {
-      return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, { cache: false });
+      return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, {
+        cache: false,
+        params: { environment: 'true' }
+      });
     } catch (error) {
       dispatch(exploreDataCalculateDataError('dailyRawEvents', error));
       return;

@@ -39,7 +39,10 @@ async function fetchAllBrivoSites(dispatch) {
   try {
     // BRIAN: Not sure how guys handle loading states, but I'm using this to determine if it's loading...
     dispatch({type: 'BRIVO_SITES_LOADING', sitesLoading: true})
-    doorways = await fetchAllObjects<DensityDoorway>('/doorways', { cache: false });
+    doorways = await fetchAllObjects<DensityDoorway>('/doorways', {
+      cache: false,
+      params: { environment: 'true' }
+    });
     doorwayMappings = await fetchAllObjects<DensityDoorway>('/integrations/doorway_mappings/', { cache: false });
     sites = await fetchAllObjects<DensityBrivoSite>('/integrations/brivo/sites/', { cache: false });
     Promise.all(sites.map(site => {      

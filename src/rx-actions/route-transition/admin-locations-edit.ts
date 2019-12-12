@@ -26,7 +26,10 @@ export async function loadData(dispatch) {
     [hierarchy, spaces, doorways, labels, tags, assignedTeams] = await Promise.all([
       await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false }),
       await fetchAllObjects<DensitySpace>('/spaces', { cache: false }),
-      await fetchAllObjects<DensityDoorway>('/doorways', { cache: false }),
+      await fetchAllObjects<DensityDoorway>('/doorways', {
+        cache: false,
+        params: { environment: 'true' }
+      }),
       await fetchAllObjects<DensityTimeSegmentLabel>('/time_segments/labels', { cache: false }),
       await fetchAllObjects<DensityTag>('/tags', { cache: false }),
       await fetchAllObjects<DensityAssignedTeam>('/assigned_teams', { cache: false }),
