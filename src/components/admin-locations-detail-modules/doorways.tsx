@@ -104,8 +104,8 @@ type UpdateHistoricCountsProps = {
   value: boolean,
   onChange: (value: boolean) => void,
 }
-function UpdateHistoricCounts({value, onChange}) {
-  return (
+function UpdateHistoricCounts({value, onChange}: UpdateHistoricCountsProps) {
+  return null && (
     <div className={styles.dpuPositionUpdateHistoricCheckbox}>
       <Checkbox
         label="Update historic space counts"

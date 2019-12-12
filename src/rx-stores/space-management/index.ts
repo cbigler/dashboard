@@ -147,7 +147,7 @@ function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: Dens
     selected: linkedToSpace ? true : false,
     sensorPlacement,
     initialSensorPlacement: sensorPlacement,
-    updateHistoricCounts: true,
+    updateHistoricCounts: false,
     linkId: linkedToSpace ? linkedToSpace.linkId : null,
     operationToPerform: null,
     linkExistsOnServer: linkedToSpace ? true : false,
