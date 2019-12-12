@@ -148,7 +148,9 @@ export default function Analytics() {
     throw new Error('This should not be possible')
   }
 
-  const opportunityMetricEnabled = Boolean(getInObject(user.organization, 'settings.opportunityMetricEnabled', false));
+  // incredible fumble, these flags coming from core are all strings eg. 'true' or 'false', wow
+  const opportunityMetricEnabledString = getInObject(user.organization, 'settings.opportunityMetricEnabled', 'false');
+  const opportunityMetricEnabled: boolean = opportunityMetricEnabledString === 'true';
 
   const organizationalWeekStartDay = getUserDashboardWeekStart(userState);
 
