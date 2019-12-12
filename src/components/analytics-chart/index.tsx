@@ -930,6 +930,21 @@ const AnalyticsChart: React.FC<{
   const outerWidth = useContainerWidth(container);
   const outerHeight = 300;
 
+  // when viewing metrics based on capacity, hide spaces for which capacity is not defined
+  const hiddenSpaceIds = (() => {
+    if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION || report.selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY) {
+      if (report.queryResult.status !== ResourceStatus.COMPLETE) return report.hiddenSpaceIds;
+      const additionalHiddenSpaceIds = report.queryResult.data.selectedSpaceIds.filter(spaceId => {
+        const space = spacesById.get(spaceId);
+        if (!space) return false;
+        if (space.targetCapacity == null) return true;
+        return false;
+      });
+      return report.hiddenSpaceIds.concat(additionalHiddenSpaceIds);
+    }
+    return report.hiddenSpaceIds;
+  })()
+
   return (
     <div ref={container} style={{ width: '100%', height: outerHeight }}>
     {(() => {
@@ -964,7 +979,7 @@ const AnalyticsChart: React.FC<{
               interval={report.query.interval}
               selectedMetric={report.selectedMetric}
               opportunityCostPerPerson={report.opportunityCostPerPerson}
-              hiddenSpaceIds={report.hiddenSpaceIds}
+              hiddenSpaceIds={hiddenSpaceIds}
               datapoints={report.queryResult.data.datapoints}
               spacesById={spacesById}
             />
