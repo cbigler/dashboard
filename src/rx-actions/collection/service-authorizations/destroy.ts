@@ -8,7 +8,7 @@ export default async function collectionServiceAuthorizationDestroy(dispatch, se
   dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY, serviceAuthorizationId });
 
   try {
-    await core().delete(`/integrations/service_authorizations/${serviceAuthorizationId}`);
+    await core().delete(`/integrations/service_authorizations/${serviceAuthorizationId}/`);
   } catch (err) {
     dispatch(collectionServiceAuthorizationError(err));
     return false;

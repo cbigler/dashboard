@@ -37,7 +37,7 @@ export default async function routeTransitionAdminSpaceMappings(dispatch, servic
 async function fetchAllServiceSpaces(dispatch, service) { 
   let serviceSpaces, errorThrown;
   try {
-    serviceSpaces = await fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces`, { cache: false });
+    serviceSpaces = await fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces/`, { cache: false });
   } catch (err) {
     errorThrown = err;
   }
