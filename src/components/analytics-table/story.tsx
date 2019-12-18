@@ -214,6 +214,7 @@ storiesOf('Analytics Table', module)
           analyticsReport={state}
           onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
+          onChangeHighlightedSpaceId={highlightedSpaceId => setState({...state, highlightedSpaceId})}
         />
     )}
     </State>
@@ -226,6 +227,7 @@ storiesOf('Analytics Table', module)
           analyticsReport={state}
           onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
+          onChangeHighlightedSpaceId={highlightedSpaceId => setState({...state, highlightedSpaceId})}
         />
     )}
     </State>
@@ -238,6 +240,7 @@ storiesOf('Analytics Table', module)
           analyticsReport={state}
           onClickColumnHeader={() => {}}
           onChangeHiddenSpaceIds={hiddenSpaceIds => setState({...state, hiddenSpaceIds})}
+          onChangeHighlightedSpaceId={highlightedSpaceId => setState({...state, highlightedSpaceId})}
         />
     )}
     </State>

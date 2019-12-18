@@ -5,11 +5,14 @@ import {
   QueryInterval,
   AnalyticsFocusedMetric,
   RESOURCE_IDLE,
-  SortDirection,
 } from '../../../types/analytics'
 import { DATE_RANGES } from '../../../helpers/space-time-utilities';
+import { getDefaultColumnSortForMetric } from '../../../helpers/analytics-table';
 
 export default async function createReport(dispatch) {
+
+  const selectedMetric = AnalyticsFocusedMetric.MAX;
+
   const newReport: AnalyticsReport = {
     id: uuid.v4(),
     name: 'Untitled Report',
@@ -22,12 +25,10 @@ export default async function createReport(dispatch) {
     queryResult: RESOURCE_IDLE,
 
     hiddenSpaceIds: [],
-    columnSort: {
-      column: null,
-      direction: SortDirection.NONE,
-    },
+    highlightedSpaceId: null,
+    columnSort: getDefaultColumnSortForMetric(selectedMetric),
     
-    selectedMetric: AnalyticsFocusedMetric.MAX,
+    selectedMetric,
     opportunityCostPerPerson: 300,
     lastRunTimestamp: undefined,
     isSaved: false,

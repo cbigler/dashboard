@@ -5,15 +5,18 @@ import {
   AnalyticsFocusedMetric,
   RESOURCE_IDLE,
   AnalyticsReportUnsaved,
-  SortDirection,
 } from '../../../types/analytics';
 import { DispatchType } from '../../../types/rx-actions';
+import { getDefaultColumnSortForMetric } from '../../../helpers/analytics-table';
 
 export type PartialAnalyticsReportWithQuery = Partial<AnalyticsReport> & {
   query: AnalyticsReport["query"],
 };
 
 export default async function openPartialReport(dispatch: DispatchType, partialReport: PartialAnalyticsReportWithQuery) {
+
+  const selectedMetric = AnalyticsFocusedMetric.MAX;
+
   const report: AnalyticsReportUnsaved = {
     ...partialReport,
     id: uuid.v4(),
@@ -21,12 +24,10 @@ export default async function openPartialReport(dispatch: DispatchType, partialR
     queryResult: RESOURCE_IDLE,
 
     hiddenSpaceIds: [],
-    columnSort: {
-      column: null,
-      direction: SortDirection.NONE,
-    },
+    highlightedSpaceId: null,
+    columnSort: getDefaultColumnSortForMetric(selectedMetric),
 
-    selectedMetric: AnalyticsFocusedMetric.MAX,
+    selectedMetric,
     opportunityCostPerPerson: partialReport.opportunityCostPerPerson || 300,
     lastRunTimestamp: undefined,
     isSaved: false,

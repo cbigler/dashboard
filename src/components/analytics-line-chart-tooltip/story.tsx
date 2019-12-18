@@ -5,7 +5,6 @@ import uuid from 'uuid/v4';
 
 import AnalyticsLineChartTooltip from './index';
 import { AnalyticsDatapoint, AnalyticsFocusedMetric } from '../../types/analytics';
-import analyticsColorScale from '../../helpers/analytics-color-scale';
 import { withState } from '../../helpers/storybook';
 
 

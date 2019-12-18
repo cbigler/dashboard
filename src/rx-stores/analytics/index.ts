@@ -49,6 +49,9 @@ import SpaceHierarchyStore from '../space-hierarchy';
 import { registerSideEffects } from './effects';
 import { serializeTimeFilter } from '../../helpers/datetime-utilities';
 import { SpacesCountsAPIResponse, SpacesCountsMetricsAPIResponse } from '../../types/api';
+import { computeTableData, getDefaultColumnSortForMetric } from '../../helpers/analytics-table';
+import { computeChartData } from '../../helpers/analytics-chart';
+import { ColorManager, COLORS } from '../../helpers/analytics-color-scale';
 
 
 export const initialState = RESOURCE_IDLE;
@@ -79,6 +82,7 @@ function convertStoredAnalyticsReportToAnalyticsReport(
     creatorEmail: report.creatorEmail || '',
 
     hiddenSpaceIds: [],
+    highlightedSpaceId: null,
     columnSort: {
       column: null,
       direction: SortDirection.NONE,
@@ -134,6 +138,7 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
   // ----------------------------------------------------------------------------
   switch (action.type) {
 
+  // FIXME: this report open flow is very confusing and probably has a lot of little hidden bugs
   case AnalyticsActionType.ANALYTICS_OPEN_REPORT: {
     const reportIsInStore = (
       state.data.reports
@@ -148,13 +153,21 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
           // Open the report if it's already in the store
           ...state.data.reports.map(r => {
             if (r.id === action.report.id) {
-              return { ...r, isOpen: true };
+              return {
+                ...r,
+                columnSort: getDefaultColumnSortForMetric(action.report.selectedMetric),
+                isOpen: true,
+              };
             } else {
               return r;
             }
           }),
           // If the report isn't in the store, add it and open it
-          ...(!reportIsInStore ? [{...action.report, isOpen: true}] : []),
+          ...(!reportIsInStore ? [{
+            ...action.report,
+            columnSort: getDefaultColumnSortForMetric(action.report.selectedMetric),
+            isOpen: true
+          }] : []),
         ],
         activeReportId: action.report.id,
       },
@@ -227,10 +240,12 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
       },
     };
 
+  // when the metric is changed, the default sort order for that metric is set
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTED_METRIC:
     return updateReport(state, action.reportId, report => ({
       ...report,
       selectedMetric: action.metric,
+      columnSort: getDefaultColumnSortForMetric(action.metric),
     }));
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS:
@@ -271,6 +286,12 @@ export function analyticsReducer(state: AnalyticsState, action: GlobalAction): A
       ...report,
       hiddenSpaceIds: action.hiddenSpaceIds,
     }));
+
+  case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIGHLIGHTED_SPACE:
+    return updateReport(state, action.reportId, report => ({
+      ...report,
+      highlightedSpaceId: action.highlightedSpaceId,
+    }))
 
   case AnalyticsActionType.ANALYTICS_REPORT_CHANGE_OPPORTUNITY_PARAMETERS:
     return updateReport(state, action.reportId, report => ({
@@ -541,3 +562,75 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
 }
 
 registerSideEffects(actions, AnalyticsStore, UserStore, SpacesStore, rxDispatch, runQuery);
+
+
+export const activeReportDataStream = AnalyticsStore.pipe(
+  switchMap(
+    () => SpacesStore.pipe(take(1)),
+    (analyticsState, spacesState) => {
+      if (analyticsState.status !== ResourceStatus.COMPLETE) {
+        return null;
+      }
+      const activeReportId = analyticsState.data.activeReportId;
+      if (!activeReportId) {
+        return null;
+      }
+      const report = analyticsState.data.reports.find(r => r.id === activeReportId);
+      if (!report) {
+        return null;
+      }
+      if (report.queryResult.status !== ResourceStatus.COMPLETE) return null;
+
+      // make a space lookup map
+      const spaceLookup = new Map<string, DensitySpace>();
+      spacesState.data.forEach(space => {
+        spaceLookup.set(space.id, space);
+      })
+      
+      const selectedSpaces = report.queryResult.data.selectedSpaceIds
+        .map(spaceId =>  spaceLookup.get(spaceId))
+        .filter<DensitySpace>((space): space is DensitySpace => space != null);
+
+      const spacesMissingTargetCapacity = selectedSpaces.filter(space => space.targetCapacity == null);
+
+      let validDatapoints = report.queryResult.data.datapoints;
+
+      if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION || report.selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY) {
+        const invalidSpaceIds = spacesMissingTargetCapacity.map(s => s.id)
+        validDatapoints = validDatapoints.filter(datapoint => !invalidSpaceIds.includes(datapoint.spaceId));
+      }
+      
+      const tableData = computeTableData(
+        report.queryResult.data.metrics,
+        selectedSpaces,
+        report.selectedMetric,
+        report.hiddenSpaceIds,
+        report.columnSort,
+        report.opportunityCostPerPerson,
+      );
+      const chartData = computeChartData(
+        validDatapoints,
+        report.query.interval,
+        report.selectedMetric,
+        report.hiddenSpaceIds,
+      );
+
+      
+      const spaceOrder = tableData.rows.map(row => row.spaceId);
+      
+      const colorManager = new ColorManager(Array.from(COLORS))
+      const colorMap = new Map<string, string>();
+      spaceOrder.forEach(spaceId => {
+        colorMap.set(spaceId, colorManager.next())
+      })
+
+      return {
+        report,
+        tableData,
+        chartData,
+        spaceOrder,
+        colorMap,
+      };
+    }
+  ) 
+)

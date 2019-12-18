@@ -4,20 +4,14 @@ import getInObject from 'lodash/get';
 
 import { AnalyticsFocusedMetric, AnalyticsReport, ResourceStatus, TableColumn } from "../../types/analytics";
 import {
-  TableDataItem,
   getHighestAncestorName,
-  sum,
-  max,
-  average,
-  RowData,
-  getTableColumnKeys,
   formatSpaceType,
   formatSpaceFunction,
-  computeTableData,
 } from '../../components/analytics-table';
 import { DensitySpace } from '../../types';
 import { downloadFile } from '../download-file';
 import formatMetricName from '../analytics-formatters/metric-name';
+import { TableDataItem, sum, average, getTableColumnKeys, RowData, computeTableData } from '../analytics-table';
 
 
 function getPeakMetricValue(tableDataItem: TableDataItem, selectedMetric: AnalyticsFocusedMetric): number | null {
@@ -88,11 +82,25 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
     [TableColumn.SPACE_TYPE]: null,
     [TableColumn.SPACE_FUNCTION]: null,
     [TableColumn.SPACE_CAPACITY]: sum(tableData, d => d.space.targetCapacity),
+    
+    [TableColumn.METRIC_PEAK_OCCUPANCY]: sum(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.MAX)),
+    [TableColumn.METRIC_AVERAGE_OCCUPANCY]: sum(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.MAX)),
+    
     [TableColumn.METRIC_PEAK_UTILIZATION]: average(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.UTILIZATION)),
     [TableColumn.METRIC_AVERAGE_UTILIZATION]: average(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.UTILIZATION)),
-    [TableColumn.METRIC_PEAK]: max(tableData, d => getPeakMetricValue(d, selectedMetric)),
-    [TableColumn.METRIC_AVERAGE]: average(tableData, d => getAverageMetricValue(d, selectedMetric)),
-    [TableColumn.METRIC_TOTAL]: sum(tableData, d => getTotalMetricValue(d, selectedMetric)),
+
+    [TableColumn.METRIC_MAXIMUM_ENTRANCES]: sum(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.ENTRANCES)),
+    [TableColumn.METRIC_AVERAGE_ENTRANCES]: sum(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.ENTRANCES)),
+    [TableColumn.METRIC_TOTAL_ENTRANCES]: sum(tableData, d => getTotalMetricValue(d, AnalyticsFocusedMetric.ENTRANCES)),
+
+    [TableColumn.METRIC_MAXIMUM_EXITS]: sum(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.EXITS)),
+    [TableColumn.METRIC_AVERAGE_EXITS]: sum(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.EXITS)),
+    [TableColumn.METRIC_TOTAL_EXITS]: sum(tableData, d => getTotalMetricValue(d, AnalyticsFocusedMetric.EXITS)),
+
+    [TableColumn.METRIC_MAXIMUM_EVENTS]: sum(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.EVENTS)),
+    [TableColumn.METRIC_AVERAGE_EVENTS]: sum(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.EVENTS)),
+    [TableColumn.METRIC_TOTAL_EVENTS]: sum(tableData, d => getTotalMetricValue(d, AnalyticsFocusedMetric.EVENTS)),
+
     [TableColumn.METRIC_OPPORTUNITY]: sum(tableData, d => getInObject(d.metricData, 'peakOpportunity')),
     [TableColumn.METRIC_AVERAGE_OPPORTUNITY]: withRounding(sum(tableData, d => getInObject(d.metricData, 'averageOpportunity'))),
     [TableColumn.METRIC_OPPORTUNITY_COST]: withMultiplier(sum(tableData, d => getInObject(d.metricData, 'peakOpportunity')), opportunityCostPerPerson),
@@ -106,11 +114,25 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
       [TableColumn.SPACE_TYPE]: formatSpaceType(tableDataItem.space.spaceType),
       [TableColumn.SPACE_FUNCTION]: formatSpaceFunction(tableDataItem.space.function),
       [TableColumn.SPACE_CAPACITY]: tableDataItem.space.targetCapacity,
+
+      [TableColumn.METRIC_PEAK_OCCUPANCY]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.MAX),
+      [TableColumn.METRIC_AVERAGE_OCCUPANCY]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.MAX),
+
       [TableColumn.METRIC_PEAK_UTILIZATION]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.UTILIZATION),
       [TableColumn.METRIC_AVERAGE_UTILIZATION]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.UTILIZATION),
-      [TableColumn.METRIC_PEAK]: getPeakMetricValue(tableDataItem, selectedMetric),
-      [TableColumn.METRIC_AVERAGE]: getAverageMetricValue(tableDataItem, selectedMetric),
-      [TableColumn.METRIC_TOTAL]: getTotalMetricValue(tableDataItem, selectedMetric),
+
+      [TableColumn.METRIC_MAXIMUM_ENTRANCES]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.ENTRANCES),
+      [TableColumn.METRIC_AVERAGE_ENTRANCES]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.ENTRANCES),
+      [TableColumn.METRIC_TOTAL_ENTRANCES]: getTotalMetricValue(tableDataItem, AnalyticsFocusedMetric.ENTRANCES),
+
+      [TableColumn.METRIC_MAXIMUM_EXITS]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.EXITS),
+      [TableColumn.METRIC_AVERAGE_EXITS]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.EXITS),
+      [TableColumn.METRIC_TOTAL_EXITS]: getTotalMetricValue(tableDataItem, AnalyticsFocusedMetric.EXITS),
+
+      [TableColumn.METRIC_MAXIMUM_EVENTS]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.EVENTS),
+      [TableColumn.METRIC_AVERAGE_EVENTS]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.EVENTS),
+      [TableColumn.METRIC_TOTAL_EVENTS]: getTotalMetricValue(tableDataItem, AnalyticsFocusedMetric.EVENTS),
+
       [TableColumn.METRIC_OPPORTUNITY]: getInObject(tableDataItem.metricData, 'peakOpportunity'),
       [TableColumn.METRIC_AVERAGE_OPPORTUNITY]: withRounding(getInObject(tableDataItem.metricData, 'averageOpportunity')),
       [TableColumn.METRIC_OPPORTUNITY_COST]: withMultiplier(getInObject(tableDataItem.metricData, 'peakOpportunity'), opportunityCostPerPerson),
@@ -131,7 +153,14 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: Densit
   const selectedSpaces: DensitySpace[] = report.queryResult.data.selectedSpaceIds
     .map(spaceId => spaces.find(s => s.id === spaceId))
     .filter(space => space != null) as DensitySpace[]
-  const rawTableData = computeTableData(report, selectedSpaces, report.columnSort);
+  const rawTableData = computeTableData(
+    report.queryResult.data.metrics,
+    selectedSpaces,
+    report.selectedMetric,
+    report.hiddenSpaceIds,
+    report.columnSort,
+    report.opportunityCostPerPerson,
+  );
 
   if (rawTableData == null) return;
 
@@ -154,14 +183,18 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: Densit
         return row;
       }
       switch (column) {
-        case TableColumn.METRIC_PEAK:
-        case TableColumn.METRIC_TOTAL:
-        case TableColumn.METRIC_AVERAGE:
-          row[column] = Math.ceil(Number(rawValue))
-          if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION) {
-            row[column] = `${row[column]}%`;
-          }
-          break;
+        case TableColumn.METRIC_PEAK_OCCUPANCY:
+        case TableColumn.METRIC_AVERAGE_OCCUPANCY:
+        case TableColumn.METRIC_MAXIMUM_ENTRANCES:
+        case TableColumn.METRIC_AVERAGE_ENTRANCES:
+        case TableColumn.METRIC_TOTAL_ENTRANCES:
+        case TableColumn.METRIC_MAXIMUM_EXITS:
+        case TableColumn.METRIC_AVERAGE_EXITS:
+        case TableColumn.METRIC_TOTAL_EXITS:
+        case TableColumn.METRIC_MAXIMUM_EVENTS:
+        case TableColumn.METRIC_AVERAGE_EVENTS:
+        case TableColumn.METRIC_TOTAL_EVENTS:
+        case TableColumn.METRIC_OPPORTUNITY:
         case TableColumn.METRIC_AVERAGE_OPPORTUNITY:
           row[column] = Math.ceil(Number(rawValue));
           break;

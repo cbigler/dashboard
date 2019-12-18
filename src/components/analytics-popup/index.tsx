@@ -23,8 +23,8 @@ type AnalyticsPopupProps = {
   open: boolean,
   onOpen: () => void,
   onClose: () => void,
-  onMouseEnter?: (string) => void,
-  onMouseLeave?: (string) => void,
+  onMouseEnter?: (evt: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void,
+  onMouseLeave?: (evt: React.MouseEvent<HTMLSpanElement, MouseEvent>) => void,
 
   pinCorner?: AnalyticsPopupPinCorner,
 };

@@ -1,43 +1,28 @@
-type HexColor = string;
 
 // https://www.tableau.com/about/blog/2016/7/colors-upgrade-tableau-10-56782
-export const COLORS: HexColor[] = [
+export const COLORS = [
   '#5581FF', '#F4AB4E',
   '#AB67B5', '#FF624D',
   '#249F70', '#2749AA',
   '#C07619', '#7A3A84',
   '#B4301E', '#09613F'
-];
+] as const;
 
-function randomInt(max: number): number {
-  return Math.floor(Math.random() * max);
-}
+export const OVERFLOW_COLOR = '#555555';
 
-function colorChannelToHex(channelValue: number) {
-  // wrap to 256
-  const normalized = channelValue % 0xff;
-  const hex = normalized.toString(16);
-  return hex.length === 2 ? hex : ('0' + hex);
-}
+type ColorString = typeof COLORS[number] | typeof OVERFLOW_COLOR;
 
-function getRandomColor(): HexColor {
-  return [...Array(3)]
-    .map(_ => randomInt(0xff))
-    .map(colorChannelToHex)
-    .reduce((a, b) => a + b, '#')
-}
+export class ColorManager {
+  private _colors: ColorString[]
+  private _pool: ColorString[]
 
-class ColorManager {
-  private _colors: HexColor[]
-  private _pool: HexColor[]
-
-  constructor(colors: HexColor[]) {
+  constructor(colors: ColorString[]) {
     this._colors = colors;
     this._pool = this._colors.slice();
   }
   public next() {
     const nextColor = this._pool.shift();
-    return nextColor != null ? nextColor : getRandomColor()
+    return nextColor != null ? nextColor : OVERFLOW_COLOR
   }
 
   public reset() {
@@ -45,11 +30,11 @@ class ColorManager {
   }
 }
 
-export function colorScale(colors: HexColor[]) {
+export function colorScale(colors: ColorString[]) {
 
   const colorManager = new ColorManager(colors);
 
-  const mapping: {[id: string]: HexColor} = {};
+  const mapping: {[id: string]: ColorString} = {};
 
   function assign(id: string) {
     mapping[id] = colorManager.next();
@@ -68,5 +53,3 @@ export function colorScale(colors: HexColor[]) {
 
   return scale;
 }
-
-export default colorScale(COLORS);

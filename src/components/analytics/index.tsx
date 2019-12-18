@@ -374,6 +374,13 @@ export default function Analytics() {
                           hiddenSpaceIds,
                         })
                       }}
+                      onChangeHighlightedSpaceId={(highlightedSpaceId) => {
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIGHLIGHTED_SPACE,
+                          reportId: activeReport.id,
+                          highlightedSpaceId,
+                        })
+                      }}
                     />
                   </div>
                 </Fragment>

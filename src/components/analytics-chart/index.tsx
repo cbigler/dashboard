@@ -5,53 +5,37 @@ import * as d3Scale from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import * as d3Array from 'd3-array';
 
-import { QueryInterval, AnalyticsFocusedMetric, AnalyticsDatapoint, AnalyticsReport, ResourceStatus } from '../../types/analytics';
-import colorScale from '../../helpers/analytics-color-scale';
+import { DensitySpace } from '../../types';
+import { QueryInterval, AnalyticsFocusedMetric, AnalyticsReport, ResourceStatus } from '../../types/analytics';
 import useContainerWidth from '../../helpers/use-container-width';
 import AnalyticsLoadingBar from '../analytics-loading-bar';
 import AnalyticsLineChartTooltip from '../analytics-line-chart-tooltip';
-import { DensitySpace } from '../../types';
+import { ChartData } from '../../helpers/analytics-chart';
 
 import analyticsIntroImage from '../../assets/images/analytics-intro.svg';
+import { useRxObservable } from '../../helpers/use-rx-store';
+import { activeReportDataStream } from '../../rx-stores/analytics';
+import { OVERFLOW_COLOR } from '../../helpers/analytics-color-scale';
 
 
-type ChartSegmentMultipleDays = {
-  type: 'MULTIPLE_DAYS',
-  days: string[],
-  series: Array<{
-    spaceId: string,
-    data: Array<{
-      day: string,
-      value: number,
-    }>
-  }>
-}
-type ChartSegmentTimesOfSingleDay = {
-  type: 'TIMES_OF_SINGLE_DAY',
-  day: string,
-  times: string[],
-  series: Array<{
-    spaceId: string,
-    data: Array<{
-      time: string,
-      value: number,
-    }>
-  }>
-}
+function sortForRenderingBySpaceOrder<T extends {spaceId: string}>(spaceOrder: string[], series: T[], highlightedSpaceId: string | null) {
+  
+  // render in reverse order so that first item is rendered on top
+  const renderingOrder = spaceOrder.slice().reverse();
+  
+  // if there's a highlighted space, move it all the way to the end of the array so it is last (rendered on top)
+  if (highlightedSpaceId) {
+    const ordered = series.filter(s => s.spaceId !== highlightedSpaceId);
 
-type ChartSegment = ChartSegmentMultipleDays | ChartSegmentTimesOfSingleDay;
-
-type ChartData = {
-  days: string[],
-  minMetricValue: number,
-  maxMetricValue: number,
-  // Store which dates in the dataset are the start of a new year and month...
-  // This will be used to label years/months
-  // eg. if the first date in the dataset is 2019-03-12 then that date is added to both yearStartDates and monthStartDates
-  //     then, if 2019-04-02 is the first date in April, then that date is added to monthStartDates
-  yearStartDates: string[],
-  monthStartDates: string[],
-  segments: ChartSegment[],
+    const highlightedSeries = series.find(s => s.spaceId === highlightedSpaceId);
+    if (highlightedSeries) {
+      ordered.push(highlightedSeries);
+    }
+    return ordered;
+  }
+  return renderingOrder
+    .map(id => series.find(s => s.spaceId === id))
+    .filter<T>((i): i is T => Boolean(i && i.spaceId))
 }
 
 function formatLocalBucketTimeLabel(localBucketTime: string, truncateMinutes: boolean = true) {
@@ -64,173 +48,6 @@ function formatLocalBucketTimeLabel(localBucketTime: string, truncateMinutes: bo
   if (hour === 12) return `12${minute}p`;
   if (hour > 12) return `${hour % 12}${minute}p`;
   return `${hour}${minute}a`;
-}
-
-
-function computeChartData(
-  data: AnalyticsDatapoint[],
-  interval: QueryInterval,
-  selectedMetric: AnalyticsFocusedMetric,
-  opportunityCostPerPerson: number,
-  hiddenSpaceIds: string[],
-): ChartData {
-
-  const hiddenSpaceIdsSet = new Set(hiddenSpaceIds);
-
-  const yearStartDatesMap = new Map<string, string>();
-  const monthStartDatesMap = new Map<string, string>();
-
-  const handleStartDates = (dateString: string) => {
-    const [year, month,] = dateString.split('-');
-    if (!yearStartDatesMap.has(year)) {
-      yearStartDatesMap.set(year, dateString)
-    }
-    const monthKey = `${year}-${month}`
-    if (!monthStartDatesMap.has(monthKey)) {
-      monthStartDatesMap.set(monthKey, dateString)
-    }
-  }
-
-  if (interval === QueryInterval.ONE_DAY) {
-    const dataset = d3Array.rollup(
-      data,
-      (v: AnalyticsDatapoint[]) => {
-        switch (selectedMetric) {
-          case AnalyticsFocusedMetric.MAX:
-            return d3Array.max(v, d => d.max) || 0;
-          case AnalyticsFocusedMetric.UTILIZATION:
-            return d3Array.max(v, d => d.targetUtilization) || 0;
-          case AnalyticsFocusedMetric.OPPORTUNITY:
-            return d3Array.min(v, d => d.opportunity) || 0;
-          case AnalyticsFocusedMetric.ENTRANCES:
-            return d3Array.sum(v, d => d.entrances) || 0;
-          case AnalyticsFocusedMetric.EXITS:
-            return d3Array.sum(v, d => d.exits) || 0;
-          case AnalyticsFocusedMetric.EVENTS:
-            return d3Array.sum(v, d => d.events) || 0;
-          default:
-            throw new Error('Nope')
-        }
-      },
-      (d: AnalyticsDatapoint) => d.spaceId,
-      // @ts-ignore
-      (d: AnalyticsDatapoint) => d.localBucketDay,
-    )
-
-    const series: ChartSegmentMultipleDays['series'] = [];
-    const localBucketDaysWithData = new Set<string>();
-    let maxMetricValue = 0;
-    let minMetricValue = 0;
-    dataset.forEach((dayValues: Map<string, number>, spaceId: string) => {
-      if (hiddenSpaceIdsSet.has(spaceId)) return;
-      const data: ChartSegmentMultipleDays['series'][number]['data'] = [];
-      dayValues.forEach((value: number, dateString: string) => {
-        
-        minMetricValue = value < minMetricValue ? value : minMetricValue;
-        maxMetricValue = value > maxMetricValue ? value : maxMetricValue;
-        localBucketDaysWithData.add(dateString);
-        handleStartDates(dateString);
-        
-        data.push({
-          day: dateString,
-          value,
-        })
-      })
-      series.push({
-        spaceId,
-        data,
-      })
-    })
-    const days = Array.from(localBucketDaysWithData);
-
-    return {
-      days,
-      segments: [{
-        type: 'MULTIPLE_DAYS',
-        days,
-        series,
-      }],
-      minMetricValue,
-      maxMetricValue,
-      yearStartDates: Array.from(yearStartDatesMap.values()),
-      monthStartDates: Array.from(monthStartDatesMap.values()),
-    }
-
-
-  } else { // interval is NOT 1-day
-    const dataset = d3Array.rollup(
-      data,
-      (v: AnalyticsDatapoint[]) => {
-        switch (selectedMetric) {
-          case AnalyticsFocusedMetric.MAX:
-            return d3Array.max(v, d => d.max) || 0;
-          case AnalyticsFocusedMetric.UTILIZATION:
-            return d3Array.max(v, d => d.targetUtilization) || 0;
-          case AnalyticsFocusedMetric.OPPORTUNITY:
-            return d3Array.min(v, d => d.opportunity) || 0;
-          case AnalyticsFocusedMetric.ENTRANCES:
-            return d3Array.sum(v, d => d.entrances) || 0;
-          case AnalyticsFocusedMetric.EXITS:
-            return d3Array.sum(v, d => d.exits) || 0;
-          case AnalyticsFocusedMetric.EVENTS:
-            return d3Array.sum(v, d => d.events) || 0;
-          default:
-            throw new Error('Nope')
-        }
-      },
-      (d: AnalyticsDatapoint) => d.localBucketDay,
-      // @ts-ignore
-      (d: AnalyticsDatapoint) => d.spaceId,
-      (d: AnalyticsDatapoint) => d.localBucketTime,
-    )
-
-    const days: string[] = [];
-    const segments: ChartSegmentTimesOfSingleDay[] = [];
-    let minMetricValue = 0;
-    let maxMetricValue = 0;
-    dataset.forEach((dayBreakdown: Map<string, Map<string, number>>, localBucketDay: string) => {
-      days.push(localBucketDay);
-      handleStartDates(localBucketDay);
-      const dayTimesUsed = new Set<string>();
-      const series: ChartSegmentTimesOfSingleDay['series'] = [];
-      dayBreakdown.forEach((spaceBreakdown: Map<string, number>, spaceId: string) => {
-        if (hiddenSpaceIdsSet.has(spaceId)) return;
-        const data: ChartSegmentTimesOfSingleDay['series'][number]['data'] = [];
-        spaceBreakdown.forEach((value: number, localBucketTime: string) => {
-          minMetricValue = value < minMetricValue ? value : minMetricValue;
-          maxMetricValue = value > maxMetricValue ? value : maxMetricValue;
-          dayTimesUsed.add(localBucketTime);
-          
-          data.push({
-            time: localBucketTime,
-            value,
-          })
-        })
-        series.push({
-          spaceId,
-          data,
-        })
-      })
-
-      const times = Array.from(dayTimesUsed).sort();
-
-      segments.push({
-        type: 'TIMES_OF_SINGLE_DAY',
-        day: localBucketDay,
-        times,
-        series,
-      })
-    })
-    return {
-      days,
-      segments,
-      minMetricValue,
-      maxMetricValue,
-      yearStartDates: Array.from(yearStartDatesMap.values()),
-      monthStartDates: Array.from(monthStartDatesMap.values()),
-    };
-
-  }
 }
 
 // used for 1d mode, gives evenly-spaced point locations for each day
@@ -265,30 +82,39 @@ const DAY_LABEL_VERTICAL_OFFSET = 26;
 const MONTH_LABEL_VERTICAL_OFFSET = DAY_LABEL_VERTICAL_OFFSET + LABEL_VERTICAL_STEP;
 const YEAR_LABEL_VERTICAL_OFFSET = MONTH_LABEL_VERTICAL_OFFSET + LABEL_VERTICAL_STEP;
 
+const MUTED_LINE_COLOR = '#DADADA';
+
 const Chart: React.FC<{
   outerWidth: number,
   outerHeight: number,
   interval: QueryInterval,
   selectedMetric: AnalyticsFocusedMetric,
-  opportunityCostPerPerson: number,
-  hiddenSpaceIds: string[]
-  datapoints: AnalyticsDatapoint[],
   spacesById: ReadonlyMap<string, DensitySpace>,
 }> = function Chart({
   outerWidth,
   outerHeight,
   interval,
   selectedMetric,
-  opportunityCostPerPerson,
-  hiddenSpaceIds,
-  datapoints,
   spacesById,
 }) {
 
   const [mousePosition, setMousePosition] = React.useState<{ x: number, y: number } | null>(null);
 
-  // TODO: probably need to memoize this result
-  const chartData = computeChartData(datapoints, interval, selectedMetric, opportunityCostPerPerson, hiddenSpaceIds);
+  const reportData = useRxObservable(activeReportDataStream);
+  if (!reportData) return null;
+  const { report, chartData, spaceOrder, colorMap } = reportData;
+
+
+
+  const getColorForSpaceId = (spaceId: string): string => {
+    const muted = MUTED_LINE_COLOR;
+    const defaultColorForSpace = colorMap.get(spaceId) || muted;
+    if (report.highlightedSpaceId) {
+      return report.highlightedSpaceId === spaceId ? defaultColorForSpace : muted;
+    } else {
+      return defaultColorForSpace === OVERFLOW_COLOR ? muted : defaultColorForSpace;
+    }
+  }
 
   const additionalSpaceNeededForYAxisLabels = (() => {
     const lengthOfMin = String(chartData.minMetricValue).length;
@@ -306,7 +132,6 @@ const Chart: React.FC<{
   }
   const width = outerWidth - (padding.left + padding.right);
   const height = outerHeight - (padding.top + padding.bottom);
-
 
   const whereIsADayPoint = makeDayPointScale(chartData.days, width);
   const whereDoesADayRegionStart = makeDayRegionScale(chartData.days, width);
@@ -711,14 +536,15 @@ const Chart: React.FC<{
             .x(d => dayPointScale(d.day) || 0)
             .y(d => yScale(d.value))
 
-          return segment.series.map(series => {
+            
+          return sortForRenderingBySpaceOrder(spaceOrder, segment.series, report.highlightedSpaceId).map(series => {
             const pathData = lineGen(series.data) || '';
             return (
               <g key={series.spaceId}>
                 <path
                   d={pathData}
                   fill="none"
-                  stroke={colorScale(series.spaceId)}
+                  stroke={getColorForSpaceId(series.spaceId)}
                   strokeWidth={2}
                 />
                 {/* {series.data.map(d => {
@@ -750,14 +576,14 @@ const Chart: React.FC<{
 
           return (
             <g key={segment.day} transform={`translate(${dayStartXPos}, 0)`}>
-            {segment.series.map(series => {
+            {sortForRenderingBySpaceOrder(spaceOrder, segment.series, report.highlightedSpaceId).map(series => {
               const pathData = lineGen(series.data) || '';
               return (
                 <g key={series.spaceId}>
                   <path
                     d={pathData}
                     fill="none"
-                    stroke={colorScale(series.spaceId)}
+                    stroke={getColorForSpaceId(series.spaceId)}
                     strokeWidth={2}
                   />
                 </g>
@@ -833,7 +659,7 @@ const Chart: React.FC<{
       x = (whereDoesADayRegionStart(day) || 0) + (timeScale(time) || 0);
     }
 
-    return tooltip.datapoints.filter(datapoint => datapoint.value === tooltip.targetValue).map(datapoint => {
+    return sortForRenderingBySpaceOrder(spaceOrder, tooltip.datapoints, report.highlightedSpaceId).filter(datapoint => datapoint.value === tooltip.targetValue).map(datapoint => {
       const y = yScale(datapoint.value);
       return (
         <circle
@@ -841,7 +667,7 @@ const Chart: React.FC<{
           cx={x}
           cy={y}
           r={3} 
-          fill={colorScale(datapoint.spaceId)}
+          fill={getColorForSpaceId(datapoint.spaceId)}
           stroke={'#fafbfc'}
           strokeWidth={2}
         />
@@ -911,6 +737,7 @@ const Chart: React.FC<{
             datapoints={tooltip.datapoints}
             targetValue={tooltip.targetValue}
             selectedMetric={selectedMetric}
+            colorMap={colorMap}
           />
         </div>
       ): null}
@@ -930,23 +757,8 @@ const AnalyticsChart: React.FC<{
   const outerWidth = useContainerWidth(container);
   const outerHeight = 300;
 
-  // when viewing metrics based on capacity, hide spaces for which capacity is not defined
-  const hiddenSpaceIds = (() => {
-    if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION || report.selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY) {
-      if (report.queryResult.status !== ResourceStatus.COMPLETE) return report.hiddenSpaceIds;
-      const additionalHiddenSpaceIds = report.queryResult.data.selectedSpaceIds.filter(spaceId => {
-        const space = spacesById.get(spaceId);
-        if (!space) return false;
-        if (space.targetCapacity == null) return true;
-        return false;
-      });
-      return report.hiddenSpaceIds.concat(additionalHiddenSpaceIds);
-    }
-    return report.hiddenSpaceIds;
-  })()
-
   return (
-    <div ref={container} style={{ width: '100%', height: outerHeight }}>
+    <div ref={container} className={styles.chartContainer} style={{ width: '100%', height: outerHeight}}>
     {(() => {
       switch (report.queryResult.status) {
         case ResourceStatus.IDLE: {
@@ -978,9 +790,6 @@ const AnalyticsChart: React.FC<{
               outerHeight={outerHeight}
               interval={report.query.interval}
               selectedMetric={report.selectedMetric}
-              opportunityCostPerPerson={report.opportunityCostPerPerson}
-              hiddenSpaceIds={hiddenSpaceIds}
-              datapoints={report.queryResult.data.datapoints}
               spacesById={spacesById}
             />
           ) : (

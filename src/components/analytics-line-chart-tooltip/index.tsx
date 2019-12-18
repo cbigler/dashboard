@@ -3,7 +3,6 @@ import classNames from 'classnames';
 
 import { descending } from '../../helpers/natural-sorting';
 import { AnalyticsFocusedMetric } from '../../types/analytics';
-import analyticsColorScale from '../../helpers/analytics-color-scale';
 import styles from './styles.module.scss';
 import { findLeast } from '../../helpers/array-utilities';
 import { commaFormat } from '../../helpers/format-number';
@@ -90,11 +89,13 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
   datapoints: TooltipDatapoint[],
   selectedMetric: AnalyticsFocusedMetric,
   targetValue: number,
+  colorMap: Map<string, string>,
 }> = function AnalyticsLineChartTooltip({
   datetimeLabel,
   datapoints,
   selectedMetric,
   targetValue,
+  colorMap,
 }) {
 
   // scoped helper functions
@@ -111,7 +112,7 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
   const entries: TooltipEntry[] = datapoints.map(datapoint => {
     return {
       title: datapoint.spaceName,
-      color: analyticsColorScale(datapoint.spaceId),
+      color: colorMap.get(datapoint.spaceId) || '#cccccc',
       value: datapoint.value,
       displayValue: formatMetricValue(datapoint.value),
     }
