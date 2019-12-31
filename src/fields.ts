@@ -19,6 +19,7 @@ export default [
     slug: 'core',
     defaults: {
       'production': 'https://api.density.io/v2',
+      'prod': 'https://agitated-seagull-api.density.io/v2',
       'dr': 'https://agitated-lemur-api.density.io/v2',
       'staging': 'https://core-staging.density.io/v2',
       'dev01': 'https://dev01-us-east-1-api.density.io/v2',
