@@ -12,8 +12,8 @@ import Checkbox from '../checkbox';
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
-import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
+import { spaceHierarchySearcher } from '@density/lib-space-helpers';
+import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
 
 export enum SelectControlTypes {
   RADIOBUTTON = 'RADIOBUTTON',

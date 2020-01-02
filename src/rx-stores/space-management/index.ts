@@ -1,7 +1,7 @@
 import moment from 'moment';
 
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
-import { SQUARE_FEET } from '../../helpers/convert-unit/index';
+import { SQUARE_FEET } from '@density/lib-helpers';
 import { DensityUser, DensityTimeSegment, DensitySpace, DensityDoorway } from '../../types';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';

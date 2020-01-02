@@ -1,5 +1,5 @@
 import moment from 'moment';
-import spaceHierarchyFormatter from '../space-hierarchy-formatter/index';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 import { DensityTimeSegment } from '../../types';
 
 // If no time segment group is selected or defined, default to using this one.

@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
+import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
 import { DensitySpace } from '../../types';
 import { DateRange } from '../../helpers/space-time-utilities';
 import useRxDispatch from '../../helpers/use-rx-dispatch';

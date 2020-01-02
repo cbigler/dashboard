@@ -42,7 +42,7 @@ import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
 import showModal from '../../rx-actions/modal/show';
 
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import { AppFrame, AppPane } from '@density/ui';
 import UserStore from '../../rx-stores/user';

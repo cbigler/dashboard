@@ -4,7 +4,7 @@ import { AppBarSection, InputBox } from '@density/ui';
 
 import styles from './metadata.module.scss';
 
-import convertUnit, { UNIT_NAMES, SQUARE_FEET, SQUARE_METERS } from '../../helpers/convert-unit/index';
+import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET, SQUARE_METERS } from '@density/lib-helpers';
 
 import FormLabel from '../form-label/index';
 import AdminLocationsDetailModule from './index';
@@ -131,7 +131,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
     ),
     SIZE: (
       <FormLabel
-        label={`Size (${UNIT_NAMES[formState.sizeAreaUnit || SQUARE_FEET]})`}
+        label={`Size (${UNIT_DISPLAY_NAMES[formState.sizeAreaUnit || SQUARE_FEET]})`}
         htmlFor="admin-locations-detail-modules-general-info-size"
         input={
           <InputBox

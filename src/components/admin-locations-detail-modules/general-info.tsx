@@ -9,10 +9,10 @@ import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
 import { fileToDataURI } from '../../helpers/media-files';
 
 import AdminLocationsDetailModule from './index';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 import { SpacePickerDropdown } from '../space-picker';
 
-import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
+import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 
 function getSpaceParentHierarchy(spaceHierarchy, formState) {
   return spaceHierarchyFormatter(spaceHierarchy).filter(item => {

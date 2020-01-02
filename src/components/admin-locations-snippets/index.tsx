@@ -10,7 +10,7 @@ import styles from './styles.module.scss';
 import { SpacesState } from '../../rx-stores/spaces';
 import { DensitySpace, DensitySpaceTypes, DensityDoorway } from '../../types';
 import { UserState } from '../../rx-stores/user';
-import convertUnit, { UNIT_NAMES, SQUARE_FEET } from '../../helpers/convert-unit';
+import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET } from '@density/lib-helpers';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
 import moment from 'moment';
 
@@ -89,7 +89,7 @@ export function AdminLocationsDetailSizeArea({user, space}: {user: UserState, sp
 
   return <AdminLocationsLeftPaneDataRowItem
     id="size"
-    label={user.data ? `Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
+    label={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
     value={area ? commaNumber(area) : <Fragment>&mdash;</Fragment>}
   />;
 }
@@ -99,7 +99,7 @@ export function AdminLocationsDetailAnnualRent({user, space}: {user: UserState, 
 
   return <AdminLocationsLeftPaneDataRowItem
     id="rent"
-    label={user.data ? `Annual rent (per ${UNIT_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
+    label={user.data ? `Annual rent (per ${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
     value={area && space.annualRent ? (
       `$${commaNumber((Math.round(space.annualRent / area * 2) / 2).toFixed(2))}`
     ) : <Fragment>&mdash;</Fragment>}
@@ -186,7 +186,7 @@ export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesState}) {
 
 export function AdminLocationsListSize({user}: {user: UserState}) {
   return <ListViewColumn
-    id={user.data ? `Size (${UNIT_NAMES[user.data.sizeAreaDisplayUnit]})` : null}
+    id={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]})` : null}
     width={120}
     template={(item: DensitySpace) => {
       const area = sizeAreaConverted(user, item);

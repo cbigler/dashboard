@@ -53,4 +53,3 @@ export function getManageableRoles(user) {
   if (can(user, PERMISSION_CODES.readonlyUserManage)) { roles.push('readonly'); }
   return roles;
 }
-

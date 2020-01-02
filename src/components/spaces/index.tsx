@@ -15,7 +15,7 @@ import {
   InputBox,
 } from '@density/ui';
 
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
 

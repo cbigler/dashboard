@@ -3,8 +3,8 @@ import styles from './styles.module.scss';
 import classnames from 'classnames';
 
 import { DensitySpace } from '../../types';
-import { SpaceHierarchyDisplayItem } from '../../helpers/space-hierarchy-formatter';
-import SPACE_FUNCTION_CHOICES from '../../helpers/space-function-choices';
+import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
+import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 import filterCollection from '../../helpers/filter-collection';
 
 import SpacePicker from '../space-picker';

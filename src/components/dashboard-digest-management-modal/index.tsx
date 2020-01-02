@@ -16,7 +16,7 @@ import {
   Modal,
 } from '@density/ui';
 import DayOfWeekSelector from '../day-of-week-selector/index';
-import TIMEZONE_CHOICES from '../../helpers/time-zone-choices/index';
+import { TIME_ZONE_CHOICES } from '@density/lib-time-helpers';
 import filterCollection from '../../helpers/filter-collection/index';
 
 import collectionUsersRead from '../../rx-actions/users/read';
@@ -355,7 +355,7 @@ function DigestManagementForm({
           <InputBox
             type="select"
             value={timeZone}
-            choices={TIMEZONE_CHOICES}
+            choices={TIME_ZONE_CHOICES}
             onChange={item => onChangeTimeZone(item.id)}
             placeholder="Select a time"
             width="100%"

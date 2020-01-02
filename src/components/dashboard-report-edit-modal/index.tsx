@@ -55,9 +55,9 @@ import GenericLoadingState from '../generic-loading-state';
 import { SpacePickerDropdown } from '../space-picker';
 import FormLabel from '../form-label';
 
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 import filterCollection from '../../helpers/filter-collection';
-import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices';
+import { TIME_ZONE_CHOICES } from '@density/lib-time-helpers';
 import {
   formatForReactDates,
   parseFromReactDates,

@@ -4,11 +4,11 @@ import moment from 'moment';
 import styles from './operating-hours.module.scss';
 import classnames from 'classnames';
 
-import TIME_ZONE_CHOICES from '../../helpers/time-zone-choices/index';
+import { TIME_ZONE_CHOICES } from '@density/lib-time-helpers';
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';
 
 import SpacePicker from '../space-picker';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
 import showModal from '../../rx-actions/modal/show';

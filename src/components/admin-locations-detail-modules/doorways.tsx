@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import styles from './doorways.module.scss';
 import colorVariables from '@density/ui/variables/colors.json';
-import convertUnit, { INCHES, CENTIMETERS } from '../../helpers/convert-unit/index';
+import { convertUnit, INCHES, CENTIMETERS } from '@density/lib-helpers';
 import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
 
 import {

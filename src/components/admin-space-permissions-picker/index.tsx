@@ -1,6 +1,6 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
-import spaceHierarchyFormatter from '../../helpers/space-hierarchy-formatter/index';
+import { spaceHierarchyFormatter, spaceHierarchySearcher } from '@density/lib-space-helpers';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -16,7 +16,6 @@ import {
 } from '@density/ui';
 
 import { getChildrenOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
-import spaceHierarchySearcher from '../../helpers/space-hierarchy-searcher/index';
 import deduplicate from '../../helpers/deduplicate';
 
 type AdminSpacePermissionsPickerProps = {
