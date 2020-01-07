@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './danger-zone.module.scss';
 
-import { Button } from '@density/ui';
+import { Button } from '@density/ui/src';
 
 import collectionSpacesDestroy from '../../rx-actions/collection/spaces/destroy';
 import showModal from '../../rx-actions/modal/show';

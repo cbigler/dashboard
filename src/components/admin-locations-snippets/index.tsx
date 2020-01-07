@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import classnames from 'classnames';
 import commaNumber from 'comma-number';
 
-import { Icons, ListView, ListViewColumn, InfoPopup } from '@density/ui';
+import { Icons, ListView, ListViewColumn, InfoPopup } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';

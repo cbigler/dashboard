@@ -11,7 +11,7 @@ import {
   ListViewColumn,
   ListViewColumnSpacer,
   ListViewClickableLink,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';

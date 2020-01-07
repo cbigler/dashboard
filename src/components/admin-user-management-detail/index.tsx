@@ -23,7 +23,7 @@ import {
   Button,
   ButtonGroup,
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import useRxStore from '../../helpers/use-rx-store';
 import usersStore from '../../rx-stores/users';

@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import classnames from 'classnames';
-import { AppBarSection, InputBox } from '@density/ui';
+import { AppBarSection, InputBox } from '@density/ui/src';
 
 import styles from './metadata.module.scss';
 

@@ -18,7 +18,7 @@ import {
   ListViewColumn,
   ListViewColumnSpacer,
   Skeleton,
-} from '@density/ui';
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 

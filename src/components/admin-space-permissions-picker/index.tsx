@@ -13,7 +13,7 @@ import {
   AppBarSection,
   Icons,
   Skeleton,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import { getChildrenOfSpace, isParentSelected } from '../../helpers/filter-hierarchy/index';
 import deduplicate from '../../helpers/deduplicate';

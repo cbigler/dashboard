@@ -10,7 +10,7 @@ import {
   CardTable,
   Icons,
   InfoPopup,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import RawEventsPager from '../explore-space-detail-raw-events-pager/index';
 import { calculateDailyRawEvents, DAILY_RAW_EVENTS_PAGE_SIZE } from '../../rx-actions/route-transition/explore-space-daily';

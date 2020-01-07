@@ -17,8 +17,8 @@ import {
   ListViewColumn,
   ListViewColumnSpacer,
   ListViewClickableLink,
-} from '@density/ui';
-// import AppBar, { AppBarSection, AppBarTitle } from '@density/ui';
+} from '@density/ui/src';
+// import AppBar, { AppBarSection, AppBarTitle } from '@density/ui/src';
 
 import { rxDispatch } from '../../rx-stores/index';
 

@@ -10,7 +10,7 @@ import {
   Button,
   ButtonGroup,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 
 export default class SpaceMappingsDestroyModal extends React.Component<any, any> {

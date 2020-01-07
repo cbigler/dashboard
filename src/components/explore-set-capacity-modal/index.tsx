@@ -10,7 +10,7 @@ import {
   AppBarTitle,
   AppBarSection,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 export default class ExploreSetCapacityModal extends React.Component<any, any> {
   constructor(props) {

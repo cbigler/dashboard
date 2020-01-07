@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import React, { Fragment } from 'react';
 import { getManageableRoles, ROLE_INFO } from '../../helpers/permissions';
 
-import { RadioButton, RadioButtonContext } from '@density/ui';
+import { RadioButton, RadioButtonContext } from '@density/ui/src';
 
 export default function AdminUserManagementRoleRadioList({ user, value, onChange }) {
   const manageableRoles = getManageableRoles(user);

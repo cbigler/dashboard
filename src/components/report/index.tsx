@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AppBar, AppBarContext, AppBarSection, Button, Modal } from '@density/ui';
+import { AppBar, AppBarContext, AppBarSection, Button, Modal } from '@density/ui/src';
 import showModal from '../../rx-actions/modal/show'; 
 
 import Report from '@density/reports';

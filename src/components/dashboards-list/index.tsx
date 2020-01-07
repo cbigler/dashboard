@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@density/ui';
+import { Button } from '@density/ui/src';
 
 import createDashboard from '../../rx-actions/dashboards/create-dashboard';
 

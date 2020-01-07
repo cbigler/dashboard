@@ -17,7 +17,7 @@ import {
   RadioButton,
   Switch,
   Modal,
-} from "@density/ui";
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';

@@ -17,7 +17,7 @@ import {
   Button,
   DashboardReportGrid,
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import { ReportLoading } from '@density/reports';
 import Report, { ExpandedReportModal } from '../report';

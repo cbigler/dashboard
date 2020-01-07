@@ -21,7 +21,7 @@ import {
   Button,
   ButtonGroup,
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 import useRxStore from '../../helpers/use-rx-store';
 import UserStore from '../../rx-stores/user';
 import TagsStore from '../../rx-stores/tags';

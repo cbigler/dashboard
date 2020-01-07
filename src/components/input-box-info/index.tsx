@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 
 import {
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 
 export default function InputBoxInfo({
   children,

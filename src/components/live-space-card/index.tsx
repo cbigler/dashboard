@@ -8,7 +8,7 @@ import {
   Card,
   CardBody,
   CardHeader,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import formatCapacityPercentage from '../../helpers/format-capacity-percentage/index';
 

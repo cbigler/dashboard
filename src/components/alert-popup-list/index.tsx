@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import classnames from 'classnames';
-import { AppBar, AppBarSection, AppBarTitle, Icons, Switch } from '@density/ui';
+import { AppBar, AppBarSection, AppBarTitle, Icons, Switch } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';

@@ -13,7 +13,7 @@ import {
   CardTable,
   Icons,
   InfoPopup,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';

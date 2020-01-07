@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 
 import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';

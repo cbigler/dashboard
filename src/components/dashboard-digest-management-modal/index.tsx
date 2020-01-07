@@ -14,7 +14,7 @@ import {
   Icons,
   InputBox,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 import DayOfWeekSelector from '../day-of-week-selector/index';
 import { TIME_ZONE_CHOICES } from '@density/lib-time-helpers';
 import filterCollection from '../../helpers/filter-collection/index';

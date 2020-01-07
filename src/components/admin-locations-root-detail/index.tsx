@@ -4,7 +4,7 @@ import AdminLocationsListViewImage  from '../admin-locations-list-view-image/ind
 
 import styles from './styles.module.scss';
 
-import { ListView, ListViewColumn } from '@density/ui';
+import { ListView, ListViewColumn } from '@density/ui/src';
 import { 
   AdminLocationsListLevelsTotal,
   AdminLocationsListRoomsTotal,

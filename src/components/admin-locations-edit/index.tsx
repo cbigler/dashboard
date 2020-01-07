@@ -30,7 +30,7 @@ import {
   Button,
   ButtonGroup,
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 import useRxStore from '../../helpers/use-rx-store';
 import TagsStore from '../../rx-stores/tags';
 import AssignedTeamsStore from '../../rx-stores/assigned-teams';

@@ -11,7 +11,7 @@ import {
   InputBox,
   DateRangePicker,
   DatePicker,
-} from '@density/ui';
+} from '@density/ui/src';
 import {
   ItemList,
   ARROW_TEMPLATE,

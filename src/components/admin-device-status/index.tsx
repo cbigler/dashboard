@@ -11,7 +11,7 @@ import {
   ListViewColumn,
   ListViewColumnSpacer,
   Icons
-} from '@density/ui';
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import useRxStore from '../../helpers/use-rx-store';
 import SpacesStore from '../../rx-stores/spaces';

@@ -32,7 +32,7 @@ import {
   Icons,
   Modal,
   Switch,
-} from '@density/ui';
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import DayOfWeekSelector from '../day-of-week-selector/index';
 

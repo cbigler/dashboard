@@ -7,7 +7,7 @@ import {
   InputBox,
   AppBar,
   RadioButton,
-} from '@density/ui';
+} from '@density/ui/src';
 import Checkbox from '../checkbox';
 
 import colorVariables from '@density/ui/variables/colors.json';

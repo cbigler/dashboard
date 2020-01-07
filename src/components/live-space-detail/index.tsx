@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { DensityMark } from '@density/ui';
+import { DensityMark } from '@density/ui/src';
 
 import { chartAsReactComponent } from '@density/charts';
 

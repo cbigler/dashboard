@@ -24,7 +24,7 @@ import {
   AppBarContext,
   Icons,
   InputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 
 export type AnalyticsSpaceSelection = {
   field: string,

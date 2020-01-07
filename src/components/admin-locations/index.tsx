@@ -22,7 +22,7 @@ import {
   ListView,
   ListViewColumn,
   Skeleton,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import {
   AdminLocationsLeftPaneDataRow,

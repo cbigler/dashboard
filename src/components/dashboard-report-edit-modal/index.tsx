@@ -32,7 +32,7 @@ import {
   Switch,
   DateRangePicker,
   DateRangePickerContext,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import updateModal from '../../rx-actions/modal/update';
 import {

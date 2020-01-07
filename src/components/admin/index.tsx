@@ -6,7 +6,7 @@ import {
   AppBarTitle,
   AppFrame,
   AppPane,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import AppBarSubnav, { AppBarSubnavLink } from '../app-bar-subnav';
 import AdminUserManagement from '../admin-user-management';

@@ -1,7 +1,7 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { TimeFilter, DayOfWeek } from '../../types/datetime';
-import { Button, Checkbox, Icons } from '@density/ui';
+import { Button, Checkbox, Icons } from '@density/ui/src';
 import isEqual from 'lodash/isEqual'; 
 
 import Slider from '../slider';

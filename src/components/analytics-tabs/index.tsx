@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { AnalyticsReport } from '../../types/analytics';

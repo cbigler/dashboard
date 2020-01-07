@@ -44,7 +44,7 @@ import showModal from '../../rx-actions/modal/show';
 
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
-import { AppFrame, AppPane } from '@density/ui';
+import { AppFrame, AppPane } from '@density/ui/src';
 import UserStore from '../../rx-stores/user';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';

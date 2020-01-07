@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 import { hideToast } from '../../rx-actions/toasts';
 
-import { Toast } from '@density/ui';
+import { Toast } from '@density/ui/src';
 
 import styles from './styles.module.scss';
 import useRxDispatch from '../../helpers/use-rx-dispatch';

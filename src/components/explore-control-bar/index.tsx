@@ -10,7 +10,7 @@ import {
   DatePicker,
   DateRangePicker,
   InputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 

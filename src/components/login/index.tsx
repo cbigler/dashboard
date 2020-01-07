@@ -9,7 +9,7 @@ import {
   Icons,
   Toast,
   ToastContext,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import accounts from '../../client/accounts';
 import { impersonateUnset } from '../../rx-actions/impersonate';

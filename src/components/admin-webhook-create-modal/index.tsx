@@ -11,7 +11,7 @@ import {
   AppBarContext,
   AppBarSection,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import FormLabel from '../form-label';
 

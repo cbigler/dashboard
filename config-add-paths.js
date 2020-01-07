@@ -13,6 +13,7 @@ module.exports = function addPaths(rule) {
       path.resolve('./node_modules/@density/lib-helpers'),
       path.resolve('./node_modules/@density/lib-space-helpers'),
       path.resolve('./node_modules/@density/lib-time-helpers'),
+      path.resolve('./node_modules/@density/ui/src'),
 
     ]);
   }

@@ -10,7 +10,7 @@ import {
   InputBox,
   Modal,
   PhoneInputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 import { DispatchType } from '../../types/rx-actions';
 import styles from './styles.module.scss';
 import FormLabel from '../form-label';

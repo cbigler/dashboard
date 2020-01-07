@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import classnames from 'classnames';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { AppBar, AppBarSection, Icons } from '@density/ui';
+import { AppBar, AppBarSection, Icons } from '@density/ui/src';
 
 export default function AdminLocationsSubheader({title, subtitle=null, spaceId=null, supportsHover=true}) {
   const [hover, setHover] = useState(false);

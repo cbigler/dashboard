@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 import styles from './styles.module.scss';
 
 import spaceHierarchyFormatterDeprecated from '../../helpers/space-hierarchy-formatter-deprecated/index';

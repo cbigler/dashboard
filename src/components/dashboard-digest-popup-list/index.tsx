@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import moment from 'moment';
-import { AppBar, AppBarSection, AppBarTitle, AppBarContext, Icons } from '@density/ui';
+import { AppBar, AppBarSection, AppBarTitle, AppBarContext, Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';

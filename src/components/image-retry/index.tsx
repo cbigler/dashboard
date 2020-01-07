@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
 import React from 'react';
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 
 // Display modes
 const FALLBACK = 'FALLBACK';

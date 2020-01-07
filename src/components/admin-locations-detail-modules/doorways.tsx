@@ -19,7 +19,7 @@ import {
   ListViewColumn,
   Modal,
   RadioButton,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import Checkbox from '../checkbox';
 import FormLabel from '../form-label/index';

@@ -12,7 +12,7 @@ import {
   CardLoading,
   Icons,
   InfoPopup,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import {
   DEFAULT_TIME_SEGMENT_GROUP,

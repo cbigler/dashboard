@@ -43,7 +43,7 @@ import {
   ListView,
   ListViewColumn,
   ListViewColumnSpacer,
-} from '@density/ui';
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import DetailModule from '../admin-locations-detail-modules';
 import FormLabel from '../form-label';

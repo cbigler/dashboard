@@ -14,7 +14,7 @@ import {
   AppBarTitle,
   Button,
   ListView,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import {
   AdminLocationsDetailTargetCapacity,

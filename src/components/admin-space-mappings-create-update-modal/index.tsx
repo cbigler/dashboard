@@ -10,7 +10,7 @@ import {
   Button,
   ButtonGroup,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import AdminServiceSpaceRadioList from '../admin-service-space-radio-list/index';
 

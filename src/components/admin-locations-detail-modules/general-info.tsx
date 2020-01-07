@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { InputBox } from '@density/ui';
+import { InputBox } from '@density/ui/src';
 import classnames from 'classnames';
 
 import styles from './general-info.module.scss';

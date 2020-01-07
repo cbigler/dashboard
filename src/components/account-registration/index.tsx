@@ -4,7 +4,7 @@ import React from 'react';
 
 import { DensityUser } from '../../types';
 
-import { Button, InputBox } from '@density/ui';
+import { Button, InputBox } from '@density/ui/src';
 
 import ErrorBar from '../error-bar/index';
 import logoDensityBlack from '../../assets/images/logo-black.svg';

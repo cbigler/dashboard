@@ -6,7 +6,7 @@ import {
   AppBar,
   AppBarTitle,
   AppBarContext,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import AdminLocationsDetailModulesAddressLocal from './address';
 import AdminLocationsDetailModulesDangerZoneLocal from './danger-zone';

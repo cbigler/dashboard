@@ -10,7 +10,7 @@ import {
   InputBox,
   Switch,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 // Called initially to get the 
 export function getActiveEnvironments(fields) {

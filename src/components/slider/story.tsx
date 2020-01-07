@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react';
 import { withState } from '../../helpers/storybook';
 import range from 'lodash/range';
 
-import { InputBox } from '@density/ui';
+import { InputBox } from '@density/ui/src';
 import Checkbox from '../checkbox';
 import Slider from '.';
 import {

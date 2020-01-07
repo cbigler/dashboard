@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import styles from './styles.module.scss';
 
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { DensitySpace } from '../../types';
 

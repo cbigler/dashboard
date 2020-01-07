@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 
 import React from 'react';
 
-import { Button } from '@density/ui';
+import { Button } from '@density/ui/src';
 import { InputStackItem } from '../input-stack/index';
 
 import logoDensityBlack from '../../assets/images/logo-black.svg';

@@ -16,7 +16,7 @@ import {
   ButtonGroup,
   RadioButton,
   Icons
-} from '@density/ui';
+} from '@density/ui/src';
 
 import brivoIcon from '../../assets/images/icon-brivo.svg';
 import colorVariables from '@density/ui/variables/colors.json';

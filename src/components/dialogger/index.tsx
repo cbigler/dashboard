@@ -11,7 +11,7 @@ import {
   ButtonGroup,
   Modal,
   InputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import hideModal from '../../rx-actions/modal/hide';
 import updateModal from '../../rx-actions/modal/update';

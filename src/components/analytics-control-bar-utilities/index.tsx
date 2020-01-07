@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import styles from './styles.module.scss';
 import Checkbox from '../checkbox';
-import { Icons } from '@density/ui';
+import { Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { InputBox } from '@density/ui';
+import { InputBox } from '@density/ui/src';
 import styles from './styles.module.scss';
 
 export default function MarkdownEditor(props) {

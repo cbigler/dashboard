@@ -9,7 +9,7 @@ import {
   DatePicker,
   DateRangePicker,
   InputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 import gridVariables from '@density/ui/variables/grid.json';
 import classnames from 'classnames';
 

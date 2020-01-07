@@ -1,5 +1,5 @@
 import React from 'react';
-import { TagInput } from '@density/ui';
+import { TagInput } from '@density/ui/src';
 import formatTagName from '../../helpers/format-tag-name/index';
 import AdminLocationsDetailModule from './index';
 

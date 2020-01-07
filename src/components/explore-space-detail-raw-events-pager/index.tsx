@@ -3,7 +3,7 @@ import classnames from 'classnames';
 
 import styles from './styles.module.scss';
 
-import { PagerButtonGroup } from '@density/ui';
+import { PagerButtonGroup } from '@density/ui/src';
 
 export default class VisualizationSpaceDetailRawEventsPager extends React.Component<any, any> {
   constructor(props) {

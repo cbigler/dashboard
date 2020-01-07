@@ -12,7 +12,7 @@ import {
   AppSidebar,
   Button,
   ListView,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import {
   AdminLocationsLeftPaneDataRow,

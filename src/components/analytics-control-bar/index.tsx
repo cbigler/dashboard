@@ -22,7 +22,7 @@ import { QueryInterval, AnalyticsFocusedMetric, AnalyticsDataExportType } from '
 // point this out in a review!
 import showModal from '../../rx-actions/modal/show';
 
-import { Button, Icons, InputBox } from '@density/ui';
+import { Button, Icons, InputBox } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { AddButton } from '../analytics-control-bar-utilities';

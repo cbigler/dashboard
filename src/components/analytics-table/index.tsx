@@ -14,7 +14,7 @@ import {
 
 import {
   Icons,
-} from '@density/ui';
+} from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import Checkbox from '../checkbox';
 import { commaFormat } from '../../helpers/format-number';

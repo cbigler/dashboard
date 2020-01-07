@@ -12,7 +12,7 @@ import {
   ListViewColumn,
   ListViewColumnSpacer,
   ListViewClickableLink,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import colorVariables from '@density/ui/variables/colors.json';
 

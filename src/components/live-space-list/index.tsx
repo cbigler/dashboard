@@ -7,7 +7,7 @@ import spaceResetCount from '../../rx-actions/collection/spaces/reset-count';
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
 
-import { InputBox } from '@density/ui';
+import { InputBox } from '@density/ui/src';
 import SpaceCard from '../live-space-card/index';
 import SpaceUpdateModal from '../explore-edit-count-modal/index';
 

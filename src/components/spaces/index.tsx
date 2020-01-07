@@ -13,7 +13,7 @@ import {
   AppScrollView,
   Icons,
   InputBox,
-} from '@density/ui';
+} from '@density/ui/src';
 
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 

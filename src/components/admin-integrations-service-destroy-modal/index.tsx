@@ -11,7 +11,7 @@ import {
   ButtonGroup,
   InputBox,
   Modal,
-} from '@density/ui';
+} from '@density/ui/src';
 
 
 export default class IntegrationsServiceDestroyModal extends React.Component<any, any> {

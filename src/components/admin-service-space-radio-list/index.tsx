@@ -3,7 +3,7 @@ import styles from './styles.module.scss';
 import React, { Component, Fragment } from 'react';
 
 import { DensityServiceSpace } from '../../types';
-import { RadioButton, RadioButtonContext, InputBox, Icons } from '@density/ui';
+import { RadioButton, RadioButtonContext, InputBox, Icons } from '@density/ui/src';
 import filterCollection from '../../helpers/filter-collection/index';
 
 

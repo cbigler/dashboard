@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 
 import { DensitySpace } from '../../types';
 
-import { InputBox, Icons } from '@density/ui';
+import { InputBox, Icons } from '@density/ui/src';
 
 import filterCollection from '../../helpers/filter-collection/index';
 
