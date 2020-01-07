@@ -605,7 +605,7 @@ function AdminLocationsDetailModulesDoorways({
       // Prompt the user for the dpu position in a modal
       onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
         sensorPlacement: 1 /* initial value */,
-        updateHistoricCounts: true,
+        updateHistoricCounts: false,
         onComplete: (sensorPlacement, updateHistoricCounts) => {
           // And then move the doorway to the top section
           onSetDoorwayField(doorway.id, 'selected', true);
