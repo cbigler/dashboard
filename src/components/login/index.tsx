@@ -260,7 +260,7 @@ export class Login extends React.Component<any, any> {
             window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
 
             webAuth.authorize({
-              connection: 'okta',
+              connection: 'linkedin',
             });
           }}
         >
