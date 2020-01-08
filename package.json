@@ -35,7 +35,7 @@
     "libphonenumber-js": "^1.7.27",
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.6.1",
-    "mixpanel-browser": "^2.31.0",
+    "mixpanel-browser": "^2.32.0",
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
     "normalize.css": "^8.0.1",
