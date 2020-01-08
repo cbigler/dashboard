@@ -65,7 +65,7 @@
     "@types/lodash": "^4.14.149",
     "@types/mixpanel": "^2.14.2",
     "@types/moment-timezone": "^0.5.10",
-    "@types/node": "^12.12.14",
+    "@types/node": "^12.12.24",
     "@types/qs": "^6.9.0",
     "@types/react": "^16.9.17",
     "@types/react-dom": "^16.9.4",
