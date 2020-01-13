@@ -442,8 +442,15 @@ export function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: Space
       case QuerySelectionType.SPACE: {
         // FIXME: objectSnakeToCamel makes this necessary, and it's confusing
         const targetField = changeCase.camelCase(selection.field) as ('spaceType' | 'function' | 'id');
-        const targetValue = getInObject(space, targetField)
+        const targetValue = getInObject(space, targetField);
+
+        // Special case: null space function means "other" :face_palm:
+        // @ts-ignore
+        if (targetField === 'function' && targetValue === null && selection.values.includes(null)) return true;
+        
+        // Other than the special-case null matching "other", falsy value means no match, I guess
         if (!targetValue) return false;
+        
         // FIXME: I have no idea what's wrong with the below...
         // @ts-ignore
         return selection.values.includes(targetValue);
