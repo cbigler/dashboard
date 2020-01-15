@@ -35,7 +35,7 @@ import ActiveModalStore from '../../rx-stores/active-modal';
 const orgFilterHelper = filterCollection({fields: ['name']});
 const userFilterHelper = filterCollection({fields: ['email', 'full_name']});
 
-function onSelectImpersonateOrganization(dispatch, org) {
+function onSelectImpersonateOrganization(dispatch, org, userInputRef) {
   updateModal(dispatch, {
     loading: true,
     selectedOrganization: org,
@@ -47,6 +47,7 @@ function onSelectImpersonateOrganization(dispatch, org) {
     headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
   }).then(response => response.json()).then(data => {
     updateModal(dispatch, {loading: false, users: data as Array<CoreUser>});
+    userInputRef.current.focus();
   });
 }
 
@@ -67,11 +68,14 @@ export default function ImpersonateModal() {
   );
 
   // Focus the "org" input when the modal is newly visible
-  const ref = useRef<HTMLElement>();
+  const orgInputRef = useRef<HTMLElement>();
   useEffect(
-    () => (activeModal.visible && ref.current && ref.current.focus()) || undefined,
+    () => (activeModal.visible && orgInputRef.current && orgInputRef.current.focus()) || undefined,
     [activeModal.visible]
   );
+  
+  // Focus the "user" input ref when an org is selected
+  const userInputRef = useRef<HTMLElement>();
 
   return <Modal
     width={800}
@@ -110,12 +114,21 @@ export default function ImpersonateModal() {
         </AppBar>
         <AppBar>
           <InputBox
-            ref={ref}
+            ref={orgInputRef}
             width="100%"
             placeholder='ex: "Density Dev", "Acme Co"'
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             disabled={!enabled}
             value={activeModal.data.organizationFilter}
+            onKeyPress={e => {
+              if (e.key === 'Enter' && filteredOrgs.length > 0) {
+                onSelectImpersonateOrganization(
+                  dispatch,
+                  activeModal.data.organizations.find(x => x.id === filteredOrgs[0].id),
+                  userInputRef
+                );
+              }
+            }}
             onChange={e => {
               updateModal(dispatch, {
                 organizationFilter: e.target.value,
@@ -134,7 +147,8 @@ export default function ImpersonateModal() {
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
                 dispatch,
-                activeModal.data.organizations.find(x => x.id === item.id)
+                activeModal.data.organizations.find(x => x.id === item.id),
+                userInputRef
               )}
               template={item => <div style={{opacity: enabled ? 1.0 : 0.25}}>
                 <RadioButton
@@ -160,6 +174,7 @@ export default function ImpersonateModal() {
         </AppBar></div>
         <AppBar>
           <InputBox
+            ref={userInputRef}
             width="100%"
             placeholder='ex: "John Denver"'
             leftIcon={<Icons.Search color={colorVariables.gray} />}
