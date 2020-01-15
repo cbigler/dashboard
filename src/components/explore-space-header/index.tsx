@@ -66,7 +66,7 @@ export function ExploreSpaceHeaderRaw({
                   'America/Chicago': 'US Central',
                   'America/Denver': 'US Mountain',
                   'America/Los_Angeles': 'US Pacific',
-                })[space.timeZone] || space.timeZone}
+                })[space.time_zone] || space.time_zone}
               </span>
             </div>
           </div>

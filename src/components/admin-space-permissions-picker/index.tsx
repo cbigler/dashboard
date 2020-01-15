@@ -174,19 +174,19 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
                       className={styles.adminSpacePermissionsPickerListItemLabel}
                       htmlFor={`admin-space-permissions-picker-space-${item.space.id}`}
                     >
-                      {item.space.spaceType === 'building' ? (
+                      {item.space.space_type === 'building' ? (
                         <span className={styles.adminSpacePermissionsPickerListItemIcon}>
                           <Icons.Building color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
                         </span>
                       ) : null}
-                      {item.space.spaceType === 'floor' ? (
+                      {item.space.space_type === 'floor' ? (
                         <span className={styles.adminSpacePermissionsPickerListItemIcon}>
                           <Icons.Folder color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
                         </span>
                       ) : null}
                       <span className={classnames(
                         styles.adminSpacePermissionsPickerListItemName, {
-                        [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                        [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.space_type),
                       })}>
                         {item.space.name}
                       </span>

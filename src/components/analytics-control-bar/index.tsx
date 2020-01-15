@@ -2,8 +2,8 @@ import React, { useState, Fragment } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
 import { DateRange } from '../../helpers/space-time-utilities';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
@@ -51,8 +51,8 @@ type AnalyticsControlBarProps = {
   timeFilter?: TimeFilter,
   onChangeTimeFilter: (timeFilter: TimeFilter) => void,
   
-  spaces: Array<DensitySpace>,
-  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+  spaces: Array<CoreSpace>,
+  formattedHierarchy: Array<DisplaySpaceHierarchyNode>,
 
   onRequestDataExport: (exportType: AnalyticsDataExportType) => void,
 
@@ -325,8 +325,8 @@ type AnalyticsSpaceSelectionBuilderProps = {
   selections: Array<AnalyticsSpaceSelection>,
   onChange: (filters: Array<AnalyticsSpaceSelection>) => void,
 
-  spaces: Array<DensitySpace>,
-  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+  spaces: Array<CoreSpace>,
+  formattedHierarchy: Array<DisplaySpaceHierarchyNode>,
 }
 
 function AnalyticsSpaceSelectionBuilder({

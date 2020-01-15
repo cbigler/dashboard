@@ -3,7 +3,7 @@ import collectionSpacesError from '../collection/spaces/error';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
-import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionAlertsRead from '../alerts/read';
 import spaceReportsCalculateReportData from '../space-reports/calculate-report-data';
@@ -29,8 +29,8 @@ export default async function routeTransitionExploreSpaceTrends(dispatch, id) {
   // this view unrfortunately.
   let spaces, spaceHierarchy, selectedSpace;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
-    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
+    spaceHierarchy = await fetchAllObjects<CoreSpaceHierarchyNode>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<CoreSpace>('/spaces', { cache: false });
   } catch (err) {
     dispatch(collectionSpacesError(`Error loading data: ${err.message}`));
     return;

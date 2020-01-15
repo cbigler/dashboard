@@ -35,7 +35,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // The card starts in a loading state
     assert.equal(component.state('state'), LOADING);
@@ -84,7 +84,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // The card starts in a loading state
     assert.equal(component.state('state'), LOADING);
@@ -146,7 +146,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // The card starts in a loading state
     assert.equal(component.state('state'), LOADING);
@@ -230,7 +230,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // Ensure the intial data fetch was issued to the server.
     // 1 request made to get all the events
@@ -344,7 +344,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // Ensure the intial data fetch was issued to the server.
     // 1 request made to get all the events
@@ -422,7 +422,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // Ensure the intial data fetch was issued to the server.
     // 1 request made to get all the events
@@ -503,7 +503,7 @@ describe.skip('raw events pager', function() {
     });
 
     // Render the component
-    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'}} />);
+    const component = mount(<RawEventsCard space={{id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'}} />);
 
     // Ensure the intial data fetch was issued to the server.
     // 1 request made to get all the events

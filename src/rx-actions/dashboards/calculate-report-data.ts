@@ -11,7 +11,7 @@ export const DASHBOARDS_CALCULATE_REPORT_DATA_UNAUTHORIZED = 'DASHBOARDS_CALCULA
 export const DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR = 'DASHBOARDS_CALCULATE_REPORT_DATA_CLEAR';
 export const DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA = 'DASHBOARDS_CALCULATE_REPORT_DATA_NO_DATA';
 
-export default async function collectionDashboardsCalculateReportData(dispatch, reports, date, weekStart) {
+export default async function collectionDashboardsCalculateReportData(dispatch, reports, date, week_start) {
   return Promise.all(reports.map(async report => {
     switch (report.type) {
     case 'HEADER':
@@ -61,7 +61,7 @@ export default async function collectionDashboardsCalculateReportData(dispatch, 
       try {
         data = await reportDataCalculationFunction(
           report,
-          { date, weekStart, client: core(), slow: getGoSlow() }
+          { date, week_start, client: core(), slow: getGoSlow() }
         );
       } catch (err) {
         errorThrown = err;

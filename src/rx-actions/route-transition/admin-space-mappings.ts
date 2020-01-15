@@ -1,5 +1,4 @@
 import { showToast } from '../../rx-actions/toasts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import { DensityService, DensityServiceSpace } from '../../types';
 import core from '../../client/core';
@@ -27,7 +26,7 @@ export default async function routeTransitionAdminSpaceMappings(dispatch, servic
     dispatch(collectionServicesError('Could not find third party integrations.'));
     return false;
   } else {
-    const services = response.data.map(d => objectSnakeToCamel<DensityService>(d));
+    const services = response.data as Array<DensityService>;
     dispatch(collectionServicesSet(services));
     const service = services.find(service => service.name === serviceName)
     fetchAllServiceSpaces(dispatch, service);

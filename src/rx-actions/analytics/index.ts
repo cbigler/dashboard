@@ -1,7 +1,7 @@
 import { AnalyticsReport, AnalyticsFocusedMetric, QuerySelection, QueryInterval, AnalyticsDatapoint, AnalyticsMetrics, TableColumn, SortDirection } from "../../types/analytics";
 import { DateRange } from "../../helpers/space-time-utilities";
 import { DayOfWeek, TimeFilter } from "../../types/datetime";
-import { DensitySpace } from "../../types";
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 export enum AnalyticsActionType {
   ROUTE_TRANSITION_ANALYTICS = 'ROUTE_TRANSITION_ANALYTICS',
@@ -69,7 +69,7 @@ export type AnalyticsAction = (
   {
     type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
     report: AnalyticsReport,
-    spaces: DensitySpace[],
+    spaces: CoreSpace[],
   } |
 
   {
@@ -101,12 +101,12 @@ export type AnalyticsAction = (
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIDDEN_SPACES,
     reportId: AnalyticsReport["id"],
-    hiddenSpaceIds: Array<DensitySpace["id"]>,
+    hiddenSpaceIds: Array<CoreSpace["id"]>,
   } |
   {
     type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_HIGHLIGHTED_SPACE,
     reportId: AnalyticsReport["id"],
-    highlightedSpaceId: DensitySpace["id"] | null,
+    highlightedSpaceId: CoreSpace["id"] | null,
   } |
 
   {
@@ -131,7 +131,7 @@ export type AnalyticsAction = (
     reportId: AnalyticsReport["id"] | null,
     datapoints: AnalyticsDatapoint[],
     metrics: AnalyticsMetrics,
-    selectedSpaceIds: Array<DensitySpace["id"]>,
+    selectedSpaceIds: Array<CoreSpace["id"]>,
   } |
   {
     type: AnalyticsActionType.ANALYTICS_QUERY_ERROR,

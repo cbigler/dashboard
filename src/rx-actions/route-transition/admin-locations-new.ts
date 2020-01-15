@@ -5,10 +5,10 @@ export const ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW = 'ROUTE_TRANSITION_ADMIN_LOCA
 export default async function routeTransitionAdminLocationsNew(dispatch, parentSpaceId, newSpaceType) {
   dispatch({
     type: ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW,
-    spaceId: parentSpaceId,
+    space_id: parentSpaceId,
     setLoading: true,
     parentSpaceId,
-    spaceType: newSpaceType,
+    space_type: newSpaceType,
   });
 
   loadData(dispatch);

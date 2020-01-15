@@ -60,17 +60,17 @@ function processModalData(data) {
 }
 
 type DpuPositionProps = {
-  spaceName: string,
+  space_name: string,
   value: 1 | -1,
   onChange: (value: 1 | -1) => void,
 };
 
-function DpuPosition({ spaceName, value, onChange }: DpuPositionProps) {
+function DpuPosition({ space_name, value, onChange }: DpuPositionProps) {
   return (
     <div className={styles.dpuPositionWrapper}>
       <p>
         Is the DPU inside or outside of{' '}
-        <strong>{spaceName && spaceName.length > 0 ? spaceName : 'this space'}</strong>?
+        <strong>{space_name && space_name.length > 0 ? space_name : 'this space'}</strong>?
       </p>
       <div className={styles.dpuPositionButtonWrapper}>
         <div
@@ -121,8 +121,8 @@ function UpdateHistoricCounts({value, onChange}: UpdateHistoricCountsProps) {
 
 function AdminLocationsDetailModulesDoorwayDpuPositionModal({
   visible,
-  spaceName,
-  sensorPlacement,
+  space_name,
+  sensor_placement,
   updateHistoricCounts,
   onUpdateSensorPlacement,
   onUpdateHistoricCounts,
@@ -142,8 +142,8 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
 
       <div className={styles.modalSection}>
         <DpuPosition
-          spaceName={spaceName}
-          value={sensorPlacement}
+          space_name={space_name}
+          value={sensor_placement}
           onChange={onUpdateSensorPlacement}
         />
         <UpdateHistoricCounts value={updateHistoricCounts} onChange={onUpdateHistoricCounts} />
@@ -158,7 +158,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
               <Button
                 type="primary"
                 variant="filled"
-                onClick={() => onSubmitModal(sensorPlacement, updateHistoricCounts)}
+                onClick={() => onSubmitModal(sensor_placement, updateHistoricCounts)}
               >Save Link</Button>
             </ButtonGroup>
           </AppBarSection>
@@ -171,7 +171,7 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
 function AdminLocationsDetailModulesDoorwayModal({
   visible,
   modalState,
-  spaceName,
+  space_name,
   onUpdateModalState,
   onCloseModal,
   onSubmitModal,
@@ -197,7 +197,7 @@ function AdminLocationsDetailModulesDoorwayModal({
 
   const formValid = (
     modalState.data.name && modalState.data.name.length > 0 &&
-    modalState.data.sensorPlacement &&
+    modalState.data.sensor_placement &&
     // Require a measurement unit if the user has an entered width / height
     ((modalState.data.width || modalState.data.height) ? modalState.data.measurementUnit : true)
   );
@@ -241,9 +241,9 @@ function AdminLocationsDetailModulesDoorwayModal({
       </AppBarContext.Provider>
       <div className={styles.modalSection}>
         <DpuPosition
-          value={modalState.data.sensorPlacement}
-          spaceName={spaceName}
-          onChange={sensorPlacement => onChangeField('sensorPlacement', sensorPlacement)}
+          value={modalState.data.sensor_placement}
+          space_name={space_name}
+          onChange={sensor_placement => onChangeField('sensor_placement', sensor_placement)}
         />
         {!createMode ? (
           <UpdateHistoricCounts
@@ -354,12 +354,12 @@ function AdminLocationsDetailModulesDoorwayModal({
             <InputBox
               type="select"
               id="admin-locations-detail-modules-doorways-power"
-              value={modalState.data.powerType}
+              value={modalState.data.power_type}
               choices={[
                 {id: POWER_OVER_ETHERNET, label: 'Power over Ethernet (803.2at PoE+)'},
                 {id: AC_OUTLET, label: 'AC Outlet'},
               ]}
-              onChange={item => onChangeField('powerType', item.id)}
+              onChange={item => onChangeField('power_type', item.id)}
               width="100%"
             />
           }
@@ -374,7 +374,7 @@ function AdminLocationsDetailModulesDoorwayModal({
       <div className={styles.modalSection}>
         <AdminLocationsImageUpload
           label="Photo from inside the space"
-          value={modalState.data.newInsideImageData || modalState.data.insideImageUrl}
+          value={modalState.data.newInsideImageData || modalState.data.inside_image_url}
           onChange={async file => {
             if (file) {
               const result = await fileToDataURI(file);
@@ -400,7 +400,7 @@ function AdminLocationsDetailModulesDoorwayModal({
         />
         <AdminLocationsImageUpload
           label="Photo from outside the space"
-          value={modalState.data.newOutsideImageData || modalState.data.outsideImageUrl}
+          value={modalState.data.newOutsideImageData || modalState.data.outside_image_url}
           onChange={async file => {
             if (file) {
               const result = await fileToDataURI(file);
@@ -530,7 +530,7 @@ function DoorwayList({
           template={i => {
             return (
               <Fragment>
-                {i.sensorPlacement !== null ? (
+                {i.sensor_placement !== null ? (
                   <Fragment>
                     <Button
                       size="small"
@@ -539,10 +539,10 @@ function DoorwayList({
                       onClick={() => {
                         // Prompt the user for the dpu position in a modal
                         onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
-                          sensorPlacement: i.sensorPlacement, /* initial value */
+                          sensor_placement: i.sensor_placement, /* initial value */
                           updateHistoricCounts: true,
-                          onComplete: (sensorPlacement, updateHistoricCounts) => {
-                            onChangeDoorwaySensorPlacement(i, sensorPlacement, updateHistoricCounts);
+                          onComplete: (sensor_placement, updateHistoricCounts) => {
+                            onChangeDoorwaySensorPlacement(i, sensor_placement, updateHistoricCounts);
                           },
                         });
                       }}
@@ -552,7 +552,7 @@ function DoorwayList({
                       </div>
                     </Button>
                     <span className={styles.dpuPosition}>
-                      {i.sensorPlacement === 1 ? 'Inside' : 'Outside'}
+                      {i.sensor_placement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>
                 ) : (
@@ -604,12 +604,12 @@ function AdminLocationsDetailModulesDoorways({
     if (state) {
       // Prompt the user for the dpu position in a modal
       onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
-        sensorPlacement: 1 /* initial value */,
+        sensor_placement: 1 /* initial value */,
         updateHistoricCounts: false,
-        onComplete: (sensorPlacement, updateHistoricCounts) => {
+        onComplete: (sensor_placement, updateHistoricCounts) => {
           // And then move the doorway to the top section
           onSetDoorwayField(doorway.id, 'selected', true);
-          onSetDoorwayField(doorway.id, 'sensorPlacement', sensorPlacement);
+          onSetDoorwayField(doorway.id, 'sensor_placement', sensor_placement);
           onSetDoorwayField(doorway.id, 'updateHistoricCounts', updateHistoricCounts);
           onSetDoorwayField(
             doorway.id,
@@ -621,7 +621,7 @@ function AdminLocationsDetailModulesDoorways({
     } else {
       // Otherwise move the doorway back down to the bottom section
       onSetDoorwayField(doorway.id, 'selected', false);
-      onSetDoorwayField(doorway.id, 'sensorPlacement', null);
+      onSetDoorwayField(doorway.id, 'sensor_placement', null);
       onSetDoorwayField(
         doorway.id,
         'operationToPerform',
@@ -629,8 +629,8 @@ function AdminLocationsDetailModulesDoorways({
       );
     }
   }
-  function onChangeDoorwaySensorPlacement(doorway, sensorPlacement, updateHistoricCounts) {
-    onSetDoorwayField(doorway.id, 'sensorPlacement', sensorPlacement);
+  function onChangeDoorwaySensorPlacement(doorway, sensor_placement, updateHistoricCounts) {
+    onSetDoorwayField(doorway.id, 'sensor_placement', sensor_placement);
     onSetDoorwayField(doorway.id, 'updateHistoricCounts', updateHistoricCounts);
     onSetDoorwayField(
       doorway.id,
@@ -648,7 +648,7 @@ function AdminLocationsDetailModulesDoorways({
         <AdminLocationsDetailModulesDoorwayModal
           visible={activeModal.visible}
           modalState={activeModal.data}
-          spaceName={formState.name}
+          space_name={formState.name}
           onUpdateModalState={onUpdateModalData}
           onCloseModal={onHideModal}
           onSubmitModal={activeModalData => {
@@ -666,10 +666,10 @@ function AdminLocationsDetailModulesDoorways({
       {activeModal.name === 'MODAL_SPACE_MANAGEMENT_DPU_POSITION' ? (
         <AdminLocationsDetailModulesDoorwayDpuPositionModal
           visible={activeModal.visible}
-          spaceName={formState.name}
-          sensorPlacement={activeModal.data.sensorPlacement}
+          space_name={formState.name}
+          sensor_placement={activeModal.data.sensor_placement}
           updateHistoricCounts={activeModal.data.updateHistoricCounts}
-          onUpdateSensorPlacement={sensorPlacement => onUpdateModalData({...activeModal, sensorPlacement})}
+          onUpdateSensorPlacement={sensor_placement => onUpdateModalData({...activeModal, sensor_placement})}
           onUpdateHistoricCounts={updateHistoricCounts => onUpdateModalData({...activeModal, updateHistoricCounts})}
           onCloseModal={onHideModal}
           // Call a function within the modal data, this lets all the code for the modal submitting
@@ -677,7 +677,7 @@ function AdminLocationsDetailModulesDoorways({
           onSubmitModal={() => {
             onHideModal();
             activeModal.data.onComplete(
-                activeModal.data.sensorPlacement,
+                activeModal.data.sensor_placement,
                 activeModal.data.updateHistoricCounts
             );
           }}
@@ -699,13 +699,13 @@ function AdminLocationsDetailModulesDoorways({
             <Button onClick={() => onShowModal('MODAL_SPACE_MANAGEMENT_DOORWAY', {
               type: 'CREATE',
               data: {
-                spaceName: formState.name,
-                sensorPlacement: 1,
+                space_name: formState.name,
+                sensor_placement: 1,
                 measurementUnit: INCHES,
                 width: '',
                 height: '',
                 clearance: null,
-                powerType: POWER_OVER_ETHERNET,
+                power_type: POWER_OVER_ETHERNET,
               },
             })}>
               Add a new doorway
@@ -806,8 +806,8 @@ const ConnectedAdminLocationsDetailModulesDoorways: React.FC<Any<FixInRefactor>>
   const onUpdateDoorway = async (data: Any<FixInRefactor>) => {
     await spaceManagementUpdateDoorway(dispatch, data);
   }
-  const onDeleteDoorway = async (doorwayId) => {
-    await spaceManagementDeleteDoorway(dispatch, doorwayId);
+  const onDeleteDoorway = async (doorway_id) => {
+    await spaceManagementDeleteDoorway(dispatch, doorway_id);
   }
 
   return (

@@ -18,7 +18,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
   constructor(props) {
     super(props);
     this.state = {
-      count: this.props.space.currentCount,
+      count: this.props.space.current_count,
       countText: null,
     };
   }

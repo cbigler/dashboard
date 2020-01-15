@@ -23,7 +23,7 @@ import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import { ActivePageState } from '../../rx-stores/active-page';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { SpaceHierarchyState } from '../../rx-stores/space-hierarchy';
 
 export function ExploreControlBarRaw({
@@ -177,14 +177,14 @@ export function ExploreControlBarRaw({
 type TemporaryExternalProps = {
   spaceHierarchy: SpaceHierarchyState,
   activePage: ActivePageState,
-  selectedSpace: DensitySpace,
+  selectedSpace: CoreSpace,
   filters: {
     dailyRawEventsPage: number,
     dataDuration: Any<FixInRefactor>,
     date: string | null,
     startDate: string | null,
     endDate: string | null,
-    doorwayId: string | null,
+    doorway_id: string | null,
     parent: Any<FixInRefactor>,
     search: string,
     sort: Any<FixInRefactor>,

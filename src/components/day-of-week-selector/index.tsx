@@ -12,26 +12,26 @@ const DAYS_OF_WEEK = [
   'Sunday',
 ];
 
-export default function DayOfWeekSelector({ daysOfWeek, disabled=false, onChange }) {
+export default function DayOfWeekSelector({ days_of_week, disabled=false, onChange }) {
   return (
     <div className={styles.wrapper}>
       {DAYS_OF_WEEK.map(dayName => (
         <div key={dayName} className={styles.item}>
          <div
             className={classnames(styles.button, {
-              [styles.active]: daysOfWeek.includes(dayName),
+              [styles.active]: days_of_week.includes(dayName),
               [styles.disabled]: disabled,
             })}
             onClick={() => {
-              if (!daysOfWeek.includes(dayName)) {
+              if (!days_of_week.includes(dayName)) {
                 // Add day
-                onChange([...daysOfWeek, dayName]);
+                onChange([...days_of_week, dayName]);
               } else {
                 // Ensure the user doesn't deselect the last day
-                if (daysOfWeek.length <= 1) { return; }
+                if (days_of_week.length <= 1) { return; }
 
                 // Remove day
-                onChange(daysOfWeek.filter(day => day !== dayName));
+                onChange(days_of_week.filter(day => day !== dayName));
               }
             }}
             tabIndex={0}

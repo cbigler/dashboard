@@ -4,7 +4,7 @@ import {
   SpaceReportControlTypes,
   SpaceReportActionTypes,
 } from '../../types/space-reports';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 import { serializeMomentToDateString } from '../../helpers/space-time-utilities';
 import { GlobalAction } from '../../types/rx-actions';
@@ -18,7 +18,7 @@ const SMALL_ROOM_FUNCTIONS = ['collaboration', 'conference_room', 'focus_quiet',
 
 
 export type SpaceReportsState = {
-  space: DensitySpace | null,
+  space: CoreSpace | null,
   controllers: Any<FixInRefactor>[]
 }
 
@@ -40,7 +40,7 @@ export const initialState: SpaceReportsState = {
         name: 'Daily Visits',
         type: 'PERIODIC_METRICS',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
           metric: 'ENTRANCES'
         }
       }
@@ -51,13 +51,13 @@ export const initialState: SpaceReportsState = {
         name: 'Visits per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
           scrollable: true,
           metric: 'VISITS',
           aggregation: 'NONE',
-          includeWeekends: true,
-          hourStart: 6,
-          hourEnd: 20
+          include_weekends: true,
+          hour_start: 6,
+          hour_end: 20
         }
       }
     }, {
@@ -73,7 +73,7 @@ export const initialState: SpaceReportsState = {
         name: 'Daily Peak Occupancy',
         type: 'PERIODIC_METRICS',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
           metric: 'PEAK_OCCUPANCY'
         }
       }
@@ -84,13 +84,13 @@ export const initialState: SpaceReportsState = {
         name: 'Average Peak Occupancy per Hour',
         type: 'HOURLY_BREAKDOWN',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
           scrollable: true,
           metric: 'PEAKS',
           aggregation: 'AVERAGE',
-          includeWeekends: true,
-          hourStart: 6,
-          hourEnd: 20
+          include_weekends: true,
+          hour_start: 6,
+          hour_end: 20
         }
       }
     }, {
@@ -108,7 +108,7 @@ export const initialState: SpaceReportsState = {
         name: 'Time Occupied',
         type: 'TIME_OCCUPIED',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }, {
@@ -119,7 +119,7 @@ export const initialState: SpaceReportsState = {
         name: 'Room Use',
         type: 'OCCUPANCY_DISTRIBUTION',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }, {
@@ -130,7 +130,7 @@ export const initialState: SpaceReportsState = {
         name: 'Popular Times',
         type: 'POPULAR_TIMES',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }],
@@ -154,7 +154,7 @@ export const initialState: SpaceReportsState = {
         name: 'Meeting attendance',
         type: 'MEETING_ATTENDANCE',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }, {
@@ -164,7 +164,7 @@ export const initialState: SpaceReportsState = {
         name: 'Meeting size',
         type: 'MEETING_SIZE',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }, {
@@ -174,7 +174,7 @@ export const initialState: SpaceReportsState = {
         name: 'Booker behavior',
         type: 'BOOKING_BEHAVIOR',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }, {
@@ -184,7 +184,7 @@ export const initialState: SpaceReportsState = {
         name: 'Meetings: Day-to-day',
         type: 'DAY_TO_DAY_MEETINGS',
         settings: {
-          spaceId: null as string | null,
+          space_id: null as string | null,
         }
       }
     }],
@@ -200,7 +200,7 @@ export const initialState: SpaceReportsState = {
 type SpaceReportsAction = {
   type: SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS,
   controllers: Array<ISpaceReportController>,
-  space: DensitySpace
+  space: CoreSpace
 } | {
   type: SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER,
   controller: ISpaceReportController
@@ -216,7 +216,7 @@ export function spaceReportsReducer(state: SpaceReportsState, action: SpaceRepor
       controllers: action.controllers.map(controller => ({
         ...controller,
         reports: controller.reports.map(report => {
-          report.configuration.settings.spaceId = action.space.id;
+          report.configuration.settings.space_id = action.space.id;
           return {...report};
         })
       }))

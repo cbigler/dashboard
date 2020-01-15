@@ -17,7 +17,7 @@ describe('spaceManagement', () => {
     const result = spaceManagementReducer(initialState, {
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW,
       parentSpaceId: 'spc_xxx',
-      spaceType: 'building',
+      space_type: 'building',
     });
     assert.deepStrictEqual(result, {
       ...initialState,
@@ -30,25 +30,25 @@ describe('spaceManagement', () => {
   it('should store the selected space when loading edit page', () => {
     const result = spaceManagementReducer(initialState, {
       type: ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT,
-      spaceId: 'spc_xxx',
+      space_id: 'spc_xxx',
     });
     assert.strictEqual(result.spaces.selected, 'spc_xxx');
   });
-  it('should update the sizeAreaDisplayUnit when user is set', () => {
+  it('should update the size_area_display_unit when user is set', () => {
     const result = spaceManagementReducer(initialState, {
       type: USER_SET,
       data: {
-        fullName: 'John Smith',
-        sizeAreaDisplayUnit: 'square_feet',
+        full_name: 'John Smith',
+        size_area_display_unit: 'square_feet',
       },
     });
     assert.strictEqual(result.userDataSizeAreaDisplayUnit, 'square_feet');
   });
-  it('should update the sizeAreaDisplayUnit when user is pushed', () => {
+  it('should update the size_area_display_unit when user is pushed', () => {
     const result = spaceManagementReducer(initialState, {
       type: USER_PUSH,
-      data: {
-        sizeAreaDisplayUnit: 'square_feet',
+      item: {
+        size_area_display_unit: 'square_feet',
       },
     });
     assert.strictEqual(result.userDataSizeAreaDisplayUnit, 'square_feet');
@@ -60,16 +60,16 @@ describe('spaceManagement', () => {
       {
         id: 'spc_xxx',
         name: 'My Campus',
-        spaceType: 'campus',
-        hasPurview: true,
+        space_type: 'campus',
+        has_purview: true,
         children: [
-          {id: 'spc_xxy', name: 'My Building', hasPurview: true, children: []},
+          {id: 'spc_xxy', name: 'My Building', has_purview: true, children: []},
         ],
       },
     ];
     const SPACES = [
-      {id: 'spc_xxx', name: 'My Campus', parentId: null },
-      {id: 'spc_xxy', name: 'My Building', parentId: 'spc_xxx' },
+      {id: 'spc_xxx', name: 'My Campus', parent_id: null },
+      {id: 'spc_xxy', name: 'My Building', parent_id: 'spc_xxx' },
     ];
     const DOORWAYS = [
       {id: 'drw_xxx', name: 'My Door', spaces: []},

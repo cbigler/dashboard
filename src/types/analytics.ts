@@ -1,10 +1,5 @@
-import {
-  DensitySpace,
-  DensitySpaceCountMetrics,
-  DensityReport,
-  DensitySpaceTypes,
-  DensitySpaceFunction,
-} from '.'
+import { CoreSpace, CoreSpaceType, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces'; 
+import { DensitySpaceCountMetrics, DensityReport } from '.';
 
 import { DateRange } from '../helpers/space-time-utilities';
 import { TimeFilter } from './datetime';
@@ -32,11 +27,11 @@ export type QuerySelection = SpaceSelection | never
 export type SpaceSelection = {
   type: QuerySelectionType.SPACE,
   field: 'space_type',
-  values: DensitySpaceTypes[],
+  values: CoreSpaceType[],
 } | {
   type: QuerySelectionType.SPACE,
   field: 'function',
-  values: DensitySpaceFunction[],
+  values: CoreSpaceFunction[],
 } | {
   type: QuerySelectionType.SPACE,
   field: 'id',
@@ -57,16 +52,16 @@ export type SpaceCountQuery = {
 }
 
 export type QueryResult = {
-  selectedSpaceIds: Array<DensitySpace["id"]>,
+  selectedSpaceIds: Array<CoreSpace["id"]>,
   datapoints: Array<AnalyticsDatapoint>,
   metrics: AnalyticsMetrics,
 };
 
 export type AnalyticsDatapoint = {
-  spaceId: string,
-  spaceName: string,
+  space_id: string,
+  space_name: string,
   millisecondsSinceUnixEpoch: number,
-  timeZone: string,
+  time_zone: string,
   localDay: string,
   localTime: string,
   localBucketDay: string,
@@ -79,15 +74,15 @@ export type AnalyticsDatapoint = {
   events: number,
 
   utilization: number | null,
-  targetUtilization: number | null,
+  target_utilization: number | null,
 
-  // targetCapacity - max
+  // target_capacity - max
   opportunity: number | null,
 };
 
 export type AnalyticsMetrics = {
   // FIXME: hacking this for right now to avoid redefining this huge type just for a single snake_case change
-  [spaceId: string]: Omit<DensitySpaceCountMetrics, 'target_utilization'> & {
+  [space_id: string]: Omit<DensitySpaceCountMetrics, 'target_utilization'> & {
     target_utilization: DensitySpaceCountMetrics['target_utilization'],
     
     // computed metrics
@@ -98,7 +93,7 @@ export type AnalyticsMetrics = {
 } | AnalyticsMetricsEmpty;
 
 export type AnalyticsMetricsEmpty = {
-  [spaceId: string]: {}
+  [space_id: string]: {}
 }
 
 export enum AnalyticsFocusedMetric {
@@ -118,11 +113,11 @@ export enum AnalyticsMetricOpportunityUnit {
 export type AnalyticsReport = {
   id: string,
   name: string,
-  creatorEmail?: string,
+  creator_email?: string,
   query: SpaceCountQuery,
   queryResult: Resource<QueryResult>,
   columnSort: TableColumnSort,
-  hiddenSpaceIds: Array<DensitySpace['id']>,
+  hiddenSpaceIds: Array<CoreSpace['id']>,
   highlightedSpaceId: string | null,
   selectedMetric: AnalyticsFocusedMetric,
   opportunityCostPerPerson: number,
@@ -140,7 +135,7 @@ export type AnalyticsReportUnsaved = AnalyticsReport & {
 export type AnalyticsReportSaved = AnalyticsReport & {
   isSaved: true,
   name: string,
-  creatorEmail: string,
+  creator_email: string,
 }
 
 export type StoredAnalyticsReport = Omit<DensityReport, 'type' | 'settings'> & {

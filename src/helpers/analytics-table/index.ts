@@ -1,7 +1,8 @@
 import * as d3Array from 'd3-array';
 import getInObject from 'lodash/get';
 
-import { DensitySpace, DensitySpaceCountMetrics } from "../../types";
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { DensitySpaceCountMetrics } from "../../types";
 import { getTableValues } from "../analytics-data-export/table";
 import { TableColumnSort, SortDirection, TableColumn, AnalyticsFocusedMetric, AnalyticsMetrics } from "../../types/analytics";
 import { ascending, descending } from '../natural-sorting';
@@ -10,7 +11,7 @@ import { ascending, descending } from '../natural-sorting';
 // TODO: move `getTableValues` into this file
 
 export type TableDataItem = {
-  space: DensitySpace,
+  space: CoreSpace,
   isVisible: boolean,
   metricData: DensitySpaceCountMetrics | {},
 };
@@ -46,7 +47,7 @@ export type RowData = {
   [TableColumn.METRIC_OPPORTUNITY_COST]: number | null | undefined,
   [TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]: number | null | undefined,
   // FIXME: not great...
-  spaceId: string,
+  space_id: string,
   isChecked: boolean,
 }
 
@@ -165,7 +166,7 @@ function getSortFunction(columnSort: TableColumnSort) {
 
 export function computeTableData(
   metrics: AnalyticsMetrics,
-  selectedSpaces: DensitySpace[],
+  selectedSpaces: CoreSpace[],
   selectedMetric: AnalyticsFocusedMetric,
   hiddenSpaceIds: string[],
   columnSort: TableColumnSort,

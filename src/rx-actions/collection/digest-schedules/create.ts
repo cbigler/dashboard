@@ -9,12 +9,12 @@ export const COLLECTION_DIGEST_SCHEDULES_CREATE = 'COLLECTION_DIGEST_SCHEDULES_C
 export default async function collectionDigestSchedulesCreate(dispatch, {
   name,
   recipients,
-  dashboardId,
+  dashboard_id,
   frequency,
-  daysOfWeek,
-  dayNumber,
+  days_of_week,
+  day_number,
   time,
-  timeZone,
+  time_zone,
 }) {
   dispatch({ type: COLLECTION_DIGEST_SCHEDULES_CREATE });
 
@@ -23,17 +23,17 @@ export default async function collectionDigestSchedulesCreate(dispatch, {
     schedule = await core().post(`/digest_schedules`, {
       name: name,
       recipients: recipients,
-      dashboard_id: dashboardId,
+      dashboard_id: dashboard_id,
       frequency: frequency,
-      days_of_week: daysOfWeek,
-      day_number: dayNumber,
+      days_of_week: days_of_week,
+      day_number: day_number,
       time: time,
-      time_zone: timeZone,
+      time_zone: time_zone,
     });
 
     mixpanelTrack('Email Digest Created', {
       name: name,
-      dashboard_id: dashboardId,
+      dashboard_id: dashboard_id,
     });
 
   } catch (err) {

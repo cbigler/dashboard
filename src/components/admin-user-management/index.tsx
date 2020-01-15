@@ -57,11 +57,11 @@ export const INVITATION_STATUS_LABELS = {
   'accepted': 'Accepted',
 };
 
-const userFilter = filterCollection({fields: ['email', 'fullName']});
+const userFilter = filterCollection({fields: ['email', 'full_name']});
 
 function canResendInvitation(user, item) {
-  return ['unsent', 'pending', 'expired'].includes(item.invitationStatus) &&
-    item.isEditable &&
+  return ['unsent', 'pending', 'expired'].includes(item.invitation_status) &&
+    item.is_editable &&
     item.id !== user.data.id;
 }
 
@@ -81,7 +81,7 @@ export function AdminUserManagement({
   // Get roles and filter to visible ("manageable") users
   const manageableRoles = getManageableRoles(user);
   const manageableUsers = users.data.filter(x => {
-    return x.isEditable && manageableRoles.indexOf(x.role) > -1;
+    return x.is_editable && manageableRoles.indexOf(x.role) > -1;
   });
 
   // Filter users based on search box
@@ -134,7 +134,7 @@ export function AdminUserManagement({
                   onChange={role => updateModal(dispatch, {
                     role,
                     spaceFilteringActive: role === 'owner' ? false : activeModal.data.spaceFilteringActive,
-                    spaceIds: role === 'owner' ? [] : activeModal.data.spaceIds,
+                    space_ids: role === 'owner' ? [] : activeModal.data.space_ids,
                   })}
                 />
               </div>
@@ -146,8 +146,8 @@ export function AdminUserManagement({
                 disabled={activeModal.data.role === 'owner'}
                 active={activeModal.data.spaceFilteringActive}
                 onChangeActive={spaceFilteringActive => updateModal(dispatch, {spaceFilteringActive})}
-                selectedSpaceIds={activeModal.data.spaceIds}
-                onChange={spaceIds => updateModal(dispatch, {spaceIds})}
+                selectedSpaceIds={activeModal.data.space_ids}
+                onChange={space_ids => updateModal(dispatch, {space_ids})}
                 height={556}
               />
             </div>
@@ -165,7 +165,7 @@ export function AdminUserManagement({
                       activeModal.data.email &&
                       activeModal.data.role && (
                         !activeModal.data.spaceFilteringActive || 
-                        activeModal.data.spaceIds.length > 0)
+                        activeModal.data.space_ids.length > 0)
                     )}
                     onClick={() => {
                       hideModal(dispatch);
@@ -202,7 +202,7 @@ export function AdminUserManagement({
               email: '',
               role: null,
               spaceFilteringActive: false,
-              spaceIds: [],
+              space_ids: [],
             });
           }}>Add user</Button>
         </AppBarSection>
@@ -242,7 +242,7 @@ export function AdminUserManagement({
                   width={240}
                   template={item => (
                     <span className={styles.adminUserManagementCellNameEmailCell}>
-                      <h5>{item.fullName || '---'}</h5>
+                      <h5>{item.full_name || '---'}</h5>
                       <span>{item.email}</span>
                     </span>
                   )} />
@@ -268,7 +268,7 @@ export function AdminUserManagement({
                   id="Activity"
                   width={180}
                   template={item => {
-                    const daysIdle = moment.utc().diff(moment.utc(item.lastLogin), 'days');
+                    const daysIdle = moment.utc().diff(moment.utc(item.last_login), 'days');
                     return daysIdle < 7 ? 'Active\u00a0in last\u00a07\u00a0days' : 'Inactive';
                   }}
                 />
@@ -278,7 +278,7 @@ export function AdminUserManagement({
                   template={item => (
                     <Fragment>
                       <span className={styles.adminUserManagementCellInvitationStatus}>
-                        {INVITATION_STATUS_LABELS[item.invitationStatus]}
+                        {INVITATION_STATUS_LABELS[item.invitation_status]}
                       </span>
                       {canResendInvitation(user, item) ? (
                         <span
@@ -298,7 +298,7 @@ export function AdminUserManagement({
                   width={120}
                   title="Space access"
                   template={item => {
-                    if (!item.isEditable) {
+                    if (!item.is_editable) {
                       return <span>Some spaces</span>;
                     } else {
                       const userSpaces = (item.spaces || []).reduce((acc, next) => {
@@ -317,7 +317,7 @@ export function AdminUserManagement({
                   id="Actions"
                   width={72}
                   align="right"
-                  template={item => item.isEditable && item.id !== user.data.id ? (
+                  template={item => item.is_editable && item.id !== user.data.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
                       Edit
                     </ListViewClickableLink>

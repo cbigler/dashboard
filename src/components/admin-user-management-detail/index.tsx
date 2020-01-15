@@ -47,11 +47,11 @@ function onStartDeleteUser(dispatch, user) {
   });
 }
 
-async function onSaveUser(dispatch, {id, role, spaceIds, spaceFilteringActive}) {
+async function onSaveUser(dispatch, {id, role, space_ids, spaceFilteringActive}) {
   const ok = await collectionUsersUpdate(dispatch, {
     id,
     role,
-    spaces: spaceFilteringActive ? spaceIds : [],
+    spaces: spaceFilteringActive ? space_ids : [],
   });
   if (ok) {
     showToast(dispatch, { text: 'User updated successfully!' });
@@ -87,7 +87,7 @@ export default function AdminUserManagementDetail() {
     case 'VISIBLE':
       if (!users.editor.data) { return null; }
       const selectedUser = users.editor.data || {};
-      const formValid = !users.editor.spaceFilteringActive || (users.editor.spaceIds || []).length > 0;
+      const formValid = !users.editor.spaceFilteringActive || (users.editor.space_ids || []).length > 0;
 
       return (
         <Fragment>
@@ -118,7 +118,7 @@ export default function AdminUserManagementDetail() {
                         role: users.editor.role,
 
                         spaceFilteringActive: users.editor.spaceFilteringActive,
-                        spaceIds: users.editor.spaceIds,
+                        space_ids: users.editor.space_ids,
                       });
                     }}
                   >Save user</Button>
@@ -135,10 +135,10 @@ export default function AdminUserManagementDetail() {
                   <div className={styles.adminUserManagementDetailCardBody}>
                     <div className={styles.adminUserManagementUserInfo}>
                       
-                      {selectedUser.fullName ? (
+                      {selectedUser.full_name ? (
                         <div className={styles.adminUserManagementUserInfoAvatar}>
                           {
-                            (selectedUser.fullName || '')
+                            (selectedUser.full_name || '')
                             .split(' ')
                             .slice(0, 2)
                             .filter(word => word.length > 0)
@@ -150,7 +150,7 @@ export default function AdminUserManagementDetail() {
 
                       <div className={styles.adminUserManagementUserInfoTitle}>
                         <h1 className={styles.adminUserManagementUserInfoName}>
-                          {selectedUser.fullName || '---'}
+                          {selectedUser.full_name || '---'}
                         </h1>
                         <div className={styles.adminUserManagementUserInfoEmail}>{selectedUser.email}</div>
                       </div>
@@ -160,14 +160,14 @@ export default function AdminUserManagementDetail() {
                       </div>
 
                       <dl className={styles.adminUserManagementUserInfoDetails}>
-                        {selectedUser.lastLogin ? (
-                          <dd className={styles.adminUserManagementUserInfoDetailsItem}>Last sign in {moment.utc(selectedUser.lastLogin).fromNow()}</dd>
+                        {selectedUser.last_login ? (
+                          <dd className={styles.adminUserManagementUserInfoDetailsItem}>Last sign in {moment.utc(selectedUser.last_login).fromNow()}</dd>
                         ) : (
                           <dd className={styles.adminUserManagementUserInfoDetailsItem}>Hasn't signed in</dd>
                         )}
                         <dd className={styles.adminUserManagementUserInfoDetailsItem}>
                           Created on{' '}
-                          {selectedUser.createdAt ? moment.utc(selectedUser.createdAt).local().format('MMM DD, YYYY') : '(unknown)'}
+                          {selectedUser.created_at ? moment.utc(selectedUser.created_at).local().format('MMM DD, YYYY') : '(unknown)'}
                         </dd>
                       </dl>
                     </div>
@@ -189,7 +189,7 @@ export default function AdminUserManagementDetail() {
                         state: {
                           role,
                           spaceFilteringActive: role === 'owner' ? false : users.editor.spaceFilteringActive,
-                          spaceIds: role === 'owner' ? [] : users.editor.spaceIds || []
+                          space_ids: role === 'owner' ? [] : users.editor.space_ids || []
                         }
                       })}
                     />
@@ -208,10 +208,10 @@ export default function AdminUserManagementDetail() {
                       type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR,
                       state: { spaceFilteringActive }
                     })}
-                    selectedSpaceIds={users.editor.spaceIds || []}
-                    onChange={spaceIds => dispatch({
+                    selectedSpaceIds={users.editor.space_ids || []}
+                    onChange={space_ids => dispatch({
                       type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR,
-                      state: { spaceIds }
+                      state: { space_ids }
                     })}
                     height={600}
                   />

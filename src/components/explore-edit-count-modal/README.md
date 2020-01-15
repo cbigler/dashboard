@@ -5,7 +5,7 @@ contains the intermediate values of the modal prior to their submission to the s
 
 
 ## Component Props
-- `space: DensitySpace`: The space to update the count of in the modal.
+- `space: CoreSpace`: The space to update the count of in the modal.
 - `onDismiss: () => any`: A callback that is called when the modal is dismissed.
 - `onSubmit: (count) => any`: A callback that is called when the modal is submitted. The count that
   was chosen is passed.

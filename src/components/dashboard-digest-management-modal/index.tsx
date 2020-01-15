@@ -54,10 +54,10 @@ type DashboardDigestManagementModalProps = {
 type DashboardDigestManagementModalState = {
   name: string,
   frequency: 'WEEKLY' | 'MONTHLY',
-  daysOfWeek: Array<string>,
+  days_of_week: Array<string>,
   recipients: Array<any>,
   time: string | null,
-  timeZone: string,
+  time_zone: string,
 
   initiallyEnabledRecipientIds: Array<string>,
 
@@ -78,9 +78,9 @@ function calculateDefaultDigestName(selectedDashboard, frequency) {
   }
 }
 
-function isFormValid({ daysOfWeek, recipients, time }) {
+function isFormValid({ days_of_week, recipients, time }) {
   return (
-    daysOfWeek.length > 0 && // at least one day is selected
+    days_of_week.length > 0 && // at least one day is selected
     recipients.length > 0 && // at least one recipient is selected
     time !== null // a time is selected
   );
@@ -113,11 +113,11 @@ export default function DashboardDigestManagementModal({
   const [state, setState] = useState({
     name: "",
     frequency: WEEKLY,
-    daysOfWeek: [ DAYS_OF_WEEK[0] ],
+    days_of_week: [ DAYS_OF_WEEK[0] ],
     recipients: [],
 
     time: null,
-    timeZone: moment.tz.guess(), // Default to the user's present time zone
+    time_zone: moment.tz.guess(), // Default to the user's present time zone
 
     initiallyEnabledRecipientIds: [],
 
@@ -135,11 +135,11 @@ export default function DashboardDigestManagementModal({
         name: initialDigestSchedule.name === defaultDigestName ? '' : initialDigestSchedule.name,
         frequency: initialDigestSchedule.frequency,
 
-        daysOfWeek: initialDigestSchedule.daysOfWeek,
+        days_of_week: initialDigestSchedule.days_of_week,
         recipients: initialDigestSchedule.recipients,
 
         time: initialDigestSchedule.time,
-        timeZone: initialDigestSchedule.timeZone,
+        time_zone: initialDigestSchedule.time_zone,
 
         // Capture all ids of recipients that were enabled when the modal opens. This is required
         // so that we can sort these at the start of all other users in the right hand side list.
@@ -175,14 +175,14 @@ export default function DashboardDigestManagementModal({
               frequency={state.frequency}
               onChangeFrequency={frequency => setState({...state, frequency})}
 
-              daysOfWeek={state.daysOfWeek}
-              onChangeDaysOfWeek={daysOfWeek => setState({...state, daysOfWeek})}
+              days_of_week={state.days_of_week}
+              onChangeDaysOfWeek={days_of_week => setState({...state, days_of_week})}
 
               time={state.time}
               onChangeTime={time => setState({...state, time})}
 
-              timeZone={state.timeZone}
-              onChangeTimeZone={timeZone => setState({...state, timeZone})}
+              time_zone={state.time_zone}
+              onChangeTimeZone={time_zone => setState({...state, time_zone})}
 
               defaultDigestName={defaultDigestName || 'Digest Name'}
 
@@ -192,12 +192,12 @@ export default function DashboardDigestManagementModal({
                   id: initialDigestSchedule.id,
                   name: state.name || defaultDigestName || 'Digest Name',
                   recipients: state.recipients,
-                  dashboardId: selectedDashboard.id,
+                  dashboard_id: selectedDashboard.id,
                   frequency: state.frequency,
-                  daysOfWeek: state.daysOfWeek,
-                  dayNumber: 1, /* What is this value for? */
+                  days_of_week: state.days_of_week,
+                  day_number: 1, /* What is this value for? */
                   time: state.time,
-                  timeZone: state.timeZone,
+                  time_zone: state.time_zone,
                 })
               }}
             />
@@ -237,12 +237,12 @@ export default function DashboardDigestManagementModal({
                     let digest: any = {
                       name: state.name || defaultDigestName || 'Digest Name',
                       recipients: state.recipients,
-                      dashboardId: selectedDashboard.id,
+                      dashboard_id: selectedDashboard.id,
                       frequency: state.frequency,
-                      daysOfWeek: state.daysOfWeek,
-                      dayNumber: 1, /* What is this value for? */
+                      days_of_week: state.days_of_week,
+                      day_number: 1, /* What is this value for? */
                       time: state.time,
-                      timeZone: state.timeZone,
+                      time_zone: state.time_zone,
                     };
 
                     if (initialDigestSchedule) {
@@ -264,8 +264,8 @@ export default function DashboardDigestManagementModal({
 
 // Generate all possible values for the hour choices in the digest management form component
 // below.
-function generateDigestTimeChoices(timeZone) {
-  const startOfLocalDay = moment.tz(timeZone).startOf('day');
+function generateDigestTimeChoices(time_zone) {
+  const startOfLocalDay = moment.tz(time_zone).startOf('day');
   const choices: Array<{id: string, label: string}> = [];
 
   for (let index = 0; index < 24; index++) {
@@ -282,9 +282,9 @@ function generateDigestTimeChoices(timeZone) {
 function DigestManagementForm({
   name,
   frequency,
-  daysOfWeek,
+  days_of_week,
   time,
-  timeZone,
+  time_zone,
 
   defaultDigestName,
 
@@ -328,7 +328,7 @@ function DigestManagementForm({
           {frequency === WEEKLY ? (
             <div className={styles.digestManagementFormGroupDayList}>
               <DayOfWeekSelector
-                daysOfWeek={daysOfWeek}
+                days_of_week={days_of_week}
                 onChange={onChangeDaysOfWeek}
               />
             </div>
@@ -345,7 +345,7 @@ function DigestManagementForm({
         <InputBox
           type="select"
           value={time}
-          choices={generateDigestTimeChoices(timeZone)}
+          choices={generateDigestTimeChoices(time_zone)}
           onChange={item => onChangeTime(item.id)}
           placeholder="Select a time"
           width={150}
@@ -354,7 +354,7 @@ function DigestManagementForm({
         <div className={styles.digestManagementFormGroupTimeZoneField}>
           <InputBox
             type="select"
-            value={timeZone}
+            value={time_zone}
             choices={TIME_ZONE_CHOICES}
             onChange={item => onChangeTimeZone(item.id)}
             placeholder="Select a time"
@@ -372,7 +372,7 @@ function DigestManagementForm({
   );
 }
 
-const userCollectionFilter = filterCollection({fields: ['fullName', 'email']});
+const userCollectionFilter = filterCollection({fields: ['full_name', 'email']});
 
 function DigestManagementRecipientList({
   users,
@@ -391,10 +391,10 @@ function DigestManagementRecipientList({
 
   const pinnedUsers = filteredUsers
     .filter(user => initiallyEnabledRecipientIds.includes(user.id))
-    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+    .sort((a, b) => a.full_name.localeCompare(b.full_name));
   const unpinnedUsers = filteredUsers
     .filter(user => !initiallyEnabledRecipientIds.includes(user.id))
-    .sort((a, b) => a.fullName.localeCompare(b.fullName));
+    .sort((a, b) => a.full_name.localeCompare(b.full_name));
 
   return (
     <Fragment>
@@ -417,14 +417,14 @@ function DigestManagementRecipientList({
           <Fragment>
             <div className={styles.digestManagementRecipientListItem}>
               <div className={styles.digestManagementRecipientListItemName}>
-                <DigestManagementRecipientIcon user={{fullName: ''}} />
+                <DigestManagementRecipientIcon user={{full_name: ''}} />
                 <div className={styles.digestManagementRecipientListItemNamePlaceholder} />
               </div>
               <div className={styles.digestManagementRecipientListItemCheckboxPlaceholder} />
             </div>
             <div className={styles.digestManagementRecipientListItem}>
               <div className={styles.digestManagementRecipientListItemName}>
-                <DigestManagementRecipientIcon user={{fullName: ''}} />
+                <DigestManagementRecipientIcon user={{full_name: ''}} />
                 <div className={styles.digestManagementRecipientListItemNamePlaceholder} />
               </div>
               <div className={styles.digestManagementRecipientListItemCheckboxPlaceholder} />
@@ -490,7 +490,7 @@ function DigestManagementRecipientListItem({user, checked, onAddRecipient, onRem
     <div className={styles.digestManagementRecipientListItem}>
       <div className={classnames(styles.digestManagementRecipientListItemName, {[styles.checked]: checked})}>
         <DigestManagementRecipientIcon user={user} />
-        <span>{user.fullName || user.email}</span>
+        <span>{user.full_name || user.email}</span>
       </div>
       <DigestAddedNotAddedBox
         id={`digest-management-${user.id}-checkbox`}
@@ -511,7 +511,7 @@ function DigestManagementRecipientIcon({ user }) {
   return (
     <div className={styles.digestManagementRecipientIcon}>
       {
-        user.fullName
+        user.full_name
         .split(' ')
         .slice(0, 2)
         .filter(word => word.length > 0)

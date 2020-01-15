@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_TAGS_SET } from '../../rx-actions/collection/tags/set';
 import { COLLECTION_TAGS_ERROR } from '../../rx-actions/collection/tags/error';
 
@@ -27,7 +26,7 @@ export function tagsReducer(state: TagsState, action: Any<FixInRefactor>): TagsS
       ...state,
       view: 'VISIBLE',
       error: null,
-      data: action.data.map(t => objectSnakeToCamel<DensityTag>(t)),
+      data: action.data as Array<DensityTag>,
     };
 
   // An error occurred while loading tags.

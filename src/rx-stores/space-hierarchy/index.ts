@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_SPACE_HIERARCHY_SET } from '../../rx-actions/collection/space-hierarchy/set';
 import createRxStore from '..';
 
@@ -28,7 +27,7 @@ export function spaceHierarchyReducer(state: SpaceHierarchyState, action: Any<Fi
       view: 'VISIBLE',
       loading: false,
       error: null,
-      data: action.data.map(s => objectSnakeToCamel<any>(s)),
+      data: action.data,
     };
 
   default:

@@ -9,5 +9,5 @@ description, and more until they are sent to the server.
   the server to create a token?)
 - `error: Error | null` - An error in the given collection (ie, a response from the server contained
   an error)
-- `onSubmit: ({name, description, tokenType}) => any` - User sumbitted the token creation form.
+- `onSubmit: ({name, description, token_type}) => any` - User sumbitted the token creation form.
 - `onDismiss: () => any` - User dismissed the modal.

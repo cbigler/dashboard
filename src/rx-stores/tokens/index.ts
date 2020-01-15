@@ -6,17 +6,16 @@ import { COLLECTION_TOKENS_DESTROY } from '../../rx-actions/collection/tokens/de
 import { COLLECTION_TOKENS_CREATE } from '../../rx-actions/collection/tokens/create';
 import { COLLECTION_TOKENS_UPDATE } from '../../rx-actions/collection/tokens/update';
 import { COLLECTION_TOKENS_ERROR } from '../../rx-actions/collection/tokens/error';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import { SHOW_MODAL } from '../../rx-actions/modal/show';
 import { HIDE_MODAL } from '../../rx-actions/modal/hide';
 
-import { DensityToken } from '../../types';
+import { CoreToken } from '@density/lib-api-types/core-v2/tokens';
 import createRxStore from '..';
 
 
 export type TokensState = {
-  data: DensityToken[],
+  data: CoreToken[],
   loading: boolean,
   error: unknown,
   filters: {
@@ -39,7 +38,7 @@ export function tokensReducer(state: TokensState, action: Any<FixInRefactor>): T
     return {
       ...state,
       loading: false,
-      data: action.data.map(t => objectSnakeToCamel<DensityToken>(t)),
+      data: action.data as Array<CoreToken>,
     };
 
   // Push an update to a token.
@@ -50,9 +49,8 @@ export function tokensReducer(state: TokensState, action: Any<FixInRefactor>): T
       data: [
         // Update existing items
         ...state.data.map((item: any) => {
-          const newItem = objectSnakeToCamel(action.item);
           if (action.item.key === item.key) {
-            return {...item, ...newItem};
+            return {...item, ...action.item};
           } else {
             return item;
           }
@@ -61,7 +59,7 @@ export function tokensReducer(state: TokensState, action: Any<FixInRefactor>): T
         // Add new items
         ...(
           state.data.find((i: any) => i.key === action.item.key) === undefined ?
-          [objectSnakeToCamel<DensityToken>(action.item)] :
+          [action.item as CoreToken] :
             []
         ),
       ],

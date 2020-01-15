@@ -13,7 +13,7 @@ import Checkbox from '../checkbox';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import { spaceHierarchySearcher } from '@density/lib-space-helpers';
-import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
+import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
 
 export enum SelectControlTypes {
   RADIOBUTTON = 'RADIOBUTTON',
@@ -22,9 +22,9 @@ export enum SelectControlTypes {
 };
 
 type SpacePickerProps = {
-  value: Array<SpaceHierarchyDisplayItem> | Array<string> | SpaceHierarchyDisplayItem | string | null,
+  value: Array<DisplaySpaceHierarchyNode> | Array<string> | DisplaySpaceHierarchyNode | string | null,
   onChange: (SpaceHierarchyDisplayItem) => any,
-  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+  formattedHierarchy: Array<DisplaySpaceHierarchyNode>,
 
   showSearchBox?: boolean,
   searchBoxPlaceholder?: string,
@@ -38,7 +38,7 @@ type SpacePickerProps = {
 };
 
 function convertValueToSpaceIds(
-  value: Array<SpaceHierarchyDisplayItem> | Array<string> | SpaceHierarchyDisplayItem | string | null,
+  value: Array<DisplaySpaceHierarchyNode> | Array<string> | DisplaySpaceHierarchyNode | string | null,
   canSelectMultiple: boolean,
 ): Array<string> {
   // Extract the id out of value
@@ -54,7 +54,7 @@ function convertValueToSpaceIds(
     } else {
       // An array of formatted hierarchy items:
       // - [{space: {id: 'spc_xxx', ...}, ...}]
-      return (value as Array<SpaceHierarchyDisplayItem>).map(v => v.space.id);
+      return (value as Array<DisplaySpaceHierarchyNode>).map(v => v.space.id);
     }
   } else {
     if (Array.isArray(value)) {
@@ -136,7 +136,7 @@ export default function SpacePicker({
 
       <div className={styles.scrollContainer} style={{height}}>
         {formattedHierarchy.map(item => {
-          const spaceDisabled = !item.space.hasPurview || isItemDisabled(item);
+          const spaceDisabled = !item.space.has_purview || isItemDisabled(item);
           const isChecked = Boolean(selectedSpaceIds.find(id => id === item.space.id));
 
           return (
@@ -172,21 +172,21 @@ export default function SpacePicker({
                 />
               ) : null}
 
-              {item.space.spaceType === 'building' ? (
+              {item.space.space_type === 'building' ? (
                 <span className={styles.itemIcon}>
                   <Icons.Building
                     color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
                   />
                 </span>
               ) : null}
-              {item.space.spaceType === 'floor' ? (
+              {item.space.space_type === 'floor' ? (
                 <span className={styles.itemIcon}>
                   <Icons.Floor
                     color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
                   />
                 </span>
               ) : null}
-              {item.space.spaceType === 'space' && selectControl === SelectControlTypes.NONE ? (
+              {item.space.space_type === 'space' && selectControl === SelectControlTypes.NONE ? (
                 <span className={styles.itemIcon} style={{transform: `translate(0, -4px)`}}>
                   <Icons.L
                     color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
@@ -196,7 +196,7 @@ export default function SpacePicker({
 
               <span
                 className={classnames(styles.itemName, {
-                  [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.spaceType),
+                  [styles.bold]: ['campus', 'building', 'floor'].includes(item.space.space_type),
                   [styles.disabled]: spaceDisabled,
                   [styles.selected]: selectControl === SelectControlTypes.NONE && isChecked,
                 })}

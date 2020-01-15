@@ -1,7 +1,7 @@
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
-import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import collectionAlertsRead from '../alerts/read';
@@ -12,8 +12,8 @@ export default async function routeTransitionExploreSpaceDataExport(dispatch, id
   dispatch({ type: ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT, id });
 
   try {
-    const spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
-    const spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
+    const spaceHierarchy = await fetchAllObjects<CoreSpaceHierarchyNode>('/spaces/hierarchy', { cache: false });
+    const spaces = await fetchAllObjects<CoreSpace>('/spaces', { cache: false });
     const selectedSpace = spaces.find(s => s.id === id);
 
     await collectionAlertsRead(dispatch);

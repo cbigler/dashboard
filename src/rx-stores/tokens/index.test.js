@@ -26,8 +26,8 @@ describe('token reducer actions', function() {
       ...initialState,
       loading: false,
       data: [
-        {tokenType: 'readonly', key: TOKEN_ONE},
-        {tokenType: 'readwrite', key: TOKEN_TWO},
+        {token_type: 'readonly', key: TOKEN_ONE},
+        {token_type: 'readwrite', key: TOKEN_TWO},
       ],
     });
   });
@@ -49,7 +49,7 @@ describe('token reducer actions', function() {
     assert.deepEqual(tokenUpdatedInCollection, {
       ...initialState,
       loading: false,
-      data: [{key: 0, name: 'new name', tokenType: 'readonly'}],
+      data: [{key: 0, name: 'new name', token_type: 'readonly'}],
     });
   });
   it('should push token when given a new token', function() {
@@ -57,13 +57,13 @@ describe('token reducer actions', function() {
     const result = tokensReducer(initialState, collectionTokensPush({
       key: 0,
       name: 'foo',
-      tokenType: 'readonly',
+      token_type: 'readonly',
     }));
 
     assert.deepEqual(result, {
       ...initialState,
       loading: false,
-      data: [{key: 0, name: 'foo', tokenType: 'readonly'}],
+      data: [{key: 0, name: 'foo', token_type: 'readonly'}],
     });
   });
   it('should filter token collection when given a filter', function() {
@@ -124,7 +124,7 @@ describe('token operations', function() {
     assert.deepEqual(state, {
       ...initialState,
       loading: false,
-      data: [{key: 'tok_XXX', name: 'foo', tokenType: 'readonly'}],
+      data: [{key: 'tok_XXX', name: 'foo', token_type: 'readonly'}],
     });
   });
   it('should destroy a token', function() {
@@ -145,7 +145,7 @@ describe('token operations', function() {
       data: [{
         key: 'tok_XXX',
         name: 'foo',
-        tokenType: 'readonly',
+        token_type: 'readonly',
       }],
       loading: true,
     });
@@ -174,7 +174,7 @@ describe('token operations', function() {
       data: [{
         key: 'tok_XXX',
         name: 'foo',
-        tokenType: 'readonly',
+        token_type: 'readonly',
       }],
       loading: true,
     });
@@ -187,7 +187,7 @@ describe('token operations', function() {
       {
         key: 'tok_XXX',
         name: 'bar',
-        tokenType: 'readonly',
+        token_type: 'readonly',
       },
     ]});
   });

@@ -4,14 +4,14 @@ import core from '../../../client/core';
 
 export const COLLECTION_SERVICE_AUTHORIZATIONS_CREATE = 'COLLECTION_SERVICE_AUTHORIZATIONS_CREATE';
 
-export default async function collectionServiceAuthorizationCreate(dispatch, serviceName, serviceAuthorization) {
+export default async function collectionServiceAuthorizationCreate(dispatch, serviceName, service_authorization) {
   dispatch({ type: COLLECTION_SERVICE_AUTHORIZATIONS_CREATE });
 
   let requestBody = {}
   if (serviceName === "robin") {
     requestBody = {
-      "robin_access_token": serviceAuthorization.credentials.robinAccessToken,
-      "robin_organization_id": serviceAuthorization.credentials.robinOrganizationId,
+      "robin_access_token": service_authorization.credentials.robin_access_token,
+      "robin_organization_id": service_authorization.credentials.robin_organization_id,
     }
   }
 

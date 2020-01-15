@@ -5,4 +5,4 @@ chart that shows a day's worth of data as well as the capacity of a space. It's 
 that manages all of its own state and data fetching.
 
 ## Component Props
-- `space: DensitySpace` - The space to fetch data from to display in the chart.
+- `space: CoreSpace` - The space to fetch data from to display in the chart.

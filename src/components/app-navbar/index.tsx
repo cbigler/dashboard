@@ -14,7 +14,7 @@ import { ROLE_INFO } from '../../helpers/permissions/index';
 function getUserLabel(user) {
   return <span style={{fontWeight: 'normal'}}>
     <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
-    <span>{user.fullName || user.email}</span>{' '}
+    <span>{user.full_name || user.email}</span>{' '}
     <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
   </span>;
 }
@@ -140,21 +140,21 @@ export default function AppNavbar({
           }}>
             <Icons.DensityMark color="white" />
           </div>
-          {stringToBoolean(settings.dashboardEnabled) ? <AppNavbarItem
+          {stringToBoolean(settings.dashboard_enabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
             showOnMobile={true}
             path="#/dashboards"
             icon={<Icons.Dashboard />}
             text="Dashboards"
           /> : null}
-          {stringToBoolean(settings.analyticsEnabled) ? <AppNavbarItem
+          {stringToBoolean(settings.analytics_enabled) ? <AppNavbarItem
             selected={['ANALYTICS'].includes(page)}
             showOnMobile={true}
             path="#/analytics"
             icon={<Icons.Chart2 />}
             text="Analytics"
           /> : null}
-          {!stringToBoolean(settings.insightsPageLocked) ? <AppNavbarItem
+          {!stringToBoolean(settings.insights_page_locked) ? <AppNavbarItem
             selected={['SPACES', 'SPACES_SPACE_DETAIL', 'SPACES_SPACE_TRENDS', 'SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].includes(page)}
             showOnMobile={true}
             path="#/spaces"

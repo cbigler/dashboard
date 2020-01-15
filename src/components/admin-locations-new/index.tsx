@@ -4,7 +4,8 @@ import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
 import { SpaceTypeForm } from '../admin-locations-edit/index';
 import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
-import { DensitySpace, DensityTag, DensityAssignedTeam } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import { showToast } from '../../rx-actions/toasts';
 import collectionSpacesCreate from '../../rx-actions/collection/spaces/create';
@@ -33,10 +34,10 @@ type AdminLocationsNewProps = {
   spaceManagement: any,
   tagsCollection: Array<DensityTag>,
   assignedTeamsCollection: Array<DensityAssignedTeam>,
-  newSpaceParent: DensitySpace,
-  newSpaceType: DensitySpace["spaceType"],
+  newSpaceParent: CoreSpace,
+  newSpaceType: CoreSpace['space_type'],
   onChangeField: (string, any) => any,
-  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
+  onSetDoorwayField: (doorway_id: string, key: string, value: any) => any,
   onSave: (spaceFields: any, spaceParentId: string | null) => any,
 };
 
@@ -78,7 +79,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
       formState.name &&
 
       // Operating hours module valid
-      formState.timeZone && formState.dailyReset && formState.operatingHours &&
+      formState.time_zone && formState.daily_reset && formState.operatingHours &&
       formState.operatingHours.filter(i => i.label === null).length === 0
     );
   }
@@ -106,12 +107,12 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
           {/* 2. Space is in the process of being updated */}
           {spaceManagement.view === 'VISIBLE' || spaceManagement.view === 'LOADING_SEND_TO_SERVER' ? (
             <Fragment>
-              {!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.spaceType : 'root'].includes(newSpaceType) ? (
+              {!ALLOWED_SUB_SPACE_TYPES[newSpaceParent ? newSpaceParent.space_type : 'root'].includes(newSpaceType) ? (
                 <AdminLocationsDetailEmptyState
                   text={`
                   A new ${SPACE_TYPE_TO_NAME[newSpaceType].toLowerCase()} cannot be placed within the
                   ${newSpaceParent ?
-                    `${SPACE_TYPE_TO_NAME[newSpaceParent.spaceType].toLowerCase()} ${newSpaceParent.name}` :
+                    `${SPACE_TYPE_TO_NAME[newSpaceParent.space_type].toLowerCase()} ${newSpaceParent.name}` :
                     'root'}.`}
                 />
               ) : null}
@@ -149,7 +150,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
               {/* All the space type components take the same props */}
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
-                  spaceType={newSpaceType}
+                  space_type={newSpaceType}
                   spaceHierarchy={this.props.spaceManagement.spaceHierarchy}
                   formState={this.props.spaceManagement.formState}
                   tagsCollection={this.props.tagsCollection}
@@ -180,7 +181,7 @@ const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps)
   const user = useRxStore(UserStore);
   const spaceManagement = useRxStore(SpaceManagementStore);
   const tags = useRxStore(TagsStore);
-  const assignedTeams = useRxStore(AssignedTeamsStore);
+  const assigned_teams = useRxStore(AssignedTeamsStore);
 
   // Figure out the type of the new space, and its parent
   const newSpaceType = spaceManagement.formSpaceType;
@@ -201,8 +202,8 @@ const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps)
   const onChangeField = (key, value) => {
     dispatch(spaceManagementFormUpdate(key, value) as Any<FixInRefactor>);
   }
-  const onSetDoorwayField = (doorwayId, field, value) => {
-    dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value) as Any<FixInRefactor>);
+  const onSetDoorwayField = (doorway_id, field, value) => {
+    dispatch(spaceManagementFormDoorwayUpdate(doorway_id, field, value) as Any<FixInRefactor>);
   }
 
   return (
@@ -210,7 +211,7 @@ const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps)
       {...externalProps}
 
       user={user}
-      assignedTeamsCollection={assignedTeams}
+      assignedTeamsCollection={assigned_teams}
       tagsCollection={tags}
       spaceManagement={spaceManagement}
       newSpaceType={newSpaceType}

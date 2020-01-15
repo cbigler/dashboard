@@ -33,7 +33,7 @@ import {
 } from '../admin-locations-snippets';
 
 export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace, spaceManagement }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
+  const visibleSpaces = spaces.data.filter(s => s.parent_id === selectedSpace.id);
 
   const leftPaneDataItemContents = (
     <Fragment>
@@ -46,8 +46,8 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
   );
 
   // If a space has a space as its parent, it's nested as depely as it possibly can be.
-  const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
-  if (parentSpace && parentSpace.spaceType === 'space') {
+  const parentSpace = spaces.data.find(space => space.id === selectedSpace.parent_id);
+  if (parentSpace && parentSpace.space_type === 'space') {
     // Shown for spaces that are "leaves" in the hierarchy tree
     return (
       <div className={styles.wrapper}>

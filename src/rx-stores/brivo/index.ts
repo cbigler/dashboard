@@ -1,12 +1,12 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
-import { DensityBrivoSite, DensityDoorway, DensityDoorwayMapping } from '../../types';
+import { DensityBrivoSite, DensityDoorwayMapping } from '../../types';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import createRxStore from '..';
 
 
 export type BrivoState = {
   sites: DensityBrivoSite[],
-  doorways: DensityDoorway[],
+  doorways: CoreDoorway[],
   doorwayMappings: DensityDoorwayMapping[],
   sitesLoading: boolean,
   numberOfSitesLoaded: number,
@@ -26,9 +26,9 @@ export function brivoSitesReducer(state: BrivoState, action: Any<FixInRefactor>)
   case 'BRIVO_SET':
     return {
       ...state,
-      doorways: action.doorways.map(t => objectSnakeToCamel<DensityDoorway>(t)),
-      doorwayMappings: action.doorwayMappings.map(t => objectSnakeToCamel<DensityDoorwayMapping>(t)),
-      sites: action.sites.map(t => objectSnakeToCamel<DensityBrivoSite>(t)),
+      doorways: action.doorways as Array<CoreDoorway>,
+      doorwayMappings: action.doorwayMappings as Array<DensityDoorwayMapping>,
+      sites: action.sites as Array<DensityBrivoSite>,
     };
 
   case 'BRIVO_SET_ACCESS_POINTS':
@@ -63,7 +63,7 @@ export function brivoSitesReducer(state: BrivoState, action: Any<FixInRefactor>)
       ...state,
       sites: state.sites.map(site => {
         if (action.ids.indexOf(site.id) > -1) {
-          site.eventSubscriptionId = 'PENDING';
+          site.event_subscription_id = 'PENDING';
         }
         return site;
       })
@@ -83,9 +83,9 @@ export function brivoSitesReducer(state: BrivoState, action: Any<FixInRefactor>)
       ...state,
       doorwayMappings: [...state.doorwayMappings, {
         id: action.id,
-        doorwayId: action.doorwayId,
-        serviceDoorwayId: action.serviceDoorwayId,
-        serviceId: action.serviceId,
+        doorway_id: action.doorway_id,
+        service_doorway_id: action.service_doorway_id,
+        service_id: action.service_id,
       }]
     }
   

@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_WEBHOOKS_SET } from '../../rx-actions/collection/webhooks/set';
 import { COLLECTION_WEBHOOKS_PUSH } from '../../rx-actions/collection/webhooks/push';
 import { COLLECTION_WEBHOOKS_DELETE } from '../../rx-actions/collection/webhooks/delete';
@@ -8,12 +7,12 @@ import { COLLECTION_WEBHOOKS_DESTROY } from '../../rx-actions/collection/webhook
 import { COLLECTION_WEBHOOKS_UPDATE } from '../../rx-actions/collection/webhooks/update';
 import { COLLECTION_WEBHOOKS_ERROR } from '../../rx-actions/collection/webhooks/error';
 
-import { DensityWebhook } from '../../types';
+import { CoreWebhook } from '@density/lib-api-types/core-v2/webhooks';
 import createRxStore from '..';
 
 
 export type WebhooksState = {
-  data: DensityWebhook[],
+  data: CoreWebhook[],
   loading: boolean,
   error: unknown,
   filters: {
@@ -41,7 +40,7 @@ export function webhooksReducer(state: WebhooksState, action: Any<FixInRefactor>
     return {
       ...state,
       loading: false,
-      data: action.data.map(objectSnakeToCamel),
+      data: action.data,
     }
 
   // Push an update to a webhook.
@@ -52,9 +51,8 @@ export function webhooksReducer(state: WebhooksState, action: Any<FixInRefactor>
       data: [
         // Update existing items
         ...state.data.map((item: any) => {
-          const newItem = objectSnakeToCamel(action.item);
           if (action.item.id === item.id) {
-            return {...item, ...newItem};
+            return {...item, ...action.item};
           } else {
             return item;
           }
@@ -63,7 +61,7 @@ export function webhooksReducer(state: WebhooksState, action: Any<FixInRefactor>
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-          [objectSnakeToCamel<DensityWebhook>(action.item)] :
+          [action.item as CoreWebhook] :
             []
         ),
       ],

@@ -4,7 +4,7 @@ import AdminLocationsSpaceMap from '../admin-locations-space-map/index';
 import AdminLocationsDetailModule from './index';
 
 export default function AdminLocationsDetailModulesAddress({
-  spaceType,
+  space_type,
   address,
   coordinates,
   onChangeAddress,
@@ -13,7 +13,7 @@ export default function AdminLocationsDetailModulesAddress({
   return (
     <AdminLocationsDetailModule title="Address">
       <AdminLocationsSpaceMap
-        spaceType={spaceType}
+        space_type={space_type}
         address={address}
         onChangeAddress={onChangeAddress}
         coordinates={coordinates}

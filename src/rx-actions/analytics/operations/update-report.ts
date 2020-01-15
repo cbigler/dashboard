@@ -4,12 +4,11 @@ import { AnalyticsReport, StoredAnalyticsReport } from '../../../types/analytics
 import core from '../../../client/core';
 
 import { showToast } from '../../toasts';
-import objectSnakeToCamel from '../../../helpers/object-snake-to-camel';
 import mixpanelTrack from '../../../helpers/tracking/mixpanel-track';
 
 
 // type sent with PUT/POST requests to update/create the report
-type StoredAnalyticsReportUpdate = Omit<StoredAnalyticsReport, 'id' | 'creatorEmail' | 'dashboardCount'>
+type StoredAnalyticsReportUpdate = Omit<StoredAnalyticsReport, 'id' | 'creator_email' | 'dashboard_count'>
 
 export default async function updateReport(dispatch, analyticsReport: AnalyticsReport) {
   dispatch({
@@ -37,7 +36,7 @@ export default async function updateReport(dispatch, analyticsReport: AnalyticsR
     return
   }
 
-  const reportResponse = objectSnakeToCamel<DensityReport>(response.data);
+  const reportResponse = response.data as DensityReport;
 
   mixpanelTrack(analyticsReport.isSaved ? 'Analytics Create Report' : 'Analytics Update Report', {
     'Report ID': reportResponse.id,

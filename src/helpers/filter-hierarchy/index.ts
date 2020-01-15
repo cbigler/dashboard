@@ -16,17 +16,17 @@ export function getParentsOfSpace(spaces, initialSpace, throwError = true) {
     // Add the current space as the next space in the list of parents.
     parents.push(space.id);
 
-    if (typeof space.parentId === 'undefined' || space.parentId === null) {
+    if (typeof space.parent_id === 'undefined' || space.parent_id === null) {
       return parents;
     }
 
     // Find the next parent space for the next loop iteration.
-    const parentId = space.parentId;
+    const parent_id = space.parent_id;
     // eslint-disable-next-line no-loop-func
-    space = spaces.find(s => s.id === space.parentId);
+    space = spaces.find(s => s.id === space.parent_id);
     if (!space) {
       if (throwError) {
-        throw new Error(`No such space found with id ${parentId}`);
+        throw new Error(`No such space found with id ${parent_id}`);
       } else {
         return parents;
       }
@@ -41,8 +41,8 @@ export function getChildrenOfSpace(spaces, initialSpace) {
   }).map(s => s.id);
 }
 
-export function isParentSelected(spaces, spaceId, selectedIds) {
-  const space = spaces.find(x => x.id === spaceId);
+export function isParentSelected(spaces, space_id, selectedIds) {
+  const space = spaces.find(x => x.id === space_id);
   if (space) {
     return getParentsOfSpace(spaces, space, false).reduce((acc, next, index) => (
       acc || (index > 0 && selectedIds.includes(next))

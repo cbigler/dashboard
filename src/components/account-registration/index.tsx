@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 
 import React from 'react';
 
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import { Button, InputBox } from '@density/ui/src';
 
@@ -14,7 +14,6 @@ import sessionTokenSet from '../../rx-actions/session-token/set';
 import accounts from '../../client/accounts';
 
 import unsafeNavigateToLandingPage from '../../helpers/unsafe-navigate-to-landing-page/index';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import rxConnect from '../../helpers/rx-connect-hoc';
 import AccountStore from '../../rx-stores/account';
 
@@ -27,11 +26,11 @@ export class AccountRegistration extends React.Component<any, any> {
 
       error: null,
 
-      fullName: '',
+      full_name: '',
       password: '',
       passwordConfirmation: '',
-      coreConsent: false,
-      marketingConsent: false,
+      core_consent: false,
+      marketing_consent: false,
     };
   }
   onSubmit() {
@@ -40,9 +39,9 @@ export class AccountRegistration extends React.Component<any, any> {
       invitation_token: this.state.invitationToken,
       password: this.state.password,
       confirm_password: this.state.password,
-      full_name: this.state.fullName,
-      core_consent: this.state.coreConsent,
-      marketing_consent: this.state.marketingConsent,
+      full_name: this.state.full_name,
+      core_consent: this.state.core_consent,
+      marketing_consent: this.state.marketing_consent,
     }).then(response => {
       return this.props.onUserLoggedIn(response.data.session_token);
     }).catch(err => {
@@ -75,8 +74,8 @@ export class AccountRegistration extends React.Component<any, any> {
               placeholder="Full Name ..."
               className={styles.accountRegistrationInput}
               id="account-registration-full-name"
-              onChange={e => this.setState({fullName: e.target.value})}
-              value={this.state.fullName}
+              onChange={e => this.setState({full_name: e.target.value})}
+              value={this.state.full_name}
               width="100%"
             />
             </div>
@@ -120,7 +119,7 @@ export class AccountRegistration extends React.Component<any, any> {
                   type="checkbox"
                   id="account-registration-core-consent"
                   className={styles.accountRegistrationCheckbox}
-                  onChange={e => this.setState({coreConsent: e.target.checked})}
+                  onChange={e => this.setState({core_consent: e.target.checked})}
                 />
                 <p>I confirm, by completing this registration, that I have read, understand, and agree to the Density <a href="https://www.density.io/terms-of-sale" target="_blank" rel="noopener noreferrer">Subscription Agreement</a>.</p>
               </label>
@@ -130,7 +129,7 @@ export class AccountRegistration extends React.Component<any, any> {
                   type="checkbox"
                   id="account-registration-marketing-consent"
                   className={styles.accountRegistrationCheckbox}
-                  onChange={e => this.setState({marketingConsent: e.target.checked})}
+                  onChange={e => this.setState({marketing_consent: e.target.checked})}
                 />
                 <p>I would like to sign up to receive marketing emails from Density (unsubscribe is available at any time).</p>
               </label> */}
@@ -145,9 +144,9 @@ export class AccountRegistration extends React.Component<any, any> {
               disabled={!(
                 this.state.password.length > 0 &&
                 this.state.password === this.state.passwordConfirmation &&
-                this.state.fullName.length > 0 &&
+                this.state.full_name.length > 0 &&
                 this.state.email.indexOf('@') >= 0 &&
-                this.state.coreConsent
+                this.state.core_consent
               )}
             >Create Account</Button>
           </div>
@@ -166,7 +165,7 @@ export default rxConnect(AccountStore, state => {
     onUserLoggedIn(token) {
       dispatch(impersonateUnset());
       sessionTokenSet(dispatch, token).then(data => {
-        const user: any = objectSnakeToCamel<DensityUser>(data);
+        const user: CoreUser = data;
         unsafeNavigateToLandingPage(user.organization.settings, null, true);
       });
     },

@@ -57,10 +57,10 @@ function SpaceList({ user, spaces, renderedSpaces }) {
 }
 
 export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpace, spaceManagement }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
-  const floors = visibleSpaces.filter(space => space.spaceType === 'floor');
-  const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parentId === floor.id));
-  const spacesNotInFloor = visibleSpaces.filter(space => space.spaceType === 'space');
+  const visibleSpaces = spaces.data.filter(s => s.parent_id === selectedSpace.id);
+  const floors = visibleSpaces.filter(space => space.space_type === 'floor');
+  const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parent_id === floor.id));
+  const spacesNotInFloor = visibleSpaces.filter(space => space.space_type === 'space');
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
   return (
@@ -79,7 +79,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             <div className={styles.leftPaneMap}>
               <AdminLocationsSpaceMap
                 readonly={true}
-                spaceType={selectedSpace.spaceType}
+                space_type={selectedSpace.space_type}
                 address={selectedSpace.address}
                 coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
               />
@@ -113,7 +113,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             {floors.map((floor, index) => {
               return (
                 <div key={floor.id} className={styles.section}>
-                  <AdminLocationsSubheader title={floor.name} spaceId={floor.id} />
+                  <AdminLocationsSubheader title={floor.name} space_id={floor.id} />
                   <SpaceList user={user} spaces={spaces} renderedSpaces={spacesInEachFloor[index]} />
                 </div>
               );

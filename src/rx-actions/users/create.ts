@@ -1,8 +1,7 @@
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { UserActionTypes } from '../../types/users';
 
 import accounts from '../../client/accounts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { showToast } from '../../rx-actions/toasts';
 
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
@@ -17,7 +16,7 @@ export default async function userManagementCreate(dispatch: DispatchType, user)
     response = await accounts().post('/users/invite', {
       email: user.email,
       role: user.role,
-      spaces: user.spaceIds,
+      spaces: user.space_ids,
     });
   } catch (err) {
     // Don't store this error in the error collection for the space, since we are showing a toast
@@ -41,7 +40,7 @@ export default async function userManagementCreate(dispatch: DispatchType, user)
 
   dispatch({
     type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH,
-    user: objectSnakeToCamel<DensityUser>(response.data)
+    user: response.data as CoreUser
   });
   showToast(dispatch, {
     text: 'User successfully created',

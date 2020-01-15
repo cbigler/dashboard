@@ -58,7 +58,7 @@ function DashboardMainScrollViewContent({
       </div>
     );
 
-  } else if (selectedDashboard && selectedDashboard.reportSet.length === 0) {
+  } else if (selectedDashboard && selectedDashboard.report_set.length === 0) {
     return (
       <div className={styles.dashboardEmptyState}>
         <h3>
@@ -79,8 +79,8 @@ function DashboardMainScrollViewContent({
       </div>
     );
 
-  } else if (selectedDashboard && selectedDashboard.reportSet.length > 0) {
-    const nonHeaderReports = selectedDashboard.reportSet.filter(r => r.type !== 'HEADER');
+  } else if (selectedDashboard && selectedDashboard.report_set.length > 0) {
+    const nonHeaderReports = selectedDashboard.report_set.filter(r => r.type !== 'HEADER');
     const loadedReports = nonHeaderReports.filter(
       report => dashboards.calculatedReportData[report.id].state !== 'LOADING'
     );
@@ -98,7 +98,7 @@ function DashboardMainScrollViewContent({
       );
 
     } else {
-      const reportSections = selectedDashboard.reportSet.reduce((sections, report) => {
+      const reportSections = selectedDashboard.report_set.reduce((sections, report) => {
         if (report.type === 'HEADER') {
           // Create a new section
           return [ ...sections, {id: report.id, name: report.name, contents: []} ];
@@ -153,8 +153,8 @@ function DashboardMainScrollViewContent({
   }
 }
 
-function DashboardListItem({selected, id, name, reportSet, onClick}) {
-  const nonHeaderReports = reportSet.filter(i => i.type !== 'HEADER');
+function DashboardListItem({selected, id, name, report_set, onClick}) {
+  const nonHeaderReports = report_set.filter(i => i.type !== 'HEADER');
   return (
     <a
       className={styles.dashboardListItemLink}
@@ -215,7 +215,7 @@ function DashboardDropdown({selectedDashboard, dashboards, onCreateDashboard}) {
                 key={dashboard.id}
                 id={dashboard.id}
                 name={dashboard.name}
-                reportSet={dashboard.reportSet}
+                report_set={dashboard.report_set}
                 selected={selectedDashboard ? selectedDashboard.id === dashboard.id : false}
                 onClick={() => setOpened(false)}
               />
@@ -382,7 +382,7 @@ const Dashboard: React.FunctionComponent<{
 const ConnectedDashboard: React.FC<Any<FixInRefactor>> = (externalProps) => {
   const dispatch = useRxDispatch();
 
-  const userState = useRxStore(UserStore);
+  const userState = useRxStore(UserStore) as Any<FixInRefactor>;
   const activeModal = useRxStore(ActiveModalStore);
   const dashboards = useRxStore(DashboardsStore);
   const miscellaneous = useRxStore(MiscellaneousStore);
@@ -391,8 +391,8 @@ const ConnectedDashboard: React.FC<Any<FixInRefactor>> = (externalProps) => {
   const selectedDashboard = getSelectedDashboard(dashboards);
 
   // formerly mapStateToProps
-  const isDemoUser = userState && userState.data && userState.data.isDemo;
-  const isReadOnlyUser = userState && userState.data && !userState.data.permissions.includes('core_write')
+  const isDemoUser = userState && userState.data && userState.data.is_demo;
+  const isReadOnlyUser = userState && userState.data && !userState.data.permissions.includes('core_write');
   const settings = userState && userState.data && userState.data.organization.settings;
   const date = miscellaneous.dashboardDate;
   const sidebarVisible = miscellaneous.dashboardSidebarVisible;

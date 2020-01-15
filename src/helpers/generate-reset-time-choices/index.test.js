@@ -4,8 +4,8 @@ import generateResetTimeChoices from './index';
 import mockdate from 'mockdate';
 import moment from 'moment';
 
-const SPACE_IN_NY = {name: 'foo', timeZone: 'America/New_York'};
-const SPACE_IN_LA = {name: 'foo', timeZone: 'America/Los_Angeles'};
+const SPACE_IN_NY = {name: 'foo', time_zone: 'America/New_York'};
+const SPACE_IN_LA = {name: 'foo', time_zone: 'America/Los_Angeles'};
 
 describe('generate-reset-time-choices', function() {
   beforeEach(() => mockdate.reset());

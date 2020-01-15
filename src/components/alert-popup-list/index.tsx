@@ -17,7 +17,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js';
 import { DensityNotification } from '../../types';
 
 function formatAlertPhoneNumber(alert: DensityNotification) {
-  const phoneNumber = parsePhoneNumberFromString((alert.meta || {}).toNum || '');
+  const phoneNumber = parsePhoneNumberFromString((alert.meta || {}).to_num || '');
   return phoneNumber ? phoneNumber.formatNational() : 'Invalid Number';
 }
 
@@ -28,7 +28,7 @@ export default function AlertPopupList({ selectedSpace }) {
   const [visible, setVisible] = useState(false);
 
   const alertsForSelectedSpace = selectedSpace ? (
-    data.filter(alert => alert.spaceId === selectedSpace.id)
+    data.filter(alert => alert.space_id === selectedSpace.id)
   ) : [];
 
   return (
@@ -61,16 +61,16 @@ export default function AlertPopupList({ selectedSpace }) {
               onClick={() => {
                 showModal(dispatch, 'MODAL_ALERT_MANAGEMENT', {
                   alert: {
-                    spaceId: selectedSpace.id,
+                    space_id: selectedSpace.id,
                     enabled: true,
-                    isOneShot: false,
-                    notificationType: 'sms',
-                    triggerValue: (selectedSpace && selectedSpace.capacity) || 50,
-                    triggerType: 'greater_than',
+                    is_one_shot: false,
+                    notification_type: 'sms',
+                    trigger_value: (selectedSpace && selectedSpace.capacity) || 50,
+                    trigger_type: 'greater_than',
                     cooldown: -1,
                     meta: {
-                      toNum: '',
-                      escalationDelta: null,
+                      to_num: '',
+                      escalation_delta: null,
                     }
                   }
                 });
@@ -119,18 +119,18 @@ export default function AlertPopupList({ selectedSpace }) {
                     </div>
                     <div className={styles.alertListDropdownItemInfoSecondRow}>
                       <span className={styles.alertListDropdownItemInfoSecondRowText}>
-                        Occupancy {alert.triggerType === 'greater_than' ? '>' : '<'}{' '}
-                        {alert.triggerValue} {alert.triggerValue === 1 ? 'person' : 'people'}
-                        {alert.isOneShot ? null :
+                        Occupancy {alert.trigger_type === 'greater_than' ? '>' : '<'}{' '}
+                        {alert.trigger_value} {alert.trigger_value === 1 ? 'person' : 'people'}
+                        {alert.is_one_shot ? null :
                           <span className={styles.alertListDropdownItemInfoEscalationText}>
-                            {(alert.meta || {}).escalationDelta ? <Fragment>
+                            {(alert.meta || {}).escalation_delta ? <Fragment>
                               <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
                                 <Icons.Danger
                                   height={16}
                                   color={colorVariables[alert.enabled ? 'brandWarning' : 'grayDarker']}
                                 />
                               </div>
-                              <div style={{marginTop: 3}}>+{(alert.meta || {}).escalationDelta}</div>
+                              <div style={{marginTop: 3}}>+{(alert.meta || {}).escalation_delta}</div>
                             </Fragment> : null}
                           </span>
                         }

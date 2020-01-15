@@ -1,4 +1,4 @@
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 import collectionSpacesPush from '../collection/spaces/push';
 import collectionSpacesError from '../collection/spaces/error';
@@ -15,7 +15,7 @@ export const ROUTE_TRANSITION_LIVE_SPACE_DETAIL = 'ROUTE_TRANSITION_LIVE_SPACE_D
 
 export default async function routeTransitionLiveSpaceDetail(dispatch, id) {
   try {
-    const space = await fetchObject<DensitySpace>(`/spaces/${id}`, { cache: false });
+    const space = await fetchObject<CoreSpace>(`/spaces/${id}`, { cache: false });
     dispatch(collectionSpacesPush(space));
     dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_DETAIL, id });
     dispatch(collectionSpacesSetDefaultTimeRange(space));

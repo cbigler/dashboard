@@ -9,9 +9,9 @@ import {
 } from './index';
 import { DayOfWeek } from '../../types/datetime';
 
-const NYC_SPACE = { name: 'New York Space', timeZone: 'America/New_York' };
-const LA_SPACE = { name: 'Los Angeles Space', timeZone: 'America/Los_Angeles' };
-const CALCUTTA_SPACE = { name: 'Kolkata Space', timeZone: 'Asia/Kolkata' };
+const NYC_SPACE = { name: 'New York Space', time_zone: 'America/New_York' };
+const LA_SPACE = { name: 'Los Angeles Space', time_zone: 'America/Los_Angeles' };
+const CALCUTTA_SPACE = { name: 'Kolkata Space', time_zone: 'Asia/Kolkata' };
 
 function assertSubRangesEqual(subrangesA, subrangesB) {
   const a = subrangesA.map(i => ({start: i.start.toISOString(), end: i.end.toISOString(), gap: i.gap}));

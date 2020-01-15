@@ -13,7 +13,7 @@ export default async function spaceManagementCreateDoorway(dispatch, item) {
         width: item.width,
         height: item.height,
         clearance: item.clearance,
-        power_type: item.powerType,
+        power_type: item.power_type,
       },
     }, { 
       params: { environment: true }
@@ -28,7 +28,7 @@ export default async function spaceManagementCreateDoorway(dispatch, item) {
 
     // Seperately specify the sensor placement as even though it can be set in the doorway modal,
     // it's not a value that is stored on a doorway.
-    item.sensorPlacement,
+    item.sensor_placement,
   ));
 
   await dispatch(uploadDoorwayImages(dispatch, response.data.id, item));

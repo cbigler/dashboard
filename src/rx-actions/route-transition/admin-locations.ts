@@ -1,7 +1,8 @@
 import collectionSpacesSet from '../collection/spaces/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
-import { DensitySpace, DensityDoorway } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 
 import spaceManagementSetDoorways from '../space-management/set-doorways';
 import spaceManagementError from '../space-management/error';
@@ -9,12 +10,12 @@ import spaceManagementError from '../space-management/error';
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS = 'ROUTE_TRANSITION_ADMIN_LOCATIONS';
 
 export async function loadData(dispatch) {
-  let spaces: Array<DensitySpace>,
-    doorways: Array<DensityDoorway>;
+  let spaces: Array<CoreSpace>,
+    doorways: Array<CoreDoorway>;
   try {
     [spaces, doorways] = await Promise.all([
-      await fetchAllObjects<DensitySpace>('/spaces', { cache: false }),
-      await fetchAllObjects<DensityDoorway>('/doorways', {
+      await fetchAllObjects<CoreSpace>('/spaces', { cache: false }),
+      await fetchAllObjects<CoreDoorway>('/doorways', {
         cache: false,
         params: { environment: 'true' }
       }),

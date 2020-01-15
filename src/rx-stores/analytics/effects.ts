@@ -17,7 +17,7 @@ import { isQueryRunnable, realizeSpacesFromQuery, ChartDataFetchingResult, Table
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { realizeDateRange, getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
 import { runQuery } from '.';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
 import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
@@ -182,7 +182,7 @@ export function registerSideEffects(
       tableData,
     ] = args;
 
-    const spaceLookup: ReadonlyMap<string, DensitySpace> = (() => {
+    const spaceLookup: ReadonlyMap<string, CoreSpace> = (() => {
       const m = new Map();
       selectedSpaces.forEach(space => {
         m.set(space.id, space);

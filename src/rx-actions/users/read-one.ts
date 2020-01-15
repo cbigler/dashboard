@@ -1,8 +1,7 @@
 import { showToast } from '../../rx-actions/toasts';
 import accounts from '../../client/accounts';
 import { UserActionTypes } from '../../types/users';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionUsersReadOne(dispatch: DispatchType, id: string) {
@@ -25,11 +24,11 @@ export default async function collectionUsersReadOne(dispatch: DispatchType, id:
   } else {
     dispatch({
       type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH,
-      user: objectSnakeToCamel<DensityUser>(response.data),
+      user: response.data as CoreUser,
     });
     dispatch({
       type: UserActionTypes.USER_MANAGEMENT_SET_EDITOR,
-      user: objectSnakeToCamel<DensityUser>(response.data),
+      user: response.data as CoreUser,
     });
     return response.data;
   }

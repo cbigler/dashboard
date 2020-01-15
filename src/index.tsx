@@ -11,7 +11,8 @@ import accounts from './client/accounts';
 import ReactGA from 'react-ga';
 import queryString from 'qs';
 
-import { DensityUser, DensitySpace } from './types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 // Import @density/ui package for font
 import '@density/ui';
@@ -19,7 +20,6 @@ import './styles.scss';
 
 import userSet from './rx-actions/user/set';
 
-import objectSnakeToCamel from './helpers/object-snake-to-camel/index';
 import WebsocketEventPusher, { CONNECTION_STATES } from './helpers/websocket-event-pusher/index';
 import mixpanelTrack from './helpers/tracking/mixpanel-track';
 import unsafeHandleWindowResize from './helpers/unsafe-handle-window-resize';
@@ -203,17 +203,17 @@ router.addRoute('admin/integrations/google-calendar/success', (code) => routeTra
 router.addRoute('admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
 router.addRoute('admin/integrations/outlook/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
 router.addRoute('admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
-router.addRoute('admin/integrations/teem/:accessToken/:expiresIn/:refreshToken/:tokenType', (accessToken, expiresIn, refreshToken, tokenType) => routeTransitionAdminIntegrationsTeem(rxDispatch, accessToken, expiresIn, refreshToken, tokenType));
+router.addRoute('admin/integrations/teem/:accessToken/:expiresIn/:refreshToken/:token_type', (accessToken, expiresIn, refreshToken, token_type) => routeTransitionAdminIntegrationsTeem(rxDispatch, accessToken, expiresIn, refreshToken, token_type));
 router.addRoute('admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(rxDispatch, code));
 router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement(rxDispatch));
 router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(rxDispatch, id));
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper(rxDispatch));
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus(rxDispatch));
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(rxDispatch, null));
-router.addRoute('admin/locations/create/:spaceType', (spaceType) => routeTransitionAdminLocationsNew(rxDispatch, null, spaceType));
+router.addRoute('admin/locations/create/:space_type', (space_type) => routeTransitionAdminLocationsNew(rxDispatch, null, space_type));
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDispatch, id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
-router.addRoute('admin/locations/:id/create/:spaceType', (id, spaceType) => routeTransitionAdminLocationsNew(rxDispatch, id, spaceType));
+router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
 
 // FIXME: why can't this just use state management? why is this on window?
@@ -251,8 +251,7 @@ async function preRouteAuthentication() {
       (rxDispatch as Any<FixInReview>)(impersonateUnset());
       configureClients();
       sessionTokenSet(rxDispatch, response.data).then(data => {
-        const user: any = objectSnakeToCamel(data);
-        unsafeNavigateToLandingPage(user.organization.settings, null, true);
+        unsafeNavigateToLandingPage(data.organization.settings, null, true);
       });
     }).catch(err => {
       window.localStorage.auth0LoginError = err.toString();
@@ -281,7 +280,7 @@ async function preRouteAuthentication() {
         (rxDispatch as Any<FixInReview>)(userSet(response.data));
 
         // Then, navigate the user to the landing page.
-        unsafeNavigateToLandingPage(objectSnakeToCamel<DensityUser>(response.data).organization.settings, null);
+        unsafeNavigateToLandingPage((response.data as CoreUser).organization.settings, null);
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
         (rxDispatch as Any<FixInReview>)(redirectAfterLogin(locationHash));
@@ -324,7 +323,7 @@ eventSource.on('connectionStateChange', newConnectionState => {
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
 eventSource.on('connected', async () => {
-  const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+  const spaces = await fetchAllObjects<CoreSpace>('/spaces');
   rxDispatch(collectionSpacesSet(spaces));
 
   const spaceEventSets: any = await Promise.all(spaces.map(space => {
@@ -348,7 +347,7 @@ eventSource.on('connected', async () => {
 
 eventSource.on('space', countChangeEvent => {
   (rxDispatch as Any<FixInReview>)(collectionSpacesCountChange({
-    id: countChangeEvent.spaceId,
+    id: countChangeEvent.space_id,
     timestamp: countChangeEvent.timestamp,
     // In v2, the API uses "direction" to for a count change, due to a traffic event, at a space.
     // In the future "count change" should refer to ANY count change at a space, including resets.
@@ -364,7 +363,7 @@ setInterval(async () => {
   const loggedIn = SessionTokenStore.imperativelyGetValue() !== null;
 
   if (loggedIn) {
-    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    const spaces = await fetchAllObjects<CoreSpace>('/spaces');
     (rxDispatch as Any<FixInReview>)(collectionSpacesSet(spaces));
   }
 },  5 * 60 * 1000);

@@ -73,7 +73,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
         {value ? <span>
           {value.name}
           <span className={styles.spaceHierarchySelectBoxItemHighlight}>
-            {value.spaceType ? `${value.spaceType[0].toUpperCase()}${value.spaceType.slice(1)}` : ''}
+            {value.space_type ? `${value.space_type[0].toUpperCase()}${value.space_type.slice(1)}` : ''}
           </span>
         </span> : <span>
           All spaces
@@ -95,7 +95,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
               choice: {
                 id: 'default',
                 name: 'All spaces',
-                spaceType: 'default',
+                space_type: 'default',
               },
             },
             ...spaceHierarchy,
@@ -138,7 +138,7 @@ export default class SpaceHierarchySelectBox extends React.Component<any, any> {
                   if (choice.disabled) {
                     return '(0)';
                   } else {
-                    return choice.spaceType ? `${choice.spaceType[0].toUpperCase()}${choice.spaceType.slice(1)}` : '';
+                    return choice.space_type ? `${choice.space_type[0].toUpperCase()}${choice.space_type.slice(1)}` : '';
                   }
                 })()}
               </span>

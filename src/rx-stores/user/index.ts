@@ -3,16 +3,15 @@ import { USER_PUSH } from '../../rx-actions/user/push';
 import { USER_ERROR } from '../../rx-actions/user/error';
 import { SESSION_TOKEN_UNSET } from '../../rx-actions/session-token/unset';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import createRxStore, { skipUpdate } from '..';
 import registerSideEffects from './effects';
 
 
-// FIXME: the typings here can't infer presence of DensityUser based on loading state
+// FIXME: the typings here can't infer presence of CoreUser based on loading state
 export type UserState = {
-  data: DensityUser | null,
+  data: CoreUser | null,
   loading: boolean,
   error: unknown,
 }
@@ -27,14 +26,14 @@ export const initialState: UserState = {
 export function userReducer(state: UserState, action: Any<FixInRefactor>) {
   switch (action.type) {
   case USER_SET:
-    return {...state, loading: false, data: objectSnakeToCamel<DensityUser>(action.data)};
+    return {...state, loading: false, data: action.data as CoreUser};
   case USER_PUSH:
     return {
       ...state,
       loading: false,
       data: {
         ...(state.data as any),
-        ...objectSnakeToCamel(action.item)
+        ...action.item as CoreUser
       },
     };
   case USER_ERROR:

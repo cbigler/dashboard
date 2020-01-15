@@ -5,4 +5,4 @@ hierarchy, and contains the ability to configure the capacity of the space. The 
 stateless.
 
 ## Component Props
-- `space: DensitySpace` - The space the header should render.
+- `space: CoreSpace` - The space the header should render.

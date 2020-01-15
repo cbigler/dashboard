@@ -20,15 +20,15 @@ export default async function spaceReportsCalculateReportData(dispatch, controll
     status: 'LOADING'
   }));
 
-  // const spaceMappingExists = space.spaceMappings.length > 0;
+  // const spaceMappingExists = space.space_mappings.length > 0;
 
   const reports = await Promise.all(
     controller.reports.map(async report => {
       const reportDataCalculationFunction: DensityReportCalculationFunction = REPORTS[report.configuration.type].calculations;
       
       const dateRangeControl = controller.controls.find(x => x.controlType === SpaceReportControlTypes.DATE_RANGE) as any;
-      const startDate = moment.tz(dateRangeControl.startDate, space.timeZone);
-      const endDate = moment.tz(dateRangeControl.endDate, space.timeZone).add(1, 'day');
+      const startDate = moment.tz(dateRangeControl.startDate, space.time_zone);
+      const endDate = moment.tz(dateRangeControl.endDate, space.time_zone).add(1, 'day');
 
       const timeSegmentControl = controller.controls.find(x => x.controlType === SpaceReportControlTypes.TIME_SEGMENT) as any;
 
@@ -36,13 +36,13 @@ export default async function spaceReportsCalculateReportData(dispatch, controll
         ...report.configuration,
         settings: {
           ...report.configuration.settings,
-          spaceId: space.id,
-          timeRange: {
+          space_id: space.id,
+          time_range: {
             type: 'CUSTOM_RANGE',
-            startDate: startDate,
-            endDate: endDate,
+            start_date: startDate,
+            end_date: endDate,
           },
-          timeSegmentLabels: !timeSegmentControl ? [] :
+          time_segment_labels: !timeSegmentControl ? [] :
             timeSegmentControl.timeSegment === DEFAULT_TIME_SEGMENT_LABEL ? [] : [ timeSegmentControl.timeSegment ],
         }
       };

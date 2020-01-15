@@ -106,7 +106,7 @@ describe.skip('websocket-event-pusher', function() {
         count: 15,
         direction: -1,
         eventId: "evt_foo",
-        spaceId: "spc_bar",
+        space_id: "spc_bar",
         timestamp: "2018-02-26T17:40:33.792Z",
       });
     });

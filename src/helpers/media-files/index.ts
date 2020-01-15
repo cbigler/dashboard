@@ -1,6 +1,5 @@
 import { asyncSleep } from '@density/lib-helpers';
 import core from '../../client/core';
-import objectSnakeToCamel from '../object-snake-to-camel';
 import { fetchObject } from '../fetch-all-objects';
 
 // Convert a file or blob to a data URL
@@ -22,10 +21,10 @@ export default async function uploadMedia(path: string, file: File, quantity=1, 
   } catch (e) {
     return e;
   }
-  const { uploadId, uploadUrl } = objectSnakeToCamel(request.data);
+  const { upload_id, upload_url } = request.data;
 
   // PUT the data to S3 directly
-  await fetch(uploadUrl, {
+  await fetch(upload_url, {
     method: 'PUT',
     headers: { 'Content-Type': file.type },
     body: file
@@ -35,7 +34,7 @@ export default async function uploadMedia(path: string, file: File, quantity=1, 
   let status: any = null;
   for (let i = 0; i < retries; i++) {
     await asyncSleep(1000);
-    status = await fetchObject(`/uploads/${uploadId}`, { cache: false });
+    status = await fetchObject(`/uploads/${upload_id}`, { cache: false });
     if (status.media.length >= quantity) { break; }
   }
 

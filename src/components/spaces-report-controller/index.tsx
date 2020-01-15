@@ -15,7 +15,7 @@ import classnames from 'classnames';
 
 import { isInclusivelyBeforeDay } from '@density/react-dates';
 
-import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import Report from '../report';
 import {
   getCurrentLocalTimeAtSpace,
@@ -39,8 +39,8 @@ function getLabelForSpaceFunction(id) {
 }
 
 export type ReportControllerProps = {
-  space: DensitySpace;
-  spaceHierarchy: Array<DensitySpaceHierarchyItem>;
+  space: CoreSpace;
+  spaceHierarchy: Array<CoreSpaceHierarchyNode>;
   controller: ISpaceReportController;
   onUpdateControls: Function;
 }

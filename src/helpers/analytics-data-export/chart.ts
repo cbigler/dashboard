@@ -29,7 +29,7 @@ function rollupMetricValueForGroupedDatapoints(group: AnalyticsDatapoint[], sele
     case AnalyticsFocusedMetric.MAX:
       return d3Array.max(group, d => d.max) || 0;
     case AnalyticsFocusedMetric.UTILIZATION:
-      return d3Array.max(group, d => d.targetUtilization) || 0;
+      return d3Array.max(group, d => d.target_utilization) || 0;
     case AnalyticsFocusedMetric.OPPORTUNITY:
       return d3Array.min(group, d => d.opportunity) || 0;
     case AnalyticsFocusedMetric.ENTRANCES:
@@ -51,17 +51,17 @@ function formatMetricValue(value: number, metric: AnalyticsFocusedMetric): strin
 function getRowsForDailyInterval(datapoints: AnalyticsDatapoint[], selectedMetric: AnalyticsFocusedMetric): DailyDataRow[] {
   
   const mapping: Map<string, Map<string, AnalyticsDatapoint[]>> = d3Array.group(datapoints,
-    (d: AnalyticsDatapoint) => d.spaceId,
+    (d: AnalyticsDatapoint) => d.space_id,
     // @ts-ignore
     (d: AnalyticsDatapoint) => d.localBucketDay,
   )
   const rows: DailyDataRow[] = [];
   const metricColumnName = selectedMetric === AnalyticsFocusedMetric.MAX ? 'Occupancy' : selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY ? 'Available Capacity' : startCase(selectedMetric);
-  mapping.forEach((groupedByDay, spaceId) => {
+  mapping.forEach((groupedByDay, space_id) => {
     groupedByDay.forEach((group, date) => {
       rows.push({
         'Date': date,
-        'Space': group[0].spaceName,
+        'Space': group[0].space_name,
         [metricColumnName]: formatMetricValue(rollupMetricValueForGroupedDatapoints(group, selectedMetric), selectedMetric)
       })
     })
@@ -71,7 +71,7 @@ function getRowsForDailyInterval(datapoints: AnalyticsDatapoint[], selectedMetri
 
 function getRowsForNonDailyInterval(datapoints: AnalyticsDatapoint[], selectedMetric: AnalyticsFocusedMetric): TimestampedDataRow[] {
   const mapping: Map<string, Map<string, Map<string, AnalyticsDatapoint[]>>> = d3Array.group(datapoints,
-    (d: AnalyticsDatapoint) => d.spaceId,
+    (d: AnalyticsDatapoint) => d.space_id,
     // @ts-ignore
     (d: AnalyticsDatapoint) => d.localBucketDay,
     (d: AnalyticsDatapoint) => d.localBucketTime,
@@ -82,8 +82,8 @@ function getRowsForNonDailyInterval(datapoints: AnalyticsDatapoint[], selectedMe
     groupedByDate.forEach((groupedByTime) => {
       groupedByTime.forEach((group) => {
         rows.push({
-          'Space': group[0].spaceName,
-          'Timestamp': moment.tz(group[0].millisecondsSinceUnixEpoch, group[0].timeZone).format(),
+          'Space': group[0].space_name,
+          'Timestamp': moment.tz(group[0].millisecondsSinceUnixEpoch, group[0].time_zone).format(),
           'Local Time': `${group[0].localDay} ${group[0].localTime}:00`,
           [metricColumnName]: formatMetricValue(rollupMetricValueForGroupedDatapoints(group, selectedMetric), selectedMetric)
         })
@@ -96,7 +96,7 @@ function getRowsForNonDailyInterval(datapoints: AnalyticsDatapoint[], selectedMe
 export function exportAnalyticsChartData(inputDatapoints: AnalyticsDatapoint[], interval: QueryInterval, selectedMetric: AnalyticsFocusedMetric, hiddenSpaceIds: string[]) {
 
   // rows that are toggled off are not included in export
-  const datapoints = inputDatapoints.filter(d => !hiddenSpaceIds.includes(d.spaceId))
+  const datapoints = inputDatapoints.filter(d => !hiddenSpaceIds.includes(d.space_id))
 
   const [startDate, endDate] = d3Array.extent(datapoints, d => d.localDay);
   const metricColumnName = formatMetricName(selectedMetric);
@@ -108,11 +108,9 @@ export function exportAnalyticsChartData(inputDatapoints: AnalyticsDatapoint[], 
  
   if (interval === QueryInterval.ONE_DAY) {
     const rows = getRowsForDailyInterval(datapoints, selectedMetric);
-    console.log('rows', rows)
     csvData = d3Dsv.csvFormat(rows, ['Space', 'Date', metricColumnName])
   } else {
     const rows = getRowsForNonDailyInterval(datapoints, selectedMetric);
-    console.log('rows', rows) 
     csvData = d3Dsv.csvFormat(rows, ['Space', 'Timestamp', 'Local Time', metricColumnName])
   }
 

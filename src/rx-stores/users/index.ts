@@ -61,7 +61,7 @@ export default createRxStore<UserState>('userStore', initialState, (state, actio
           data: action.user,
           role: action.user.role,
           spaceFilteringActive: (action.user.spaces || []).length > 0,
-          spaceIds: action.user.spaces || [],
+          space_ids: action.user.spaces || [],
         }
       };
 

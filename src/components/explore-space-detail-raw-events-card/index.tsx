@@ -71,7 +71,7 @@ export function ExploreSpaceDetailRawEventsCardRaw({
           mapDataItemToRow={item => [
             parseISOTimeAtSpace(item.timestamp, space).format('MMM Do YYYY, h:mm:ss a'),
             item.direction === 1 ? 'Entrance' : 'Exit',
-            calculatedData.data.doorwayLookup[item.doorwayId] ? calculatedData.data.doorwayLookup[item.doorwayId].name : item.doorwayId,
+            calculatedData.data.doorwayLookup[item.doorway_id] ? calculatedData.data.doorwayLookup[item.doorway_id].name : item.doorway_id,
           ]}
         /> : null}
 

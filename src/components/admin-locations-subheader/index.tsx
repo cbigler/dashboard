@@ -5,7 +5,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import { AppBar, AppBarSection, Icons } from '@density/ui/src';
 
-export default function AdminLocationsSubheader({title, subtitle=null, spaceId=null, supportsHover=true}) {
+export default function AdminLocationsSubheader({title, subtitle=null, space_id=null, supportsHover=true}) {
   const [hover, setHover] = useState(false);
   return (
     <a
@@ -13,7 +13,7 @@ export default function AdminLocationsSubheader({title, subtitle=null, spaceId=n
         [styles.hover]: supportsHover && hover,
         [styles.supportsHover]: supportsHover,
       })}
-      href={spaceId ? `#/admin/locations/${spaceId}` : undefined}
+      href={space_id ? `#/admin/locations/${space_id}` : undefined}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >

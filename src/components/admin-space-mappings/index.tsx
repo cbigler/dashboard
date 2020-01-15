@@ -15,7 +15,7 @@ import {
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import Toaster from '../toaster/index';
 
 import integrationServicesList from '../../rx-actions/integrations/services';
@@ -40,7 +40,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
 
   componentDidMount() {
     this.interval = setInterval(() => {
-      if (this.props.currentService.serviceAuthorization.lastSync === null) {
+      if (this.props.currentService.service_authorization.last_sync === null) {
         this.props.onCheckForIntegrationLastSync();
       }
     }, 5000);
@@ -65,9 +65,9 @@ export class AdminSpaceMappings extends React.Component<any, any> {
 
     const conferenceRooms = spaces.filter(space => ["conference_room", "meeting_room"].includes(space['function']))
 
-    const serviceSpaceForService = (spaceMappings, service) => {
+    const serviceSpaceForService = (space_mappings, service) => {
       if (service) {
-        const spaceMappingsForService = spaceMappings.filter(spm => spm.serviceId === service.id);
+        const spaceMappingsForService = space_mappings.filter(spm => spm.service_id === service.id);
         if (spaceMappingsForService) {
           return spaceMappingsForService[0];
         }
@@ -83,7 +83,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
         loading={spaceMappingsPage.loading}
         service={currentService}
         serviceSpaces={spaceMappingsPage.serviceSpaces}
-        initialServiceSpaceId={activeModal.data.serviceSpaceId}
+        initialServiceSpaceId={activeModal.data.service_space_id}
         space={activeModal.data.space}
 
         onSubmit={onSaveSpaceMapping}
@@ -112,16 +112,16 @@ export class AdminSpaceMappings extends React.Component<any, any> {
         <div className={styles.adminIntegrationsList}>
           <div className={styles.adminIntegrationsSectionHeader}>Link your room-booking spaces</div>
           
-          {currentService && currentService.serviceAuthorization.lastSync === null ? (
+          {currentService && currentService.service_authorization.last_sync === null ? (
             <div className={styles.centeredMessage}>
               <div className={styles.integrationNotice}>
-                We are syncing your {currentService.displayName} spaces with Density for the first time. This will take between 2-5 minutes.
+                We are syncing your {currentService.display_name} spaces with Density for the first time. This will take between 2-5 minutes.
               </div>
             </div>
           ) : null}
 
-          {currentService && currentService.serviceAuthorization.lastSync !== null ? (
-            <ListView keyTemplate={space => space.name} data={conferenceRooms as Array<DensitySpace>}>
+          {currentService && currentService.service_authorization.last_sync !== null ? (
+            <ListView keyTemplate={space => space.name} data={conferenceRooms as Array<CoreSpace>}>
               <ListViewColumn
                 id="Density Conference Room"
                 width={360}
@@ -134,10 +134,10 @@ export class AdminSpaceMappings extends React.Component<any, any> {
               />
               <ListViewColumnSpacer />
               <ListViewColumn
-                id={currentService ? `${currentService.displayName} Space` : "..."}
+                id={currentService ? `${currentService.display_name} Space` : "..."}
                 width={240}
                 template={space => {
-                  const serviceSpace = serviceSpaceForService(space.spaceMappings, currentService)
+                  const serviceSpace = serviceSpaceForService(space.space_mappings, currentService)
                   if (serviceSpace) {
                     return <ListViewClickableLink>{serviceSpace.serviceSpaceName}</ListViewClickableLink>
                   } else {
@@ -146,14 +146,14 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 }}
                 onClick={space => onOpenModal('space-mappings-create-update', {
                   space: space, 
-                  serviceSpaceId: space.spaceMappings.length > 0 ? space.spaceMappings[0].serviceSpaceId : null
+                  service_space_id: space.space_mappings.length > 0 ? space.space_mappings[0].service_space_id : null
                 })}
               />
               <ListViewColumn
                 id="Meeting Analytics"
                 width={160}
                 template={space => {
-                  if (space.spaceMappings.length > 0) {
+                  if (space.space_mappings.length > 0) {
                     return <ListViewClickableLink
                       onClick={() => window.location.href = `/#/spaces/${space.id}/meetings/${currentService.name}`}
                     >
@@ -170,9 +170,9 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                 width={30}
                 align="right"
                 template={space => {
-                  if (space.spaceMappings.length > 0) {
+                  if (space.space_mappings.length > 0) {
                     return <ListViewClickableLink
-                      onClick={() => onOpenModal('space-mappings-destroy', {spaceMappingId: space.spaceMappings[0].id})}
+                      onClick={() => onOpenModal('space-mappings-destroy', {spaceMappingId: space.space_mappings[0].id})}
                     >
                       <Icons.Trash color={colorVariables.grayDarker} />
                     </ListViewClickableLink>
@@ -208,8 +208,8 @@ const ConnectedAdminSpaceMappings: React.FC = () => {
     await hideModal(dispatch);
   }
   const onSaveSpaceMapping = async (serviceMappingData) => {
-    const { serviceSpaceId, spaceId, serviceId } = serviceMappingData;
-    const ok = await collectionSpaceMappingsCreate(dispatch, serviceSpaceId, spaceId, serviceId);
+    const { service_space_id, space_id, service_id } = serviceMappingData;
+    const ok = await collectionSpaceMappingsCreate(dispatch, service_space_id, space_id, service_id);
     if (ok) { await hideModal(dispatch); }
   }
   const onDestroySpaceMapping = async (spaceMappingId) => {

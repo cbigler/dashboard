@@ -1,4 +1,4 @@
-import { DensitySpace } from ".";
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 // Space Report Actions
 
@@ -10,7 +10,7 @@ export enum SpaceReportActionTypes {
 export type SpaceReportsAction = {
   type: SpaceReportActionTypes.SPACES_SET_REPORT_CONTROLLERS,
   controllers: Array<ISpaceReportController>,
-  space: DensitySpace,
+  space: CoreSpace,
 } | {
   type: SpaceReportActionTypes.SPACES_UPDATE_REPORT_CONTROLLER,
   controller: ISpaceReportController

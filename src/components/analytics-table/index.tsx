@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames';
 import styles from './styles.module.scss';
-import { DensitySpaceTypes, DensitySpace, DensitySpaceFunction } from '../../types';
+import { CoreSpace, CoreSpaceType, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 
 import {
   ResourceStatus,
@@ -199,28 +199,28 @@ const SortIcon: React.FC<{
 const ACTIVE_CHEVRON_COLOR = colorVariables.grayCinder;
 const INACTIVE_CHEVRON_COLOR = colorVariables.gray;
 
-export function formatSpaceType(spaceType: DensitySpaceTypes) {
-  switch (spaceType) {
-  case DensitySpaceTypes.BUILDING:
+export function formatSpaceType(space_type: CoreSpaceType) {
+  switch (space_type) {
+  case CoreSpaceType.BUILDING:
     return 'Building';
-  case DensitySpaceTypes.CAMPUS:
+  case CoreSpaceType.CAMPUS:
     return 'Campus';
-  case DensitySpaceTypes.FLOOR:
+  case CoreSpaceType.FLOOR:
     return 'Floor';
-  case DensitySpaceTypes.SPACE:
+  case CoreSpaceType.SPACE:
     return 'Space';
   default:
-    return spaceType;
+    return space_type;
   }
 }
 
-export function formatSpaceFunction(spaceFunction: DensitySpaceFunction | null) {
+export function formatSpaceFunction(spaceFunction: CoreSpaceFunction | null) {
   if (spaceFunction == null) return '--';
   return startCase(spaceFunction);
 }
 
 
-export function getHighestAncestorName(space: DensitySpace): string {
+export function getHighestAncestorName(space: CoreSpace): string {
   if (space.ancestry.length > 0) {
     return space.ancestry[space.ancestry.length-1].name;
   } else {
@@ -316,11 +316,11 @@ const TOGGLE_COLUMN_WIDTH = 18 + 24 //width of checkbox + padding;
 const COLUMN_HEADER_POPUP_WIDTH = 240;
 
 const AnalyticsTable: React.FC<{
-  spaces: DensitySpace[],
+  spaces: CoreSpace[],
   analyticsReport: AnalyticsReport,
   onClickColumnHeader: (column: TableColumn) => void,
-  onChangeHiddenSpaceIds: (spaceIds: string[]) => void,
-  onChangeHighlightedSpaceId: (spaceId: string | null) => void,
+  onChangeHiddenSpaceIds: (space_ids: string[]) => void,
+  onChangeHighlightedSpaceId: (space_id: string | null) => void,
 }> = function AnalyticsTable({
   spaces,
   analyticsReport,
@@ -352,7 +352,7 @@ const AnalyticsTable: React.FC<{
 
   const selectedSpaces = analyticsReport.queryResult.data.selectedSpaceIds
     .map(id => spaces.find(space => space.id === id))
-    .filter(space => Boolean(space)) as Array<DensitySpace>
+    .filter(space => Boolean(space)) as Array<CoreSpace>
 
   // Compute the table from the report
   // const tableData = computeTableData(analyticsReport, selectedSpaces, columnSort);
@@ -510,25 +510,25 @@ const AnalyticsTable: React.FC<{
                 <tr
                   key={index}
                   onMouseEnter={() => {
-                    onChangeHighlightedSpaceId(row.spaceId);
+                    onChangeHighlightedSpaceId(row.space_id);
                   }}
                   onMouseLeave={() => {
                     onChangeHighlightedSpaceId(null);
                   }}
-                  className={classNames({[styles.highlightedSpaceRow]: analyticsReport.highlightedSpaceId === row.spaceId})}
+                  className={classNames({[styles.highlightedSpaceRow]: analyticsReport.highlightedSpaceId === row.space_id})}
                 >
                   <td
                     key={'toggle'}
                     className={classNames(styles.cellWithCheckbox, {[styles.columnSortActive]: isColumnSorted(TableColumn.SPACE_NAME)})}
                   >
                     <Checkbox
-                      color={colorMap.get(row.spaceId)}
-                      checked={!analyticsReport.hiddenSpaceIds.includes(row.spaceId)}
+                      color={colorMap.get(row.space_id)}
+                      checked={!analyticsReport.hiddenSpaceIds.includes(row.space_id)}
                       onChange={evt => {
                         if (evt.currentTarget.checked) {
-                          onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.filter(i => i !== row.spaceId))
+                          onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.filter(i => i !== row.space_id))
                         } else {
-                          onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.concat([row.spaceId]))
+                          onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.concat([row.space_id]))
                         }
                       }}
                     />
@@ -538,15 +538,15 @@ const AnalyticsTable: React.FC<{
                       <td
                         key={column}
                         style={{
-                          color: colorMap.get(row.spaceId),
+                          color: colorMap.get(row.space_id),
                           fontWeight: 500
                         }}
-                        className={classNames(styles.spaceName, {[styles.columnSortActive]: isColumnSorted(column)})}
+                        className={classNames(styles.space_name, {[styles.columnSortActive]: isColumnSorted(column)})}
                         onClick={() => {
                           if (row.isChecked) {
-                            onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.concat([row.spaceId]))
+                            onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.concat([row.space_id]))
                           } else {
-                            onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.filter(i => i !== row.spaceId))
+                            onChangeHiddenSpaceIds(analyticsReport.hiddenSpaceIds.filter(i => i !== row.space_id))
                           }
                         }}
                       >

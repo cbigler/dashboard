@@ -1,5 +1,4 @@
 import React, { ReactNode, Fragment } from 'react';
-import changeCase from 'change-case';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import styles from './styles.module.scss';
@@ -8,12 +7,9 @@ import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import MarkdownEditor from '../markdown-editor/index';
 
-import {
-  DensityReport,
-  DensitySpaceHierarchyItem,
-  DensityTimeSegmentLabel,
-  DensitySpace,
-} from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
+import { CoreTimeSegmentLabel } from '@density/lib-api-types/core-v2/time_segments';
+import { DensityReport } from '../../types';
 
 import {
   AppBar,
@@ -72,6 +68,7 @@ import DashboardsStore from '../../rx-stores/dashboards';
 import MiscellaneousStore from '../../rx-stores/miscellaneous';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import { sanitizeReportSettings } from '../../helpers/casing';
 
 type DashboardReportModalProps = {
   activeModal: ActiveModalState & {
@@ -85,10 +82,10 @@ type DashboardReportModalProps = {
     },
   },
   spaces: {
-    data: Array<DensitySpace>,
+    data: Array<CoreSpace>,
   },
   spaceHierarchy: {
-    data: Array<DensitySpaceHierarchyItem>,
+    data: Array<CoreSpaceHierarchyNode>,
   },
   reportList: Array<DensityReport>,
   reportsInSelectedDashboard: Array<DensityReport>,
@@ -96,7 +93,7 @@ type DashboardReportModalProps = {
     state: string,
     data: any,
   },
-  timeSegmentLabels: Array<DensityTimeSegmentLabel>,
+  timeSegmentLabels: Array<CoreTimeSegmentLabel>,
   dashboardDate: string,
   dashboardWeekStart: string,
   onSaveReportModal: (object) => void,
@@ -139,7 +136,7 @@ function getEmptyRequiredFields(report) {
   return REPORTS[report.type].metadata.controls
     .filter(control => control.parameters.required)
     .filter(control => {
-      const value = report.settings[changeCase.camel(control.parameters.field)];
+      const value = report.settings[control.parameters.field];
       return !value || value.length === 0;
     });
 }
@@ -277,15 +274,15 @@ function DashboardReportEditModal({
                       <ListViewColumn
                         id="Spaces"
                         template={item => {
-                          let spaceIds: Array<string> = [];
-                          if (item.settings.spaceId) {
-                            spaceIds = [item.settings.spaceId];
+                          let space_ids: Array<string> = [];
+                          if (item.settings.space_id) {
+                            space_ids = [item.settings.space_id];
                           }
-                          if (item.settings.spaceIds) {
-                            spaceIds = item.settings.spaceIds;
+                          if (item.settings.space_ids) {
+                            space_ids = item.settings.space_ids;
                           }
 
-                          let spaceNames = spaceIds.map(id => {
+                          let spaceNames = space_ids.map(id => {
                             const match = formattedHierarchy.find(x => x.space.id === id);
                             return match ? match.space.name : null;
                           }).filter(x => x);
@@ -425,13 +422,13 @@ function DashboardReportEditModal({
                   />
                   {selectedReportType.metadata.controls.map(control => {
                     const id = `reports-control-${control.label.replace(' ', '-')}`;
-                    const fieldName = changeCase.camel(control.parameters.field);
+                    const fieldName = control.parameters.field;
                     let input: ReactNode = null;
 
                     function reportUpdateSettings(key, value) {
                       const report = {
                         ...activeModal.data.report,
-                        settings: { ...activeModal.data.report.settings, [key]: value },
+                        settings: sanitizeReportSettings({ ...activeModal.data.report.settings, [key]: value }),
                       };
                       onUpdateModal('report', report);
 
@@ -465,7 +462,7 @@ function DashboardReportEditModal({
                       break;
 
                     case 'TIME_SEGMENT_LABEL_PICKER':
-                      const space = spaces.data.find(s => s.id === activeModal.data.report.settings.spaceId);
+                      const space = spaces.data.find(s => s.id === activeModal.data.report.settings.space_id);
                       input = (
                         control.parameters.canSelectMultiple ? (
                           <TagInput
@@ -474,7 +471,7 @@ function DashboardReportEditModal({
                                 // If the report only allows selection of a single space, filter the
                                 // list of time segment labels by that space.
                                 if (!space) { return true; }
-                                return (space as any).timeSegments.find(tsm => tsm.label === label);
+                                return (space as any).time_segments.find(tsm => tsm.label === label);
                               }).map(label => ({id: label, label}))
                             }
                             tags={activeModal.data.report.settings[fieldName].map(label => ({id: label, label}))}
@@ -576,27 +573,27 @@ function DashboardReportEditModal({
 
                                   // Use a huristic to try to guess what time zone should be
                                   // defaulted to.
-                                  if (activeModal.data.report.settings.spaceId) {
+                                  if (activeModal.data.report.settings.space_id) {
                                     const matchingSpace = spaces.data.find(
-                                      space => space.id === activeModal.data.report.settings.spaceId
+                                      space => space.id === activeModal.data.report.settings.space_id
                                     );
                                     if (matchingSpace) {
-                                      displayTimeZone = matchingSpace.timeZone;
+                                      displayTimeZone = matchingSpace.time_zone;
                                     }
-                                  } else if (activeModal.data.report.settings.spaceIds && activeModal.data.report.settings.spaceIds.length > 0) {
+                                  } else if (activeModal.data.report.settings.space_ids && activeModal.data.report.settings.space_ids.length > 0) {
                                     const matchingSpace = spaces.data.find(
-                                      space => space.id === activeModal.data.report.settings.spaceIds[0]
+                                      space => space.id === activeModal.data.report.settings.space_ids[0]
                                     );
                                     if (matchingSpace) {
-                                      displayTimeZone = matchingSpace.timeZone;
+                                      displayTimeZone = matchingSpace.time_zone;
                                     }
                                   }
 
                                   reportUpdateSettings(fieldName, {
                                     type: 'CUSTOM_RANGE',
-                                    displayTimeZone,
-                                    startDate: moment.tz(displayTimeZone).subtract(7, 'days').startOf('day').format(),
-                                    endDate: moment.tz(displayTimeZone).subtract(1, 'day').startOf('day').format(),
+                                    display_time_zone: displayTimeZone,
+                                    start_date: moment.tz(displayTimeZone).subtract(7, 'days').startOf('day').format(),
+                                    end_date: moment.tz(displayTimeZone).subtract(1, 'day').startOf('day').format(),
                                   });
                                 } else {
                                   reportUpdateSettings(fieldName, choice.id);
@@ -617,70 +614,70 @@ function DashboardReportEditModal({
                                   <DateRangePicker
                                     startDate={formatForReactDates(
                                       moment.tz(
-                                        activeModal.data.report.settings[fieldName].startDate,
-                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        activeModal.data.report.settings[fieldName].start_date,
+                                        activeModal.data.report.settings[fieldName].display_time_zone,
                                       ),
-                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                      {time_zone: activeModal.data.report.settings[fieldName].display_time_zone},
                                     )}
                                     endDate={formatForReactDates(
                                       moment.tz(
-                                        activeModal.data.report.settings[fieldName].endDate,
-                                        activeModal.data.report.settings[fieldName].displayTimeZone,
+                                        activeModal.data.report.settings[fieldName].end_date,
+                                        activeModal.data.report.settings[fieldName].display_time_zone,
                                       ),
-                                      {timeZone: activeModal.data.report.settings[fieldName].displayTimeZone},
+                                      {time_zone: activeModal.data.report.settings[fieldName].display_time_zone},
                                     )}
                                     onChange={({startDate, endDate}) => {
                                       if (startDate) {
                                         startDate = parseFromReactDates(startDate, {
-                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                         }).startOf('day');
                                       } else {
                                         startDate = parseISOTimeAtSpace(
-                                          activeModal.data.report.settings[fieldName].startDate,
+                                          activeModal.data.report.settings[fieldName].start_date,
                                           {
-                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                            time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                           }
                                         );
                                       }
                                       if (endDate) {
                                         endDate = parseFromReactDates(endDate, {
-                                          timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                          time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                         }).endOf('day');
                                       } else {
                                         endDate = parseISOTimeAtSpace(
-                                          activeModal.data.report.settings[fieldName].endDate,
+                                          activeModal.data.report.settings[fieldName].end_date,
                                           {
-                                            timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                            time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                           }
                                         );
                                       }
 
                                       reportUpdateSettings(fieldName, {
                                         ...activeModal.data.report.settings[fieldName],
-                                        startDate: startDate.format(),
-                                        endDate: endDate.format(),
+                                        start_date: startDate.format(),
+                                        end_date: endDate.format(),
                                       });
                                     }}
                                     isOutsideRange={day => isOutsideRange({
-                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                     }, day)}
                                     // Within the component, store if the user has selected the start of end date picker
                                     // input
-                                    focusedInput={activeModal.data.report.settings[fieldName].datePickerInput}
+                                    focusedInput={activeModal.data.report.settings[fieldName].date_picker_input}
                                     onFocusChange={(focused, a) => {
                                       reportUpdateSettings(fieldName, {
                                         ...activeModal.data.report.settings[fieldName],
-                                        datePickerInput: focused,
+                                        date_picker_input: focused,
                                       });
                                     }}
                                     commonRanges={getCommonRangesForSpace({
-                                      timeZone: activeModal.data.report.settings[fieldName].displayTimeZone,
+                                      time_zone: activeModal.data.report.settings[fieldName].display_time_zone,
                                     })}
                                     onSelectCommonRange={({startDate, endDate}) => {
                                       reportUpdateSettings(fieldName, {
                                         ...activeModal.data.report.settings[fieldName],
-                                        startDate: startDate.format(),
-                                        endDate: endDate.format(),
+                                        start_date: startDate.format(),
+                                        end_date: endDate.format(),
                                       });
                                     }}
                                   />
@@ -696,11 +693,11 @@ function DashboardReportEditModal({
                                   choices={TIME_ZONE_CHOICES}
                                   menuMaxHeight={300}
                                   width="100%"
-                                  value={activeModal.data.report.settings[fieldName].displayTimeZone}
+                                  value={activeModal.data.report.settings[fieldName].display_time_zone}
                                   onChange={choice => {
                                     reportUpdateSettings(fieldName, {
                                       ...activeModal.data.report.settings[fieldName],
-                                      displayTimeZone: choice.id,
+                                      display_time_zone: choice.id,
                                     });
                                   }}
                                 />}
@@ -1014,7 +1011,7 @@ const ConnectedDashboardReportEditModal: React.FC<Any<FixInRefactor>> = (externa
   const reportList = dashboards.reportList;
   // List of all reports in the working copy of the selected dashboard
   // (ie, `report_set` from GET /v2/dashboards/:id)
-  const reportsInSelectedDashboard = dashboards.formState ? dashboards.formState.reportSet : [];
+  const reportsInSelectedDashboard = dashboards.formState ? dashboards.formState.report_set : [];
   const timeSegmentLabels = dashboards.timeSegmentLabels;
   const calculatedReportDataForPreviewedReport = extractCalculatedReportDataFromDashboardsReducer(dashboards)
 
@@ -1029,7 +1026,7 @@ const ConnectedDashboardReportEditModal: React.FC<Any<FixInRefactor>> = (externa
     // Set default parameters for a newly created report
     const reportType = report.type === 'HEADER' ? HEADER_REPORT : REPORTS[report.type];
     const initialReportSettings = reportType.metadata.controls.reduce((acc, control) => {
-      const fieldName = changeCase.camel(control.parameters.field);
+      const fieldName = control.parameters.field;
 
       let value;
       switch (control.type) {

@@ -55,7 +55,7 @@ const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
           showToast(dispatch, { type: 'error', text: 'Error deleting space' });
         }
         // FIXME: this seems like a bad idea to have this just chilling in this callback
-        window.location.href = `#/admin/locations/${space.parentId}`;
+        window.location.href = `#/admin/locations/${space.parent_id}`;
       }
     });
   }

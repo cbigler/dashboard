@@ -11,7 +11,7 @@ export default async function collectionTokensCreate(dispatch, token) {
     const response = await accounts().post('/tokens', {
       name: token.name,
       description: token.description,
-      token_type: token.tokenType,
+      token_type: token.token_type,
     });
     dispatch(collectionTokensPush(response.data));
     return response.data;

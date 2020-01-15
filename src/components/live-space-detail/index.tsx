@@ -31,8 +31,8 @@ export function LiveSpaceDetail({
       <div className={styles.liveSpaceDetailStats}>
         <div className={styles.liveSpaceDetailStatsItem}>
           <h2 className="liveSpaceDetailStatsCount">
-            {space.currentCount}
-            {space.currentCount === 1 ? ' person' : ' people'}
+            {space.current_count}
+            {space.current_count === 1 ? ' person' : ' people'}
           </h2>
           <h1 className={styles.liveSpaceDetailStatsName}>{space.name}</h1>
         </div>

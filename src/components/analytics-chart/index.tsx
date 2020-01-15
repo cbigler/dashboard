@@ -5,7 +5,7 @@ import * as d3Scale from 'd3-scale';
 import * as d3Shape from 'd3-shape';
 import * as d3Array from 'd3-array';
 
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { QueryInterval, AnalyticsFocusedMetric, AnalyticsReport, ResourceStatus } from '../../types/analytics';
 import useContainerWidth from '../../helpers/use-container-width';
 import AnalyticsLoadingBar from '../analytics-loading-bar';
@@ -18,24 +18,24 @@ import { activeReportDataStream } from '../../rx-stores/analytics';
 import { OVERFLOW_COLOR } from '../../helpers/analytics-color-scale';
 
 
-function sortForRenderingBySpaceOrder<T extends {spaceId: string}>(spaceOrder: string[], series: T[], highlightedSpaceId: string | null) {
+function sortForRenderingBySpaceOrder<T extends {space_id: string}>(spaceOrder: string[], series: T[], highlightedSpaceId: string | null) {
   
   // render in reverse order so that first item is rendered on top
   const renderingOrder = spaceOrder.slice().reverse();
   
   // if there's a highlighted space, move it all the way to the end of the array so it is last (rendered on top)
   if (highlightedSpaceId) {
-    const ordered = series.filter(s => s.spaceId !== highlightedSpaceId);
+    const ordered = series.filter(s => s.space_id !== highlightedSpaceId);
 
-    const highlightedSeries = series.find(s => s.spaceId === highlightedSpaceId);
+    const highlightedSeries = series.find(s => s.space_id === highlightedSpaceId);
     if (highlightedSeries) {
       ordered.push(highlightedSeries);
     }
     return ordered;
   }
   return renderingOrder
-    .map(id => series.find(s => s.spaceId === id))
-    .filter<T>((i): i is T => Boolean(i && i.spaceId))
+    .map(id => series.find(s => s.space_id === id))
+    .filter<T>((i): i is T => Boolean(i && i.space_id))
 }
 
 function formatLocalBucketTimeLabel(localBucketTime: string, truncateMinutes: boolean = true) {
@@ -89,7 +89,7 @@ const Chart: React.FC<{
   outerHeight: number,
   interval: QueryInterval,
   selectedMetric: AnalyticsFocusedMetric,
-  spacesById: ReadonlyMap<string, DensitySpace>,
+  spacesById: ReadonlyMap<string, CoreSpace>,
 }> = function Chart({
   outerWidth,
   outerHeight,
@@ -106,11 +106,11 @@ const Chart: React.FC<{
 
 
 
-  const getColorForSpaceId = (spaceId: string): string => {
+  const getColorForSpaceId = (space_id: string): string => {
     const muted = MUTED_LINE_COLOR;
-    const defaultColorForSpace = colorMap.get(spaceId) || muted;
+    const defaultColorForSpace = colorMap.get(space_id) || muted;
     if (report.highlightedSpaceId) {
-      return report.highlightedSpaceId === spaceId ? defaultColorForSpace : muted;
+      return report.highlightedSpaceId === space_id ? defaultColorForSpace : muted;
     } else {
       return defaultColorForSpace === OVERFLOW_COLOR ? muted : defaultColorForSpace;
     }
@@ -147,7 +147,7 @@ const Chart: React.FC<{
 
   function computeHoverData(mouseX: number) {
 
-    const datapoints: Array<{ spaceId: string, value: number }> = [];
+    const datapoints: Array<{ space_id: string, value: number }> = [];
 
     const dayXPositionsMap = new Map<number, string>();
     chartData.days.forEach(day => {
@@ -175,7 +175,7 @@ const Chart: React.FC<{
           series.data.forEach(datum => {
             if (datum.day === nearestDay) {
               datapoints.push({
-                spaceId: series.spaceId,
+                space_id: series.space_id,
                 value: datum.value,
               })
             }
@@ -213,7 +213,7 @@ const Chart: React.FC<{
         series.data.forEach(datum => {
           if (datum.time === nearestTime) {
             datapoints.push({
-              spaceId: series.spaceId,
+              space_id: series.space_id,
               value: datum.value,
             })
           }
@@ -540,11 +540,11 @@ const Chart: React.FC<{
           return sortForRenderingBySpaceOrder(spaceOrder, segment.series, report.highlightedSpaceId).map(series => {
             const pathData = lineGen(series.data) || '';
             return (
-              <g key={series.spaceId}>
+              <g key={series.space_id}>
                 <path
                   d={pathData}
                   fill="none"
-                  stroke={getColorForSpaceId(series.spaceId)}
+                  stroke={getColorForSpaceId(series.space_id)}
                   strokeWidth={2}
                 />
                 {/* {series.data.map(d => {
@@ -554,7 +554,7 @@ const Chart: React.FC<{
                       cx={dayPointScale(d.day)}
                       cy={yScale(d.value)}
                       r={2}
-                      fill={colorScale(series.spaceId)}
+                      fill={colorScale(series.space_id)}
                       strokeWidth={1}
                       stroke={'#fafafa'}
                     />
@@ -579,11 +579,11 @@ const Chart: React.FC<{
             {sortForRenderingBySpaceOrder(spaceOrder, segment.series, report.highlightedSpaceId).map(series => {
               const pathData = lineGen(series.data) || '';
               return (
-                <g key={series.spaceId}>
+                <g key={series.space_id}>
                   <path
                     d={pathData}
                     fill="none"
-                    stroke={getColorForSpaceId(series.spaceId)}
+                    stroke={getColorForSpaceId(series.space_id)}
                     strokeWidth={2}
                   />
                 </g>
@@ -624,11 +624,11 @@ const Chart: React.FC<{
     if (!targetDatapoint) return hidden;
     const targetValue = targetDatapoint.value;
     const datapoints = hoverData.datapoints.map(d => {
-      const space = spacesById.get(d.spaceId);
+      const space = spacesById.get(d.space_id);
       if (!space) throw new Error('Should not be possible');
       return {
-        spaceId: space.id,
-        spaceName: space.name,
+        space_id: space.id,
+        space_name: space.name,
         value: d.value,
       }
     })
@@ -663,11 +663,11 @@ const Chart: React.FC<{
       const y = yScale(datapoint.value);
       return (
         <circle
-          key={datapoint.spaceId}
+          key={datapoint.space_id}
           cx={x}
           cy={y}
           r={3} 
-          fill={getColorForSpaceId(datapoint.spaceId)}
+          fill={getColorForSpaceId(datapoint.space_id)}
           stroke={'#fafbfc'}
           strokeWidth={2}
         />
@@ -747,7 +747,7 @@ const Chart: React.FC<{
 
 const AnalyticsChart: React.FC<{
   report: AnalyticsReport,
-  spacesById: ReadonlyMap<string, DensitySpace>,
+  spacesById: ReadonlyMap<string, CoreSpace>,
 }> = function AnalyticsChart({
   report,
   spacesById,

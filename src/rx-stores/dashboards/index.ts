@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { DASHBOARDS_SET } from '../../rx-actions/dashboards/set';
 import { DASHBOARDS_SET_DATA } from '../../rx-actions/dashboards/set-data';
 import { DASHBOARDS_PUSH } from '../../rx-actions/dashboards/push';
@@ -74,10 +73,10 @@ export function dashboardsReducer(state: DashboardsState, action: Any<FixInRefac
   // When the active page changes, reset the state of all reports to be at the loading state,
   // removing all of their previously stored data.
   case ROUTE_TRANSITION_DASHBOARD_DETAIL: {
-    const allReports = state.data.reduce((acc, dashboard: any) => [...acc, ...dashboard.reportSet], [] as any);
+    const allReports = state.data.reduce((acc, dashboard: any) => [...acc, ...dashboard.report_set], [] as any);
     return {
       ...state,
-      selected: action.dashboardId,
+      selected: action.dashboard_id,
       calculatedReportData: {
         // All reports will be put into a loading state.
         ...(allReports.reduce((acc, report) => ({
@@ -96,20 +95,20 @@ export function dashboardsReducer(state: DashboardsState, action: Any<FixInRefac
   }
 
   case ROUTE_TRANSITION_DASHBOARD_EDIT:
-    return { ...state, selected: action.dashboardId, loading: true, view: 'LOADING' };
+    return { ...state, selected: action.dashboard_id, loading: true, view: 'LOADING' };
 
   case DASHBOARDS_UPDATE:
     return { ...state, loading: true, view: 'LOADING' };
 
   // Update the whole dashboard collection.
   case DASHBOARDS_SET: {
-    const allReports = action.data.reduce((acc, dashboard) => [...acc, ...dashboard.reportSet], []);
+    const allReports = action.data.reduce((acc, dashboard) => [...acc, ...dashboard.report_set], []);
     return {
       ...state,
       loading: false,
       error: null,
       view: 'VISIBLE',
-      data: action.data.map(d => objectSnakeToCamel<DensityDashboard>(d)),
+      data: action.data as Array<DensityDashboard>,
       calculatedReportData: {
         // Any reports that don't have data loaded yet will be put into a loading state.
         ...(allReports.reduce((acc, report) => ({
@@ -133,10 +132,10 @@ export function dashboardsReducer(state: DashboardsState, action: Any<FixInRefac
       loading: false,
       error: null,
       view: 'VISIBLE',
-      data: [objectSnakeToCamel<DensityDashboard>(action.dashboard)],
+      data: [action.dashboard as DensityDashboard],
       calculatedReportData: {
         // Any reports that don't have data loaded yet will be put into a loading state.
-        ...(action.dashboard.reportSet.reduce((acc, report) => ({
+        ...(action.dashboard.report_set.reduce((acc, report) => ({
           ...acc,
           [report.id]: {
             state: 'LOADING',
@@ -163,7 +162,7 @@ export function dashboardsReducer(state: DashboardsState, action: Any<FixInRefac
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.item.id === item.id) {
-          return {...item, ...objectSnakeToCamel<DensityDashboard>(action.item)};
+          return {...item, ...action.item as DensityDashboard};
           } else {
             return item;
           }
@@ -172,7 +171,7 @@ export function dashboardsReducer(state: DashboardsState, action: Any<FixInRefac
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel<DensityDashboard>(action.item)] :
+            [action.item as DensityDashboard] :
             []
         ),
       ],

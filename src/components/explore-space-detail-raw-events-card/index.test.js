@@ -10,7 +10,7 @@ describe('noop', function() {
 
 // import { ExploreSpaceDetailRawEventsCardRaw as RawEventsCard } from './index';
 
-// const space = {id: 'spc_1', name: 'My Space', timeZone: 'America/New_York'};
+// const space = {id: 'spc_1', name: 'My Space', time_zone: 'America/New_York'};
 
 // describe('daily raw events card', function() {
 //   it('should render the card (smoke test)', async function() {

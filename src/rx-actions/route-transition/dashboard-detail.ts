@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import dashboardsSet from '../dashboards/set';
 import dashboardsError from '../dashboards/error';
 import dashboardsSelect from '../dashboards/select';
@@ -16,6 +15,7 @@ import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 import UserStore from '../../rx-stores/user';
 import DashboardsStore from '../../rx-stores/dashboards';
 import MiscellaneousStore from '../../rx-stores/miscellaneous';
+import { sanitizeReportSettings } from '../../helpers/casing';
 
 
 export const ROUTE_TRANSITION_DASHBOARD_DETAIL = 'ROUTE_TRANSITION_DASHBOARD_DETAIL';
@@ -61,7 +61,7 @@ async function loadDashboardAndReports(dispatch, id) {
   }
 
   // Determine "start of week" for this organization and the dashboard date
-  const dashboardWeekStart = user.organization.settings.dashboardWeekStart;
+  const dashboardWeekStart = user.organization.settings.dashboard_week_start;
   await calculateDashboardDate(dispatch, dashboardWeekStart);
   // FIXME: imperative get state
   const miscellaneous = MiscellaneousStore.imperativelyGetValue();
@@ -70,7 +70,7 @@ async function loadDashboardAndReports(dispatch, id) {
   // FIXME: need to imperatively get the state for now...
   const dashboardsState = DashboardsStore.imperativelyGetValue();
   // First, if the dashboard already is in the collection, then immediately select it.
-  let selectedDashboard: Any<FixInRefactor> = dashboardsState.data.find(d => d.id === id);
+  let selectedDashboard: DensityDashboard | undefined = dashboardsState.data.find(d => d.id === id);
   if (selectedDashboard) {
     // The data for the dashboard being selected already exists, so don't "reset the state" as
     // this will show a loading state / remove all dashboards that are already in the collection
@@ -89,7 +89,7 @@ async function loadDashboardAndReports(dispatch, id) {
   // So, next, load all dashboards. Even if all dashboards are set, loading them again isn't a bad
   // idea and ensures we have up to date data.
 
-  let dashboards;
+  let dashboards: Array<DensityDashboard>;
   try {
     dashboards = await fetchAllObjects<DensityDashboard>('/dashboards', { cache: false });
   } catch (err) {
@@ -97,22 +97,24 @@ async function loadDashboardAndReports(dispatch, id) {
     return;
   }
 
-  const results = dashboards.map(d => objectSnakeToCamel<DensityDashboard>(d));
-  dispatch(dashboardsSet(results));
+  // TODO: sanitize report settings, because we have saved reports with mixed/inconsistent casing
+  dashboards.forEach(dashboard => {
+    dashboard.report_set = dashboard.report_set.map(r => sanitizeReportSettings(r));
+  });
 
-  if (results.length === 0) {
+  dispatch(dashboardsSet(dashboards));
+
+  if (dashboards.length === 0) {
     return;
   }
 
   // Now, if the dashboard to be selected hasn't already been selected (optimistically, at the top
   // of the function), then select it now that it has been loaded.
   if (!selectedDashboard) {
-    selectedDashboard = results.find(dashboard => dashboard.id === id);
+    selectedDashboard = dashboards.find(dashboard => dashboard.id === id);
     if (!selectedDashboard) {
       dispatch(dashboardsError('No dashboard with this id was found.'))
       return;
-    } else {
-      dashboards = dashboards.map(d => objectSnakeToCamel<DensityDashboard>(d));
     }
 
     // Load the selected dashboard directly, in case it is hidden
@@ -127,7 +129,9 @@ async function loadDashboardAndReports(dispatch, id) {
       );
     } else {
       try {
-        selectedDashboard = fetchObject<DensityDashboard>(`/dashboards/${id}`, { cache: false });
+        selectedDashboard = await fetchObject<DensityDashboard>(`/dashboards/${id}`, { cache: false });
+        // TODO: sanitize report settings, because we have saved reports with mixed/inconsistent casing
+        selectedDashboard.report_set = selectedDashboard.report_set.map(r => sanitizeReportSettings(r));
       } catch (err) {
         dispatch(dashboardsError(err));
         return;
@@ -152,7 +156,7 @@ async function loadDashboardAndReports(dispatch, id) {
 }
 
 export default async function routeTransitionDashboardDetail(dispatch, id) {
-  dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL, dashboardId: id });
+  dispatch({ type: ROUTE_TRANSITION_DASHBOARD_DETAIL, dashboard_id: id });
 
   await Promise.all([
     loadDigestSchedules(dispatch),

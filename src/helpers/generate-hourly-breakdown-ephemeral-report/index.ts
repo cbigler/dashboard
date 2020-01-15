@@ -4,7 +4,7 @@ export default function generateHourlyBreakdownEphemeralReport(space, startDate,
     type: 'HOURLY_BREAKDOWN',
     name: title,
     settings: {
-      spaceId: space.id,
+      space_id: space.id,
       scrollable: true,
       metric: metric,
       aggregation: aggregation,

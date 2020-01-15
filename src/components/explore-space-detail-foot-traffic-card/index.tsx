@@ -44,7 +44,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
   space,
 
   date,
-  timeSegments,
+  time_segments,
   timeSegmentLabel,
   calculatedData,
 
@@ -56,16 +56,16 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
   // Subtract 2 from width and more due to rendering weirdness
   const innerWidth = width - 45;
 
-  const localTimestamp = moment.utc(date).tz(space.timeZone).startOf('day');
+  const localTimestamp = moment.utc(date).tz(space.time_zone).startOf('day');
   const dayOfWeek = localTimestamp.format('dddd');
 
   // Find time segment matching this day of the week, or a default
   let timeSegment;
-  if (timeSegments) {
-    const timeSegmentIndex = timeSegments.findIndex(x => x.days.indexOf(dayOfWeek) > -1);
-    timeSegment = timeSegments[timeSegmentIndex] || DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+  if (time_segments) {
+    const timeSegmentIndex = time_segments.findIndex(x => x.days.indexOf(dayOfWeek) > -1);
+    timeSegment = time_segments[timeSegmentIndex] || DEFAULT_TIME_SEGMENT_GROUP.time_segments[0];
   } else {
-    timeSegment = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+    timeSegment = DEFAULT_TIME_SEGMENT_GROUP.time_segments[0];
   }
 
   // Get start and end times from the selected time segment
@@ -102,8 +102,8 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
     });
 
     const isToday = (
-      moment.utc(date).tz(space.timeZone).format('YYYY-MM-DD') ===
-      moment.utc().tz(space.timeZone).format('YYYY-MM-DD')
+      moment.utc(date).tz(space.time_zone).format('YYYY-MM-DD') ===
+      moment.utc().tz(space.time_zone).format('YYYY-MM-DD')
     );
 
     // Add a final point at the end of the chart that aligns with the right side of the chart.
@@ -144,7 +144,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
           Foot Traffic
           <InfoPopup horizontalIconOffset={8}>
             <p className={styles.exploreSpaceDetailFootTrafficCardPopupP}>
-              Count over time on <strong>{moment.utc(date).tz(space.timeZone).format('MMMM D, YYYY')}</strong>{' '}
+              Count over time on <strong>{moment.utc(date).tz(space.time_zone).format('MMMM D, YYYY')}</strong>{' '}
               during the time segment <strong>{timeSegmentLabel}</strong>,{' '}
               queried in 5 minute intervals.
             </p>
@@ -180,7 +180,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
 
         <CardBody className={styles.exploreSpaceDetailFootTrafficCardBody}>
           {calculatedData.state === 'COMPLETE' && chartData.length > 0 ? <LineChartComponent
-            timeZone={space.timeZone}
+            time_zone={space.time_zone}
             svgWidth={innerWidth}
             svgHeight={CHART_HEIGHT}
 
@@ -210,7 +210,7 @@ export function ExploreSpaceDetailFootTrafficCardRaw ({
                 topPopupFormatter: overlayTwoPopupsPersonIconTextFormatter(item => `${item.value}`),
                 bottomPopupFormatter: overlayTwoPopupsPlainTextFormatter(
                   (item, {mouseX, xScale}) => {
-                    const timestamp = moment.utc(xScale.invert(mouseX)).tz(space.timeZone);
+                    const timestamp = moment.utc(xScale.invert(mouseX)).tz(space.time_zone);
                     const time = timestamp.format(`h:mma`).slice(0, -1);
                     const date = timestamp.format(`ddd MMM Do`);
                     return `${time} ${date}`;

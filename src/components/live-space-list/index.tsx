@@ -28,11 +28,11 @@ import SpacesStore from '../../rx-stores/spaces';
 import EventPusherStatusStore from '../../rx-stores/event-pusher-status';
 const spaceFilter = filterCollection({fields: ['name']});
 
-function filterHierarchy(spaces, parentId) {
+function filterHierarchy(spaces, parent_id) {
   return spaces.filter(space => {
     return (
       space.doorways.length !== 0 && /* must have doorways */
-      getParentsOfSpace(spaces, space).indexOf(parentId) > 0 /* index 0 = current space */
+      getParentsOfSpace(spaces, space).indexOf(parent_id) > 0 /* index 0 = current space */
     );
   });
 }
@@ -80,7 +80,7 @@ export function LiveSpaceList({
         <div className={styles.liveSpaceListHeaderHierarchy}>
           <SpaceHierarchySelectBox
             value={spaces.filters.parent ?  spaces.data.find(i => i.id === spaces.filters.parent) : null}
-            choices={spaces.data.filter(i => i.spaceType !== 'space')}
+            choices={spaces.data.filter(i => i.space_type !== 'space')}
             onChange={parent => onSpaceChangeParent(parent ? parent.id : null)}
           />
           <span className={styles.liveSpaceListLiveIndicatorTag}>
@@ -157,8 +157,8 @@ const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
   const onSpaceSearch = (searchQuery) => {
     dispatch(collectionSpacesFilter('search', searchQuery) as Any<FixInRefactor>);
   }
-  const onSpaceChangeParent = (parentId) => {
-    dispatch(collectionSpacesFilter('parent', parentId) as Any<FixInRefactor>);
+  const onSpaceChangeParent = (parent_id) => {
+    dispatch(collectionSpacesFilter('parent', parent_id) as Any<FixInRefactor>);
   }
 
   return (

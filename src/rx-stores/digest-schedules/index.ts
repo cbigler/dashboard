@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_DIGEST_SCHEDULES_LOAD } from '../../rx-actions/collection/digest-schedules/load';
 import { COLLECTION_DIGEST_SCHEDULES_SET } from '../../rx-actions/collection/digest-schedules/set';
 import { COLLECTION_DIGEST_SCHEDULES_PUSH } from '../../rx-actions/collection/digest-schedules/push';
@@ -36,7 +35,7 @@ export function digestSchedulesReducer(state: DigestSchedulesState, action: Any<
       ...state,
       view: 'VISIBLE',
       error: null,
-      data: action.data.map(d => objectSnakeToCamel<DensityDigestSchedule>(d)),
+      data: action.data as Array<DensityDigestSchedule>,
     };
 
   // Add a new value to the collection
@@ -47,7 +46,7 @@ export function digestSchedulesReducer(state: DigestSchedulesState, action: Any<
       data: [
         // Update existing items
         ...state.data.map((item: Any<FixInRefactor>) => {
-          const newItem = objectSnakeToCamel(action.item);
+          const newItem = action.item;
           if (action.item.id === item.id) {
             return {...item, ...newItem};
           } else {
@@ -58,7 +57,7 @@ export function digestSchedulesReducer(state: DigestSchedulesState, action: Any<
         // Add new items
         ...(
           state.data.find((i: Any<FixInRefactor>) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel(action.item)] :
+            [action.item] :
             []
         ),
       ],

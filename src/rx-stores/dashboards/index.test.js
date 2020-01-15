@@ -22,7 +22,7 @@ describe('noop', () => {
 // const DASHBOARD = {
 //   id: 'das_123',
 //   name: 'My Dashboard',
-//   reportSet: [
+//   report_set: [
 //     // This report will "calculate" data successfully.
 //     {
 //       id: 'rpt_456',

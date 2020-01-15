@@ -2,11 +2,11 @@ import collectionSpacesFetchAll from '../spaces/fetch-all';
 import collectionSpaceMappingsError from './error';
 import core from '../../../client/core';
 
-export default async function collectionSpaceMappingsCreateUpdate(dispatch, serviceSpaceId, spaceId, serviceId) {
+export default async function collectionSpaceMappingsCreateUpdate(dispatch, service_space_id, space_id, service_id) {
   const requestBody = {
-    "service_space_id": serviceSpaceId,
-    "service_id": serviceId,
-    "space_id": spaceId,
+    "service_space_id": service_space_id,
+    "service_id": service_id,
+    "space_id": space_id,
   };
 
   let response, errorThrown;

@@ -48,7 +48,7 @@ export function ExploreSpaceDailyRaw ({
               space={space}
               date={spaces.filters.date}
               timeSegmentLabel={selectedTimeSegmentLabel}
-              timeSegments={applicableTimeSegments}
+              time_segments={applicableTimeSegments}
             />
           </div>
           <div className={styles.exploreSpaceDailyItem}>

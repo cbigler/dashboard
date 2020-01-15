@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import {
   AppBar,
@@ -21,7 +21,6 @@ import {
 import colorVariables from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import filterCollection from '../../helpers/filter-collection';
 
 import hideModal from '../../rx-actions/modal/hide';
@@ -34,7 +33,7 @@ import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
 
 const orgFilterHelper = filterCollection({fields: ['name']});
-const userFilterHelper = filterCollection({fields: ['email', 'fullName']});
+const userFilterHelper = filterCollection({fields: ['email', 'full_name']});
 
 function onSelectImpersonateOrganization(dispatch, org) {
   updateModal(dispatch, {
@@ -47,7 +46,7 @@ function onSelectImpersonateOrganization(dispatch, org) {
   fetch(`${accounts().defaults.baseURL}/users?organization_id=${org.id}`, {
     headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
   }).then(response => response.json()).then(data => {
-    updateModal(dispatch, {loading: false, users: data.map(u => objectSnakeToCamel<DensityUser>(u))});
+    updateModal(dispatch, {loading: false, users: data as Array<CoreUser>});
   });
 }
 
@@ -65,6 +64,13 @@ export default function ImpersonateModal() {
   const filteredUsers = userFilterHelper(
     activeModal.data.users.filter(x => x.role !== 'service'),
     activeModal.data.userFilter
+  );
+
+  // Focus the "org" input when the modal is newly visible
+  const ref = useRef<HTMLElement>();
+  useEffect(
+    () => (activeModal.visible && ref.current && ref.current.focus()) || undefined,
+    [activeModal.visible]
   );
 
   return <Modal
@@ -104,6 +110,7 @@ export default function ImpersonateModal() {
         </AppBar>
         <AppBar>
           <InputBox
+            ref={ref}
             width="100%"
             placeholder='ex: "Density Dev", "Acme Co"'
             leftIcon={<Icons.Search color={colorVariables.gray} />}
@@ -171,7 +178,7 @@ export default function ImpersonateModal() {
           overflowY: enabled ? 'scroll' : 'hidden',
         }}>
           {filteredUsers.map(item => {
-            const label = item.fullName || item.email;
+            const label = item.full_name || item.email;
             const selected = (activeModal.data.selectedUser || {}).id === item.id;
             const disabled = loading || !enabled;
             return <div
@@ -188,7 +195,7 @@ export default function ImpersonateModal() {
               }}
             >
               <div className={styles.impersonateUserIcon}>{
-                (item.fullName || '')
+                (item.full_name || '')
                   .split(' ')
                   .slice(0, 2)
                   .filter(word => word.length > 0)

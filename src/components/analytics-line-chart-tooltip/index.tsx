@@ -79,8 +79,8 @@ const TooltipEntries: React.FunctionComponent<{
 }
 
 type TooltipDatapoint = {
-  spaceId: string,
-  spaceName: string,
+  space_id: string,
+  space_name: string,
   value: number
 }
 
@@ -111,8 +111,8 @@ const AnalyticsLineChartTooltip: React.FunctionComponent<{
 
   const entries: TooltipEntry[] = datapoints.map(datapoint => {
     return {
-      title: datapoint.spaceName,
-      color: colorMap.get(datapoint.spaceId) || '#cccccc',
+      title: datapoint.space_name,
+      color: colorMap.get(datapoint.space_id) || '#cccccc',
       value: datapoint.value,
       displayValue: formatMetricValue(datapoint.value),
     }

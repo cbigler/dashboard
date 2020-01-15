@@ -7,15 +7,13 @@ import {
   switchMap,
   catchError,
 } from 'rxjs/operators';
-import changeCase from 'change-case';
 import getInObject from 'lodash/get';
 
 import core from '../../client/core';
 import createRxStore, { rxDispatch, actions, skipUpdate } from '..';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import {
   DensityReport,
-  DensitySpace,
-  DensitySpaceHierarchyItem,
 } from '../../types';
 import { TimeFilter } from '../../types/datetime';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
@@ -79,7 +77,7 @@ function convertStoredAnalyticsReportToAnalyticsReport(
   return {
     id: report.id,
     name: report.name,
-    creatorEmail: report.creatorEmail || '',
+    creator_email: report.creator_email || '',
 
     hiddenSpaceIds: [],
     highlightedSpaceId: null,
@@ -374,7 +372,7 @@ const spacesLoadStream = routeTransitionStream.pipe(
     if (spacesState.view !== 'VISIBLE' && spacesState.data.length > 1) {
       return of();
     } else {
-      return fetchAllObjects<DensitySpace>('/spaces');
+      return fetchAllObjects<CoreSpace>('/spaces');
     }
   }),
   map(spaces => collectionSpacesSet(spaces)),
@@ -386,7 +384,7 @@ const spaceHierarchyLoadStream = routeTransitionStream.pipe(
     if (spaceHierarchyState.view !== 'VISIBLE' && spaceHierarchyState.data.length > 1) {
       return of();
     } else {
-      return fetchAllObjects<Array<DensitySpaceHierarchyItem>>('/spaces/hierarchy');
+      return fetchAllObjects<Array<CoreSpaceHierarchyNode>>('/spaces/hierarchy');
     }
   }),
   map(spaces => collectionSpaceHierarchySet(spaces)),
@@ -435,25 +433,23 @@ merge(
 // RUN REPORT QUERY WHEN IT CHANGES
 // ----------------------------------------------------------------------------
 
-export function realizeSpacesFromQuery(spaces: Array<DensitySpace>, query: SpaceCountQuery): Array<DensitySpace> {
+export function realizeSpacesFromQuery(spaces: Array<CoreSpace>, query: SpaceCountQuery): Array<CoreSpace> {
   return spaces.filter(space => {
     const spaceMatchesQuery = query.selections.some(selection => {
       switch (selection.type) {
       case QuerySelectionType.SPACE: {
-        // FIXME: objectSnakeToCamel makes this necessary, and it's confusing
-        const targetField = changeCase.camelCase(selection.field) as ('spaceType' | 'function' | 'id');
-        const targetValue = getInObject(space, targetField);
+        const targetValue = getInObject(space, selection.field);
 
         // Special case: null space function means "other" :face_palm:
-        // @ts-ignore
-        if (targetField === 'function' && targetValue === null && selection.values.includes(null)) return true;
+        if (selection.field === 'function' && 
+            targetValue === null &&
+            (selection.values as Any<FixInRefactor>).includes(null)) return true;
         
-        // Other than the special-case null matching "other", falsy value means no match, I guess
+        // Other than the special-case null matching "other", falsy value means no match
         if (!targetValue) return false;
         
         // FIXME: I have no idea what's wrong with the below...
-        // @ts-ignore
-        return selection.values.includes(targetValue);
+        return (selection.values as Any<FixInRefactor>).includes(targetValue);
       }
       default:
         return false;
@@ -470,7 +466,7 @@ export function isQueryRunnable(query: SpaceCountQuery): boolean {
 }
 
 export type ChartDataFetchingResult = {
-  [spaceId: string]: Array<{
+  [space_id: string]: Array<{
     start: string,
     end: string,
     analytics: {
@@ -541,13 +537,12 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
     
 
     return allResponses.reduce<ChartDataFetchingResult>((output, current) => {
-      Object.keys(current.results).forEach(spaceId => {
-        // const buckets = current.results[spaceId].map(d => objectSnakeToCamel<DensitySpaceCountBucketInterval>(d.interval));
-        const buckets = current.results[spaceId].map(d => d.interval);
-        if (!output[spaceId]) {
-          output[spaceId] = buckets;
+      Object.keys(current.results).forEach(space_id => {
+        const buckets = current.results[space_id].map(d => d.interval);
+        if (!output[space_id]) {
+          output[space_id] = buckets;
         } else {
-          output[spaceId].push(...buckets)
+          output[space_id].push(...buckets)
         }
       })
       return output;
@@ -589,22 +584,22 @@ export const activeReportDataStream = AnalyticsStore.pipe(
       if (report.queryResult.status !== ResourceStatus.COMPLETE) return null;
 
       // make a space lookup map
-      const spaceLookup = new Map<string, DensitySpace>();
+      const spaceLookup = new Map<string, CoreSpace>();
       spacesState.data.forEach(space => {
         spaceLookup.set(space.id, space);
       })
       
       const selectedSpaces = report.queryResult.data.selectedSpaceIds
-        .map(spaceId =>  spaceLookup.get(spaceId))
-        .filter<DensitySpace>((space): space is DensitySpace => space != null);
+        .map(space_id =>  spaceLookup.get(space_id))
+        .filter<CoreSpace>((space): space is CoreSpace => space != null);
 
-      const spacesMissingTargetCapacity = selectedSpaces.filter(space => space.targetCapacity == null);
+      const spacesMissingTargetCapacity = selectedSpaces.filter(space => space.target_capacity == null);
 
       let validDatapoints = report.queryResult.data.datapoints;
 
       if (report.selectedMetric === AnalyticsFocusedMetric.UTILIZATION || report.selectedMetric === AnalyticsFocusedMetric.OPPORTUNITY) {
         const invalidSpaceIds = spacesMissingTargetCapacity.map(s => s.id)
-        validDatapoints = validDatapoints.filter(datapoint => !invalidSpaceIds.includes(datapoint.spaceId));
+        validDatapoints = validDatapoints.filter(datapoint => !invalidSpaceIds.includes(datapoint.space_id));
       }
       
       const tableData = computeTableData(
@@ -623,12 +618,12 @@ export const activeReportDataStream = AnalyticsStore.pipe(
       );
 
       
-      const spaceOrder = tableData.rows.map(row => row.spaceId);
+      const spaceOrder = tableData.rows.map(row => row.space_id);
       
       const colorManager = new ColorManager(Array.from(COLORS))
       const colorMap = new Map<string, string>();
-      spaceOrder.forEach(spaceId => {
-        colorMap.set(spaceId, colorManager.next())
+      spaceOrder.forEach(space_id => {
+        colorMap.set(space_id, colorManager.next())
       })
 
       return {

@@ -12,7 +12,8 @@ import AnalyticsTable from '../analytics-table';
 import AnalyticsHome from '../analytics-home';
 import GenericErrorState from '../generic-error-state';
 
-import { DensitySpace, DensitySpaceFunction, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
+import { CoreSpace, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
 import {
   ResourceStatus,
@@ -51,40 +52,40 @@ import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { AnalyticsFeatureFlagsContext } from '../../helpers/analytics-feature-flags';
 
-export function spaceFunctionToRecommendedMetric(spaceFunction: DensitySpaceFunction): AnalyticsFocusedMetric {
+export function spaceFunctionToRecommendedMetric(spaceFunction: CoreSpaceFunction): AnalyticsFocusedMetric {
   switch (spaceFunction) {
-  case DensitySpaceFunction.CONFERENCE_ROOM:
-  case DensitySpaceFunction.COLLABORATION:
-  case DensitySpaceFunction.MEETING_ROOM:
-  case DensitySpaceFunction.PHONE_BOOTH:
+  case CoreSpaceFunction.CONFERENCE_ROOM:
+  case CoreSpaceFunction.COLLABORATION:
+  case CoreSpaceFunction.MEETING_ROOM:
+  case CoreSpaceFunction.PHONE_BOOTH:
     return AnalyticsFocusedMetric.MAX;
-  case DensitySpaceFunction.BREAK_ROOM:
-  case DensitySpaceFunction.CAFE:
-  case DensitySpaceFunction.EVENT_SPACE:
-  case DensitySpaceFunction.FOCUS_QUIET:
-  case DensitySpaceFunction.GYM:
-  case DensitySpaceFunction.LOUNGE:
-  case DensitySpaceFunction.RESTROOM:
-  case DensitySpaceFunction.KITCHEN:
-  case DensitySpaceFunction.LIBRARY:
-  case DensitySpaceFunction.THEATER:
-  case DensitySpaceFunction.WELLNESS_ROOM:
+  case CoreSpaceFunction.BREAK_ROOM:
+  case CoreSpaceFunction.CAFE:
+  case CoreSpaceFunction.EVENT_SPACE:
+  case CoreSpaceFunction.FOCUS_QUIET:
+  case CoreSpaceFunction.GYM:
+  case CoreSpaceFunction.LOUNGE:
+  case CoreSpaceFunction.RESTROOM:
+  case CoreSpaceFunction.KITCHEN:
+  case CoreSpaceFunction.LIBRARY:
+  case CoreSpaceFunction.THEATER:
+  case CoreSpaceFunction.WELLNESS_ROOM:
     return AnalyticsFocusedMetric.ENTRANCES;
-  // case DensitySpaceFunction.OFFICE:
-  // case DensitySpaceFunction.RECEPTION:
+  // case CoreSpaceFunction.OFFICE:
+  // case CoreSpaceFunction.RECEPTION:
   //   return AnalyticsFocusedMetric.UTILIZATION;
   default:
     return AnalyticsFocusedMetric.MAX;
   }
 }
 
-export function getRecommendedReports(spaces: DensitySpace[]): Array<Partial<AnalyticsReport>> {
-  const byFunction: [DensitySpaceFunction | null, DensitySpace[]][] = groupBy<DensitySpace, DensitySpaceFunction | null>(spaces, d => d['function']);
+export function getRecommendedReports(spaces: CoreSpace[]): Array<Partial<AnalyticsReport>> {
+  const byFunction: [CoreSpaceFunction | null, CoreSpace[]][] = groupBy<CoreSpace, CoreSpaceFunction | null>(spaces, d => d['function']);
 
   // filter out spaces with no function
   const byFunctionFiltered = ((
     byFunction.filter(([spaceFunction, spaces]) => spaceFunction !== null)
-  ) as unknown) as [DensitySpaceFunction, DensitySpace[]][];
+  ) as unknown) as [CoreSpaceFunction, CoreSpace[]][];
   return byFunctionFiltered
     // sort function groups descending by number of spaces
     .sort((a, b) => d3Array.descending(a[1].length, b[1].length))
@@ -121,7 +122,7 @@ const saveDismissalOfIntroToStorage = () => {
   )
 }
 
-function mapSpacesById(spaces: DensitySpace[]): ReadonlyMap<string, DensitySpace> {
+function mapSpacesById(spaces: CoreSpace[]): ReadonlyMap<string, CoreSpace> {
   const map = new Map();
   spaces.forEach(space => {
     map.set(space.id, space);
@@ -137,7 +138,7 @@ export default function Analytics() {
 
   // for now, just trying to force some basic typing here via assertion...
   const spaces = spacesState.data
-  const spaceHierarchy = spaceHierarchyState.data as DensitySpaceHierarchyItem[]
+  const spaceHierarchy = spaceHierarchyState.data as CoreSpaceHierarchyNode[]
 
   const spacesById = mapSpacesById(spaces);
   

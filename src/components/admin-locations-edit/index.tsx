@@ -8,7 +8,8 @@ import spaceManagementReset from '../../rx-actions/space-management/reset';
 import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';
 
-import { DensitySpace, DensityTag, DensityAssignedTeam, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
+import { DensityTag, DensityAssignedTeam } from '../../types';
 import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
 
 import {
@@ -38,19 +39,19 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 
 type AdminLocationsFormProps = {
-  spaceType: DensitySpace["spaceType"],
-  spaceHierarchy: Array<DensitySpaceHierarchyItem>,
+  space_type: CoreSpace["space_type"],
+  spaceHierarchy: Array<CoreSpaceHierarchyNode>,
   formState: { [key: string]: any },
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
   onChangeField: (string, any) => any,
-  onSetDoorwayField?: (doorwayId: string, key: string, value: any) => any,
+  onSetDoorwayField?: (doorway_id: string, key: string, value: any) => any,
   operationType: 'CREATE' | 'UPDATE',
 };
 
 // A component that renders all the space management modules for the given space type
 export function SpaceTypeForm({
-  spaceType,
+  space_type,
   spaceHierarchy,
   formState,
   tagsCollection,
@@ -62,7 +63,7 @@ export function SpaceTypeForm({
   const MODULES = {
     generalInfo: (
       <AdminLocationsDetailModulesGeneralInfo
-        spaceType={spaceType}
+        space_type={space_type}
         spaceHierarchy={spaceHierarchy}
         formState={formState}
         onChangeField={onChangeField}
@@ -70,14 +71,14 @@ export function SpaceTypeForm({
     ),
     metadata: (
       <AdminLocationsDetailModulesMetadata
-        spaceType={spaceType}
+        space_type={space_type}
         formState={formState}
         onChangeField={onChangeField}
       />
     ),
     address: (
       <AdminLocationsDetailModulesAddress
-        spaceType={spaceType}
+        space_type={space_type}
         address={formState.address}
         coordinates={formState.coordinates}
         onChangeAddress={address => onChangeField('address', address)}
@@ -107,9 +108,9 @@ export function SpaceTypeForm({
         placeholder="Start typing to assign a team"
         processIntoSlug={false}
         emptyTagsPlaceholder="No teams have been assigned to this space yet"
-        tags={formState.assignedTeams}
+        tags={formState.assigned_teams}
         tagsCollection={assignedTeamsCollection}
-        onChangeTags={assignedTeams => onChangeField('assignedTeams', assignedTeams)}
+        onChangeTags={assigned_teams => onChangeField('assigned_teams', assigned_teams)}
       />
     ),
     doorways: (
@@ -172,7 +173,7 @@ export function SpaceTypeForm({
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleInner}>
-        {MODULES_BY_SPACE_TYPE[spaceType].map((mod, index) => (
+        {MODULES_BY_SPACE_TYPE[space_type].map((mod, index) => (
           // Note: normally using the index would be not optimal as a key, but the order of these
           // modules in the array is stable / isn't going to change so I think it is preferrable to
           // adding an explicit key to each one.
@@ -187,14 +188,14 @@ export function SpaceTypeForm({
 
 type AdminLocationsEditProps = {
   spaceManagement: any,
-  selectedSpace: DensitySpace,
+  selectedSpace: CoreSpace,
 
   tagsCollection: Array<DensityTag>,
   assignedTeamsCollection: Array<DensityAssignedTeam>,
 
   onChangeField: (string, any) => any,
-  onSetDoorwayField: (doorwayId: string, key: string, value: any) => any,
-  onSave: (spaceId: string, spaceFieldUpdate: any) => any,
+  onSetDoorwayField: (doorway_id: string, key: string, value: any) => any,
+  onSave: (space_id: string, spaceFieldUpdate: any) => any,
 };
 
 const SPACE_TYPE_TO_NAME = {
@@ -210,7 +211,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       id: this.props.spaceManagement.spaces.selected,
       ...convertFormStateToSpaceFields(
         this.props.spaceManagement.formState,
-        this.props.selectedSpace.spaceType,
+        this.props.selectedSpace.space_type,
       ),
     };
     this.props.onSave(
@@ -226,7 +227,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       formState.name &&
 
       // Operating hours module valid
-      formState.timeZone && formState.dailyReset && formState.operatingHours &&
+      formState.time_zone && formState.daily_reset && formState.operatingHours &&
       formState.operatingHours.filter(i => i.label === null).length === 0
     );
   }
@@ -271,7 +272,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                     >
                       <Icons.ArrowLeft />
                     </a>
-                    Edit {SPACE_TYPE_TO_NAME[selectedSpace.spaceType]}
+                    Edit {SPACE_TYPE_TO_NAME[selectedSpace.space_type]}
                   </AppBarTitle>
                   <AppBarSection>
                     <ButtonGroup>
@@ -294,7 +295,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
               {/* All the space type components take the same props */}
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
-                  spaceType={selectedSpace.spaceType}
+                  space_type={selectedSpace.space_type}
                   spaceHierarchy={spaceManagement.spaceHierarchy}
                   formState={spaceManagement.formState}
                   tagsCollection={tagsCollection}
@@ -324,14 +325,14 @@ const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps
   const dispatch = useRxDispatch();
   const spaceManagement = useRxStore(SpaceManagementStore);
   const tags = useRxStore(TagsStore);
-  const assignedTeams = useRxStore(AssignedTeamsStore);
+  const assigned_teams = useRxStore(AssignedTeamsStore);
 
   const selectedSpace = spaceManagement.spaces.data.find(s => s.id === spaceManagement.spaces.selected)
 
-  const onSave = async (spaceId, spaceFieldUpdate) => {
+  const onSave = async (space_id, spaceFieldUpdate) => {
     const ok = await collectionSpacesUpdate(dispatch, {
       ...spaceFieldUpdate,
-      id: spaceId,
+      id: space_id,
     });
 
     dispatch(spaceManagementReset() as Any<FixInRefactor>);
@@ -343,13 +344,13 @@ const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps
 
     showToast(dispatch, { text: 'Space updated successfully' });
     // FIXME: just a little inline url swapping, what could go wrong...
-    window.location.href = `#/admin/locations/${spaceId}`;
+    window.location.href = `#/admin/locations/${space_id}`;
   }
   const onChangeField = (key, value) => {
     dispatch(spaceManagementFormUpdate(key, value) as Any<FixInRefactor>);
   }
-  const onSetDoorwayField = (doorwayId, field, value) => {
-    dispatch(spaceManagementFormDoorwayUpdate(doorwayId, field, value) as Any<FixInRefactor>);
+  const onSetDoorwayField = (doorway_id, field, value) => {
+    dispatch(spaceManagementFormDoorwayUpdate(doorway_id, field, value) as Any<FixInRefactor>);
   }
 
   return (
@@ -357,7 +358,7 @@ const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps
       {...externalProps}
 
       tagsCollection={tags}
-      assignedTeamsCollection={assignedTeams}
+      assignedTeamsCollection={assigned_teams}
       spaceManagement={spaceManagement}
       selectedSpace={selectedSpace}
 

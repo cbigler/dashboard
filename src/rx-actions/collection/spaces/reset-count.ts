@@ -17,7 +17,7 @@ export default async function collectionSpacesResetCount(dispatch, space, newCou
       count: newCount,
       timestamp: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
     });
-    dispatch(collectionSpacesPush({...space, currentCount: newCount}));
+    dispatch(collectionSpacesPush({...space, current_count: newCount}));
     return response.data;
   } catch (err) {
     dispatch(collectionSpacesError(err));

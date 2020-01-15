@@ -12,24 +12,24 @@ import useRxStore from '../../helpers/use-rx-store';
 
 function generateHumanReadableFrequency(digest) {
   /* NOTE: the below is in local time. */
-  const time = moment.tz(digest.time, 'HH:mm:ss', digest.timeZone).local().format('h:mm A');
+  const time = moment.tz(digest.time, 'HH:mm:ss', digest.time_zone).local().format('h:mm A');
 
   switch (digest.frequency) {
   case 'WEEKLY':
     return `Weekly on ${
-      digest.daysOfWeek.map(day => day.slice(0, 3)).join(', ')
+      digest.days_of_week.map(day => day.slice(0, 3)).join(', ')
     } @ ${time}`;
 
   case 'MONTHLY':
     let postfixedNumber;
-    if (digest.dayNumber === 1) {
+    if (digest.day_number === 1) {
       postfixedNumber = '1st';
-    } else if (digest.dayNumber === 2) {
+    } else if (digest.day_number === 2) {
       postfixedNumber = '2nd';
-    } else if (digest.dayNumber === 3) {
+    } else if (digest.day_number === 3) {
       postfixedNumber = '3rd';
     } else {
-      postfixedNumber = `${digest.dayNumber}th`;
+      postfixedNumber = `${digest.day_number}th`;
     }
     return `Monthly on the ${postfixedNumber} @ ${time}`;
 
@@ -65,7 +65,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
     const { visible } = this.state;
 
     const digestSchedulesForSelectedDashboard = selectedDashboard ? (
-      digestSchedules.data.filter(digest => digest.dashboardId === selectedDashboard.id)
+      digestSchedules.data.filter(digest => digest.dashboard_id === selectedDashboard.id)
     ) : [];
 
     return (

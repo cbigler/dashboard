@@ -27,25 +27,25 @@ export default async function collectionSpacesCreate(dispatch, item) {
     const response = await core().post('/spaces', {
       name: item.name,
       description: item.description,
-      parent_id: item.parentId,
-      space_type: item.spaceType,
+      parent_id: item.parent_id,
+      space_type: item.space_type,
       'function': item['function'],
 
-      annual_rent: item.annualRent,
-      size_area: item.sizeArea,
-      size_area_unit: item.sizeAreaUnit,
+      annual_rent: item.annual_rent,
+      size_area: item.size_area,
+      size_area_unit: item.size_area_unit,
       currency_unit: item.currencyUnit,
       capacity: item.capacity,
-      target_capacity: item.targetCapacity,
-      floor_level: item.floorLevel,
+      target_capacity: item.target_capacity,
+      floor_level: item.floor_level,
 
       address: item.address,
       latitude: item.latitude,
       longitude: item.longitude,
-      time_zone: item.timeZone,
-      daily_reset: item.dailyReset,
+      time_zone: item.time_zone,
+      daily_reset: item.daily_reset,
 
-      inherits_time_segments: item.inheritsTimeSegments,
+      inherits_time_segments: item.inherits_time_segments,
     });
 
     if (item.operatingHours) {
@@ -83,10 +83,10 @@ export default async function collectionSpacesCreate(dispatch, item) {
       if (upload instanceof Error) {
         showToast(dispatch, {text: 'Image must be JPG or PNG', type: 'error'});
       } else if (upload.media.length > 0) {
-        response.data.imageUrl = upload.media[0].signedUrl;
+        response.data.image_url = upload.media[0].signedUrl;
       }
     } else {
-      response.data.imageUrl = item.newImageData;
+      response.data.image_url = item.newImageData;
     }
 
     // When saving the space, create any links that were configured or changed in the doorways
@@ -98,8 +98,8 @@ export default async function collectionSpacesCreate(dispatch, item) {
         case 'CREATE':
           return core().post('/links', {
             space_id: response.data.id,
-            doorway_id: linkItem.doorwayId,
-            sensor_placement: linkItem.sensorPlacement,
+            doorway_id: linkItem.doorway_id,
+            sensor_placement: linkItem.sensor_placement,
             update_historical: linkItem.updateHistoricCounts,
           });
         default:

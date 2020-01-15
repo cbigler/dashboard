@@ -1,12 +1,12 @@
 import moment from 'moment';
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
-import { DensityTimeSegment } from '../../types';
+import { CoreSpaceTimeSegment } from '@density/lib-api-types/core-v2/spaces';
 
 // If no time segment group is selected or defined, default to using this one.
 export const DEFAULT_TIME_SEGMENT_GROUP = {
   id: 'tsg_default',
   name: 'Whole day',
-  timeSegments: [
+  time_segments: [
     {
       id: 'tsm_default',
       name: 'Whole day',
@@ -24,11 +24,11 @@ export const DEFAULT_TIME_SEGMENT_GROUP = {
     },
   ],
 };
-export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.timeSegments[0];
+export const DEFAULT_TIME_SEGMENT = DEFAULT_TIME_SEGMENT_GROUP.time_segments[0];
 export const DEFAULT_TIME_SEGMENT_LABEL = DEFAULT_TIME_SEGMENT_GROUP.name;
 
-export function getAllTimeSegmentLabelsForSpace(space: {timeSegments: Array<DensityTimeSegment>}) {
-  const allLabels = space.timeSegments.map(t => t.label);
+export function getAllTimeSegmentLabelsForSpace(space: {time_segments: Array<CoreSpaceTimeSegment>}) {
+  const allLabels = space.time_segments.map(t => t.label);
   return Array.from(new Set(allLabels));
 }
 
@@ -65,18 +65,18 @@ export function parseStartAndEndTimesInTimeSegment(timeSegment) {
 
 
 export function getShownTimeSegmentsForSpace(space, spaceHierarchy) {
-  if (space.inheritsTimeSegments) {
-    return getParentTimeSegmentsForSpace(space.parentId, spaceHierarchy);
+  if (space.inherits_time_segments) {
+    return getParentTimeSegmentsForSpace(space.parent_id, spaceHierarchy);
   } else {
-    return space.timeSegments;
+    return space.time_segments;
   }
 }
 
 // Given the parent space id of a space, return an array of all time segments of spaces above it in
 // the hierarchy.
-export function getParentTimeSegmentsForSpace(parentId, spaceHierarchy) {
+export function getParentTimeSegmentsForSpace(parent_id, spaceHierarchy) {
   const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
-  const parentOfSpaceInHierarchy = formattedHierarchy.find(i => i.space.id === parentId);
+  const parentOfSpaceInHierarchy = formattedHierarchy.find(i => i.space.id === parent_id);
   if (!parentOfSpaceInHierarchy) {
     return []; // Parent space id could not be found
   }
@@ -88,8 +88,8 @@ export function getParentTimeSegmentsForSpace(parentId, spaceHierarchy) {
   // Loop through each space, finding the first space that has time segments of its own.
   for (let index = 0; index < allSpaces.length; index += 1) {
     const hierarchyItem = allSpaces[index];
-    if (!hierarchyItem.inheritsTimeSegments) {
-      return hierarchyItem.timeSegments;
+    if (!hierarchyItem.inherits_time_segments) {
+      return hierarchyItem.time_segments;
     }
   }
   return [];

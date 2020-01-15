@@ -1,9 +1,8 @@
-import objectSnakeToCamel from '../../object-snake-to-camel';
 import hierarchy from './hierarchy.json';
 import spaces from './spaces.json';
 import batchCounts from './batch-counts.json';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import {
-  DensitySpace,
   DensitySpaceCountBucket,
 } from '../../../types';
 import {
@@ -11,20 +10,20 @@ import {
 } from '../../../types/analytics';
 
 
-export const HIERARCHY = objectSnakeToCamel(hierarchy);
-export const SPACES: DensitySpace[] = spaces.results.map(objectSnakeToCamel);
+export const HIERARCHY = hierarchy;
+export const SPACES: CoreSpace[] = spaces.results as Any<FixInRefactor>;
 export const BATCH_COUNTS: {
-  results: { [spaceId: string]: DensitySpaceCountBucket[] },
+  results: { [space_id: string]: DensitySpaceCountBucket[] },
   metrics: AnalyticsMetrics,
 } = {
-  results: Object.keys(batchCounts.results).reduce((output, spaceId) => {
-    if (!Array.isArray(batchCounts.results[spaceId])) return output;
-    output[spaceId] = batchCounts.results[spaceId].map(objectSnakeToCamel)
+  results: Object.keys(batchCounts.results).reduce((output, space_id) => {
+    if (!Array.isArray(batchCounts.results[space_id])) return output;
+    output[space_id] = batchCounts.results[space_id]
     return output;
   }, {}),
-  metrics: Object.keys(batchCounts.metrics).reduce((output, spaceId) => {
-    if (!Array.isArray(batchCounts.metrics[spaceId])) return output;
-    output[spaceId] = batchCounts.metrics[spaceId].map(objectSnakeToCamel)
+  metrics: Object.keys(batchCounts.metrics).reduce((output, space_id) => {
+    if (!Array.isArray(batchCounts.metrics[space_id])) return output;
+    output[space_id] = batchCounts.metrics[space_id]
     return output;
   }, {})
 }

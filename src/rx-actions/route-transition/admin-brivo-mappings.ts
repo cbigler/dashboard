@@ -1,7 +1,7 @@
 import { showToast } from '../toasts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
-import { DensityService, DensityDoorway, DensityBrivoSite } from '../../types';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
+import { DensityService, DensityBrivoSite } from '../../types';
 import core from '../../client/core';
 
 import collectionServicesError from '../collection/services/error';
@@ -28,7 +28,7 @@ export default async function routeTransitionAdminBrivoMappings(dispatch) {
     dispatch(collectionServicesError('Could not find third party integrations.'));
     return false;
   } else {
-    const services = response.data.map(d => objectSnakeToCamel<DensityService>(d));
+    const services = response.data as Array<DensityService>;
     dispatch(collectionServicesSet(services));
     fetchAllBrivoSites(dispatch);
   }
@@ -39,11 +39,11 @@ async function fetchAllBrivoSites(dispatch) {
   try {
     // BRIAN: Not sure how guys handle loading states, but I'm using this to determine if it's loading...
     dispatch({type: 'BRIVO_SITES_LOADING', sitesLoading: true})
-    doorways = await fetchAllObjects<DensityDoorway>('/doorways', {
+    doorways = await fetchAllObjects<CoreDoorway>('/doorways', {
       cache: false,
       params: { environment: 'true' }
     });
-    doorwayMappings = await fetchAllObjects<DensityDoorway>('/integrations/doorway_mappings/', { cache: false });
+    doorwayMappings = await fetchAllObjects<CoreDoorway>('/integrations/doorway_mappings/', { cache: false });
     sites = await fetchAllObjects<DensityBrivoSite>('/integrations/brivo/sites/', { cache: false });
     Promise.all(sites.map(site => {      
       return fetchAllObjects<any>(`integrations/brivo/sites/${site.id}/access_points/`, { cache: false }).then(accessPoints => {

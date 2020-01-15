@@ -17,28 +17,28 @@ import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 function getSpaceParentHierarchy(spaceHierarchy, formState) {
   return spaceHierarchyFormatter(spaceHierarchy).filter(item => {
     return formState.id !== item.space.id &&
-      (formState.spaceType !== 'building' || item.space.spaceType === 'campus') &&
-      (formState.spaceType !== 'floor' || item.space.spaceType === 'building');
+      (formState.space_type !== 'building' || item.space.space_type === 'campus') &&
+      (formState.space_type !== 'floor' || item.space.space_type === 'building');
   });
 }
 
-function getSpaceTypeLabel(spaceType) {
+function getSpaceTypeLabel(space_type) {
   return {
     campus: 'Campus',
     building: 'Building',
     floor: 'Floor',
     space: 'Space',
-  }[spaceType] || 'Unknown';
+  }[space_type] || 'Unknown';
 }
 
 export default function AdminLocationsDetailModulesGeneralInfo({
-  spaceType,
+  space_type,
   spaceHierarchy,
   formState,
   onChangeField
 }) {
 
-  const formattedHierarchy = spaceType !== 'campus' ?
+  const formattedHierarchy = space_type !== 'campus' ?
     getSpaceParentHierarchy(spaceHierarchy, formState) : [];
 
   return (
@@ -67,20 +67,20 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                   type="text"
                   disabled
                   id="admin-locations-detail-modules-general-info-space-type"
-                  value={getSpaceTypeLabel(formState.spaceType)}
+                  value={getSpaceTypeLabel(formState.space_type)}
                   width="100%"
                 />
               }
             />
-            {spaceType !== 'campus' ? (
+            {space_type !== 'campus' ? (
               <Fragment>
                 <FormLabel
                   label="Parent"
                   htmlFor="admin-locations-detail-modules-general-parent"
                   input={
                     <SpacePickerDropdown
-                      value={formattedHierarchy.find(i => i.space.id === formState.parentId) || null}
-                      onChange={hierarchyItem => onChangeField('parentId', hierarchyItem.space.id)}
+                      value={formattedHierarchy.find(i => i.space.id === formState.parent_id) || null}
+                      onChange={hierarchyItem => onChangeField('parent_id', hierarchyItem.space.id)}
                       formattedHierarchy={formattedHierarchy}
                       placeholder="Select a campus" // Only navigable buildings will show this empty state
                       width="100%"
@@ -111,7 +111,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
           <div className={classnames(styles.spaceFieldRendererCell, styles.right)}>
             <AdminLocationsImageUpload
               label="Photo"
-              value={formState.newImageData || formState.imageUrl}
+              value={formState.newImageData || formState.image_url}
               onChange={async file => {
                 if (file) {
                   const result = await fileToDataURI(file);

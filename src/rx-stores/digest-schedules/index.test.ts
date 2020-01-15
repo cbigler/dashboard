@@ -11,25 +11,25 @@ const INITIAL_STATE = {...initialState}
 const EXAMPLE_DIGEST_SCHEDULE = {
   id: 'dig_123',
   name: 'My digest',
-  dashboardId: 'das_456',
-  dayNumber: 1,
-  daysOfWeek: ['Monday', 'Thursday'],
+  dashboard_id: 'das_456',
+  day_number: 1,
+  days_of_week: ['Monday', 'Thursday'],
   frequency: 'weekly',
   recipients: [],
   time: '05:00:00',
-  timeZone: 'America/New_York',
+  time_zone: 'America/New_York',
 };
 
 const EXAMPLE_DIGEST_SCHEDULE_2 = {
   id: 'dig_098',
   name: 'My digest number two',
-  dashboardId: 'das_456',
-  dayNumber: 1,
-  daysOfWeek: ['Monday', 'Wednesday'],
+  dashboard_id: 'das_456',
+  day_number: 1,
+  days_of_week: ['Monday', 'Wednesday'],
   frequency: 'weekly',
   recipients: [],
   time: '05:00:00',
-  timeZone: 'America/New_York',
+  time_zone: 'America/New_York',
 };
 
 describe('digest-schedules', function() {

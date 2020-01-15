@@ -2,8 +2,8 @@ import React, { useState, useRef, useEffect, Fragment } from 'react';
 import styles from './styles.module.scss';
 import classnames from 'classnames';
 
-import { DensitySpace } from '../../types';
-import { SpaceHierarchyDisplayItem } from '@density/lib-space-helpers/types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
 import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 import filterCollection from '../../helpers/filter-collection';
 
@@ -42,8 +42,8 @@ type AnalyticsSpaceSelectorProps = {
   onOpen: () => void,
   onClose: (AnalyticsSpaceFilter) => void,
 
-  spaces: Array<DensitySpace>,
-  formattedHierarchy: Array<SpaceHierarchyDisplayItem>,
+  spaces: Array<CoreSpace>,
+  formattedHierarchy: Array<DisplaySpaceHierarchyNode>,
 }
 
 const ANALYTICS_FIELD_TYPE_TO_LABEL = {
@@ -52,17 +52,17 @@ const ANALYTICS_FIELD_TYPE_TO_LABEL = {
   id: 'Add by Space Name',
 };
 
-const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: string, formattedHierarchy: Array<SpaceHierarchyDisplayItem>) => string } = {
+const ANALYTICS_FIELD_TYPE_TO_FORMATTING_FUNCTION: { [key: string]: (value: string, formattedHierarchy: Array<DisplaySpaceHierarchyNode>) => string } = {
   'function': spaceFunction => {
     const choice = SPACE_FUNCTION_CHOICES.find(i => i.id === spaceFunction);
     return choice ? choice.label : '(unknown function)';
   },
-  space_type: spaceType => ({
+  space_type: space_type => ({
     campus: 'Campus',
     building: 'Building',
     floor: 'Floor',
     space: 'Space',
-  }[spaceType] || '(unknown type)'),
+  }[space_type] || '(unknown type)'),
   id: (id, formattedHierarchy) => {
     const hierarchyItem = formattedHierarchy.find(i => i.space.id === id);
     return hierarchyItem ? hierarchyItem.space.name : '(unknown space)';
@@ -264,10 +264,10 @@ const SpaceSelector: React.FunctionComponent<AnalyticsSpaceSelectorProps> = func
           <div className={styles.popupBody}>
             <MultipleSelectItemList
               choices={[
-                {id: 'campus', label: `Campus (${spaces.filter(s => s.spaceType === 'campus').length})`},
-                {id: 'building', label: `Building (${spaces.filter(s => s.spaceType === 'building').length})`},
-                {id: 'floor', label: `Floor (${spaces.filter(s => s.spaceType === 'floor').length})`},
-                {id: 'space', label: `Space (${spaces.filter(s => s.spaceType === 'space').length})`},
+                {id: 'campus', label: `Campus (${spaces.filter(s => s.space_type === 'campus').length})`},
+                {id: 'building', label: `Building (${spaces.filter(s => s.space_type === 'building').length})`},
+                {id: 'floor', label: `Floor (${spaces.filter(s => s.space_type === 'floor').length})`},
+                {id: 'space', label: `Space (${spaces.filter(s => s.space_type === 'space').length})`},
               ]}
               value={workingFilter.values}
               onChange={values => setWorkingFilter({ ...workingFilter, values })}

@@ -5,5 +5,5 @@ has a date range picker for choosing the date range of events to display, and ma
 data.
 
 ## Component Props
-- `space: DensitySpace` - The space that the events should be filtered by when the request to the
+- `space: CoreSpace` - The space that the events should be filtered by when the request to the
   server is made.

@@ -60,15 +60,15 @@ const GeneralInfoSection = props => {
   const [mode, setMode] = useState(DISPLAY);
   
   // this state is only used for editing the user info, not for display (display is always pulled from props)
-  const [userFullName, setUserFullName] = useState(user.data.fullName || '');
-  const [userPhoneNumber, setUserPhoneNumber] = useState(user.data.phoneNumber || '');
+  const [userFullName, setUserFullName] = useState(user.data.full_name || '');
+  const [userPhoneNumber, setUserPhoneNumber] = useState(user.data.phone_number || '');
 
   const handleEditButtonClick = evt => {
     setMode(EDIT);
   }
 
   const handleCancelButtonClick = evt => {
-    setUserFullName(user.data.fullName || '');
+    setUserFullName(user.data.full_name || '');
     setMode(DISPLAY);
   }
 
@@ -84,7 +84,7 @@ const GeneralInfoSection = props => {
         <div className={styles.accountPageSectionHeaderText}>General Info</div>
 
         {/* Edit / Cancel button */}
-        {mode === DISPLAY && user.data && !user.data.isDemo ? (
+        {mode === DISPLAY && user.data && !user.data.is_demo ? (
           <Button onClick={handleEditButtonClick}>Edit</Button>
         ) : null}
         {mode === EDIT ? ([
@@ -110,7 +110,7 @@ const GeneralInfoSection = props => {
                 type="text"
                 placeholder="Name"
                 width="100%"
-                value={mode === DISPLAY ? user.data.fullName : userFullName}
+                value={mode === DISPLAY ? user.data.full_name : userFullName}
                 onChange={evt => setUserFullName(evt.target.value)}
                 disabled={mode !== EDIT}
                 id="account-full-name"
@@ -139,7 +139,7 @@ const GeneralInfoSection = props => {
                 type="text"
                 placeholder="+1 888 555 1234"
                 width="100%"
-                value={mode === DISPLAY ? user.data.phoneNumber : userPhoneNumber}
+                value={mode === DISPLAY ? user.data.phone_number : userPhoneNumber}
                 onChange={value => setUserPhoneNumber(value)}
                 disabled={mode !== EDIT}
                 id="account-phone-number"
@@ -319,8 +319,8 @@ function AlertSection({
 
   // Prepare the array of necessary data once, so columns can iterate quickly
   const alertData = alerts.data.map(alert => {
-    const space = spaces.data.find(space => space.id === alert.spaceId) || {};
-    return { ...alert, spaceName: space.name };
+    const space = spaces.data.find(space => space.id === alert.space_id) || {};
+    return { ...alert, space_name: space.name };
   });
 
   return <div className={styles.accountPageSection}>
@@ -337,9 +337,9 @@ function AlertSection({
             template={alert => (
               <ListViewClickableLink
                 onClick={() => (
-                  window.location.href = `#/spaces/${alert.spaceId}/trends`
+                  window.location.href = `#/spaces/${alert.space_id}/trends`
                 )}
-              >{alert.spaceName}</ListViewClickableLink>
+              >{alert.space_name}</ListViewClickableLink>
             )}
           />
 
@@ -348,8 +348,8 @@ function AlertSection({
             id="Trigger"
             width={160}
             template={alert => {
-              const greaterLessSymbol = alert.triggerType === 'greater_than' ? '>' : '<';
-              return `Occupancy ${greaterLessSymbol} ${alert.triggerValue}`;
+              const greaterLessSymbol = alert.trigger_type === 'greater_than' ? '>' : '<';
+              return `Occupancy ${greaterLessSymbol} ${alert.trigger_value}`;
             }}
           />
           <ListViewColumn
@@ -405,7 +405,7 @@ export class Account extends React.Component<any, any> {
       onSubmitUserUpdate,
     } = this.props;
 
-    const canChangePassword = user.data && !user.data.isDemo && !user.data.organization.forceSsoLogin;
+    const canChangePassword = user.data && !user.data.is_demo && !user.data.organization.force_sso_login;
     const canManageAlerts = user.data && user.data.role !== 'readonly';
     return (
       <AppFrame>
@@ -485,8 +485,8 @@ const ConnectedAccount: React.FC = () => {
     await userResetPassword(dispatch, email, currentPassword, password)
     showModal(dispatch, 'account-password-reset');
   }
-  const onSubmitUserUpdate = async (fullName, phoneNumber) => {
-    await userUpdate(dispatch, fullName, phoneNumber);
+  const onSubmitUserUpdate = async (full_name, phone_number) => {
+    await userUpdate(dispatch, full_name, phone_number);
   }
   const onHideSuccessToast = async () => {
     await hideModal(dispatch);

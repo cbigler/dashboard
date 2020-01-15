@@ -3,8 +3,7 @@ import ReactDOMServer from 'react-dom/server';
 import styles from './styles.module.scss';
 
 import { Icons } from '@density/ui/src';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 import * as MapboxGL from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -23,7 +22,7 @@ const MAP_ZOOM_BY_SPACE_TYPE = {
 
 type AdminLocationsSpaceMapProps = {
   readonly: boolean,
-  spaceType: DensitySpace["spaceType"],
+  space_type: CoreSpace["space_type"],
   address: string,
   coordinates: [number, number] | null,
   onChangeAddress?: any,
@@ -41,7 +40,7 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
 
   componentDidMount() {
     const {
-      spaceType,
+      space_type,
       address,
       coordinates,
       readonly,
@@ -57,7 +56,7 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
         container: this.container.current,
         style: 'mapbox://styles/mapbox/dark-v10', // stylesheet location
         center: coordinates ? {lat: coordinates[0], lng: coordinates[1]} : DEFAULT_MAP_COORDINATES,
-        zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[spaceType] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
+        zoom: coordinates ? (MAP_ZOOM_BY_SPACE_TYPE[space_type] || DEFAULT_MAP_ZOOM) : DEFAULT_MAP_ZOOM,
         interactive: readonly ? false : true,
       });
 
@@ -142,9 +141,8 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
 
   // When the geocoder generate a result, remove the initially placed marker and update the state to
   // match the location that was selected.
-  onGeocoderResult = o => {
+  onGeocoderResult = object => {
     const { onChangeCoordinates, onChangeAddress } = this.props;
-    const object = objectSnakeToCamel(o);
 
     const [lng, lat] = object.result.geometry.coordinates;
     onChangeCoordinates([lat, lng]);

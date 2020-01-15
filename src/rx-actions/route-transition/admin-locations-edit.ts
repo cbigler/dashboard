@@ -1,11 +1,7 @@
-import {
-  DensitySpace,
-  DensityTimeSegmentLabel,
-  DensitySpaceHierarchyItem,
-  DensityDoorway,
-  DensityTag,
-  DensityAssignedTeam,
-} from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
+import { CoreTimeSegmentLabel } from '@density/lib-api-types/core-v2/time_segments';
+import { DensityTag, DensityAssignedTeam } from '../../types';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import spaceManagementSetData from '../space-management/set-data';
@@ -16,21 +12,21 @@ import collectionAssignedTeamsSet from '../collection/assigned-teams/set';
 export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
 
 export async function loadData(dispatch) {
-  let hierarchy: Array<DensitySpaceHierarchyItem>,
-    spaces: Array<DensitySpace>,
-    doorways: Array<DensityDoorway>,
-    labels: Array<DensityTimeSegmentLabel>,
+  let hierarchy: Array<CoreSpaceHierarchyNode>,
+    spaces: Array<CoreSpace>,
+    doorways: Array<CoreDoorway>,
+    labels: Array<CoreTimeSegmentLabel>,
     tags: Array<DensityTag>,
-    assignedTeams: Array<DensityAssignedTeam>;
+    assigned_teams: Array<DensityAssignedTeam>;
   try {
-    [hierarchy, spaces, doorways, labels, tags, assignedTeams] = await Promise.all([
-      await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false }),
-      await fetchAllObjects<DensitySpace>('/spaces', { cache: false }),
-      await fetchAllObjects<DensityDoorway>('/doorways', {
+    [hierarchy, spaces, doorways, labels, tags, assigned_teams] = await Promise.all([
+      await fetchAllObjects<CoreSpaceHierarchyNode>('/spaces/hierarchy', { cache: false }),
+      await fetchAllObjects<CoreSpace>('/spaces', { cache: false }),
+      await fetchAllObjects<CoreDoorway>('/doorways', {
         cache: false,
         params: { environment: 'true' }
       }),
-      await fetchAllObjects<DensityTimeSegmentLabel>('/time_segments/labels', { cache: false }),
+      await fetchAllObjects<CoreTimeSegmentLabel>('/time_segments/labels', { cache: false }),
       await fetchAllObjects<DensityTag>('/tags', { cache: false }),
       await fetchAllObjects<DensityAssignedTeam>('/assigned_teams', { cache: false }),
     ]);
@@ -41,14 +37,14 @@ export async function loadData(dispatch) {
   }
 
   dispatch(collectionTagsSet(tags));
-  dispatch(collectionAssignedTeamsSet(assignedTeams));
+  dispatch(collectionAssignedTeamsSet(assigned_teams));
   dispatch(spaceManagementSetData(hierarchy, spaces, doorways, labels));
 }
 
-export default async function routeTransitionAdminLocationsEdit(dispatch, spaceId) {
+export default async function routeTransitionAdminLocationsEdit(dispatch, space_id) {
   dispatch({
     type: ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT,
-    spaceId,
+    space_id,
     setLoading: true,
   });
 

@@ -11,8 +11,8 @@ describe('sort-collection', function() {
   });
   it('works sorting from newest to oldest', function() {
     assert.deepEqual(
-      sortCollection([{createdAt: 10}, {createdAt: 5}], SORT_NEWEST),
-      [{createdAt: 10}, {createdAt: 5}]
+      sortCollection([{created_at: 10}, {created_at: 5}], SORT_NEWEST),
+      [{created_at: 10}, {created_at: 5}]
     );
   });
 });

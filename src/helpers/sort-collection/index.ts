@@ -12,7 +12,7 @@ export default function sortCollection(items, method) {
     if (method === SORT_A_Z) {
       return a.name > b.name ? 1 : -1;
     } else if (method === SORT_NEWEST) {
-      return (new Date(b.createdAt).getTime()) - (new Date(a.createdAt).getTime());
+      return (new Date(b.created_at).getTime()) - (new Date(a.created_at).getTime());
     } else if (typeof method === 'function') {
       return method(a, b);
     } else {

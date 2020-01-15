@@ -38,11 +38,11 @@ export default class AdminServiceSpaceRadioList extends Component<any, any> {
               <RadioButtonContext.Provider value='SERVICE_SPACE_FORM'>
                 <RadioButton
                   name="admin-service-space"
-                  checked={this.props.value === serviceSpace.serviceSpaceId}
+                  checked={this.props.value === serviceSpace.service_space_id}
                   onChange={e => {
-                    this.props.onChange(serviceSpace.serviceSpaceId)
+                    this.props.onChange(serviceSpace.service_space_id)
                   }}
-                  value={serviceSpace.serviceSpaceId}
+                  value={serviceSpace.service_space_id}
                   text={serviceSpace.name} />
               </RadioButtonContext.Provider>
             </div>

@@ -133,7 +133,7 @@ export function AdminDeveloper({
         <Button
           variant="filled"
           type="primary"
-          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', tokenType: READONLY}})}
+          onClick={() => onOpenModal('token-create', {token: {name: '', description: '', token_type: READONLY}})}
         >Add token</Button>
         &nbsp;&nbsp;
         <Button
@@ -159,7 +159,7 @@ export function AdminDeveloper({
             id="Permissions"
             width={120}
             template={item => (
-              <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.tokenType]}</span>
+              <span className={styles.adminDeveloperListviewValue}>{PERMISSION_TEXT[item.token_type]}</span>
             )} />
           <ListViewColumn
             id="Token"

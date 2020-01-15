@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import fetchAllObjects from '../../../helpers/fetch-all-objects';
-import { DensitySpace } from '../../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import formatTagName from '../../../helpers/format-tag-name/index';
 
 import collectionSpacesSet from './set';
@@ -30,25 +30,25 @@ export default async function collectionSpacesUpdate(dispatch, item) {
     await core().put(`/spaces/${item.id}`, {
       name: item.name,
       description: item.description,
-      parent_id: item.parentId,
-      space_type: item.spaceType,
+      parent_id: item.parent_id,
+      space_type: item.space_type,
       'function': item['function'],
 
-      annual_rent: item.annualRent,
-      size_area: item.sizeArea,
-      size_area_unit: item.sizeAreaUnit,
+      annual_rent: item.annual_rent,
+      size_area: item.size_area,
+      size_area_unit: item.size_area_unit,
       currency_unit: item.currencyUnit,
       capacity: item.capacity,
-      target_capacity: item.targetCapacity,
-      floor_level: item.floorLevel,
+      target_capacity: item.target_capacity,
+      floor_level: item.floor_level,
 
       address: item.address,
       latitude: item.latitude,
       longitude: item.longitude,
-      time_zone: item.timeZone,
-      daily_reset: item.dailyReset,
+      time_zone: item.time_zone,
+      daily_reset: item.daily_reset,
 
-      inherits_time_segments: item.inheritsTimeSegments,
+      inherits_time_segments: item.inherits_time_segments,
     });
 
     if (item.operatingHours) {
@@ -124,13 +124,13 @@ export default async function collectionSpacesUpdate(dispatch, item) {
         case 'CREATE':
           return await core().post('/links', {
             space_id: item.id,
-            doorway_id: linkItem.doorwayId,
-            sensor_placement: linkItem.sensorPlacement,
+            doorway_id: linkItem.doorway_id,
+            sensor_placement: linkItem.sensor_placement,
             update_historical: linkItem.updateHistoricCounts,
           });
         case 'UPDATE':
           return await core().post(`/links/${linkItem.id}/set_placement`, {
-            sensor_placement: linkItem.sensorPlacement,
+            sensor_placement: linkItem.sensor_placement,
             update_historical: linkItem.updateHistoricCounts,
           });
         case 'DELETE':
@@ -143,7 +143,7 @@ export default async function collectionSpacesUpdate(dispatch, item) {
 
     // Fetch all spaces after updating this space. If we changed this space's size area unit, then
     // the size area unit of child spaces will update too.
-    const spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    const spaces = await fetchAllObjects<CoreSpace>('/spaces');
     dispatch(collectionSpacesSet(spaces));
     return spaces;
 

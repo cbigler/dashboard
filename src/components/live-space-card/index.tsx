@@ -33,7 +33,7 @@ export default class SpaceCard extends React.Component<{
   }
 
   shouldComponentUpdate(nextProps) {
-    const countChanged = this.props.space.currentCount !== nextProps.space.currentCount;
+    const countChanged = this.props.space.current_count !== nextProps.space.current_count;
     const hasEvents = this.props.events &&
       (this.props.events.length > 0 || nextProps.events.length > 0);
     if (!countChanged && !hasEvents) {
@@ -61,12 +61,12 @@ export default class SpaceCard extends React.Component<{
     } = this.props;
 
     if (space) {
-      const capacityPercent = space.capacity ? (space.currentCount / space.capacity) * 100 : null;
+      const capacityPercent = space.capacity ? (space.current_count / space.capacity) * 100 : null;
       return <div ref={this.containerRef}>
         <Card className={styles.spaceCard}>
           <CardHeader className={styles.spaceCardHeader}>
             <span className={styles.spaceCardHeaderName}>{space.name}</span>
-            <span className={styles.spaceCardHeaderCount}>{space.currentCount}</span>
+            <span className={styles.spaceCardHeaderCount}>{space.current_count}</span>
           </CardHeader>
           <CardBody>
             <div className={styles.spaceCardCapacityContainer}>
@@ -76,7 +76,7 @@ export default class SpaceCard extends React.Component<{
                     space.capacity ?
                     <span className={styles.spaceCardUtilizationPercentageLabel}>
                       Utilization: 
-                      <span> {formatCapacityPercentage(space.currentCount, space.capacity)}%</span>
+                      <span> {formatCapacityPercentage(space.current_count, space.capacity)}%</span>
                     </span> :
                     'Max capacity not yet specified'
                   }

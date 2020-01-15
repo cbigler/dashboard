@@ -7,7 +7,7 @@ export type ChartSegmentMultipleDays = {
   type: 'MULTIPLE_DAYS',
   days: string[],
   series: Array<{
-    spaceId: string,
+    space_id: string,
     data: Array<{
       day: string,
       value: number,
@@ -19,7 +19,7 @@ export type ChartSegmentTimesOfSingleDay = {
   day: string,
   times: string[],
   series: Array<{
-    spaceId: string,
+    space_id: string,
     data: Array<{
       time: string,
       value: number,
@@ -74,7 +74,7 @@ export function computeChartData(
           case AnalyticsFocusedMetric.MAX:
             return d3Array.max(v, d => d.max) || 0;
           case AnalyticsFocusedMetric.UTILIZATION:
-            return d3Array.max(v, d => d.targetUtilization) || 0;
+            return d3Array.max(v, d => d.target_utilization) || 0;
           case AnalyticsFocusedMetric.OPPORTUNITY:
             return d3Array.min(v, d => d.opportunity) || 0;
           case AnalyticsFocusedMetric.ENTRANCES:
@@ -87,7 +87,7 @@ export function computeChartData(
             throw new Error('Nope')
         }
       },
-      (d: AnalyticsDatapoint) => d.spaceId,
+      (d: AnalyticsDatapoint) => d.space_id,
       // @ts-ignore
       (d: AnalyticsDatapoint) => d.localBucketDay,
     )
@@ -96,8 +96,8 @@ export function computeChartData(
     const localBucketDaysWithData = new Set<string>();
     let maxMetricValue = 0;
     let minMetricValue = 0;
-    dataset.forEach((dayValues: Map<string, number>, spaceId: string) => {
-      if (hiddenSpaceIdsSet.has(spaceId)) return;
+    dataset.forEach((dayValues: Map<string, number>, space_id: string) => {
+      if (hiddenSpaceIdsSet.has(space_id)) return;
       const data: ChartSegmentMultipleDays['series'][number]['data'] = [];
       dayValues.forEach((value: number, dateString: string) => {
         
@@ -112,7 +112,7 @@ export function computeChartData(
         })
       })
       series.push({
-        spaceId,
+        space_id,
         data,
       })
     })
@@ -140,7 +140,7 @@ export function computeChartData(
           case AnalyticsFocusedMetric.MAX:
             return d3Array.max(v, d => d.max) || 0;
           case AnalyticsFocusedMetric.UTILIZATION:
-            return d3Array.max(v, d => d.targetUtilization) || 0;
+            return d3Array.max(v, d => d.target_utilization) || 0;
           case AnalyticsFocusedMetric.OPPORTUNITY:
             return d3Array.min(v, d => d.opportunity) || 0;
           case AnalyticsFocusedMetric.ENTRANCES:
@@ -155,7 +155,7 @@ export function computeChartData(
       },
       (d: AnalyticsDatapoint) => d.localBucketDay,
       // @ts-ignore
-      (d: AnalyticsDatapoint) => d.spaceId,
+      (d: AnalyticsDatapoint) => d.space_id,
       (d: AnalyticsDatapoint) => d.localBucketTime,
     )
 
@@ -168,8 +168,8 @@ export function computeChartData(
       handleStartDates(localBucketDay);
       const dayTimesUsed = new Set<string>();
       const series: ChartSegmentTimesOfSingleDay['series'] = [];
-      dayBreakdown.forEach((spaceBreakdown: Map<string, number>, spaceId: string) => {
-        if (hiddenSpaceIdsSet.has(spaceId)) return;
+      dayBreakdown.forEach((spaceBreakdown: Map<string, number>, space_id: string) => {
+        if (hiddenSpaceIdsSet.has(space_id)) return;
         const data: ChartSegmentTimesOfSingleDay['series'][number]['data'] = [];
         spaceBreakdown.forEach((value: number, localBucketTime: string) => {
           minMetricValue = value < minMetricValue ? value : minMetricValue;
@@ -182,7 +182,7 @@ export function computeChartData(
           })
         })
         series.push({
-          spaceId,
+          space_id,
           data,
         })
       })

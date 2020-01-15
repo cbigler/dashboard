@@ -67,16 +67,16 @@ export default function TokenCreate({
             <div className={styles.tokenCreateTokenTypeRadioItem}>
               <RadioButton 
                 name="token-create-token-type"
-                onChange={() => onUpdate({...token, tokenType: READONLY})}
-                checked={token.tokenType === READONLY}
+                onChange={() => onUpdate({...token, token_type: READONLY})}
+                checked={token.token_type === READONLY}
                 text="Read-only"
               />
             </div>
             <div className={styles.tokenCreateTokenTypeRadioItem}>
               <RadioButton 
                 name="token-create-token-type"
-                onChange={() => onUpdate({...token, tokenType: READWRITE})}
-                checked={token.tokenType === READWRITE}
+                onChange={() => onUpdate({...token, token_type: READWRITE})}
+                checked={token.token_type === READWRITE}
                 text="Read-write"
               />
             </div>
@@ -96,7 +96,7 @@ export default function TokenCreate({
                 id="admin-token-create-modal-submit"
                 onClick={() => onSubmit({
                   name: token.name,
-                  tokenType: token.tokenType,
+                  token_type: token.token_type,
                   description: token.description || undefined,
                 })}
               >Save token</Button>

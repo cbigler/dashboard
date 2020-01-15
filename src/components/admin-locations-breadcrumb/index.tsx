@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
 
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 import { InputBox, Icons } from '@density/ui/src';
 
@@ -47,10 +47,10 @@ export default function AdminLocationsBreadcrumb({ spaces, space }) {
 type BreadcrumbSiblingSelectorProps = {
   spaces: {
     view: 'VISIBLE' | 'ERROR' | 'LOADING',
-    data: Array<DensitySpace>,
+    data: Array<CoreSpace>,
     error: any,
   },
-  selectedSpace: DensitySpace,
+  selectedSpace: CoreSpace,
 };
 
 type BreadcrumbSiblingSelectorState = {
@@ -85,7 +85,7 @@ export class BreadcrumbSiblingSelector extends Component<BreadcrumbSiblingSelect
     const { filterText, activeItemIndex, visible } = this.state;
     const { selectedSpace, spaces } = this.props;
 
-    const rawItems = spaces.data.filter(s => s.parentId === selectedSpace.parentId);
+    const rawItems = spaces.data.filter(s => s.parent_id === selectedSpace.parent_id);
     const items = nameFilter(rawItems, filterText);
 
     return (

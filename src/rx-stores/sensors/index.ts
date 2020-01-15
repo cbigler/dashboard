@@ -1,14 +1,13 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_SENSORS_SET } from '../../rx-actions/collection/sensors/set';
 
-import { DensitySensor } from '../../types';
+import { CoreSensor } from '@density/lib-api-types/core-v2/sensors';
 import createRxStore from '..';
 
 
 export type SensorsState = {
   loading: boolean,
   error: unknown,
-  data: DensitySensor[],
+  data: CoreSensor[],
 }
 
 export const initialState: SensorsState = {
@@ -27,7 +26,7 @@ export function sensorsReducer(state: SensorsState, action: Any<FixInRefactor>):
       ...state,
       loading: false,
       error: null,
-      data: action.data.map(s => objectSnakeToCamel<DensitySensor>(s)),
+      data: action.data as Array<CoreSensor>,
     };
 
   default:

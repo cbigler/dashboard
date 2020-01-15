@@ -17,8 +17,8 @@ import FormLabel from '../form-label';
 
 export default class IntegrationsRobinCreateModal extends React.Component<any, any> {
   state = {
-    robinAccessToken: '',
-    robinOrganizationId: '',
+    robin_access_token: '',
+    robin_organization_id: '',
   }
 
   render() {
@@ -42,8 +42,8 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
               type="text"
               id="create-token"
               width="100%"
-              value={this.state.robinAccessToken}
-              onChange={e => this.setState({robinAccessToken: e.target.value})}
+              value={this.state.robin_access_token}
+              onChange={e => this.setState({robin_access_token: e.target.value})}
             />}
           />
           <FormLabel
@@ -53,8 +53,8 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
               type="text"
               id="create-organization-id"
               width="100%"
-              value={this.state.robinOrganizationId}
-              onChange={e => this.setState({robinOrganizationId: e.target.value})}
+              value={this.state.robin_organization_id}
+              onChange={e => this.setState({robin_organization_id: e.target.value})}
             />}
           />
         </div>
@@ -67,11 +67,11 @@ export default class IntegrationsRobinCreateModal extends React.Component<any, a
                 <Button
                   variant="filled"
                   type="primary"
-                  disabled={this.state.robinAccessToken.length === 0 && this.state.robinOrganizationId.length === 0}
+                  disabled={this.state.robin_access_token.length === 0 && this.state.robin_organization_id.length === 0}
                   onClick={() => this.props.onSubmit({
                     credentials: {
-                      robinAccessToken: this.state.robinAccessToken,
-                      robinOrganizationId: this.state.robinOrganizationId,
+                      robin_access_token: this.state.robin_access_token,
+                      robin_organization_id: this.state.robin_organization_id,
                     }
                   })}
                 >Save</Button>

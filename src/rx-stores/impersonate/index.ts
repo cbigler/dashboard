@@ -57,7 +57,6 @@ actions.pipe(
 ).subscribe(([action, state]) => {
   const shouldReload = state && lastState && state.selectedUser !== lastState.selectedUser;
   lastState = JSON.parse(JSON.stringify(state));
-  console.log(state, lastState);
   if (action.type === ImpersonateActionTypes.IMPERSONATE_UNSET) {
     delete localStorage.impersonate;
   }

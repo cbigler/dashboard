@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './styles.module.scss';
 
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { AnalyticsReport } from '../../types/analytics';
 import { PartialAnalyticsReportWithQuery } from '../../rx-actions/analytics/operations/open-partial-report';
 
@@ -86,7 +86,7 @@ function MoreButton({reportName, onUpdateReportName, onDeleteReport}: MoreButton
 }
 
 type AnalyticsHomePageProps = {
-  user: DensityUser,
+  user: CoreUser,
   introVisible: boolean,
   reports: Array<AnalyticsReport>,
   recommendedReports: Array<Partial<AnalyticsReport>>,
@@ -114,7 +114,7 @@ export default function AnalyticsHomePage({
 }: AnalyticsHomePageProps) {
   const savedReports = reports.filter(r => (
     r.isSaved &&
-    r.creatorEmail === user.email
+    r.creator_email === user.email
   )).sort((a, b) => a.name.localeCompare(b.name));
   return (
     <div className={styles.home}>

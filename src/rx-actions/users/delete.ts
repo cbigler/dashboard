@@ -3,9 +3,9 @@ import accounts from '../../client/accounts';
 
 import { UserActionTypes } from '../../types/users';
 import { DispatchType } from '../../types/rx-actions';
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
-export default async function collectionUsersDelete(dispatch: DispatchType, user: DensityUser) {
+export default async function collectionUsersDelete(dispatch: DispatchType, user: CoreUser) {
   //dispatch({ type: UserManagementActionTypes.USER_MANAGEMENT_USERS_REMOVE, user });
 
   try {

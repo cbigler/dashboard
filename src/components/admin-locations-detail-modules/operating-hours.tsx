@@ -84,7 +84,7 @@ function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
           height={444}
           isItemDisabled={item => {
             const space = spaces.data.find(s => s.id === item.space.id);
-            const spaceHasNoTimeSegments = space ? space.timeSegments.length === 0 : false;
+            const spaceHasNoTimeSegments = space ? space.time_segments.length === 0 : false;
             return spaceHasNoTimeSegments;
           }}
         />
@@ -172,17 +172,17 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
   onChangeSelectedSpace,
   onConfirmResetTimeChange,
 }) {
-  const resetTimeChoices = generateResetTimeChoices({timeZone: formState.timeZone});
+  const resetTimeChoices = generateResetTimeChoices({time_zone: formState.time_zone});
 
   // Depending on if "override default" is checked, show either this space's segments or
   // the the above calculated operating hours.
   const parentTimeSegments = getParentTimeSegmentsForSpace(
-    formState.parentId,
+    formState.parent_id,
     spaceManagement.spaceHierarchy,
   );
   const parentOperatingHours = calculateOperatingHoursFromSpace({
-    dailyReset: formState.dailyReset,
-    timeSegments: parentTimeSegments,
+    daily_reset: formState.daily_reset,
+    time_segments: parentTimeSegments,
   });
   const shownOperatingHours = formState.overrideDefault ? (
     formState.operatingHours
@@ -197,9 +197,9 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
         spaces={spaces}
         spaceManagement={spaceManagement}
 
-        onSubmitModal={spaceId => {
+        onSubmitModal={space_id => {
           const hierarchyEntry = spaceHierarchyFormatter(spaceManagement.spaceHierarchy)
-            .find(s => s.space.id === spaceId);
+            .find(s => s.space.id === space_id);
           if (!hierarchyEntry) { return; }
 
           // Each time segment on the space becomes an entry in the operating hours structure
@@ -289,8 +289,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 type="select"
                 disabled={!formState.overrideDefault}
                 choices={TIME_ZONE_CHOICES}
-                value={formState.timeZone}
-                onChange={choice => onChangeField('timeZone', choice.id)}
+                value={formState.time_zone}
+                onChange={choice => onChangeField('time_zone', choice.id)}
                 width={320}
                 menuMaxHeight={300}
               />
@@ -319,11 +319,11 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       </div>
                     ),
                   }))
-                  .find(choice => choice.id === formState.dailyReset)
+                  .find(choice => choice.id === formState.daily_reset)
                 }
                 onChange={choice => {
                   function changeResetTime() {
-                    onChangeField('dailyReset', choice.id);
+                    onChangeField('daily_reset', choice.id);
                     onChangeField(
                       'operatingHours',
                       formState.operatingHours.map(i => ({ ...i, operationToPerform: 'DELETE' })),
@@ -426,7 +426,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                   <AppBarSection>
                     <span className={styles.dayOfWeekLabel}>Days affected:</span>
                     <DayOfWeekSelector
-                      daysOfWeek={operatingHoursItem.daysAffected}
+                      days_of_week={operatingHoursItem.daysAffected}
                       disabled={!formState.overrideDefault}
                       onChange={daysAffected => {
                         const operatingHoursCopy = formState.operatingHours.slice();
@@ -443,8 +443,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
               </AppBarContext.Provider>
               <div className={styles.timeSegmentItemSection}>
                 <AdminLocationsDetailModulesOperatingHoursSlider
-                  timeZone={formState.timeZone}
-                  dayStartTime={formState.dailyReset}
+                  time_zone={formState.time_zone}
+                  dayStartTime={formState.daily_reset}
                   startTime={operatingHoursItem.startTimeSeconds}
                   endTime={operatingHoursItem.endTimeSeconds}
                   disabled={!formState.overrideDefault}
@@ -528,8 +528,8 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 
                     const operatingHoursItem = {
                       label: null,
-                      startTimeSeconds: moment.duration(formState.dailyReset).add(2, 'hours').as('seconds'),
-                      endTimeSeconds: moment.duration(formState.dailyReset).add(12+2, 'hours').as('seconds'),
+                      startTimeSeconds: moment.duration(formState.daily_reset).add(2, 'hours').as('seconds'),
+                      endTimeSeconds: moment.duration(formState.daily_reset).add(12+2, 'hours').as('seconds'),
                       daysAffected: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
                       operationToPerform: 'CREATE',
                     };
@@ -569,7 +569,7 @@ const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefa
         // FIXME: previous code did not handle this case, is this what should happen here?
         return spaceManagement.formParentSpaceId
       }
-      return selectedSpace.parentId || spaceManagement.formParentSpaceId;
+      return selectedSpace.parent_id || spaceManagement.formParentSpaceId;
 
     }
     return spaceManagement.formParentSpaceId;

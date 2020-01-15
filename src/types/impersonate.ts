@@ -1,4 +1,5 @@
-import { DensityOrganization, DensityUser } from ".";
+import { CoreOrganization } from '@density/lib-api-types/core-v2/organizations';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 export enum ImpersonateActionTypes {
   IMPERSONATE_SET = 'IMPERSONATE_SET',
@@ -15,10 +16,10 @@ export type ImpersonateAction = {
 export type ImpersonateState = {
   enabled: boolean,
   loading: boolean,
-  organizations: Array<DensityOrganization>,
+  organizations: Array<CoreOrganization>,
   organizationFilter: Any<FixInReview>,
-  selectedOrganization: DensityOrganization | null,
-  users: Array<DensityUser>,
+  selectedOrganization: CoreOrganization | null,
+  users: Array<CoreUser>,
   userFilter: Any<FixInReview>,
-  selectedUser: DensityUser | null
+  selectedUser: CoreUser | null
 };

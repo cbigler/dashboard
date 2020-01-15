@@ -21,7 +21,7 @@ const TIME_SEGMENT_IN_GROUP = {
 const TIME_SEGMENT_GROUP = {
   id: 'tsg_one',
   name: 'Group One',
-  timeSegments: [ {timeSegmentId: TIME_SEGMENT_IN_GROUP.id, name: TIME_SEGMENT_IN_GROUP.name} ],
+  time_segments: [ {time_segment_id: TIME_SEGMENT_IN_GROUP.id, name: TIME_SEGMENT_IN_GROUP.name} ],
 };
 
 const SECONDS_PER_DAY = 86400;

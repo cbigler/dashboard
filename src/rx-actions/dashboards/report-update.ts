@@ -1,7 +1,4 @@
-import changeCase from 'change-case';
-
 import core from '../../client/core';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityReport } from '../../types';
 
 export default async function updateReport(dispatch, report) {
@@ -10,11 +7,10 @@ export default async function updateReport(dispatch, report) {
     reportResponse = await core().put(`/reports/${report.id}`, {
       name: report.name,
       type: report.type,
-      settings: Object.entries(report.settings)
-        .reduce((acc, [key, value]) => ({ ...acc, [changeCase.snake(key)]: value }), {})
+      settings: report.settings,
     });
   } catch (err) {
     return null;
   }
-  return objectSnakeToCamel<DensityReport>(reportResponse.data);
+  return reportResponse.data as DensityReport;
 }

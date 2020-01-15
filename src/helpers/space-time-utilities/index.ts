@@ -18,10 +18,10 @@ export function getBrowserLocalTimeZone() {
 // DATE STRING RELATED OPERATIONS
 // ----------------------------------------------------------------------------
 export function currentDateStringAtSpace(space) {
-  return moment.tz(space.timeZone).format('YYYY-MM-DD');
+  return moment.tz(space.time_zone).format('YYYY-MM-DD');
 }
 export function parseDateStringAtSpace(dateString, space) {
-  return moment.tz(dateString, space.timeZone);
+  return moment.tz(dateString, space.time_zone);
 }
 export function serializeMomentToDateString(dateInstance) {
   return dateInstance.format('YYYY-MM-DD');
@@ -159,16 +159,16 @@ const DAYS_OF_WEEK: Array<DayOfWeek> = [
 
 export function realizeDateRange(
   dateRange: DateRange,
-  timeZone: string,
+  time_zone: string,
   opts: { organizationalWeekStartDay?: DayOfWeek, now?: moment.Moment } = {},
 ): {startDate: moment.Moment, endDate: moment.Moment} {
   const organizationalWeekStartDay = opts.organizationalWeekStartDay || 'Sunday';
-  const now = opts.now || moment.tz(timeZone);
+  const now = opts.now || moment.tz(time_zone);
 
   if (dateRange.type === RangeType.ABSOLUTE) {
     return {
-      startDate: moment.tz(dateRange.startDate, timeZone).startOf('day'),
-      endDate: moment.tz(dateRange.endDate, timeZone).endOf('day'),
+      startDate: moment.tz(dateRange.startDate, time_zone).startOf('day'),
+      endDate: moment.tz(dateRange.endDate, time_zone).endOf('day'),
     };
   } else {
     return {
@@ -229,11 +229,11 @@ export function realizeRelativeDuration(
 // TIME-RELATED OPERATIONS
 // ----------------------------------------------------------------------------
 export function getCurrentLocalTimeAtSpace(space) {
-  return moment.utc().tz(space.timeZone);
+  return moment.utc().tz(space.time_zone);
 }
 
 export function convertDateToLocalTimeAtSpace(date, space) {
-  return moment.tz(moment(date).format('YYYY-MM-DD'), space.timeZone);
+  return moment.tz(moment(date).format('YYYY-MM-DD'), space.time_zone);
 }
 
 export function getDurationBetweenMomentsInDays(a, b) {
@@ -248,20 +248,20 @@ export function parseISOTimeAtSpace(timestamp, space) {
   if (!space) {
     throw new Error('parseISOTimeAtSpace requires a second argument specifying a space.');
   }
-  return moment.utc(timestamp).tz(space.timeZone);
+  return moment.utc(timestamp).tz(space.time_zone);
 }
 export function parseFromReactDates(momentInstance, space) {
-  return momentInstance.tz(space.timeZone).startOf('day');
+  return momentInstance.tz(space.time_zone).startOf('day');
 }
 
 export function formatInISOTime(timestamp) {
   return timestamp.utc().toISOString();
 }
 export function formatInISOTimeAtSpace(timestamp, space) {
-  return timestamp.tz(space.timeZone).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
+  return timestamp.tz(space.time_zone).format('YYYY-MM-DDTHH:mm:ss.SSSZ');
 }
 export function formatForReactDates(momentInstance, space) {
-  return momentInstance.tz(space.timeZone).startOf('day');
+  return momentInstance.tz(space.time_zone).startOf('day');
 }
 export function prettyPrintHoursMinutes(momentInstance) {
   return momentInstance.format('h:mma').slice(0, -1); /* am -> a */
@@ -360,7 +360,7 @@ export function splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, par
   if (start >= end) { throw Error("Start must be before end!"); }
 
   // Create a list of DST transitions within this range of (local) time
-  const tz: any = moment.tz.zone(space.timeZone);
+  const tz: any = moment.tz.zone(space.time_zone);
   const transitions = tz.untils.map((ts, index) => {
     return { index: index, until: moment.utc(ts) };
   }).filter(ts => startTs < ts.until && ts.until < endTs);

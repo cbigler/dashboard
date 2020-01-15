@@ -31,12 +31,12 @@ type DashboardEmailModalState = { recipient: string };
 const initialState: DashboardEmailModalState = { recipient: '' };
 
 async function onCreateEmail(dispatch: DispatchType, email: {
-  dashboardId: string,
+  dashboard_id: string,
   recipient: string
 }) {
   hideModal(dispatch);
   try {
-    await core().post(`/dashboards/${email.dashboardId}/email`, {
+    await core().post(`/dashboards/${email.dashboard_id}/email`, {
       recipient_email: email.recipient
     });
     showToast(dispatch, { text: 'Email sent' });
@@ -92,7 +92,7 @@ export default function DashboardEmailModal({
                   onClick={() => {
                     let email = {
                       recipient: state.recipient,
-                      dashboardId: selectedDashboard.id,
+                      dashboard_id: selectedDashboard.id,
                     };
                     onCreateEmail(dispatch, email);
                   }}

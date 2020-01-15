@@ -158,7 +158,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
   }
 
   render() {
-    const { dayStartTime, timeZone, disabled } = this.props;
+    const { dayStartTime, time_zone, disabled } = this.props;
     const { startTime, endTime } = this.state;
     const dayStartTimeSeconds = moment.duration(dayStartTime).as('seconds');
 
@@ -167,7 +167,7 @@ export default class AdminLocationsDetailModulesOperatingHoursSlider extends Com
 
     // Render all possible reset time choices underneath the slider, starting at the reset time and
     // working upwards in hours until that same reset time the next day.
-    const resetTimeChoices = generateResetTimeChoices({timeZone});
+    const resetTimeChoices = generateResetTimeChoices({time_zone});
     const splitPointIndex = resetTimeChoices.findIndex(choice => {
       const choiceSeconds = moment.duration(choice.value).as('seconds');
       return choiceSeconds === dayStartTimeSeconds;

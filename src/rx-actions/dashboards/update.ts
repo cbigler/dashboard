@@ -11,7 +11,7 @@ export default async function dashboardsUpdate(dispatch, dashboard) {
   try {
     dashboardResponse = await core().put(`/dashboards/${dashboard.id}`, {
       name: dashboard.name,
-      report_set: dashboard.reportSet.map(report => report.id),
+      report_set: dashboard.report_set.map(report => report.id),
     });
   } catch (err) {
     dispatch(dashboardsError(err));

@@ -1,19 +1,19 @@
 import getInObject from 'lodash/get';
 
-import { DensityUser } from "../../types";
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { DayOfWeek } from '../../types/datetime';
 import { DashboardsState } from '../../rx-stores/dashboards';
 import { UserState } from "../../rx-stores/user";
 
 
-export function getUserOrgSettings(user: UserState): DensityUser['organization']['settings'] {
+export function getUserOrgSettings(user: UserState): CoreUser['organization']['settings'] {
   const settings = getInObject(user, ['data', 'organization', 'settings'], {});
   return settings;
 }
 
 export function getUserDashboardWeekStart(user: UserState): DayOfWeek {
   const settings = getUserOrgSettings(user)
-  const dashboardWeekStart = getInObject(settings, 'dashboardWeekStart', 'Sunday') as DayOfWeek;
+  const dashboardWeekStart = getInObject(settings, 'dashboard_week_start', 'Sunday') as DayOfWeek;
   return dashboardWeekStart;
 }
 

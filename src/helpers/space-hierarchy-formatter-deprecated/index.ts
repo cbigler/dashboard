@@ -5,11 +5,11 @@ const SPACE_TYPE_SORT_ORDER = [
   'space',
 ];
 
-function addZeroItemBeforeFirstSpaceOfType(items, zeroItem, spaceType) {
+function addZeroItemBeforeFirstSpaceOfType(items, zeroItem, space_type) {
   const firstSpaceOfTypeIndex = items.findIndex(i => {
     return (
       i.depth === 0 &&
-      i.space.spaceType === spaceType
+      i.space.space_type === space_type
     );
   });
   if (firstSpaceOfTypeIndex === -1) {
@@ -27,15 +27,15 @@ function addZeroItemBeforeFirstSpaceOfType(items, zeroItem, spaceType) {
 // NOTE: this is deprecated, please use the new `space-hierarchy-formatter` helper instead
 // XXX
 export default function spaceHierarchyFormatterDeprecated(spaces, opts={renderZeroItems: true}) {
-  // Find everything with a `parentId` of `null` - they should go at the top of the list.
-  const topLevelItems = spaces.filter(i => i.parentId === null);
+  // Find everything with a `parent_id` of `null` - they should go at the top of the list.
+  const topLevelItems = spaces.filter(i => i.parent_id === null);
 
   function insertLowerItems(topLevelItems, depth=0) {
     return topLevelItems.sort((a, b) => {
-      return SPACE_TYPE_SORT_ORDER.indexOf(a.spaceType) - SPACE_TYPE_SORT_ORDER.indexOf(b.spaceType);
+      return SPACE_TYPE_SORT_ORDER.indexOf(a.space_type) - SPACE_TYPE_SORT_ORDER.indexOf(b.space_type);
     }).reduce((acc, topLevelItem) => {
       // Find all items that should be rendered under the given `topLevelItem`
-      const itemsUnderThisTopLevelItem = spaces.filter(i => i.parentId === topLevelItem.id);
+      const itemsUnderThisTopLevelItem = spaces.filter(i => i.parent_id === topLevelItem.id);
 
       return [
         ...acc,
@@ -55,38 +55,38 @@ export default function spaceHierarchyFormatterDeprecated(spaces, opts={renderZe
   // Insert the "zero items" - the items that indicate that there is zero of a particular class of
   // items such as floors, buildings, or campuses.
   if (opts.renderZeroItems) {
-    if (spaces.filter(i => i.spaceType === 'floor').length === 0) {
+    if (spaces.filter(i => i.space_type === 'floor').length === 0) {
       lowerItems = addZeroItemBeforeFirstSpaceOfType(lowerItems, {
         depth: 0,
         space: {
           id: 'zerofloors',
           disabled: true,
           name: 'Floor',
-          spaceType: 'floor',
+          space_type: 'floor',
         },
       }, 'space');
     }
 
-    if (spaces.filter(i => i.spaceType === 'building').length === 0) {
+    if (spaces.filter(i => i.space_type === 'building').length === 0) {
       lowerItems = addZeroItemBeforeFirstSpaceOfType(lowerItems, {
         depth: 0,
         space: {
           id: 'zerobuildings',
           disabled: true,
           name: 'Building',
-          spaceType: 'building',
+          space_type: 'building',
         },
       }, 'floor');
     }
 
-    if (spaces.filter(i => i.spaceType === 'campus').length === 0) {
+    if (spaces.filter(i => i.space_type === 'campus').length === 0) {
       lowerItems = addZeroItemBeforeFirstSpaceOfType(lowerItems, {
         depth: 0,
         space: {
           id: 'zerocampuses',
           disabled: true,
           name: 'Campus',
-          spaceType: 'campus',
+          space_type: 'campus',
         },
       }, 'building');
     }

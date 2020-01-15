@@ -10,17 +10,17 @@ import uploadMedia from '../../helpers/media-files';
 
 export const SPACE_MANAGEMENT_UPDATE_DOORWAY = 'SPACE_MANAGEMENT_UPDATE_DOORWAY';
 
-export async function uploadDoorwayImages(dispatch, doorwayId, item) {
+export async function uploadDoorwayImages(dispatch, doorway_id, item) {
   // Check inside and outside image url, upload them to the doorway if they are newly added
   const uploadPromises: Array<Promise<any>> = [];
   if (item.newInsideImageFile) {
     uploadPromises.push(
-      uploadMedia(`/uploads/doorway_image/${doorwayId}/inside`, item.newInsideImageFile),
+      uploadMedia(`/uploads/doorway_image/${doorway_id}/inside`, item.newInsideImageFile),
     );
   }
   if (item.newOutsideImageFile) {
     uploadPromises.push(
-      uploadMedia(`/uploads/doorway_image/${doorwayId}/outside`, item.newOutsideImageFile),
+      uploadMedia(`/uploads/doorway_image/${doorway_id}/outside`, item.newOutsideImageFile),
     );
   }
 
@@ -70,7 +70,7 @@ export default async function spaceManagementUpdateDoorway(dispatch, item) {
         width: item.width,
         height: item.height,
         clearance: item.clearance,
-        power_type: item.powerType,
+        power_type: item.power_type,
       },
     }, { 
       params: { environment: true }
@@ -84,8 +84,8 @@ export default async function spaceManagementUpdateDoorway(dispatch, item) {
 
   // Separately update the sensor placement as even though it can be set in the doorway modal,
   // it's not a value that is stored on a doorway.
-  dispatch(formDoorwayUpdate(item.id, 'linkId', item.linkId));
-  dispatch(formDoorwayUpdate(item.id, 'sensorPlacement', item.sensorPlacement));
+  dispatch(formDoorwayUpdate(item.id, 'link_id', item.link_id));
+  dispatch(formDoorwayUpdate(item.id, 'sensor_placement', item.sensor_placement));
   dispatch(formDoorwayUpdate(item.id, 'updateHistoricCounts', item.updateHistoricCounts));
   dispatch(formDoorwayUpdate(item.id, 'operationToPerform', 'UPDATE'));
 

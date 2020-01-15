@@ -1,8 +1,7 @@
 import { showToast } from '../../rx-actions/toasts';
 import accounts from '../../client/accounts';
 import { UserActionTypes } from '../../types/users';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionUsersLoad(dispatch: DispatchType) {
@@ -25,7 +24,7 @@ export default async function collectionUsersLoad(dispatch: DispatchType) {
   } else {
     dispatch({
       type: UserActionTypes.USER_MANAGEMENT_USERS_SET,
-      users: response.data.map(u => objectSnakeToCamel<DensityUser>(u)),
+      users: response.data as Array<CoreUser>,
     });
   }
 }

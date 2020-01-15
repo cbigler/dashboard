@@ -54,10 +54,10 @@ export function AlertManagementModalRaw({
   onCloseModal
 }) {
 
-  const phoneNumberInvalid = !alert.meta.toNum;
+  const phoneNumberInvalid = !alert.meta.to_num;
   const cooldownInvalid = parseInt(alert.cooldown) < 0;
-  const triggerValueInvalid = isNaN(parseInt(alert.triggerValue));
-  const escalationDeltaInvalid = alert.meta.escalationDelta && isNaN(parseInt(alert.meta.escalationDelta));
+  const triggerValueInvalid = isNaN(parseInt(alert.trigger_value));
+  const escalationDeltaInvalid = alert.meta.escalation_delta && isNaN(parseInt(alert.meta.escalation_delta));
 
   return <Modal
     visible={visible}
@@ -81,15 +81,15 @@ export function AlertManagementModalRaw({
             input={<PhoneInputBox
               id="update-alert-phone-number"
               width="100%"
-              value={alert.meta.toNum}
-              onChange={value => onUpdateAlertMeta(alert, 'toNum', value)}
+              value={alert.meta.to_num}
+              onChange={value => onUpdateAlertMeta(alert, 'to_num', value)}
             />}
           />
-          {user.data && user.data.phoneNumber ? <div style={{ paddingTop: 12 }}>
+          {user.data && user.data.phone_number ? <div style={{ paddingTop: 12 }}>
             <Button
               id="update-alert-phone-number-link"
               variant="underline"
-              onClick={() => onUpdateAlertMeta(alert, 'toNum', user.data.phoneNumber)}
+              onClick={() => onUpdateAlertMeta(alert, 'to_num', user.data.phone_number)}
             >Use my number</Button>
           </div> : null}
         </div>
@@ -100,24 +100,24 @@ export function AlertManagementModalRaw({
             input={<div style={{display: 'flex', alignItems: 'center'}}>
               <InputBox
                 type="select"
-                value={alert.triggerType}
+                value={alert.trigger_type}
                 width={160}
                 choices={TRIGGER_TYPE_CHOICES}
-                onChange={value => onUpdateAlert(alert, 'triggerType', value.id)}
+                onChange={value => onUpdateAlert(alert, 'trigger_type', value.id)}
               />
               <div style={{width: 8}}></div>
               <InputBox
                 type="text"
                 width="80px"
-                value={alert.triggerValue}
+                value={alert.trigger_value}
                 onChange={e => onUpdateAlert(
                   alert,
-                  'triggerValue',
+                  'trigger_value',
                   e.target.value.replace(/[^0-9]/, '')
                 )}
               />
               <div style={{width: 8}}></div>
-              {parseInt(alert.triggerValue) === 1 ? 'person' : 'people'}
+              {parseInt(alert.trigger_value) === 1 ? 'person' : 'people'}
             </div>}
           />
         </div>
@@ -136,7 +136,7 @@ export function AlertManagementModalRaw({
             </div>}
           />
         </div>
-        {alert.triggerType === GREATER_THAN && parseInt(alert.cooldown, 10) > 0 ?
+        {alert.trigger_type === GREATER_THAN && parseInt(alert.cooldown, 10) > 0 ?
           <Fragment>
             <div className={styles.alertManagementModalFormRow}>
               <div className={styles.escalationDescription}>
@@ -151,15 +151,15 @@ export function AlertManagementModalRaw({
                   <InputBox
                     type="text"
                     width="80px"
-                    value={alert.meta.escalationDelta}
+                    value={alert.meta.escalation_delta}
                     onChange={e => onUpdateAlertMeta(
                       alert,
-                      'escalationDelta',
+                      'escalation_delta',
                       e.target.value.replace(/[^0-9]/, '')
                     )}
                   />
                   <div style={{width: 8}}></div>
-                  {parseInt(alert.meta.escalationDelta) === 1 ? 'person' : 'people'}
+                  {parseInt(alert.meta.escalation_delta) === 1 ? 'person' : 'people'}
                 </div>}
               />
             </div>
@@ -222,11 +222,11 @@ export default () => {
   }
   const onSaveAlert = async (alert) => {
     alert.cooldown = parseInt(alert.cooldown);
-    alert.isOneShot = alert.cooldown === 0;
-    if (!alert.meta.escalationDelta || alert.triggerType !== GREATER_THAN) {
-      alert.meta.escalationDelta = null;
+    alert.is_one_shot = alert.cooldown === 0;
+    if (!alert.meta.escalation_delta || alert.trigger_type !== GREATER_THAN) {
+      alert.meta.escalation_delta = null;
     } else {
-      alert.meta.escalationDelta = parseInt(alert.meta.escalationDelta);
+      alert.meta.escalation_delta = parseInt(alert.meta.escalation_delta);
     }
     if (alert.id) {
       collectionAlertsUpdate(dispatch as DispatchType, alert);

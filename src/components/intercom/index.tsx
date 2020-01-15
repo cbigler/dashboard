@@ -16,7 +16,7 @@ export function IntercomDensity() {
     intercomUser = {
       user_id: user.data.id,
       email: user.data.email,
-      name: user.data.fullName,
+      name: user.data.full_name,
       organization_id: user.data.organization.id,
       organization_name: user.data.organization.name,
     }

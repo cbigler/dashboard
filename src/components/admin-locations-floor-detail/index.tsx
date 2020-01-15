@@ -34,7 +34,7 @@ import {
 } from '../admin-locations-snippets';
 
 export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace, spaceManagement }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === selectedSpace.id);
+  const visibleSpaces = spaces.data.filter(s => s.parent_id === selectedSpace.id);
 
   return (
     <AppFrame>

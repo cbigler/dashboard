@@ -1,6 +1,5 @@
 import fetchAllObjects from '../../helpers/fetch-all-objects';
-
-import { DensitySpace, DensitySpaceHierarchyItem } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 
 import collectionSpacesSet from '../collection/spaces/set';
 import collectionSpacesError from '../collection/spaces/error';
@@ -37,8 +36,8 @@ export default async function routeTransitionExplore(dispatch) {
   errorThrown = false;
   let spaces, spaceHierarchy;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
-    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
+    spaceHierarchy = await fetchAllObjects<CoreSpaceHierarchyNode>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<CoreSpace>('/spaces', { cache: false });
   } catch (err) {
     errorThrown = true;
     dispatch(collectionSpacesError(`Error loading spaces: ${err}`));

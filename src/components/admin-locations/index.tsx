@@ -35,28 +35,28 @@ import UserStore from '../../rx-stores/user';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceManagementStore from '../../rx-stores/space-management';
 
-function generateCreateRoute(parentId, type) {
-  if (parentId) {
+function generateCreateRoute(parent_id, type) {
+  if (parent_id) {
     // Not at the root, so there's a parent space id to include in the route
-    return `#/admin/locations/${parentId}/create/${type}`;
+    return `#/admin/locations/${parent_id}/create/${type}`;
   } else {
     // At the root, there's no parent space id
     return `#/admin/locations/create/${type}`;
   }
 }
 
-function ActionButtons({spaceId, spaceType, parentSpaceType}) {
-  switch (spaceType) {
+function ActionButtons({space_id, space_type, parentSpaceType}) {
+  switch (space_type) {
   case null:
     return (
       <ButtonGroup>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'campus')}
+          href={generateCreateRoute(space_id, 'campus')}
         >Add a campus</Button>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'building')}
+          href={generateCreateRoute(space_id, 'building')}
         >Add a building</Button>
       </ButtonGroup>
     );
@@ -64,7 +64,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
     return (
       <Button
         variant="filled"
-        href={generateCreateRoute(spaceId, 'building')}
+        href={generateCreateRoute(space_id, 'building')}
       >Add a building</Button>
     );
   case 'building':
@@ -72,11 +72,11 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
       <ButtonGroup>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'floor')}
+          href={generateCreateRoute(space_id, 'floor')}
         >Add a floor</Button>
         <Button
           variant="filled"
-          href={generateCreateRoute(spaceId, 'space')}
+          href={generateCreateRoute(space_id, 'space')}
         >Add a space</Button>
       </ButtonGroup>
     );
@@ -84,7 +84,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
     return (
       <Button
         variant="filled"
-        href={generateCreateRoute(spaceId, 'space')}
+        href={generateCreateRoute(space_id, 'space')}
       >Add a space</Button>
     );
   case 'space':
@@ -95,7 +95,7 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
         {parentSpaceType !== 'space' ? (
           <Button
             variant="filled"
-            href={generateCreateRoute(spaceId, 'space')}
+            href={generateCreateRoute(space_id, 'space')}
           >Add a space</Button>
         ) : null}
       </Fragment>
@@ -108,14 +108,14 @@ function ActionButtons({spaceId, spaceType, parentSpaceType}) {
 function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
   let selectedSpaceParentSpaceType = null;
   if (selectedSpace) {
-    const parentSpace = spaces.data.find(space => space.id === selectedSpace.parentId);
+    const parentSpace = spaces.data.find(space => space.id === selectedSpace.parent_id);
     if (parentSpace) {
-      selectedSpaceParentSpaceType = parentSpace.spaceType;
+      selectedSpaceParentSpaceType = parentSpace.space_type;
     }
   }
 
   let content: ReactNode = null;
-  switch (selectedSpace ? selectedSpace.spaceType : null) {
+  switch (selectedSpace ? selectedSpace.space_type : null) {
   case 'campus':
     content = (
       <AdminLocationsCampusDetail user={user} spaces={spaces} selectedSpace={selectedSpace} spaceManagement={spaceManagement} />
@@ -147,7 +147,7 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
   return (
     <div className={classnames(
       styles.adminLocations,
-      {[styles.space]: selectedSpace && selectedSpace.spaceType === 'space'}
+      {[styles.space]: selectedSpace && selectedSpace.space_type === 'space'}
     )}>
       {spaces.view === 'LOADING' ? (
         <div className={styles.loading}>
@@ -260,8 +260,8 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
               <AppBarSection>
                 {user.data.permissions.includes('core_write') ? (
                   <ActionButtons
-                    spaceId={selectedSpace ? selectedSpace.id : null}
-                    spaceType={selectedSpace ? selectedSpace.spaceType : null}
+                    space_id={selectedSpace ? selectedSpace.id : null}
+                    space_type={selectedSpace ? selectedSpace.space_type : null}
                     parentSpaceType={selectedSpaceParentSpaceType}
                   />
                 ) : null}

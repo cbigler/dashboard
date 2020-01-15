@@ -4,7 +4,7 @@ export type SpacesCountsAPIResponse = {
   next: string | null,
   previous: string | null,
   results: {
-    [spaceId: string]: Array<{
+    [space_id: string]: Array<{
       timestamp: string,
       count: number,
       interval: {
@@ -28,7 +28,7 @@ export type SpacesCountsAPIResponse = {
 
 // GET /v2/spaces/counts/metrics
 export type SpacesCountsMetricsAPIResponse = {
-  [spaceId: string]: {
+  [space_id: string]: {
     metrics: {
       count: {
         average: number,

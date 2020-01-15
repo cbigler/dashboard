@@ -5,15 +5,15 @@ import core from '../../client/core';
 
 export const SPACE_MANAGEMENT_DELETE_DOORWAY = 'SPACE_MANAGEMENT_DELETE_DOORWAY';
 
-export default async function spaceManagementDeleteDoorway(dispatch, doorwayId) {
+export default async function spaceManagementDeleteDoorway(dispatch, doorway_id) {
   try {
-    await core().delete(`/doorways/${doorwayId}`);
+    await core().delete(`/doorways/${doorway_id}`);
   } catch (err) {
     showToast(dispatch, {type: 'error', text: 'Error deleting doorway'});
     return;
   }
 
-  dispatch({type: SPACE_MANAGEMENT_DELETE_DOORWAY, doorwayId});
+  dispatch({type: SPACE_MANAGEMENT_DELETE_DOORWAY, doorway_id});
   showToast(dispatch, {text: 'Doorway deleted!'});
   hideModal(dispatch);
 }

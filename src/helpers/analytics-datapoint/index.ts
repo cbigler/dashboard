@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { DensitySpace } from '../../types'
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { AnalyticsDatapoint, QueryInterval } from '../../types/analytics';
 import { TimeFilter, TimeOfDay } from '../../types/datetime';
 import { DAYS_OF_WEEK } from '../datetime-utilities';
@@ -54,7 +54,7 @@ export function processAnalyticsChartData(
   data: ChartDataFetchingResult,
   interval: QueryInterval,
   timeFilter: TimeFilter | undefined,
-  spacesById: ReadonlyMap<string, DensitySpace>
+  spacesById: ReadonlyMap<string, CoreSpace>
 ): AnalyticsDatapoint[] {
 
   const now = Date.now();
@@ -140,14 +140,14 @@ export function processAnalyticsChartData(
 
   const series = new Map<string, AnalyticsDatapoint[]>();
 
-  Object.entries(data).forEach(([spaceId, datapoints]) => {
-    const space = spacesById.get(spaceId);
-    if (!space) { throw new Error(`No space found with id ${spaceId}`) }
-    const timeZone = space.timeZone;
+  Object.entries(data).forEach(([space_id, datapoints]) => {
+    const space = spacesById.get(space_id);
+    if (!space) { throw new Error(`No space found with id ${space_id}`) }
+    const time_zone = space.time_zone;
 
-    series.set(spaceId, datapoints.reduce<AnalyticsDatapoint[]>((processed, d) => {
+    series.set(space_id, datapoints.reduce<AnalyticsDatapoint[]>((processed, d) => {
       const millisecondsSinceUnixEpoch = Date.parse(d.start)
-      const m = moment.tz(millisecondsSinceUnixEpoch, timeZone);
+      const m = moment.tz(millisecondsSinceUnixEpoch, time_zone);
       const localDay = m.format('YYYY-MM-DD');
       const localTime = m.format('HH:mm');
 
@@ -169,10 +169,10 @@ export function processAnalyticsChartData(
       }
 
       processed.push({
-        spaceId,
-        spaceName: space.name,
+        space_id,
+        space_name: space.name,
         millisecondsSinceUnixEpoch,
-        timeZone: space.timeZone,
+        time_zone: space.time_zone,
         localDay,
         localTime,
         localBucketDay,
@@ -185,9 +185,9 @@ export function processAnalyticsChartData(
         events: d.analytics.events,
 
         utilization: d.analytics.utilization,
-        targetUtilization: d.analytics.target_utilization,
+        target_utilization: d.analytics.target_utilization,
 
-        opportunity: space.targetCapacity ? space.targetCapacity - d.analytics.max : null
+        opportunity: space.target_capacity ? space.target_capacity - d.analytics.max : null
       })
       return processed;
     }, []))

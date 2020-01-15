@@ -59,20 +59,20 @@ function iconForIntegration(serviceName: string) {
 }
 
 function activateLink(item, onClick) {
-  if (!item.serviceAuthorization.id && item.name !== 'condeco') {
+  if (!item.service_authorization.id && item.name !== 'condeco') {
     return <ListViewClickableLink onClick={onClick}>Activate</ListViewClickableLink>;
   }
 }
 
 function handleActivateClick(item, onOpenModal) {
-  if (item.name === "teem" && !item.serviceAuthorization.id) {
+  if (item.name === "teem" && !item.service_authorization.id) {
      window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
-  } else if (item.name === "google_calendar" && !item.serviceAuthorization.id) {
+  } else if (item.name === "google_calendar" && !item.service_authorization.id) {
     return doGoogleCalendarAuthRedirect();
-  } else if (item.name === "outlook" && !item.serviceAuthorization.id) {
+  } else if (item.name === "outlook" && !item.service_authorization.id) {
     return doOutlookAuthRedirect();
-  } else if (item.name === "robin" && !item.serviceAuthorization.id) {
-    onOpenModal('integrations-robin-create', {serviceAuthorization: item.serviceAuthorization})
+  } else if (item.name === "robin" && !item.service_authorization.id) {
+    onOpenModal('integrations-robin-create', {service_authorization: item.service_authorization})
   }
 }
 
@@ -97,7 +97,7 @@ export function AdminIntegrations({
 
     {activeModal.name === 'integrations-service-destroy' ? <IntegrationsServiceDestroyModal
       visible={activeModal.visible}
-      initialServiceAuthorization={activeModal.data.serviceAuthorization}
+      initialServiceAuthorization={activeModal.data.service_authorization}
       error={integrations.error}
       loading={integrations.loading}
 
@@ -115,7 +115,7 @@ export function AdminIntegrations({
     <AppScrollView backgroundColor={colorVariables.grayLightest}>
       <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
-        <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
+        <ListView keyTemplate={item => item.display_name} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
           <ListViewColumn
             id="Service"
             width={80}
@@ -127,38 +127,38 @@ export function AdminIntegrations({
             id="Name"
             width={170}
             template={item => (
-              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.display_name}</strong></span>
             )}
           />
           <ListViewColumn
             id="Added by"
             width={170}
-            template={item => item.serviceAuthorization.id != null ? (
-              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            template={item => item.service_authorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.service_authorization.user.full_name}</span>) : null
             }
           />
           <ListViewColumn
             id="Default service"
             width={120}
             template={item => {
-              if(item.serviceAuthorization && item.serviceAuthorization.default === true) {
+              if(item.service_authorization && item.service_authorization.default === true) {
                 return <span className={styles.adminIntegrationsListviewValue}>Default</span>
-              } else if (item.serviceAuthorization && item.serviceAuthorization.id != null && item.serviceAuthorization.default === false) {
+              } else if (item.service_authorization && item.service_authorization.id != null && item.service_authorization.default === false) {
                 return <ListViewClickableLink>Make default</ListViewClickableLink>
               } else {
                 return null;
               }
             }} 
-            onClick={item => onMakeServiceAuthorizationDefault(item.serviceAuthorization.id)}
+            onClick={item => onMakeServiceAuthorizationDefault(item.service_authorization.id)}
           />          
           <ListViewColumnSpacer />
           <ListViewColumn
             id="Space Mappings"
             title=" "
             width={180}
-            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
+            template={item => !item.service_authorization.id ? null : <ListViewClickableLink>Space mappings</ListViewClickableLink>}
             onClick={item => {
-              if (item.serviceAuthorization.id) {
+              if (item.service_authorization.id) {
                 window.location.href = `#/admin/integrations/${item.name}/space-mappings`
               }
             }}
@@ -179,9 +179,9 @@ export function AdminIntegrations({
             width={30}
             align="right"
             template={item => (
-              !item.serviceAuthorization.id ?
+              !item.service_authorization.id ?
                 null :
-                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}>
+                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}>
                   <Icons.Trash color={colorVariables.grayDarker} />
                 </ListViewClickableLink>
             )}
@@ -193,7 +193,7 @@ export function AdminIntegrations({
 
       <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Access Control</div>
-        <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Tailgating') as Array<DensityService>}>
+        <ListView keyTemplate={item => item.display_name} data={integrations.services.filter(integration => integration.category === 'Tailgating') as Array<DensityService>}>
           <ListViewColumn
             id="Service"
             width={80}
@@ -205,14 +205,14 @@ export function AdminIntegrations({
             id="Name"
             width={170}
             template={item => (
-              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.display_name}</strong></span>
             )}
           />
           <ListViewColumn
             id="Added by"
             width={170}
-            template={item => item.serviceAuthorization.id != null ? (
-              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            template={item => item.service_authorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.service_authorization.user.full_name}</span>) : null
             }
           />
           
@@ -221,9 +221,9 @@ export function AdminIntegrations({
             id="Doorway Mappings"
             title=" "
             width={180}
-            template={item => !item.serviceAuthorization.id ? null : <ListViewClickableLink>Doorway mappings</ListViewClickableLink>}
+            template={item => !item.service_authorization.id ? null : <ListViewClickableLink>Doorway mappings</ListViewClickableLink>}
             onClick={item => {
-              if (item.serviceAuthorization.id) {
+              if (item.service_authorization.id) {
                 window.location.href = `#/admin/integrations/${item.name}/doorway-mappings`
               }
             }}
@@ -233,7 +233,7 @@ export function AdminIntegrations({
             title=" "
             width={90}
             align="right"
-            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            template={item => !item.service_authorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={async item => {
               const authUrl = await core().get(`/integrations/${item.name}/`);
               window.location.href = authUrl.data;
@@ -245,9 +245,9 @@ export function AdminIntegrations({
             width={30}
             align="right"
             template={item => (
-              !item.serviceAuthorization.id ?
+              !item.service_authorization.id ?
                 null :
-                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}>
+                <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}>
                   <Icons.Trash color={colorVariables.grayDarker} />
                 </ListViewClickableLink>
             )}
@@ -258,7 +258,7 @@ export function AdminIntegrations({
 
       <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Chat</div>
-        <ListView keyTemplate={item => item.displayName} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
+        <ListView keyTemplate={item => item.display_name} data={integrations.services.filter(integration => integration.category === 'Chat') as Array<DensityService>}>
           <ListViewColumn
             id="Service"
             width={80}
@@ -270,14 +270,14 @@ export function AdminIntegrations({
             id="Name"
             width={170}
             template={item => (
-              <span className={styles.adminIntegrationsListviewValue}><strong>{item.displayName}</strong></span>
+              <span className={styles.adminIntegrationsListviewValue}><strong>{item.display_name}</strong></span>
             )}
           />
           <ListViewColumn
             id="Added by"
             width={170}
-            template={item => item.serviceAuthorization.id != null ? (
-              <span className={styles.adminIntegrationsListviewValue}>{item.serviceAuthorization.user.fullName}</span>) : null
+            template={item => item.service_authorization.id != null ? (
+              <span className={styles.adminIntegrationsListviewValue}>{item.service_authorization.user.full_name}</span>) : null
             }
           />
           <ListViewColumnSpacer />
@@ -286,9 +286,9 @@ export function AdminIntegrations({
             title=" "
             width={90}
             align="right"
-            template={item => !item.serviceAuthorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
+            template={item => !item.service_authorization.id ? <ListViewClickableLink>Activate</ListViewClickableLink> : null }
             onClick={item => {
-              if (!item.serviceAuthorization.id) {
+              if (!item.service_authorization.id) {
                 window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=bot,chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}` 
               }
             }}
@@ -298,8 +298,8 @@ export function AdminIntegrations({
             title=" "
             width={30}
             align="right"
-            template={item => !item.serviceAuthorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
-            onClick={item => onOpenModal('integrations-service-destroy', {serviceAuthorization: item.serviceAuthorization})}
+            template={item => !item.service_authorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            onClick={item => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}
           />
         </ListView>
       </div>
@@ -324,8 +324,8 @@ const ConnectedAdminIntegrations: React.FC = () => {
     await hideModal(dispatch);
   }
 
-  const onCreateServiceAuthorizationRobin = async (serviceAuthorization) => {
-    const ok = await collectionServiceAuthorizationCreate(dispatch, 'robin', serviceAuthorization);
+  const onCreateServiceAuthorizationRobin = async (service_authorization) => {
+    const ok = await collectionServiceAuthorizationCreate(dispatch, 'robin', service_authorization);
     if (ok) { hideModal(dispatch); }
   }
 

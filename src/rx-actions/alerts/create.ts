@@ -1,6 +1,5 @@
 import core from '../../client/core';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityNotification } from '../../types';
 import { getNotificationsURL } from './read';
 import { AlertActionTypes } from '../../types/alerts';
@@ -16,22 +15,22 @@ export default async function collectionAlertsCreate(
   try {
     const meta = alert.meta || {};
     response = await core().post(getNotificationsURL(), {
-      space_id: alert.spaceId,
+      space_id: alert.space_id,
       enabled: alert.enabled,
-      trigger_type: alert.triggerType,
-      trigger_value: alert.triggerValue,
-      is_one_shot: alert.isOneShot,
+      trigger_type: alert.trigger_type,
+      trigger_value: alert.trigger_value,
+      is_one_shot: alert.is_one_shot,
       cooldown: alert.cooldown,
       meta: {
-        to_num: meta.toNum,
-        escalation_delta: meta.escalationDelta,
+        to_num: meta.to_num,
+        escalation_delta: meta.escalation_delta,
       },
     });
 
     mixpanelTrack('SMS Alert Created', {
-      trigger_type: alert.triggerType,
-      trigger_value: alert.triggerValue,
-      space_id: alert.spaceId,
+      trigger_type: alert.trigger_type,
+      trigger_value: alert.trigger_value,
+      space_id: alert.space_id,
     });
 
   } catch (err) {
@@ -44,7 +43,7 @@ export default async function collectionAlertsCreate(
   } else {
     dispatch({
       type: AlertActionTypes.COLLECTION_ALERTS_PUSH,
-      alert: objectSnakeToCamel<DensityNotification>(response.data),
+      alert: response.data as DensityNotification,
     });
   }
 }

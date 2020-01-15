@@ -40,6 +40,7 @@ import ActivePageStore from '../../rx-stores/active-page';
 import SpacesStore from '../../rx-stores/spaces';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import SpaceReportsStore from '../../rx-stores/space-reports';
+import UserStore from '../../rx-stores/user';
 // import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 export const SPACES_BACKGROUND = '#FAFAFA';
@@ -84,6 +85,7 @@ export function SpacesRaw ({
   activePage,
   activeModal,
   //resizeCounter,
+  user,
   onCloseModal,
   onFilterSpaces,
   onUpdateReportController,
@@ -193,9 +195,11 @@ export function SpacesRaw ({
                   </AppBarSubnavLink>
                 </AppBarSubnav>
               </AppBarSection> : null}
-              <AppBarSection>
-                <AlertPopupList selectedSpace={selectedSpace} />
-              </AppBarSection>
+              {user.data.permissions.includes('core_write') ? (
+                <AppBarSection>
+                  <AlertPopupList selectedSpace={selectedSpace} />
+                </AppBarSection>
+              ) : null}
             </AppBar>
             
             {/* New controller for trends page */}
@@ -222,7 +226,7 @@ export function SpacesRaw ({
             {/* New controller for meetings page */}
             {activePage === 'SPACES_SPACE_MEETINGS' && selectedSpace ?
               spaceReports.controllers.filter(x => x.key === 'meetings_page_controller').map(controller => (
-                (selectedSpace.spaceMappings || []).length ?
+                (selectedSpace.space_mappings || []).length ?
                   <SpacesReportController
                     key={controller.key}
                     space={selectedSpace}
@@ -283,6 +287,7 @@ const ConnectedSpaces: React.FC = () => {
   const spaces = useRxStore(SpacesStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const spaceReports = useRxStore(SpaceReportsStore);
+  const user = useRxStore(UserStore);
   // const resizeCounter = useRxStore(ResizeCounterStore);
 
   // FIXME: This could probably just be handled by the spaces store
@@ -312,6 +317,7 @@ const ConnectedSpaces: React.FC = () => {
       spaceHierarchy={spaceHierarchy}
       spaceReports={spaceReports}
       selectedSpace={selectedSpace}
+      user={user}
       onFilterSpaces={onFilterSpaces}
       onUpdateReportController={onUpdateReportController}
       onCalculateReportData={onCalculateReportData}

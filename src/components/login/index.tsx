@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import {
   Button,
@@ -21,7 +21,6 @@ import { InputStackItem } from '../input-stack/index';
 import logoDensityBlack from '../../assets/images/logo-black.svg';
 import logoGoogleG from '../../assets/images/logo-google-g.svg';
 import logoOktaO from '../../assets/images/logo-okta-o.png';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 
 import webAuth from "../../auth0";
 import styles from './styles.module.scss';
@@ -412,8 +411,7 @@ const ConnectedLogin: React.FunctionComponent = () => {
   const onUserSuccessfullyLoggedIn = (token, redirect) => {
     dispatch(impersonateUnset());
     sessionTokenSet(dispatch, token).then(data => {
-      const user = objectSnakeToCamel<DensityUser>(data);
-      unsafeNavigateToLandingPage(user.organization.settings, redirect);
+      unsafeNavigateToLandingPage((data as CoreUser).organization.settings, redirect);
       dispatch(redirectAfterLogin(null) as Any<FixInRefactor>);
     });
   };

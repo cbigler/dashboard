@@ -5,11 +5,11 @@ import collectionSpacesError from '../collection/spaces/error';
 import collectionSpacesFilter from '../collection/spaces/filter';
 import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher/index';
 
-import { DensitySpace, DensitySpaceHierarchyItem, DensityDoorway } from '../../types';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 
 import exploreDataCalculateDataLoading from '../explore-data/calculate-data-loading';
 import exploreDataCalculateDataComplete from '../explore-data/calculate-data-complete';
@@ -40,8 +40,8 @@ export default async function routeTransitionExploreSpaceDaily(dispatch, id) {
   // this view unfortunately.
   let spaces, spaceHierarchy, selectedSpace;
   try {
-    spaceHierarchy = await fetchAllObjects<DensitySpaceHierarchyItem>('/spaces/hierarchy', { cache: false });
-    spaces = await fetchAllObjects<DensitySpace>('/spaces', { cache: false });
+    spaceHierarchy = await fetchAllObjects<CoreSpaceHierarchyNode>('/spaces/hierarchy', { cache: false });
+    spaces = await fetchAllObjects<CoreSpace>('/spaces', { cache: false });
     selectedSpace = spaces.find(s => s.id === id);
   } catch (err) {
     dispatch(collectionSpacesError(`Error loading space: ${err.message}`));
@@ -143,14 +143,13 @@ export async function calculateDailyRawEvents(dispatch, space) {
 
   // Convert all keys in the response to camelcase. Also, reverse data so it is ordered from
   const data = preResponse.data.results
-    .map(i => objectSnakeToCamel(i))
     .sort((a, b) => moment.utc(b.timestamp).valueOf() - moment.utc(a.timestamp).valueOf());
 
   // Calculate a unique array of all doorways that are referenced by each event that was
   // returned.
   const uniqueArrayOfDoorways = data.reduce((acc, item) => {
-    if (acc.indexOf(item.doorwayId) === -1) {
-      return [...acc, item.doorwayId];
+    if (acc.indexOf(item.doorway_id) === -1) {
+      return [...acc, item.doorway_id];
     } else {
       return acc;
     }
@@ -158,9 +157,9 @@ export async function calculateDailyRawEvents(dispatch, space) {
 
   // Fetch information about each doorway in each event, if the doorway information isn't
   // already known.
-  const doorwayRequests = uniqueArrayOfDoorways.map(async doorwayId => {
+  const doorwayRequests = uniqueArrayOfDoorways.map(async doorway_id => {
     try {
-      return await fetchObject<DensityDoorway>(`/doorways/${doorwayId}`, {
+      return await fetchObject<CoreDoorway>(`/doorways/${doorway_id}`, {
         cache: false,
         params: { environment: 'true' }
       });

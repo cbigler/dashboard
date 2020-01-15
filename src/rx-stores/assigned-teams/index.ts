@@ -1,4 +1,3 @@
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_ASSIGNED_TEAMS_SET } from '../../rx-actions/collection/assigned-teams/set';
 import { COLLECTION_ASSIGNED_TEAMS_ERROR } from '../../rx-actions/collection/assigned-teams/error';
 
@@ -28,7 +27,7 @@ export function assignedTeamsReducer(state: AssignedTeamsState, action: Any<FixI
       ...state,
       view: 'VISIBLE',
       error: null,
-      data: action.data.map(t => objectSnakeToCamel<DensityAssignedTeam>(t)),
+      data: action.data as Array<DensityAssignedTeam>,
     };
 
   // An error occurred while loading assigned teams.

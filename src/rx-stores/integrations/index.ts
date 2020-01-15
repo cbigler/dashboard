@@ -17,7 +17,6 @@ import {
   INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../rx-actions/integrations/room-booking';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import createRxStore from '..';
 
 
@@ -68,7 +67,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     return {
       ...state,
       loading: false,
-      services: action.data.map(objectSnakeToCamel),
+      services: action.data,
     };
    case COLLECTION_SERVICES_ERROR:
      return {...state, error: action.error, loading: false};

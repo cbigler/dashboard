@@ -40,7 +40,7 @@ export default function registerSideEffects(
       // Database field names should always be underscores and lowercase
       window.mixpanel.identify(user.id);
       window.mixpanel.people.set({
-        $name: user.fullName,
+        $name: user.full_name,
         $email: user.email,
         Organization: user.organization.name,
         organization_id: user.organization.id,

@@ -1,8 +1,9 @@
 import moment from 'moment';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { SQUARE_FEET } from '@density/lib-helpers';
-import { DensityUser, DensityTimeSegment, DensitySpace, DensityDoorway } from '../../types';
+import { CoreSpaceTimeSegment, CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
@@ -28,7 +29,7 @@ export type SpaceManagementState = {
   view: 'LOADING_INITIAL' | 'LOADING_SEND_TO_SERVER' | 'VISIBLE' | 'ERROR',
   error: unknown,
   spaces: {
-    data: DensitySpace[],
+    data: CoreSpace[],
     selected: null | string,
   },
   doorways: Any<FixInRefactor>[],
@@ -75,33 +76,33 @@ export type OperatingHoursLabelItem = {
 export type AdminLocationsFormState = {
   id: string | null,
   name: string,
-  spaceType: string,
+  space_type: string,
   'function': string | null | undefined,
-  annualRent: any,
-  sizeArea: any,
-  sizeAreaUnit: 'square_feet' | 'square_meters',
+  annual_rent: any,
+  size_area: any,
+  size_area_unit: 'square_feet' | 'square_meters',
   currencyUnit: 'USD',
   capacity: string,
-  targetCapacity: string,
-  floorLevel: string,
+  target_capacity: string,
+  floor_level: string,
   address: string,
   coordinates: [number, number] | null,
-  timeZone: string,
-  dailyReset: string | null,
-  parentId: string | null,
+  time_zone: string,
+  daily_reset: string | null,
+  parent_id: string | null,
   doorwaysFilter: string,
   doorways: Array<DoorwayItem>,
   operatingHours: Array<OperatingHoursItem>,
   operatingHoursLabels: Array<OperatingHoursLabelItem>,
   overrideDefault: boolean,
   overrideDefaultControlHidden: boolean,
-  imageUrl: string,
+  image_url: string,
   newImageFile?: any,
   tags?: Array<{
     name: string,
     operationToPerform: 'CREATE' | 'DELETE' | null,
   }>,
-  assignedTeams?: Array<{
+  assigned_teams?: Array<{
     id: string,
     name: string,
     operationToPerform: 'CREATE' | 'DELETE' | null,
@@ -111,26 +112,26 @@ export type AdminLocationsFormState = {
 export type DoorwayItem = {
   id: string,
   name: string,
-  spaces: DensityDoorway["spaces"],
+  spaces: CoreDoorway["spaces"],
   list: 'TOP' | 'BOTTOM',
   selected: boolean,
-  sensorPlacement: number | null,
+  sensor_placement: number | null,
   updateHistoricCounts: boolean,
   initialSensorPlacement: number | null,
-  linkId: string | null,
+  link_id: string | null,
   operationToPerform: 'CREATE' | 'UPDATE' | 'DELETE' | null,
   linkExistsOnServer: boolean,
   height: string | null,
   width: string | null,
   clearance: boolean | null,
-  powerType: 'POWER_OVER_ETHERNET' | 'AC_OUTLET' | null,
-  insideImageUrl: string | null,
-  outsideImageUrl: string | null,
+  power_type: 'POWER_OVER_ETHERNET' | 'AC_OUTLET' | null,
+  inside_image_url: string | null,
+  outside_image_url: string | null,
 }
 
-function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: DensityDoorway, initialSensorPlacement=null): DoorwayItem {
-  const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === spaceId) : null;
-  const sensorPlacement = linkedToSpace ? linkedToSpace.sensorPlacement : initialSensorPlacement;
+function makeDoorwayItemFromDensityDoorway(space_id: string | null, doorway: CoreDoorway, initialSensorPlacement=null): DoorwayItem {
+  const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === space_id) : null;
+  const sensor_placement = linkedToSpace ? linkedToSpace.sensor_placement : initialSensorPlacement;
   return {
     id: doorway.id,
     name: doorway.name,
@@ -139,30 +140,30 @@ function makeDoorwayItemFromDensityDoorway(spaceId: string | null, doorway: Dens
     height: doorway.environment && doorway.environment.height ? `${doorway.environment.height}` : null,
     width: doorway.environment && doorway.environment.width ? `${doorway.environment.width}` : null,
     clearance: doorway.environment ? doorway.environment.clearance : null,
-    powerType: doorway.environment ? doorway.environment.powerType : null,
-    insideImageUrl: doorway.environment ? doorway.environment.insideImageUrl : null,
-    outsideImageUrl: doorway.environment ? doorway.environment.outsideImageUrl : null,
+    power_type: doorway.environment ? doorway.environment.power_type : null,
+    inside_image_url: doorway.environment ? doorway.environment.inside_image_url : null,
+    outside_image_url: doorway.environment ? doorway.environment.outside_image_url : null,
 
     list: linkedToSpace ? 'TOP' : 'BOTTOM',
     selected: linkedToSpace ? true : false,
-    sensorPlacement,
-    initialSensorPlacement: sensorPlacement,
+    sensor_placement,
+    initialSensorPlacement: sensor_placement,
     updateHistoricCounts: false,
-    linkId: linkedToSpace ? linkedToSpace.linkId : null,
+    link_id: linkedToSpace ? linkedToSpace.link_id : null,
     operationToPerform: null,
     linkExistsOnServer: linkedToSpace ? true : false,
   };
 }
 
 export function calculateOperatingHoursFromSpace(
-  space: {dailyReset: string, timeSegments: Array<DensityTimeSegment>},
+  space: {daily_reset: string, time_segments: Array<CoreSpaceTimeSegment>},
 ): Array<OperatingHoursItem> {
-  if (!space.timeSegments) {
+  if (!space.time_segments) {
     return [];
   }
 
-  return space.timeSegments.map(tsm => {
-    const resetTimeSeconds = moment.duration(space.dailyReset).as('seconds');
+  return space.time_segments.map(tsm => {
+    const resetTimeSeconds = moment.duration(space.daily_reset).as('seconds');
     let startTimeSeconds = moment.duration(tsm.start).as('seconds');
     let endTimeSeconds = moment.duration(tsm.end).as('seconds');
 
@@ -203,39 +204,39 @@ function calculateInitialFormState({
 }): AdminLocationsFormState {
   // Find the current space
   const space = spaces.data.find(s => s.id === spaces.selected) || {
-    parentId: formParentSpaceId,
-    spaceType: formSpaceType,
-    timeSegments: [],
+    parent_id: formParentSpaceId,
+    space_type: formSpaceType,
+    time_segments: [],
     doorways: [],
   };
-  const parentSpace = spaces.data.find(s => s.id === space.parentId) || {};
+  const parentSpace = spaces.data.find(s => s.id === space.parent_id) || {};
 
   // Whether the time segments editor should be enabled, or the space should inherit
   let overrideDefault = false;
-  if (space.parentId === null) {
+  if (space.parent_id === null) {
     overrideDefault = true;
-  } else if (typeof space.inheritsTimeSegments === 'boolean') {
-    overrideDefault = !space.inheritsTimeSegments;
+  } else if (typeof space.inherits_time_segments === 'boolean') {
+    overrideDefault = !space.inherits_time_segments;
   }
 
   return {
     // General information module
     id: space.id || null,
     name: space.name || '',
-    spaceType: space.spaceType,
+    space_type: space.space_type,
     'function': space['function'],
-    parentId: space.parentId,
-    imageUrl: space.imageUrl,
+    parent_id: space.parent_id,
+    image_url: space.image_url,
 
 
     // Metadata module
-    annualRent: space.annualRent || '',
-    sizeArea: space.sizeArea || '',
-    sizeAreaUnit: space.sizeAreaUnit || userDataSizeAreaDisplayUnit || SQUARE_FEET,
+    annual_rent: space.annual_rent || '',
+    size_area: space.size_area || '',
+    size_area_unit: space.size_area_unit || userDataSizeAreaDisplayUnit || SQUARE_FEET,
     currencyUnit: space.currencyUnit || 'USD',
     capacity: space.capacity || '',
-    targetCapacity: space.targetCapacity || '',
-    floorLevel: space.floorLevel || '',
+    target_capacity: space.target_capacity || '',
+    floor_level: space.floor_level || '',
 
 
     // Address module
@@ -250,7 +251,7 @@ function calculateInitialFormState({
 
 
     // Team assignments module
-    assignedTeams: (space.assignedTeams || []).map(t => ({
+    assigned_teams: (space.assigned_teams || []).map(t => ({
       id: t.id,
       name: t.name,
       operationToPerform: null,
@@ -262,13 +263,13 @@ function calculateInitialFormState({
 
 
     // Operating hours module
-    timeZone: space.timeZone || parentSpace.timeZone || moment.tz.guess(), // Guess the time zone
-    dailyReset: space.dailyReset || parentSpace.dailyReset || '04:00',
+    time_zone: space.time_zone || parentSpace.time_zone || moment.tz.guess(), // Guess the time zone
+    daily_reset: space.daily_reset || parentSpace.daily_reset || '04:00',
 
     // Override default is always on and the control is hidden if this is the top level space in the
     // tree. Otherwise, it's enabled if the space has some of its own time segments
     overrideDefault,
-    overrideDefaultControlHidden: space.parentId === null,
+    overrideDefaultControlHidden: space.parent_id === null,
     operatingHours: calculateOperatingHoursFromSpace(space),
     operatingHoursLabels: operatingHoursLabels.map(i => ({id: i, name: i}))
   };
@@ -278,7 +279,7 @@ function calculateInitialFormState({
 // a PUT to the space.
 export function convertFormStateToSpaceFields(
   formState: AdminLocationsFormState,
-  spaceType: DensitySpace["spaceType"],
+  space_type: CoreSpace["space_type"],
 ): object {
   function parseIntOrNull(string) {
     const result = parseInt(string, 10);
@@ -290,40 +291,40 @@ export function convertFormStateToSpaceFields(
   }
   return {
     name: formState.name,
-    spaceType: formState.spaceType,
+    space_type: formState.space_type,
     'function': formState['function'] || null,
-    parentId: formState.parentId,
-    floorLevel: spaceType === 'floor' ? parseIntOrNull(formState.floorLevel) : undefined,
+    parent_id: formState.parent_id,
+    floor_level: space_type === 'floor' ? parseIntOrNull(formState.floor_level) : undefined,
 
     newTags: formState.tags,
-    newAssignedTeams: formState.assignedTeams,
+    newAssignedTeams: formState.assigned_teams,
 
-    annualRent: spaceType === 'building' ? parseIntOrNull(formState.annualRent) : undefined,
-    sizeArea: spaceType !== 'campus' ? parseIntOrNull(formState.sizeArea) : undefined,
-    sizeAreaUnit: spaceType === 'building' ? formState.sizeAreaUnit : undefined,
+    annual_rent: space_type === 'building' ? parseIntOrNull(formState.annual_rent) : undefined,
+    size_area: space_type !== 'campus' ? parseIntOrNull(formState.size_area) : undefined,
+    size_area_unit: space_type === 'building' ? formState.size_area_unit : undefined,
     currencyUnit: formState.currencyUnit,
-    capacity: spaceType !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
-    targetCapacity: spaceType !== 'campus' ? parseIntOrNull(formState.targetCapacity) : undefined,
+    capacity: space_type !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
+    target_capacity: space_type !== 'campus' ? parseIntOrNull(formState.target_capacity) : undefined,
 
     address: formState.address && formState.address.length > 0 ? formState.address : null,
     latitude: formState.coordinates ? formState.coordinates[0] : null,
     longitude: formState.coordinates ? formState.coordinates[1] : null,
 
-    dailyReset: formState.dailyReset,
-    timeZone: formState.timeZone,
+    daily_reset: formState.daily_reset,
+    time_zone: formState.time_zone,
 
     newImageFile: formState.newImageFile,
     operatingHours: formState.operatingHours,
 
     links: formState.doorways.map(i => ({
-      id: i.linkId,
-      doorwayId: i.id,
-      sensorPlacement: i.sensorPlacement,
+      id: i.link_id,
+      doorway_id: i.id,
+      sensor_placement: i.sensor_placement,
       operationToPerform: i.operationToPerform,
       updateHistoricCounts: i.updateHistoricCounts,
     })),
 
-    inheritsTimeSegments: !formState.overrideDefault,
+    inherits_time_segments: !formState.overrideDefault,
   };
 }
 
@@ -345,7 +346,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       view: 'LOADING_INITIAL',
       error: null,
       formParentSpaceId: action.parentSpaceId,
-      formSpaceType: action.spaceType,
+      formSpaceType: action.space_type,
       spaces: { ...state.spaces, selected: null },
     };
 
@@ -356,7 +357,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       error: null,
       spaces: {
         ...state.spaces,
-        selected: action.spaceId,
+        selected: action.space_id,
       },
       formParentSpaceId: null,
       formSpaceType: null,
@@ -371,16 +372,16 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       error: null,
     };
 
-  // Keep a copy of `sizeAreaDisplayUnit` in this reducer as it is needed when calculating the
+  // Keep a copy of `size_area_display_unit` in this reducer as it is needed when calculating the
   // initial form state.
   case USER_SET: {
-    const user = objectSnakeToCamel<DensityUser>(action.data);
-    return { ...state, userDataSizeAreaDisplayUnit: user.sizeAreaDisplayUnit };
+    const user = action.data as CoreUser;
+    return { ...state, userDataSizeAreaDisplayUnit: user.size_area_display_unit };
   }
   case USER_PUSH: {
-    const user = objectSnakeToCamel(action.data);
-    if (user.sizeAreaDisplayUnit) {
-      return { ...state, userDataSizeAreaDisplayUnit: user.sizeAreaDisplayUnit };
+    const user = action.item as CoreUser;
+    if (user.size_area_display_unit) {
+      return { ...state, userDataSizeAreaDisplayUnit: user.size_area_display_unit };
     } else {
       return state;
     }
@@ -398,7 +399,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       view: 'VISIBLE',
       spaces: {
         ...state.spaces,
-        data: action.spaces.map(s => objectSnakeToCamel<DensitySpace>(s)),
+        data: action.spaces as Array<CoreSpace>,
       },
       doorways: action.doorways,
       spaceHierarchy: action.hierarchy,
@@ -427,7 +428,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
         // Update existing items
         ...state.doorways.map((item: any) => {
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel<DensityDoorway>(action.item)};
+            return {...item, ...action.item as CoreDoorway};
           } else {
             return item;
           }
@@ -436,7 +437,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
         // Add new items
         ...(
           state.doorways.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel<DensityDoorway>(action.item)] :
+            [action.item as CoreDoorway] :
             []
         ),
       ],
@@ -467,10 +468,10 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
   case SPACE_MANAGEMENT_DELETE_DOORWAY:
     return {
       ...state,
-      doorways: state.doorways.filter((item: DensityDoorway) => action.doorwayId !== item.id),
+      doorways: state.doorways.filter((item: CoreDoorway) => action.doorway_id !== item.id),
       formState: {
         ...state.formState,
-        doorways: state.formState.doorways.filter(item => action.doorwayId !== item.id),
+        doorways: state.formState.doorways.filter(item => action.doorway_id !== item.id),
       },
     };
 
@@ -498,7 +499,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
             ...action.doorway,
             list: 'BOTTOM',
             selected: true,
-            sensorPlacement: action.sensorPlacement,
+            sensor_placement: action.sensor_placement,
             initialSensorPlacement: null
           }
         ]

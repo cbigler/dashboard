@@ -16,7 +16,7 @@ export default async function createReport(dispatch) {
   const newReport: AnalyticsReport = {
     id: uuid.v4(),
     name: 'Untitled Report',
-    creatorEmail: '',
+    creator_email: '',
     query: {
       dateRange: DATE_RANGES.LAST_WEEK,
       interval: QueryInterval.ONE_HOUR,

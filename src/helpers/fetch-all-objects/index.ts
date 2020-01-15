@@ -1,5 +1,4 @@
 import fetchAllPages from '../fetch-all-pages/index';
-import objectSnakeToCamel from '../object-snake-to-camel/index';
 import core from '../../client/core';
 
 const CACHE = {};
@@ -52,7 +51,7 @@ export default async function fetchAllObjects<T = any>(
     }
   }
 
-  return responseData.map(i => typeof i === 'object' ? objectSnakeToCamel<T>(i) : i);
+  return responseData as Array<T>;
 }
 
 export async function fetchObject<T = any>(
@@ -86,5 +85,5 @@ export async function fetchObject<T = any>(
     }
   }
 
-  return typeof response.data === 'object' ? objectSnakeToCamel<T>(response.data) : response.data;
+  return response.data as T;
 }

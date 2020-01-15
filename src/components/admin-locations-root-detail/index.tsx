@@ -58,16 +58,16 @@ export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }
   const topLevelSpaceIds = [
     null,
     ...spaces.data.filter(space => (
-      space.parentId === null || // parent id is null, or
-      !spaces.data.find(s => s.id === space.parentId) // parent id is a space that's unknown
+      space.parent_id === null || // parent id is null, or
+      !spaces.data.find(s => s.id === space.parent_id) // parent id is a space that's unknown
     )).map(s => s.id),
   ];
   const visibleSpaces = spaces.data.filter(
-    s => selectedSpace ? (s.parentId === selectedSpace.id) : topLevelSpaceIds.includes(s.id)
+    s => selectedSpace ? (s.parent_id === selectedSpace.id) : topLevelSpaceIds.includes(s.id)
   );
-  const campuses = visibleSpaces.filter(space => space.spaceType === 'campus');
-  const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parentId === campus.id));
-  const buildingsNotInCampus = visibleSpaces.filter(space => space.spaceType === 'building');
+  const campuses = visibleSpaces.filter(space => space.space_type === 'campus');
+  const spacesInEachCampus = campuses.map(campus => spaces.data.filter(space => space.parent_id === campus.id));
+  const buildingsNotInCampus = visibleSpaces.filter(space => space.space_type === 'building');
 
   return (
     <div className={styles.wrapper}>
@@ -84,7 +84,7 @@ export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }
             <AdminLocationsSubheader
               title={campus.name}
               subtitle={campus.address}
-              spaceId={campus.id}
+              space_id={campus.id}
             />
             <SpaceList user={user} spaces={spaces} renderedSpaces={spacesInEachCampus[index]} />
           </div>

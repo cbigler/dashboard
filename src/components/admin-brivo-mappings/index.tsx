@@ -37,16 +37,16 @@ import IntegrationsStore from '../../rx-stores/integrations';
 
 
 function doorwayForBrivoAccessPoint(accessPoint, doorways, doorwayMappings) {
-    const mapping = doorwayMappings.find(x => x.serviceDoorwayId === accessPoint.id.toString());
+    const mapping = doorwayMappings.find(x => x.service_doorway_id === accessPoint.id.toString());
     if (mapping) {
-        return doorways.find(x => x.id === mapping.doorwayId) || null;
+        return doorways.find(x => x.id === mapping.doorway_id) || null;
     }
     return null;
 }
 
 function AdminBrivoMappingsAddSite({activeModal, brivo}) {
     const [ids, setIds] = useState([] as Any<FixInRefactor>);
-    const unAddedSites = brivo.sites.filter(x => !x.eventSubscriptionId);
+    const unAddedSites = brivo.sites.filter(x => !x.event_subscription_id);
 
     const dispatch = useRxDispatch();
 
@@ -125,7 +125,7 @@ function AdminBrivoDoorwayMappingsDestroy({activeModal, doorwayMapping}) {
     </Modal>;
 }
 
-function AdminBrivoSiteEventSubscriptionDestroy({activeModal, siteId, eventSubscriptionId}) {
+function AdminBrivoSiteEventSubscriptionDestroy({activeModal, siteId, event_subscription_id}) {
     const dispatch = useRxDispatch();
 
     return <Modal width={480} visible={activeModal.visible}>
@@ -144,7 +144,7 @@ function AdminBrivoSiteEventSubscriptionDestroy({activeModal, siteId, eventSubsc
                 <Button type={'danger'}
                     onClick={async () => {
                     try {
-                        await core().delete(`/integrations/brivo/sites/${siteId}/event_subscription/${eventSubscriptionId}/`)
+                        await core().delete(`/integrations/brivo/sites/${siteId}/event_subscription/${event_subscription_id}/`)
                     } catch {
                         // ...
                     }
@@ -163,7 +163,7 @@ function AdminBrivoSiteEventSubscriptionDestroy({activeModal, siteId, eventSubsc
 function AdminBrivoMappingsCreateUpdate({activeModal, brivo, integrations}) {
     const [id, setId] = useState(null as Any<FixInRefactor>);
     const unmappedDoorways = brivo.doorways.filter(x => (
-        !brivo.doorwayMappings.find(y => y.doorwayId === x.id)
+        !brivo.doorwayMappings.find(y => y.doorway_id === x.id)
     ));
     
     const dispatch = useRxDispatch();
@@ -209,9 +209,9 @@ function AdminBrivoMappingsCreateUpdate({activeModal, brivo, integrations}) {
                         dispatch({
                             type: 'BRIVO_ASSIGN_DOORWAY',
                             id: response.data['id'],
-                            doorwayId: response.data['doorway_id'],
-                            serviceDoorwayId: activeModal.data.accessPoint.id.toString(),
-                            serviceId: response.data['service_id'],
+                            doorway_id: response.data['doorway_id'],
+                            service_doorway_id: activeModal.data.accessPoint.id.toString(),
+                            service_id: response.data['service_id'],
                         } as Any<FixInRefactor>);
                     } catch {
                         // ...
@@ -231,14 +231,14 @@ export default function AdminBrivoMappings () {
     const integrations = useRxStore(IntegrationsStore);
     const brivo = useRxStore(BrivoStore);
 
-    const addedSites = brivo.sites.filter(x => !!x.eventSubscriptionId);
+    const addedSites = brivo.sites.filter(x => !!x.event_subscription_id);
   
     return <Fragment>
 
     {activeModal.name === 'brivo-site-add' ? <AdminBrivoMappingsAddSite activeModal={activeModal} brivo={brivo} /> : null}
     {activeModal.name === 'brivo-mappings-create-update' ? <AdminBrivoMappingsCreateUpdate activeModal={activeModal} brivo={brivo} integrations={integrations} /> : null}
     {activeModal.name === 'brivo-doorway-mappings-destroy' ? <AdminBrivoDoorwayMappingsDestroy activeModal={activeModal} doorwayMapping={activeModal.data.doorwayMapping}/> : null}
-    {activeModal.name === 'brivo-site-destroy' ? <AdminBrivoSiteEventSubscriptionDestroy activeModal={activeModal} eventSubscriptionId={activeModal.data.site.eventSubscriptionId} siteId={activeModal.data.site.id}/> : null}
+    {activeModal.name === 'brivo-site-destroy' ? <AdminBrivoSiteEventSubscriptionDestroy activeModal={activeModal} event_subscription_id={activeModal.data.site.event_subscription_id} siteId={activeModal.data.site.id}/> : null}
 
 
     <Toaster />
@@ -308,7 +308,7 @@ export default function AdminBrivoMappings () {
                                     id=""
                                     width={40}
                                     template={accessPoint => {
-                                        const doorwayMapping = brivo.doorwayMappings.find(x => x.serviceDoorwayId === accessPoint.id.toString());
+                                        const doorwayMapping = brivo.doorwayMappings.find(x => x.service_doorway_id === accessPoint.id.toString());
                                         return doorwayMapping ? <ListViewClickableLink onClick={() => showModal(dispatch, 'brivo-doorway-mappings-destroy', {doorwayMapping})}>
                                                     <Icons.LinkBroken color={colorVariables.grayDarker} />
                                                 </ListViewClickableLink> : null;

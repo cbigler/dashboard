@@ -12,9 +12,8 @@ import { createTestStore, createTestActionStream } from '../../helpers/test-util
 
 import { analyticsReducer } from '.';
 import { registerSideEffects } from './effects';
-import { DensitySpaceFunction } from '../../types';
+import { CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import { TimeFilter } from '../../types/datetime';
-import { initialState } from '.';
 
 
 describe('AnalyticsStore', () => {
@@ -67,7 +66,7 @@ describe('AnalyticsStore', () => {
       selections: [{
         type: QuerySelectionType.SPACE,
         field: 'function',
-        values: [DensitySpaceFunction.CAFE],
+        values: [CoreSpaceFunction.CAFE],
       }]
     })
     
@@ -95,7 +94,7 @@ describe('AnalyticsStore', () => {
       selections: [{
         type: QuerySelectionType.SPACE,
         field: 'function',
-        values: [DensitySpaceFunction.CAFE],
+        values: [CoreSpaceFunction.CAFE],
       }]
     })
 

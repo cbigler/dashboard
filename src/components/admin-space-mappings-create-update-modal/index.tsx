@@ -18,7 +18,7 @@ export default class SpaceMappingsCreateUpdateModal extends React.Component<any,
   constructor(props){
     super(props);
     this.state = {
-      serviceSpaceId: this.props.initialServiceSpaceId,
+      service_space_id: this.props.initialServiceSpaceId,
     };
   }
 
@@ -38,10 +38,10 @@ export default class SpaceMappingsCreateUpdateModal extends React.Component<any,
         <div className={styles.spaceMappingsWrapper}>
           <AdminServiceSpaceRadioList
             serviceSpaces={this.props.serviceSpaces}
-            value={this.state.serviceSpaceId}
-            onChange={serviceSpaceId => {
+            value={this.state.service_space_id}
+            onChange={service_space_id => {
               this.setState({
-                serviceSpaceId: serviceSpaceId
+                service_space_id: service_space_id
               })
             }}
          />
@@ -55,11 +55,11 @@ export default class SpaceMappingsCreateUpdateModal extends React.Component<any,
                 <Button
                   variant="filled"
                   type="primary"
-                  disabled={this.state.serviceSpaceId === null}
+                  disabled={this.state.service_space_id === null}
                   onClick={() => this.props.onSubmit({
-                    serviceSpaceId: this.state.serviceSpaceId,
-                    spaceId: this.props.space.id,
-                    serviceId: this.props.service.id,
+                    service_space_id: this.state.service_space_id,
+                    space_id: this.props.space.id,
+                    service_id: this.props.service.id,
                   })}
                 >Save</Button>
               </ButtonGroup>

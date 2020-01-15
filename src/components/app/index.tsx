@@ -40,14 +40,14 @@ import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal
 import ActivePageStore, { ActivePageState } from '../../rx-stores/active-page';
 import { getUserOrgSettings } from '../../helpers/legacy';
 import { ImpersonateState } from '../../types/impersonate';
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 const App: React.FunctionComponent<{
   activePage: ActivePageState,
   activeModal: ActiveModalState,
   impersonate: ImpersonateState,
   user: UserState,
-  settings: DensityUser['organization']['settings']
+  settings: CoreUser['organization']['settings']
 }> = function App({
   activePage,
   activeModal,
@@ -136,7 +136,7 @@ function ActivePage({activePage, user, settings}) {
   case "ADMIN_USER_MANAGEMENT_DETAIL":
     return <AdminUserManagementDetail />;
   case "LIVE_SPACE_LIST":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <LiveSpaceList />;
+    return stringToBoolean(settings.insights_page_locked) ? null : <LiveSpaceList />;
   case "LIVE_SPACE_DETAIL":
     return <LiveSpaceDetail />;
   case "SPACES":
@@ -145,7 +145,7 @@ function ActivePage({activePage, user, settings}) {
   case "SPACES_SPACE_DAILY":
   case "SPACES_SPACE_DATA_EXPORT":
   case "SPACES_SPACE_MEETINGS":
-    return stringToBoolean(settings.insightsPageLocked) ? null : <Spaces />;
+    return stringToBoolean(settings.insights_page_locked) ? null : <Spaces />;
   case "ACCOUNT":
     return <Account />;
   case "ACCOUNT_REGISTRATION":

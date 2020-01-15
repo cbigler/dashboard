@@ -21,7 +21,7 @@ import filterCollection from '../../helpers/filter-collection/index';
 import { IntercomAPI } from 'react-intercom';
 
 
-const sensorsFilter = filterCollection({ fields: ['serialNumber', 'doorwayName'] });
+const sensorsFilter = filterCollection({ fields: ['serial_number', 'doorway_name'] });
 
 function getStatusColor(status) {
   switch (status) {
@@ -59,8 +59,8 @@ export function NetworkAddressElement({
   item,
   networkInterface,
 }) {
-  if (item.networkAddresses) {
-    let networks = item.networkAddresses.filter(na => na.if === networkInterface);
+  if (item.network_addresses) {
+    let networks = item.network_addresses.filter(na => na.if === networkInterface);
     if (networks.length > 0) {
       return (
         <div key={networks[0].if}>
@@ -123,11 +123,11 @@ export function AdminDeviceStatus({
     {lowPowerAlert}
     <AppScrollView backgroundColor={colorVariables.grayLightest}>
       <div className={styles.adminDeviceList}>
-        <ListView keyTemplate={item => item.serialNumber} data={sortedSensors}>
+        <ListView keyTemplate={item => item.serial_number} data={sortedSensors}>
           <ListViewColumn
             id="Serial number"
             width={160}
-            template={item => <strong>{item.serialNumber}</strong>} />
+            template={item => <strong>{item.serial_number}</strong>} />
           <ListViewColumn
             id="Status"
             width={128}
@@ -137,19 +137,19 @@ export function AdminDeviceStatus({
           <ListViewColumn
             id="Last heartbeat"
             width={146}
-            template={item => moment(item.lastHeartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
+            template={item => moment(item.last_heartbeat).format("MMM\u00a0D,\u00a0h:mma")} />
           <ListViewColumnSpacer />
           <ListViewColumn
             id="Doorway"
             width={320}
-            template={item => item.doorwayName} />
+            template={item => item.doorway_name} />
           <ListViewColumn
             id="Space(s)"
             width={360}
             template={item => spaces.data.filter(space => {
               return space.doorways.map(doorway => {
                 return doorway.id
-              }).includes(item.doorwayId)
+              }).includes(item.doorway_id)
             }).map(space => {
               return <div style={{ marginRight: 10 }} key={space.id}>{space.name}</div>
             })} />

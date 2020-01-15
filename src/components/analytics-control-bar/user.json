@@ -1,22 +1,22 @@
 {
   "id": "usr_123",
   "email": "user@example.com",
-  "fullName": "Test User",
+  "full_name": "Test User",
   "organization": {
     "id": "org_123",
     "name": "Test Org",
-    "forceSsoLogin": false,
-    "settings": { "analyticsEnabled": "true" }
+    "force_sso_login": false,
+    "settings": { "analytics_enabled": "true" }
   },
-  "isDemo": false,
-  "coreConsent": true,
-  "marketingConsent": true,
+  "is_demo": false,
+  "core_consent": true,
+  "marketing_consent": true,
   "role": "readonly",
-  "lastLogin": null,
-  "invitationStatus": "accepted",
-  "createdAt": "2019-01-01",
+  "last_login": null,
+  "invitation_status": "accepted",
+  "created_at": "2019-01-01",
   "permissions": ["core_read", "core_write"],
   "spaces": [],
-  "sizeAreaDisplayUnit": "square_feet",
-  "isEditable": true
+  "size_area_display_unit": "square_feet",
+  "is_editable": true
 }

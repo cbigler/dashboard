@@ -37,7 +37,7 @@ import {
 } from '../admin-locations-snippets';
 
 export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace, spaceManagement }) {
-  const visibleSpaces = spaces.data.filter(s => s.parentId === (selectedSpace ? selectedSpace.id : null));
+  const visibleSpaces = spaces.data.filter(s => s.parent_id === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
   return (
@@ -56,7 +56,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
             <div className={styles.leftPaneMap}>
               <AdminLocationsSpaceMap
                 readonly={true}
-                spaceType={selectedSpace.spaceType}
+                space_type={selectedSpace.space_type}
                 address={selectedSpace.address}
                 coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
               />

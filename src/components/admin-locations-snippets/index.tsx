@@ -8,7 +8,8 @@ import colorVariables from '@density/ui/variables/colors.json';
 import styles from './styles.module.scss';
 
 import { SpacesState } from '../../rx-stores/spaces';
-import { DensitySpace, DensitySpaceTypes, DensityDoorway } from '../../types';
+import { CoreSpace, CoreSpaceType } from '@density/lib-api-types/core-v2/spaces';
+import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { UserState } from '../../rx-stores/user';
 import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET } from '@density/lib-helpers';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
@@ -52,7 +53,7 @@ export function AdminLocationsLeftPaneDataRowItem({id, label, value}) {
 Space detail snippets to render in left pane
 *********************/
 
-export function AdminLocationsDetailCapacity({space}: {space: DensitySpace}) {
+export function AdminLocationsDetailCapacity({space}: {space: CoreSpace}) {
   return <AdminLocationsLeftPaneDataRowItem
     id="capacity"
     label="Capacity:"
@@ -60,48 +61,48 @@ export function AdminLocationsDetailCapacity({space}: {space: DensitySpace}) {
   />
 }
 
-export function AdminLocationsDetailTargetCapacity({space}: {space: DensitySpace}) {
+export function AdminLocationsDetailTargetCapacity({space}: {space: CoreSpace}) {
   return <AdminLocationsLeftPaneDataRowItem
     id="target-capacity"
     label="Target capacity:"
-    value={space.targetCapacity ? commaNumber(space.targetCapacity) : <Fragment>&mdash;</Fragment>}
+    value={space.target_capacity ? commaNumber(space.target_capacity) : <Fragment>&mdash;</Fragment>}
   />;
 }
 
-export function AdminLocationsDetailDPUsTotal({space}: {space: DensitySpace}) {
+export function AdminLocationsDetailDPUsTotal({space}: {space: CoreSpace}) {
   return <AdminLocationsLeftPaneDataRowItem
     id="dpus"
     label="DPUs:"
-    value={space.sensorsTotal ? commaNumber(space.sensorsTotal) : <Fragment>&mdash;</Fragment>}
+    value={space.sensors_total ? commaNumber(space.sensors_total) : <Fragment>&mdash;</Fragment>}
   />;
 }
 
-export function sizeAreaConverted(user: UserState, space: DensitySpace) {
-  return (user.data && space.sizeArea) ? convertUnit(
-    space.sizeArea,
-    space.sizeAreaUnit || user.data.sizeAreaDisplayUnit || SQUARE_FEET,
-    user.data.sizeAreaDisplayUnit,
+export function sizeAreaConverted(user: UserState, space: CoreSpace) {
+  return (user.data && space.size_area) ? convertUnit(
+    space.size_area,
+    space.size_area_unit || user.data.size_area_display_unit || SQUARE_FEET,
+    user.data.size_area_display_unit,
   ) : null;
 }
 
-export function AdminLocationsDetailSizeArea({user, space}: {user: UserState, space: DensitySpace}) {
+export function AdminLocationsDetailSizeArea({user, space}: {user: UserState, space: CoreSpace}) {
   const area = sizeAreaConverted(user, space);
 
   return <AdminLocationsLeftPaneDataRowItem
     id="size"
-    label={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
+    label={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.size_area_display_unit]}):` : null}
     value={area ? commaNumber(area) : <Fragment>&mdash;</Fragment>}
   />;
 }
 
-export function AdminLocationsDetailAnnualRent({user, space}: {user: UserState, space: DensitySpace}) {
+export function AdminLocationsDetailAnnualRent({user, space}: {user: UserState, space: CoreSpace}) {
   const area = sizeAreaConverted(user, space);
 
   return <AdminLocationsLeftPaneDataRowItem
     id="rent"
-    label={user.data ? `Annual rent (per ${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]}):` : null}
-    value={area && space.annualRent ? (
-      `$${commaNumber((Math.round(space.annualRent / area * 2) / 2).toFixed(2))}`
+    label={user.data ? `Annual rent (per ${UNIT_DISPLAY_NAMES[user.data.size_area_display_unit]}):` : null}
+    value={area && space.annual_rent ? (
+      `$${commaNumber((Math.round(space.annual_rent / area * 2) / 2).toFixed(2))}`
     ) : <Fragment>&mdash;</Fragment>}
   />;
 }
@@ -109,13 +110,13 @@ export function AdminLocationsDetailAnnualRent({user, space}: {user: UserState, 
 export function AdminLocationsDetailDescendantsTotal({
   spaces,
   space,
-  spaceType,
+  space_type,
   label,
   id,
 }: {
   spaces: SpacesState,
-  space: DensitySpace,
-  spaceType: DensitySpaceTypes,
+  space: CoreSpace,
+  space_type: CoreSpaceType,
   label: string,
   id: string,
 
@@ -125,25 +126,25 @@ export function AdminLocationsDetailDescendantsTotal({
     label={label}
     value={
       commaNumber(spaces.data.filter(x => (
-        x.spaceType === spaceType && x.ancestry.map(a => a.id).includes(space.id)
+        x.space_type === space_type && x.ancestry.map(a => a.id).includes(space.id)
       )).length)
     }
   />;
 }
 
-export function AdminLocationsDetailBuildingsTotal({spaces, space}: {spaces: SpacesState, space: DensitySpace}) {
+export function AdminLocationsDetailBuildingsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
-    spaces={spaces} space={space} spaceType={DensitySpaceTypes.BUILDING} label="Buildings:" id="buildings" />;
+    spaces={spaces} space={space} space_type={CoreSpaceType.BUILDING} label="Buildings:" id="buildings" />;
 }
 
-export function AdminLocationsDetailLevelsTotal({spaces, space}: {spaces: SpacesState, space: DensitySpace}) {
+export function AdminLocationsDetailLevelsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
-    spaces={spaces} space={space} spaceType={DensitySpaceTypes.FLOOR} label="Floors:" id="floors" />;
+    spaces={spaces} space={space} space_type={CoreSpaceType.FLOOR} label="Floors:" id="floors" />;
 }
 
-export function AdminLocationsDetailRoomsTotal({spaces, space}: {spaces: SpacesState, space: DensitySpace}) {
+export function AdminLocationsDetailRoomsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
-    spaces={spaces} space={space} spaceType={DensitySpaceTypes.SPACE} label="Spaces:" id="spaces" />;
+    spaces={spaces} space={space} space_type={CoreSpaceType.SPACE} label="Spaces:" id="spaces" />;
 }
 
 
@@ -155,7 +156,7 @@ export function AdminLocationsListInfo() {
   return <ListViewColumn
     id="Info"
     width={320}
-    template={(item: DensitySpace) => (
+    template={(item: CoreSpace) => (
       <Fragment>
         <AdminLocationsListViewImage space={item} />
         <span className={styles.listViewSpaceName}>{item.name}</span>
@@ -168,8 +169,8 @@ export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesState}) {
   return <ListViewColumn
     id="Floors"
     width={80}
-    template={(item: DensitySpace) => commaNumber(spaces.data.filter(
-      space => space.spaceType === DensitySpaceTypes.FLOOR && space.ancestry.map(a => a.id).includes(item.id)).length
+    template={(item: CoreSpace) => commaNumber(spaces.data.filter(
+      space => space.space_type === CoreSpaceType.FLOOR && space.ancestry.map(a => a.id).includes(item.id)).length
     )}
   />;
 }
@@ -178,17 +179,17 @@ export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesState}) {
   return <ListViewColumn
     id="Spaces"
     width={80}
-    template={(item: DensitySpace) => commaNumber(spaces.data.filter(
-      space => space.spaceType === DensitySpaceTypes.SPACE && space.ancestry.map(a => a.id).includes(item.id)).length
+    template={(item: CoreSpace) => commaNumber(spaces.data.filter(
+      space => space.space_type === CoreSpaceType.SPACE && space.ancestry.map(a => a.id).includes(item.id)).length
     )}
   />
 }
 
 export function AdminLocationsListSize({user}: {user: UserState}) {
   return <ListViewColumn
-    id={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.sizeAreaDisplayUnit]})` : null}
+    id={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.size_area_display_unit]})` : null}
     width={120}
-    template={(item: DensitySpace) => {
+    template={(item: CoreSpace) => {
       const area = sizeAreaConverted(user, item);
       return area ? commaNumber(area) : <Fragment>&mdash;</Fragment>;
     }}
@@ -199,7 +200,7 @@ export function AdminLocationsListAnnualRent() {
   return <ListViewColumn
     id="Annual rent"
     width={100}
-    template={(item: DensitySpace) => item.annualRent ? `$${commaNumber(item.annualRent)}` : <Fragment>&mdash;</Fragment>}
+    template={(item: CoreSpace) => item.annual_rent ? `$${commaNumber(item.annual_rent)}` : <Fragment>&mdash;</Fragment>}
   />;
 }
 
@@ -207,8 +208,8 @@ export function AdminLocationsListTargetCapacity() {
   return <ListViewColumn
     id="Target capacity"
     width={120}
-    template={(item: DensitySpace) => item.targetCapacity ?
-      commaNumber(item.targetCapacity) : <Fragment>&mdash;</Fragment>}
+    template={(item: CoreSpace) => item.target_capacity ?
+      commaNumber(item.target_capacity) : <Fragment>&mdash;</Fragment>}
   />;
 }
 
@@ -216,7 +217,7 @@ export function AdminLocationsListCapacity() {
   return <ListViewColumn
     id="Capacity"
     width={100}
-    template={(item: DensitySpace) => item.capacity ?
+    template={(item: CoreSpace) => item.capacity ?
       commaNumber(item.capacity) : <Fragment>&mdash;</Fragment>}
   />;
 }
@@ -225,8 +226,8 @@ export function AdminLocationsListDPUsTotal() {
   return <ListViewColumn
     id="DPUs"
     width={80}
-    template={(item: DensitySpace) => item.sensorsTotal ?
-      commaNumber(item.sensorsTotal) : <Fragment>&mdash;</Fragment>}
+    template={(item: CoreSpace) => item.sensors_total ?
+      commaNumber(item.sensors_total) : <Fragment>&mdash;</Fragment>}
   />;
 }
 
@@ -261,7 +262,7 @@ function AdminLocationsOperatingHoursSegment({segment}) {
   </div>;
 } 
 
-export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
+export function AdminLocationsOperatingHours({space}: {space: CoreSpace}) {
   const DEFAULT_OPERATING_HOURS_BY_DAY = {
     'Sunday': [{ start: '00:00:00', end: '00:00:00' }],
     'Monday': [{ start: '00:00:00', end: '00:00:00' }],
@@ -272,9 +273,9 @@ export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
     'Saturday': [{ start: '00:00:00', end: '00:00:00' }],
   };
 
-  const operatingHoursByDay = space.timeSegments.length === 0 ?
+  const operatingHoursByDay = space.time_segments.length === 0 ?
     DEFAULT_OPERATING_HOURS_BY_DAY :
-    space.timeSegments.reduce((acc, next) => {
+    space.time_segments.reduce((acc, next) => {
       next.days.forEach(day => {
         acc[day] = acc[day] || [];
         acc[day].push({ start: next.start, end: next.end });
@@ -302,7 +303,7 @@ export function AdminLocationsOperatingHours({space}: {space: DensitySpace}) {
   </AdminLocationsLeftPaneDataRow>;
 }
 
-export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: DensitySpace, doorway: DensityDoorway}) {
+export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: CoreSpace, doorway: CoreDoorway}) {
   const spacesOtherThanSelectedSpace = doorway.spaces.filter(s => s.id !== space.id);
   if (spacesOtherThanSelectedSpace.length > 1) {
     return (
@@ -356,7 +357,7 @@ export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: Dens
   }
 }
 
-export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpace, doorways: Array<DensityDoorway>}) {
+export function AdminLocationsDoorwayList({space, doorways}: {space: CoreSpace, doorways: Array<CoreDoorway>}) {
   const linkedDoorways = doorways.filter(doorway => doorway.spaces.map(s => s.id).indexOf(space.id) > -1);
   return linkedDoorways.length > 0 ? (
     <AdminLocationsLeftPaneDataRow>
@@ -369,7 +370,7 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpac
                 <div className={styles.doorwayIcon}>
                   <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
                 </div>
-                <span className={styles.doorwayName}>{item.name}</span>
+                <span className={styles.doorway_name}>{item.name}</span>
               </div>
             </Fragment>}
             width={220}
@@ -385,10 +386,10 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: DensitySpac
             template={i => {
               const link = i.spaces.find(x => x.id === space.id);
               return <Fragment>
-                {link.sensorPlacement !== null ? (
+                {link.sensor_placement !== null ? (
                   <Fragment>
                     <span className={styles.doorwayDpuPosition}>
-                      {link.sensorPlacement === 1 ? 'Inside' : 'Outside'}
+                      {link.sensor_placement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>
                 ) : (

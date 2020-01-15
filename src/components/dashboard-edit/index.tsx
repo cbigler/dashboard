@@ -85,7 +85,7 @@ export function DashboardEdit({
       <DashboardReportEditModal
         onCloseModal={onCloseModal}
         onAddReportToDashboard={report => {
-          onUpdateFormState('reportSet', [ ...dashboards.formState.reportSet, report ]);
+          onUpdateFormState('report_set', [ ...dashboards.formState.report_set, report ]);
           onCloseModal();
           mixpanelTrack('Report Added to Dashboard', {
             report_id: report.id,
@@ -162,10 +162,10 @@ export function DashboardEdit({
                     </ButtonGroup>
                   </AppBarSection>
                 )}>
-                  {dashboards.formState.reportSet.length === 0 ? (
+                  {dashboards.formState.report_set.length === 0 ? (
                     <p>There are no reports in this dashboard.</p>
                   ) : (
-                    <ListView data={dashboards.formState.reportSet}>
+                    <ListView data={dashboards.formState.report_set}>
                       <ListViewColumn
                         id="Name"
                         width={240}
@@ -196,7 +196,7 @@ export function DashboardEdit({
                           <ButtonGroup>
                             <Button
                               onClick={() => onRelativeReportMove(dashboards.formState, item, -1)}
-                              disabled={item.id === dashboards.formState.reportSet[0].id}
+                              disabled={item.id === dashboards.formState.report_set[0].id}
                               width={40}
                               height={40}
                               size="small"
@@ -205,7 +205,7 @@ export function DashboardEdit({
                             </Button>
                             <Button
                               onClick={() => onRelativeReportMove(dashboards.formState, item, 1)}
-                              disabled={item.id === dashboards.formState.reportSet[dashboards.formState.reportSet.length-1].id}
+                              disabled={item.id === dashboards.formState.report_set[dashboards.formState.report_set.length-1].id}
                               width={40}
                               height={40}
                               size="small"
@@ -283,14 +283,14 @@ const ConnectedDashboardEdit: React.FC = () => {
     dispatch(dashboardsUpdateFormState(key, value) as Any<FixInRefactor>);
   }
   const onRelativeReportMove = (formState, report, relativeMove) => {
-    const reportIndex = formState.reportSet.findIndex(r => r.id === report.id);
+    const reportIndex = formState.report_set.findIndex(r => r.id === report.id);
     if (reportIndex === -1) { return; }
 
-    const reportSet = formState.reportSet.slice();
+    const report_set = formState.report_set.slice();
     // Move the report `relativeMove` places in the report set array
-    reportSet.splice(reportIndex, 1);
-    reportSet.splice(reportIndex+relativeMove, 0, report);
-    dispatch(dashboardsUpdateFormState('reportSet', reportSet) as Any<FixInRefactor>);
+    report_set.splice(reportIndex, 1);
+    report_set.splice(reportIndex+relativeMove, 0, report);
+    dispatch(dashboardsUpdateFormState('report_set', report_set) as Any<FixInRefactor>);
   }
   const onSaveDashboard = async (dashboard) => {
     const ok = await dashboardsUpdate(dispatch, dashboard);
@@ -319,7 +319,7 @@ const ConnectedDashboardEdit: React.FC = () => {
   const onCreateReport = async (dashboardDate, dashboardWeekStart) => {
     await openReportModal(
       dispatch,
-      { name: '', type: '', settings: {}, creatorEmail: '' },
+      { name: '', type: '', settings: {}, creator_email: '' },
       PAGE_NEW_REPORT_TYPE,
       OPERATION_CREATE,
       dashboardDate,
@@ -329,7 +329,7 @@ const ConnectedDashboardEdit: React.FC = () => {
   const onAddExistingReport = async (dashboardDate, dashboardWeekStart) => {
     await openReportModal(
       dispatch,
-      { name: '', type: '', settings: {}, creatorEmail: '' },
+      { name: '', type: '', settings: {}, creator_email: '' },
       PAGE_PICK_SAVED_REPORT,
       OPERATION_CREATE,
       dashboardDate,
@@ -364,7 +364,7 @@ const ConnectedDashboardEdit: React.FC = () => {
 
     // Add report to the dashboard if it's a newly created report
     if (shouldCreateReport) {
-      dispatch(dashboardsUpdateFormState('reportSet', [...formState.reportSet, result]) as Any<FixInRefactor>);
+      dispatch(dashboardsUpdateFormState('report_set', [...formState.report_set, result]) as Any<FixInRefactor>);
     }
 
     await closeReportModal(dispatch);
@@ -377,7 +377,7 @@ const ConnectedDashboardEdit: React.FC = () => {
     showModal(dispatch, 'MODAL_CONFIRM', {
       prompt: [
         'Are you sure you want to delete this report? This will delete the report from the system',
-        `${report.dashboardCount > 1 ? ` and also remove it from ${report.dashboardCount-1} other ${report.dashboardCount-1 === 1 ? 'dashboard' : 'dashboards'}` : 'and any dashboards it is part of'}.`,
+        `${report.dashboard_count > 1 ? ` and also remove it from ${report.dashboard_count-1} other ${report.dashboard_count-1 === 1 ? 'dashboard' : 'dashboards'}` : 'and any dashboards it is part of'}.`,
       ].join(''),
       confirmText: 'Delete',
       callback: async () => {
@@ -388,8 +388,8 @@ const ConnectedDashboardEdit: React.FC = () => {
         if (ok) {
           // Remove report from dashboard locally
           dispatch(dashboardsUpdateFormState(
-            'reportSet',
-            formState.reportSet.filter(r => r.id !== report.id),
+            'report_set',
+            formState.report_set.filter(r => r.id !== report.id),
           ) as Any<FixInRefactor>);
 
           showToast(dispatch, {text: 'Successfully deleted report from dashboard.'});
@@ -404,8 +404,8 @@ const ConnectedDashboardEdit: React.FC = () => {
   const onRemoveReportFromDashboard = async (formState, report) => {
     // Only delete the link, not the report itself
     dispatch(dashboardsUpdateFormState(
-      'reportSet',
-      formState.reportSet.filter(r => r.id !== report.id),
+      'report_set',
+      formState.report_set.filter(r => r.id !== report.id),
     ) as Any<FixInRefactor>);
 
     showToast(dispatch, {text: 'Removed report from dashboard.'});

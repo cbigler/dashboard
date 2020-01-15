@@ -1,7 +1,4 @@
-import changeCase from 'change-case';
-
 import core from '../../client/core';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { DensityReport } from '../../types';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
@@ -14,14 +11,13 @@ export default async function reportCreate(dispatch, report) {
     reportResponse = await core().post('/reports', {
       name: report.name,
       type: report.type,
-      settings: Object.entries(report.settings)
-        .reduce((acc, [key, value]) => ({ ...acc, [changeCase.snake(key)]: value }), {})
+      settings: report.settings
     });
   } catch (err) {
     return null;
   }
 
-  const response = objectSnakeToCamel<DensityReport>(reportResponse.data);
+  const response = reportResponse.data as DensityReport;
 
   mixpanelTrack('Report Created', {
     report_id: response.id,

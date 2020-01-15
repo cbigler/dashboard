@@ -9,8 +9,8 @@ import { withState } from '../../helpers/storybook';
 
 
 // const MODEL_DATAPOINT: AnalyticsDatapoint = {
-//   spaceId: '123',
-//   spaceName: 'A test space',
+//   space_id: '123',
+//   space_name: 'A test space',
 //   min: 0,
 //   max: 3,
 //   entrances: 5,
@@ -28,7 +28,7 @@ import { withState } from '../../helpers/storybook';
 //   return Object.assign(
 //     {},
 //     MODEL_DATAPOINT,
-//     {spaceId: uuid()},
+//     {space_id: uuid()},
 //     overrides,
 //   );
 // }
@@ -41,14 +41,14 @@ import { withState } from '../../helpers/storybook';
 //     analyticsColorScale.reset();
 
 //       const datapoints = [
-//         makeDatapoint({ spaceName: 'Mercury', max: 4 }),
-//         makeDatapoint({ spaceName: 'Venus', max: 13 }),
-//         makeDatapoint({ spaceName: 'Earth', max: 18 }),
-//         makeDatapoint({ spaceName: 'Mars', max: 15 }),
-//         makeDatapoint({ spaceName: 'Jupiter', max: 3 }),
-//         makeDatapoint({ spaceName: 'Saturn', max: 9 }),
-//         makeDatapoint({ spaceName: 'Uranus', max: 4 }),
-//         makeDatapoint({ spaceName: 'Neptune', max: 1 }),
+//         makeDatapoint({ space_name: 'Mercury', max: 4 }),
+//         makeDatapoint({ space_name: 'Venus', max: 13 }),
+//         makeDatapoint({ space_name: 'Earth', max: 18 }),
+//         makeDatapoint({ space_name: 'Mars', max: 15 }),
+//         makeDatapoint({ space_name: 'Jupiter', max: 3 }),
+//         makeDatapoint({ space_name: 'Saturn', max: 9 }),
+//         makeDatapoint({ space_name: 'Uranus', max: 4 }),
+//         makeDatapoint({ space_name: 'Neptune', max: 1 }),
 //       ]
     
 //     return (
@@ -81,14 +81,14 @@ import { withState } from '../../helpers/storybook';
 //     analyticsColorScale.reset();
 
 //     const datapoints = [
-//       makeDatapoint({ spaceName: 'Mercury', max: 0 }),
-//       makeDatapoint({ spaceName: 'Venus', max: 0 }),
-//       makeDatapoint({ spaceName: 'Earth', max: 12 }),
-//       makeDatapoint({ spaceName: 'Mars', max: 0 }),
-//       makeDatapoint({ spaceName: 'Jupiter', max: 0 }),
-//       makeDatapoint({ spaceName: 'Saturn', max: 0 }),
-//       makeDatapoint({ spaceName: 'Uranus', max: 0 }),
-//       makeDatapoint({ spaceName: 'Neptune', max: 0 }),
+//       makeDatapoint({ space_name: 'Mercury', max: 0 }),
+//       makeDatapoint({ space_name: 'Venus', max: 0 }),
+//       makeDatapoint({ space_name: 'Earth', max: 12 }),
+//       makeDatapoint({ space_name: 'Mars', max: 0 }),
+//       makeDatapoint({ space_name: 'Jupiter', max: 0 }),
+//       makeDatapoint({ space_name: 'Saturn', max: 0 }),
+//       makeDatapoint({ space_name: 'Uranus', max: 0 }),
+//       makeDatapoint({ space_name: 'Neptune', max: 0 }),
 //     ]
 
 //     return (

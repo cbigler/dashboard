@@ -7,7 +7,7 @@ export default function AdminLocationsListViewImage({ space }) {
   return (
     <div className={styles.wrapper}>
       <ImageRetry
-        src={space.imageUrl}
+        src={space.image_url}
         alt="Space image"
         retries={5}
       />

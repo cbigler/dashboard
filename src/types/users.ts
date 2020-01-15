@@ -1,4 +1,4 @@
-import { DensityUser } from ".";
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 
 export enum UserActionTypes {
@@ -19,30 +19,30 @@ export enum UserActionTypes {
 export type UserAction = (
   { type: UserActionTypes.USER_MANAGEMENT_USERS_LOAD } |
   { type: UserActionTypes.USER_MANAGEMENT_USERS_LOAD_ONE, id } |
-  { type: UserActionTypes.USER_MANAGEMENT_USERS_SET, users: Array<DensityUser> } |
-  { type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH, user: DensityUser } |
-  { type: UserActionTypes.USER_MANAGEMENT_USERS_REMOVE, user: DensityUser } |
-  { type: UserActionTypes.USER_MANAGEMENT_USERS_INVITE_RESEND, user: DensityUser } |
-  { type: UserActionTypes.USER_MANAGEMENT_USERS_CREATE, user: DensityUser } |
+  { type: UserActionTypes.USER_MANAGEMENT_USERS_SET, users: Array<CoreUser> } |
+  { type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH, user: CoreUser } |
+  { type: UserActionTypes.USER_MANAGEMENT_USERS_REMOVE, user: CoreUser } |
+  { type: UserActionTypes.USER_MANAGEMENT_USERS_INVITE_RESEND, user: CoreUser } |
+  { type: UserActionTypes.USER_MANAGEMENT_USERS_CREATE, user: CoreUser } |
 
   { type: UserActionTypes.USER_MANAGEMENT_ERROR, error: Error } |
   { type: UserActionTypes.USER_MANAGEMENT_UPDATE_SEARCH, text: string } |
   { type: UserActionTypes.USER_MANAGEMENT_UPDATE_EDITOR, state: UserEditorState } |
-  { type: UserActionTypes.USER_MANAGEMENT_SET_EDITOR, user: DensityUser }
+  { type: UserActionTypes.USER_MANAGEMENT_SET_EDITOR, user: CoreUser }
 );
 
 
 export interface UserEditorState {
-  data?: DensityUser,
+  data?: CoreUser,
   role?: string,
   spaceFilteringActive?: boolean,
-  spaceIds?: Array<string>,
+  space_ids?: Array<string>,
 }
 
 export interface UserState {
   view: 'LOADING' | 'VISIBLE' | 'ERROR',
   error: Error | null,
-  data: Array<DensityUser>,
+  data: Array<CoreUser>,
   searchText: string,
   editor: UserEditorState,
 }

@@ -1,12 +1,12 @@
 // Make a shallow copy of space data and clean it according to new API rules
 export default function cleanSpaceData(spaceData) {
   const newSpaceData = Object.assign({}, spaceData);
-  if (newSpaceData.spaceType !== 'floor') {
-    delete newSpaceData.floorLevel;
+  if (newSpaceData.space_type !== 'floor') {
+    delete newSpaceData.floor_level;
   }
-  if (newSpaceData.spaceType !== 'building') {
-    delete newSpaceData.sizeAreaUnit;
-    delete newSpaceData.annualRent;
+  if (newSpaceData.space_type !== 'building') {
+    delete newSpaceData.size_area_unit;
+    delete newSpaceData.annual_rent;
   }
   return newSpaceData;
 }

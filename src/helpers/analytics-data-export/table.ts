@@ -8,7 +8,7 @@ import {
   formatSpaceType,
   formatSpaceFunction,
 } from '../../components/analytics-table';
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { downloadFile } from '../download-file';
 import formatMetricName from '../analytics-formatters/metric-name';
 import { TableDataItem, sum, average, getTableColumnKeys, RowData, computeTableData } from '../analytics-table';
@@ -76,12 +76,12 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
   const columnHeaders = getTableColumnKeys(selectedMetric);
   const rows: Array<RowData> = [];
   // header row (aggregations)
-  const headerRow: Omit<RowData, 'spaceId'> = {
+  const headerRow: Omit<RowData, 'space_id'> = {
     [TableColumn.SPACE_NAME]: 'Summary',
     [TableColumn.SPACE_LOCATION]: null,
     [TableColumn.SPACE_TYPE]: null,
     [TableColumn.SPACE_FUNCTION]: null,
-    [TableColumn.SPACE_CAPACITY]: sum(tableData, d => d.space.targetCapacity),
+    [TableColumn.SPACE_CAPACITY]: sum(tableData, d => d.space.target_capacity),
     
     [TableColumn.METRIC_PEAK_OCCUPANCY]: sum(tableData, d => getPeakMetricValue(d, AnalyticsFocusedMetric.MAX)),
     [TableColumn.METRIC_AVERAGE_OCCUPANCY]: sum(tableData, d => getAverageMetricValue(d, AnalyticsFocusedMetric.MAX)),
@@ -111,9 +111,9 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
     rows.push({
       [TableColumn.SPACE_NAME]: tableDataItem.space.name,
       [TableColumn.SPACE_LOCATION]: getHighestAncestorName(tableDataItem.space),
-      [TableColumn.SPACE_TYPE]: formatSpaceType(tableDataItem.space.spaceType),
+      [TableColumn.SPACE_TYPE]: formatSpaceType(tableDataItem.space.space_type),
       [TableColumn.SPACE_FUNCTION]: formatSpaceFunction(tableDataItem.space.function),
-      [TableColumn.SPACE_CAPACITY]: tableDataItem.space.targetCapacity,
+      [TableColumn.SPACE_CAPACITY]: tableDataItem.space.target_capacity,
 
       [TableColumn.METRIC_PEAK_OCCUPANCY]: getPeakMetricValue(tableDataItem, AnalyticsFocusedMetric.MAX),
       [TableColumn.METRIC_AVERAGE_OCCUPANCY]: getAverageMetricValue(tableDataItem, AnalyticsFocusedMetric.MAX),
@@ -138,7 +138,7 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
       [TableColumn.METRIC_OPPORTUNITY_COST]: withMultiplier(getInObject(tableDataItem.metricData, 'peakOpportunity'), opportunityCostPerPerson),
       [TableColumn.METRIC_AVERAGE_OPPORTUNITY_COST]: withMultiplier(withRounding(getInObject(tableDataItem.metricData, 'averageOpportunity')), opportunityCostPerPerson),
       isChecked: tableDataItem.isVisible,
-      spaceId: tableDataItem.space.id,
+      space_id: tableDataItem.space.id,
     })
   })
   return {
@@ -148,11 +148,11 @@ export function getTableValues(tableData: TableDataItem[], selectedMetric: Analy
   }
 }
 
-export function exportAnalyticsTableData(report: AnalyticsReport, spaces: DensitySpace[]) {
+export function exportAnalyticsTableData(report: AnalyticsReport, spaces: CoreSpace[]) {
   if (report.queryResult.status !== ResourceStatus.COMPLETE) return;
-  const selectedSpaces: DensitySpace[] = report.queryResult.data.selectedSpaceIds
-    .map(spaceId => spaces.find(s => s.id === spaceId))
-    .filter(space => space != null) as DensitySpace[]
+  const selectedSpaces: CoreSpace[] = report.queryResult.data.selectedSpaceIds
+    .map(space_id => spaces.find(s => s.id === space_id))
+    .filter(space => space != null) as CoreSpace[]
   const rawTableData = computeTableData(
     report.queryResult.data.metrics,
     selectedSpaces,
@@ -171,7 +171,7 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: Densit
   const fileName = `density_summary_${interval}_${metricColumnName.replace(' ', '_').toLowerCase()}_${startDate}_${endDate}.csv`;
 
   // rows that are toggled off are not included in export
-  const enabledRows = rawTableData.rows.filter(row => !report.hiddenSpaceIds.includes(row.spaceId))
+  const enabledRows = rawTableData.rows.filter(row => !report.hiddenSpaceIds.includes(row.space_id))
   
   const inputRows = [rawTableData.headerRow].concat(enabledRows);
 

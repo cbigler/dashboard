@@ -1,7 +1,6 @@
 import accounts from '../../client/accounts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import { UserActionTypes } from '../../types/users';
-import { DensityUser } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { DispatchType } from '../../types/rx-actions';
 
 export default async function collectionUsersUpdate(dispatch: DispatchType, user) {
@@ -11,7 +10,7 @@ export default async function collectionUsersUpdate(dispatch: DispatchType, user
   try {
     response = await accounts().put(`/users/${user.id}`, {
       role: user.role,
-      full_name: user.fullName,
+      full_name: user.full_name,
       email: user.email,
       spaces: user.spaces,
     });
@@ -25,7 +24,7 @@ export default async function collectionUsersUpdate(dispatch: DispatchType, user
   } else {
     dispatch({
       type: UserActionTypes.USER_MANAGEMENT_USERS_PUSH,
-      user: objectSnakeToCamel<DensityUser>(response.data),
+      user: response.data as CoreUser,
     });
     return true;
   }

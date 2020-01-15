@@ -1,4 +1,4 @@
-import { DensitySpace } from '../../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import fetchAllObjects from '../../../helpers/fetch-all-objects';
 
 import collectionSpacesError from './error';
@@ -10,7 +10,7 @@ export default async function collectionSpacesFetchAll(dispatch) {
   dispatch({ type: COLLECTION_SPACES_FETCH_ALL_START });
   let spaces;
   try {
-    spaces = await fetchAllObjects<DensitySpace>('/spaces');
+    spaces = await fetchAllObjects<CoreSpace>('/spaces');
   } catch (err) {
     dispatch(collectionSpacesError(err));
     return null;

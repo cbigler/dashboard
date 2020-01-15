@@ -1,6 +1,5 @@
 import moment from 'moment';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel/index';
 import { COLLECTION_SPACES_SET } from '../../rx-actions/collection/spaces/set';
 import { COLLECTION_SPACES_PUSH } from '../../rx-actions/collection/spaces/push';
 import { COLLECTION_SPACES_FILTER } from '../../rx-actions/collection/spaces/filter';
@@ -34,7 +33,7 @@ import { HIDE_MODAL } from '../../rx-actions/modal/hide';
 
 import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 
-import { DensitySpace } from '../../types';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import createRxStore from '..';
 
 // Store at maximum 500 events per space
@@ -47,12 +46,12 @@ const DATA_DURATION_WEEK = 'DATA_DURATION_WEEK';
 
 export type SpacesState = {
   view: 'LOADING' | 'VISIBLE' | 'ERROR',
-  data: DensitySpace[],
+  data: CoreSpace[],
   loading: boolean,
   error: unknown,
-  selected: DensitySpace['id'] | null,
+  selected: CoreSpace['id'] | null,
   filters: {
-    doorwayId: Any<FixInRefactor>,
+    doorway_id: Any<FixInRefactor>,
     search: string,
     sort: Any<FixInRefactor>,
     parent: Any<FixInRefactor>,
@@ -66,7 +65,7 @@ export type SpacesState = {
     date: Any<FixInRefactor>,
   },
   events: {
-    [spaceId: string]: Any<FixInRefactor>[]
+    [space_id: string]: Any<FixInRefactor>[]
   }
 }
 
@@ -77,7 +76,7 @@ export const initialState: SpacesState = {
   error: null,
   selected: null,
   filters: {
-    doorwayId: null,
+    doorway_id: null,
     search: '',
     sort: SORT_A_Z,
     parent: null,
@@ -108,7 +107,7 @@ function getTimeSegmentLabelForRouteChange(currentSelectedSpace, currentTimeSegm
   let timeSegmentLabel = currentTimeSegmentLabel;
   if (!currentSelectedSpace) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
-  } else if (!(currentSelectedSpace.timeSegments.map(ts => ts.label).includes(currentTimeSegmentLabel))) {
+  } else if (!(currentSelectedSpace.time_segments.map(ts => ts.label).includes(currentTimeSegmentLabel))) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
   } else if (currentTimeSegmentLabel == null) {
     timeSegmentLabel = DEFAULT_TIME_SEGMENT_LABEL;
@@ -130,7 +129,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
       ...state,
       view: 'VISIBLE',
       loading: false,
-      data: action.data.map(s => objectSnakeToCamel<DensitySpace>(s)),
+      data: action.data as Array<CoreSpace>,
       filters: {
         ...state.filters,
         // If the parent space no longer exists with the space updates, then reset it to null
@@ -148,7 +147,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.item.id === item.id) {
-            return {...item, ...objectSnakeToCamel<DensitySpace>(action.item)};
+            return {...item, ...action.item as CoreSpace};
           } else {
             return item;
           }
@@ -157,7 +156,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
         // Add new items
         ...(
           state.data.find((i: any) => i.id === action.item.id) === undefined ?
-            [objectSnakeToCamel<DensitySpace>(action.item)] :
+            [action.item as CoreSpace] :
             []
         ),
       ],
@@ -252,7 +251,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
       ...state,
       view: action.setLoading ? 'LOADING' : 'VISIBLE',
       loading: action.setLoading,
-      selected: action.spaceId,
+      selected: action.space_id,
       data: [],
     };
 
@@ -312,7 +311,7 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
         // Update existing items
         ...state.data.map((item: any) => {
           if (action.id === item.id) {
-            return {...item, currentCount: Math.max(item.currentCount + action.countChange, 0)};
+            return {...item, current_count: Math.max(item.current_count + action.countChange, 0)};
           } else {
             return item;
           }

@@ -1,15 +1,14 @@
 /* eslint-disable import/first */
 import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
-import { action } from '@storybook/addon-actions';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 import AnalyticsTable from './index';
 import { RangeType } from '../../helpers/space-time-utilities';
 import { AnalyticsFocusedMetric, ResourceStatus, SortDirection } from '../../types/analytics';
 
 import spaces from './spaces.json';
-const SPACES = spaces.map(objectSnakeToCamel);
+const SPACES = spaces as Array<CoreSpace>;
 
 function State({ initialState, children }) {
   const [state, setState] = useState(initialState);

@@ -3,7 +3,6 @@ import { getNotificationsURL } from './read';
 import { DensityNotification } from '../../types';
 import { DispatchType } from '../../types/rx-actions';
 import { AlertActionTypes } from '../../types/alerts';
-import objectSnakeToCamel from '../../helpers/object-snake-to-camel';
 
 export default async function collectionAlertsUpdate(
   dispatch: DispatchType,
@@ -15,15 +14,15 @@ export default async function collectionAlertsUpdate(
   try {
     const meta = alert.meta || {};
     response = await core().put(`${getNotificationsURL()}/${alert.id}`, {
-      space_id: alert.spaceId,
+      space_id: alert.space_id,
       enabled: alert.enabled,
-      trigger_type: alert.triggerType,
-      trigger_value: alert.triggerValue,
-      is_one_shot: alert.isOneShot,
+      trigger_type: alert.trigger_type,
+      trigger_value: alert.trigger_value,
+      is_one_shot: alert.is_one_shot,
       cooldown: alert.cooldown,
       meta: {
-        to_num: meta.toNum,
-        escalation_delta: meta.escalationDelta,
+        to_num: meta.to_num,
+        escalation_delta: meta.escalation_delta,
       },
     });
   } catch (err) {
@@ -36,7 +35,7 @@ export default async function collectionAlertsUpdate(
   } else {
     dispatch({
       type: AlertActionTypes.COLLECTION_ALERTS_PUSH,
-      alert: objectSnakeToCamel<DensityNotification>(response.data),
+      alert: response.data as DensityNotification,
     });
   }
 }

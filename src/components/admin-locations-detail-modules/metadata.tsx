@@ -38,7 +38,7 @@ function MetadataFieldRenderer({fields}) {
   );
 }
 
-export default function AdminLocationsDetailModulesMetadata({spaceType, formState, onChangeField}) {
+export default function AdminLocationsDetailModulesMetadata({space_type, formState, onChangeField}) {
   let controls = (
     <AppBarSection>
       Units:
@@ -50,17 +50,17 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
             {id: SQUARE_METERS, label: 'meters'},
           ]}
           width={130}
-          value={formState.sizeAreaUnit}
-          disabled={spaceType === 'floor' || spaceType === 'space'}
+          value={formState.size_area_unit}
+          disabled={space_type === 'floor' || space_type === 'space'}
           onChange={choice => {
-            // Convert the sizeArea when the unit is changed.
-            const sizeArea = parseFloat(formState.sizeArea);
-            if (!isNaN(sizeArea)) {
-              const converted = convertUnit(formState.sizeArea, formState.sizeAreaUnit, choice.id);
-              onChangeField('sizeArea', `${converted}`);
+            // Convert the size_area when the unit is changed.
+            const size_area = parseFloat(formState.size_area);
+            if (!isNaN(size_area)) {
+              const converted = convertUnit(formState.size_area, formState.size_area_unit, choice.id);
+              onChangeField('size_area', `${converted}`);
             }
 
-            onChangeField('sizeAreaUnit', choice.id);
+            onChangeField('size_area_unit', choice.id);
           }}
         />
       </span>
@@ -89,8 +89,8 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
             type="number"
             id="admin-locations-detail-modules-general-info-rent-annual"
             placeholder="ex. 48000"
-            value={formState.annualRent}
-            onChange={e => onChangeField('annualRent', e.target.value)}
+            value={formState.annual_rent}
+            onChange={e => onChangeField('annual_rent', e.target.value)}
             leftIcon={<span>$</span>}
             width="100%"
           />
@@ -106,8 +106,8 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
             type="number"
             id="admin-locations-detail-modules-general-info-seat-assignments"
             placeholder="ex. 80"
-            value={formState.targetCapacity}
-            onChange={e => onChangeField('targetCapacity', e.target.value)}
+            value={formState.target_capacity}
+            onChange={e => onChangeField('target_capacity', e.target.value)}
             width="100%"
           />
         }
@@ -131,15 +131,15 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
     ),
     SIZE: (
       <FormLabel
-        label={`Size (${UNIT_DISPLAY_NAMES[formState.sizeAreaUnit || SQUARE_FEET]})`}
+        label={`Size (${UNIT_DISPLAY_NAMES[formState.size_area_unit || SQUARE_FEET]})`}
         htmlFor="admin-locations-detail-modules-general-info-size"
         input={
           <InputBox
             type="number"
             placeholder="ex. 24000"
             id="admin-locations-detail-modules-general-info-size"
-            value={formState.sizeArea}
-            onChange={e => onChangeField('sizeArea', e.target.value)}
+            value={formState.size_area}
+            onChange={e => onChangeField('size_area', e.target.value)}
             width="100%"
           />
         }
@@ -172,7 +172,7 @@ export default function AdminLocationsDetailModulesMetadata({spaceType, formStat
     ],
   };
 
-  const SPACE_FIELDS = FIELDS_BY_SPACE_TYPE[spaceType] || [];
+  const SPACE_FIELDS = FIELDS_BY_SPACE_TYPE[space_type] || [];
 
   return (
     <AdminLocationsDetailModule title="Meta" actions={controls}>
