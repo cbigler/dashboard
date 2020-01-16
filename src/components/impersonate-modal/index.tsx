@@ -181,7 +181,7 @@ export default function ImpersonateModal() {
               if (e.key === 'Enter' && filteredUsers.length > 0) {
                 const user = activeModal.data.users.find(x => x.id === filteredUsers[0].id);
                 updateModal(dispatch, {selectedUser: user});
-                saveButtonRef.current && saveButtonRef.current.focus();
+                setTimeout(() => saveButtonRef.current && saveButtonRef.current.focus());
               }
             }}
             onChange={e => {
@@ -244,6 +244,7 @@ export default function ImpersonateModal() {
           <ButtonGroup>
             <Button variant="underline" onClick={() => hideModal(dispatch)}>Cancel</Button>
             <Button
+              ref={saveButtonRef}
               variant="filled"
               type="primary"
               disabled={loading || (enabled && !activeModal.data.selectedUser)}
