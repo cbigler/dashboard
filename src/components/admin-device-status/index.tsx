@@ -156,7 +156,7 @@ export function AdminDeviceStatus({
           <ListViewColumn
             id="Firmware Version"
             width={360}
-            template={item => item.firmwareVersion} />
+            template={item => item.firmware_version} />
           <ListViewColumn
             id="Ethernet"
             width={280}

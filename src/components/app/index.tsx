@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import accounts from '../../client/accounts';
 
@@ -41,6 +41,28 @@ import ActivePageStore, { ActivePageState } from '../../rx-stores/active-page';
 import { getUserOrgSettings } from '../../helpers/legacy';
 import { ImpersonateState } from '../../types/impersonate';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
+import can, { PERMISSION_CODES } from '../../helpers/permissions';
+import hideModal from '../../rx-actions/modal/hide';
+
+async function onClickImpersonate(dispatch, impersonate) {
+  const value = impersonate || impersonateDefaultState;
+  showModal(dispatch, 'MODAL_IMPERSONATE', {
+    ...value,
+    organizationFilter: '',
+    userFilter: '',
+    enabled: true
+  });
+
+  let organizations;
+  if (value.enabled) {
+    organizations = value.organizations;
+  } else {
+    organizations = (await accounts().get('/organizations')).data;
+    dispatch(impersonateSet({...value, organizations}));
+  }
+
+  updateModal(dispatch, {organizations, loading: false});
+}
 
 const App: React.FunctionComponent<{
   activePage: ActivePageState,
@@ -56,6 +78,23 @@ const App: React.FunctionComponent<{
   settings,
 }) {
   const dispatch = useRxDispatch();
+
+  useEffect(() => {
+    function shortcutHandler(e) {
+      if ((impersonate || can(user, PERMISSION_CODES.impersonate)) &&
+          (e.ctrlKey || e.metaKey) &&
+          e.key === 'i'
+      ) {
+        if (!activeModal.visible) {
+          onClickImpersonate(dispatch, impersonate);
+        } else if (activeModal.name === 'MODAL_IMPERSONATE') {
+          hideModal(dispatch);
+        }
+      }
+    }
+    window.addEventListener('keypress', shortcutHandler);
+    return () => window.removeEventListener('keypress', shortcutHandler);
+  });
 
   return (
     <div className={styles.app}>
@@ -84,25 +123,7 @@ const App: React.FunctionComponent<{
               user={user}
               settings={settings}
               impersonate={impersonate}
-              onClickImpersonate={async () => {
-                const value = impersonate || impersonateDefaultState;
-                showModal(dispatch, 'MODAL_IMPERSONATE', {
-                  ...value,
-                  organizationFilter: '',
-                  userFilter: '',
-                  enabled: true
-                });
-          
-                let organizations;
-                if (value.enabled) {
-                  organizations = value.organizations;
-                } else {
-                  organizations = (await accounts().get('/organizations')).data;
-                  dispatch(impersonateSet({...value, organizations}));
-                }
-          
-                updateModal(dispatch, {organizations, loading: false});
-              }}
+              onClickImpersonate={() => onClickImpersonate(dispatch, impersonate)}
             />;
         }
       })(activePage)}

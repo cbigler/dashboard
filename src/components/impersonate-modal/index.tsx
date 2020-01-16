@@ -35,7 +35,7 @@ import ActiveModalStore from '../../rx-stores/active-modal';
 const orgFilterHelper = filterCollection({fields: ['name']});
 const userFilterHelper = filterCollection({fields: ['email', 'full_name']});
 
-function onSelectImpersonateOrganization(dispatch, org, userInputRef) {
+function onSelectImpersonateOrganization(dispatch, org) {
   updateModal(dispatch, {
     loading: true,
     selectedOrganization: org,
@@ -47,7 +47,6 @@ function onSelectImpersonateOrganization(dispatch, org, userInputRef) {
     headers: { 'Authorization': accounts().defaults.headers.common['Authorization'] }
   }).then(response => response.json()).then(data => {
     updateModal(dispatch, {loading: false, users: data as Array<CoreUser>});
-    userInputRef.current.focus();
   });
 }
 
@@ -74,8 +73,9 @@ export default function ImpersonateModal() {
     [activeModal.visible]
   );
   
-  // Focus the "user" input ref when an org is selected
+  // Focus the "user" input and "save" button when needed
   const userInputRef = useRef<HTMLElement>();
+  const saveButtonRef = useRef<HTMLElement>();
 
   return <Modal
     width={800}
@@ -122,11 +122,9 @@ export default function ImpersonateModal() {
             value={activeModal.data.organizationFilter}
             onKeyPress={e => {
               if (e.key === 'Enter' && filteredOrgs.length > 0) {
-                onSelectImpersonateOrganization(
-                  dispatch,
-                  activeModal.data.organizations.find(x => x.id === filteredOrgs[0].id),
-                  userInputRef
-                );
+                const org = activeModal.data.organizations.find(x => x.id === filteredOrgs[0].id);
+                onSelectImpersonateOrganization(dispatch, org);
+                userInputRef.current && userInputRef.current.focus();
               }
             }}
             onChange={e => {
@@ -147,8 +145,7 @@ export default function ImpersonateModal() {
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
                 dispatch,
-                activeModal.data.organizations.find(x => x.id === item.id),
-                userInputRef
+                activeModal.data.organizations.find(x => x.id === item.id)
               )}
               template={item => <div style={{opacity: enabled ? 1.0 : 0.25}}>
                 <RadioButton
@@ -180,6 +177,13 @@ export default function ImpersonateModal() {
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             disabled={!enabled}
             value={activeModal.data.userFilter}
+            onKeyPress={e => {
+              if (e.key === 'Enter' && filteredUsers.length > 0) {
+                const user = activeModal.data.users.find(x => x.id === filteredUsers[0].id);
+                updateModal(dispatch, {selectedUser: user});
+                saveButtonRef.current && saveButtonRef.current.focus();
+              }
+            }}
             onChange={e => {
               updateModal(dispatch, {
                 organizationFilter: activeModal.data.organizationFilter,
