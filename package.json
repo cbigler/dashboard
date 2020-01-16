@@ -72,7 +72,7 @@
     "enzyme": "^3.8.0",
     "enzyme-adapter-react-16": "^1.15.1",
     "mockdate": "^2.0.5",
-    "node-sass": "^4.13.0",
+    "node-sass": "^4.13.1",
     "react-app-rewired": "^2.1.5",
     "react-docgen-typescript-loader": "^3.5.0",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
