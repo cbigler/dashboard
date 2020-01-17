@@ -1,20 +1,20 @@
 import moment from 'moment';
 
-import { COLLECTION_SPACES_SET } from '../../rx-actions/collection/spaces/set';
-import { COLLECTION_SPACES_PUSH } from '../../rx-actions/collection/spaces/push';
-import { COLLECTION_SPACES_FILTER } from '../../rx-actions/collection/spaces/filter';
-import { COLLECTION_SPACES_CREATE } from '../../rx-actions/collection/spaces/create';
-import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces/destroy';
-import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces/update';
-import { COLLECTION_SPACES_DELETE } from '../../rx-actions/collection/spaces/delete';
-import { COLLECTION_SPACES_ERROR } from '../../rx-actions/collection/spaces/error';
-import { COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE } from '../../rx-actions/collection/spaces/set-default-time-range'
+import { COLLECTION_SPACES_SET } from '../../rx-actions/collection/spaces-legacy/set';
+import { COLLECTION_SPACES_PUSH } from '../../rx-actions/collection/spaces-legacy/push';
+import { COLLECTION_SPACES_FILTER } from '../../rx-actions/collection/spaces-legacy/filter';
+import { COLLECTION_SPACES_CREATE } from '../../rx-actions/collection/spaces-legacy/create';
+import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces-legacy/destroy';
+import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-legacy/update';
+import { COLLECTION_SPACES_DELETE } from '../../rx-actions/collection/spaces-legacy/delete';
+import { COLLECTION_SPACES_ERROR } from '../../rx-actions/collection/spaces-legacy/error';
+import { COLLECTION_SPACES_SET_DEFAULT_TIME_RANGE } from '../../rx-actions/collection/spaces-legacy/set-default-time-range'
 
-import { COLLECTION_SPACES_COUNT_CHANGE } from '../../rx-actions/collection/spaces/count-change';
+import { COLLECTION_SPACES_COUNT_CHANGE } from '../../rx-actions/collection/spaces-legacy/count-change';
 import {
   COLLECTION_SPACES_SET_EVENTS,
   COLLECTION_SPACES_BATCH_SET_EVENTS,
-} from '../../rx-actions/collection/spaces/set-events';
+} from '../../rx-actions/collection/spaces-legacy/set-events';
 
 
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../rx-actions/route-transition/live-space-list';

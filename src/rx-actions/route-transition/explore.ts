@@ -1,8 +1,8 @@
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 
-import collectionSpacesSet from '../collection/spaces/set';
-import collectionSpacesError from '../collection/spaces/error';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
+import collectionSpacesError from '../collection/spaces-legacy/error';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';

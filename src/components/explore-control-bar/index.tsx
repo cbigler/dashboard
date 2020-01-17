@@ -16,7 +16,7 @@ import { isInclusivelyBeforeDay } from '@density/react-dates';
 
 import { formatForReactDates, parseISOTimeAtSpace, formatInISOTime, parseFromReactDates, getCurrentLocalTimeAtSpace, prettyPrintHoursMinutes } from '../../helpers/space-time-utilities';
 
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
 import { calculate as calculateDailyModules } from '../../rx-actions/route-transition/explore-space-daily';
 import { parseStartAndEndTimesInTimeSegment, getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';

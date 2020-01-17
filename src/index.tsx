@@ -74,9 +74,9 @@ import { AnalyticsActionType } from './rx-actions/analytics';
 import sessionTokenSet from './rx-actions/session-token/set';
 import incrementResizeCounter from './rx-actions/miscellaneous/increment-resize-counter';
 import redirectAfterLogin from './rx-actions/miscellaneous/redirect-after-login';
-import collectionSpacesSet from './rx-actions/collection/spaces/set';
-import collectionSpacesCountChange from './rx-actions/collection/spaces/count-change';
-import { collectionSpacesBatchSetEvents } from './rx-actions/collection/spaces/set-events';
+import collectionSpacesSet from './rx-actions/collection/spaces-legacy/set';
+import collectionSpacesCountChange from './rx-actions/collection/spaces-legacy/count-change';
+import { collectionSpacesBatchSetEvents } from './rx-actions/collection/spaces-legacy/set-events';
 
 import eventPusherStatusChange from './rx-actions/event-pusher/status-change';
 

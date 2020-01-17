@@ -10,7 +10,7 @@ import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/
 import SpacePicker from '../space-picker';
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
 import showModal from '../../rx-actions/modal/show';
 import updateModal from '../../rx-actions/modal/update';
 import hideModal from '../../rx-actions/modal/hide';

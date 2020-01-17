@@ -1,9 +1,9 @@
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-import collectionSpacesPush from '../collection/spaces/push';
-import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesSetEvents from '../collection/spaces/set-events';
-import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
+import collectionSpacesPush from '../collection/spaces-legacy/push';
+import collectionSpacesError from '../collection/spaces-legacy/error';
+import collectionSpacesSetEvents from '../collection/spaces-legacy/set-events';
+import collectionSpacesSetDefaultTimeRange from '../collection/spaces-legacy/set-default-time-range';
 
 import {
   getCurrentLocalTimeAtSpace,

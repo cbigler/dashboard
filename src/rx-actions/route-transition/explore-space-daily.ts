@@ -1,9 +1,9 @@
 import moment from 'moment';
 
-import collectionSpacesSet from '../collection/spaces/set';
-import collectionSpacesError from '../collection/spaces/error';
-import collectionSpacesFilter from '../collection/spaces/filter';
-import collectionSpacesSetDefaultTimeRange from '../collection/spaces/set-default-time-range';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
+import collectionSpacesError from '../collection/spaces-legacy/error';
+import collectionSpacesFilter from '../collection/spaces-legacy/filter';
+import collectionSpacesSetDefaultTimeRange from '../collection/spaces-legacy/set-default-time-range';
 
 import core from '../../client/core';
 import { getGoSlow } from '../../components/environment-switcher/index';

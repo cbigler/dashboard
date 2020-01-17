@@ -1,4 +1,4 @@
-import collectionSpacesFetchAll from '../spaces/fetch-all';
+import collectionSpacesFetchAll from '../spaces-legacy/fetch-all';
 import collectionSpaceMappingsError from './error';
 import core from '../../../client/core';
 

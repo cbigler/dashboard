@@ -2,8 +2,8 @@ import React from 'react';
 import classnames from 'classnames';
 import ErrorBar from '../error-bar/index';
 
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
-import spaceResetCount from '../../rx-actions/collection/spaces/reset-count';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
+import spaceResetCount from '../../rx-actions/collection/spaces-legacy/reset-count';
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
 

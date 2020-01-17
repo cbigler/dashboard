@@ -2,7 +2,7 @@ import React from 'react';
 
 import SetCapacityModal from '../explore-set-capacity-modal/index';
 
-import collectionSpacesUpdate from '../../rx-actions/collection/spaces/update';
+import collectionSpacesUpdate from '../../rx-actions/collection/spaces-legacy/update';
 
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';

@@ -17,7 +17,7 @@ import {
 
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
 
 import AlertPopupList from '../alert-popup-list/index';
 import ExploreSpaceDaily from '../explore-space-daily/index';

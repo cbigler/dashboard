@@ -1,5 +1,5 @@
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
-import collectionSpacesSet from '../collection/spaces/set';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import { UserActionTypes } from '../../types/users';

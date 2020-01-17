@@ -8,7 +8,7 @@ import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import { showToast } from '../../rx-actions/toasts';
-import collectionSpacesCreate from '../../rx-actions/collection/spaces/create';
+import collectionSpacesCreate from '../../rx-actions/collection/spaces-legacy/create';
 import spaceManagementReset from '../../rx-actions/space-management/reset';
 import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';

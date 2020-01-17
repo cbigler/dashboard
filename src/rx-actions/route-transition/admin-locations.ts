@@ -1,4 +1,4 @@
-import collectionSpacesSet from '../collection/spaces/set';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';

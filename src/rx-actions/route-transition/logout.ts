@@ -1,5 +1,5 @@
 import sessionTokenUnset from '../session-token/unset';
-import collectionSpacesSet from '../collection/spaces/set';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import collectionTokensSet from '../collection/tokens/set';
 import collectionWebhooksSet from '../collection/webhooks/set';

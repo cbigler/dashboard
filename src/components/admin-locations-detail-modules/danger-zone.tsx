@@ -3,7 +3,7 @@ import styles from './danger-zone.module.scss';
 
 import { Button } from '@density/ui/src';
 
-import collectionSpacesDestroy from '../../rx-actions/collection/spaces/destroy';
+import collectionSpacesDestroy from '../../rx-actions/collection/spaces-legacy/destroy';
 import showModal from '../../rx-actions/modal/show';
 import { showToast } from '../../rx-actions/toasts';
 

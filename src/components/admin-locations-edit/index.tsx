@@ -2,7 +2,7 @@ import React, { Fragment, Component } from 'react';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
-import collectionSpacesUpdate from '../../rx-actions/collection/spaces/update';
+import collectionSpacesUpdate from '../../rx-actions/collection/spaces-legacy/update';
 import { showToast } from '../../rx-actions/toasts';
 import spaceManagementReset from '../../rx-actions/space-management/reset';
 import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';

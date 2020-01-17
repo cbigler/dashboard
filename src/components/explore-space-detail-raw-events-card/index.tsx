@@ -14,7 +14,7 @@ import {
 
 import RawEventsPager from '../explore-space-detail-raw-events-pager/index';
 import { calculateDailyRawEvents, DAILY_RAW_EVENTS_PAGE_SIZE } from '../../rx-actions/route-transition/explore-space-daily';
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
 
 import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 import useRxStore from '../../helpers/use-rx-store';

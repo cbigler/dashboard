@@ -38,8 +38,8 @@ import {
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { DATE_RANGES } from '../../helpers/space-time-utilities';
 
-import collectionSpacesError from '../../rx-actions/collection/spaces/error';
-import collectionSpacesSet from '../../rx-actions/collection/spaces/set';
+import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
+import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
 import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hierarchy/set';
 import { GlobalAction } from '../../types/rx-actions';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';

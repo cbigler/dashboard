@@ -1,16 +1,13 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import fetchAllObjects from '../../../helpers/fetch-all-objects';
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
-import formatTagName from '../../../helpers/format-tag-name/index';
-
-import collectionSpacesSet from './set';
+import collectionSpacesPush from './push';
 import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
-import { showToast, hideToast } from '../../../rx-actions/toasts';
+import { showToast, hideToast } from '../../toasts';
+import formatTagName from '../../../helpers/format-tag-name/index';
 
-export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
+export const COLLECTION_SPACES_CREATE = 'COLLECTION_SPACES_CREATE';
 
 const ONE_UTC_DAY_IN_SECONDS = moment.duration('24:00:00').as('seconds');
 function convertSecondsIntoTime(seconds) {
@@ -23,11 +20,11 @@ function convertSecondsIntoTime(seconds) {
     .format('HH:mm:ss');
 }
 
-export default async function collectionSpacesUpdate(dispatch, item) {
-  dispatch({ type: COLLECTION_SPACES_UPDATE, item });
+export default async function collectionSpacesCreate(dispatch, item) {
+  dispatch({ type: COLLECTION_SPACES_CREATE, item });
 
   try {
-    await core().put(`/spaces/${item.id}`, {
+    const response = await core().post('/spaces', {
       name: item.name,
       description: item.description,
       parent_id: item.parent_id,
@@ -52,56 +49,72 @@ export default async function collectionSpacesUpdate(dispatch, item) {
     });
 
     if (item.operatingHours) {
-      await Promise.all(item.operatingHours.map(async operatingHoursItem => {
+      await Promise.all(item.operatingHours.map(operatingHoursItem => {
         switch (operatingHoursItem.operationToPerform) {
-
         case 'CREATE':
           return core().post('/time_segments', {
             label: operatingHoursItem.label,
             start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
             end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
             days: operatingHoursItem.daysAffected,
-            spaces: [ item.id ],
+            spaces: [ response.data.id ],
           });
-
         case 'UPDATE':
           return core().put(`/time_segments/${operatingHoursItem.id}`, {
             label: operatingHoursItem.label,
             start: convertSecondsIntoTime(operatingHoursItem.startTimeSeconds),
             end: convertSecondsIntoTime(operatingHoursItem.endTimeSeconds),
             days: operatingHoursItem.daysAffected,
-            // don't update `spaces`: if a time segment is linked to multiple spaces, we want to
-            // maintain those links even if it is just being updated on one space.
+            spaces: [ response.data.id ],
           });
-
         case 'DELETE':
           return core().delete(`/time_segments/${operatingHoursItem.id}`);
+        default:
+          return undefined;
+        }
+      }));
+    }
 
+    if (item.newImageFile) {
+      const id = uuid();
+      showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
+      const upload = await uploadMedia(`/uploads/space_image/${response.data.id}`, item.newImageFile);
+      await hideToast(dispatch, id);
+      if (upload instanceof Error) {
+        showToast(dispatch, {text: 'Image must be JPG or PNG', type: 'error'});
+      } else if (upload.media.length > 0) {
+        response.data.image_url = upload.media[0].signedUrl;
+      }
+    } else {
+      response.data.image_url = item.newImageData;
+    }
+
+    // When saving the space, create any links that were configured or changed in the doorways
+    // module. Note that the only thing that can happen is that new links can be created -
+    // "updating" or "deleting" isn't really relevant if the space didn't exist yet!
+    if (item.links) {
+      await Promise.all(item.links.map(async linkItem => {
+        switch (linkItem.operationToPerform) {
+        case 'CREATE':
+          return core().post('/links', {
+            space_id: response.data.id,
+            doorway_id: linkItem.doorway_id,
+            sensor_placement: linkItem.sensor_placement,
+            update_historical: linkItem.updateHistoricCounts,
+          });
         default:
           return;
         }
       }));
     }
 
-    // Upload any new image data for this space
-    // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
-    if (item.newImageFile) {
-      const id = uuid();
-      showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
-      const upload = await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
-      await hideToast(dispatch, id);
-      if (upload instanceof Error) {
-        showToast(dispatch, {text: 'Image must be JPG or PNG', type: 'error'});
-      }
-    }
-
     if (item.newTags) {
       await Promise.all(item.newTags.map(async tag => {
         const tagName = formatTagName(tag.name);
         if (tag.operationToPerform === 'CREATE') {
-          await core().post(`/spaces/${item.id}/tags`, { tag_name: tagName });
+          await core().post(`/spaces/${response.data.id}/tags`, { tag_name: tagName });
         } else if (tag.operationToPerform === 'DELETE') {
-          await core().delete(`/spaces/${item.id}/tags/${tagName}`);
+          await core().delete(`/spaces/${response.data.id}/tags/${tagName}`);
         }
       }));
     }
@@ -109,46 +122,16 @@ export default async function collectionSpacesUpdate(dispatch, item) {
     if (item.newAssignedTeams) {
       await Promise.all(item.newAssignedTeams.map(async assignedTeam => {
         if (assignedTeam.operationToPerform === 'CREATE') {
-          await core().post(`/spaces/${item.id}/assigned_teams`, { team_name: assignedTeam.name });
+          await core().post(`/spaces/${response.data.id}/assigned_teams`, { team_name: assignedTeam.name });
         } else if (assignedTeam.operationToPerform === 'DELETE') {
-          await core().delete(`/spaces/${item.id}/assigned_teams/${assignedTeam.id}`);
+          await core().delete(`/spaces/${response.data.id}/assigned_teams/${assignedTeam.id}`);
         }
       }));
     }
 
-    // When saving the space, update any links that were configured or changed in the doorways
-    // module.
-    if (item.links) {
-      await Promise.all(item.links.map(async linkItem => {
-        switch (linkItem.operationToPerform) {
-        case 'CREATE':
-          return await core().post('/links', {
-            space_id: item.id,
-            doorway_id: linkItem.doorway_id,
-            sensor_placement: linkItem.sensor_placement,
-            update_historical: linkItem.updateHistoricCounts,
-          });
-        case 'UPDATE':
-          return await core().post(`/links/${linkItem.id}/set_placement`, {
-            sensor_placement: linkItem.sensor_placement,
-            update_historical: linkItem.updateHistoricCounts,
-          });
-        case 'DELETE':
-          return await core().delete(`/links/${linkItem.id}`);
-        default:
-          return;
-        }
-      }));
-    }
-
-    // Fetch all spaces after updating this space. If we changed this space's size area unit, then
-    // the size area unit of child spaces will update too.
-    const spaces = await fetchAllObjects<CoreSpace>('/spaces');
-    dispatch(collectionSpacesSet(spaces));
-    return spaces;
-
+    dispatch(collectionSpacesPush(response.data));
+    return response.data;
   } catch (err) {
-    console.error(err);
     dispatch(collectionSpacesError(err));
     return false;
   }

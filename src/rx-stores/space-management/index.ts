@@ -17,12 +17,12 @@ import { SPACE_MANAGEMENT_SET_DOORWAYS } from '../../rx-actions/space-management
 import { SPACE_MANAGEMENT_SET_DATA } from '../../rx-actions/space-management/set-data';
 import { SPACE_MANAGEMENT_ERROR } from '../../rx-actions/space-management/error';
 import { SPACE_MANAGEMENT_RESET } from '../../rx-actions/space-management/reset';
-import { COLLECTION_SPACES_CREATE } from '../../rx-actions/collection/spaces/create';
-import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces/update';
+import { COLLECTION_SPACES_CREATE } from '../../rx-actions/collection/spaces-legacy/create';
+import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-legacy/update';
 import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../rx-actions/space-management/push-doorway';
 import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../rx-actions/space-management/delete-doorway';
 import createRxStore from '..';
-import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces/destroy';
+import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces-legacy/destroy';
 
 
 export type SpaceManagementState = {

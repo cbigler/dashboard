@@ -1,12 +1,12 @@
 import assert from 'assert';
 import { initialState, spacesReducer } from '.';
 
-import collectionSpacesSet from '../../rx-actions/collection/spaces/set';
-import collectionSpacesPush from '../../rx-actions/collection/spaces/push';
-import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
-import collectionSpacesDelete from '../../rx-actions/collection/spaces/delete';
-import collectionSpacesError from '../../rx-actions/collection/spaces/error';
-import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces/update'; 
+import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
+import collectionSpacesPush from '../../rx-actions/collection/spaces-legacy/push';
+import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
+import collectionSpacesDelete from '../../rx-actions/collection/spaces-legacy/delete';
+import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
+import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-legacy/update'; 
 
 describe('spaces', function() {
   it('should set spaces when given a bunch of spaces', function() {

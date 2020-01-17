@@ -1,5 +1,5 @@
-import collectionSpacesSet from '../collection/spaces/set';
-import collectionSpacesError from '../collection/spaces/error';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
+import collectionSpacesError from '../collection/spaces-legacy/error';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 

@@ -1,5 +1,5 @@
 import collectionAlertsRead from "../alerts/read";
-import collectionSpacesFetchAll from "../collection/spaces/fetch-all";
+import collectionSpacesFetchAll from "../collection/spaces-legacy/fetch-all";
 
 export const ROUTE_TRANSITION_ACCOUNT = 'ROUTE_TRANSITION_ACCOUNT';
 

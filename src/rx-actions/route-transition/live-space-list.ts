@@ -1,5 +1,5 @@
-import collectionSpacesSet from '../collection/spaces/set';
-import { collectionSpacesBatchSetEvents } from '../collection/spaces/set-events';
+import collectionSpacesSet from '../collection/spaces-legacy/set';
+import { collectionSpacesBatchSetEvents } from '../collection/spaces-legacy/set-events';
 
 import {
   getCurrentLocalTimeAtSpace,
