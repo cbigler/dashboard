@@ -15,7 +15,7 @@
     "@density/lib-time-helpers": "^0.1.1",
     "@density/react-dates": "^12.6.0",
     "@density/reports": "^12.1.3",
-    "@density/ui": "20.4.2",
+    "@density/ui": "20.4.4",
     "@mapbox/mapbox-gl-geocoder": "^4.5.0",
     "@material-ui/core": "^4.7.1",
     "auth0-js": "^9.12.2",
