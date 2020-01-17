@@ -3,8 +3,8 @@ import classNames from 'classnames';
 import styles from './styles.module.scss';
 import { CoreSpace, CoreSpaceType, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 
+import { ResourceStatus } from '../../types/resource';
 import {
-  ResourceStatus,
   QueryInterval,
   AnalyticsReport,
   TableColumn,

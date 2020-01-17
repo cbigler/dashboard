@@ -6,7 +6,8 @@ import * as d3Shape from 'd3-shape';
 import * as d3Array from 'd3-array';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
-import { QueryInterval, AnalyticsFocusedMetric, AnalyticsReport, ResourceStatus } from '../../types/analytics';
+import { ResourceStatus } from '../../types/resource';
+import { QueryInterval, AnalyticsFocusedMetric, AnalyticsReport } from '../../types/analytics';
 import useContainerWidth from '../../helpers/use-container-width';
 import AnalyticsLoadingBar from '../analytics-loading-bar';
 import AnalyticsLineChartTooltip from '../analytics-line-chart-tooltip';

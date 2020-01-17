@@ -3,12 +3,11 @@ import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap
 
 import { StoreSubject } from '../../rx-stores'
 import { GlobalAction } from '../../types/rx-actions'
+import { ResourceComplete, ResourceStatus } from '../../types/resource';
 import {
   AnalyticsReport,
   AnalyticsState,
   AnalyticsStateRaw,
-  ResourceComplete,
-  ResourceStatus,
 } from '../../types/analytics';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { UserState } from '../../rx-stores/user';

@@ -5,7 +5,8 @@ import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 import AnalyticsTable from './index';
 import { RangeType } from '../../helpers/space-time-utilities';
-import { AnalyticsFocusedMetric, ResourceStatus, SortDirection } from '../../types/analytics';
+import { ResourceStatus } from '../../types/resource';
+import { AnalyticsFocusedMetric } from '../../types/analytics';
 
 import spaces from './spaces.json';
 const SPACES = spaces as Array<CoreSpace>;

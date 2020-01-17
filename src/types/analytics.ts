@@ -3,6 +3,7 @@ import { DensitySpaceCountMetrics, DensityReport } from '.';
 
 import { DateRange } from '../helpers/space-time-utilities';
 import { TimeFilter } from './datetime';
+import { Resource } from './resource';
 
 
 export type AnalyticsStateRaw = {
@@ -199,27 +200,3 @@ export enum AnalyticsDataExportType {
   SUMMARY = 'Summary',
   BOTH = 'Both',
 }
-
-// REVIEW: should typings for Resource be somewhere else?
-export enum ResourceStatus {
-  IDLE = 'idle',
-  LOADING = 'loading',
-  COMPLETE = 'complete',
-  ERROR = 'error',
-}
-
-export type ResourceIdle = { status: ResourceStatus.IDLE };
-export type ResourceLoading = { status: ResourceStatus.LOADING };
-export type ResourceComplete<T> = {
-  status: ResourceStatus.COMPLETE,
-  data: T,
-};
-export type ResourceError = {
-  status: ResourceStatus.ERROR,
-  error: any,
-};
-
-export type Resource<T> = ResourceIdle | ResourceLoading | ResourceComplete<T> | ResourceError;
-
-export const RESOURCE_IDLE: ResourceIdle = { status: ResourceStatus.IDLE };
-export const RESOURCE_LOADING: ResourceLoading = { status: ResourceStatus.LOADING };

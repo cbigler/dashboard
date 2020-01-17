@@ -1,9 +1,9 @@
 import uuid from 'uuid';
 import { AnalyticsActionType } from '..';
+import { RESOURCE_IDLE } from '../../../types/resource';
 import {
   AnalyticsReport,
   AnalyticsFocusedMetric,
-  RESOURCE_IDLE,
   AnalyticsReportUnsaved,
 } from '../../../types/analytics';
 import { DispatchType } from '../../../types/rx-actions';

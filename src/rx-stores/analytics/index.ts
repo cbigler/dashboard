@@ -17,6 +17,12 @@ import {
 } from '../../types';
 import { TimeFilter } from '../../types/datetime';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
+import { 
+  ResourceStatus,
+  ResourceComplete,
+  RESOURCE_IDLE,
+  RESOURCE_LOADING,
+} from '../../types/resource';
 import {
   AnalyticsState,
   AnalyticsStateRaw,
@@ -25,10 +31,6 @@ import {
   SpaceCountQuery,
   QueryInterval,
   QuerySelectionType,
-  ResourceStatus,
-  ResourceComplete,
-  RESOURCE_IDLE,
-  RESOURCE_LOADING,
   StoredAnalyticsReport,
   AnalyticsMetrics,
   SortDirection,

@@ -1,10 +1,10 @@
 import uuid from 'uuid';
 import { AnalyticsActionType } from '..';
+import { RESOURCE_IDLE } from '../../../types/resource';
 import {
   AnalyticsReport,
   QueryInterval,
   AnalyticsFocusedMetric,
-  RESOURCE_IDLE,
 } from '../../../types/analytics'
 import { DATE_RANGES } from '../../../helpers/space-time-utilities';
 import { getDefaultColumnSortForMetric } from '../../../helpers/analytics-table';

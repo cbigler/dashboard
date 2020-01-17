@@ -2,7 +2,8 @@ import * as d3Array from 'd3-array';
 import * as d3Dsv from 'd3-dsv';
 import getInObject from 'lodash/get';
 
-import { AnalyticsFocusedMetric, AnalyticsReport, ResourceStatus, TableColumn } from "../../types/analytics";
+import { ResourceStatus } from '../../types/resource';
+import { AnalyticsFocusedMetric, AnalyticsReport, TableColumn } from '../../types/analytics';
 import {
   getHighestAncestorName,
   formatSpaceType,

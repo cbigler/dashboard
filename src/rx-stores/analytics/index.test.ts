@@ -1,7 +1,8 @@
 import { Subject } from 'rxjs';
 
 import { AnalyticsActionType } from '../../rx-actions/analytics';
-import { AnalyticsState, ResourceStatus, QuerySelectionType } from '../../types/analytics';
+import { ResourceStatus } from '../../types/resource';
+import { AnalyticsState, QuerySelectionType } from '../../types/analytics';
 import { StoreSubject } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 
@@ -129,6 +130,8 @@ describe('snapping the TimeFilter to a QueryInterval properly', () => {
         reports: [{
           id: '123',
           name: 'Some Report',
+          // TODO: figure out correct types for this
+          // @ts-ignore
           type: 'LINE_CHART',
           settings: {
             query: {

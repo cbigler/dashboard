@@ -15,8 +15,8 @@ import GenericErrorState from '../generic-error-state';
 import { CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import { CoreSpace, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
+import { ResourceStatus } from '../../types/resource';
 import {
-  ResourceStatus,
   QuerySelection,
   AnalyticsFocusedMetric,
   AnalyticsReport,
