@@ -47,7 +47,7 @@ import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import { AppFrame, AppPane } from '@density/ui/src';
 import UserStore from '../../rx-stores/user';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { AnalyticsFeatureFlagsContext } from '../../helpers/analytics-feature-flags';
@@ -133,7 +133,7 @@ function mapSpacesById(spaces: CoreSpace[]): ReadonlyMap<string, CoreSpace> {
 export default function Analytics() {
   
   const userState = useRxStore(UserStore);
-  const spacesState = useRxStore(SpacesStore);
+  const spacesState = useRxStore(SpacesLegacyStore);
   const spaceHierarchyState = useRxStore(SpaceHierarchyStore);
 
   // for now, just trying to force some basic typing here via assertion...

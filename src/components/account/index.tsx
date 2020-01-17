@@ -42,7 +42,7 @@ import alertsStore from '../../rx-stores/alerts';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import UserStore from '../../rx-stores/user';
 import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -466,7 +466,7 @@ export class Account extends React.Component<any, any> {
 const ConnectedAccount: React.FC = () => {
   const dispatch = useRxDispatch();
   const user = useRxStore(UserStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const activeModal = useRxStore(ActiveModalStore)
   const loading = user.loading;
 

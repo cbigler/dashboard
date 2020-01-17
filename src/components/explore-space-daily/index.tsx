@@ -12,7 +12,7 @@ import {
 } from '../../helpers/time-segments/index';
 import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 // import ResizeCounterStore from '../../rx-stores/resize-counter';
 
@@ -69,7 +69,7 @@ export function ExploreSpaceDailyRaw ({
 const ConnectedExploreSpaceDaily: React.FC = () => {
 
   const activeModal = useRxStore(ActiveModalStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   // const resizeCounter = useRxStore(ResizeCounterStore);
   

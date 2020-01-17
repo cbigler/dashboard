@@ -12,7 +12,7 @@ import cleanSpaceData from '../../helpers/clean-space-data';
 import spaceReportsCalculateReportData from '../../rx-actions/space-reports/calculate-report-data';
 import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceReportsStore from '../../rx-stores/space-reports';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
@@ -82,7 +82,7 @@ export function ExploreSpaceHeaderRaw({
 const ConnectedExploreSpaceHeader: React.FC = () => {
 
   const dispatch = useRxDispatch();
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const activeModal = useRxStore(ActiveModalStore);
   const spaceReports = useRxStore(SpaceReportsStore);
 

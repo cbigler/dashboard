@@ -44,7 +44,7 @@ import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hiera
 import { GlobalAction } from '../../types/rx-actions';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 import UserStore from '../user';
-import SpacesStore from '../spaces';
+import SpacesLegacyStore from '../spaces-legacy';
 import SpaceHierarchyStore from '../space-hierarchy';
 import { registerSideEffects } from './effects';
 import { serializeTimeFilter } from '../../helpers/datetime-utilities';
@@ -356,7 +356,7 @@ export default AnalyticsStore;
 const routeTransitionStream = actions.pipe(
   filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
   switchMap(() => combineLatest(
-    SpacesStore.pipe(take(1)),
+    SpacesLegacyStore.pipe(take(1)),
     SpaceHierarchyStore.pipe(take(1)),
     AnalyticsStore.pipe(take(1)),
   )),
@@ -565,12 +565,12 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
   return await Promise.all([chartDataPromise, tableDataPromise]);
 }
 
-registerSideEffects(actions, AnalyticsStore, UserStore, SpacesStore, rxDispatch, runQuery);
+registerSideEffects(actions, AnalyticsStore, UserStore, SpacesLegacyStore, rxDispatch, runQuery);
 
 
 export const activeReportDataStream = AnalyticsStore.pipe(
   switchMap(
-    () => SpacesStore.pipe(take(1)),
+    () => SpacesLegacyStore.pipe(take(1)),
     (analyticsState, spacesState) => {
       if (analyticsState.status !== ResourceStatus.COMPLETE) {
         return null;

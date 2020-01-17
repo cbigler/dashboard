@@ -32,7 +32,7 @@ import {
 import Breadcrumb from '../admin-locations-breadcrumb/index';
 import useRxStore from '../../helpers/use-rx-store';
 import UserStore from '../../rx-stores/user';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceManagementStore from '../../rx-stores/space-management';
 
 function generateCreateRoute(parent_id, type) {
@@ -279,7 +279,7 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
 const ConnectedAdminLocations: React.FC = () => {
 
   const user = useRxStore(UserStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceManagement = useRxStore(SpaceManagementStore);
 
   // FIXME: this again

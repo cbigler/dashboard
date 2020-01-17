@@ -30,7 +30,7 @@ import hideModal from '../../rx-actions/modal/hide';
 import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import IntegrationsStore from '../../rx-stores/integrations';
 
 
@@ -194,7 +194,7 @@ const ConnectedAdminSpaceMappings: React.FC = () => {
 
   const dispatch = useRxDispatch();
   const activeModal = useRxStore(ActiveModalStore)
-  const spacesState = useRxStore(SpacesStore);
+  const spacesState = useRxStore(SpacesLegacyStore);
   const integrations = useRxStore(IntegrationsStore);
 
   // FIXME: the state shape could be improved...

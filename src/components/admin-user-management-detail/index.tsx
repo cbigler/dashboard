@@ -30,7 +30,7 @@ import usersStore from '../../rx-stores/users';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import { UserActionTypes } from '../../types/users';
 import UserStore from '../../rx-stores/user';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 
 function onStartDeleteUser(dispatch, user) {
@@ -68,7 +68,7 @@ export default function AdminUserManagementDetail() {
 
   // Connect to the RxJS store and dispatch
   const users = useRxStore(usersStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const dispatch = useRxDispatch();
 
   switch (users.view) {

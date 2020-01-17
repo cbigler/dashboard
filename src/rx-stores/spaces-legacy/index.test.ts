@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { initialState, spacesReducer } from '.';
+import { initialState, spacesLegacyReducer } from '.';
 
 import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
 import collectionSpacesPush from '../../rx-actions/collection/spaces-legacy/push';
@@ -10,7 +10,7 @@ import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-leg
 
 describe('spaces', function() {
   it('should set spaces when given a bunch of spaces', function() {
-    const result = spacesReducer(initialState, collectionSpacesSet([
+    const result = spacesLegacyReducer(initialState, collectionSpacesSet([
       {id: 0, name: 'foo', current_count: 5},
       {id: 1, name: 'bar', current_count: 8},
     ]));
@@ -27,14 +27,14 @@ describe('spaces', function() {
   });
   it('should push space when given a space update', function() {
     // Add a new space.
-    const spaceInCollection = spacesReducer(initialState, collectionSpacesPush({
+    const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush({
       id: 0,
       name: 'foo',
       current_count: 4,
     }));
 
     // Update space in collection
-    const spaceUpdatedInCollection = spacesReducer(spaceInCollection, collectionSpacesPush({
+    const spaceUpdatedInCollection = spacesLegacyReducer(spaceInCollection, collectionSpacesPush({
       id: 0,
       name: 'new name',
     }));
@@ -47,7 +47,7 @@ describe('spaces', function() {
     });
   });
   it('should push space when given a new space', function() {
-    const result = spacesReducer(initialState, collectionSpacesPush({
+    const result = spacesLegacyReducer(initialState, collectionSpacesPush({
       id: 0,
       name: 'foo',
       current_count: 5,
@@ -61,7 +61,7 @@ describe('spaces', function() {
     });
   });
   it('should filter space collection when given a filter', function() {
-    const result = spacesReducer(initialState, collectionSpacesFilter('search', 'foo'));
+    const result = spacesLegacyReducer(initialState, collectionSpacesFilter('search', 'foo'));
 
     assert.deepEqual(result, {
       ...initialState,
@@ -76,32 +76,32 @@ describe('spaces', function() {
     };
 
     // Add a space, then delete a space
-    const spaceInCollection = spacesReducer(initialState, collectionSpacesPush(SPACE));
-    const result = spacesReducer(spaceInCollection, collectionSpacesDelete(SPACE));
+    const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush(SPACE));
+    const result = spacesLegacyReducer(spaceInCollection, collectionSpacesDelete(SPACE));
 
     // Initial state should then match final state.
     assert.deepEqual(result, {...initialState, view: 'VISIBLE', loading: false});
   });
   it('should set an error when an error happens', function() {
     // Add a space, then delete a space
-    const errorState = spacesReducer(initialState, collectionSpacesError('boom!'));
+    const errorState = spacesLegacyReducer(initialState, collectionSpacesError('boom!'));
 
     // Initial state should then match final state.
     assert.deepEqual(errorState, {...initialState, error: 'boom!', view: 'ERROR', loading: false});
   });
   it('should clear an error and start loading when an async operation starts.', function() {
     // Add an error to the state.
-    const errorState = spacesReducer(initialState, collectionSpacesError('boom!'));
+    const errorState = spacesLegacyReducer(initialState, collectionSpacesError('boom!'));
 
     // Then, update a space.
-    const state = spacesReducer(errorState, {type: COLLECTION_SPACES_UPDATE});
+    const state = spacesLegacyReducer(errorState, {type: COLLECTION_SPACES_UPDATE});
 
     // Initial state should then have error: null
     assert.deepEqual(state, {...initialState, error: null, loading: true});
   });
   it('should clear the parent space filter on set if the parent space was deleted', function() {
     // Set two spaces
-    const resulta = spacesReducer(initialState, collectionSpacesSet([
+    const resulta = spacesLegacyReducer(initialState, collectionSpacesSet([
       {id: 0, name: 'foo', current_count: 5},
       {id: 1, name: 'bar', current_count: 8},
     ]));
@@ -110,7 +110,7 @@ describe('spaces', function() {
     initialState.filters.parent = 1;
 
     // Set one space
-    const resultb = spacesReducer(resulta, collectionSpacesSet([
+    const resultb = spacesLegacyReducer(resulta, collectionSpacesSet([
       {id: 0, name: 'foo', current_count: 5},
     ]));
 

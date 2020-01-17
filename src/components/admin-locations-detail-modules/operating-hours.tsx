@@ -43,7 +43,7 @@ import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import UserStore from '../../rx-stores/user';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 
 
@@ -554,7 +554,7 @@ const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefa
 
   const dispatch = useRxDispatch();
   const user = useRxStore(UserStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
   const spaceManagement = useRxStore(SpaceManagementStore);

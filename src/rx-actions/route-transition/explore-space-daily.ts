@@ -24,7 +24,7 @@ import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments/index';
 import collectionSpaceHierarchySet from '../collection/space-hierarchy/set';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 import collectionAlertsRead from '../alerts/read';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 
 export const ROUTE_TRANSITION_EXPLORE_SPACE_DAILY = 'ROUTE_TRANSITION_EXPLORE_SPACE_DAILY';
 
@@ -55,7 +55,7 @@ export default async function routeTransitionExploreSpaceDaily(dispatch, id) {
   dispatch(collectionSpacesSetDefaultTimeRange(selectedSpace));
 
   // FIXME: yikes
-  let spacesState = SpacesStore.imperativelyGetValue();
+  let spacesState = SpacesLegacyStore.imperativelyGetValue();
   dispatch(collectionSpacesFilter('date', spacesState.filters.date));
 
   await calculate(dispatch, selectedSpace);
@@ -70,7 +70,7 @@ export async function calculateFootTraffic(dispatch, space) {
   // Mark the foot traffic card as in a loading state
   dispatch(exploreDataCalculateDataLoading('footTraffic', null));
 
-  const spaces = SpacesStore.imperativelyGetValue();
+  const spaces = SpacesLegacyStore.imperativelyGetValue();
   const {
     date,
     timeSegmentLabel,
@@ -109,7 +109,7 @@ export async function calculateDailyRawEvents(dispatch, space) {
   // Mark the foot traffic card as in a loading state
   dispatch(exploreDataCalculateDataLoading('dailyRawEvents', null));
 
-  const spaces = SpacesStore.imperativelyGetValue();
+  const spaces = SpacesLegacyStore.imperativelyGetValue();
   const {
     date,
     dailyRawEventsPage,

@@ -24,7 +24,7 @@ import { isDocumentHidden } from '../../helpers/visibility-change';
 import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import EventPusherStatusStore from '../../rx-stores/event-pusher-status';
 const spaceFilter = filterCollection({fields: ['name']});
 
@@ -141,7 +141,7 @@ const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
 
   const dispatch = useRxDispatch();
   const activeModal = useRxStore(ActiveModalStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const eventPusherStatus = useRxStore(EventPusherStatusStore);
 
   const onResetSpace = async (space, newCount) => {

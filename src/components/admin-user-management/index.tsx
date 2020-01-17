@@ -46,7 +46,7 @@ import usersStore from '../../rx-stores/users';
 import FormLabel from '../form-label';
 import UserStore from '../../rx-stores/user';
 import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import ResizeCounterStore from '../../rx-stores/resize-counter';
 
@@ -375,7 +375,7 @@ function AdminUserManagementInfo({width=400, anchor='left', children }: AdminUse
 const ConnectedAdminUserManagement: React.FC = () => {
   
   const user = useRxStore(UserStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
   const resizeCounter = useRxStore(ResizeCounterStore);

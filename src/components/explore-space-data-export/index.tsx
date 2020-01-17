@@ -8,7 +8,7 @@ import RawEventsExportCard from '../explore-space-detail-raw-events-export-card/
 // import collectionSpacesFilter from '../../rx-actions/collection/spaces/filter';
 import useRxStore from '../../helpers/use-rx-store';
 // import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 // import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 function ExploreSpaceDataExportRaw({
@@ -42,7 +42,7 @@ function ExploreSpaceDataExportRaw({
 const ConnectedExploreSpaceDataExport: React.FC<Any<FixInRefactor>> = (connectedProps) => {
 
   // const dispatch = useRxDispatch();
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   // const activeModal = useRxStore(ActiveModalStore);
 
   // FIXME: the spaces store should handle this one too

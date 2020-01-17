@@ -44,7 +44,7 @@ const DATA_DURATION_WEEK = 'DATA_DURATION_WEEK';
       // DATA_DURATION_MONTH = 'DATA_DURATION_MONTH';
 
 
-export type SpacesState = {
+export type SpacesLegacyState = {
   view: 'LOADING' | 'VISIBLE' | 'ERROR',
   data: CoreSpace[],
   loading: boolean,
@@ -69,7 +69,7 @@ export type SpacesState = {
   }
 }
 
-export const initialState: SpacesState = {
+export const initialState: SpacesLegacyState = {
   view: 'LOADING',
   data: [],
   loading: true,
@@ -116,7 +116,7 @@ function getTimeSegmentLabelForRouteChange(currentSelectedSpace, currentTimeSegm
 }
 
 // FIXME: action should be GlobalAction
-export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): SpacesState {
+export function spacesLegacyReducer(state: SpacesLegacyState, action: Any<FixInRefactor>): SpacesLegacyState {
   var currentSelectedSpace: any,
       timeSegmentLabel: any,
       newTimeSegmentLabel: any;
@@ -333,5 +333,5 @@ export function spacesReducer(state: SpacesState, action: Any<FixInRefactor>): S
   }
 }
 
-const SpacesStore = createRxStore('SpacesStore', initialState, spacesReducer);
-export default SpacesStore;
+const SpacesLegacyStore = createRxStore('SpacesLegacyStore', initialState, spacesLegacyReducer);
+export default SpacesLegacyStore;

@@ -14,7 +14,7 @@ import {
 } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import useRxStore from '../../helpers/use-rx-store';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SensorsStore from '../../rx-stores/sensors';
 import filterCollection from '../../helpers/filter-collection/index';
 // @ts-ignore
@@ -176,7 +176,7 @@ export function AdminDeviceStatus({
 
 const ConnectedAdminDeviceStatus: React.FC = () => {
 
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const sensors = useRxStore(SensorsStore);
 
   return (

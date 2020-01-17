@@ -11,7 +11,7 @@ import {
 } from '../../types/analytics';
 import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { UserState } from '../../rx-stores/user';
-import { SpacesState } from '../spaces';
+import { SpacesLegacyState } from '../spaces-legacy';
 import { isQueryRunnable, realizeSpacesFromQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { realizeDateRange, getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
@@ -30,7 +30,7 @@ export function registerSideEffects(
   actionStream: Subject<GlobalAction>,
   analyticsStore: StoreSubject<AnalyticsState>,
   userStore: StoreSubject<UserState>,
-  spacesStore: StoreSubject<SpacesState>,
+  spacesStore: StoreSubject<SpacesLegacyState>,
   dispatch: (action: GlobalAction) => void,
   runQuery: RunQueryFunction,
 ) {
@@ -79,7 +79,7 @@ export function registerSideEffects(
     }),
     filter(([activeReport, userState, spacesState]) => typeof activeReport !== 'undefined'),
     map(([activeReport, userState, spacesState]) => {
-      return [activeReport as AnalyticsReport, userState as UserState, spacesState as SpacesState] as const
+      return [activeReport as AnalyticsReport, userState as UserState, spacesState as SpacesLegacyState] as const
     }),
 
     // REVIEW: do we need this? what does it do?

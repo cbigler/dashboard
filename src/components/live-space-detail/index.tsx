@@ -10,7 +10,7 @@ import styles from './styles.module.scss';
 import RealTimeCountFn from '@density/chart-real-time-count';
 import autoRefresh from '../../helpers/auto-refresh-hoc/index';
 import useRxStore from '../../helpers/use-rx-store';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 const RealTimeCountChart = chartAsReactComponent(RealTimeCountFn);
 
 export function LiveSpaceDetail({
@@ -79,7 +79,7 @@ const AutoRefreshedLiveSpaceDetail = autoRefresh({
 // FIXME: are there any actual external props needed?
 const ConnectedAutoRefreshedLiveSpaceDetail: React.FC<Any<FixInRefactor>> = (externalProps) => {
 
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
 
   // FIXME: this again
   const space = spaces.data.find(s => s.id === spaces.selected);

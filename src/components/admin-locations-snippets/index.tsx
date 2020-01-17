@@ -7,7 +7,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
 
-import { SpacesState } from '../../rx-stores/spaces';
+import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 import { CoreSpace, CoreSpaceType } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { UserState } from '../../rx-stores/user';
@@ -114,7 +114,7 @@ export function AdminLocationsDetailDescendantsTotal({
   label,
   id,
 }: {
-  spaces: SpacesState,
+  spaces: SpacesLegacyState,
   space: CoreSpace,
   space_type: CoreSpaceType,
   label: string,
@@ -132,17 +132,17 @@ export function AdminLocationsDetailDescendantsTotal({
   />;
 }
 
-export function AdminLocationsDetailBuildingsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
+export function AdminLocationsDetailBuildingsTotal({spaces, space}: {spaces: SpacesLegacyState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
     spaces={spaces} space={space} space_type={CoreSpaceType.BUILDING} label="Buildings:" id="buildings" />;
 }
 
-export function AdminLocationsDetailLevelsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
+export function AdminLocationsDetailLevelsTotal({spaces, space}: {spaces: SpacesLegacyState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
     spaces={spaces} space={space} space_type={CoreSpaceType.FLOOR} label="Floors:" id="floors" />;
 }
 
-export function AdminLocationsDetailRoomsTotal({spaces, space}: {spaces: SpacesState, space: CoreSpace}) {
+export function AdminLocationsDetailRoomsTotal({spaces, space}: {spaces: SpacesLegacyState, space: CoreSpace}) {
   return <AdminLocationsDetailDescendantsTotal
     spaces={spaces} space={space} space_type={CoreSpaceType.SPACE} label="Spaces:" id="spaces" />;
 }
@@ -165,7 +165,7 @@ export function AdminLocationsListInfo() {
   />;
 }
 
-export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesState}) {
+export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesLegacyState}) {
   return <ListViewColumn
     id="Floors"
     width={80}
@@ -175,7 +175,7 @@ export function AdminLocationsListLevelsTotal({spaces}: {spaces: SpacesState}) {
   />;
 }
 
-export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesState}) {
+export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesLegacyState}) {
   return <ListViewColumn
     id="Spaces"
     width={80}

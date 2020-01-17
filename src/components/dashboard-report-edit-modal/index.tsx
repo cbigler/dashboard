@@ -66,7 +66,7 @@ import UserStore from '../../rx-stores/user';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import DashboardsStore from '../../rx-stores/dashboards';
 import MiscellaneousStore from '../../rx-stores/miscellaneous';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import { sanitizeReportSettings } from '../../helpers/casing';
 
@@ -999,7 +999,7 @@ const ConnectedDashboardReportEditModal: React.FC<Any<FixInRefactor>> = (externa
   const dispatch = useRxDispatch();
 
   const user = useRxStore(UserStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
   const dashboards = useRxStore(DashboardsStore);

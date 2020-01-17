@@ -20,7 +20,7 @@ import { parseISOTimeAtSpace } from '../../helpers/space-time-utilities/index';
 import useRxStore from '../../helpers/use-rx-store';
 import ExploreDataStore from '../../rx-stores/explore-data';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 
 export const LOADING = 'LOADING',
       EMPTY = 'EMPTY',
@@ -106,7 +106,7 @@ export function ExploreSpaceDetailRawEventsCardRaw({
 const ConnectedExploreSpaceDetailRawEventsCard: React.FC<Any<FixInRefactor>> = (externalProps) => {
   
   const dispatch = useRxDispatch();
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const exploreData = useRxStore(ExploreDataStore);
 
   const calculatedData = exploreData.calculations.dailyRawEvents;

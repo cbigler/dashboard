@@ -9,7 +9,7 @@ import { showToast } from '../../rx-actions/toasts';
 
 import AdminLocationsDetailModule from './index';
 import useRxStore from '../../helpers/use-rx-store';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceManagementStore from '../../rx-stores/space-management';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
@@ -36,7 +36,7 @@ function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShow
 const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
   
   const dispatch = useRxDispatch();
-  const spaces = useRxStore(SpacesStore)
+  const spaces = useRxStore(SpacesLegacyStore)
   const spaceManagement = useRxStore(SpaceManagementStore);
 
   // FIXME: this seems like a dubious way to juggle across stores...

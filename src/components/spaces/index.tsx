@@ -37,7 +37,7 @@ import useRxStore from '../../helpers/use-rx-store';
 import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import ActivePageStore from '../../rx-stores/active-page';
-import SpacesStore from '../../rx-stores/spaces';
+import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
 import SpaceReportsStore from '../../rx-stores/space-reports';
 import UserStore from '../../rx-stores/user';
@@ -284,7 +284,7 @@ const ConnectedSpaces: React.FC = () => {
   const dispatch = useRxDispatch();
   const activePage = useRxStore(ActivePageStore);
   const activeModal = useRxStore(ActiveModalStore);
-  const spaces = useRxStore(SpacesStore);
+  const spaces = useRxStore(SpacesLegacyStore);
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const spaceReports = useRxStore(SpaceReportsStore);
   const user = useRxStore(UserStore);
