@@ -19,6 +19,9 @@ export function IntercomDensity() {
       name: user.data.full_name,
       organization_id: user.data.organization.id,
       organization_name: user.data.organization.name,
+      marketing_consent: user.data.marketing_consent,
+      core_consent: user.data.core_consent,
+      role: user.data.role,
     }
   }
   if (process.env.REACT_APP_INTERCOM_APP_ID && notImpersonating) {
@@ -30,7 +33,7 @@ export function IntercomDensity() {
       <Fragment />
     )
   }
-  
+
 }
 
 export default IntercomDensity;
