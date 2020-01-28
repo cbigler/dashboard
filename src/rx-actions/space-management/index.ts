@@ -1,8 +1,12 @@
 import formUpdate from './form-update';
+import formDoorwayUpdate from './form-doorway-update';
+import formDoorwayPush from './form-doorway-push';
 
 
 const spaceManagementActions = {
     formUpdate,
+    formDoorwayUpdate,
+    formDoorwayPush,
 }
 
 
