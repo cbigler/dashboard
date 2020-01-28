@@ -23,6 +23,7 @@ import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../rx-actions/space-management
 import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../rx-actions/space-management/delete-doorway';
 import createRxStore from '..';
 import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces-legacy/destroy';
+import { GlobalAction } from '../../types/rx-actions';
 
 
 export type SpaceManagementState = {
@@ -328,8 +329,8 @@ export function convertFormStateToSpaceFields(
   };
 }
 
-// FIXME: action should be GlobalAction
-export function spaceManagementReducer(state: SpaceManagementState, action: Any<FixInRefactor>): SpaceManagementState {
+
+export function spaceManagementReducer(state: SpaceManagementState, action: GlobalAction): SpaceManagementState {
   switch (action.type) {
 
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:
@@ -485,7 +486,10 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
   case SPACE_MANAGEMENT_FORM_UPDATE:
     return {
       ...state,
-      formState: { ...state.formState, [action.key]: action.value },
+      formState: {
+        ...state.formState,
+        [action.key]: action.value,
+      },
     };
 
   case SPACE_MANAGEMENT_FORM_DOORWAY_PUSH:
