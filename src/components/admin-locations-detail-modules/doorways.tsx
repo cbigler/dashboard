@@ -31,9 +31,9 @@ import { fileToDataURI } from '../../helpers/media-files';
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
 import updateModal from '../../rx-actions/modal/update';
-import spaceManagementCreateDoorway from '../../rx-actions/space-management/create-doorway';
-import spaceManagementUpdateDoorway from '../../rx-actions/space-management/update-doorway';
-import spaceManagementDeleteDoorway from '../../rx-actions/space-management/delete-doorway';
+import spaceManagementCreateDoorway from '../../rx-actions/space-management/operations/create-doorway';
+import spaceManagementUpdateDoorway from '../../rx-actions/space-management/operations/update-doorway';
+import spaceManagementDeleteDoorway from '../../rx-actions/space-management/operations/delete-doorway';
 
 import {
   DOORWAY_ICON,

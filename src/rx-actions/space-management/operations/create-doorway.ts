@@ -1,6 +1,6 @@
-import { showToast } from '../../rx-actions/toasts';
-import pushDoorway from './push-doorway';
-import core from '../../client/core';
+import { showToast } from '../../../rx-actions/toasts';
+import pushDoorway from '../push-doorway';
+import core from '../../../client/core';
 
 import { uploadDoorwayImages } from './update-doorway';
 

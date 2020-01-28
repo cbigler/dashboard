@@ -2,7 +2,7 @@ import moment from 'moment';
 
 import { SQUARE_FEET } from '@density/lib-helpers';
 import { CoreSpaceTimeSegment, CoreSpace } from '@density/lib-api-types/core-v2/spaces';
-import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
+import { CoreDoorway, CoreDoorwaySpace } from '@density/lib-api-types/core-v2/doorways';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
@@ -20,10 +20,10 @@ import { SPACE_MANAGEMENT_RESET } from '../../rx-actions/space-management/reset'
 import { COLLECTION_SPACES_CREATE } from '../../rx-actions/collection/spaces-legacy/create';
 import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-legacy/update';
 import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../rx-actions/space-management/push-doorway';
-import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../rx-actions/space-management/delete-doorway';
 import createRxStore from '..';
 import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces-legacy/destroy';
 import { GlobalAction } from '../../types/rx-actions';
+import { SPACE_MANAGEMENT_DOORWAY_DELETED } from '../../rx-actions/space-management/doorway-deleted';
 
 
 export type SpaceManagementState = {
@@ -33,7 +33,7 @@ export type SpaceManagementState = {
     data: CoreSpace[],
     selected: null | string,
   },
-  doorways: Any<FixInRefactor>[],
+  doorways: CoreDoorway[],
   spaceHierarchy: Any<FixInRefactor>,
   operatingHoursLabels: Any<FixInRefactor>[],
   
@@ -130,7 +130,7 @@ export type DoorwayItem = {
   outside_image_url: string | null,
 }
 
-function makeDoorwayItemFromDensityDoorway(space_id: string | null, doorway: CoreDoorway, initialSensorPlacement=null): DoorwayItem {
+function makeDoorwayItemFromDensityDoorway(space_id: string | null, doorway: CoreDoorway, initialSensorPlacement: CoreDoorwaySpace['sensor_placement'] | null = null): DoorwayItem {
   const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === space_id) : null;
   const sensor_placement = linkedToSpace ? linkedToSpace.sensor_placement : initialSensorPlacement;
   return {
@@ -413,7 +413,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Glob
   // adds the doorway both to the doroways collection as well as to the doorway item list in the
   // formState.
   case SPACE_MANAGEMENT_PUSH_DOORWAY:
-    const newDoorwayItem = {
+    const newDoorwayItem: DoorwayItem = {
       ...makeDoorwayItemFromDensityDoorway(
         state.spaces.selected,
         action.item,
@@ -466,7 +466,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Glob
 
   // Called when the doorway modal deletes a doorway, removing it from both the doorways list and
   // the formState
-  case SPACE_MANAGEMENT_DELETE_DOORWAY:
+  case SPACE_MANAGEMENT_DOORWAY_DELETED:
     return {
       ...state,
       doorways: state.doorways.filter((item: CoreDoorway) => action.doorway_id !== item.id),
@@ -480,7 +480,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Glob
     return {
       ...state,
       view: 'ERROR',
-      error: action.error.message || action.error,
+      error: action.error instanceof Error ? action.error.message : action.error,
     };
 
   case SPACE_MANAGEMENT_FORM_UPDATE:

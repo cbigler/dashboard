@@ -1,14 +1,14 @@
 import uuid from 'uuid';
 
-import { showToast, hideToast } from '../../rx-actions/toasts';
-import hideModal from '../modal/hide';
-import pushDoorway from './push-doorway';
-import formDoorwayUpdate from './form-doorway-update';
+import { showToast, hideToast } from '../../../rx-actions/toasts';
+import hideModal from '../../modal/hide';
+import pushDoorway from '../push-doorway';
+import formDoorwayUpdate from '../form-doorway-update';
 
-import core from '../../client/core';
-import uploadMedia from '../../helpers/media-files';
+import core from '../../../client/core';
+import uploadMedia from '../../../helpers/media-files';
+import { DoorwayItem } from '../../../rx-stores/space-management';
 
-export const SPACE_MANAGEMENT_UPDATE_DOORWAY = 'SPACE_MANAGEMENT_UPDATE_DOORWAY';
 
 export async function uploadDoorwayImages(dispatch, doorway_id, item) {
   // Check inside and outside image url, upload them to the doorway if they are newly added
@@ -60,7 +60,7 @@ export async function uploadDoorwayImages(dispatch, doorway_id, item) {
   return true;
 }
 
-export default async function spaceManagementUpdateDoorway(dispatch, item) {
+export default async function spaceManagementUpdateDoorway(dispatch, item: DoorwayItem) {
   let response;
   try {
     response = await core().put(`/doorways/${item.id}`, {
