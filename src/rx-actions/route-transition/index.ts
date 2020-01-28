@@ -1,4 +1,4 @@
-import { ActionTypesOf } from '../space-management';
+import { ActionTypesOf } from '../../types/rx-actions';
 import {
   adminLocations,
   adminLocationsNew,

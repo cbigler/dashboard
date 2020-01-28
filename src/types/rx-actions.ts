@@ -23,3 +23,6 @@ export type GlobalAction =
 ;
 
 export type DispatchType = (action: GlobalAction) => void;
+
+export type ValuesOf<T> = T[keyof T]
+export type ActionTypesOf<T extends any> = ReturnType<ValuesOf<T>>

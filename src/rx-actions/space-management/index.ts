@@ -7,6 +7,7 @@ import pushDoorway from './push-doorway';
 import reset from './reset';
 import setData from './set-data';
 import setDoorways from './set-doorways';
+import { ActionTypesOf } from '../../types/rx-actions';
 
 
 export const spaceManagementActions = {
@@ -20,10 +21,5 @@ export const spaceManagementActions = {
     setData,
     setDoorways,
 }
-
-
-// FIXME: temporary duplication, delete me once new abstractions are brought in
-export type ValuesOf<T> = T[keyof T]
-export type ActionTypesOf<T extends any> = ReturnType<ValuesOf<T>>
 
 export type SpaceManagementAction = ActionTypesOf<typeof spaceManagementActions>
