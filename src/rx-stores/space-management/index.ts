@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { SQUARE_FEET } from '@density/lib-helpers';
+import { INCHES, CENTIMETERS, SQUARE_FEET } from '@density/lib-helpers';
 import { CoreSpaceTimeSegment, CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway, CoreDoorwaySpace } from '@density/lib-api-types/core-v2/doorways';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
@@ -116,7 +116,7 @@ export type DoorwayItem = {
   spaces: CoreDoorway["spaces"],
   list: 'TOP' | 'BOTTOM',
   selected: boolean,
-  sensor_placement: number | null,
+  sensor_placement: CoreDoorwaySpace['sensor_placement'] | null,
   updateHistoricCounts: boolean,
   initialSensorPlacement: number | null,
   link_id: string | null,
@@ -124,15 +124,26 @@ export type DoorwayItem = {
   linkExistsOnServer: boolean,
   height: string | null,
   width: string | null,
+  measurementUnit: typeof INCHES | typeof CENTIMETERS | null,
   clearance: boolean | null,
   power_type: 'POWER_OVER_ETHERNET' | 'AC_OUTLET' | null,
   inside_image_url: string | null,
   outside_image_url: string | null,
 }
 
+function getMeasurementUnitFromDoorway(doorway: CoreDoorway): DoorwayItem['measurementUnit'] {
+  if (!doorway.environment) return null;
+  if (!doorway.environment.measurement_unit) return null;
+  const unitString = doorway.environment.measurement_unit;
+  if (unitString === INCHES) return INCHES;
+  if (unitString === CENTIMETERS) return CENTIMETERS;
+  return null;
+}
+
 function makeDoorwayItemFromDensityDoorway(space_id: string | null, doorway: CoreDoorway, initialSensorPlacement: CoreDoorwaySpace['sensor_placement'] | null = null): DoorwayItem {
   const linkedToSpace = doorway.spaces ? doorway.spaces.find(x => x.id === space_id) : null;
   const sensor_placement = linkedToSpace ? linkedToSpace.sensor_placement : initialSensorPlacement;
+
   return {
     id: doorway.id,
     name: doorway.name,
@@ -140,6 +151,7 @@ function makeDoorwayItemFromDensityDoorway(space_id: string | null, doorway: Cor
 
     height: doorway.environment && doorway.environment.height ? `${doorway.environment.height}` : null,
     width: doorway.environment && doorway.environment.width ? `${doorway.environment.width}` : null,
+    measurementUnit: getMeasurementUnitFromDoorway(doorway),
     clearance: doorway.environment ? doorway.environment.clearance : null,
     power_type: doorway.environment ? doorway.environment.power_type : null,
     inside_image_url: doorway.environment ? doorway.environment.inside_image_url : null,
