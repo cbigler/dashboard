@@ -516,7 +516,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Acti
         doorways: [
           ...state.formState.doorways,
           {
-            ...action.doorway,
+            ...makeDoorwayItemFromDensityDoorway(state.spaces.selected, action.doorway),
             list: 'BOTTOM',
             selected: true,
             sensor_placement: action.sensor_placement,
