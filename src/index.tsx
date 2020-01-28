@@ -11,7 +11,7 @@ import accounts from './client/accounts';
 import ReactGA from 'react-ga';
 import queryString from 'qs';
 
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreSpace, CoreSpaceType } from '@density/lib-api-types/core-v2/spaces';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 // Import @density/ui package for font
@@ -210,10 +210,10 @@ router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManag
 router.addRoute('admin/developer', () => routeTransitionAdminDeveloper(rxDispatch));
 router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus(rxDispatch));
 router.addRoute('admin/locations', () => routeTransitionAdminLocations(rxDispatch, null));
-router.addRoute('admin/locations/create/:space_type', (space_type) => routeTransitionAdminLocationsNew(rxDispatch, null, space_type));
+router.addRoute('admin/locations/create/:space_type', (space_type) => routeTransitionAdminLocationsNew(rxDispatch, null, space_type as CoreSpaceType));
 router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDispatch, id));
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
-router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
+router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type as CoreSpaceType));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
 
 // FIXME: why can't this just use state management? why is this on window?
