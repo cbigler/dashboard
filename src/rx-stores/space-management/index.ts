@@ -341,8 +341,12 @@ export function convertFormStateToSpaceFields(
   };
 }
 
+// HACK: tricking the compiler temporarily here
+type Action = GlobalAction | {
+  type: typeof COLLECTION_SPACES_CREATE | typeof COLLECTION_SPACES_UPDATE | typeof COLLECTION_SPACES_DESTROY,
+}
 
-export function spaceManagementReducer(state: SpaceManagementState, action: GlobalAction): SpaceManagementState {
+export function spaceManagementReducer(state: SpaceManagementState, action: Action): SpaceManagementState {
   switch (action.type) {
 
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:
