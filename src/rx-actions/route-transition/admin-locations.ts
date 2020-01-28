@@ -7,7 +7,7 @@ import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import spaceManagementSetDoorways from '../space-management/set-doorways';
 import spaceManagementError from '../space-management/error';
 
-export const ROUTE_TRANSITION_ADMIN_LOCATIONS = 'ROUTE_TRANSITION_ADMIN_LOCATIONS';
+export const ROUTE_TRANSITION_ADMIN_LOCATIONS = 'ROUTE_TRANSITION_ADMIN_LOCATIONS' as const;
 
 export async function loadData(dispatch) {
   let spaces: Array<CoreSpace>,

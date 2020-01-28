@@ -7,6 +7,7 @@ import { SessionTokenAction } from './session-token';
 import { ImpersonateAction } from './impersonate';
 import { AccountAction } from './account';
 import { SpaceManagementAction } from '../rx-actions/space-management';
+import { RouteTransitionAction } from '../rx-actions/route-transition';
 
 export type GlobalAction =
   | AccountAction
@@ -14,6 +15,7 @@ export type GlobalAction =
   | AnalyticsAction
   | ImpersonateAction
   | ReduxAction
+  | RouteTransitionAction
   | SessionTokenAction
   | SpaceManagementAction
   | UserManagementAction

@@ -9,7 +9,7 @@ import spaceManagementError from '../space-management/error';
 import collectionTagsSet from '../collection/tags/set';
 import collectionAssignedTeamsSet from '../collection/assigned-teams/set';
 
-export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT';
+export const ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT = 'ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT' as const;
 
 export async function loadData(dispatch) {
   let hierarchy: Array<CoreSpaceHierarchyNode>,
