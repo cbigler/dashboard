@@ -388,11 +388,11 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Glob
   // Keep a copy of `size_area_display_unit` in this reducer as it is needed when calculating the
   // initial form state.
   case USER_SET: {
-    const user = action.data as CoreUser;
+    const user = action.data;
     return { ...state, userDataSizeAreaDisplayUnit: user.size_area_display_unit };
   }
   case USER_PUSH: {
-    const user = action.item as CoreUser;
+    const user = action.item;
     if (user.size_area_display_unit) {
       return { ...state, userDataSizeAreaDisplayUnit: user.size_area_display_unit };
     } else {

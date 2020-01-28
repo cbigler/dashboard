@@ -26,8 +26,8 @@ import FormLabel from '../form-label/index';
 import ErrorBar from '../error-bar/index';
 import InputBoxInfo from '../input-box-info';
 
-import userResetPassword from '../../rx-actions/user/reset-password';
-import userUpdate from '../../rx-actions/user/update';
+import userResetPassword from '../../rx-actions/user/operations/reset-password';
+import userUpdate from '../../rx-actions/user/operations/update';
 
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';

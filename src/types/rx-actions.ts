@@ -1,7 +1,8 @@
 import { AnalyticsAction } from '../rx-actions/analytics';
 import { ReduxAction } from './redux';
 import { AlertAction } from './alerts';
-import { UserAction } from './users';
+import { UserAction } from '../rx-actions/user';
+import { UserAction as UserManagementAction } from './users';
 import { SessionTokenAction } from './session-token';
 import { ImpersonateAction } from './impersonate';
 import { AccountAction } from './account';
@@ -15,6 +16,7 @@ export type GlobalAction =
   | ReduxAction
   | SessionTokenAction
   | SpaceManagementAction
+  | UserManagementAction
   | UserAction
 ;
 

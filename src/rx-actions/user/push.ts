@@ -1,5 +1,10 @@
-export const USER_PUSH = 'USER_PUSH';
+import { CoreUser } from "@density/lib-api-types/core-v2/users";
 
-export default function userPush(item) {
-  return { type: USER_PUSH, item };
+export const USER_PUSH = 'USER_PUSH' as const;
+
+export default function userPush(item: CoreUser) {
+  return {
+    type: USER_PUSH,
+    item,
+  };
 }

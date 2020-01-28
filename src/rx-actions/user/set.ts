@@ -1,5 +1,10 @@
-export const USER_SET = 'USER_SET';
+import { CoreUser } from "@density/lib-api-types/core-v2/users";
 
-export default function userSet(data) {
-  return { type: USER_SET, data };
+export const USER_SET = 'USER_SET' as const;
+
+export default function userSet(data: CoreUser) {
+  return {
+    type: USER_SET,
+    data,
+  };
 }
