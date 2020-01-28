@@ -399,7 +399,7 @@ export function spaceManagementReducer(state: SpaceManagementState, action: Any<
       view: 'VISIBLE',
       spaces: {
         ...state.spaces,
-        data: action.spaces as Array<CoreSpace>,
+        data: action.spaces,
       },
       doorways: action.doorways,
       spaceHierarchy: action.hierarchy,
