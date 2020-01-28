@@ -3,7 +3,6 @@ import moment from 'moment';
 import { INCHES, CENTIMETERS, SQUARE_FEET } from '@density/lib-helpers';
 import { CoreSpaceTimeSegment, CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway, CoreDoorwaySpace } from '@density/lib-api-types/core-v2/doorways';
-import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';

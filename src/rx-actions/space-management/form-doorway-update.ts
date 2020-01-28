@@ -1,5 +1,5 @@
 import { CoreDoorway } from "@density/lib-api-types/core-v2/doorways";
-import { SpaceManagementState, DoorwayItem } from "../../rx-stores/space-management";
+import { DoorwayItem } from "../../rx-stores/space-management";
 
 export const SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE = 'SPACE_MANAGEMENT_FORM_DOORWAY_UPDATE' as const;
 
