@@ -116,7 +116,7 @@ export default function ImpersonateModal() {
           </AppBarSection>
           <AppBarSection>
             <div className={styles.impersonateStatusLabel}>
-              Hide Organization:
+              Hide Details:
             </div>
             <Switch
               value={hidden}
