@@ -56,6 +56,7 @@ export default function ImpersonateModal() {
 
   const loading = !!activeModal.data.loading;
   const enabled = !!activeModal.data.enabled;
+  const hidden = !!activeModal.data.hidden;
 
   const filteredOrgs = orgFilterHelper(
     activeModal.data.organizations,
@@ -110,7 +111,22 @@ export default function ImpersonateModal() {
         borderRight: `1px solid ${colorVariables.grayLight}`
       }}>
         <AppBar>
-          <span style={{fontSize: 20}}>Organization</span>
+          <AppBarSection>
+            <span style={{fontSize: 20}}>Organization</span>
+          </AppBarSection>
+          <AppBarSection>
+            <div className={styles.impersonateStatusLabel}>
+              Hide Organization:
+            </div>
+            <Switch
+              value={hidden}
+              onChange={event => {
+                updateModal(dispatch, {
+                  hidden: event.target.checked,
+                });
+              }}
+            />
+          </AppBarSection>
         </AppBar>
         <AppBar>
           <InputBox
