@@ -3,6 +3,9 @@
 
 $appNavbarHeight: 40px;
 
+// Navbar Layout
+// -------------------------------------------
+
 .appNavbarContainer {
   flex-direction: row;
   justify-content: flex-start;
@@ -51,6 +54,25 @@ $appNavbarHeight: 40px;
   align-items: center;
 }
 
+// Navbar Logo
+// -------------------------------------------
+
+.appNavbarLogo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  width: 26px;
+  margin-right: 16px;
+  margin-left: 8px;
+  background-color: $grayCinder;
+  border-radius: 4px;
+}
+
+
+// Navbar Items
+// -------------------------------------------
+
 .appNavbarItem {
   display: none;
   user-select: none;
@@ -92,7 +114,11 @@ $appNavbarHeight: 40px;
   }
 }
 
-.appNavbarIcon { padding-right: 8px; }
+.appNavbarIcon {
+  display: flex;
+  align-items: center;
+  padding-right: 8px;
+}
 
 
 // Dropdown menu

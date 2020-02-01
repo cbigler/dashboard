@@ -89,6 +89,7 @@ function AppNavbarItem({
   style = {},
   path = undefined as string | undefined,
   onClick = undefined as ((event: any) => void) | undefined,
+  newTab = false,
   hideOnDesktop = false
 }) {
   return (
@@ -99,8 +100,8 @@ function AppNavbarItem({
         [styles.hideOnDesktop]: hideOnDesktop
       })}
       style={style}
-    >
-      <a href={path} onClick={onClick}>
+    > 
+      <a href={path} onClick={onClick} target={newTab ? "_blank" : ""}>
         {icon ? <span className={styles.appNavbarIcon}>
           {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
         </span> : null}
@@ -130,15 +131,8 @@ export default function AppNavbar({
     <div className={styles.appNavbarContainer}>
       <div className={styles.appNavbar}>
         <ul className={styles.appNavbarLeft}>
-          <div style={{
-            margin: '0 16px 0 8px',
-            padding: '8px 7px',
-            borderRadius: '2px',
-            display: 'flex',
-            alignItems: 'center',
-            backgroundColor: colorVariables.grayCinder
-          }}>
-            <Icons.DensityMark color="white" />
+          <div className={styles.appNavbarLogo}>
+            <Icons.DensityMark color="white" height={14} width={14} />
           </div>
           {stringToBoolean(settings.dashboard_enabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
@@ -169,8 +163,8 @@ export default function AppNavbar({
             text="Live"
           />
         </ul>
-        <ul className={styles.appNavbarRight}>
 
+        <ul className={styles.appNavbarRight}>
           {/* Impersonation interface */}
           {(impersonate || can(user, PERMISSION_CODES.impersonate)) ? (
             impersonate && impersonate.enabled && impersonate.selectedUser ?
@@ -204,6 +198,16 @@ export default function AppNavbar({
             style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Logout />}
             text=""
+          />
+
+          <AppNavbarItem
+            selected={false}
+            showOnMobile={true}
+            path="https://www.density.io/support/"
+            newTab={true}
+            style={{ marginRight: -8, marginTop: 2 }}
+            icon={<Icons.Chat />}
+            text="Support"
           />
 
           {/* Desktop menus */}
