@@ -10,7 +10,6 @@ import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 import { ROLE_INFO } from '../../helpers/permissions/index';
-import impersonateSet from '../../rx-actions/impersonate';
 
 function getUserLabel(user, hidden) {
   if(hidden) {
