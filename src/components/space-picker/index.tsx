@@ -142,7 +142,7 @@ export default function SpacePicker({
           return (
             <div
               key={item.space.id}
-              className={classnames(styles.item, {
+              className={classnames(styles.item, `space-type-${item.space.space_type}`, {
                 [styles.depth0]: item.depth === 0,
                 [styles.disabled]: spaceDisabled,
               })}
