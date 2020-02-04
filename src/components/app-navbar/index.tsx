@@ -12,8 +12,8 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
 function getUserLabel(user, hidden) {
-  if(hidden) {
-    return
+  if (hidden) {
+    return ""
   } else {
     return <span style={{fontWeight: 'normal'}}>
       <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
