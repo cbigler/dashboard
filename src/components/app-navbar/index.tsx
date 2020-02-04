@@ -89,7 +89,7 @@ function AppNavbarItem({
   style = {},
   path = undefined as string | undefined,
   onClick = undefined as ((event: any) => void) | undefined,
-  newTab = false,
+  targetBlank = false,
   hideOnDesktop = false
 }) {
   return (
@@ -101,7 +101,7 @@ function AppNavbarItem({
       })}
       style={style}
     > 
-      <a href={path} onClick={onClick} target={newTab ? "_blank" : ""}>
+      <a href={path} onClick={onClick} target={targetBlank ? "_blank" : ""}>
         {icon ? <span className={styles.appNavbarIcon}>
           {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
         </span> : null}
@@ -204,7 +204,7 @@ export default function AppNavbar({
             selected={false}
             showOnMobile={true}
             path="https://www.density.io/support/"
-            newTab={true}
+            targetBlank={true}
             style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Chat />}
             text="Support"
