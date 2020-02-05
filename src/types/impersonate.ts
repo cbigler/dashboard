@@ -15,6 +15,7 @@ export type ImpersonateAction = {
 
 export type ImpersonateState = {
   enabled: boolean,
+  hidden: boolean,
   loading: boolean,
   organizations: Array<CoreOrganization>,
   organizationFilter: Any<FixInReview>,

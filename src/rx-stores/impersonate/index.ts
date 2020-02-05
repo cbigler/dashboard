@@ -5,6 +5,7 @@ import { ImpersonateActionTypes } from '../../types/impersonate';
 
 export const defaultState = {
   enabled: false,
+  hidden: false,
   loading: false,
   organizations: [],
   organizationFilter: null,
@@ -22,6 +23,7 @@ const ImpersonateStore = createRxStore('ImpersonateStore', initialState, (state,
     return action.data && action.data.enabled ? {
       ...defaultState,
       enabled: true,
+      hidden: action.data.hidden,
       organizations: action.data.organizations,
       selectedOrganization: action.data.selectedOrganization,
       users: action.data.users,

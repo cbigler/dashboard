@@ -11,12 +11,16 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
-function getUserLabel(user) {
-  return <span style={{fontWeight: 'normal'}}>
-    <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
-    <span>{user.full_name || user.email}</span>{' '}
-    <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
-  </span>;
+function getUserLabel(user, hidden) {
+  if (hidden) {
+    return ""
+  } else {
+    return <span style={{fontWeight: 'normal'}}>
+      <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
+      <span>{user.full_name || user.email}</span>{' '}
+      <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
+    </span>;
+  }
 }
 
 
@@ -182,7 +186,7 @@ export default function AppNavbar({
                   <span className={styles.appNavbarIcon}>
                     <Icons.ImpersonateOn color="primary" />
                   </span>
-                  {getUserLabel(impersonate.selectedUser)}
+                  {getUserLabel(impersonate.selectedUser, impersonate.hidden)}
                 </span>
               </li>
               : <AppNavbarItem
