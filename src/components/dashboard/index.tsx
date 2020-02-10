@@ -309,37 +309,27 @@ const Dashboard: React.FunctionComponent<{
                     </AppBarSection>
                   ) : null}
 
-                  {/* TODO: Replace this with better report time navigation (like MixPanel) */}
-                  {settings && stringToBoolean(settings.dashboardWeekScrubber) ? <AppBarSection>
-                    <div style={{width: 58}}>
-                      <Button onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
-                      <div style={{paddingTop: 6, paddingLeft: 1}}>
-                        <Icons.ChevronLeft color={colorVariables.brandPrimary} />
-                      </div>
-                      </Button>
-                    </div>
-                    <div style={{padding: 13}}>
-                      Reported on{' '}
-                      <strong>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</strong>
-                    </div>
-                    <div style={{width: 58}}>
-                      <Button
-                        onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
-                        disabled={moment(date).add(1, 'week') > moment()}
-                      >
-                        <div style={{paddingTop: 6, paddingLeft: 1}}>
-                          <Icons.ChevronRight
-                            color={moment(date).add(1, 'week') > moment() ?
-                              colorVariables.gray :
-                              colorVariables.brandPrimary}
-                          />
-                        </div>
-                      </Button>
-                    </div>
-                  </AppBarSection> : null}
-
                   {selectedDashboard ? (
                     <AppBarSection>
+                      {/* TODO: Replace this with better report time navigation (like MixPanel) */}
+                      {settings && stringToBoolean(settings.dashboard_week_scrubber) ? 
+                        <div className={styles.dashboardWeekScrubberContainer}>
+                          <button
+                            className={styles.dashboardWeekScrubberControl}
+                            onClick={() => onDashboardChangeWeek(selectedDashboard, -1)}>
+                            <Icons.ChevronLeft color={colorVariables.brandPrimary}  height={24} width={24}/>
+                          </button>
+                          <button
+                            className={styles.dashboardWeekScrubberControl}
+                            onClick={() => onDashboardChangeWeek(selectedDashboard, 1)}
+                            disabled={moment(date).add(1, 'week') > moment()}>
+                            <Icons.ChevronRight color={moment(date).add(1, 'week') > moment() ? colorVariables.gray : colorVariables.brandPrimary} height={24} width={24}/>
+                          </button>
+                          <div className={styles.dashboardWeekScrubberLabel}>
+                            Reported on: <span className={styles.dashboardWeekScrubberLabelDate}>{moment(date).format('MMMM\u00a0D,\u00a0YYYY')}</span>
+                          </div>
+                        </div>
+                      : null}
                       {!isDemoUser && !isReadOnlyUser ? (
                         <DashboardDigestPopupList
                           selectedDashboard={selectedDashboard}

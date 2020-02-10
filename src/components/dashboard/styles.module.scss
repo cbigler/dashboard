@@ -252,3 +252,82 @@
   font-size: $fontSizeBase;
   margin-bottom: 18px;
 }
+
+
+// Week Scrubber Controls
+// ========================================
+.dashboardWeekScrubberContainer {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 40px;
+  padding: 6px;
+  margin-right: 16px;
+  border: 1px solid $gray;
+  border-radius: 4px;
+}
+button.dashboardWeekScrubberControl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 28px;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid $gray;
+  border-radius: 4px;
+  color: $brandPrimary;
+  text-decoration: none;
+  font-family: sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 250ms ease-in-out, 
+              transform 150ms ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+button.dashboardWeekScrubberControl + button.dashboardWeekScrubberControl {
+  margin-left: 4px;
+}
+button.dashboardWeekScrubberControl:hover,
+button.dashboardWeekScrubberControl:focus {
+  background: $blueLight;
+  border-color: $blueLight;
+}
+
+button.dashboardWeekScrubberControl:focus {
+  border-color: $brandPrimary;
+  box-shadow: 0 0 0 1px $brandPrimary;
+  outline: none;
+}
+
+button.dashboardWeekScrubberControl:disabled,
+button.dashboardWeekScrubberControl:disabled:hover,
+button.dashboardWeekScrubberControl:disabled:focus {
+  background: $grayLight;
+  border-color: $grayLight;
+  cursor: not-allowed;
+}
+
+.dashboardWeekScrubberLabel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  padding-left: 12px;
+  padding-right: 12px;
+  margin-left: 8px;
+  background-color: $grayLight;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.dashboardWeekScrubberLabelDate {
+  display: inline-block;
+  width: 136px;
+  padding-left: 8px;
+  text-align: center;
+  color: $brandPrimary;
+}
