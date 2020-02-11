@@ -18,13 +18,13 @@
   padding-right: 24px;
   overflow-x: auto;
 }
-.leftPaneDataRow.topBorder { border-top: 1px solid $grayLight; }
-.leftPaneDataRow.bottomBorder:last-of-type { border-bottom: 1px solid $grayLight; }
+.leftPaneDataRow.topBorder { border-top: 1px solid $gray300; }
+.leftPaneDataRow.bottomBorder:last-of-type { border-bottom: 1px solid $gray300; }
 
 .leftPaneDataRowItem { padding-right: 24px; }
 .leftPaneDataRowItem label {
   display: block;
-  color: $grayDarker;
+  color: $gray500;
   font-size: 14px;
   margin-bottom: 4px;
   white-space: nowrap;
@@ -48,7 +48,7 @@
   width: calc(100% - 20px);
   padding: 10px;
   border-radius: $borderRadiusBase;
-  border: 1px solid $grayLight;
+  border: 1px solid $gray300;
   overflow-x: auto;
 }
 .operatingHoursDayRow {
@@ -95,7 +95,7 @@
 .doorwayLinkedSpacesPopoverTag {
   display: flex;
   align-items: center;
-  color: $grayLight;
+  color: $gray300;
   font-size: 14px;
   font-weight: 500;
   margin-bottom: 12px;
@@ -107,7 +107,7 @@
 .doorwayLinkedSpacesTag {
   display: flex;
   align-items: center;
-  background-color: $grayLight;
+  background-color: $gray300;
   height: 28px;
   padding-left: 8px;
   padding-right: 8px;
@@ -130,7 +130,7 @@
   margin-right: 8px;
 }
 .doorwayDpuPosition {
-  color: $grayDarker;
+  color: $gray500;
   font-size: 14px;
   font-weight: bold;
 }

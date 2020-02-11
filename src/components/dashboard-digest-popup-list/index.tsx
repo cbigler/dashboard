@@ -79,9 +79,9 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
           className={classnames(styles.dashboardDigestListButton, {[styles.visible]: visible})}
           onClick={() => this.setState({visible: !visible})}
         >
-          <Icons.Mail color={colorVariables.brandPrimary} />
+          <Icons.Mail color={colorVariables.midnight} />
           <span className={styles.dashboardDigestListButtonText}>Email</span>
-          <Icons.ChevronDown color={colorVariables.brandPrimary} />
+          <Icons.ChevronDown color={colorVariables.midnight} />
         </button>
 
         <div className={classnames(styles.dashboardDigestListDropdown, {[styles.visible]: visible})}>
@@ -101,7 +101,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                   }}
                   tabIndex={visible ? 0 : -1}
                 >
-                  <Icons.Share color={colorVariables.brandPrimary} />
+                  <Icons.Share color={colorVariables.midnight} />
                   <span className={styles.dashboardDigestListDropdownCreateButtonText}>
                     Send once
                   </span>
@@ -116,7 +116,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                   }}
                   tabIndex={visible ? 0 : -1}
                 >
-                  <Icons.PlusCircle color={colorVariables.brandPrimary} />
+                  <Icons.PlusCircle color={colorVariables.midnight} />
                   <span className={styles.dashboardDigestListDropdownCreateButtonText}>
                     Create digest
                   </span>
@@ -148,7 +148,7 @@ class DashboardDigestPopupList extends Component<DashboardDigestPopupListProps, 
                     >Edit</span>
                   </div>
                   <span className={styles.dashboardDigestListDropdownItemInterval}>
-                    <Icons.Calendar color={colorVariables.grayDarker} />
+                    <Icons.Calendar color={colorVariables.gray500} />
                     <span className={styles.dashboardDigestListDropdownItemIntervalText}>
                       {generateHumanReadableFrequency(digest)}
                     </span>

@@ -24,13 +24,13 @@
   background-color: #fff;
   font-family: $fontBase;
   cursor: pointer;
-  color: $grayCinder;
+  color: $midnight;
   user-select: none;
   transition: all 100ms ease-in-out;
   outline: none;
 }
 
-.box.focus { border-color: $brandPrimary; }
+.box.focus { border-color: $midnight; }
 
 .placeholder { color: $inputFieldPlaceholderColor; }
 
@@ -43,11 +43,11 @@
   width: 368px;
 
   z-index: 999999;
-  color: $grayCinder;
-  background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  color: $midnight;
+  background-color: $white;
+  box-shadow: 0px 2px 4px rgba($gray900, 0.1);
   box-sizing: border-box;
-  border: 1px solid $inputFieldBorderColor;
+  border: 1px solid $gray200;
   border-radius: $borderRadiusBase;
   transition: all 100ms ease-in-out;
   user-select: none;
@@ -83,29 +83,28 @@
 
 
 .searchBar {
-  background-color: $grayLightest;
+  background-color: $white;
 }
 
 .scrollContainer {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   height: calc(100% - 64px - 64px - 64px);
-  background-color: #FEFEFE;
   height: 100%;
 }
 .item {
   display: flex;
   align-items: center;
-  font-size: $fontSizeBase;
   height: 40px;
   padding-left: 24px;
   padding-right: 24px;
+  color: $gray700;
   cursor: pointer;
   user-select: none;
 }
-.item.depth0 { border-top: 1px solid $gray; }
+.item.depth0 { border-top: 1px solid $gray200; }
 .item.depth0:first-child { border-top-width: 0px; }
-.item.disabled { cursor: default; color: $grayDarker; }
+.item.disabled { cursor: default; color: $gray400; }
 
 .itemIcon { margin-left: 8px; }
 
@@ -116,10 +115,10 @@
   text-overflow: ellipsis;
 }
 .itemName.selected {
-  color: $brandPrimary;
+  color: $blue;
   font-weight: 500;
 }
 .copyFromSpaceModalItemName.bold { font-weight: bold; }
 .copyFromSpaceModalItemName.disabled {
-  color: $grayDark;
+  color: $gray400;
 }

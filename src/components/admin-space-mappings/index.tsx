@@ -108,7 +108,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
         </AppBarSection>
       </AppBar>
 
-      <AppScrollView backgroundColor={colorVariables.grayLightest}>
+      <AppScrollView backgroundColor={colorVariables.gray000}>
         <div className={styles.adminIntegrationsList}>
           <div className={styles.adminIntegrationsSectionHeader}>Link your room-booking spaces</div>
           
@@ -174,7 +174,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
                     return <ListViewClickableLink
                       onClick={() => onOpenModal('space-mappings-destroy', {spaceMappingId: space.space_mappings[0].id})}
                     >
-                      <Icons.Trash color={colorVariables.grayDarker} />
+                      <Icons.Trash color={colorVariables.gray500} />
                     </ListViewClickableLink>
                   } else {
                     return null;

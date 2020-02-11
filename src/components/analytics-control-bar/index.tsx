@@ -143,7 +143,7 @@ const AnalyticsControlBar: React.FunctionComponent<AnalyticsControlBarProps> = f
             }
           }}
         >
-          <Icons.Refresh color={refreshEnabled ? colorVariables.brandPrimary : colorVariables.gray} />
+          <Icons.Refresh color={refreshEnabled ? colorVariables.midnight : colorVariables.gray400} />
         </button>
 
       </div>

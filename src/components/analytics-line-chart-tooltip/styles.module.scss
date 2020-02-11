@@ -1,3 +1,5 @@
+@import '../../styles/shadows.scss';
+
 .hoverOverlay {
   z-index: 100;
   // max-height: 168px;
@@ -10,7 +12,7 @@
   background: #FFFFFF;
   border: 1px solid #EDEDED;
   overflow: hidden;
-  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
+  @include hover-overlay-box-shadow;
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;

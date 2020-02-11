@@ -17,7 +17,7 @@
   width: calc(100% - 15px - 15px);
 
   background-color: #fff;
-  border: 1px solid $grayDark;
+  border: 1px solid $gray400;
   border-radius: 4px;
 
   padding-left: 15px;
@@ -32,7 +32,7 @@
   height: (43px - 1px - 1px); /* (for borders) */
 
   font-size: $fontSizeBase;
-  color: $grayCinder;
+  color: $midnight;
 
   display: flex;
   flex-direction: row;
@@ -51,13 +51,13 @@
   & > .inputBoxCaret { margin-top: 3px; }
 
   &.opened {
-    border-color: $brandPrimary;
+    border-color: $midnight;
     outline: none;
   }
 
   // When disabled, a selectbox is grayed out and can't be clicked.
   &.disabled {
-    background-color: $grayLighter;
+    background-color: $gray100;
     pointer-events: none;
   }
 }
@@ -78,7 +78,7 @@
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 
   z-index: 100;
-  color: $grayCinder;
+  color: $midnight;
   transition: all 100ms ease-in-out;
   user-select: none;
 
@@ -105,14 +105,14 @@
 
   display: flex;
 
-  &:hover { background-color: $grayLightest; }
+  &:hover { background-color: $gray000; }
 
   &:focus {
-    color: $brandPrimary;
+    color: $midnight;
     outline: none;
   }
 
-  &.disabled { color: $grayDark; }
+  &.disabled { color: $gray400; }
 }
 
 // When select box items are too wide, cause an ellipsis to form on the right side of each.
@@ -124,6 +124,6 @@
 
 .spaceHierarchySelectBoxItemHighlight {
   margin-left: 10px;
-  color: $grayDark;
+  color: $gray400;
   font-style: italic;
 }

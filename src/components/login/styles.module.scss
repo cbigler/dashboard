@@ -54,7 +54,7 @@ $zIndexToast: 2000;
 
 .loginLead {
   margin-bottom: 64px;
-  color: $grayCinder;
+  color: $midnight;
   font-weight: bold;
 }
 
@@ -66,7 +66,7 @@ $zIndexToast: 2000;
 .loginSsoSectionHeading {
   font-size: 14px;
   font-weight: bold;
-  color: $grayCinder;
+  color: $midnight;
   margin-bottom: 4px;
 }
 
@@ -108,7 +108,7 @@ $zIndexToast: 2000;
 .formControlLabel {
   display: block;
   font-size: 12px;
-  color: $grayCinder;
+  color: $midnight;
   font-weight: bold;
   margin-top: 0;
   margin-bottom: 4px;
@@ -125,10 +125,10 @@ $zIndexToast: 2000;
   padding-left: 16px;
   padding-right: 16px;
   margin-bottom: 16px;
-  background-color: $grayLight;
-  border: 1px solid $grayLight;
+  background-color: $gray300;
+  border: 1px solid $gray300;
   border-radius: 4px;
-  color: $grayCinder;
+  color: $midnight;
   cursor: pointer;
 
   &:hover {
@@ -168,10 +168,10 @@ $zIndexToast: 2000;
   padding-left: 16px;
   padding-right: 16px;
   background-color: #fff;
-  border: 1px solid $gray;
+  border: 1px solid $gray400;
   text-align: center;
   line-height: normal;
-  color: $grayCinder;
+  color: $midnight;
 }
 .loginSubmitButton .iconSsoLogin {
   margin-bottom: -1px;
@@ -210,13 +210,13 @@ $zIndexToast: 2000;
   font-size: 14px;
   font-weight: bold;
   text-decoration: underline;
-  color: $grayCinder;
+  color: $midnight;
   cursor: pointer;
 
   svg { margin-right: 8px; }
 
   &:hover {
-    color: $brandPrimary;
+    color: $midnight;
   }
 }
 
@@ -243,10 +243,10 @@ $zIndexToast: 2000;
   padding-bottom: 64px;
   font-size: 14px;
   font-weight: bold;
-  color: $grayDarker;
+  color: $gray500;
 
-  a { color: $grayDark; }
-  a:hover { color: $brandPrimary; }
+  a { color: $gray400; }
+  a:hover { color: $midnight; }
 }
 
 // Log in toast
@@ -261,7 +261,7 @@ $zIndexToast: 2000;
   margin-left: -($loginSectionWidth - 48px)/2;
 }
 .loginToastHeader {
-  color: $brandDanger;
+  color: $red;
   font-size: $fontSize4;
   font-weight: $fontWeight4;
   margin-bottom: 8px;

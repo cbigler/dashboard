@@ -35,7 +35,7 @@ $accountRegistrationSectionWidth: 560px;
 
 .accountRegistrationLead {
   margin-bottom: 64px;
-  color: $grayCinder;
+  color: $midnight;
   font-weight: bold;
 }
 
@@ -70,13 +70,13 @@ $accountRegistrationSectionWidth: 560px;
 .formControlLabel {
   display: block;
   font-size: 12px;
-  color: $grayCinder;
+  color: $midnight;
   font-weight: bold;
   margin-top: 0;
   margin-bottom: 4px;
 }
 .formControlLabelRequired {
-  color: $brandPrimary;
+  color: $midnight;
   margin-left: 3px;
 }
 
@@ -97,9 +97,9 @@ $accountRegistrationSectionWidth: 560px;
   display: flex;
   padding: 16px;
   margin-bottom: 16px;
-  border: 1px solid $grayLight;
+  border: 1px solid $gray300;
   border-radius: 4px;
-  color: $grayDarker;
+  color: $gray500;
 
   p {
     font-size: $fontSize4;
@@ -107,7 +107,7 @@ $accountRegistrationSectionWidth: 560px;
   }
 
   &:hover {
-    background-color: $grayLightest;
+    background-color: $gray000;
     cursor: pointer;
   }
 }

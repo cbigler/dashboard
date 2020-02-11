@@ -25,7 +25,7 @@
   margin-bottom: 4px;
   font-size: $fontSizeBase;
   font-weight: bold;
-  color: $grayDarkest;
+  color: $gray700;
 
   overflow: hidden;
   text-overflow: ellipsis;
@@ -58,14 +58,14 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  border-bottom: 1px solid $gray;
+  border-bottom: 1px solid $gray400;
   font-size: 24px;
   font-weight: 400;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 .adminUserManagementEditUser {
-  color: $brandPrimary;
+  color: $midnight;
   user-select: none;
   text-decoration: underline;
   &:hover { opacity: 0.9; }
@@ -83,7 +83,7 @@
   width: 50%;
 }
 .adminUserManagementModalColumn.left {
-  border-right: 1px solid $grayLighter;
+  border-right: 1px solid $gray200;
 }
 
 .adminUserManagementEmptySearchState { width: 340px; }
@@ -128,8 +128,8 @@
   font-size: $fontSizeBase;
   font-weight: normal;
   padding: 16px;
-  color: #fff;
-  background-color: $grayCinder;
+  color: $white;
+  background-color: $midnight;
   border-radius: $borderRadiusBase;
 }
 .adminUserManagementInfoPopupBackdrop {

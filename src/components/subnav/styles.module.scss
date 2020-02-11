@@ -35,13 +35,13 @@
 }
 
 .subnavItem a {
-  color: $gray;
+  color: $gray400;
   text-decoration: none;
 }
 
 .subnavItem.active {
   margin-top: 3px;
-  border-bottom: 3px solid $brandPrimary;
+  border-bottom: 3px solid $midnight;
   font-weight: bold;
 }
 .subnavItem.active a {

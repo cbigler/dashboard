@@ -1,6 +1,8 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/spacing.scss";
 
+@import '../../styles/shadows.scss';
+
 .spacesReportControl {
   margin-right: 8px;
 }
@@ -13,10 +15,10 @@
   margin-top: 40px;
   margin-bottom: 8px;
   padding-top: 8px;
-  border-top: 1px solid $grayDarker;
+  border-top: 1px solid $gray500;
   font-size: 24px;
   font-weight: 400;
-  color: $grayCinder;
+  color: $midnight;
 }
 .spacesReportHeader.first {
   margin-top: 16px;
@@ -34,10 +36,10 @@
   align-items: center;
   justify-content: space-between;
 
-  background-color: #fff;
-  border: 1px solid $gray;
+  background-color: $white;
+  border: 1px solid $gray200;
   border-radius: $borderRadiusBase;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
+  @include elevated-status-box-shadow;
   line-height: 22px;
   height: 72px;
 

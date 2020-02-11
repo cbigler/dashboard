@@ -43,10 +43,10 @@ export default function AlertPopupList({ selectedSpace }) {
         onClick={() => setVisible(!visible)}
       >
         <Icons.Alert
-          color={colorVariables.brandPrimary}
-          accentColor={alertsForSelectedSpace.find(x => x.enabled) ? colorVariables.brandDanger : colorVariables.brandPrimary} />
+          color={colorVariables.midnight}
+          accentColor={alertsForSelectedSpace.find(x => x.enabled) ? colorVariables.red : colorVariables.midnight} />
         <span className={styles.alertListButtonText}>Alerts</span>
-        <Icons.ChevronDown color={colorVariables.brandPrimary} />
+        <Icons.ChevronDown color={colorVariables.midnight} />
       </button>
 
       <div className={classnames(styles.alertListDropdown, {[styles.visible]: visible})}>
@@ -78,7 +78,7 @@ export default function AlertPopupList({ selectedSpace }) {
               }}
               tabIndex={visible ? 0 : -1}
             >
-              <Icons.PlusCircle color={colorVariables.brandPrimary} />
+              <Icons.PlusCircle color={colorVariables.midnight} />
               <span className={styles.alertListDropdownCreateButtonText}>
                 Add an alert
               </span>
@@ -127,7 +127,7 @@ export default function AlertPopupList({ selectedSpace }) {
                               <div style={{transform: 'translateY(2.5px)', marginRight: 6}}>
                                 <Icons.Danger
                                   height={16}
-                                  color={colorVariables[alert.enabled ? 'brandWarning' : 'grayDarker']}
+                                  color={colorVariables[alert.enabled ? 'yellow' : 'gray500']}
                                 />
                               </div>
                               <div style={{marginTop: 3}}>+{(alert.meta || {}).escalation_delta}</div>

@@ -6,10 +6,10 @@
   background-color: #fff;
 
   width: 818px;
-  border: 1px solid $grayLight;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
 }
-.moduleError { border-color: $brandDanger; }
+.moduleError { border-color: $red; }
 .moduleHideOverflow { overflow: hidden; }
 .moduleBody.padding {
   padding: 24px;

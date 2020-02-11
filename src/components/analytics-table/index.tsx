@@ -196,8 +196,8 @@ const SortIcon: React.FC<{
   )
 }
 
-const ACTIVE_CHEVRON_COLOR = colorVariables.grayCinder;
-const INACTIVE_CHEVRON_COLOR = colorVariables.gray;
+const ACTIVE_CHEVRON_COLOR = colorVariables.midnight;
+const INACTIVE_CHEVRON_COLOR = colorVariables.gray400;
 
 export function formatSpaceType(space_type: CoreSpaceType) {
   switch (space_type) {
@@ -426,7 +426,7 @@ const AnalyticsTable: React.FC<{
               >
                 <Checkbox
                   checked={allSpacesEnabled}
-                  color={'#333'}
+                  color={colorVariables.midnight}
                   onChange={evt => {
                     if (evt.currentTarget.checked) {
                       onChangeHiddenSpaceIds([])

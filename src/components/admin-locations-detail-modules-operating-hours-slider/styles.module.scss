@@ -12,15 +12,15 @@
   position: relative;
   height: 5px;
   width: 100%;
-  background-color: $gray;
+  background-color: $gray400;
 }
 
 .operatingHoursSliderTrackFilledSection {
   position: absolute;
-  background-color: $brandPrimary;
+  background-color: $midnight;
   height: 100%;
 }
-.disabled .operatingHoursSliderTrackFilledSection { background-color: $grayDarker; }
+.disabled .operatingHoursSliderTrackFilledSection { background-color: $gray500; }
 
 .operatingHoursSliderHead {
   position: absolute;
@@ -35,14 +35,14 @@
 
   color: #fff;
   font-size: 14px;
-  background-color: $brandPrimary;
+  background-color: $midnight;
   user-select: none;
   cursor: pointer;
 }
-.operatingHoursSliderHead:hover { background-color: darken($brandPrimary, 5%); }
-.operatingHoursSliderHead:active { background-color: darken($brandPrimary, 10%); }
+.operatingHoursSliderHead:hover { background-color: darken($midnight, 5%); }
+.operatingHoursSliderHead:active { background-color: darken($midnight, 10%); }
 .disabled .operatingHoursSliderHead {
-  background-color: $grayDarker;
+  background-color: $gray500;
   cursor: default;
 }
 
@@ -59,7 +59,7 @@
   position: absolute;
   transform: translate(-50%, 0px);
 }
-.disabled .operatingHoursLabel { color: $grayDarkest; }
+.disabled .operatingHoursLabel { color: $gray700; }
 
 
 .operatingHoursLabelResetTimeIcon {

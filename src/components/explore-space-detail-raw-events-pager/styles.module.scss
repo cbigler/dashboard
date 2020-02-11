@@ -28,10 +28,10 @@
   font-family: $fontBase;
   font-size: $fontSizeBase;
 
-  color: $grayDarker;
+  color: $gray500;
   background-color: #fff;
 
-  border: 1px solid $grayLight;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
 
   outline: none;
@@ -47,6 +47,6 @@
   text-align: center;
   font-size: $fontSizeBase;
 
-  &:focus { border-color: $brandPrimary; }
-  &::placeholder { color: $gray; }
+  &:focus { border-color: $midnight; }
+  &::placeholder { color: $gray400; }
 }

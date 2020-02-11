@@ -34,11 +34,11 @@
   height: 496px;
 
   font-size: $fontSizeBase;
-  color: $grayCinder;
+  color: $midnight;
 }
 // Errors should be prefixed by the error icon
 .exploreSpaceDetailRawEventsCardBodyErrorIcon {
-  color: $brandDanger;
+  color: $red;
   font-family: "Densicons";
   margin-right: 10px;
   position: relative;

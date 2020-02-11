@@ -167,7 +167,7 @@ function DashboardListItem({selected, id, name, report_set, onClick}) {
           {nonHeaderReports.length} {nonHeaderReports.length === 1 ? 'Report' : 'Reports'}
         </span>
         <Icons.ChevronRight
-          color={selected ? colorVariables.brandPrimary : colorVariables.grayDarker}
+          color={selected ? colorVariables.midnight : colorVariables.gray500}
           width={16}
           height={16}
         />
@@ -352,7 +352,7 @@ const Dashboard: React.FunctionComponent<{
                 </AppBar>
               </AppBarContext.Provider>
             ) : null}
-            <AppScrollView backgroundColor={colorVariables.grayLightest}>
+            <AppScrollView backgroundColor={colorVariables.gray000}>
               <DashboardMainScrollViewContent
                 dashboards={dashboards}
                 selectedDashboard={selectedDashboard}

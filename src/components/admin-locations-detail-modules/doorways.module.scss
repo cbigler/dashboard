@@ -16,8 +16,8 @@
 }
 .list.shaded {
   margin-bottom: -1px;
-  background-color: $grayLightest;
-  border-top: 1px solid $grayLight;
+  background-color: $gray000;
+  border-top: 1px solid $gray200;
 }
 .name {
   white-space: nowrap;
@@ -45,7 +45,7 @@
 .linkedSpacesTag {
   display: flex;
   align-items: center;
-  background-color: $grayLight;
+  background-color: $gray300;
   height: 28px;
   padding-left: 8px;
   padding-right: 8px;
@@ -69,13 +69,13 @@
 
 .dpuPosition {
   margin-left: 16px;
-  color: $brandPrimary;
+  color: $midnight;
   font-size: 14px;
   font-weight: bold;
 }
 
 .editLink {
-  color: $brandPrimary;
+  color: $midnight;
   font-weight: 500;
   text-decoration: underline;
   cursor: pointer;
@@ -87,10 +87,10 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  border-top: 1px solid $grayLight;
+  border-top: 1px solid $gray200;
 }
 .emptyState:first-of-type { border-top: 0px; }
-.emptyState.shaded { background-color: $grayLightest; }
+.emptyState.shaded { background-color: $gray000; }
 .emptyStateInner {
   display: flex;
   align-items: center;
@@ -114,13 +114,13 @@
 .emptyStateInnerRight h3 {
   font-weight: normal;
   font-size: 18px;
-  color: $grayDarkest;
+  color: $gray700;
   margin-top: 32px;
   margin-bottom: 7px;
 }
 .emptyStateInnerRight p {
   font-size: 14px;
-  color: $grayDarker;
+  color: $gray500;
   margin-top: 0px;
   margin-bottom: 7px;
 }
@@ -143,7 +143,7 @@
   justify-content: space-between;
   padding-bottom: 12px;
 }
-.formMeasurementUnit { color: $brandPrimary; }
+.formMeasurementUnit { color: $midnight; }
 .formMountingSpaceRadioButtonGroup {
   display: flex;
   flex-direction: column;
@@ -175,12 +175,12 @@
   width: 200px;
   height: 160px;
   cursor: pointer;
-  border: 1px solid $gray;
+  border: 1px solid $gray200;
   border-radius: $borderRadiusBase;
 }
 .dpuPositionButton:hover { opacity: 0.8; }
 .dpuPositionButton:active { opacity: 1; }
-.dpuPositionButton.active { border-color: $brandPrimary; }
+.dpuPositionButton.active { border-color: $midnight; }
 .dpuPositionButton svg { margin-bottom: 24px; }
 
 .dpuPositionUpdateHistoricCheckbox {

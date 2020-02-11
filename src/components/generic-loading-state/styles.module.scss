@@ -2,6 +2,8 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
+@import '../../styles/shadows.scss';
+
 .genericLoadingState {
   display: flex;
   align-items: center;
@@ -9,15 +11,15 @@
   width: 480px;
   height: 72px;
   background-color: #fff;
-  border: 1px solid $gray;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
-  box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
+  @include elevated-status-box-shadow;
   font-size: $fontSizeBase;
   padding-left: 24px;
   padding-right: 24px;
 }
 .genericLoadingStateLoading {
-  color: $brandPrimary;
+  color: $midnight;
   font-size: 18px;
   margin-right: 32px;
 }

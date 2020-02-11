@@ -17,7 +17,7 @@
   justify-content: space-between;
 
   background-color: #fff;
-  border: 1px solid $gray;
+  border: 1px solid $gray400;
   border-radius: $borderRadiusBase;
   box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.05);
   height: 72px;
@@ -36,10 +36,10 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  border-bottom: 1px solid $gray;
+  border-bottom: 1px solid $gray400;
   font-size: 24px;
   font-weight: 400;
-  color: $grayCinder;
+  color: $midnight;
   margin-bottom: 32px;
 }
 

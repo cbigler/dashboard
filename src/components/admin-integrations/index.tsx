@@ -108,11 +108,11 @@ export function AdminIntegrations({
     <AppBar>
       <AppBarSection>
        Looking for a different integration? Contact us&nbsp;
-       <a href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">contact@density.io</a>
+       <a className={styles.contactLink} href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">contact@density.io</a>
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView backgroundColor={colorVariables.grayLightest}>
+    <AppScrollView backgroundColor={colorVariables.gray000}>
       <div className={styles.adminIntegrationsListSection}>
         <div className={styles.adminIntegrationsSectionHeader}>Room Booking</div>
         <ListView keyTemplate={item => item.display_name} data={integrations.services.filter(integration => integration.category === 'Room Booking') as Array<DensityService>}>
@@ -182,7 +182,7 @@ export function AdminIntegrations({
               !item.service_authorization.id ?
                 null :
                 <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}>
-                  <Icons.Trash color={colorVariables.grayDarker} />
+                  <Icons.Trash color={colorVariables.gray500} />
                 </ListViewClickableLink>
             )}
            />
@@ -248,7 +248,7 @@ export function AdminIntegrations({
               !item.service_authorization.id ?
                 null :
                 <ListViewClickableLink onClick={() => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}>
-                  <Icons.Trash color={colorVariables.grayDarker} />
+                  <Icons.Trash color={colorVariables.gray500} />
                 </ListViewClickableLink>
             )}
            />
@@ -298,7 +298,7 @@ export function AdminIntegrations({
             title=" "
             width={30}
             align="right"
-            template={item => !item.service_authorization.id ? null : <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => !item.service_authorization.id ? null : <Icons.Trash color={colorVariables.gray500} />}
             onClick={item => onOpenModal('integrations-service-destroy', {service_authorization: item.service_authorization})}
           />
         </ListView>

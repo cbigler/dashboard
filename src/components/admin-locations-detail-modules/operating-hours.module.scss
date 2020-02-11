@@ -23,7 +23,7 @@
 
 
 .timeSegmentItem {
-  background-color: $grayLightest;
+  background-color: $gray000;
   position: relative;
 }
 .timeSegmentsItemInvalid {
@@ -38,7 +38,7 @@
   align-items: center;
   justify-content: center;
   background-color: rgba(255, 255, 255, 0.9);
-  color: $brandDanger;
+  color: $red;
   font-weight: bold;
 }
 
@@ -53,24 +53,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: $brandPrimary;
+  background-color: $midnight;
   border-radius: $borderRadiusBase;
   font-size: 14px;
   color: #fff;
 }
-.timeRangeBubble.disabled { background-color: $grayDarker; }
+.timeRangeBubble.disabled { background-color: $gray500; }
 .timeRangeBubbleBridge {
   height: 4px;
   width: 10px;
-  background-color: $brandPrimary;
+  background-color: $midnight;
 }
-.timeRangeBubbleBridge.disabled { background-color: $grayDarker; }
+.timeRangeBubbleBridge.disabled { background-color: $gray500; }
 
 
 .addLabel {
   display: flex;
   align-items: center;
-  color: $brandPrimary;
+  color: $midnight;
   font-weight: bold;
   font-size: 14px;
 }
@@ -78,10 +78,10 @@
 
 .dayOfWeekLabel {
   margin-right: 16px;
-  color: $grayDarkest;
+  color: $gray700;
 }
 
-.copyFromSpaceModalSearchBar { background-color: $grayLightest; }
+.copyFromSpaceModalSearchBar { background-color: $gray000; }
 .copyFromSpaceModalContainer {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
@@ -98,7 +98,7 @@
   cursor: pointer;
   user-select: none;
 }
-.copyFromSpaceModalItem.depth0 { border-top: 1px solid $gray; }
+.copyFromSpaceModalItem.depth0 { border-top: 1px solid $gray400; }
 .copyFromSpaceModalItem.depth0:first-child { border-top-width: 0px; }
 .copyFromSpaceModalItem.disabled { cursor: default; }
 
@@ -112,7 +112,7 @@
 }
 .copyFromSpaceModalItemName.bold { font-weight: bold; }
 .copyFromSpaceModalItemName.disabled {
-  color: $grayDark;
+  color: $gray400;
 }
 
 .resetTimeChoiceWrapper {
@@ -131,7 +131,7 @@
   width: 100%;
   height: 200px;
   margin-bottom: -1px;
-  border-bottom: 1px solid $grayLight;
+  border-bottom: 1px solid $gray300;
 }
 .emptyStateInner {
   display: flex;
@@ -156,13 +156,13 @@
 .emptyStateInnerRight h3 {
   font-weight: normal;
   font-size: 18px;
-  color: $grayDarkest;
+  color: $gray700;
   margin-top: 0px;
   margin-bottom: 7px;
 }
 .emptyStateInnerRight p {
   font-size: 14px;
-  color: $grayDarker;
+  color: $gray500;
   margin-top: 0px;
   margin-bottom: 7px;
 }

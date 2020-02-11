@@ -24,7 +24,7 @@
   height: 80px;
   padding-left: 32px;
   padding-right: 16px;
-  border-bottom: 1px solid $grayLight;
+  border-bottom: 1px solid $gray300;
 }
 
 .dashboardAppBarTitle {
@@ -42,19 +42,17 @@
   align-items: center;
   height: 48px;
 
-  transition: background-color 150ms ease-in-out, color 150ms ease-in-out;
-
   padding-left: 24px;
   padding-right: 19px;
-  border-bottom: 1px solid $grayLight;
+  border-bottom: 1px solid $gray300;
 }
-.dashboardListItem:hover { background-color: $grayLightest; }
+.dashboardListItem:hover { background-color: $gray000; }
 
 .dashboardListItemName {
-  color: $grayDarkest;
+  color: $gray700;
 
   font-size: $fontSizeBase;
-  font-weight: 600;
+  font-weight: 500;
   margin-right: auto;
   padding-right: 10px;
 
@@ -62,21 +60,19 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.dashboardListItem:hover .dashboardListItemName { color: $grayCinder; }
-.dashboardListItem.selected .dashboardListItemName { color: $brandPrimary; }
+.dashboardListItem.selected .dashboardListItemName { color: $midnight; }
 
 .dashboardListItemNumReports {
   flex-grow: 0;
   flex-shrink: 0;
 
-  color: $grayDarker;
+  color: $gray500;
   font-size: 12px;
   font-weight: bold;
   margin-right: 4px;
   white-space: nowrap;
 }
-.dashboardListItem:hover .dashboardListItemNumReports { color: $grayCinder; }
-.dashboardListItem.selected .dashboardListItemNumReports { color: $brandPrimary; }
+.dashboardListItem.selected .dashboardListItemNumReports { color: $midnight; }
 
 
 .dashboardWrapper {
@@ -99,10 +95,10 @@
 .dashboardHeader {
   margin-top: 40px;
   padding-top: 8px;
-  border-top: 1px solid $grayDarker;
+  border-top: 1px solid $gray500;
   font-size: 24px;
   font-weight: 400;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 .dashboardNonIdealState {
@@ -115,7 +111,7 @@
   padding-left: 24px;
 
   height: 400px;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 .dashboardLoadingWrapper {
@@ -125,7 +121,7 @@
   align-items: center;
 
   height: 90vh;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 .dashboardLoading {
@@ -170,7 +166,7 @@
 .dashboardPageHeader h1 {
   margin: 0px;
   font-size: 24px;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 .dashboardDropdownWrapper {
@@ -188,15 +184,15 @@
   top: 42px;
   padding-left: 0px;
   padding-right: 0px;
-  border: 1px solid $gray;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
 
   width: 396px;
 
   z-index: 100;
-  color: $grayCinder;
+  color: $midnight;
   background-color: #fff;
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 2px 4px rgba($gray900, 0.1);
   transition: all 100ms ease-in-out;
   user-select: none;
   overflow-y: auto;

@@ -8,7 +8,7 @@
 
 .adminLocations {
   height: calc(100% - 64px - 64px);
-  background-color: $grayLightest;
+  background-color: $gray000;
 }
 .adminLocations.space { height: calc(100% - 64px); }
 
@@ -18,7 +18,7 @@
 
 .loadingMapSkeleton {
   height: 300px;
-  background-color: $grayCinder;
+  background-color: $midnight;
   margin: 24px;
   border-radius: $borderRadiusBase;
 }

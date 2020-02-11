@@ -3,12 +3,12 @@
 
 .subheader {
   display: block;
-  color: $grayCinder;
-  background-color: $grayLightest;
+  color: $midnight;
+  background-color: $gray000;
   text-decoration: none;
   cursor: default;
 }
-.subheader.hover { background-color: $grayLighter; }
+.subheader.hover { background-color: $gray100; }
 .subheader.supportsHover { cursor: pointer; }
 
 .title {
@@ -18,14 +18,14 @@
 }
 .supportsHover .title { cursor: pointer; }
 .title.hover {
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
 }
 
 .subtitle {
   margin-left: 24px;
   font-size: $fontSizeBase;
-  color: $grayDarker;
+  color: $gray500;
   white-space: nowrap;
 }
 .subtitle.hover { text-decoration: none; }
@@ -40,7 +40,7 @@
   font-size: 14px;
   text-decoration: underline;
   margin-right: 16px;
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: none;
 }
 .manageLink.hover { text-decoration: underline; }

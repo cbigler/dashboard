@@ -28,11 +28,11 @@
   height: 355px;
 
   font-size: $fontSizeBase;
-  color: $grayCinder;
+  color: $midnight;
 }
 // Errors should be prefixed by the error icon
 .exploreSpaceDetailRawEventsExportCardBodyErrorIcon {
-  color: $brandDanger;
+  color: $red;
   font-family: "Densicons";
   margin-right: 10px;
   position: relative;
@@ -60,7 +60,7 @@
 
   font-size: 14px;
   font-weight: normal;
-  background-color: $brandPrimary;
+  background-color: $midnight;
   color: #fff;
   text-align: center;
   border-bottom-left-radius: 4px;
@@ -71,11 +71,11 @@
   &:active { opacity: 1; }
 }
 .exploreSpaceDetailRawEventsExportCardHeaderDownloadBar.loading {
-  color: $gray;
+  color: $gray400;
   cursor: default;
 }
 .exploreSpaceDetailRawEventsExportCardHeaderDownloadBar.disabled {
-  background-color: $gray;
+  background-color: $gray400;
   cursor: default;
 }
 
@@ -83,10 +83,10 @@
 .exploreSpaceDetailRawEventsExportCardDescription {
   line-height: 20px;
   font-size: 14px;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 :global(.card) .exploreSpaceDetailRawEventsExportCardSampleRows {
   padding-bottom: 10px;
-  color: $grayCinder;
+  color: $midnight;
 }

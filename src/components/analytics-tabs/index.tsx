@@ -39,7 +39,7 @@ const TabTarget: React.FunctionComponent<{
         <Icons.SaveOutline
           width={20}
           height={20}
-          color={props.isSaved ? colorVariables.brandPrimary : colorVariables.grayDark}
+          color={props.isSaved ? colorVariables.midnight : colorVariables.gray400}
         />
         <div className={styles.tabTargetTitle}>
           {props.title}
@@ -120,7 +120,7 @@ const QueryTabList: React.FunctionComponent<{
         tabIndex={0}
       >
         <div className={styles.addReportButtonIcon}>
-          <Icons.Plus color={colorVariables.brandPrimary} />
+          <Icons.Plus color={colorVariables.midnight} />
         </div>
         New Report
       </div>

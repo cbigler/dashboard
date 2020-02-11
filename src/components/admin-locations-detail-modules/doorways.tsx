@@ -489,7 +489,7 @@ function DoorwayList({
                   onClick={() => onSelectDoorway(item, newDoorwayCheckboxState)}
                 >
                   <div className={styles.icon}>
-                    <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
+                    <Icons.Doorway width={20} height={20} color={colorVariables.gray700} />
                   </div>
                   <span className={styles.name}>{item.name}</span>
                 </div>
@@ -548,7 +548,7 @@ function DoorwayList({
                       }}
                     >
                       <div style={{marginTop: 6}}>
-                        <Icons.Switch color={colorVariables.brandPrimary} />
+                        <Icons.Switch color={colorVariables.midnight} />
                       </div>
                     </Button>
                     <span className={styles.dpuPosition}>
@@ -564,7 +564,8 @@ function DoorwayList({
           width={140}
         />
         <ListViewColumn
-          id={null}
+          id="Edit"
+          title=""
           template={i => <div
             className={styles.editLink}
             onClick={() => onEditDoorway(i)}

@@ -7,7 +7,7 @@
   height: 4px;
   border-radius: $borderRadiusBase;
   overflow: hidden;
-  background-color: $grayDark;
+  background-color: $gray300;
 }
 
 .inner {
@@ -16,7 +16,7 @@
   left: 0px;
   width: 25%;
   height: 100%;
-  background-color: $brandPrimary;
+  background-color: $blue;
   animation: loadingBar 0.8s infinite ease-in-out;
 }
 

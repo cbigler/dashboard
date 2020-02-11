@@ -29,7 +29,6 @@ import getCommonRangesForSpace from '../../helpers/common-ranges';
 import { SpaceReportControlTypes, ISpaceReportController } from '../../types/space-reports';
 import { getShownTimeSegmentsForSpace, DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 
-import { SPACES_BACKGROUND } from '../spaces';
 import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 
 function getLabelForSpaceFunction(id) {
@@ -206,7 +205,7 @@ export function SpacesReportController({
           })}
         </AppBarSection>
       </AppBar>
-      <AppScrollView backgroundColor={SPACES_BACKGROUND}>
+      <AppScrollView>
         {controller.status === 'COMPLETE' ? (
           <div className={styles.spacesReportContainer}>
             {controller.reports.map((report, index) => {

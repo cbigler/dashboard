@@ -23,11 +23,11 @@
   cursor: pointer;
   outline: none;
   user-select: none;
-  color: $grayDarkest;
+  color: $gray700;
 }
-.itemList li:hover { background-color: $grayLighter; }
+.itemList li:hover { background-color: $gray100; }
 .itemList li:focus {
-  background-color: $grayLighter;
+  background-color: $gray100;
 }
 
 
@@ -46,7 +46,7 @@
   background-color: transparent;
   transition: all 150ms ease-in-out;
 }
-.backButton:focus { background-color: $grayLight; }
+.backButton:focus { background-color: $gray300; }
 
 .deleteButton {
   width: 20px;
@@ -58,12 +58,12 @@
 
   background-color: #fff;
   border-radius: 50%;
-  border: 1px solid $gray;
+  border: 1px solid $gray400;
   box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
   cursor: pointer;
   outline: none;
 }
-.deleteButton:focus { border: 1px solid $grayDarker; }
+.deleteButton:focus { border: 1px solid $gray500; }
 
 .addButton {
   display: flex;
@@ -77,8 +77,8 @@
   padding: 0px;
   margin-left: 8px;
   margin-right: 16px;
-  background-color: #fff;
-  border: 1px solid $gray;
+  background-color: $white;
+  border: 1px solid $gray200;
   // box-shadow: 0 2px 4px 0 rgba(34,42,46,0.05);
   border-radius: 50%;
   outline: none;
@@ -118,7 +118,7 @@
 .submitButton {
   width: 100%;
   height: 56px;
-  background-color: $grayCinder;
+  background-color: $midnight;
   border: 0px;
   color: #fff;
   font-family: $fontBase;
@@ -127,7 +127,7 @@
   cursor: pointer;
 }
 .submitButton[disabled] {
-  background-color: $grayDark;
+  background-color: $gray400;
   cursor: default;
 }
 

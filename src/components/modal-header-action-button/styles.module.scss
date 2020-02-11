@@ -2,7 +2,7 @@
 @import "@density/ui/variables/colors.scss";
 
 .modalHeaderActionButton {
-  color: $gray;
+  color: $gray400;
   text-decoration: underline;
   display: inline-block;
   font-size: $fontSizeBase;
@@ -14,5 +14,5 @@
 }
 
 .modalHeaderActionButton:active {
-  color: $grayDarker;
+  color: $gray500;
 }

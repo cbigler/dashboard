@@ -185,7 +185,7 @@ export function AdminUserManagement({
         <AppBarSection>
           <InputBox
             type="text"
-            leftIcon={<Icons.Search color={colorVariables.gray} />}
+            leftIcon={<Icons.Search color={colorVariables.gray400} />}
             placeholder={`Search through ${manageableUsers.length} ${manageableUsers.length === 1 ?  'user' : 'users'}`}
             value={users.searchText}
             width={320}
@@ -208,7 +208,7 @@ export function AdminUserManagement({
         </AppBarSection>
       </AppBar>
 
-      <AppScrollView backgroundColor={colorVariables.grayLightest}>
+      <AppScrollView backgroundColor={colorVariables.gray000}>
         {users.view === 'ERROR' ? (
           <div className={classnames(styles.adminUserManagementList, styles.centered)}>
             <GenericErrorState />
@@ -216,7 +216,7 @@ export function AdminUserManagement({
         ) : null}
         {users.view === 'LOADING' ? (
           <div className={classnames(styles.adminUserManagementList, {[styles.centered]: showEmptySearchState})}>
-            <ListView data={[1, 2]} keyTemplate={n => n}>
+            <ListView data={[1, 2]} keyTemplate={n => n.toString()}>
               <ListViewColumn id="User" width={240} template={() => <Skeleton />} />
               <ListViewColumn id="Role" width={120} template={() => <Skeleton />} />
               <ListViewColumnSpacer />
@@ -286,7 +286,7 @@ export function AdminUserManagement({
                           className={styles.adminUserManagementCellInvitationResend}
                           onClick={() => collectionUsersInviteResend(dispatch, item)}
                         >
-                          <Icons.Refresh color={colorVariables.brandPrimary} />
+                          <Icons.Refresh color={colorVariables.midnight} />
                         </span>
                       ) : null}
                     </Fragment>

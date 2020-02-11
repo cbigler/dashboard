@@ -15,6 +15,8 @@ import {
   InputBox,
 } from '@density/ui/src';
 
+import colorVariables from '@density/ui/variables/colors.json';
+
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
@@ -43,7 +45,6 @@ import SpaceReportsStore from '../../rx-stores/space-reports';
 import UserStore from '../../rx-stores/user';
 // import ResizeCounterStore from '../../rx-stores/resize-counter';
 
-export const SPACES_BACKGROUND = '#FAFAFA';
 
 function hasMeetingsPage(space) {
   return ['conference_room', 'meeting_room'].includes(space.function);
@@ -127,7 +128,7 @@ export function SpacesRaw ({
       <div ref={ref} className={styles.appFrameWrapper}>
         <AppFrame>
           <AppSidebar visible={true} width={width <= 1120 ? 280 : 328}>
-            <AppBar>
+            <div className={styles.searchBoxContainer}>
               <InputBox
                 type="text"
                 width="100%"
@@ -137,8 +138,8 @@ export function SpacesRaw ({
                 value={spaces.filters.search}
                 onChange={onFilterSpaces}
               />
-            </AppBar>
-            <AppScrollView>
+            </div>
+            <AppScrollView backgroundColor={colorVariables.gray100}>
               <nav className={styles.exploreAppFrameSidebarList}>
                 {formattedHierarchy.length === 0 && !spaces.filters.search ?
                   <div className={styles.loadingSpaces}>Loading spaces...</div> :
@@ -243,7 +244,7 @@ export function SpacesRaw ({
                       onCalculateReportData(selectedSpace, updated);
                     }}
                   /> :
-                  <div style={{ width: '100%', height: '100%', background: SPACES_BACKGROUND }}>
+                  <div style={{ width: '100%', height: '100%' }}>
                     <div className={styles.centeredMessage}>
                       <div className={styles.roomBookingMessage}>
                         <span>
@@ -266,7 +267,7 @@ export function SpacesRaw ({
                   activePage={activePage}
                   filters={spaces.filters}
                 />
-                <AppScrollView backgroundColor={SPACES_BACKGROUND}>
+                <AppScrollView>
                   <ExploreSpacePage activePage={activePage} /> 
                 </AppScrollView>
               </Fragment> : null}

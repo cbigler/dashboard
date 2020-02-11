@@ -4,7 +4,7 @@
 .spaceMappingsDestroyContainer { padding: 24px; }
 
 .spaceMappingsDestroyLink {
-  color: $brandDanger;
+  color: $red;
 }
 
 // Allow the user to type in the name of a integrations before removing.
@@ -19,5 +19,5 @@
 .spaceMappingsDestroyWarning {
   font-size: $fontSize3;
   font-weight: $fontWeight3;
-  color: $brandDanger;
+  color: $red;
 }

@@ -1,3 +1,5 @@
+@import "@density/ui/variables/colors.scss";
+
 .chartContainer {
   position: relative;
   display: flex;
@@ -6,8 +8,8 @@
   justify-content: center;
   width: 100%;
   height: 300px;
-  background-color: #FAFBFC;
-  border-bottom: 1px solid #E1E4E8;
+  background-color: $gray000;
+  border-bottom: 1px solid $gray200;
 }
 
 

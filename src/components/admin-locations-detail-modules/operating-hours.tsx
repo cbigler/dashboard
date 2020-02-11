@@ -313,7 +313,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     label: (
                       <div className={styles.resetTimeChoiceWrapper}>
                         <div className={styles.resetTimeIconWrapper}>
-                          <Icons.Reset width={20} height={20} color={colorVariables.gray} />
+                          <Icons.Reset width={20} height={20} color={colorVariables.gray400} />
                         </div>
                         {i.display}
                       </div>
@@ -411,7 +411,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                           id: 'ADD_A_LABEL',
                           label: (
                             <span className={styles.addLabel}>
-                              <Icons.Plus width={10} height={10} color={colorVariables.brandPrimary} />
+                              <Icons.Plus width={10} height={10} color={colorVariables.midnight} />
                               <span>Add a label</span>
                             </span>
                           ),

@@ -1,0 +1,58 @@
+.hack-outline-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    white-space: nowrap;
+  
+    color: $midnight;
+    background-color: $white;
+    height: 40px;
+    padding-top: 2px;
+    padding-left: 13px;
+    padding-right: 11px;
+    border: 1px solid $midnightTransparent20;
+    border-radius: $borderRadiusBase;
+    outline: none;
+
+    transition: all 100ms ease-in-out;
+    svg *[fill-rule=nonzero] {
+        transition: all 100ms ease-in-out;
+    }
+
+  
+    &:hover {
+      background-color: $blueLight;
+      color: $blue;
+      border-color: $blueLight;
+  
+      svg *[fill-rule=nonzero] {
+        fill: $blue;
+      }
+    }
+  
+    &:focus {
+      background-color: $blueLight;
+      color: $blue;
+      border-color: $blue;
+      box-shadow: 0 0 0 1px $blue;
+  
+      svg *[fill-rule=nonzero] {
+        fill: $blue;
+      }
+    }
+  
+    &:active {
+      background-color: $blue;
+      color: $white;
+      border-color: $blue;
+      box-shadow: none;
+  
+      svg *[fill-rule=nonzero] {
+        fill: $white;
+      }
+    }
+  }

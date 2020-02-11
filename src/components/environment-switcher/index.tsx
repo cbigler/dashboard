@@ -137,9 +137,9 @@ export default class EnvironmentSwitcher extends React.Component<any, any> {
 
           <div className={styles.environmentSwitcherFooter}>
             <Button
+              type="primary"
               variant="filled"
               width="100%"
-              className={styles.environmentSwitcherButton}
               onClick={() => {
                 this.setState({open: false});
                 window.localStorage.environmentSwitcher = JSON.stringify(this.state.values);

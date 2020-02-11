@@ -2,22 +2,26 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
-$admin-space-permissions-picker-checkbox-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (active)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(active)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' fill='%232E51B6' x='0' y='0' width='18' height='18' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
-$admin-space-permissions-picker-checkbox-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (inactive)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(inactive)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23979797' fill='%23FFFFFF' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
-$admin-space-permissions-picker-checkbox-disabled-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (disabled-checked)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(disabled-checked)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23B1B1B1' fill='%23D7D7D7' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpolyline stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round' points='1.2 6.58158544 4.57194418 9.95352961 10.6414437 2.53525243'%3E%3C/polyline%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
-$admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com --%3E%3Ctitle%3Eform control / checkbox (disabled)%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='form-control-/-checkbox-(disabled)' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Crect id='checkbox' stroke='%23B1B1B1' fill='%23D7D7D7' x='0.5' y='0.5' width='17' height='17' rx='2'%3E%3C/rect%3E%3Cg id='icon-check' transform='translate(3.000000, 3.000000)'%3E%3Cg id='icon-check-copy'%3E%3Crect id='bounds' fill-opacity='0' fill='%23E3E3E6' x='0' y='0' width='12' height='12'%3E%3C/rect%3E%3Cpath d='M2,6 L10,6' id='icon-check' stroke='%23B1B1B1' stroke-width='1.5' stroke-linecap='square' stroke-linejoin='round'%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 62 (91390) - https://sketch.com --%3E%3Ctitle%3Eform control / checkbox-checked%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Symbols' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='space-hierarchy-/-checkbox-/-checkbox' transform='translate(-72.000000, -191.000000)'%3E%3Cg id='floor' transform='translate(72.000000, 184.000000)'%3E%3Cg id='form-control-/-checkbox-/-checked' transform='translate(0.000000, 7.000000)'%3E%3Cg%3E%3Crect id='checkbox' stroke='%233E6FFD' fill='%233E6FFD' x='0.5' y='0.5' width='17' height='17' rx='4'%3E%3C/rect%3E%3Cg id='check-/-check-small' fill='%23FFFFFF' fill-rule='nonzero'%3E%3Cpolygon id='Shape' points='12.1805575 6.26190647 13.3194425 7.23809353 8.29236133 12.3530215 5.46966991 9.53033009 6.53033009 8.46966991 8.20763867 10.1469785'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 62 (91390) - https://sketch.com --%3E%3Ctitle%3Eform control / checkbox%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Symbols' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='space-hierarchy-/-checkbox-/-checkbox' transform='translate(-72.000000, -159.000000)' fill='%23FFFFFF' stroke='%23D1D5DA'%3E%3Cg id='space' transform='translate(72.000000, 152.000000)'%3E%3Cg id='form-control-/-checkbox-/-normal' transform='translate(0.000000, 7.000000)'%3E%3Cg id='checkbox'%3E%3Crect x='0.5' y='0.5' width='17' height='17' rx='4'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-disabled-checked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 62 (91390) - https://sketch.com --%3E%3Ctitle%3Eform control / checkbox-disabled-checked%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Symbols' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='space-hierarchy-/-checkbox-/-checkbox' transform='translate(-96.000000, -223.000000)'%3E%3Cg id='space' transform='translate(96.000000, 216.000000)'%3E%3Cg id='form-control-/-checkbox-/-disabled-checked' transform='translate(0.000000, 7.000000)'%3E%3Cg%3E%3Crect id='checkbox' stroke='%23E1E4E8' fill='%23E1E4E8' x='0.5' y='0.5' width='17' height='17' rx='4'%3E%3C/rect%3E%3Cg id='check-/-check-small' fill='%23C9CED7' fill-rule='nonzero'%3E%3Cpolygon id='Shape' points='12.1805575 6.26190647 13.3194425 7.23809353 8.29236133 12.3530215 5.46966991 9.53033009 6.53033009 8.46966991 8.20763867 10.1469785'%3E%3C/polygon%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
+$admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/svg+xml,%3C%3Fxml version='1.0' encoding='UTF-8'%3F%3E%3Csvg width='18px' height='18px' viewBox='0 0 18 18' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'%3E%3C!-- Generator: Sketch 62 (91390) - https://sketch.com --%3E%3Ctitle%3Eform control / checkbox-disabled%3C/title%3E%3Cdesc%3ECreated with Sketch.%3C/desc%3E%3Cg id='Symbols' stroke='none' stroke-width='1' fill='none' fill-rule='evenodd'%3E%3Cg id='space-hierarchy-/-checkbox-/-checkbox' transform='translate(-72.000000, -127.000000)' fill='%23E1E4E8' stroke='%23E1E4E8'%3E%3Cg id='space' transform='translate(72.000000, 120.000000)'%3E%3Cg id='form-control-/-checkbox-/-disabled' transform='translate(0.000000, 7.000000)'%3E%3Cg id='checkbox'%3E%3Crect x='0.5' y='0.5' width='17' height='17' rx='4'%3E%3C/rect%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E";
 
 .adminSpacePermissionsPicker {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: #fff;
+  background-color: $white;
 }
 .adminSpacePermissionsPickerBody {
   flex-grow: 1;
   flex-shrink: 0;
   height: calc(100% - 64px);
-  background-color: $grayLightest;
+  background-color: $gray000;
+
+  &.active {
+    background-color: $white;
+  }
 }
 .adminSpacePermissionsPickerScroll {
   height: calc(100% - 64px);
@@ -33,7 +37,7 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
 }
 
 .adminSpacePermissionsSelectAllLink {
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
   cursor: pointer;
   user-select: none;
@@ -66,14 +70,14 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 8px;
-  color: $grayCinder;
+  color: $midnight;
 }
 .adminSpacePermissionsPickerListItemCheckbox:disabled + label {
   cursor: default;
-  color: $grayDarker;
+  color: $gray500;
 }
 .adminSpacePermissionsPickerListItemCheckbox.active:checked:disabled + label {
-  color: $grayCinder;
+  color: $midnight;
 }
 .adminSpacePermissionsPickerListItemCheckbox + label:before {
   content: ' ';
@@ -99,7 +103,7 @@ $admin-space-permissions-picker-checkbox-disabled-unchecked-image: "data:image/s
   cursor: default;
 }
 
-.adminSpacePermissionsPickerListItem.depth0 { border-top: 1px solid $gray; }
+.adminSpacePermissionsPickerListItem.depth0 { border-top: 1px solid $gray200; }
 .adminSpacePermissionsPickerListItem.depth0:first-of-type { border-top: 0px; }
 
 .adminSpacePermissionsPickerListItemIcon {

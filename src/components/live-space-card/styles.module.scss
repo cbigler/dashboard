@@ -6,7 +6,7 @@
   overflow: hidden;
 }
 :global(.card) :global(.card-header).spaceCardHeader {
-  color: $grayCinder;
+  color: $midnight;
   font-size: $fontSize3;
   font-weight: normal;
   display: flex;
@@ -23,7 +23,7 @@
 
 .spaceCardHeaderCount {
   margin-left: auto;
-  color: $brandPrimary;
+  color: $midnight;
 }
 
 .spaceCardCapacityInformation {
@@ -32,15 +32,15 @@
 }
 
 // Add a capacity unit after the capacity number indicator above the progress bar.
-.spaceCardUtilizationPercentage { color: $gray; }
-.spaceCardUtilizationPercentageLabel { color: $grayCinder; }
-.spaceCardUtilizationPercentageLabel > span { color: $brandPrimary; }
+.spaceCardUtilizationPercentage { color: $gray400; }
+.spaceCardUtilizationPercentageLabel { color: $midnight; }
+.spaceCardUtilizationPercentageLabel > span { color: $midnight; }
 
 // Add a capacity percent unit after the percentage indicator directly above and right from the
 // progress bar.
 .spaceCardEditCountLink {
   margin-left: auto;
-  color: $gray;
+  color: $gray400;
   text-decoration: underline;
   cursor: pointer;
 }
@@ -53,8 +53,8 @@
   top: -8px;
 
   :global(.progress-container), :global(.progress-bar) { height: 2px; }
-  :global(.progress-container) { fill: $grayLighter; }
-  :global(.progress-bar) { fill: $brandPrimary; }
+  :global(.progress-container) { fill: $gray100; }
+  :global(.progress-bar) { fill: $midnight; }
 
   // The height of the progress bar should be `2px`.
   :global(.linear-progress-chart) { height: 2px; }
@@ -75,7 +75,7 @@
   top: 13px;
   left: 14px;
 
-  color: $grayDarkest;
+  color: $gray700;
   z-index: 50;
   cursor: pointer;
 
@@ -83,7 +83,7 @@
 
   transition: all 100ms ease-in-out;
   transform: rotate(45deg);
-  &:hover { color: $grayDarker; }
+  &:hover { color: $gray500; }
 }
 
 .spaceCardHeaderNameLinkLabel {

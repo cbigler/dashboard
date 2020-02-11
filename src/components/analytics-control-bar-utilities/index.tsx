@@ -80,6 +80,7 @@ export const MultipleSelectItemList: React.FunctionComponent<MultipleSelectItemL
           <Checkbox
             id={choice.id as string}
             checked={value.includes(choice.id)}
+            color={colorVariables.blue}
             onChange={(e) => {
               if ((e.target as HTMLInputElement).checked) {
                 onChange([ ...value, choice.id ]);
@@ -138,7 +139,7 @@ export const FilterDeleteButton: React.FC<{
       onBlur={onBlur}
     >
       <Icons.Close
-        color={colorVariables.brandDanger}
+        color={colorVariables.red}
         width={16}
         height={16}
       />

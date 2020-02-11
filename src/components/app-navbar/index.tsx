@@ -18,7 +18,7 @@ function getUserLabel(user, hidden) {
     return <span style={{fontWeight: 'normal'}}>
       <span style={{fontWeight: 'bold'}}>{user.organization.name}:</span>{' '}
       <span>{user.full_name || user.email}</span>{' '}
-      <span style={{color: colorVariables.brandPrimary}}>({ROLE_INFO[user.role].label})</span>
+      <span style={{color: colorVariables.midnight}}>({ROLE_INFO[user.role].label})</span>
     </span>;
   }
 }
@@ -78,7 +78,7 @@ function AppNavbarMenuItem({path, text, icon, selected}) {
     onClick={context.onMenuBlur}
   >
     <span className={styles.appNavbarMenuItemIcon}>
-      {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
+      {selected ? React.cloneElement(icon, {color: colorVariables.midnight}) : icon}
     </span>
     {text}
   </a>}</AppNavbarMenuContext.Consumer>;
@@ -107,7 +107,7 @@ function AppNavbarItem({
     > 
       <a href={path} onClick={onClick} target={targetBlank ? "_blank" : ""}>
         {icon ? <span className={styles.appNavbarIcon}>
-          {selected ? React.cloneElement(icon, {color: colorVariables.brandPrimary}) : icon}
+          {selected ? React.cloneElement(icon, {color: colorVariables.midnight}) : icon}
         </span> : null}
         {text}
       </a>
@@ -178,7 +178,7 @@ export default function AppNavbar({
               >
                 <span onClick={onClickImpersonate}>
                   <span className={styles.appNavbarIcon}>
-                    <Icons.ImpersonateOn color="primary" />
+                    <Icons.ImpersonateOn color={colorVariables.midnight} />
                   </span>
                   {getUserLabel(impersonate.selectedUser, impersonate.hidden)}
                 </span>

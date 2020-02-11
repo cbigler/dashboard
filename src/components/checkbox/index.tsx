@@ -45,5 +45,5 @@ Checkbox.defaultProps = {
   id: null,
   checked: false,
   disabled: false,
-  color: colorVariables.brandPrimary,
+  color: colorVariables.midnight,
 };

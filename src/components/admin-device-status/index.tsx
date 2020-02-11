@@ -28,11 +28,11 @@ function getStatusColor(status) {
     case 'error':
     case 'offline':
     case 'low_power':
-      return colorVariables.brandDanger;
+      return colorVariables.red;
     case 'online':
-      return colorVariables.brandSuccess;
+      return colorVariables.green;
     default:
-      return colorVariables.grayDarkest;
+      return colorVariables.gray700;
   }
 }
 
@@ -121,7 +121,7 @@ export function AdminDeviceStatus({
       />
     </AppBar>
     {lowPowerAlert}
-    <AppScrollView backgroundColor={colorVariables.grayLightest}>
+    <AppScrollView backgroundColor={colorVariables.gray000}>
       <div className={styles.adminDeviceList}>
         <ListView keyTemplate={item => item.serial_number} data={sortedSensors}>
           <ListViewColumn

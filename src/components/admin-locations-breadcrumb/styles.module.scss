@@ -12,7 +12,7 @@
   margin-left: 16px;
   margin-right: 16px;
   font-weight: 500;
-  color: $grayDarker;
+  color: $gray500;
   text-decoration: none;
   user-select: none;
   max-width: 180px;
@@ -25,7 +25,7 @@
 .item:last-child {
   margin-right: 8px;
   margin-left: 7px;
-  color: $grayCinder;
+  color: $midnight;
   overflow: visible;
 }
 .item:first-child { margin-left: 0px; }
@@ -63,9 +63,17 @@
   line-height: 40px;
   transition: all 100ms ease-in-out;
   border-radius: $borderRadiusBase;
+
+  svg polygon {
+    transition: all 100ms ease-in-out;
+  }
 }
 .target.visible {
-  border-color: $brandPrimary;
+  color: $blue;
+
+  svg polygon {
+    fill: $blue;
+  }
 }
 
 .popup {
@@ -79,7 +87,7 @@
   width: 280px;
 
   background-color: #fff;
-  border: 1px solid $grayLight;
+  border: 1px solid $gray200;
   border-radius: 4px;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
 
@@ -95,7 +103,7 @@
   padding-left: 16px;
   padding-right: 16px;
   align-items: center;
-  border-bottom: 1px solid $grayLight;
+  border-bottom: 1px solid $gray200;
 }
 
 .popup nav {
@@ -126,14 +134,14 @@
   width: 100%;
   text-decoration: none;
   font-size: 16px;
-  color: $grayCinder;
+  color: $midnight;
   text-overflow: ellipsis;
   white-space: nowrap; 
   overflow: hidden;
 }
 .popupItem a:focus { outline: none; }
-.popupItem.active { background-color: $grayLighter; }
+.popupItem.active { background-color: $gray000; }
 .popupItem.active a {
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
 }

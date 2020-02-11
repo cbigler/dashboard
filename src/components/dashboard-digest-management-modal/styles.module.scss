@@ -17,7 +17,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 }
 .dashboardDigestManagementModalSplit.left {
   width: 45%;
-  border-right: 1px solid $grayLight;
+  border-right: 1px solid $gray300;
 }
 .dashboardDigestManagementModalSplit.right {
   width: 55%;
@@ -27,7 +27,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 
 .dashboardDigestManagementModalFooterCancel {
   margin-right: 24px;
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
   cursor: pointer;
   transition: all 150ms ease-in-out;
@@ -54,7 +54,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 }
 .digestManagementFormGroupDayStatus {
   margin-left: 16px;
-  color: $grayDarker;
+  color: $gray500;
   font-style: italic;
   font-size: 14px;
 }
@@ -82,8 +82,8 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
   height: 64px;
   padding-left: 24px;
   padding-right: 24px;
-  background-color: $grayLightest;
-  border-bottom: 1px solid $grayLight;
+  background-color: $gray000;
+  border-bottom: 1px solid $gray300;
 }
 
 .digestManagementRecipientListTitle {
@@ -111,15 +111,15 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
     width: 250px;
   }
 }
-.digestManagementRecipientListItemName.checked { color: $brandPrimary; }
+.digestManagementRecipientListItemName.checked { color: $midnight; }
 .digestManagementRecipientListItemNamePlaceholder {
-  background-color: $gray;
+  background-color: $gray400;
   border-radius: 4px;
   width: 170px;
   height: 16px;
 }
 .digestManagementRecipientListItemCheckboxPlaceholder {
-  background-color: $gray;
+  background-color: $gray400;
   border-radius: 2px;
   width: 24px;
   height: 24px;
@@ -153,14 +153,14 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 
   width: 100%;
   height: 40px;
-  border: 1px solid $grayDark;
+  border: 1px solid $gray400;
   border-radius: 2px;
   background-color: #fff;
   padding-left: 16px;
   padding-right: 16px;
   cursor: text;
 }
-.digestManagementRecipientListSearchBox.focused { border-color: $brandPrimary; }
+.digestManagementRecipientListSearchBox.focused { border-color: $midnight; }
 .digestManagementRecipientListSearchBox input {
   border: 0px;
   background-color: transparent;
@@ -177,13 +177,13 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 
   width: 100%;
   height: 40px;
-  border: 1px solid $grayDark;
+  border: 1px solid $gray400;
   border-radius: 2px;
   background-color: #fff;
   cursor: text;
   box-sizing: border-box;
 }
-.digestManagementRecipientListInputBox.focused { border-color: $brandPrimary; }
+.digestManagementRecipientListInputBox.focused { border-color: $midnight; }
 .digestManagementRecipientListInputBox input {
   border: 0px;
   background-color: transparent;
@@ -202,7 +202,7 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
   flex-grow: 0;
   flex-shrink: 0;
 
-  background-color: $grayDarker;
+  background-color: $gray500;
   color: #fff;
   border-radius: 50%;
   width: 40px;
@@ -236,12 +236,12 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
 .digestManagementAddedNotAddedBox .textLabel {
   font-size: 14px;
   font-weight: bold;
-  color: $grayDarker;
+  color: $gray500;
   user-select: none;
   margin-right: 8px;
   white-space: nowrap;
 }
-.digestManagementAddedNotAddedBox.checked .textLabel { color: $brandPrimary; }
+.digestManagementAddedNotAddedBox.checked .textLabel { color: $blue; }
 
 .digestManagementAddedNotAddedBox .checkboxWell {
   display: flex;
@@ -252,14 +252,14 @@ $dashboardDigestManagementModalAppBarHeight: 64px;
   width: 24px;
   height: 24px;
   border-radius: $borderRadiusBase;
-  border: 1px solid $grayDarker;
+  border: 1px solid $gray500;
   transition: all 150ms ease-in-out;
 }
 .digestManagementAddedNotAddedBox .checkboxWell:hover { opacity: 0.9; }
 .digestManagementAddedNotAddedBox .checkboxWell:active { opacity: 1; }
 
 .digestManagementAddedNotAddedBox.checked .checkboxWell {
-  background-color: $brandPrimary;
-  border-color: $brandPrimary;
+  background-color: $blue;
+  border-color: $blue;
 }
 // end checkbox styles

@@ -238,7 +238,7 @@ const PasswordSection = props => {
                         width="100%"
                         value={currentPassword}
                         leftIcon={validationStatus === CURRENT_PASSWORD_REQUIRED ? (
-                          <InputBoxInfo color={colors.brandDanger}>Field is required</InputBoxInfo>
+                          <InputBoxInfo color={colors.red}>Field is required</InputBoxInfo>
                         ) : null}
                         onChange={evt => setCurrentPassword(evt.target.value)}
                       />}
@@ -257,9 +257,9 @@ const PasswordSection = props => {
                         width="100%"
                         value={newPassword}
                         leftIcon={validationStatus === NEW_PASSWORD_TOO_SHORT ? (
-                          <InputBoxInfo color={colors.brandDanger}>Must be at least {PASSWORD_MIN_LENGTH} characters</InputBoxInfo>
+                          <InputBoxInfo color={colors.red}>Must be at least {PASSWORD_MIN_LENGTH} characters</InputBoxInfo>
                         ) : validationStatus === PASSWORD_UNCHANGED ? (
-                          <InputBoxInfo color={colors.brandDanger}>Must be a new password</InputBoxInfo>
+                          <InputBoxInfo color={colors.red}>Must be a new password</InputBoxInfo>
                         ) : null}
                         onChange={evt => setNewPassword(evt.target.value)}
                       />}
@@ -277,7 +277,7 @@ const PasswordSection = props => {
                         width="100%"
                         value={newPasswordConfirm}
                         leftIcon={validationStatus === PASSWORD_CONFIRMATION_MISMATCH ? (
-                          <InputBoxInfo color={colors.brandDanger}>Password must match</InputBoxInfo>
+                          <InputBoxInfo color={colors.red}>Password must match</InputBoxInfo>
                         ) : null}
                         onChange={evt => setNewPasswordConfirm(evt.target.value)}
                       />}
@@ -366,6 +366,8 @@ function AlertSection({
             />}
           />
           <ListViewColumn
+            id="Edit"
+            title=""
             width={60}
             align="right"
             template={alert => (

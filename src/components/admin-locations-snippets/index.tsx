@@ -187,7 +187,7 @@ export function AdminLocationsListRoomsTotal({spaces}: {spaces: SpacesLegacyStat
 
 export function AdminLocationsListSize({user}: {user: UserState}) {
   return <ListViewColumn
-    id={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.size_area_display_unit]})` : null}
+    id={user.data ? `Size (${UNIT_DISPLAY_NAMES[user.data.size_area_display_unit]})` : 'Size'}
     width={120}
     template={(item: CoreSpace) => {
       const area = sizeAreaConverted(user, item);
@@ -233,6 +233,8 @@ export function AdminLocationsListDPUsTotal() {
 
 export function AdminLocationsListRightArrow() {
   return <ListViewColumn
+    id="ArrowRight"
+    title=""
     width={60}
     align="right"
     template={() => <span style={{paddingRight: 24}}>
@@ -322,13 +324,13 @@ export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: Core
         </div>}
         popupAnchor="left"
         popupWidth="auto"
-        popupBackground={colorVariables.grayCinder}
-        popupBorder={colorVariables.grayCinder}
+        popupBackground={colorVariables.midnight}
+        popupBorder={colorVariables.midnight}
       >
         {spacesOtherThanSelectedSpace.map(space => (
           <div className={styles.doorwayLinkedSpacesPopoverTag}>
             <div className={styles.doorwayLinkedSpacesIcon}>
-              <Icons.Link width={20} height={20} color={colorVariables.grayLight} />
+              <Icons.Link width={20} height={20} color={colorVariables.gray300} />
             </div>
             <span className={styles.doorwayLinkedSpacesText}>{space.name}</span>
           </div>
@@ -368,7 +370,7 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: CoreSpace, 
             template={item => <Fragment>
               <div className={styles.doorwayContainer}>
                 <div className={styles.doorwayIcon}>
-                  <Icons.Doorway width={20} height={20} color={colorVariables.grayDarkest} />
+                  <Icons.Doorway width={20} height={20} color={colorVariables.gray700} />
                 </div>
                 <span className={styles.doorway_name}>{item.name}</span>
               </div>

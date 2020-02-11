@@ -1,0 +1,11 @@
+@mixin dialog-box-shadow {
+    box-shadow: 0 8px 10px 0 rgba(0, 0, 0, 0.08);
+}
+
+@mixin hover-overlay-box-shadow {
+    box-shadow: 0 8px 10px 0 rgba(0, 0, 0, 0.08);
+}
+
+@mixin elevated-status-box-shadow {
+    box-shadow: 0 8px 10px 0 rgba(0, 0, 0, 0.08);
+}

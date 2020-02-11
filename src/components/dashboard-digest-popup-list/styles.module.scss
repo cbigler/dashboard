@@ -2,6 +2,9 @@
 @import "@density/ui/variables/fonts.scss";
 @import "@density/ui/variables/spacing.scss";
 
+@import '../../styles/button.scss';
+@import '../../styles/shadows.scss';
+
 $dashboardDigestBackdropZIndex: 99999;
 
 .dashboardDigestList {
@@ -24,24 +27,7 @@ $dashboardDigestBackdropZIndex: 99999;
 
 
 .dashboardDigestListButton {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  white-space: nowrap;
-
-  color: $brandPrimary;
-  background-color: #fff;
-  height: 40px;
-  padding-top: 2px;
-  padding-left: 13px;
-  padding-right: 11px;
-  border: 1px solid $gray;
-  border-radius: $borderRadiusBase;
-  outline: none;
+  @extend .hack-outline-button;
 }
 @media (max-width: 375px) {
   // Hide digests on mobile
@@ -51,7 +37,6 @@ $dashboardDigestBackdropZIndex: 99999;
   position: relative;
   z-index: $dashboardDigestBackdropZIndex + 1;
 }
-.dashboardDigestListButton:focus { border-color: $brandPrimary; }
 
 .dashboardDigestListButtonText {
   margin-left: 8px;
@@ -67,13 +52,13 @@ $dashboardDigestBackdropZIndex: 99999;
 
   margin-top: 8px;
   background-color: #fff;
-  border: 1px solid $gray;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
 
   opacity: 0;
   transition: all 150ms ease-in-out;
   pointer-events: none;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  @include dialog-box-shadow;
 }
 .dashboardDigestListDropdown.visible {
   pointer-events: auto;
@@ -84,7 +69,7 @@ $dashboardDigestBackdropZIndex: 99999;
 .dashboardDigestListDropdownCreateButton {
   display: flex;
   align-items: center;
-  color: $brandPrimary;
+  color: $midnight;
   font-weight: bold;
   cursor: pointer;
   outline: none;
@@ -121,7 +106,7 @@ $dashboardDigestBackdropZIndex: 99999;
 }
 
 .dashboardDigestListDropdownItemEdit {
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
   cursor: pointer;
   outline: none;
@@ -140,7 +125,7 @@ $dashboardDigestBackdropZIndex: 99999;
   font-weight: bold;
   user-select: none;
   cursor: default;
-  color: $grayDarker;
+  color: $gray500;
 }
 .dashboardDigestListDropdownItemIntervalText {
   margin-left: 8px;
@@ -163,14 +148,14 @@ $dashboardDigestBackdropZIndex: 99999;
   margin-left: 24px;
 }
 .dashboardDigestListEmptyContainerTitle {
-  color: $grayCinder;
+  color: $midnight;
   font-size: $fontSizeBase;
   font-weight: 400;
   margin-top: 0px;
   margin-bottom: 4px;
 }
 .dashboardDigestListEmptyContainerDesc {
-  color: $grayDark;
+  color: $gray400;
   font-size: 14px;
 }
 
@@ -183,7 +168,7 @@ $dashboardDigestBackdropZIndex: 99999;
 }
 .dashboardCigestListErrorContainerTitle {
   font-size: 24px;
-  color: $brandDanger;
+  color: $red;
   margin-top: 0px;
 }
 .dashboardDigestListErrorContainerDesc { font-size: $fontSizeBase; }
@@ -204,8 +189,8 @@ $dashboardDigestBackdropZIndex: 99999;
   margin-bottom: 21px;
 }
 .dashboardDigestListLoadingPlaceholder {
-  background-color: $grayLight;
+  background-color: $gray300;
   border-radius: $borderRadiusSmall;
   height: 8px;
 }
-.dashboardDigestListLoadingPlaceholder.dark { background-color: $grayDark; }
+.dashboardDigestListLoadingPlaceholder.dark { background-color: $gray400; }

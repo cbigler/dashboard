@@ -2,6 +2,7 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { TimeFilter, DayOfWeek } from '../../types/datetime';
 import { Button, Checkbox, Icons } from '@density/ui/src';
+import colorVariables from '@density/ui/variables/colors.json';
 import isEqual from 'lodash/isEqual'; 
 
 import Slider from '../slider';
@@ -327,7 +328,6 @@ const TimeFilterControls: React.FC<{
       <Checkbox
         checked={state.isOvernight}
         onChange={() => dispatch(actions.toggleOvernight())}
-        color={'#0d183a'}
         label={'Overnight'}
       />
 
@@ -404,7 +404,7 @@ const AnalyticsControlBarTimeFilter: React.FC<{
             [styles.active]: isOpen,
             [styles.filterActive]: isFilterActive,
           })}>
-            <Icons.Clock color={'#0D183A'}/>
+            <Icons.Clock color={colorVariables.midnight}/>
           </div>
         )}
       >

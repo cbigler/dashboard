@@ -18,7 +18,7 @@
   transform: translate(0px, -6px);
 }
 .exploreEditCountModalCountPickerLabel input {
-  color: $brandPrimary;
+  color: $midnight;
   font-size: $fontSizeBase;
   font-family: $fontBase;
 
@@ -27,7 +27,7 @@
   height: 40px;
   border-radius: $borderRadiusBase;
   outline: none;
-  border: 1px solid $grayDarker;
+  border: 1px solid $gray500;
 
   margin-left: 40px;
   margin-right: 40px;
@@ -39,7 +39,7 @@
     -webkit-appearance: none;
     margin: 0;
   }
-  &:focus { border-color: $brandPrimary; }
+  &:focus { border-color: $midnight; }
 }
 .exploreEditCountModalCountButton {
   display: flex;
@@ -53,9 +53,9 @@
 
   outline: none;
 
-  color: $gray;
+  color: $gray400;
   background-color: #fff;
-  border: 1px solid $grayDarker;
+  border: 1px solid $gray500;
   cursor: pointer;
 }
 .exploreEditCountModalCountButton.subtract { margin-left: auto; }

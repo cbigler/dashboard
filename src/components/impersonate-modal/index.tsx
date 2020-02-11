@@ -75,8 +75,8 @@ export default function ImpersonateModal() {
   );
   
   // Focus the "user" input and "save" button when needed
-  const userInputRef = useRef<HTMLElement>();
-  const saveButtonRef = useRef<HTMLElement>();
+  const userInputRef = useRef<HTMLElement>(null);
+  const saveButtonRef = useRef<HTMLElement>(null);
 
   return <Modal
     width={800}
@@ -108,7 +108,7 @@ export default function ImpersonateModal() {
         width: '50%',
         display: 'flex',
         flexDirection: 'column',
-        borderRight: `1px solid ${colorVariables.grayLight}`
+        borderRight: `1px solid ${colorVariables.gray300}`
       }}>
         <AppBar>
           <AppBarSection>
@@ -133,7 +133,7 @@ export default function ImpersonateModal() {
             ref={orgInputRef}
             width="100%"
             placeholder='ex: "Density Dev", "Acme Co"'
-            leftIcon={<Icons.Search color={colorVariables.gray} />}
+            leftIcon={<Icons.Search color={colorVariables.gray400} />}
             disabled={!enabled}
             value={activeModal.data.organizationFilter}
             onKeyPress={e => {
@@ -157,6 +157,8 @@ export default function ImpersonateModal() {
         }}>
           <ListView data={filteredOrgs} showHeaders={false}>
             <ListViewColumn
+              id="Column 1"
+              title=""
               width="auto"
               disabled={item => loading || !enabled}
               onClick={item => onSelectImpersonateOrganization(
@@ -180,7 +182,7 @@ export default function ImpersonateModal() {
         width: '50%',
         display: 'flex',
         flexDirection: 'column',
-        background: colorVariables.grayLightest
+        background: colorVariables.gray000
       }}>
         <div style={{background: '#FFF'}}><AppBar>
           <span style={{fontSize: 20}}>User</span>
@@ -190,7 +192,7 @@ export default function ImpersonateModal() {
             ref={userInputRef}
             width="100%"
             placeholder='ex: "John Denver"'
-            leftIcon={<Icons.Search color={colorVariables.gray} />}
+            leftIcon={<Icons.Search color={colorVariables.gray400} />}
             disabled={!enabled}
             value={activeModal.data.userFilter}
             onKeyPress={e => {
@@ -222,7 +224,7 @@ export default function ImpersonateModal() {
               style={{
                 opacity: enabled ? 1.0 : 0.25,
                 cursor: enabled ? 'pointer' : undefined,
-                color: selected ? colorVariables.brandPrimary: undefined,
+                color: selected ? colorVariables.midnight: undefined,
               }}
               onClick={() => {
                 const user = activeModal.data.users.find(x => x.id === item.id);

@@ -80,7 +80,7 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
             />
           </AppBarSection>
         </AppBar>
-        <div className={styles.adminSpacePermissionsPickerBody}>
+        <div className={classnames(styles.adminSpacePermissionsPickerBody, {[styles.active]: active})}>
           <AppBar>
             {active ? (
               <Fragment>
@@ -176,12 +176,12 @@ export default class AdminSpacePermissionsPicker extends Component<AdminSpacePer
                     >
                       {item.space.space_type === 'building' ? (
                         <span className={styles.adminSpacePermissionsPickerListItemIcon}>
-                          <Icons.Building color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                          <Icons.Building color={active ? colorVariables.midnight : colorVariables.gray500} />
                         </span>
                       ) : null}
                       {item.space.space_type === 'floor' ? (
                         <span className={styles.adminSpacePermissionsPickerListItemIcon}>
-                          <Icons.Folder color={active ? colorVariables.grayCinder : colorVariables.grayDarker} />
+                          <Icons.Folder color={active ? colorVariables.midnight : colorVariables.gray500} />
                         </span>
                       ) : null}
                       <span className={classnames(
@@ -209,9 +209,9 @@ function AdminSpacePermissionsPickerListItemLabelSkeleton() {
         <span className={styles.adminSpacePermissionsPickerListItemLabel}>
           <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
             <div style={{marginRight: 12, marginTop: 1}}>
-              <Skeleton width={16} height={16} color={colorVariables.gray} />
+              <Skeleton width={16} height={16} color={colorVariables.gray400} />
             </div>
-            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+            <Skeleton width={150} height={6} color={colorVariables.gray500} />
           </div>
         </span>
       </div>
@@ -219,9 +219,9 @@ function AdminSpacePermissionsPickerListItemLabelSkeleton() {
         <span className={styles.adminSpacePermissionsPickerListItemLabel}>
           <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
             <div style={{marginRight: 12, marginTop: 1}}>
-              <Skeleton width={16} height={16} color={colorVariables.gray} />
+              <Skeleton width={16} height={16} color={colorVariables.gray400} />
             </div>
-            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+            <Skeleton width={150} height={6} color={colorVariables.gray500} />
           </div>
         </span>
       </div>
@@ -232,9 +232,9 @@ function AdminSpacePermissionsPickerListItemLabelSkeleton() {
         <span className={styles.adminSpacePermissionsPickerListItemLabel}>
           <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
             <div style={{marginRight: 12, marginTop: 1}}>
-              <Skeleton width={16} height={16} color={colorVariables.gray} />
+              <Skeleton width={16} height={16} color={colorVariables.gray400} />
             </div>
-            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+            <Skeleton width={150} height={6} color={colorVariables.gray500} />
           </div>
         </span>
       </div>
@@ -245,9 +245,9 @@ function AdminSpacePermissionsPickerListItemLabelSkeleton() {
         <span className={styles.adminSpacePermissionsPickerListItemLabel}>
           <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
             <div style={{marginRight: 12, marginTop: 1}}>
-              <Skeleton width={16} height={16} color={colorVariables.gray} />
+              <Skeleton width={16} height={16} color={colorVariables.gray400} />
             </div>
-            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+            <Skeleton width={150} height={6} color={colorVariables.gray500} />
           </div>
         </span>
       </div>
@@ -258,9 +258,9 @@ function AdminSpacePermissionsPickerListItemLabelSkeleton() {
         <span className={styles.adminSpacePermissionsPickerListItemLabel}>
           <div className={styles.adminSpacePermissionsPickerListItemLabelSkeleton}>
             <div style={{marginRight: 12, marginTop: 1}}>
-              <Skeleton width={16} height={16} color={colorVariables.gray} />
+              <Skeleton width={16} height={16} color={colorVariables.gray400} />
             </div>
-            <Skeleton width={150} height={6} color={colorVariables.grayDarker} />
+            <Skeleton width={150} height={6} color={colorVariables.gray500} />
           </div>
         </span>
       </div>

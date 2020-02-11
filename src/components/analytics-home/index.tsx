@@ -126,7 +126,7 @@ export default function AnalyticsHomePage({
               <p>A new way to explore your Density data and gain deeper insights into your portfolio.</p>
             </div>
             <div className={styles.analyticsIntroRight}>
-              <Button onClick={() => onChangeIntroVisible(false)} variant="underline" type="muted">
+              <Button onClick={() => onChangeIntroVisible(false)} variant="underline">
                 <div className={styles.dismissButton}>
                   <Icons.VisibilityHide />
                   <span className={styles.dismissButtonText}>Dismiss</span>
@@ -189,7 +189,7 @@ function SavedReportsListView({
         id="Saved Reports"
         title={<div className={styles.homeHeader}>
           <span className={styles.homeHeaderIcon}>
-            <Icons.Save color={colorVariables.brandPrimary} />
+            <Icons.Save color={colorVariables.midnight} />
           </span>
           Saved Reports
         </div>}
@@ -240,8 +240,8 @@ export function AnalyticsHomeSkeleton() {
       <div className={styles.homeMain}>
         <SavedReportsListView
           savedReports={[
-            {id: 1, name: <Skeleton width={100} height={6} color={colorVariables.gray} />},
-            {id: 2, name: <Skeleton width={145} height={6} color={colorVariables.gray} />},
+            {id: 1, name: <Skeleton width={100} height={6} color={colorVariables.gray300} />},
+            {id: 2, name: <Skeleton width={145} height={6} color={colorVariables.gray300} />},
           ]}
           onOpenReport={() => {}}
           onUpdateReportName={() => {}}
@@ -251,8 +251,8 @@ export function AnalyticsHomeSkeleton() {
       <div className={styles.homeRecommended}>
         <RecommendedListView
           recommendedReports={[
-            {id: 1, name: <Skeleton width={100} height={6} color={colorVariables.gray} />},
-            {id: 2, name: <Skeleton width={145} height={6} color={colorVariables.gray} />},
+            {id: 1, name: <Skeleton width={100} height={6} color={colorVariables.gray300} />},
+            {id: 2, name: <Skeleton width={145} height={6} color={colorVariables.gray300} />},
           ]}
           onOpenPartialReport={() => {}}
         />

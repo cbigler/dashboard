@@ -1,12 +1,9 @@
 @import '@density/ui/variables/colors.scss';
 
-$newDarkColor: #0d183a;
-
-
 .wrapper {
   position: relative;
 
-  * {
+  *:not(label) {
     box-sizing: border-box;
   }
 }
@@ -19,35 +16,35 @@ $newDarkColor: #0d183a;
   width: 32px;
   margin-right: 8px;  
   border-radius: 50%;
-  border: 1px solid #fff;
-  background-color: #fff;
+  border: 1px solid $white;
+  background-color: $white;
   cursor: pointer;
 
   &:hover {
-    background-color: #DDE6FF;
-    border-color: #DDE6FF;
-    color: #5581FF;
+    background-color: $blueLight;
+    border-color: $blueLight;
+    color: $blue;
 
-    path { fill: #5581ff}
+    path { fill: $blue }
   }
 
   &.active,
   &:active,
   &:focus {
-    background-color: #DDE6FF;
-    border-color: #5581FF;
-    box-shadow: 0 0 0 1px #5581FF;
-    color: #5581FF;
+    background-color: $blueLight;
+    border-color: $blue;
+    box-shadow: 0 0 0 1px $blue;
+    color: $blue;
 
-    path { fill: #5581ff}
+    path { fill: $blue }
   }
 
   &.filterActive {
-    background-color: #5581FF;
+    background-color: $blue;
     border-color: transparent;
-    color: #ffffff;
+    color: $white;
 
-    path { fill: #ffffff}
+    path { fill: $white }
   }
 }
 
@@ -88,10 +85,10 @@ $newDarkColor: #0d183a;
 }
 .timeRangeDisplayInput {
   color: #999;
-  background-color: #efefef;
+  background-color: $gray200;
   margin: 0 8px;
   padding: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid $gray300;
   border-radius: 4px;
   font-size: 14px;
   width: 70px;
@@ -133,8 +130,8 @@ $newDarkColor: #0d183a;
   user-select: none;
 
   &.active {
-    background-color: $brandPrimary;
-    border-color: $brandPrimary;
+    background-color: $midnight;
+    border-color: $midnight;
     color: white;
   }
 }
@@ -145,7 +142,7 @@ $newDarkColor: #0d183a;
   justify-content: space-between;
   padding-top: 12px;
   margin-top: 16px;
-  border-top: 1px solid $grayLight;
+  border-top: 1px solid $gray200;
 
   button {
     flex-grow: 0;
@@ -164,7 +161,7 @@ $newDarkColor: #0d183a;
   padding-left: 10px;
   padding-right: 16px;
   border-radius: 4px;
-  border: 1px solid $gray;
+  border: 1px solid $gray400;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
@@ -172,21 +169,21 @@ $newDarkColor: #0d183a;
   svg { padding-right: 8px; }
 
   &:hover {
-    background-color: #DDE6FF;
-    border-color: #DDE6FF;
-    color: #5581FF;
+    background-color: $gray300;
+    border-color: $gray300;
+    color: $blue;
 
-    path { fill: #5581ff}
+    path { fill: $blue}
   }
 
   &.active,
   &:active,
   &:focus {
-    background-color: #DDE6FF;
-    border-color: #5581FF;
-    box-shadow: 0 0 0 1px #5581FF;
-    color: #5581FF;
+    background-color: $gray300;
+    border-color: $blue;
+    box-shadow: 0 0 0 1px $blue;
+    color: $blue;
 
-    path { fill: #5581ff}
+    path { fill: $blue}
   }
 }

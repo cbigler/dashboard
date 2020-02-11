@@ -65,7 +65,7 @@
 
 // Header for the space list view. Contians a label and a search box.
 .liveSpaceListHeader {
-  color: $grayDarkest;
+  color: $gray700;
   font-size: $fontSizeBase;
   font-weight: normal;
 
@@ -105,13 +105,13 @@
 }
 
 .liveSpaceListSearchBox {
-  color: $grayDarker;
+  color: $gray500;
   &::placeholder,
   &::-webkit-input-placeholder,
   &::-moz-placeholder,
   &:-ms-input-placeholder,
   &:-moz-placeholder {
-    color: $gray;
+    color: $gray400;
     opacity: 1; // Placeholders in firefox have opacity be default. Undo that.
   }
 
@@ -137,10 +137,10 @@
   font-size: $fontSizeXSmall;
   font-weight: bold;
   color: #fff;
-  background-color: $grayCinder;
+  background-color: $midnight;
   user-select: none;
 
-  border: 1px solid $grayCinder;
+  border: 1px solid $midnight;
   border-radius: $borderRadiusBase;
 }
 
@@ -148,14 +148,14 @@
   display: inline-block;
   width: 8px;
   height: 8px;
-  background-color: $gray;
+  background-color: $gray400;
   border-radius: 50%;
   margin-left: 6px;
 }
 
-.liveSpaceListLiveIndicatorTag i.status.connected { background-color: $brandSuccess; }
-.liveSpaceListLiveIndicatorTag i.status.connecting { background-color: $brandWarning; }
-.liveSpaceListLiveIndicatorTag i.status.error { background-color: $brandDanger; }
+.liveSpaceListLiveIndicatorTag i.status.connected { background-color: $green; }
+.liveSpaceListLiveIndicatorTag i.status.connecting { background-color: $yellow; }
+.liveSpaceListLiveIndicatorTag i.status.error { background-color: $red; }
 
 .liveSpaceListContainer {
   @include grid-container;
@@ -166,7 +166,7 @@
 
 // Shown when the space live list is empty
 .liveSpaceListEmpty {
-  color: $grayDark;
+  color: $gray400;
   font-size: $fontSize3;
   margin-top: 100px;
 

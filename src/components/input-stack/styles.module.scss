@@ -38,19 +38,19 @@
 }
 
 .inputStackItemContainer.inputstackItemValid::before {
-  background-color: $brandPrimary;
+  background-color: $midnight;
 }
 
 .inputStackItemContainer.inputStackItemError::before {
-  background-color: $brandDanger;
+  background-color: $red;
 }
 
 .inputStackItemContainer.inputStackItemOendingValid {
   z-index: 2;
-  border-color: $brandPrimary;
+  border-color: $midnight;
 }
 
 .inputStackItemContainer.inputStackItemPendingError {
   z-index: 2;
-  border-color: $brandDanger;
+  border-color: $red;
 }

@@ -33,7 +33,7 @@ export default function AdminLocationsSubheader({title, subtitle=null, space_id=
             <span className={styles.manageLinkWrapper}>
               <span className={classnames(styles.manageLink, {[styles.hover]: hover})}>Manage</span>
               <Icons.ArrowRight
-                color={hover ? colorVariables.brandPrimary : colorVariables.gray}
+                color={hover ? colorVariables.midnight : colorVariables.gray400}
                 width={17}
                 height={17}
               />

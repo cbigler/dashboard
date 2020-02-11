@@ -1,6 +1,8 @@
 @import "@density/ui/variables/colors.scss";
 @import "@density/ui/variables/grid.scss";
 
+@import "../../styles/shadows.scss";
+
 $appNavbarHeight: 40px;
 
 // Navbar Layout
@@ -14,7 +16,7 @@ $appNavbarHeight: 40px;
 
   background-color: #fff;
   height: $appNavbarHeight;
-  border-bottom: 1px solid $grayLight;
+  border-bottom: 1px solid $gray200;
 }
 
 .appNavbar {
@@ -92,7 +94,7 @@ $appNavbarHeight: 40px;
   padding-left: 16px;
   padding-right: 16px;
 
-  color: $grayCinder;
+  color: $midnight;
   text-decoration: none;
   font-size: 14px;
   font-weight: bold;
@@ -100,7 +102,7 @@ $appNavbarHeight: 40px;
 }
 
 .appNavbarItem.selected > a,
-.appNavbarItem.selected > span { color: $brandPrimary; }
+.appNavbarItem.selected > span { color: $midnight; }
 
 .appNavbarItem.showOnMobile {
   display: flex;
@@ -152,12 +154,12 @@ $appNavbarHeight: 40px;
   padding-left: 16px;
   padding-right: 32px;
 
-  border: 1px solid $gray;
+  border: 1px solid $gray300;
   border-radius: 4px;
 
   opacity: 0;
   pointer-events: none;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  @include dialog-box-shadow;
 }
 .appNavbarMenuItems.opened {
   opacity: 1;
@@ -171,7 +173,7 @@ $appNavbarHeight: 40px;
   opacity: 0.5;
   user-select: none;
 
-  color: $grayCinder;
+  color: $midnight;
   font-size: 14px;
   font-weight: bold;
   text-decoration: none;
@@ -181,7 +183,7 @@ $appNavbarHeight: 40px;
 .appNavbarMenuItem:hover { opacity: 1; }
 .appNavbarMenuItem.selected {
   opacity: 1;
-  color: $brandPrimary;
+  color: $midnight;
 }
 
 .appNavbarMenuItemIcon {

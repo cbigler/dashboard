@@ -2,6 +2,8 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
+@import '../../styles/shadows.scss';
+
 .backdrop {
   position: absolute;
   top: 0px;
@@ -14,13 +16,13 @@
 .wrapper {
   position: relative;
   outline: none;
-  color: $grayDarkest;
+  color: $gray700;
 }
 
 .target {
   font-size: $fontSizeBase;
   font-weight: 500;
-  color: $gray;
+  color: $gray400;
   padding-bottom: 2px;
   cursor: pointer;
   user-select: none;
@@ -35,10 +37,10 @@
   pointer-events: none;
   transition: all 150ms ease-in-out;
 
-  border: 1px solid $gray;
+  border: 1px solid $gray200;
   border-radius: $borderRadiusBase;
-  box-shadow: 0 8px 10px 0 rgba(0,0,0,0.08);
-  background-color: #fff;
+  @include dialog-box-shadow;
+  background-color: $white;
   z-index: 3;
   overflow: hidden;
 }
@@ -57,6 +59,8 @@
   margin: 0px;
   list-style: none;
   padding: 8px;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 .itemList li {
@@ -73,12 +77,12 @@
   cursor: pointer;
   outline: none;
   user-select: none;
-  color: $grayDarkest;
+  color: $gray700;
 }
 .itemList li:hover,
-.itemList li:focus { background-color: $grayLighter; }
+.itemList li:focus { background-color: $gray100; }
 .itemList li.disabled {
-  color: $gray;
-  background-color: $grayLightest;
+  color: $gray400;
+  background-color: $gray000;
   cursor: default;
 }

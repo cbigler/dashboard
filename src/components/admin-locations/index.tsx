@@ -158,10 +158,10 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
             <AppBarSection>
               <ButtonGroup>
                 <Button variant="filled">
-                  <Skeleton width={96} color={colorVariables.grayLight} />
+                  <Skeleton width={96} color={colorVariables.gray300} />
                 </Button>
                 <Button variant="filled">
-                  <Skeleton width={96} color={colorVariables.grayLight} />
+                  <Skeleton width={96} color={colorVariables.gray300} />
                 </Button>
               </ButtonGroup>
             </AppBarSection>
@@ -225,7 +225,7 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
                 supportsHover={false}
               />
               <div className={styles.loadingWrapper}>
-                <ListView data={[1, 2]} keyTemplate={i => i}>
+                <ListView data={[1, 2]} keyTemplate={i => i.toString()}>
                   <ListViewColumn
                     id="Info"
                     width="auto"
@@ -234,6 +234,8 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
                     )}
                   />
                   <ListViewColumn
+                    id="Column 2"
+                    title=""
                     width={200}
                     template={() => (
                       <Skeleton width={200} height={16} />

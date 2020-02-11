@@ -87,7 +87,7 @@ const Selector: React.FunctionComponent<SelectorProps> = function Selector(props
         {/* Selector Label */}
         <span
           role="button"
-          className={styles.selector}
+          className={classnames(styles.selector, {[styles.open]: open})}
           onClick={onOpen}
           onMouseEnter={e => !open && onMouseEnter && onMouseEnter(e)}
           onMouseLeave={e => onMouseLeave && onMouseLeave(e)}

@@ -127,7 +127,7 @@ export function AdminDeveloper({
     <AppBar>
       <AppBarSection>
        Looking for more information on our API? Read our&nbsp;
-       <a href="http://docs.density.io" target="_blank" rel="noopener noreferrer">API Docs</a>
+       <a className={styles.apiDocsLink} href="http://docs.density.io" target="_blank" rel="noopener noreferrer">API Docs</a>
       </AppBarSection>
       <AppBarSection>
         <Button
@@ -144,7 +144,7 @@ export function AdminDeveloper({
       </AppBarSection>
     </AppBar>
 
-    <AppScrollView backgroundColor={colorVariables.grayLightest}>
+    <AppScrollView backgroundColor={colorVariables.gray000}>
       <div className={styles.adminDeveloperTokenList}>
         <div className={styles.adminDeveloperSectionHeader}>Tokens</div>
         <ListView keyTemplate={item => item.key} data={tokens.data}>
@@ -179,7 +179,7 @@ export function AdminDeveloper({
             title=" "
             width={30}
             align="right"
-            template={item => <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => <Icons.Trash color={colorVariables.gray500} />}
             onClick={item => onOpenModal('token-update', {token: item, isDestroying: true})} />
         </ListView>
       </div>
@@ -213,7 +213,7 @@ export function AdminDeveloper({
             title=" "
             width={30}
             align="right"
-            template={item => <Icons.Trash color={colorVariables.grayDarker} />}
+            template={item => <Icons.Trash color={colorVariables.gray500} />}
             onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: true})} />
         </ListView>
       </div>

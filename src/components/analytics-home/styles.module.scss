@@ -25,7 +25,7 @@
   height: 100%;
   flex-grow: 1;
   flex-shrink: 0;
-  border-left: 1px solid $grayLight;
+  border-left: 1px solid $gray300;
   padding-top: 24px;
   padding-left: 24px;
   overflow-y: auto;
@@ -60,11 +60,11 @@
   font-size: $fontSizeBase;
   font-weight: bold;
   margin-bottom: 18px;
-  color: $grayCinder;
+  color: $midnight;
 }
 .homeRecommendedReportsEmpty p {
   font-size: $fontSizeBase;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 

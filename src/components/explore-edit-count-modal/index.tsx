@@ -52,7 +52,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
                 className={`${styles.exploreEditCountModalCountButton} ${styles.subtract}`}
               >
                 <div style={{width: 24, height: 24, marginTop: 12}}>
-                  <Icons.Minus color={colorVariables.grayDarker} />
+                  <Icons.Minus color={colorVariables.gray500} />
                 </div>
               </button>
 
@@ -80,7 +80,7 @@ export default class ExploreEditCountModal extends React.Component<any, any> {
                 className={`${styles.exploreEditCountModalCountButton} ${styles.add}`}
               >
                 <div style={{width: 24, height: 24}}>
-                  <Icons.Plus color={colorVariables.grayDarker} />
+                  <Icons.Plus color={colorVariables.gray500} />
                 </div>
               </button>
             </div>

@@ -256,7 +256,7 @@ export default function AdminBrivoMappings () {
         </AppBarSection>
     </AppBar>
 
-    <AppScrollView backgroundColor={colorVariables.grayLightest}>
+    <AppScrollView backgroundColor={colorVariables.gray000}>
         <div className={styles.appContent}>
         {brivo.sitesLoading ? (
             <div className={styles.loadingIndicatorBanner}>
@@ -270,18 +270,18 @@ export default function AdminBrivoMappings () {
                 <div className={styles.brivoSiteSection}>
                     <div className={styles.brivoSiteSectionHeader}>
                         <div className={styles.brivoSiteSectionHeaderIcon}>
-                            <Icons.Building color={colorVariables.grayDarker} />
+                            <Icons.Building color={colorVariables.gray500} />
                         </div>
                         <h3 className={styles.brivoSiteSectionHeaderName}>{site.siteName}</h3>
                         <Button height={40} width={40}
                             onClick={() => showModal(dispatch, 'brivo-site-destroy', {site})}>
-                            <Icons.Trash color={colorVariables.grayDarker}/>
+                            <Icons.Trash color={colorVariables.gray500}/>
                         </Button>
                     </div>
     
                     <div className={styles.brivoSiteSectionBody}>
                         {site.accessPoints.length > 0 ? (
-                            <ListView keyTemplate={accessPoint => accessPoint.id} data={site.accessPoints}>
+                            <ListView keyTemplate={accessPoint => accessPoint.id.toString()} data={site.accessPoints}>
                                 <ListViewColumn
                                     id="Access point"
                                     width={360}
@@ -310,7 +310,7 @@ export default function AdminBrivoMappings () {
                                     template={accessPoint => {
                                         const doorwayMapping = brivo.doorwayMappings.find(x => x.service_doorway_id === accessPoint.id.toString());
                                         return doorwayMapping ? <ListViewClickableLink onClick={() => showModal(dispatch, 'brivo-doorway-mappings-destroy', {doorwayMapping})}>
-                                                    <Icons.LinkBroken color={colorVariables.grayDarker} />
+                                                    <Icons.LinkBroken color={colorVariables.gray500} />
                                                 </ListViewClickableLink> : null;
                                     }}
                                 />

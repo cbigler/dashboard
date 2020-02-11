@@ -2,7 +2,7 @@
 @import "@density/ui/variables/fonts.scss";
 
 .tokenUpdateDestroyLink {
-  color: $brandDanger;
+  color: $red;
 }
 
 // Allow the user to type in the name of a token before removing.
@@ -17,7 +17,7 @@
 .tokenUpdateDestroyWarning {
   font-size: $fontSize3;
   font-weight: $fontWeight3;
-  color: $brandDanger;
+  color: $red;
 }
 
 .tokenUpdateDescriptionField {

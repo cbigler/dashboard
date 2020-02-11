@@ -5,7 +5,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   height: 100%;
-  background-color: $grayLightest;
+  background-color: $gray000;
 }
 
 .wrapper {
@@ -25,7 +25,7 @@
 .card {
   width: 100%;
   max-width: 800px;
-  border: 1px solid $grayLight;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
   background-color: #fff;
 

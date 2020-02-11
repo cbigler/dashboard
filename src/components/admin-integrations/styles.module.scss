@@ -1,5 +1,9 @@
 @import "@density/ui/variables/colors.scss";
 
+.contactLink {
+  color: $blue;
+}
+
 .adminIntegrationsListSection {
   padding: 24px;
 
@@ -11,10 +15,10 @@
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  border-bottom: 1px solid $gray;
+  border-bottom: 1px solid $gray200;
   font-size: 24px;
   font-weight: 400;
-  color: $grayCinder;
+  color: $midnight;
   margin-bottom: 32px;
 }
 
@@ -33,7 +37,7 @@
 .adminIntegrationsMakeDefaultLink {
   text-decoration: underline;
   font-weight: 500;
-  color: $brandPrimary;
+  color: $midnight;
   cursor: pointer;  
 }
 
@@ -43,7 +47,7 @@
   display: flex;
   align-items: center;
   font-weight: 500;
-  color: $grayDarker;
+  color: $gray500;
   cursor: default;
   user-select: none;
 }

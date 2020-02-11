@@ -130,7 +130,7 @@
 
     .mapboxgl-ctrl-geocoder ul > .active > a,
     .mapboxgl-ctrl-geocoder ul > li > a:hover {
-      color: $brandPrimary;
+      color: $midnight;
       background-color: #f3f3f3;
       text-decoration: underline;
       cursor: pointer;
@@ -254,7 +254,7 @@
 }
 .addressMapTooltip {
   display: inline-block;
-  color: $grayDarkest;
+  color: $gray700;
   background-color: #fff;
   border-radius: $borderRadiusBase;
   user-select: none;

@@ -9,7 +9,7 @@
   justify-content: space-between;
 }
 .adminLocationsImageUploadHeaderEdit {
-  color: $brandPrimary;
+  color: $midnight;
   text-decoration: underline;
   cursor: pointer;
 
@@ -24,7 +24,7 @@
   position: relative;
   height: 292px;
 
-  background-color: $grayLight;
+  background-color: $gray300;
   border-radius: 4px;
   overflow: hidden;
 
@@ -55,12 +55,12 @@
   font-family: 'Densicons';
   font-size: 18px;
   margin-right: 8px;
-  color: $grayCinder;
+  color: $midnight;
 }
 
 // The second visible flex child (in the empty state) is a upload link.
 .adminLocationsImageUploadLink {
-  color: $brandPrimary;
+  color: $midnight;
   font-size: $fontSize5;
   font-weight: 600;
   text-decoration: underline;

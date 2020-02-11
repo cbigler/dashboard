@@ -171,7 +171,7 @@ export function DashboardEdit({
                         width={240}
                         template={item => (
                           <Fragment>
-                            <Icons.Report color={colorVariables.grayDark} />
+                            <Icons.Report color={colorVariables.gray400} />
                             <span className={styles.name}>
                               {item.name}
                             </span>
@@ -191,6 +191,8 @@ export function DashboardEdit({
                       />
                       <ListViewColumnSpacer />
                       <ListViewColumn
+                        id="Move"
+                        title=""
                         width={100}
                         template={item => (
                           <ButtonGroup>
@@ -216,6 +218,8 @@ export function DashboardEdit({
                         )}
                       />
                       <ListViewColumn
+                        id="Edit"
+                        title=""
                         width={60}
                         align="right"
                         template={item => (

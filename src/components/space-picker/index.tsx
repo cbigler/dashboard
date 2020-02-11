@@ -168,6 +168,7 @@ export default function SpacePicker({
                 <Checkbox
                   disabled={spaceDisabled}
                   checked={isChecked}
+                  color={colorVariables.blue}
                   onChange={e => {}}
                 />
               ) : null}
@@ -175,21 +176,21 @@ export default function SpacePicker({
               {item.space.space_type === 'building' ? (
                 <span className={styles.itemIcon}>
                   <Icons.Building
-                    color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
+                    color={isChecked ? colorVariables.midnight : colorVariables.gray500}
                   />
                 </span>
               ) : null}
               {item.space.space_type === 'floor' ? (
                 <span className={styles.itemIcon}>
                   <Icons.Floor
-                    color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
+                    color={isChecked ? colorVariables.midnight : colorVariables.gray500}
                   />
                 </span>
               ) : null}
               {item.space.space_type === 'space' && selectControl === SelectControlTypes.NONE ? (
                 <span className={styles.itemIcon} style={{transform: `translate(0, -4px)`}}>
                   <Icons.L
-                    color={isChecked ? colorVariables.grayCinder : colorVariables.grayDarker}
+                    color={isChecked ? colorVariables.midnight : colorVariables.gray500}
                   />
                 </span>
               ) : null}

@@ -22,7 +22,7 @@ $deleteButtonSpacing: 4px;
 
 .header {
   width: 370px;
-  background-color: $grayLightest;
+  background-color: $gray100;
 }
 .back {
   margin-right: 16px;
@@ -32,7 +32,7 @@ $deleteButtonSpacing: 4px;
   height: 300px;
   overflow-y: auto;
 }
-.popupBodySmall { width: 300px; }
+.popupBodySmall { min-width: 240px; }
 
 .label {
   display: inline-block;
