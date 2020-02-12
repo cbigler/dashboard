@@ -207,7 +207,7 @@ export default function AppNavbar({
           <AppNavbarItem
             selected={false}
             showOnMobile={true}
-            path="https://www.density.io/support/"
+            path="https://help.density.io/"
             targetBlank={true}
             style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Chat />}
