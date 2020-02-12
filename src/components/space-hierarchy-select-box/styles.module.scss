@@ -17,7 +17,7 @@
   width: calc(100% - 15px - 15px);
 
   background-color: #fff;
-  border: 1px solid $gray400;
+  border: 1px solid $gray300;
   border-radius: 4px;
 
   padding-left: 15px;
@@ -51,7 +51,7 @@
   & > .inputBoxCaret { margin-top: 3px; }
 
   &.opened {
-    border-color: $midnight;
+    border-color: $blue;
     outline: none;
   }
 
