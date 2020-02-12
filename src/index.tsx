@@ -309,7 +309,7 @@ SessionTokenStore.pipe(combineLatest(ActivePageStore)).subscribe(([token, page])
   if (!onLivePage && eventSource.connectionState !== CONNECTION_STATES.CLOSED) {
     eventSource.disconnect();
   }
-  if (onLivePage && currentToken !== token) {
+  if (onLivePage && (eventSource.connectionState !== CONNECTION_STATES.CONNECTED || currentToken !== token)) {
     currentToken = token;
     eventSource.connect();
   }
