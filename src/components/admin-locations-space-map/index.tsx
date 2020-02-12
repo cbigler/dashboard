@@ -146,7 +146,7 @@ export default class AdminLocationsSpaceMap extends Component<AdminLocationsSpac
 
     const [lng, lat] = object.result.geometry.coordinates;
     onChangeCoordinates([lat, lng]);
-    onChangeAddress(object.result.placeName);
+    onChangeAddress(object.result.place_name);
 
     this.geocoderInstance.mapMarker.on('dragend', this.onMapPointDragged);
   }
