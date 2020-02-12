@@ -1,4 +1,5 @@
 import styles from './styles.module.scss';
+import colors from '@density/ui/variables/colors.json';
 
 import React from 'react';
 import { Icons } from '@density/ui/src';
@@ -62,11 +63,11 @@ export default class ImageRetry extends React.Component<any, any> {
       />;
     } else if (this.state.mode === LOADING) {
       return this.props.loadingContent || <div className={styles.imageLoading}>
-        <Icons.Image color="#fff" />
+        <Icons.Image color={colors.white} />
       </div>;
     } else {
       return this.props.fallbackContent || <div className={styles.imageFallback}>
-        <Icons.Image color="#fff" />
+        <Icons.Image color={colors.white} />
       </div>;
     }
   }

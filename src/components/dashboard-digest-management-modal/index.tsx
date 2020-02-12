@@ -15,6 +15,7 @@ import {
   InputBox,
   Modal,
 } from '@density/ui/src';
+import colors from '@density/ui/variables/colors.json';
 import DayOfWeekSelector from '../day-of-week-selector/index';
 import { TIME_ZONE_CHOICES } from '@density/lib-time-helpers';
 import filterCollection from '../../helpers/filter-collection/index';
@@ -536,7 +537,7 @@ function DigestAddedNotAddedBox({id, checked, onChange}) {
       <label htmlFor={id}>
         <span className={styles.textLabel}>{checked ? 'Added' : 'Not added'}</span>
         <div className={styles.checkboxWell}>
-          <Icons.Check width={14} height={14} color="#fff" />
+          <Icons.Check width={14} height={14} color={colors.white} />
         </div>
       </label>
     </div>

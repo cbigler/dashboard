@@ -136,7 +136,7 @@ export default function AppNavbar({
       <div className={styles.appNavbar}>
         <ul className={styles.appNavbarLeft}>
           <div className={styles.appNavbarLogo}>
-            <Icons.DensityMark color="white" height={14} width={14} />
+            <Icons.DensityMark color={colorVariables.white} height={14} width={14} />
           </div>
           {stringToBoolean(settings.dashboard_enabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}

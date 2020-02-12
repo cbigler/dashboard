@@ -10,6 +10,7 @@ import {
   Toast,
   ToastContext,
 } from '@density/ui/src';
+import colors from '@density/ui/variables/colors.json';
 
 import accounts from '../../client/accounts';
 import { impersonateUnset } from '../../rx-actions/impersonate';
@@ -318,7 +319,7 @@ export class Login extends React.Component<any, any> {
           <ToastContext.Provider value="MULTILINE">
             <Toast
               visible
-              icon={<Icons.Check color="white" />}
+              icon={<Icons.Check color={colors.white} />}
               onDismiss={() => this.setState({forgotPasswordConfirmation: null})}
             >
               {this.state.forgotPasswordConfirmation}
@@ -332,7 +333,7 @@ export class Login extends React.Component<any, any> {
             <ToastContext.Provider value="MULTILINE">
               <Toast
                 visible
-                icon={<Icons.No color="white" />}
+                icon={<Icons.No color={colors.white} />}
                 onDismiss={() => this.setState({referredFromForgotPassword: false})}
               >
                 Password reset successful, log in using your new credentials.
@@ -348,7 +349,7 @@ export class Login extends React.Component<any, any> {
                 type="error"
                 visible
                 title="Error fetching user"
-                icon={<Icons.No color="white" />}
+                icon={<Icons.No color={colors.white} />}
               >
                 {this.props.user.error}
               </Toast>
@@ -364,7 +365,7 @@ export class Login extends React.Component<any, any> {
                 type="error"
                 visible
                 title={this.state.errorTitle || 'Incorrect password'}
-                icon={<Icons.No color="white" />}
+                icon={<Icons.No color={colors.white} />}
                 onDismiss={() => this.setState({error: null})}
               >
                 <span>{this.state.error.message || this.state.error}</span>
