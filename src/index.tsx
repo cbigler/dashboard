@@ -346,14 +346,17 @@ eventSource.on('connected', async () => {
 });
 
 eventSource.on('space', countChangeEvent => {
-  (rxDispatch as Any<FixInReview>)(collectionSpacesCountChange({
-    id: countChangeEvent.space_id,
-    timestamp: countChangeEvent.timestamp,
-    // In v2, the API uses "direction" to for a count change, due to a traffic event, at a space.
-    // In the future "count change" should refer to ANY count change at a space, including resets.
-    // TODO: The UI does not show "live" resets, so review other instances of `countChange`.
-    countChange: countChangeEvent.direction,
-  }));
+  // WORKAROUND: The current chart only handles a "direction" of 1 or -1
+  // So we're sending out many "count changes" in the case of an OB1 reset
+  let absoluteDelta = Math.abs(countChangeEvent.direction);
+  while (absoluteDelta > 0) {
+    (rxDispatch as Any<FixInReview>)(collectionSpacesCountChange({
+      id: countChangeEvent.space_id,
+      timestamp: countChangeEvent.timestamp,
+      countChange: countChangeEvent.direction > 0 ? 1 : -1,
+    }));
+    absoluteDelta = absoluteDelta - 1;
+  }
 });
 
 // If the user is logged in, sync the count of all spaces with the server every 5 minutes.
