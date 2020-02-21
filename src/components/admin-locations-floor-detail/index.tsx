@@ -20,12 +20,12 @@ import {
   AdminLocationsDetailTargetCapacity,
   AdminLocationsDetailCapacity,
   AdminLocationsDetailRoomsTotal,
-  AdminLocationsDetailDPUsTotal,
+  AdminLocationsDetailSensorsTotal,
   AdminLocationsListInfo,
   AdminLocationsListSize,
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
-  AdminLocationsListDPUsTotal,
+  AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow,
   AdminLocationsListRoomsTotal,
   AdminLocationsDoorwayList,
@@ -42,6 +42,8 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace,
         <AppBar>
           <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
           <AppBarSection>
+            <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
+            <div style={{width: 8}}></div>
             {user.data.permissions.includes('core_write') ? (
               <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
             ) : null}
@@ -53,7 +55,7 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace,
             <AdminLocationsDetailTargetCapacity space={selectedSpace} />
             <AdminLocationsDetailCapacity space={selectedSpace} />
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
-            <AdminLocationsDetailDPUsTotal space={selectedSpace} />
+            <AdminLocationsDetailSensorsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
@@ -77,7 +79,7 @@ export default function AdminLocationsFloorDetail({ user, spaces, selectedSpace,
                 <AdminLocationsListSize user={user} />
                 <AdminLocationsListTargetCapacity />
                 <AdminLocationsListCapacity />
-                <AdminLocationsListDPUsTotal />
+                <AdminLocationsListSensorsTotal />
                 <AdminLocationsListRightArrow />
               </ListView>
             </div>

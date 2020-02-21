@@ -67,7 +67,7 @@
 }
 
 
-.dpuPosition {
+.sensorPosition {
   margin-left: 16px;
   color: $midnight;
   font-size: 14px;
@@ -162,12 +162,12 @@
   font-size: $fontSizeBase;
 }
 
-.dpuPositionButtonWrapper {
+.sensorPositionButtonWrapper {
   display: flex;
   justify-content: space-between;
   padding-top: 24px;
 }
-.dpuPositionButton {
+.sensorPositionButton {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -178,11 +178,11 @@
   border: 1px solid $gray200;
   border-radius: $borderRadiusBase;
 }
-.dpuPositionButton:hover { opacity: 0.8; }
-.dpuPositionButton:active { opacity: 1; }
-.dpuPositionButton.active { border-color: $midnight; }
-.dpuPositionButton svg { margin-bottom: 24px; }
+.sensorPositionButton:hover { opacity: 0.8; }
+.sensorPositionButton:active { opacity: 1; }
+.sensorPositionButton.active { border-color: $midnight; }
+.sensorPositionButton svg { margin-bottom: 24px; }
 
-.dpuPositionUpdateHistoricCheckbox {
+.sensorPositionUpdateHistoricCheckbox {
   padding-top: 16px;
 }

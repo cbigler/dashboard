@@ -1,12 +1,10 @@
 import { ROUTE_TRANSITION_LOGIN } from '../../rx-actions/route-transition/login';
-import { ROUTE_TRANSITION_EXPLORE } from '../../rx-actions/route-transition/explore';
+import { ROUTE_TRANSITION_ACCOUNT } from '../../rx-actions/route-transition/account';
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../rx-actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-transition/live-space-detail';
-import { ROUTE_TRANSITION_ACCOUNT } from '../../rx-actions/route-transition/account';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../rx-actions/route-transition/explore-space-trends';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../rx-actions/route-transition/explore-space-daily';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../rx-actions/route-transition/explore-space-data-export';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../rx-actions/route-transition/explore-space-meetings';
+import { ROUTE_TRANSITION_SPACES } from '../../rx-actions/route-transition/spaces';
+import { ROUTE_TRANSITION_SPACES_SPACE } from '../../rx-actions/route-transition/spaces-space';
+import { ROUTE_TRANSITION_SPACES_DOORWAY } from '../../rx-actions/route-transition/spaces-doorway';
 
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../rx-actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../rx-actions/route-transition/dashboard-detail';
@@ -37,10 +35,8 @@ export enum ActivePage {
   LIVE_SPACE_LIST = 'LIVE_SPACE_LIST',
   LIVE_SPACE_DETAIL = 'LIVE_SPACE_DETAIL',
   SPACES = 'SPACES',
-  SPACES_SPACE_TRENDS = 'SPACES_SPACE_TRENDS',
-  SPACES_SPACE_DAILY = 'SPACES_SPACE_DAILY',
-  SPACES_SPACE_DATA_EXPORT = 'SPACES_SPACE_DATA_EXPORT',
-  SPACES_SPACE_MEETINGS = 'SPACES_SPACE_MEETINGS',
+  SPACES_SPACE = 'SPACES_SPACE',
+  SPACES_DOORWAY = 'SPACES_DOORWAY',
   ACCOUNT = 'ACCOUNT',
   ACCOUNT_REGISTRATION = 'ACCOUNT_REGISTRATION',
   ACCOUNT_FORGOT_PASSWORD = 'ACCOUNT_FORGOT_PASSWORD',
@@ -74,16 +70,13 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.LIVE_SPACE_LIST;
   case ROUTE_TRANSITION_LIVE_SPACE_DETAIL:
     return ActivePage.LIVE_SPACE_DETAIL;
-  case ROUTE_TRANSITION_EXPLORE:
+
+  case ROUTE_TRANSITION_SPACES:
     return ActivePage.SPACES;
-  case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
-    return ActivePage.SPACES_SPACE_TRENDS;
-  case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
-    return ActivePage.SPACES_SPACE_DAILY;
-  case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
-    return ActivePage.SPACES_SPACE_DATA_EXPORT;
-  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
-    return ActivePage.SPACES_SPACE_MEETINGS;
+  case ROUTE_TRANSITION_SPACES_SPACE:
+    return ActivePage.SPACES_SPACE;
+  case ROUTE_TRANSITION_SPACES_DOORWAY:
+    return ActivePage.SPACES_DOORWAY;
 
   case ROUTE_TRANSITION_ACCOUNT:
     return ActivePage.ACCOUNT;

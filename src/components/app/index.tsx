@@ -6,17 +6,17 @@ import accounts from '../../client/accounts';
 
 import stringToBoolean from '../../helpers/string-to-boolean';
 
-import Spaces from '../spaces/index';
 import Login from '../login/index';
+import Account from '../account/index';
+import AccountRegistration from '../account-registration/index';
+import AccountForgotPassword from '../account-forgot-password/index';
+import Spaces from '../spaces/index';
+import LiveSpaceList from '../live-space-list/index';
+import LiveSpaceDetail from '../live-space-detail/index';
 import Admin from '../admin/index';
 import AdminUserManagementDetail from '../admin-user-management-detail/index';
 import AdminLocationsEdit from '../admin-locations-edit/index';
 import AdminLocationsNew from '../admin-locations-new/index';
-import Account from '../account/index';
-import AccountRegistration from '../account-registration/index';
-import AccountForgotPassword from '../account-forgot-password/index';
-import LiveSpaceList from '../live-space-list/index';
-import LiveSpaceDetail from '../live-space-detail/index';
 import DashboardsList from '../dashboards-list/index';
 import DashboardsEdit from '../dashboard-edit/index';
 import Analytics from '../analytics';
@@ -162,10 +162,8 @@ function ActivePage({activePage, user, settings}) {
     return <LiveSpaceDetail />;
   case "SPACES":
     return <Spaces />;
-  case "SPACES_SPACE_TRENDS":
-  case "SPACES_SPACE_DAILY":
-  case "SPACES_SPACE_DATA_EXPORT":
-  case "SPACES_SPACE_MEETINGS":
+  case "SPACES_SPACE":
+  case "SPACES_DOORWAY":
     return stringToBoolean(settings.insights_page_locked) ? null : <Spaces />;
   case "ACCOUNT":
     return <Account />;

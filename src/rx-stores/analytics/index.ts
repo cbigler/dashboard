@@ -52,6 +52,7 @@ import { SpacesCountsAPIResponse, SpacesCountsMetricsAPIResponse } from '../../t
 import { computeTableData, getDefaultColumnSortForMetric } from '../../helpers/analytics-table';
 import { computeChartData } from '../../helpers/analytics-chart';
 import { ColorManager, COLORS } from '../../helpers/analytics-color-scale';
+import createReport from '../../rx-actions/analytics/operations/create-report';
 
 
 export const initialState = RESOURCE_IDLE;
@@ -430,6 +431,21 @@ merge(
     ])),
   ),
 ).subscribe(action => rxDispatch(action as Any<InAHurry>));
+
+// Some magic to preload a space when analytics is loaded and this key is present in localStorage.
+// Be sure to delete the key from localStorage before preload, otherwise it will infinite loop.
+// TODO: Make this less crazy!
+actions.pipe(
+  filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
+  switchMap(() => AnalyticsStore),
+  filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
+).subscribe(() => {
+  const preload = localStorage.analyticsPreload ? JSON.parse(localStorage.analyticsPreload) : {};
+  if (preload.spaceIds) {
+    delete localStorage.analyticsPreload;
+    createReport(rxDispatch, preload.spaceIds);
+  }
+})
 
 // ----------------------------------------------------------------------------
 // RUN REPORT QUERY WHEN IT CHANGES

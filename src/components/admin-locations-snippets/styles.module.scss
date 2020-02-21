@@ -78,6 +78,7 @@
   text-overflow: ellipsis;
   padding-left: 10px;
   padding-right: 10px;
+  width: 177px;
 }
 .doorwayIcon {
   display: flex;
@@ -129,7 +130,7 @@
   flex-shrink: 0;
   margin-right: 8px;
 }
-.doorwayDpuPosition {
+.doorwaySensorPosition {
   color: $gray500;
   font-size: 14px;
   font-weight: bold;

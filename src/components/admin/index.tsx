@@ -63,7 +63,7 @@ export default function Admin({
                   href="#/admin/device-status"
                   active={activePage === 'ADMIN_DEVICE_STATUS'}
                 >
-                  DPU Status
+                  Sensor Status
                 </AppBarSubnavLink> : null}
             </AppBarSubnav>
           </AppBarSection>

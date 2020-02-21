@@ -20,7 +20,7 @@ import {
 } from '@density/ui/src';
 
 import { ReportLoading } from '@density/reports';
-import Report, { ExpandedReportModal } from '../report';
+import DashboardReport, { ExpandedReportModal } from '../dashboard-report';
 import DashboardDigestPopupList from '../dashboard-digest-popup-list/index';
 import DashboardDigestManagementModal from '../dashboard-digest-management-modal/index';
 import DashboardEmailModal from '../dashboard-email-modal';
@@ -127,7 +127,7 @@ function DashboardMainScrollViewContent({
                         return {
                           id: `${report.id}-${resizeCounter}`,
                           report: (
-                            <Report
+                            <DashboardReport
                               report={report}
                               reportData={dashboards.calculatedReportData[report.id]}
                               expanded={false}

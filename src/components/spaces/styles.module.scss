@@ -11,151 +11,29 @@
   overflow: hidden;
 }
 
-.exploreAppFrameSidebarList {
-  flex-grow: 1;
-  flex-shrink: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding-bottom: 60px;
-}
-
-.exploreAppFrameSidebarListItem {
-  display: block;
-  text-decoration: none;
-  color: $gray500;
-}
-
-.exploreSidebarItem {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin-left: 24px;
-}
-
-.exploreSidebarItemRow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.exploreSidebarItemName {
-  margin-right: auto;
-  margin-bottom: -3px;
-  padding-right: 12px;
-  padding-left: 12px;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-decoration: none;
-}
-
-.exploreAppFrameSidebarListItem {
-  color: $midnight;
-  cursor: pointer;
-  user-select: none;
-}
-.exploreAppFrameSidebarListItem .exploreSidebarItemName:hover {
-  color: $midnight;
-}
-.exploreAppFrameSidebarListItem.disabled,
-.exploreAppFrameSidebarListItem.disabled .exploreSidebarItemName:hover {
-  color: $gray500;
-  cursor: default;
-}
-
-.exploreSidebarItem.selected .exploreSidebarItemName {
-  color: $midnight;
-}
-
-.exploreAppFrameSidebarList:first-child .campusContainer:first-child .campus {
-  margin-top: 0;
-  border-top: 0;
-}
-
-.exploreAppFrameSidebarList:first-child .spaceContainer:first-child {
-  margin-top: 20px;
-}
-
-.spaceContainer .spaceContainer {
-  margin-left: 20px;
-}
-
-.exploreAppFrameSidebarList:first-child .buildingContainer:first-child {
-  margin-top: 20px;
-}
-
-.exploreAppFrameSidebarList:first-child .floorContainer:first-child {
-  margin-top: 20px;
-}
-
-.exploreAppFrameSidebarListItem.campus {
-  font-weight: bold;
-  font-size: 14px;
-  color: $gray500;
-  margin-top: 20px;
-  border-top: 1px solid $gray300;
-}
-
-.exploreAppFrameSidebarListItem.campus .exploreSidebarItem {
-  border-bottom: 1px solid $gray300;
-  padding: 17px 0;
-}
-
-.exploreAppFrameSidebarListItem.campus .exploreSidebarItemName {
-  padding-left: 0;
-}
-
-.exploreAppFrameSidebarListItem.building {
-  font-weight: bold;
-  font-size: 14px;
-  margin-top: 10px;
-}
-
-.exploreAppFrameSidebarListItem.floor {
-  font-weight: bold;
-  font-size: 14px;
-  margin-left: 20px;
-}
-
-.exploreAppFrameSidebarListItem.space {
-  margin-left: 28px;
-}
-
-.exploreAppFrameSidebarListItem.space svg {
-  opacity: 0.5;
-}
-
 .loadingSpaces {
   margin-left: 24px;
   margin-top: 20px;
   color: $gray300;
 }
 
-.centeredMessage {
-  position: absolute;
-  top: 50%;
-  left: 50%;
+.spaceDetailBar {
+  width: 384px;
+  border-left: 1px solid $gray200;
+  flex-shrink: 0;
 }
 
-.roomBookingMessage {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  background-color: #fff;
-  border: 1px solid $gray400;
-  border-radius: $borderRadiusBase;
-  @include elevated-status-box-shadow;
-  line-height: 22px;
-  height: 72px;
-  width: 320px;
-
-  padding-left: 24px;
-  padding-right: 24px;
+.spaceReportHeader:first-of-type {
+  margin-top: 0;
+}
+.spaceReportHeader {
+  margin-top: 80px;
+  margin-bottom: 64px;
+  padding-top: 8px;
+  border-top: 1px solid $gray300;
+  font-size: 24px;
+  font-weight: 400;
+  color: $midnight;
 }
 
 .searchBoxContainer {

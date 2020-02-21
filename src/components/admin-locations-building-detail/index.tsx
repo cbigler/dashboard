@@ -21,7 +21,7 @@ import {
   AdminLocationsDetailCapacity,
   AdminLocationsDetailLevelsTotal,
   AdminLocationsDetailRoomsTotal,
-  AdminLocationsDetailDPUsTotal,
+  AdminLocationsDetailSensorsTotal,
   AdminLocationsLeftPaneDataRow,
   AdminLocationsDetailSizeArea,
   AdminLocationsDetailAnnualRent,
@@ -30,7 +30,7 @@ import {
   AdminLocationsListSize,
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
-  AdminLocationsListDPUsTotal,
+  AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
@@ -49,7 +49,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         <AdminLocationsListSize user={user} />
         <AdminLocationsListTargetCapacity />
         <AdminLocationsListCapacity />
-        <AdminLocationsListDPUsTotal />
+        <AdminLocationsListSensorsTotal />
         <AdminLocationsListRightArrow />
       </ListView>
     </div>
@@ -69,6 +69,8 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
         <AppBar>
           <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
           <AppBarSection>
+            <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
+            <div style={{width: 8}}></div>
             {user.data.permissions.includes('core_write') ? (
               <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
             ) : null}
@@ -94,7 +96,7 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
             <AdminLocationsDetailCapacity space={selectedSpace} />
             <AdminLocationsDetailLevelsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
-            <AdminLocationsDetailDPUsTotal space={selectedSpace} />
+            <AdminLocationsDetailSensorsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />

@@ -10,7 +10,6 @@ import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../rx-actions/coll
 import { COLLECTION_SERVICE_SPACES_SET } from '../../rx-actions/collection/service-spaces/set';
 import { COLLECTION_SERVICE_SPACES_ERROR } from '../../rx-actions/collection/service-spaces/error';
 
-import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../rx-actions/route-transition/explore-space-meetings';
 import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../rx-actions/route-transition/admin-space-mappings';
 
 import {
@@ -77,16 +76,6 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
   case COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE:
   case COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY:
     return {...state, error: null, loading: true};
-
-  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
-    return {
-      ...state,
-      roomBooking: {
-        ...state.roomBooking,
-        view: 'LOADING',
-        service: null,
-      },
-    };
   
   case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
     return {

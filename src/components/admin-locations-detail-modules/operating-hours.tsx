@@ -292,7 +292,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                 value={formState.time_zone}
                 onChange={choice => onChangeField('time_zone', choice.id)}
                 width={320}
-                menuMaxHeight={300}
+                menuMaxHeight={240}
               />
             </div>
           </AppBarSection>
@@ -337,7 +337,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     changeResetTime();
                   }
                 }}
-                menuMaxHeight={300}
+                menuMaxHeight={240}
                 width={154}
               />
             </div>
@@ -421,6 +421,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       placeholder="Select a label"
                       invalid={operatingHoursItem.label === null}
                       width={350}
+                      menuMaxHeight={176}
                     />
                   </AppBarSection>
                   <AppBarSection>

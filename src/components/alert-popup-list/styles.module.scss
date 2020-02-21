@@ -23,6 +23,24 @@ $alertBackdropZIndex: 99999;
 
 
 .alertListButton {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+
+  color: $midnight;
+  background-color: #fff;
+  height: 40px;
+  padding-top: 2px;
+  padding-left: 12px;
+  padding-right: 11px;
+  border: 1px solid $gray300;
+  border-radius: $borderRadiusBase;
+  outline: none;
   @extend .hack-outline-button;
 }
 @media (max-width: 375px) {

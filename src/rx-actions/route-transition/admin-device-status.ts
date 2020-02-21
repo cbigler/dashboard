@@ -1,5 +1,5 @@
 import collectionSpacesSet from '../collection/spaces-legacy/set';
-import collectionSensorsSet from '../collection/sensors/set';
+import { sensorActions } from '../sensors';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreSensor } from '@density/lib-api-types/core-v2/sensors';
@@ -13,7 +13,7 @@ export default async function routeTransitionAdminDeviceStatus(dispatch) {
     fetchAllObjects<CoreSensor>('/sensors', { cache: false }),
     fetchAllObjects<CoreSpace>('/spaces', { cache: false })
   ]).then(([sensors, spaces]) => {
-    dispatch(collectionSensorsSet(sensors));
+    dispatch(sensorActions.setAll(sensors));
     dispatch(collectionSpacesSet(spaces));
   });
 }

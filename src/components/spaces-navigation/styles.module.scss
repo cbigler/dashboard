@@ -1,0 +1,56 @@
+// Import any global variables from "../../../variables/*.scss"
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  font-size: $fontSizeBase;
+  font-weight: 500;
+  height: 32px;
+  font-size: 14px;
+  padding-left: 8px;
+  padding-right: 32px;
+  cursor: pointer;
+  user-select: none;
+}
+.item.depth0 {
+  padding-top: 8px;
+  margin-top: 8px;
+  border-top: 1px solid $gray200;
+  transition: padding-top 120ms, margin-bottom 120ms;
+}
+.item.depth0.collapsed { padding-top: 0; margin-bottom: -8px; }
+.item.disabled { cursor: default; }
+.item:first-of-type { margin-top: 0; border-top: none; }
+
+.itemIcon { margin-left: 8px; }
+
+.itemName {
+  margin-left: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: $gray700;
+  font-weight: 500;
+}
+.itemName.disabled {
+  color: $gray400;
+}
+.itemName.disabled.campus {
+  color: $gray500;
+}
+.itemName.selected {
+  font-weight: bold;
+}
+
+.itemSelectedIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: $blue;
+  position: absolute;
+  right: 14px;
+}

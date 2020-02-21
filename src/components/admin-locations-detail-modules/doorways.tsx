@@ -59,22 +59,22 @@ function processModalData(data) {
   };
 }
 
-type DpuPositionProps = {
+type SensorPositionProps = {
   space_name: string,
   value: 1 | -1,
   onChange: (value: 1 | -1) => void,
 };
 
-function DpuPosition({ space_name, value, onChange }: DpuPositionProps) {
+function SensorPosition({ space_name, value, onChange }: SensorPositionProps) {
   return (
-    <div className={styles.dpuPositionWrapper}>
+    <div className={styles.sensorPositionWrapper}>
       <p>
-        Is the DPU inside or outside of{' '}
+        Is the Sensor inside or outside of{' '}
         <strong>{space_name && space_name.length > 0 ? space_name : 'this space'}</strong>?
       </p>
-      <div className={styles.dpuPositionButtonWrapper}>
+      <div className={styles.sensorPositionButtonWrapper}>
         <div
-          className={classnames(styles.dpuPositionButton, {[styles.active]: value === 1})}
+          className={classnames(styles.sensorPositionButton, {[styles.active]: value === 1})}
           onClick={() => onChange(1)}
         >
           {INSIDE_THE_SPACE_GLYPH}
@@ -85,7 +85,7 @@ function DpuPosition({ space_name, value, onChange }: DpuPositionProps) {
           />
         </div>
         <div
-          className={classnames(styles.dpuPositionButton, {[styles.active]: value === -1})}
+          className={classnames(styles.sensorPositionButton, {[styles.active]: value === -1})}
           onClick={() => onChange(-1)}
         >
           {OUTSIDE_THE_SPACE_GLYPH}
@@ -106,7 +106,7 @@ type UpdateHistoricCountsProps = {
 }
 function UpdateHistoricCounts({value, onChange}: UpdateHistoricCountsProps) {
   return null && (
-    <div className={styles.dpuPositionUpdateHistoricCheckbox}>
+    <div className={styles.sensorPositionUpdateHistoricCheckbox}>
       <Checkbox
         label="Update historic space counts"
         checked={value}
@@ -119,7 +119,7 @@ function UpdateHistoricCounts({value, onChange}: UpdateHistoricCountsProps) {
   );
 }
 
-function AdminLocationsDetailModulesDoorwayDpuPositionModal({
+function AdminLocationsDetailModulesDoorwaySensorPositionModal({
   visible,
   space_name,
   sensor_placement,
@@ -137,11 +137,11 @@ function AdminLocationsDetailModulesDoorwayDpuPositionModal({
       onEscape={onCloseModal}
     >
       <AppBar>
-        <AppBarTitle>DPU position</AppBarTitle>
+        <AppBarTitle>Sensor position</AppBarTitle>
       </AppBar>
 
       <div className={styles.modalSection}>
-        <DpuPosition
+        <SensorPosition
           space_name={space_name}
           value={sensor_placement}
           onChange={onUpdateSensorPlacement}
@@ -236,11 +236,11 @@ function AdminLocationsDetailModulesDoorwayModal({
 
       <AppBarContext.Provider value="CARD_SUBHEADER">
         <AppBar>
-          <AppBarTitle>DPU position</AppBarTitle>
+          <AppBarTitle>Sensor position</AppBarTitle>
         </AppBar>
       </AppBarContext.Provider>
       <div className={styles.modalSection}>
-        <DpuPosition
+        <SensorPosition
           value={modalState.data.sensor_placement}
           space_name={space_name}
           onChange={sensor_placement => onChangeField('sensor_placement', sensor_placement)}
@@ -526,7 +526,7 @@ function DoorwayList({
           width={200}
         />
         <ListViewColumn
-          id="DPU position"
+          id="Sensor position"
           template={i => {
             return (
               <Fragment>
@@ -537,8 +537,8 @@ function DoorwayList({
                       width={40}
                       height={40}
                       onClick={() => {
-                        // Prompt the user for the dpu position in a modal
-                        onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
+                        // Prompt the user for the sensor position in a modal
+                        onShowModal('MODAL_SPACE_MANAGEMENT_SENSOR_POSITION', {
                           sensor_placement: i.sensor_placement, /* initial value */
                           updateHistoricCounts: true,
                           onComplete: (sensor_placement, updateHistoricCounts) => {
@@ -551,7 +551,7 @@ function DoorwayList({
                         <Icons.Switch color={colorVariables.midnight} />
                       </div>
                     </Button>
-                    <span className={styles.dpuPosition}>
+                    <span className={styles.sensorPosition}>
                       {i.sensor_placement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>
@@ -603,8 +603,8 @@ function AdminLocationsDetailModulesDoorways({
 
   function onSelectDoorway(doorway, state) {
     if (state) {
-      // Prompt the user for the dpu position in a modal
-      onShowModal('MODAL_SPACE_MANAGEMENT_DPU_POSITION', {
+      // Prompt the user for the sensor position in a modal
+      onShowModal('MODAL_SPACE_MANAGEMENT_SENSOR_POSITION', {
         sensor_placement: 1 /* initial value */,
         updateHistoricCounts: false,
         onComplete: (sensor_placement, updateHistoricCounts) => {
@@ -664,8 +664,8 @@ function AdminLocationsDetailModulesDoorways({
         />
       ) : null}
 
-      {activeModal.name === 'MODAL_SPACE_MANAGEMENT_DPU_POSITION' ? (
-        <AdminLocationsDetailModulesDoorwayDpuPositionModal
+      {activeModal.name === 'MODAL_SPACE_MANAGEMENT_SENSOR_POSITION' ? (
+        <AdminLocationsDetailModulesDoorwaySensorPositionModal
           visible={activeModal.visible}
           space_name={formState.name}
           sensor_placement={activeModal.data.sensor_placement}

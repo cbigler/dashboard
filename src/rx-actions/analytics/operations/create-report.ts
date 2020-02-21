@@ -5,11 +5,13 @@ import {
   AnalyticsReport,
   QueryInterval,
   AnalyticsFocusedMetric,
+  QuerySelectionType,
 } from '../../../types/analytics'
 import { DATE_RANGES } from '../../../helpers/space-time-utilities';
 import { getDefaultColumnSortForMetric } from '../../../helpers/analytics-table';
+import { DispatchType } from '../../../types/rx-actions';
 
-export default async function createReport(dispatch) {
+export default async function createReport(dispatch: DispatchType, spaceIds=null as Array<string> | null) {
 
   const selectedMetric = AnalyticsFocusedMetric.MAX;
 
@@ -40,4 +42,17 @@ export default async function createReport(dispatch) {
     type: AnalyticsActionType.ANALYTICS_OPEN_REPORT,
     report: newReport,
   });
+
+  // Immediately query some spaces, if provided
+  if (spaceIds) {
+    dispatch({
+      type: AnalyticsActionType.ANALYTICS_REPORT_CHANGE_SELECTIONS,
+      reportId: newReport.id,
+      selections: [{
+        type: QuerySelectionType.SPACE,
+        field: "id",
+        values: spaceIds,
+      }]
+    })
+  }
 }

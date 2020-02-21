@@ -1,12 +1,12 @@
 import React, { useEffect, useReducer, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { TimeFilter, DayOfWeek } from '../../types/datetime';
 import { Button, Checkbox, Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import isEqual from 'lodash/isEqual'; 
 
-import Slider from '../slider';
-import styles from './styles.module.scss';
+import { TimeFilter, TimeOfDay, DayOfWeek } from '../../types/datetime';
+import { QueryInterval } from '../../types/analytics';
+
 import { DAYS_OF_WEEK } from '../../helpers/datetime-utilities';
 import {
   DAY_MILLISECONDS,
@@ -15,8 +15,9 @@ import {
   timeOfDayToMilliseconds,
   millisecondsToTimeOfDay
 } from '../../helpers/datetime-utilities/time-string';
-import { QueryInterval } from '../../types/analytics';
-import { TimeOfDay } from '../../types/datetime';
+
+import styles from './styles.module.scss';
+import Slider from '../slider';
 import AnalyticsPopup from '../analytics-popup';
 
 /**
@@ -47,9 +48,9 @@ const TIME_OF_DAY_MARKS = [{
   label: '12a',
 }]
 
-type RangeSliderValue = [number, number]
+export type RangeSliderValue = [number, number]
 
-const TimeFilterSlider: React.FC<{
+export const TimeFilterSlider: React.FC<{
   value: RangeSliderValue,
   interval: QueryInterval,
   isOvernight: boolean,
@@ -92,7 +93,7 @@ const TimeFilterSlider: React.FC<{
   );
 }
 
-const realizeRangeSliderValue = (rangeSliderValue: RangeSliderValue, isOvernight: boolean): [TimeOfDay, TimeOfDay] => {
+export const realizeRangeSliderValue = (rangeSliderValue: RangeSliderValue, isOvernight: boolean): [TimeOfDay, TimeOfDay] => {
   const [left, right] = rangeSliderValue;
   let start: number;
   let end: number;
@@ -179,18 +180,20 @@ const actions = {
   }
 }
 
+export type DayToggles = {
+  'Sunday': boolean,
+  'Monday': boolean,
+  'Tuesday': boolean,
+  'Wednesday': boolean,
+  'Thursday': boolean,
+  'Friday': boolean,
+  'Saturday': boolean,
+}
+
 type ControlBarTimeFilterState = {
   sliderValue: RangeSliderValue,
   isOvernight: boolean,
-  dayToggles: {
-    'Sunday': boolean,
-    'Monday': boolean,
-    'Tuesday': boolean,
-    'Wednesday': boolean,
-    'Thursday': boolean,
-    'Friday': boolean,
-    'Saturday': boolean,
-  }
+  dayToggles: DayToggles
 }
 type ControlBarTimeFilterAction = ReturnType<typeof actions[keyof typeof actions]>;
 
@@ -235,7 +238,7 @@ function reducer(state: ControlBarTimeFilterState, action: ControlBarTimeFilterA
   }
 }
 
-const TimeRangeDisplay: React.FC<{
+export const TimeRangeDisplay: React.FC<{
   start: TimeOfDay,
   end: TimeOfDay,
 }> = function TimeRangeDisplay({
@@ -268,7 +271,7 @@ const TimeRangeDisplay: React.FC<{
 }
 
 
-const TimeFilterDayToggles: React.FC<{
+export const TimeFilterDayToggles: React.FC<{
   dayToggles: ControlBarTimeFilterState['dayToggles'],
   onClickDay: (day: DayOfWeek) => void,
 }> = function TimeFilterDayToggles({

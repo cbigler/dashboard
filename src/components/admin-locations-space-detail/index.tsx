@@ -20,12 +20,12 @@ import {
   AdminLocationsDetailTargetCapacity,
   AdminLocationsDetailCapacity,
   AdminLocationsDetailRoomsTotal,
-  AdminLocationsDetailDPUsTotal,
+  AdminLocationsDetailSensorsTotal,
   AdminLocationsListInfo,
   AdminLocationsListSize,
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
-  AdminLocationsListDPUsTotal,
+  AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow,
   AdminLocationsDoorwayList,
   AdminLocationsOperatingHours,
@@ -41,7 +41,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
       <AdminLocationsDetailTargetCapacity space={selectedSpace} />
       <AdminLocationsDetailCapacity space={selectedSpace} />
       <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
-      <AdminLocationsDetailDPUsTotal space={selectedSpace} />
+      <AdminLocationsDetailSensorsTotal space={selectedSpace} />
     </Fragment>
   );
 
@@ -55,6 +55,8 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
           <AppBar>
             <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
             <AppBarSection>
+              <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
+              <div style={{width: 8}}></div>
               {user.data.permissions.includes('core_write') ? (
                 <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
               ) : null}
@@ -74,6 +76,8 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
           <AppBar>
             <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
             <AppBarSection>
+              <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
+              <div style={{width: 8}}></div>
               {user.data.permissions.includes('core_write') ? (
                 <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
               ) : null}
@@ -104,7 +108,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
                   <AdminLocationsListSize user={user} />
                   <AdminLocationsListTargetCapacity />
                   <AdminLocationsListCapacity />
-                  <AdminLocationsListDPUsTotal />
+                  <AdminLocationsListSensorsTotal />
                   <AdminLocationsListRightArrow />
                 </ListView>
               </div>

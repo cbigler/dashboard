@@ -9,7 +9,7 @@ import hideModal from '../../rx-actions/modal/hide';
 
 import { InputBox } from '@density/ui/src';
 import SpaceCard from '../live-space-card/index';
-import SpaceUpdateModal from '../explore-edit-count-modal/index';
+import EditCountModal from '../edit-count-modal/index';
 
 import { CONNECTION_STATES } from '../../helpers/websocket-event-pusher/index';
 
@@ -68,7 +68,7 @@ export function LiveSpaceList({
     <ErrorBar message={spaces.error} showRefresh />
 
     {/* Show space count update modal when the flag is set */}
-    {activeModal.name === 'update-space-count' ? <SpaceUpdateModal
+    {activeModal.name === 'update-space-count' ? <EditCountModal
       visible={activeModal.visible}
       space={activeModal.data.space}
       onDismiss={onCloseModal}

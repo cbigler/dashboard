@@ -56,6 +56,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                   value={formState.name}
                   onChange={e => onChangeField('name', e.target.value)}
                   width="100%"
+                  menuMaxHeight={240}
                 />
               }
             />
@@ -69,6 +70,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                   id="admin-locations-detail-modules-general-info-space-type"
                   value={getSpaceTypeLabel(formState.space_type)}
                   width="100%"
+                  menuMaxHeight={240}
                 />
               }
             />
@@ -97,7 +99,7 @@ export default function AdminLocationsDetailModulesGeneralInfo({
                       id="admin-locations-detail-modules-general-function"
                       placeholder="No function assigned"
                       value={formState['function']}
-                      menuMaxHeight={300}
+                      menuMaxHeight={240}
                       choices={SPACE_FUNCTION_CHOICES}
                       onChange={e => onChangeField('function', e.id)}
                       width="100%"

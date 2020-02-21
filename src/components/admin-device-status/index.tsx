@@ -14,8 +14,8 @@ import {
 } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import useRxStore from '../../helpers/use-rx-store';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
-import SensorsStore from '../../rx-stores/sensors';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import SensorsStore, { SensorsState } from '../../rx-stores/sensors';
 import filterCollection from '../../helpers/filter-collection/index';
 // @ts-ignore
 import { IntercomAPI } from 'react-intercom';
@@ -23,7 +23,7 @@ import { IntercomAPI } from 'react-intercom';
 
 const sensorsFilter = filterCollection({ fields: ['serial_number', 'doorway_name'] });
 
-function getStatusColor(status) {
+export function getStatusColor(status) {
   switch (status) {
     case 'error':
     case 'offline':
@@ -36,7 +36,7 @@ function getStatusColor(status) {
   }
 }
 
-function getStatusText(status) {
+export function getStatusText(status) {
   switch (status) {
     case 'error':
     case 'offline':
@@ -79,9 +79,13 @@ export function NetworkAddressElement({
 export function AdminDeviceStatus({
   sensors,
   spaces
+}: {
+  sensors: SensorsState,
+  spaces: SpacesLegacyState,
 }) {
+  const sensorsArray = Array.from(sensors.data.bySerialNumber.values());
   const [ sensorsFilterText, setSensorsFilterText ] = useState('');
-  let sortedSensors = sensorsFilter(sensors.data, sensorsFilterText).sort(function(a, b){
+  let sortedSensors = sensorsFilter(sensorsArray, sensorsFilterText).sort(function(a, b){
     if (a.status === 'low_power') {
       return -1;
     }
@@ -94,13 +98,13 @@ export function AdminDeviceStatus({
     return 0;
   });
 
-  const numLowPowerSensors = sensors.data.filter(s => s.status === 'low_power').length;
+  const numLowPowerSensors = sensorsArray.filter(s => s.status === 'low_power').length;
   const lowPowerAlert = numLowPowerSensors > 0 ? (
     <div className={styles.lowPowerWarningSection}>
       <div className={styles.lowPowerWarningAlert}>
         <Icons.Danger color='#f4ab4e'/>
         <h4 className={styles.lowPowerWarningTitle}>
-          {numLowPowerSensors} DPUs are not counting due to insufficient power. Please&nbsp;
+          {numLowPowerSensors} Sensors are not counting due to insufficient power. Please&nbsp;
           <span
             className={styles.lowPowerWarningLink}
             onClick={openIntercom}>reach out to customer support.
@@ -115,7 +119,7 @@ export function AdminDeviceStatus({
       <InputBox
         type="text"
         width={250}
-        placeholder="Filter dpus ..."
+        placeholder="Filter sensors ..."
         value={sensorsFilterText}
         onChange={e => setSensorsFilterText(e.target.value)}
       />

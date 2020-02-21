@@ -18,7 +18,7 @@ import {
 
 import {
   AdminLocationsLeftPaneDataRow,
-  AdminLocationsDetailDPUsTotal,
+  AdminLocationsDetailSensorsTotal,
   AdminLocationsDetailRoomsTotal,
   AdminLocationsDetailLevelsTotal,
   AdminLocationsDetailBuildingsTotal,
@@ -27,7 +27,7 @@ import {
   AdminLocationsListSize,
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
-  AdminLocationsListDPUsTotal,
+  AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow,
   AdminLocationsListLevelsTotal,
   AdminLocationsListAnnualRent,
@@ -46,6 +46,8 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
         <AppBar>
           <AppBarTitle><div className={styles.title}>{selectedSpace.name}</div></AppBarTitle>
           <AppBarSection>
+            <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
+            <div style={{width: 8}}></div>
             {user.data.permissions.includes('core_write') ? (
               <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
             ) : null}
@@ -66,7 +68,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
             <AdminLocationsDetailBuildingsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailLevelsTotal spaces={spaces} space={selectedSpace} />
             <AdminLocationsDetailRoomsTotal spaces={spaces} space={selectedSpace} />
-            <AdminLocationsDetailDPUsTotal space={selectedSpace} />
+            <AdminLocationsDetailSensorsTotal space={selectedSpace} />
           </AdminLocationsLeftPaneDataRow>
           <AdminLocationsOperatingHours space={selectedSpace} />
           <AdminLocationsDoorwayList space={selectedSpace} doorways={spaceManagement.doorways} />
@@ -88,7 +90,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
                 <AdminLocationsListAnnualRent />
                 <AdminLocationsListTargetCapacity />
                 <AdminLocationsListCapacity />
-                <AdminLocationsListDPUsTotal />
+                <AdminLocationsListSensorsTotal />
                 <AdminLocationsListRightArrow />
               </ListView>
             </div>

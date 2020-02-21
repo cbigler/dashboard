@@ -14,6 +14,7 @@ import { UserState } from '../../rx-stores/user';
 import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET } from '@density/lib-helpers';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
 import moment from 'moment';
+import InfoPopupNew from '../info-popup-new';
 
 
 /********************
@@ -69,10 +70,10 @@ export function AdminLocationsDetailTargetCapacity({space}: {space: CoreSpace}) 
   />;
 }
 
-export function AdminLocationsDetailDPUsTotal({space}: {space: CoreSpace}) {
+export function AdminLocationsDetailSensorsTotal({space}: {space: CoreSpace}) {
   return <AdminLocationsLeftPaneDataRowItem
-    id="dpus"
-    label="DPUs:"
+    id="sensors"
+    label="Sensors:"
     value={space.sensors_total ? commaNumber(space.sensors_total) : <Fragment>&mdash;</Fragment>}
   />;
 }
@@ -222,9 +223,9 @@ export function AdminLocationsListCapacity() {
   />;
 }
 
-export function AdminLocationsListDPUsTotal() {
+export function AdminLocationsListSensorsTotal() {
   return <ListViewColumn
-    id="DPUs"
+    id="Sensors"
     width={80}
     template={(item: CoreSpace) => item.sensors_total ?
       commaNumber(item.sensors_total) : <Fragment>&mdash;</Fragment>}
@@ -248,7 +249,7 @@ export function AdminLocationsListRightArrow() {
 Larger items to render in sidebar
 *********************/
 
-function AdminLocationsOperatingHoursSegment({segment}) {
+function OperatingHoursSegment({segment}) {
   const start = moment(segment.start, 'HH:mm:ss');
   const end = moment(segment.end, 'HH:mm:ss');
   // if (start.diff(end) === 0 && start.hour() === 0) {
@@ -262,9 +263,9 @@ function AdminLocationsOperatingHoursSegment({segment}) {
     {end.format('h:mma').slice(0, -1)}
     {isNextDay ? ' (next day)' : ''}
   </div>;
-} 
+}
 
-export function AdminLocationsOperatingHours({space}: {space: CoreSpace}) {
+export function OperatingHoursList({space}: {space: CoreSpace}) {
   const DEFAULT_OPERATING_HOURS_BY_DAY = {
     'Sunday': [{ start: '00:00:00', end: '00:00:00' }],
     'Monday': [{ start: '00:00:00', end: '00:00:00' }],
@@ -286,20 +287,26 @@ export function AdminLocationsOperatingHours({space}: {space: CoreSpace}) {
       return acc;
     }, {} as typeof DEFAULT_OPERATING_HOURS_BY_DAY);
 
+  return <Fragment>
+    {Object.keys(operatingHoursByDay).map(day => {
+      const segments = operatingHoursByDay[day];
+      return <div key={day} className={styles.operatingHoursDayRow}>
+        <div className={styles.operatingHoursDayName}>{moment(day, 'dddd').format('ddd')}:</div>
+        {segments.map((segment, index) => <Fragment key={index}>
+          <OperatingHoursSegment segment={segment} />
+          {index < segments.length - 1 ? <div style={{ marginRight: 4 }}>, </div> : null}
+        </Fragment>)}
+      </div>;
+    })}
+  </Fragment>
+}
+
+export function AdminLocationsOperatingHours({space}: {space: CoreSpace}) {
   return <AdminLocationsLeftPaneDataRow>
     <div className={styles.operatingHoursContainer}>
       <div className={styles.operatingHoursTitle}>Operating Hours</div>
       <div className={styles.operatingHoursCard}>
-        {Object.keys(operatingHoursByDay).map(day => {
-          const segments = operatingHoursByDay[day];
-          return <div key={day} className={styles.operatingHoursDayRow}>
-            <div className={styles.operatingHoursDayName}>{moment(day, 'dddd').format('ddd')}:</div>
-            {segments.map((segment, index) => <Fragment key={index}>
-              <AdminLocationsOperatingHoursSegment segment={segment} />
-              {index < segments.length - 1 ? <div style={{ marginRight: 4 }}>, </div> : null}
-            </Fragment>)}
-          </div>;
-        })}
+        <OperatingHoursList space={space} />
       </div>
     </div>
   </AdminLocationsLeftPaneDataRow>;
@@ -367,14 +374,12 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: CoreSpace, 
         <ListView data={linkedDoorways} padOuterColumns={false}>
           <ListViewColumn
             id="Doorways"
-            template={item => <Fragment>
-              <div className={styles.doorwayContainer}>
-                <div className={styles.doorwayIcon}>
-                  <Icons.Doorway width={20} height={20} color={colorVariables.gray700} />
-                </div>
-                <span className={styles.doorway_name}>{item.name}</span>
+            template={item => <div className={styles.doorwayContainer}>
+              <div className={styles.doorwayIcon}>
+                <Icons.Doorway width={20} height={20} color={colorVariables.gray700} />
               </div>
-            </Fragment>}
+              <InfoPopupNew target={<div className={styles.doorway_name}>{item.name}</div>} contents={item.name}></InfoPopupNew>
+            </div>}
             width={220}
           />
           <ListViewColumn
@@ -383,14 +388,14 @@ export function AdminLocationsDoorwayList({space, doorways}: {space: CoreSpace, 
             width={200}
           />
           <ListViewColumn
-            id="DPU position"
+            id="Sensor position"
             align="right"
             template={i => {
               const link = i.spaces.find(x => x.id === space.id);
               return <Fragment>
                 {link.sensor_placement !== null ? (
                   <Fragment>
-                    <span className={styles.doorwayDpuPosition}>
+                    <span className={styles.doorwaySensorPosition}>
                       {link.sensor_placement === 1 ? 'Inside' : 'Outside'}
                     </span>
                   </Fragment>

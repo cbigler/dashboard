@@ -41,11 +41,9 @@ import createRouter from './router';
 import { impersonateUnset } from './rx-actions/impersonate';
 import routeTransitionLogin from './rx-actions/route-transition/login';
 import routeTransitionLogout from './rx-actions/route-transition/logout';
-import routeTransitionExplore from './rx-actions/route-transition/explore';
-import routeTransitionExploreSpaceTrends from './rx-actions/route-transition/explore-space-trends';
-import routeTransitionExploreSpaceDaily from './rx-actions/route-transition/explore-space-daily';
-import routeTransitionExploreSpaceDataExport from './rx-actions/route-transition/explore-space-data-export';
-import routeTransitionExploreSpaceMeetings from './rx-actions/route-transition/explore-space-meetings';
+import routeTransitionSpaces from './rx-actions/route-transition/spaces';
+import routeTransitionSpacesSpace from './rx-actions/route-transition/spaces-space';
+import routeTransitionSpacesDoorway from './rx-actions/route-transition/spaces-doorway';
 import routeTransitionLiveSpaceList from './rx-actions/route-transition/live-space-list';
 import routeTransitionLiveSpaceDetail from './rx-actions/route-transition/live-space-detail';
 import routeTransitionAccount from './rx-actions/route-transition/account';
@@ -89,7 +87,14 @@ import SessionTokenStore from './rx-stores/session-token';
 import { SessionTokenState } from './types/session-token';
 import { rxDispatch } from './rx-stores';
 import ActivePageStore, { ActivePage } from './rx-stores/active-page';
-import { combineLatest } from 'rxjs/operators';
+import { combineLatest, take, distinctUntilChanged, filter } from 'rxjs/operators';
+import { spacesPageActions } from './rx-actions/spaces-page';
+import SpacesPageStore from './rx-stores/spaces-page';
+import { SpacesPageState } from './rx-stores/spaces-page/reducer';
+import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
+import moment from 'moment-timezone';
+import SpacesStore, { SpacesState } from './rx-stores/spaces';
+import DoorwaysStore, { DoorwaysState } from './rx-stores/doorways';
 
 configureClients();
 
@@ -135,21 +140,6 @@ function trackHashChange() {
 window.addEventListener('hashchange', trackHashChange);
 trackHashChange();
 
-// Routing helper to redirect to a different url when a user visits a url.
-
-type RedirectURLFunction = (...routeParams: string[]) => string;
-
-function redirect(url: string | RedirectURLFunction) {
-  return async (...args: string[]) => {
-    if (typeof url === 'function') {
-      window.location.href = `#/${url(...args)}`;
-    } else {
-      window.location.href = `#/${url}`;
-    }
-  }
-}
-
-
 // Create a router to listen to the store and dispatch actions when the hash changes.
 // Uses conduit, an open source router we made at Density: https://github.com/DensityCo/conduit
 const router = createRouter();
@@ -157,32 +147,13 @@ router.addRoute('login', async () => { (rxDispatch as Any<FixInReview>)(routeTra
 router.addRoute('logout', async () => routeTransitionLogout(rxDispatch));
 router.addRoute('access_token=:oauth', async () => {});
 
-// v I AM DEPRECATED
-router.addRoute('insights/spaces', redirect('spaces/explore')); // DEPRECATED
-router.addRoute('spaces/insights', redirect(`spaces/explore`)); // DEPRECATED
-router.addRoute('spaces/insights/:id', redirect(id => `spaces/explore/${id}`)); // DEPRECATED
-router.addRoute('spaces/insights/:id/trends', redirect(id => `spaces/explore/${id}/trends`)); // DEPRECATED
-router.addRoute('spaces/insights/:id/daily', redirect(id => `spaces/explore/${id}/daily`)); // DEPRECATED
-router.addRoute('spaces/insights/:id/data-export', redirect(id => `spaces/explore/${id}/data-export`)); // DEPRECATED
-
-router.addRoute('spaces/explore', redirect(`spaces`)); // DEPRECATED
-router.addRoute('spaces/explore/:id', redirect(id => `spaces/${id}`)); // DEPRECATED
-router.addRoute('spaces/explore/:id/trends', redirect(id => `spaces/${id}/trends`)); // DEPRECATED
-router.addRoute('spaces/explore/:id/daily', redirect(id => `spaces/${id}/daily`)); // DEPRECATED
-router.addRoute('spaces/explore/:id/data-export', redirect(id => `spaces/${id}/data-export`)); // DEPRECATED
-// ^ I AM DEPRECATED
-
 router.addRoute('dashboards', () => routeTransitionDashboardList(rxDispatch));
 router.addRoute('dashboards/:id/edit', id => routeTransitionDashboardEdit(rxDispatch, id));
 router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(rxDispatch, id));
 
-router.addRoute('spaces', () => routeTransitionExplore(rxDispatch));
-router.addRoute('spaces/:id', redirect(id => `spaces/${id}/trends`));
-router.addRoute('spaces/:id/trends', id => routeTransitionExploreSpaceTrends(rxDispatch, id));
-router.addRoute('spaces/:id/daily', id => routeTransitionExploreSpaceDaily(rxDispatch, id));
-router.addRoute('spaces/:id/data-export', id => routeTransitionExploreSpaceDataExport(rxDispatch, id));
-router.addRoute('spaces/:id/meetings', id => routeTransitionExploreSpaceMeetings(rxDispatch, id, null));
-router.addRoute('spaces/:id/meetings/:service', (id, service) => routeTransitionExploreSpaceMeetings(rxDispatch, id, service));
+router.addRoute('spaces', () => routeTransitionSpaces(rxDispatch));
+router.addRoute('spaces/:id', id => routeTransitionSpacesSpace(rxDispatch, id));
+router.addRoute('spaces/:id/doorways/:id', (space_id, doorway_id) => routeTransitionSpacesDoorway(rxDispatch, space_id, doorway_id));
 router.addRoute('spaces/live', () => routeTransitionLiveSpaceList(rxDispatch));
 router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(rxDispatch, id));
 
@@ -295,39 +266,62 @@ preRouteAuthentication().then(async () => await router.handle());
 
 
 // ----------------------------------------------------------------------------
-// Real time event source
+// Real time event sources
 // Listen in real time for pushed events via websockets. When we receive
 // events, dispatch them as actions into the system.
 // ----------------------------------------------------------------------------
-const eventSource = new WebsocketEventPusher();
+const livePageEventSource = new WebsocketEventPusher();
+const spacesPageEventSource = new WebsocketEventPusher();
 
-// Connect to the socket whenever the token changes AND user is on a "live" page.
+// Connect and disconnect from sockets according to this logic.
 let currentToken: SessionTokenState = null;
 let onLivePage: boolean = false;
+let onSpacesPage: boolean = false;
 SessionTokenStore.pipe(combineLatest(ActivePageStore)).subscribe(([token, page]) => {
+
+  // Live page gets events for all spaces
   onLivePage = [ActivePage.LIVE_SPACE_LIST, ActivePage.LIVE_SPACE_DETAIL].indexOf(page) > -1;
-  if (!onLivePage && eventSource.connectionState !== CONNECTION_STATES.CLOSED) {
-    eventSource.disconnect();
+  if (!onLivePage &&
+    livePageEventSource.connectionState !== CONNECTION_STATES.CLOSED
+  ) {
+    livePageEventSource.disconnect();
   }
-  if (onLivePage && (eventSource.connectionState !== CONNECTION_STATES.CONNECTED || currentToken !== token)) {
+  if (onLivePage &&
+    (livePageEventSource.connectionState !== CONNECTION_STATES.CONNECTED || currentToken !== token)
+  ) {
     currentToken = token;
-    eventSource.connect();
+    livePageEventSource.connect();
   }
+
+  // Spaces page gets events for just one space (but still receives all events)
+  onSpacesPage = [ActivePage.SPACES_SPACE, ActivePage.SPACES_DOORWAY].indexOf(page) > -1;
+  if (!onSpacesPage &&
+    spacesPageEventSource.connectionState !== CONNECTION_STATES.CLOSED
+  ) {
+    spacesPageEventSource.disconnect();
+  }
+  if (onSpacesPage && 
+    (spacesPageEventSource.connectionState !== CONNECTION_STATES.CONNECTED || currentToken !== token)
+  ) {
+    currentToken = token;
+    spacesPageEventSource.connect();
+  }
+
 });
 
 // When the state of the connection changes, sync that change into redux.
-eventSource.on('connectionStateChange', newConnectionState => {
+livePageEventSource.on('connectionStateChange', newConnectionState => {
   (rxDispatch as Any<FixInReview>)(eventPusherStatusChange(newConnectionState));
 });
 
 // When the event source disconnects, fetch the state of each space from the core api to ensure that
 // the dashboard hasn't missed any events.
-eventSource.on('connected', async () => {
+livePageEventSource.on('connected', async () => {
   const spaces = await fetchAllObjects<CoreSpace>('/spaces');
   rxDispatch(collectionSpacesSet(spaces));
 
   const spaceEventSets: any = await Promise.all(spaces.map(space => {
-    return fetchAllObjects(`/spaces/${space.id}/events`, {
+    return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
       params: {
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
         end_time: formatInISOTime(getCurrentLocalTimeAtSpace(space)),
@@ -345,8 +339,8 @@ eventSource.on('connected', async () => {
   (rxDispatch as Any<FixInReview>)(collectionSpacesBatchSetEvents(eventsAtSpaces));
 });
 
-eventSource.on('space', countChangeEvent => {
-  // WORKAROUND: The current chart only handles a "direction" of 1 or -1
+livePageEventSource.on('space', countChangeEvent => {
+  // WORKAROUND: The legacy chart only handles a "direction" of 1 or -1
   // So we're sending out many "count changes" in the case of an OB1 reset
   let absoluteDelta = Math.abs(countChangeEvent.direction);
   while (absoluteDelta > 0) {
@@ -357,6 +351,94 @@ eventSource.on('space', countChangeEvent => {
     }));
     absoluteDelta = absoluteDelta - 1;
   }
+});
+
+// Handler for a second event source that provides events for a single space (or doorway)
+async function handleSpacesPageEventSetup([state, spacesState, doorwaysState]: [SpacesPageState, SpacesState, DoorwaysState]) {
+  const selectedSpace = spacesState.data.get(state.spaceId || 'spc_0');
+  const selectedDoorway = doorwaysState.data.get(state.doorwayId || 'drw_0');
+
+  if (selectedSpace) {
+
+    // Logic to find the last reset at this space
+    const localNow = moment.tz(selectedSpace.time_zone);
+    const localOneMinuteAgo = localNow.clone().subtract(1, 'minute');
+    const resetTime = moment(selectedSpace.daily_reset, 'HH:mm');
+    const resetTimestamp = localNow.clone().hour(resetTime.hour()).minute(resetTime.minute()).second(0).millisecond(0);
+    if (resetTimestamp > localNow) { resetTimestamp.subtract(1, 'day'); }
+
+    // Fetch all events since the last reset
+    const events = await fetchAllObjects<CoreSpaceEvent>(`/spaces/${selectedSpace.id}/events`, {
+      params: {
+        start_time: formatInISOTime(resetTimestamp),
+        end_time: formatInISOTime(moment.tz(selectedSpace.time_zone)),
+        doorway_id: selectedDoorway?.id,
+        count: true,
+      }
+    });
+
+    // Aggregate total entrances & exits since the last reset, and save recent events
+    const {entrances, exits, recentEvents} = events.reduce((acc, next) => {
+      if (next.direction === 1) { acc.entrances += 1; }
+      else if (next.direction === -1) { acc.exits += 1; }
+      if (moment.tz(next.timestamp, selectedSpace.time_zone) > localOneMinuteAgo) { acc.recentEvents.push(next); }
+      return acc;
+    }, {entrances: 0, exits: 0, count: 0, recentEvents: [] as Array<CoreSpaceEvent>});
+
+    rxDispatch(spacesPageActions.setAllLiveEvents(recentEvents));
+    rxDispatch(spacesPageActions.setLiveStats(
+      events.length > 0 ? (events[events.length-1] as Any<FixInRefactor>).count : 0,
+      entrances,
+      exits
+    ));
+  }
+}
+
+// Set up the spaces page events whenever the websocket reconnects
+spacesPageEventSource.on('connected', () => {
+  SpacesPageStore.pipe(
+    combineLatest(SpacesStore, DoorwaysStore),
+    filter(([spacesPageState, spacesState]) => !!spacesPageState.spaceId && !!spacesState.data.size),
+    take(1),
+  ).subscribe(handleSpacesPageEventSetup);
+});
+
+// Kick the "space event pusher" every time the selected space or doorway changes
+SpacesPageStore.pipe(
+  combineLatest(SpacesStore, DoorwaysStore),
+  filter(([spacesPageState, spacesState, doorwaysState]) => {
+    if (!spacesPageState.spaceId ||
+        !spacesState.data.has(spacesPageState.spaceId) ||
+        (spacesPageState.doorwayId && !doorwaysState.data.has(spacesPageState.doorwayId))
+    ) {
+      return false;
+    }
+    return true;
+  }),
+  distinctUntilChanged(([a], [b]) => a.spaceId === b.spaceId && a.doorwayId === b.doorwayId),
+).subscribe(handleSpacesPageEventSetup);
+
+spacesPageEventSource.on('space', countChangeEvent => {
+  SpacesPageStore.pipe(
+    combineLatest(SpacesStore, DoorwaysStore),
+    take(1),
+  ).subscribe(([state, spacesState, doorwaysState]) => {
+    const selectedSpace = spacesState.data.get(state.spaceId || 'spc_0');
+    const selectedDoorway = doorwaysState.data.get(state.doorwayId || 'drw_0');
+    if (!selectedSpace) {
+      return;
+    } else if (selectedSpace.id !== countChangeEvent.space_id) {
+      return;
+    } else if (selectedDoorway && selectedDoorway.id !== countChangeEvent.doorway_id) {
+      return;
+    }
+    rxDispatch(spacesPageActions.setOneLiveEvent(countChangeEvent));
+    rxDispatch(spacesPageActions.setLiveStats(
+      Math.max(state.liveEvents.metrics.occupancy + countChangeEvent.direction, 0),
+      state.liveEvents.metrics.entrances + (countChangeEvent.direction > 0 ? countChangeEvent.direction : 0),
+      state.liveEvents.metrics.exits + (countChangeEvent.direction < 0 ? -1 * countChangeEvent.direction : 0),
+    ));
+  });
 });
 
 // If the user is logged in, sync the count of all spaces with the server every 5 minutes.
@@ -375,9 +457,12 @@ setInterval(async () => {
 // This prevents pushed events from piling up and crashing the page when not rendered
 handleVisibilityChange(hidden => {
   if (hidden) {
-    eventSource.disconnect();
+    livePageEventSource.disconnect();
+    spacesPageEventSource.disconnect();
   } else if (onLivePage) {
-    eventSource.connect();
+    livePageEventSource.connect();
+  } else if (onSpacesPage) {
+    spacesPageEventSource.connect();
   }
 });
 

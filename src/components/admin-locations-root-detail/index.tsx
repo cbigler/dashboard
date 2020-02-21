@@ -12,7 +12,7 @@ import {
   AdminLocationsListAnnualRent,
   AdminLocationsListTargetCapacity,
   AdminLocationsListCapacity,
-  AdminLocationsListDPUsTotal,
+  AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow
 } from '../admin-locations-snippets';
 
@@ -45,7 +45,7 @@ function SpaceList({ user, spaces, renderedSpaces }) {
         <AdminLocationsListAnnualRent />
         <AdminLocationsListTargetCapacity />
         <AdminLocationsListCapacity />
-        <AdminLocationsListDPUsTotal />
+        <AdminLocationsListSensorsTotal />
         <AdminLocationsListRightArrow />
       </ListView>
     </div>

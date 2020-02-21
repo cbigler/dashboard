@@ -1,0 +1,43 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+.rawEventsPopupP {
+  line-height: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+// Horizontally and vertically center errors and info messages
+.rawEventsInfo,
+.rawEventsError {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 496px;
+
+  font-size: 14px;
+  color: $grayCinder;
+}
+// Errors should be prefixed by the error icon
+.rawEventsErrorIcon {
+  color: $brandDanger;
+  font-family: "Densicons";
+  margin-right: 10px;
+  position: relative;
+  top: -2px;
+}
+
+// Refresh icon to refetch data
+.rawEventsRefresh {
+  display: inline-block;
+  transform: translate(0px, 3px);
+  margin-left: auto;
+  cursor: pointer;
+}
+.rawEventsRefresh:hover { opacity: 0.8; }
+.rawEventsRefresh:active { opacity: 1; }
+.rawEventsRefresh.disabled {
+  cursor: default;
+  pointer-events: none;
+}

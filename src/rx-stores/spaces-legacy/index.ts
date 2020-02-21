@@ -19,11 +19,6 @@ import {
 
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../rx-actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-transition/live-space-detail';
-import { ROUTE_TRANSITION_EXPLORE } from '../../rx-actions/route-transition/explore';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS } from '../../rx-actions/route-transition/explore-space-trends';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_DAILY } from '../../rx-actions/route-transition/explore-space-daily';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT } from '../../rx-actions/route-transition/explore-space-data-export';
-import { ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS } from '../../rx-actions/route-transition/explore-space-meetings';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../rx-actions/route-transition/admin-locations-edit';
@@ -200,37 +195,6 @@ export function spacesLegacyReducer(state: SpacesLegacyState, action: Any<FixInR
       ...state, 
       error: null, 
       selected: currentSelectedSpace.id,
-      filters: {
-        ...state.filters,
-        timeSegmentLabel: newTimeSegmentLabel
-      }
-    };
-  case ROUTE_TRANSITION_EXPLORE:
-    currentSelectedSpace = state.data.find((space: any) => space.id === action.id);
-    timeSegmentLabel = state.filters.timeSegmentLabel;
-    newTimeSegmentLabel = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
-
-    return {
-      ...state, 
-      error: null, 
-      selected: null,
-      filters: {
-        ...state.filters,
-        timeSegmentLabel: newTimeSegmentLabel
-      }
-    };
-  case ROUTE_TRANSITION_EXPLORE_SPACE_TRENDS:
-  case ROUTE_TRANSITION_EXPLORE_SPACE_DAILY:
-  case ROUTE_TRANSITION_EXPLORE_SPACE_DATA_EXPORT:
-  case ROUTE_TRANSITION_EXPLORE_SPACE_MEETINGS:
-    currentSelectedSpace = state.data.find((space: any) => space.id === action.id);
-    timeSegmentLabel = state.filters.timeSegmentLabel;
-    newTimeSegmentLabel = getTimeSegmentLabelForRouteChange(currentSelectedSpace, timeSegmentLabel);
-
-    return {
-      ...state, 
-      error: null, 
-      selected: action.id,
       filters: {
         ...state.filters,
         timeSegmentLabel: newTimeSegmentLabel

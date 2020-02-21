@@ -173,8 +173,10 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
                   <Skeleton width={200} height={8} />
                 </AppBarSection>
                 <AppBarSection>
+                  <Button disabled={true}>Explore</Button>
+                  <div style={{width: 8}}></div>
                   {user.data.permissions.includes('core_write') ? (
-                    <Button>Edit</Button>
+                    <Button disabled={true}>Edit</Button>
                   ) : null}
                 </AppBarSection>
               </AppBar>
@@ -199,22 +201,22 @@ function AdminLocations({user, selectedSpace, spaces, spaceManagement}) {
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="capacity"
-                  label="Capacity"
+                  label="Capacity:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="floors"
-                  label="Floors"
+                  label="Floors:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
                   id="spaces"
-                  label="Spaces"
+                  label="Spaces:"
                   value={<Skeleton height={8} width={36} />}
                 />
                 <AdminLocationsLeftPaneDataRowItem
-                  id="dpus"
-                  label="DPUs"
+                  id="sensors"
+                  label="Sensors:"
                   value={<Skeleton height={8} width={36} />}
                 />
               </AdminLocationsLeftPaneDataRow>

@@ -138,26 +138,26 @@ export default function AppNavbar({
           <div className={styles.appNavbarLogo}>
             <Icons.DensityMark color={colorVariables.white} height={14} width={14} />
           </div>
+          {!stringToBoolean(settings.insights_page_locked) ? <AppNavbarItem
+            selected={['SPACES', 'SPACES_SPACE', 'SPACES_DOORWAY'].includes(page)}
+            showOnMobile={true}
+            path="#/spaces"
+            icon={<Icons.Space />}
+            text="Spaces"
+          /> : null}
+          {stringToBoolean(settings.analytics_enabled) ? <AppNavbarItem
+            selected={['ANALYTICS'].includes(page)}
+            showOnMobile={true}
+            path="#/analytics"
+            icon={<Icons.Report />}
+            text="Analytics"
+          /> : null}
           {stringToBoolean(settings.dashboard_enabled) ? <AppNavbarItem
             selected={['DASHBOARD_LIST', 'DASHBOARD_DETAIL'].includes(page)}
             showOnMobile={true}
             path="#/dashboards"
             icon={<Icons.Dashboard />}
             text="Dashboards"
-          /> : null}
-          {stringToBoolean(settings.analytics_enabled) ? <AppNavbarItem
-            selected={['ANALYTICS'].includes(page)}
-            showOnMobile={true}
-            path="#/analytics"
-            icon={<Icons.Chart2 />}
-            text="Analytics"
-          /> : null}
-          {!stringToBoolean(settings.insights_page_locked) ? <AppNavbarItem
-            selected={['SPACES', 'SPACES_SPACE_DETAIL', 'SPACES_SPACE_TRENDS', 'SPACES_SPACE_DAILY', 'SPACES_SPACE_DATA_EXPORT'].includes(page)}
-            showOnMobile={true}
-            path="#/spaces"
-            icon={<Icons.Space />}
-            text="Spaces"
           /> : null}
           <AppNavbarItem
             selected={['LIVE_SPACE_LIST', 'LIVE_SPACE_DETAIL'].includes(page)}
@@ -258,7 +258,7 @@ export default function AppNavbar({
               {can(user, PERMISSION_CODES.sensorsList) ?
                 <AppNavbarMenuItem
                   path="#/admin/device-status"
-                  text="DPU Status"
+                  text="Sensor Status"
                   icon={<Icons.Heartbeat />}
                   selected={['ADMIN_DEVICE_STATUS'].includes(page)}
                 /> : null}
