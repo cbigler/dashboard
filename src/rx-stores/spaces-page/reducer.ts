@@ -1,4 +1,4 @@
-import { CoreSpaceCountBucket, CoreSpaceCountMetrics } from '@density/lib-api-types/core-v2/counts';
+import { CoreSpaceCountBucket } from '@density/lib-api-types/core-v2/counts';
 import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 import { TimeOfDay } from '../../types/datetime';
 import { GlobalAction } from '../../types/rx-actions';
@@ -34,7 +34,7 @@ export type SpacesPageState = {
   },
   dailyOccupancy: {
     buckets: Array<CoreSpaceCountBucket>,
-    metrics: CoreSpaceCountMetrics | null,
+    metrics: { peak: number, },
     status: 'LOADING' | 'ERROR' | 'COMPLETE',
     error: Error | null,
   },
@@ -74,7 +74,7 @@ export function getInitialState() {
     },
     startDate: now.clone().subtract(13, 'days').format('YYYY-MM-DD'),
     endDate: now.clone().format('YYYY-MM-DD'),
-    dailyDate: '',
+    dailyDate: now.clone().format('YYYY-MM-DD'),
     spaceId: null,
     doorwayId: null,
     doorwayMappings: new Map(),
@@ -86,7 +86,7 @@ export function getInitialState() {
     },
     dailyOccupancy: {
       buckets: [],
-      metrics: null,
+      metrics: { peak: 0 },
       status: 'LOADING',
       error: null,
     },
@@ -123,7 +123,14 @@ export function spacesPageReducer(state: SpacesPageState, action: GlobalAction):
         rawEvents: getInitialState().rawEvents,
       };
     case 'SPACES_PAGE_SET_DAILY_DATE':
-      return { ...state, dailyDate: action.value, dailyOccupancy: { ...state.dailyOccupancy, status: 'LOADING' } };
+      return {
+        ...state,
+        dailyDate: action.value,
+        dailyOccupancy: {
+          ...state.dailyOccupancy,
+          status: action.indicateLoading ? 'LOADING' : state.dailyOccupancy.status
+        }
+      };
     case 'SPACES_PAGE_SET_SELECTED_SPACE':
       return { ...state, spaceId: action.spaceId, doorwayId: null };
     case 'SPACES_PAGE_SET_SELECTED_DOORWAY':
@@ -172,7 +179,21 @@ export function spacesPageReducer(state: SpacesPageState, action: GlobalAction):
         dailyOccupancy: {
           ...state.dailyOccupancy,
           ...dailyOccupancy,
-          status: 'COMPLETE',
+          metrics: {
+            peak: Math.max.apply(Math, dailyOccupancy.buckets.map(x => x.interval.analytics.max))
+          },
+          status: 'COMPLETE'
+        }
+      };
+    case 'SPACES_PAGE_SET_DAILY_OCCUPANCY_PEAK':
+      return {
+        ...state,
+        dailyOccupancy: {
+          ...state.dailyOccupancy,
+          metrics: {
+            ...state.dailyOccupancy.metrics,
+            peak: Math.max(state.dailyOccupancy.metrics.peak, action.peak),
+          }
         }
       };
     case 'SPACES_PAGE_SET_RAW_EVENTS':

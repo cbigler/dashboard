@@ -318,8 +318,8 @@ export default function Spaces() {
                   sensorsByDoorway={sensors.data.byDoorway}
                   dailyOccupancy={spacesPage.dailyOccupancy}
                   selectedSpace={selectedSpace}
-                  localDate={moment.tz(spacesPage.dailyDate, selectedSpace?.time_zone)}
-                  isToday={spacesPage.dailyDate === moment().format('YYYY-MM-DD')} />}
+                  localDate={moment.tz(spacesPage.dailyDate, selectedSpace.time_zone)}
+                  isToday={spacesPage.dailyDate === moment.tz(selectedSpace.time_zone).format('YYYY-MM-DD')} />}
             </div>
           </div>
         </AppPane> : null}

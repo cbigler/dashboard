@@ -438,6 +438,9 @@ spacesPageEventSource.on('space', countChangeEvent => {
       state.liveEvents.metrics.entrances + (countChangeEvent.direction > 0 ? countChangeEvent.direction : 0),
       state.liveEvents.metrics.exits + (countChangeEvent.direction < 0 ? -1 * countChangeEvent.direction : 0),
     ));
+    if (state.dailyDate === moment.tz(selectedSpace.time_zone).format('YYYY-MM-DD')) {
+      rxDispatch(spacesPageActions.setDailyOccupancyPeak(countChangeEvent.count));
+    }
   });
 });
 

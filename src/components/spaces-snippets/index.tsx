@@ -183,7 +183,7 @@ export default function SpaceDetailCard({
 }) {
   return <div style={{
     width: 304,
-    marginTop: 24,
+    marginTop: 16,
     padding: 16,
     fontSize: 14,
     borderRadius: spacing.borderRadiusBase,
@@ -318,8 +318,7 @@ export function SpaceMetaBar({
           <SpaceMetaField
             label="Annual Rent"
             value={selectedSpace.annual_rent !== null ? '$' + commaNumber(selectedSpace.annual_rent) : '--'}
-            tooltip="The rent for this space, annualized."
-            tooltipPlacement="bottom-end" />
+            tooltip="The rent for this space, annualized." />
         </div>
       </AppBarSection>
       <AppBarSection>
@@ -349,16 +348,21 @@ export function SpaceRightSidebar({
   const dispatch = useRxDispatch();
   const hasRoomBooking = selectedSpace.space_mappings.length > 0;
 
+  // Primitive (string) dependencies for useEffect hook
+  const spaceId = selectedSpace.id;
+  const spaceTimeZone = selectedSpace.time_zone;
+  const dateString = localDate.format('YYYY-MM-DD');
+
   // Refresh daily occupancy every 5 minutes
   useEffect(() => {
     const dailyOccupancyRefreshHandle = setTimeout(() => {
-      loadDailyOccupancy(dispatch, selectedSpace, localDate.format('YYYY-MM-DD'));
+      loadDailyOccupancy(dispatch, spaceId, spaceTimeZone, dateString);
     }, 300000);
     return () => clearTimeout(dailyOccupancyRefreshHandle);
-  }, [dispatch, dailyOccupancy, localDate, selectedSpace]);
+  }, [dispatch, spaceId, spaceTimeZone, dateString]);
 
   return <AppScrollView backgroundColor="#FAFBFC">
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 64}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8, paddingBottom: 64}}>
       <SpaceDetailCard
         title="Live Events"
         actions={<span style={{color: colors.gray400}}>Today</span>}
@@ -372,7 +376,8 @@ export function SpaceRightSidebar({
             style={{marginTop: -6, marginBottom: -7, cursor: 'pointer'}}
             onClick={() => loadDailyOccupancy(
               dispatch,
-              selectedSpace,
+              selectedSpace.id,
+              selectedSpace.time_zone,
               localDate.clone().subtract(1, 'day').format('YYYY-MM-DD')
             )}
           ><Icons.ChevronLeft /></div>
@@ -383,13 +388,19 @@ export function SpaceRightSidebar({
             style={{marginTop: -6, marginBottom: -7, cursor: isToday ? undefined : 'pointer'}}
             onClick={() => !isToday && loadDailyOccupancy(
               dispatch,
-              selectedSpace,
+              selectedSpace.id,
+              selectedSpace.time_zone,
               localDate.clone().add(1, 'day').format('YYYY-MM-DD')
             )}
           ><Icons.ChevronRight color={isToday ? colors.gray400 : undefined} /></div>
         </div>}
       >
-        <SpaceDailyOccupancy space={selectedSpace} date={localDate} dailyOccupancy={dailyOccupancy} />
+        <SpaceDailyOccupancy
+          space={selectedSpace}
+          date={localDate}
+          isToday={isToday}
+          dailyOccupancy={dailyOccupancy}
+        />
       </SpaceDetailCard>
       <SpaceDetailCard
         background={colors.gray100}
@@ -584,7 +595,7 @@ export function DoorwayRightSidebar({
 }) {
   const hasAccessControl = doorwayMappings.has(selectedDoorway.id);
   return <AppScrollView backgroundColor="#FAFBFC">
-    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 64}}>
+    <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 8, paddingBottom: 64}}>
       <SpaceDetailCard
         title="Live Events"
         actions={<span style={{color: colors.gray400}}>Today</span>}

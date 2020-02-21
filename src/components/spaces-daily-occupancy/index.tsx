@@ -62,10 +62,12 @@ function handleHover(
 export default function SpaceDailyOccupancy ({
   space,
   date,
+  isToday,
   dailyOccupancy,
 }: {
   space: CoreSpace,
   date: Moment,
+  isToday: boolean,
   dailyOccupancy: SpacesPageState['dailyOccupancy'],
 }) {
   const chartRef = useRef<HTMLDivElement>(null);
@@ -78,17 +80,11 @@ export default function SpaceDailyOccupancy ({
   const calculatedData = dailyOccupancy.buckets;
   const startTime = moment.utc(date).tz(space.time_zone).startOf('day');
   const endTime = moment.utc(date).tz(space.time_zone).endOf('day');
-  const max = Math.max.apply(Math, calculatedData.map(i => i.interval.analytics.max));
 
   const chartData = calculatedData.map(i => ({
     timestamp: moment.tz(i.timestamp, space.time_zone),
     value: i.interval.analytics.max,
   })).sort((a, b) => b ? a.timestamp.valueOf() - b.timestamp.valueOf() : 0);
-
-  const isToday = (
-    moment.tz(date, space.time_zone).format('YYYY-MM-DD') ===
-    moment.tz(space.time_zone).format('YYYY-MM-DD')
-  );
 
   // Final point for "completed" days (all but today)
   if (chartData.length > 0 && !isToday) {
@@ -106,7 +102,7 @@ export default function SpaceDailyOccupancy ({
     .domain([0, CHART_WIDTH])
     .range([startTime.valueOf(), endTime.valueOf()]);
   const yScale = d3Scale.scaleLinear()
-    .domain([0, Math.max(max, space.capacity || 1)])
+    .domain([0, Math.max(dailyOccupancy.metrics.peak, space.capacity || 1)])
     .range([CHART_HEIGHT - 10, 1]);
 
   return dailyOccupancy.status === 'COMPLETE' ? <div
@@ -122,7 +118,7 @@ export default function SpaceDailyOccupancy ({
         compact={true} />
       <SpaceMetaField
         label="Peak"
-        value={commaNumber(max)}
+        value={commaNumber(dailyOccupancy.metrics.peak)}
         compact={true} />
     </div>
     <svg height={CHART_HEIGHT} width={CHART_WIDTH} preserveAspectRatio="none">

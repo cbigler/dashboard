@@ -1,4 +1,4 @@
-import { CoreSpaceCountBucket, CoreSpaceCountMetrics } from '@density/lib-api-types/core-v2/counts';
+import { CoreSpaceCountBucket } from '@density/lib-api-types/core-v2/counts';
 import { CoreWebsocketEventPayload, CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 import { TimeFilter } from '../../types/datetime';
 import { SpacesPageState } from '../../rx-stores/spaces-page/reducer';
@@ -13,7 +13,7 @@ const setCollapsedSpaces = (value: Set<string>) => ({ type: 'SPACES_PAGE_SET_COL
 const setTimeSegmentLabel = (value: string) => ({ type: 'SPACES_PAGE_SET_TIME_SEGMENT_LABEL' as const, value });
 const setTimeFilter = (value: TimeFilter) => ({ type: 'SPACES_PAGE_SET_TIME_FILTER' as const, value });
 const setReportDates = (startDate: string, endDate: string) => ({ type: 'SPACES_PAGE_SET_REPORT_DATES' as const, startDate, endDate });
-const setDailyDate = (value: string) => ({ type: 'SPACES_PAGE_SET_DAILY_DATE' as const, value });
+const setDailyDate = (value: string, indicateLoading: boolean) => ({ type: 'SPACES_PAGE_SET_DAILY_DATE' as const, value, indicateLoading });
 const setSelectedSpace = (spaceId: string) => ({ type: 'SPACES_PAGE_SET_SELECTED_SPACE' as const, spaceId });
 const setSelectedDoorway = (spaceId: string, doorwayId: string) => ({ type: 'SPACES_PAGE_SET_SELECTED_DOORWAY' as const, spaceId, doorwayId });
 
@@ -27,10 +27,13 @@ const setLiveStats = (occupancy: number, entrances: number, exits: number) => ({
   entrances,
   exits,
 });
-const setDailyOccupancy = (buckets: Array<CoreSpaceCountBucket>, metrics: CoreSpaceCountMetrics) => ({
+const setDailyOccupancy = (buckets: Array<CoreSpaceCountBucket>) => ({
   type: 'SPACES_PAGE_SET_DAILY_OCCUPANCY' as const,
   buckets,
-  metrics,
+});
+const setDailyOccupancyPeak = (peak: number) => ({
+  type: 'SPACES_PAGE_SET_DAILY_OCCUPANCY_PEAK' as const,
+  peak,
 });
 const setRawEvents = (rawEvents: Partial<SpacesPageState['rawEvents']>) => ({
   type: 'SPACES_PAGE_SET_RAW_EVENTS' as const,
@@ -53,6 +56,7 @@ export const spacesPageActions = {
   setOneLiveEvent,
   setLiveStats,
   setDailyOccupancy,
+  setDailyOccupancyPeak,
   setRawEvents,
 };
 export type SpacesPageAction = ActionTypesOf<typeof spacesPageActions>;

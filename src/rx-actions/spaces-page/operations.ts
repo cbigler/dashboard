@@ -1,6 +1,5 @@
 import moment from 'moment-timezone';
 import core from '../../client/core';
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { DispatchType } from '../../types/rx-actions';
 
 import { spacesPageActions } from '.';
@@ -8,11 +7,11 @@ import { getGoSlow } from '../../components/environment-switcher';
 import { SpacesPageState } from '../../rx-stores/spaces-page/reducer';
 import { SpacesState } from '../../rx-stores/spaces';
 
-export async function loadDailyOccupancy(dispatch: DispatchType, space: CoreSpace, date: string) {
-  dispatch(spacesPageActions.setDailyDate(date));
+export async function loadDailyOccupancy(dispatch: DispatchType, spaceId: string, spaceTimeZone: string, date: string, indicateLoading: boolean = true) {
+  dispatch(spacesPageActions.setDailyDate(date, indicateLoading));
   
-  const localDate = moment.tz(date, space.time_zone);
-  const response = await core().get(`/spaces/${space.id}/counts`, {
+  const localDate = moment.tz(date, spaceTimeZone);
+  const response = await core().get(`/spaces/${spaceId}/counts`, {
     params: {
       interval: '5m',
       order: 'asc',
@@ -23,14 +22,11 @@ export async function loadDailyOccupancy(dispatch: DispatchType, space: CoreSpac
     }
   });
 
-  if (typeof response.data.metrics === 'undefined') {
-    throw new Error(`Response did not contain .metrics key! (data=${response.data})`);
-  }
   if (typeof response.data.results === 'undefined') {
     throw new Error(`Response did not contain .results key! (data=${response.data})`);
   }
 
-  dispatch(spacesPageActions.setDailyOccupancy(response.data.results.reverse(), response.data.metrics));
+  dispatch(spacesPageActions.setDailyOccupancy(response.data.results.reverse()));
 }
 
 export async function loadRawEvents(dispatch: DispatchType, spaces: SpacesState, spacesPage: SpacesPageState) {

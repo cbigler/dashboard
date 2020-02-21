@@ -53,9 +53,8 @@ export default async function routeTransitionSpacesSpace(dispatch, id) {
   await alertsRead(dispatch);
 
   // Load daily occupancy data
-  const today = moment().format('YYYY-MM-DD');
-  dispatch(spacesPageActions.setDailyDate(today));
-  await loadDailyOccupancy(dispatch, selectedSpace, today);
+  const today = moment.tz(selectedSpace.time_zone).format('YYYY-MM-DD');
+  await loadDailyOccupancy(dispatch, selectedSpace.id, selectedSpace.time_zone, today);
 
   // Load first page of raw events
   dispatch(spacesPageActions.setRawEvents({page: 1}));
