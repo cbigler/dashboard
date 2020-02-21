@@ -437,15 +437,17 @@ merge(
 // TODO: Make this less crazy!
 actions.pipe(
   filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
-  switchMap(() => AnalyticsStore),
-  filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
+  switchMap(() => AnalyticsStore.pipe(
+    filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
+    take(1),
+  )),
 ).subscribe(() => {
   const preload = localStorage.sessionAnalyticsPreload ? JSON.parse(localStorage.sessionAnalyticsPreload) : {};
   if (preload.spaceIds) {
     delete localStorage.sessionAnalyticsPreload;
     createReport(rxDispatch, preload.spaceIds);
   }
-})
+});
 
 // ----------------------------------------------------------------------------
 // RUN REPORT QUERY WHEN IT CHANGES
