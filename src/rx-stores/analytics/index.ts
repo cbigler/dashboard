@@ -433,7 +433,6 @@ merge(
 ).subscribe(action => rxDispatch(action as Any<InAHurry>));
 
 // Some magic to preload a space when analytics is loaded and this key is present in localStorage.
-// Be sure to delete the key from localStorage before preload, otherwise it will infinite loop.
 // TODO: Make this less crazy!
 actions.pipe(
   filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
