@@ -19,8 +19,8 @@ function getFirstLeafSpace(space) {
 
 export default async function routeTransitionSpaces(dispatch) {  
   let errorThrown = false, spaces, spaceHierarchy;
-  dispatch({ type: ROUTE_TRANSITION_SPACES });
   dispatch(spacesPageActions.clearData());
+  dispatch({ type: ROUTE_TRANSITION_SPACES });
 
   // Load all spaces and the hierarchy, which is fairly wasteful
   try {
