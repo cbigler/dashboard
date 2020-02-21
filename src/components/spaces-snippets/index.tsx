@@ -355,10 +355,10 @@ export function SpaceRightSidebar({
 
   // Refresh daily occupancy every 5 minutes
   useEffect(() => {
-    const dailyOccupancyRefreshHandle = setTimeout(() => {
+    const dailyOccupancyRefreshHandle = setInterval(() => {
       loadDailyOccupancy(dispatch, spaceId, spaceTimeZone, dateString);
     }, 300000);
-    return () => clearTimeout(dailyOccupancyRefreshHandle);
+    return () => clearInterval(dailyOccupancyRefreshHandle);
   }, [dispatch, spaceId, spaceTimeZone, dateString]);
 
   return <AppScrollView backgroundColor="#FAFBFC">
