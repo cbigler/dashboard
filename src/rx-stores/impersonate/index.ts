@@ -65,12 +65,12 @@ actions.pipe(
   
   if (shouldReload) {
     delete localStorage.sessionSpacesPageState;
-    delete localStorage.analyticsPreload;
+    delete localStorage.sessionAnalyticsPreload;
 
     if (state.selectedUser) {
-      localStorage['impersonate'] = JSON.stringify(state);
+      localStorage.impersonate = JSON.stringify(state);
     } else {
-      delete localStorage['impersonate'];
+      delete localStorage.impersonate;
     }
     window.location.hash = '/';
     window.location.reload();

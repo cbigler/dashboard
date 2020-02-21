@@ -266,7 +266,7 @@ export function SpaceMetaBar({
               contents="Open in Analytics"
               // TODO: make this open the space in a new report
               target={<Button onClick={() => {
-                localStorage.analyticsPreload = JSON.stringify({spaceIds: [selectedSpace.id]});
+                localStorage.sessionAnalyticsPreload = JSON.stringify({spaceIds: [selectedSpace.id]});
                 window.location.href = `#/analytics`;
               }}>
                 <div style={{marginTop: 7, marginLeft: -7, marginRight: -7}}>

@@ -440,9 +440,9 @@ actions.pipe(
   switchMap(() => AnalyticsStore),
   filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
 ).subscribe(() => {
-  const preload = localStorage.analyticsPreload ? JSON.parse(localStorage.analyticsPreload) : {};
+  const preload = localStorage.sessionAnalyticsPreload ? JSON.parse(localStorage.sessionAnalyticsPreload) : {};
   if (preload.spaceIds) {
-    delete localStorage.analyticsPreload;
+    delete localStorage.sessionAnalyticsPreload;
     createReport(rxDispatch, preload.spaceIds);
   }
 })
