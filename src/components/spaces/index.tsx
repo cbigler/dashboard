@@ -316,6 +316,7 @@ export default function Spaces() {
                   doorwayMappings={spacesPage.doorwayMappings} /> :
                 <SpaceRightSidebar
                   sensorsByDoorway={sensors.data.byDoorway}
+                  dailyOccupancy={spacesPage.dailyOccupancy}
                   selectedSpace={selectedSpace}
                   localDate={moment.tz(spacesPage.dailyDate, selectedSpace?.time_zone)}
                   isToday={spacesPage.dailyDate === moment().format('YYYY-MM-DD')} />}

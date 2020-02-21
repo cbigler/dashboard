@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { Moment } from 'moment';
 import classnames from 'classnames';
 import commaNumber from 'comma-number';
@@ -335,17 +335,27 @@ export function SpaceMetaBar({
 
 export function SpaceRightSidebar({
   sensorsByDoorway,
+  dailyOccupancy,
   selectedSpace,
   localDate,
   isToday
 }: {
   sensorsByDoorway: SensorsState['data']['byDoorway'],
+  dailyOccupancy: SpacesPageState['dailyOccupancy'],
   selectedSpace: CoreSpace,
   localDate: Moment,
   isToday: boolean
 }) {
   const dispatch = useRxDispatch();
   const hasRoomBooking = selectedSpace.space_mappings.length > 0;
+
+  // Refresh daily occupancy every 5 minutes
+  useEffect(() => {
+    const dailyOccupancyRefreshHandle = setTimeout(() => {
+      loadDailyOccupancy(dispatch, selectedSpace, localDate.format('YYYY-MM-DD'));
+    }, 300000);
+    return () => clearTimeout(dailyOccupancyRefreshHandle);
+  }, [dispatch, dailyOccupancy, localDate, selectedSpace]);
 
   return <AppScrollView backgroundColor="#FAFBFC">
     <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 64}}>
@@ -379,7 +389,7 @@ export function SpaceRightSidebar({
           ><Icons.ChevronRight color={isToday ? colors.gray400 : undefined} /></div>
         </div>}
       >
-        <SpaceDailyOccupancy space={selectedSpace} date={localDate} />
+        <SpaceDailyOccupancy space={selectedSpace} date={localDate} dailyOccupancy={dailyOccupancy} />
       </SpaceDetailCard>
       <SpaceDetailCard
         background={colors.gray100}
@@ -437,7 +447,7 @@ export function SpaceRightSidebar({
           paddingTop: 4,
           marginBottom: -8
         }}>
-          {selectedSpace.tags.map(tag => <div style={{
+          {selectedSpace.tags.map(tag => <div key={tag} style={{
             background: colors.blueLight,
             borderRadius: spacing.borderRadiusBase,
             whiteSpace: 'nowrap',

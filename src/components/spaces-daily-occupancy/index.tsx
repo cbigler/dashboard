@@ -8,9 +8,8 @@ import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { Icons } from '@density/ui';
 import colors from '@density/ui/variables/colors.json';
 import spacing from '@density/ui/variables/spacing.json';
-import useRxStore from '../../helpers/use-rx-store';
-import SpacesPageStore from '../../rx-stores/spaces-page';
 import { SpaceMetaField, SpaceDetailCardLoading } from '../spaces-snippets';
+import { SpacesPageState } from '../../rx-stores/spaces-page/reducer';
 
 const CHART_HEIGHT = 80;
 const CHART_WIDTH = 302;
@@ -63,6 +62,11 @@ function handleHover(
 export default function SpaceDailyOccupancy ({
   space,
   date,
+  dailyOccupancy,
+}: {
+  space: CoreSpace,
+  date: Moment,
+  dailyOccupancy: SpacesPageState['dailyOccupancy'],
 }) {
   const chartRef = useRef<HTMLDivElement>(null);
   const hoverGroupRef = useRef<HTMLDivElement>(null);
@@ -71,9 +75,7 @@ export default function SpaceDailyOccupancy ({
   const hoverLineRef = useRef<HTMLDivElement>(null);
   const hoverMarkerRef = useRef<HTMLDivElement>(null);
 
-  const spacesPage = useRxStore(SpacesPageStore);
-  const calculatedData = spacesPage.dailyOccupancy.buckets;
-
+  const calculatedData = dailyOccupancy.buckets;
   const startTime = moment.utc(date).tz(space.time_zone).startOf('day');
   const endTime = moment.utc(date).tz(space.time_zone).endOf('day');
   const max = Math.max.apply(Math, calculatedData.map(i => i.interval.analytics.max));
@@ -107,7 +109,7 @@ export default function SpaceDailyOccupancy ({
     .domain([0, Math.max(max, space.capacity || 1)])
     .range([CHART_HEIGHT - 10, 1]);
 
-  return spacesPage.dailyOccupancy.status === 'COMPLETE' ? <div
+  return dailyOccupancy.status === 'COMPLETE' ? <div
     ref={chartRef}
     style={{width: '100%', position: 'relative', paddingBottom: 12}}
     onMouseOut={event => handleHover(chartRef, hoverGroupRef, hoverTimeRef, hoverValueRef, hoverLineRef, hoverMarkerRef, xScale, inverseXScale, yScale, space, startTime, chartData, event)}
