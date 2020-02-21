@@ -64,6 +64,9 @@ actions.pipe(
   }
   
   if (shouldReload) {
+    delete localStorage.sessionSpacesPageState;
+    delete localStorage.analyticsPreload;
+
     if (state.selectedUser) {
       localStorage['impersonate'] = JSON.stringify(state);
     } else {
