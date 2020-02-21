@@ -162,12 +162,13 @@ export default function Spaces() {
                   display: 'flex',
                   alignItems: 'center',
                   position: 'fixed',
-                  zIndex: 1,
                   width: 'calc(100% - 265px - 384px - 48px)',
+                  height: 64,
+                  zIndex: 1,
                   paddingBottom: 8,
                   paddingTop: 16,
                   marginTop: -32,
-                  backgroundColor: '#FAFBFC'
+                  backgroundColor: '#FAFBFC',
                 }}>
                   <SpacesReportTimeSegmentLabelPicker
                     timeSegmentLabel={spacesPage.timeSegmentLabel}
@@ -176,7 +177,7 @@ export default function Spaces() {
                     selectedSpace={selectedSpace}
                     onChange={value => dispatch(spacesPageActions.setTimeSegmentLabel(value))}
                   />
-                  <div style={{width: 8}}></div>
+                  <div style={{width: 8, flexShrink: 0}}></div>
                   <SpacesReportDateRangePicker
                     startDate={spacesPage.startDate}
                     endDate={spacesPage.endDate}

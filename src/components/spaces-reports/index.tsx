@@ -70,6 +70,13 @@ export function SpacesReportDateRangePicker({
   );
 }
 
+function SpaceReportTimeSegmentLabelPickerLabel({label, hours}: {label: string, hours: string}) {
+  return <div style={{lineHeight: '16px', padding: '10px 0'}}>
+    <span style={{fontWeight: 600, whiteSpace: 'nowrap'}}>{label}</span>{' '}
+    <span style={{whiteSpace: 'nowrap'}}>{hours}</span>
+  </div>
+}
+
 // Time segment picker control for reports section
 export function SpacesReportTimeSegmentLabelPicker({
   timeSegmentLabel,
@@ -92,18 +99,28 @@ export function SpacesReportTimeSegmentLabelPicker({
           const {startSeconds, endSeconds} = parseStartAndEndTimesInTimeSegment(timeSegment);
           return {
             id: label,
-            label: `${label} (${prettyPrintHoursMinutes(
-              getCurrentLocalTimeAtSpace(selectedSpace).startOf('day').add(startSeconds, 'seconds')
-            )} - ${prettyPrintHoursMinutes(
-              getCurrentLocalTimeAtSpace(selectedSpace).startOf('day').add(endSeconds, 'seconds')
-            )})`,
+            label: <SpaceReportTimeSegmentLabelPickerLabel
+              label={label}
+              hours={`(${prettyPrintHoursMinutes(
+                getCurrentLocalTimeAtSpace(selectedSpace).startOf('day').add(startSeconds, 'seconds')
+              )} - ${prettyPrintHoursMinutes(
+                getCurrentLocalTimeAtSpace(selectedSpace).startOf('day').add(endSeconds, 'seconds')
+              )})`}
+            />,
           };
         } else if (label === DEFAULT_TIME_SEGMENT_LABEL) {
-          return { id: label, label: 'Whole day (12:00a - 11:59p)' }
+          return {
+            id: label,
+            label: <SpaceReportTimeSegmentLabelPickerLabel
+              label="Whole day"
+              hours="(12:00a - 11:59p)" />
+          }
         } else {
           return {
             id: label,
-            label: `${label} (mixed hours)`
+            label: <SpaceReportTimeSegmentLabelPickerLabel
+              label={label}
+              hours="(mixed hours)" />
           };
         }
       })
