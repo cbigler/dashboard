@@ -3,6 +3,7 @@ import fetchAllObjects from '../../helpers/fetch-all-objects';
 import sortSpaceTree from '../../helpers/sort-space-tree/index';
 
 import { spaceActions } from '../spaces';
+import { spacesPageActions } from '../spaces-page';
 import spacesError from '../collection/spaces-legacy/error';
 import spaceHierarchySet from '../collection/space-hierarchy/set';
 
@@ -19,6 +20,7 @@ function getFirstLeafSpace(space) {
 export default async function routeTransitionSpaces(dispatch) {  
   let errorThrown = false, spaces, spaceHierarchy;
   dispatch({ type: ROUTE_TRANSITION_SPACES });
+  dispatch(spacesPageActions.clearData());
 
   // Load all spaces and the hierarchy, which is fairly wasteful
   try {
