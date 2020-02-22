@@ -160,13 +160,12 @@ export default function Spaces() {
               <div style={{padding: '0 24px 24px 24px', position: 'relative'}}>
                 <div style={{
                   display: 'flex',
-                  alignItems: 'center',
+                  alignItems: 'flex-end',
                   position: 'fixed',
                   width: 'calc(100% - 265px - 384px - 48px)',
                   height: 64,
                   zIndex: 1,
-                  paddingBottom: 8,
-                  paddingTop: 16,
+                  paddingBottom: 8, 
                   marginTop: -32,
                   backgroundColor: '#FAFBFC',
                 }}>
@@ -226,13 +225,13 @@ export default function Spaces() {
                       <h1 className={styles.spaceReportHeader}>
                         How busy does this {selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'} get?
                       </h1>
-                      <AveragePeakOccupancyPerHour
+                      <DailyPeakOccupancy
                         space={selectedSpace}
                         startDate={spacesPage.startDate}
                         endDate={spacesPage.endDate}
                         timeSegmentLabel={spacesPage.timeSegmentLabel}
                       />
-                      <DailyPeakOccupancy
+                      <AveragePeakOccupancyPerHour
                         space={selectedSpace}
                         startDate={spacesPage.startDate}
                         endDate={spacesPage.endDate}

@@ -3,12 +3,15 @@ import commaNumber from 'comma-number';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { SpaceMetaField, SpaceDetailCardLoading } from '../spaces-snippets';
-import colors from '@density/ui/variables/colors.json'
 import useRxStore from '../../helpers/use-rx-store';
 import SpacesPageStore from '../../rx-stores/spaces-page';
 
+import styles from './styles.module.scss'
+import colors from '@density/ui/variables/colors.json'
+
 import * as d3Scale from 'd3-scale';
 import moment from 'moment';
+import { StylesProvider } from '@material-ui/core';
 
 const CHART_HEIGHT = 80;
 const CHART_WIDTH = 334;
@@ -103,7 +106,7 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
         compact={true} />
       <SpaceMetaField
         label={<div style={{display: 'flex', alignItems: 'center'}}>
-          <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.yellow, marginRight: 4}}></div>
+          <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.gray400, marginRight: 4}}></div>
           Exits
         </div>}
         value={commaNumber(metrics.exits)}
@@ -120,7 +123,7 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
               {...{'data-timestamp': moment(marker.timestamp).valueOf()}}
             >
               <circle
-                fill={marker.count > 0 ? colors.blue : colors.yellow}
+                fill={marker.count > 0 ? colors.blue : colors.gray400}
                 cy={marker.count > 0 ? 33 : 47}
                 r={3} />
               {Math.abs(marker.count) > 1 ? <g>
@@ -146,9 +149,14 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
         })}
       </svg>
     </div>
-    <div style={{position: 'absolute', width: '100%', display: 'flex', justifyContent: 'space-between', fontSize: 12}}>
-      <div>1m ago</div>
-      <div>now</div>
+    <div className={styles.axisX}>
+      <div className={styles.axisLabel}>
+        1m ago
+      </div>
+      <div className={styles.axisLabel}>
+        now
+        <div className={styles.liveDot}></div>
+      </div>
     </div>
   </div> : <SpaceDetailCardLoading />
 }

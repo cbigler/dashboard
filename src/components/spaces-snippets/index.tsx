@@ -74,6 +74,7 @@ export function SensorStatusLabel({status}: {status: string}) {
     <div style={{
       width:6,
       height: 6,
+      marginTop: 2,
       borderRadius: 3,
       backgroundColor: getStatusColor(status),
     }}></div>
