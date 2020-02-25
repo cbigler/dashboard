@@ -148,7 +148,7 @@ export default function Spaces() {
           {selectedDoorway ? 
             <DoorwayMetaBar sensorsByDoorway={sensors.data.byDoorway} selectedSpace={selectedSpace} selectedDoorway={selectedDoorway} /> :
             <SpaceMetaBar selectedSpace={selectedSpace} spaces={spaces.data} doorways={doorways.data} user={user.data} />}
-          <div style={{display: 'flex', height: 'calc(100% - 128px)'}}>
+          <div style={{display: 'flex', height: 'calc(100% - 128px)', overflowX: 'hidden'}}>
             <div style={{
               flexGrow: 1,
               flexShrink: 1,
@@ -162,7 +162,7 @@ export default function Spaces() {
                   display: 'flex',
                   alignItems: 'center',
                   position: 'fixed',
-                  width: 'calc(100% - 265px - 384px - 48px)',
+                  width: `calc(100% - ${spacesPage.navigationCollapsed ? '0px' : '265px'} - 384px - 48px)`,
                   height: 64,
                   zIndex: 1,
                   paddingBottom: 8,
@@ -308,7 +308,7 @@ export default function Spaces() {
                 </div>
               </div>
             </div>
-            <div className={styles.spaceDetailBar}>
+            <div className={styles.spaceDetailBar} style={{zIndex: 1}}>
               {selectedDoorway ?
                 <DoorwayRightSidebar
                   spaces={spaces.data}

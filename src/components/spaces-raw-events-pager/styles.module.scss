@@ -9,6 +9,7 @@
 }
 
 .visualizationSpaceDetailRawEventsPagerTotal {
+  flex-shrink: 0; 
   line-height: 36px;
 }
 
@@ -20,7 +21,7 @@
   margin-right: auto;
   line-height: 36px;
 }
-.visualizationSpaceDetailRawEventsPagerPicker * { display: inline-block; }
+.visualizationSpaceDetailRawEventsPagerPicker * { flex-shrink: 0; display: inline-block; }
 .visualizationSpaceDetailRawEventsPagerPickerBox {
   display: block;
   resize: none;
@@ -38,7 +39,7 @@
   padding: 0px;
   height: 36px;
   line-height: 36px;
-  width: 4em;
+  width: 60px;
   box-sizing: border-box;
 
   margin-left: 10px;

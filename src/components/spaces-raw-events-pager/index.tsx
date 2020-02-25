@@ -1,76 +1,65 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import classnames from 'classnames';
 
 import styles from './styles.module.scss';
 
 import { PagerButtonGroup } from '@density/ui/src';
+import { useAutoWidth } from '../../helpers/use-auto-width';
 
-export default class SpacesRawEventsPager extends React.Component<any, any> {
-  constructor(props) {
-    super(props);
-    this.state = { textPage: false };
-  }
-  shouldComponentUpdate(props, state, context) {
-    return !props.loading &&
-      (this.props.totalPages !== props.totalPages ||
-        this.props.totalEvents !== props.totalEvents ||
-        this.props.page !== props.page ||
-        this.props.disabled !== props.disabled ||
-        this.props.onChange !== props.onChange ||
-        this.state.textPage !== state.textPage);
-  }
-  render() {
-    const {
-      disabled,
-      page,
-      totalPages,
-      totalEvents,
-      onChange,
-    } = this.props;
-    return <div className={classnames(styles.visualizationSpaceDetailRawEventsPager, {[styles.disabled]: disabled})}>
-      <div className={styles.visualizationSpaceDetailRawEventsPagerTotal}>
-        {totalEvents || 0} events...
-      </div>
-      <div className={styles.visualizationSpaceDetailRawEventsPagerPicker}>
-        <span>Page</span>
-        <input
-          type="text"
-          className={styles.visualizationSpaceDetailRawEventsPagerPickerBox}
-          value={!totalPages ? '' : (this.state.textPage === false ? page : this.state.textPage)}
+export default function SpacesRawEventsPager({
+  disabled,
+  page,
+  totalPages,
+  totalEvents,
+  onChange,
+}) {
+  const [textPage, setTextPage] = useState(1);
+  const ref = useRef(null);
+  const width = useAutoWidth(ref);
 
-          // Disable the box when there are no pages to change to.
-          disabled={!totalPages}
+  return <div ref={ref} className={classnames(styles.visualizationSpaceDetailRawEventsPager, {[styles.disabled]: disabled})}>
+    {width < 640 ? null : <div className={styles.visualizationSpaceDetailRawEventsPagerTotal}>
+      {totalEvents || 0} events...
+    </div>}
+    <div className={styles.visualizationSpaceDetailRawEventsPagerPicker} style={{alignItems: width < 480 ? 'left' : undefined}}>
+      {width < 480 ? null : <span>Page</span>}
+      <input
+        type="text"
+        className={styles.visualizationSpaceDetailRawEventsPagerPickerBox}
+        style={{marginLeft: width < 480 ? '0px' : undefined}}
+        value={!totalPages ? '' : textPage}
 
-          // As the user types, update the internal representation
-          onChange={e => this.setState({textPage: e.target.value})}
+        // Disable the box when there are no pages to change to.
+        disabled={!totalPages}
 
-          // When the user is finished typing, clear the internal representation and emit the
-          // changed value if the value was value.
-          onBlur={() => {
-            const parsedPage = parseInt(this.state.textPage, 10);
-            if (!isNaN(parsedPage) && parsedPage > 0 && parsedPage <= totalPages) {
-              onChange(parsedPage);
-            }
-            this.setState({textPage: false});
-          }}
-        />
-        {isNaN(totalPages) ? null : <span>of {totalPages}</span>}
-      </div>
-      <div className={styles.visualizationSpaceDetailRawEventsPagerButtonGroup}>
-        <PagerButtonGroup
-          showFirstLastButtons
+        // As the user types, update the internal representation
+        onChange={e => setTextPage(parseInt(e.target.value, 10))}
 
-          disabledStart={!totalPages || page === 1}
-          disabledPrevious={!totalPages || page === 1}
-          disabledNext={!totalPages || page === totalPages || totalPages === 1}
-          disabledEnd={!totalPages || page === totalPages || totalPages === 1}
+        // When the user is finished typing, clear the internal representation and emit the
+        // changed value if the value was value.
+        onBlur={() => {
+          if (!isNaN(textPage) && textPage > 0 && textPage <= totalPages) {
+            onChange(textPage);
+          }
+          setTextPage(1);
+        }}
+      />
+      {isNaN(totalPages) ? null : <span>of {totalPages}</span>}
+    </div>
+    <div className={styles.visualizationSpaceDetailRawEventsPagerButtonGroup}>
+      <PagerButtonGroup
+        showFirstLastButtons
 
-          onClickStart={() => onChange(1)}
-          onClickEnd={() => onChange(totalPages)}
-          onClickNext={() => onChange(page + 1)}
-          onClickPrevious={() => onChange(page - 1)}
-        />
-      </div>
-    </div>;
-  }
+        disabledStart={!totalPages || page === 1}
+        disabledPrevious={!totalPages || page === 1}
+        disabledNext={!totalPages || page === totalPages || totalPages === 1}
+        disabledEnd={!totalPages || page === totalPages || totalPages === 1}
+
+        onClickStart={() => onChange(1)}
+        onClickEnd={() => onChange(totalPages)}
+        onClickNext={() => onChange(page + 1)}
+        onClickPrevious={() => onChange(page - 1)}
+      />
+    </div>
+  </div>;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import classnames from 'classnames';
 import uuid from 'uuid';
 
@@ -28,6 +28,8 @@ import DoorwaysStore from '../../rx-stores/doorways';
 import moment, { min } from 'moment-timezone';
 import { downloadFile } from '../../helpers/download-file';
 import { showToast, hideToast } from '../../rx-actions/toasts';
+import { useAutoWidth } from '../../helpers/use-auto-width';
+import { ListViewColumnSpacer } from '@density/ui';
 
 export function getCSVURL() {
   const baseV1 = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
@@ -43,12 +45,15 @@ export default function SpacesRawEvents() {
   const space = spacesPage.spaceId ? spaces.data.get(spacesPage.spaceId) : null;
   const doorway = spacesPage.doorwayId ? doorways.data.get(spacesPage.doorwayId) : null;
 
+  const tableRef = useRef<HTMLDivElement>(null);
+  const width = useAutoWidth(tableRef);
+
   const onChangePage = async (page: number = 1) => {
     dispatch(spacesPageActions.setRawEvents({page}));
   }
 
   return space ? (
-    <div>
+    <div ref={tableRef}>
       <div style={{
         background: colors.white,
         borderRadius: spacing.borderRadiusBase,
@@ -116,7 +121,8 @@ export default function SpacesRawEvents() {
         </AppBar>
         {rawEvents.status === 'COMPLETE' ? <div style={{
           fontSize: 12,
-          padding: '16px 24px 8px 24px'
+          padding: '16px 24px 8px 24px',
+          overflow: 'hidden'
         }}>
           <ListView
             data={rawEvents.data || []}
@@ -125,14 +131,24 @@ export default function SpacesRawEvents() {
           >
             <ListViewColumn
               id="Timestamp"
-              template={item => parseISOTimeAtSpace(item.timestamp, space).format('MMM Do YYYY, h:mm:ss a')} />
-            <ListViewColumn
-              id="Doorway"
-              template={item => doorways.data.get(item.doorway_id)?.name || item.doorway_id} />
+              template={item => parseISOTimeAtSpace(item.timestamp, space).format('MMM Do YYYY, h:mm:ss a')}
+              width={200} />
+            {width < 640 ? 
+              <ListViewColumnSpacer /> :
+              <ListViewColumn
+                id="Doorway"
+                template={item => (
+                  <span style={{whiteSpace: 'nowrap'}}>
+                    {doorways.data.get(item.doorway_id)?.name || item.doorway_id}
+                  </span>
+                )} />}
             <ListViewColumn
               id="Event"
-              template={item => item.direction === 1 ? 'Entrance' : 'Exit'}
-              width={120} />
+              template={item => (
+                width < 640 ? item.direction === 1 ? '+1' : '-1' :
+                item.direction === 1 ? 'Entrance' : 'Exit'
+              )}
+              width={width < 640 ? 40 : 70} />
             <ListViewColumn
               id="Count"
               template={item => commaNumber(item.count)}
@@ -156,7 +172,6 @@ export default function SpacesRawEvents() {
       </div>
       <RawEventsPager
         disabled={rawEvents.status !== 'COMPLETE'}
-        loading={rawEvents.status === 'LOADING'}
         page={spacesPage.rawEvents.page}
         totalPages={rawEvents.status === 'COMPLETE' ? Math.ceil(rawEvents.totalEvents / 10) : 0}
         totalEvents={rawEvents.status === 'COMPLETE' ? rawEvents.totalEvents : 0}
