@@ -11,7 +11,7 @@ import SensorsStore from '../../rx-stores/sensors';
 import SpacesStore from '../../rx-stores/spaces';
 import SpacesPageStore from '../../rx-stores/spaces-page';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
-import UserStore from '../../rx-stores/user';
+import UserStore from '../../rx-stores/user'; 
 
 // Actions
 import useRxDispatch from '../../helpers/use-rx-dispatch';
