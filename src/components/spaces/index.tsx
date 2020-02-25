@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import moment from 'moment';
 import { formatSpaceFunction } from '@density/lib-space-helpers';
+import classnames from 'classnames';
 
 // Stores
 import useRxStore from '../../helpers/use-rx-store';
@@ -66,6 +67,7 @@ export default function Spaces() {
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
 
+  const spaceNavigationCollapsed = spacesPage.navigationCollapsed;
   const selectedSpace = spaces.data.get(spacesPage.spaceId || 'spc_0');
   const selectedDoorway = doorways.data.get(spacesPage.doorwayId || 'drw_0');
   const spaceDoorways = new Map(Array.from(spaces.data.values()).map(x => [x.id, x.doorways]));
@@ -102,18 +104,8 @@ export default function Spaces() {
             onClick={() => {
               dispatch(spacesPageActions.setNavigationCollapsed(!spacesPage.navigationCollapsed));
             }}
-            style={{
-              position: 'absolute',
-              left: spacesPage.navigationCollapsed ? 4 : 253,
-              transition: 'left 200ms ease-in-out',
-              top: 59,
-              height: 24,
-              borderRadius: 12,
-              background: colors.white,
-              boxShadow: `0 2px 4px ${colors.midnightTransparent10}`,
-              border: `1px solid ${colors.gray200}`,
-              cursor: 'pointer'
-            }}
+            className={classnames(styles.spacesNavCollapseToggle)}
+            style={{ left: spacesPage.navigationCollapsed ? 4 : 253 }}
           >
             {spacesPage.navigationCollapsed ? <Icons.ChevronRight /> : <Icons.ChevronLeft />}
           </div> : null}
@@ -194,7 +186,7 @@ export default function Spaces() {
                   <h1 className={styles.spaceReportHeader}>
                     {selectedDoorway ?
                       'How busy is this Doorway?' : 
-                      `How many people visit this ${selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'}?`}
+                      `How many people enter this ${selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'}?`}
                   </h1>
 
                   {/* All spaces have "entrances per day" */}
