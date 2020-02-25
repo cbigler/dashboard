@@ -11,7 +11,6 @@ import colors from '@density/ui/variables/colors.json'
 
 import * as d3Scale from 'd3-scale';
 import moment from 'moment';
-import { StylesProvider } from '@material-ui/core';
 
 const CHART_HEIGHT = 80;
 const CHART_WIDTH = 334;
