@@ -14,7 +14,7 @@
 .adminLocations.space { height: calc(100% - 64px); }   
 
 // This removes the height of the breadcrumb from the app pane
-.adminLocations > [class*="appFrame"] {
+.adminLocations.space > [class*="appFrame"] {
   height: calc(100% - 64px);
 }
 
