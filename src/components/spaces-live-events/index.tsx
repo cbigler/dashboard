@@ -145,7 +145,7 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
                 </text>
               </g> : null}
             </g>
-          </Fragment>;StylesProvider
+          </Fragment>;
         })}
       </svg>
     </div>
