@@ -10,7 +10,13 @@
   height: calc(100% - 64px - 64px);
   background-color: $gray000;
 }
-.adminLocations.space { height: calc(100% - 64px); }
+// This seems to just overwrite the above? results in a miscalcuated height
+.adminLocations.space { height: calc(100% - 64px); }   
+
+// This removes the height of the breadcrumb from the app pane
+.adminLocations.space > [class*="appFrame"] {
+  height: calc(100% - 64px);
+}
 
 .loading {
   height: 100%;

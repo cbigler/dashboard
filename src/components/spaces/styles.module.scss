@@ -17,6 +17,28 @@
   color: $gray300;
 }
 
+.spacesNavCollapseToggle {
+  position: absolute;
+  transition: left 200ms ease-in-out;
+  top: 59px;
+  left: 253px;
+  height: 24px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 4px $midnightTransparent10;
+  border: 1px solid $gray200;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $blue;
+    box-shadow: 0 0 0 1px $blue;
+  }
+}
+// This isn't being used, I think it's fine to put these values inline on the component
+.spacesNavCollapseToggleCollapsed {
+  left: 4px;
+}
+
 .spaceDetailBar {
   width: 384px;
   border-left: 1px solid $gray200;

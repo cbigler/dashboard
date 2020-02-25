@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import moment from 'moment';
 import { formatSpaceFunction } from '@density/lib-space-helpers';
+import classnames from 'classnames';
 
 // Stores
 import useRxStore from '../../helpers/use-rx-store';
@@ -10,7 +11,7 @@ import SensorsStore from '../../rx-stores/sensors';
 import SpacesStore from '../../rx-stores/spaces';
 import SpacesPageStore from '../../rx-stores/spaces-page';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
-import UserStore from '../../rx-stores/user';
+import UserStore from '../../rx-stores/user'; 
 
 // Actions
 import useRxDispatch from '../../helpers/use-rx-dispatch';
@@ -23,7 +24,6 @@ import {
   AppSidebar,
   Icons,
 } from '@density/ui/src';
-import colors from '@density/ui/variables/colors.json';
 import styles from './styles.module.scss';
 import AlertManagementModal from '../alert-management-modal';
 import { ExpandedReportModal } from '../dashboard-report';
@@ -102,18 +102,8 @@ export default function Spaces() {
             onClick={() => {
               dispatch(spacesPageActions.setNavigationCollapsed(!spacesPage.navigationCollapsed));
             }}
-            style={{
-              position: 'absolute',
-              left: spacesPage.navigationCollapsed ? 4 : 253,
-              transition: 'left 200ms ease-in-out',
-              top: 59,
-              height: 24,
-              borderRadius: 12,
-              background: colors.white,
-              boxShadow: `0 2px 4px ${colors.midnightTransparent10}`,
-              border: `1px solid ${colors.gray200}`,
-              cursor: 'pointer'
-            }}
+            className={classnames(styles.spacesNavCollapseToggle)}
+            style={{ left: spacesPage.navigationCollapsed ? 4 : 253 }}
           >
             {spacesPage.navigationCollapsed ? <Icons.ChevronRight /> : <Icons.ChevronLeft />}
           </div> : null}
@@ -160,13 +150,12 @@ export default function Spaces() {
               <div style={{padding: '0 24px 24px 24px', position: 'relative'}}>
                 <div style={{
                   display: 'flex',
-                  alignItems: 'center',
+                  alignItems: 'flex-end',
                   position: 'fixed',
                   width: `calc(100% - ${spacesPage.navigationCollapsed ? '0px' : '265px'} - 384px - 48px)`,
                   height: 64,
                   zIndex: 1,
-                  paddingBottom: 8,
-                  paddingTop: 16,
+                  paddingBottom: 8, 
                   marginTop: -32,
                   backgroundColor: '#FAFBFC',
                 }}>
@@ -195,7 +184,7 @@ export default function Spaces() {
                   <h1 className={styles.spaceReportHeader}>
                     {selectedDoorway ?
                       'How busy is this Doorway?' : 
-                      `How many people visit this ${selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'}?`}
+                      `How many people enter this ${selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'}?`}
                   </h1>
 
                   {/* All spaces have "entrances per day" */}
@@ -226,13 +215,13 @@ export default function Spaces() {
                       <h1 className={styles.spaceReportHeader}>
                         How busy does this {selectedSpace.function ? formatSpaceFunction(selectedSpace.function) : 'Space'} get?
                       </h1>
-                      <AveragePeakOccupancyPerHour
+                      <DailyPeakOccupancy
                         space={selectedSpace}
                         startDate={spacesPage.startDate}
                         endDate={spacesPage.endDate}
                         timeSegmentLabel={spacesPage.timeSegmentLabel}
                       />
-                      <DailyPeakOccupancy
+                      <AveragePeakOccupancyPerHour
                         space={selectedSpace}
                         startDate={spacesPage.startDate}
                         endDate={spacesPage.endDate}
