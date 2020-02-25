@@ -24,7 +24,6 @@ import {
   AppSidebar,
   Icons,
 } from '@density/ui/src';
-import colors from '@density/ui/variables/colors.json';
 import styles from './styles.module.scss';
 import AlertManagementModal from '../alert-management-modal';
 import { ExpandedReportModal } from '../dashboard-report';
@@ -67,7 +66,6 @@ export default function Spaces() {
   const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
 
-  const spaceNavigationCollapsed = spacesPage.navigationCollapsed;
   const selectedSpace = spaces.data.get(spacesPage.spaceId || 'spc_0');
   const selectedDoorway = doorways.data.get(spacesPage.doorwayId || 'drw_0');
   const spaceDoorways = new Map(Array.from(spaces.data.values()).map(x => [x.id, x.doorways]));
