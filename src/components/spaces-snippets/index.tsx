@@ -56,7 +56,7 @@ export function SpacesEmptyState() {
       <div style={{display: 'flex', marginTop: 24}}>
         <Button href="#/admin/locations">Create your first space</Button>
         <div style={{width: 8}}></div>
-        <Button href="https://help.density.io/en/articles/3658439-the-dashboard-is-blank-what-do-i-do" target="blank" variant="underline">
+        <Button href="https://help.density.io/en/articles/3380938-how-to-create-a-doorway-in-dashboard" target="blank" variant="underline">
           <div style={{display: 'flex', alignItems: 'center'}}>
             <Icons.Study />
             <div style={{marginLeft: 8}}>How to create spaces</div>
