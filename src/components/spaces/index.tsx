@@ -147,7 +147,7 @@ export default function Spaces() {
               position: 'relative',
               paddingBottom: 64,
             }}>
-              <div style={{padding: '0 24px 24px 24px', position: 'relative'}}>
+              <div style={{padding: '0 24px 24px 24px', position: 'relative', zIndex: 2}}>
                 <div style={{
                   display: 'flex',
                   alignItems: 'flex-end',
