@@ -103,8 +103,8 @@ export function getInitialState() {
 export function spacesPageReducer(state: SpacesPageState, action: GlobalAction): SpacesPageState {
   switch (action.type) {
     case 'SPACES_PAGE_CLEAR_DATA':
-      const { searchFilter, timeFilter, startDate, endDate, dailyDate } = state;
-      return { ...getInitialState(), searchFilter, timeFilter, startDate, endDate, dailyDate };
+      const { searchFilter, timeSegmentLabel, timeFilter, startDate, endDate, dailyDate } = state;
+      return { ...getInitialState(), searchFilter, timeSegmentLabel, timeFilter, startDate, endDate, dailyDate };
     case 'SPACES_PAGE_SET_NAVIGATION_COLLAPSED':
       return { ...state, navigationCollapsed: action.value };
     case 'SPACES_PAGE_SET_SHOW_DOORWAYS':

@@ -297,21 +297,35 @@ export default function Analytics() {
 
                     onRequestDataExport={(exportType: AnalyticsDataExportType) => {
                       if (activeReport.queryResult.status !== ResourceStatus.COMPLETE) return;
-                      if (exportType === AnalyticsDataExportType.BOTH || exportType ===  AnalyticsDataExportType.TIME_SERIES) {
+                      if (exportType === AnalyticsDataExportType.BOTH) {
                         dispatch({
                           type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
                           datapoints: activeReport.queryResult.data.datapoints,
                           interval: activeReport.query.interval,
                           selectedMetric: activeReport.selectedMetric,
                           hiddenSpaceIds: activeReport.hiddenSpaceIds,
-                        })
-                      }
-                      if (exportType === AnalyticsDataExportType.BOTH || exportType === AnalyticsDataExportType.SUMMARY) {
+                        });
+                        // Safari will block rapid downloads, so wait half a second before
+                        // downloading the second file
+                        setTimeout(() => dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
+                          report: activeReport,
+                          spaces: spaces,
+                        }), 500);
+                      } else if (exportType ===  AnalyticsDataExportType.TIME_SERIES) {
+                        dispatch({
+                          type: AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT,
+                          datapoints: activeReport.queryResult.data.datapoints,
+                          interval: activeReport.query.interval,
+                          selectedMetric: activeReport.selectedMetric,
+                          hiddenSpaceIds: activeReport.hiddenSpaceIds,
+                        });
+                      } else if (exportType === AnalyticsDataExportType.SUMMARY) {
                         dispatch({
                           type: AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT,
                           report: activeReport,
                           spaces: spaces,
-                        })
+                        });
                       }
                     }}
 

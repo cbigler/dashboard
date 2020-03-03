@@ -6,6 +6,7 @@ import { StoreSubject } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 import { loadRawEvents } from '../../rx-actions/spaces-page/operations';
 import { spacesPageActions } from '../../rx-actions/spaces-page';
+import { DEFAULT_TIME_SEGMENT_LABEL } from '../../helpers/time-segments';
 
 export function registerSideEffects(
   actionStream: Subject<GlobalAction>,
@@ -24,8 +25,7 @@ export function registerSideEffects(
     });
   });
 
-  // This loads the correct page of raw events,
-  // Whenever state affecting that data changes
+  // Load the correct page of raw events when state affecting that data changes
   actionStream.pipe(
     filter(action => (
       action.type === 'SPACES_PAGE_SET_REPORT_DATES' ||
@@ -33,10 +33,28 @@ export function registerSideEffects(
     )),
     switchMap(() => combineLatest(
       spacesPageStore.pipe(take(1)),
-      spacesStore.pipe(take(1))
+      spacesStore.pipe(take(1)),
     )),
   ).subscribe(([spacesPage, spaces]) => {
     dispatch(spacesPageActions.setRawEvents({status: 'LOADING'}));
     loadRawEvents(dispatch, spaces, spacesPage);
+  });
+
+  // Reset the selected time segment when selecting a space that does not have
+  // the current time segment
+  actionStream.pipe(
+    filter(action => (
+      action.type === 'SPACES_PAGE_SET_SELECTED_SPACE' ||
+      action.type === 'SPACES_PAGE_SET_SELECTED_DOORWAY'
+    )),
+    switchMap(() => combineLatest(
+      spacesPageStore.pipe(take(1)),
+      spacesStore.pipe(take(1)),
+    )),
+  ).subscribe(([spacesPage, spaces]) => {
+    const selectedSpace = spaces.data.get(spacesPage.spaceId || 'spc_0');
+    if (!selectedSpace || !selectedSpace.time_segments.some(x => x.label === spacesPage.timeSegmentLabel)) {
+      dispatch(spacesPageActions.setTimeSegmentLabel(DEFAULT_TIME_SEGMENT_LABEL));
+    }
   });
 }

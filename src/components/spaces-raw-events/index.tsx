@@ -70,7 +70,7 @@ export default function SpacesRawEvents() {
               })}
               onClick={async () => {
                 let startDate = moment.tz(spacesPage.startDate, space.time_zone);
-                const endDate = moment.tz(spacesPage.endDate, space.time_zone);
+                const endDate = moment.tz(spacesPage.endDate, space.time_zone).add(1, 'days');
                 const fileName = `density_raw-events_${startDate.toISOString()}_${endDate.toISOString()}.csv`;
                 const headerRow = 'Timestamp,Local Time,Event,Current Count,Count Change,Doorway Name,Doorway ID';
                 let csvData: string[] = [];
