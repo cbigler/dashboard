@@ -53,6 +53,7 @@ import { computeTableData, getDefaultColumnSortForMetric } from '../../helpers/a
 import { computeChartData } from '../../helpers/analytics-chart';
 import { ColorManager, COLORS } from '../../helpers/analytics-color-scale';
 import createReport from '../../rx-actions/analytics/operations/create-report';
+import { getGoSlow } from '../../components/environment-switcher';
 
 
 export const initialState = RESOURCE_IDLE;
@@ -532,7 +533,8 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
     end_time: endDate.format('YYYY-MM-DDTHH:mm:ss'),
     space_list: selectedSpaceIds.join(','),
     interval: interval,
-    page_size: '10000', 
+    page_size: '10000',
+    slow: getGoSlow(),
   }
 
   async function getChartData() {
