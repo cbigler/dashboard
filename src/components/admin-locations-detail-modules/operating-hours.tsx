@@ -10,12 +10,11 @@ import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/
 import SpacePicker from '../space-picker';
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
-import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/filter';
 import showModal from '../../rx-actions/modal/show';
 import updateModal from '../../rx-actions/modal/update';
 import hideModal from '../../rx-actions/modal/hide';
 
-import SpaceManagementStore, { calculateOperatingHoursFromSpace } from '../../rx-stores/space-management';
+import SpaceManagementStore, { calculateOperatingHoursFromSpace, SpaceManagementState } from '../../rx-stores/space-management';
 import {
   getParentTimeSegmentsForSpace,
   getAllTimeSegmentLabelsForSpace,
@@ -40,24 +39,19 @@ import AdminLocationsDetailModule from './index';
 
 import AdminLocationsDetailModulesOperatingHoursSlider from '../admin-locations-detail-modules-operating-hours-slider/index';
 import useRxStore from '../../helpers/use-rx-store';
-import ActiveModalStore from '../../rx-stores/active-modal';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import UserStore from '../../rx-stores/user';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
-import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 
 
 function AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal({
   activeModal,
   spaceHierarchy,
   spaces,
-  spaceManagement,
   selectedSpaceId,
-  user,
 
   onSubmitModal,
   onCloseModal,
-  onChangeSearchText,
   onChangeSelectedSpace,
 }) {
   if (activeModal.name === 'OPERATING_HOURS_COPY_FROM_SPACE') {
@@ -157,20 +151,30 @@ const HOURGLASS_ICON = (
 
 function AdminLocationsDetailModulesOperatingHoursUnconnected({
   formState,
+  onChangeField,
   activeModal,
-  selectedSpaceParentId,
-  user,
   spaceManagement,
   spaces,
 
-  onChangeField,
   onClickAddLabel,
   onConfirmSegmentCanBeDeleted,
   onOpenCopyFromSpace,
   onCloseModal,
-  onChangeSearchText,
   onChangeSelectedSpace,
   onConfirmResetTimeChange,
+}: {
+  formState: { [key: string]: Any<FixInRefactor> },
+  onChangeField: (string: Any<FixInRefactor>, any: Any<FixInRefactor>) => Any<FixInRefactor>,
+  activeModal: ActiveModalState,
+  spaceManagement: SpaceManagementState,
+  spaces: SpacesLegacyState,
+
+  onClickAddLabel: () => Promise<Any<FixInRefactor>>,
+  onConfirmSegmentCanBeDeleted: (callback: Any<FixInRefactor>) => void,
+  onOpenCopyFromSpace: () => void,
+  onCloseModal: () => Promise<void>,
+  onChangeSelectedSpace: (selectedSpaceId: string) => void,
+  onConfirmResetTimeChange: (callback: Any<FixInRefactor>) => void,
 }) {
   const resetTimeChoices = generateResetTimeChoices({time_zone: formState.time_zone});
 
@@ -193,10 +197,10 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
       <AdminLocationsDetailModulesOperatingHoursCopyFromSpaceModal
         activeModal={activeModal}
         spaceHierarchy={spaceManagement.spaceHierarchy}
-        user={user}
         spaces={spaces}
-        spaceManagement={spaceManagement}
 
+        selectedSpaceId={activeModal.data.selectedSpaceId}
+        onChangeSelectedSpace={onChangeSelectedSpace}
         onSubmitModal={space_id => {
           const hierarchyEntry = spaceHierarchyFormatter(spaceManagement.spaceHierarchy)
             .find(s => s.space.id === space_id);
@@ -229,10 +233,6 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
           onCloseModal();
         }}
         onCloseModal={onCloseModal}
-        onChangeSearchText={onChangeSearchText}
-
-        selectedSpaceId={activeModal.data.selectedSpaceId}
-        onChangeSelectedSpace={onChangeSelectedSpace}
       />
 
       <AdminLocationsDetailModule
@@ -551,30 +551,17 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
 }
 
 // FIXME: apparently there are additional props expected to be passed to the connected component
-const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefactor>> = (externalProps) => {
-
+const ConnectedAdminLocationsDetailModulesOperatingHours = ({
+  formState,
+  onChangeField,
+}: {
+  formState: { [key: string]: Any<FixInRefactor> },
+  onChangeField: (string: Any<FixInRefactor>, any: Any<FixInRefactor>) => Any<FixInRefactor>,
+}) => {
   const dispatch = useRxDispatch();
-  const user = useRxStore(UserStore);
   const spaces = useRxStore(SpacesLegacyStore);
-  const spaceHierarchy = useRxStore(SpaceHierarchyStore);
   const activeModal = useRxStore(ActiveModalStore);
   const spaceManagement = useRxStore(SpaceManagementStore);
-
-  // formerly mapStateToProps
-
-  // FIXME: this is pretty terrible
-  const selectedSpaceParentId = (() => {
-    if (spaceManagement.spaces.selected) {
-      const selectedSpace = spaces.data.find(s => s.id === spaceManagement.spaces.selected);
-      if (!selectedSpace) {
-        // FIXME: previous code did not handle this case, is this what should happen here?
-        return spaceManagement.formParentSpaceId
-      }
-      return selectedSpace.parent_id || spaceManagement.formParentSpaceId;
-
-    }
-    return spaceManagement.formParentSpaceId;
-  })()
 
   // formerly mapDispatchToProps
   const onClickAddLabel = async () => {
@@ -611,23 +598,17 @@ const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefa
   const onCloseModal = async () => {
     await hideModal(dispatch);
   }
-  const onChangeSearchText = (text) => {
-    dispatch(collectionSpacesFilter('search', text) as Any<FixInRefactor>);
-  }
-  const onChangeSelectedSpace = (selectedSpaceId) => {
+  const onChangeSelectedSpace = (selectedSpaceId: string) => {
     updateModal(dispatch, { selectedSpaceId });
   }
 
   return (
     <AdminLocationsDetailModulesOperatingHoursUnconnected
-      
-      {...externalProps}
+      formState={formState}
+      onChangeField={onChangeField}
 
-      user={user}
       spaces={spaces}
-      spaceHierarchy={spaceHierarchy}
       spaceManagement={spaceManagement}
-      selectedSpaceParentId={selectedSpaceParentId}
       activeModal={activeModal}
       
       onClickAddLabel={onClickAddLabel}
@@ -635,7 +616,6 @@ const ConnectedAdminLocationsDetailModulesOperatingHours: React.FC<Any<FixInRefa
       onConfirmResetTimeChange={onConfirmResetTimeChange}
       onOpenCopyFromSpace={onOpenCopyFromSpace}
       onCloseModal={onCloseModal}
-      onChangeSearchText={onChangeSearchText}
       onChangeSelectedSpace={onChangeSelectedSpace}
     />
   )
