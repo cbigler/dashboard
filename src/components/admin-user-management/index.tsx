@@ -44,10 +44,10 @@ import collectionUsersInviteResend from '../../rx-actions/users/invite-resend';
 import usersStore from '../../rx-stores/users';
 
 import FormLabel from '../form-label';
-import UserStore from '../../rx-stores/user';
-import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
-import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import UserStore, { UserState } from '../../rx-stores/user';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import SpaceHierarchyStore, { SpaceHierarchyState } from '../../rx-stores/space-hierarchy';
 import ResizeCounterStore from '../../rx-stores/resize-counter';
 
 export const INVITATION_STATUS_LABELS = {
@@ -71,6 +71,12 @@ export function AdminUserManagement({
   user,
   activeModal,
   resizeCounter,
+}: {
+  spaces: SpacesLegacyState,
+  spaceHierarchy: SpaceHierarchyState,
+  user: UserState,
+  activeModal: ActiveModalState,
+  resizeCounter: number,
 }) {
   const users = useRxStore(usersStore);
   const dispatch = useRxDispatch();
@@ -317,7 +323,7 @@ export function AdminUserManagement({
                   id="Actions"
                   width={72}
                   align="right"
-                  template={item => item.is_editable && item.id !== user.data.id ? (
+                  template={item => item.is_editable && item.id !== user.data?.id ? (
                     <ListViewClickableLink onClick={() => window.location.href = `#/admin/user-management/${item.id}`}>
                       Edit
                     </ListViewClickableLink>
