@@ -15,7 +15,7 @@ import {
 
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreSpace, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import Toaster from '../toaster/index';
 
 import integrationServicesList from '../../rx-actions/integrations/services';
@@ -28,19 +28,28 @@ import SpaceMappingsDestroyModal from '../admin-space-mappings-destroy-modal/ind
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
 import useRxStore from '../../helpers/use-rx-store';
-import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
-import IntegrationsStore from '../../rx-stores/integrations';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import IntegrationsStore, { IntegrationsState } from '../../rx-stores/integrations';
 
+export class AdminSpaceMappings extends React.Component<{
+  spaces: SpacesLegacyState['data'],
+  spaceMappingsPage: IntegrationsState['spaceMappingsPage'],
+  currentService: IntegrationsState['spaceMappingsPage']['service'],
+  activeModal: ActiveModalState,
 
-
-export class AdminSpaceMappings extends React.Component<any, any> {
+  onOpenModal: (name: Any<FixInRefactor>, data: Any<FixInRefactor>) => void,
+  onCloseModal: () => Promise<void>,
+  onSaveSpaceMapping: (serviceMappingData: Any<FixInRefactor>) => Promise<void>,
+  onDestroySpaceMapping: (spaceMappingId: Any<FixInRefactor>) => Promise<void>,
+  onCheckForIntegrationLastSync: () => Promise<void>,
+}, {}> {
   private interval: any = null;
 
   componentDidMount() {
     this.interval = setInterval(() => {
-      if (this.props.currentService.service_authorization.last_sync === null) {
+      if (this.props.currentService?.service_authorization.last_sync === null) {
         this.props.onCheckForIntegrationLastSync();
       }
     }, 5000);
@@ -63,7 +72,7 @@ export class AdminSpaceMappings extends React.Component<any, any> {
       onDestroySpaceMapping,
     } = this.props;
 
-    const conferenceRooms = spaces.filter(space => ["conference_room", "meeting_room"].includes(space['function']))
+    const conferenceRooms = spaces.filter(space => space.function && [CoreSpaceFunction.CONFERENCE_ROOM, CoreSpaceFunction.MEETING_ROOM].includes(space.function))
 
     const serviceSpaceForService = (space_mappings, service) => {
       if (service) {
@@ -223,7 +232,6 @@ const ConnectedAdminSpaceMappings: React.FC = () => {
 
   return (
     <AdminSpaceMappings
-      
       spaces={spacesState.data}
       spaceMappingsPage={spaceMappingsPage}
       currentService={currentService}
