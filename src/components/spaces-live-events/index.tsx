@@ -4,13 +4,16 @@ import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { SpaceMetaField, SpaceDetailCardLoading } from '../spaces-snippets';
 import useRxStore from '../../helpers/use-rx-store';
+import SpacesStore from '../../rx-stores/spaces';
 import SpacesPageStore from '../../rx-stores/spaces-page';
+import SensorsStore from '../../rx-stores/sensors';
 
 import styles from './styles.module.scss'
 import colors from '@density/ui/variables/colors.json'
 
 import * as d3Scale from 'd3-scale';
 import moment from 'moment';
+import { CoreSensorType } from '@density/lib-api-types/core-v2/sensors';
 
 const CHART_HEIGHT = 80;
 const CHART_WIDTH = 334;
@@ -60,7 +63,9 @@ export function getIndicatorLocations(data, minimumStackDistance=4000) {
 
 export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, doorway?: CoreDoorway}) {
   const svgRef = useRef<SVGSVGElement>(null);
+  const spaces = useRxStore(SpacesStore);
   const spacesPage = useRxStore(SpacesPageStore);
+  const sensors = useRxStore(SensorsStore);
   const liveMarkers = getIndicatorLocations(spacesPage.liveEvents.data);
   const metrics = spacesPage.liveEvents.metrics;
 
@@ -82,6 +87,13 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
     return () => window.cancelAnimationFrame(animationFrame);
   }, [space.time_zone]);
 
+  const doorwayIds = spacesPage.doorwayId ? 
+    [spacesPage.doorwayId] :
+    spaces.data.get(spacesPage.spaceId || 'spc_0')?.doorways.map(doorway => doorway.id);
+  const hideEntrancesAndExits = doorwayIds?.some(id => (
+    sensors.data.byDoorway.get(id)?.sensor_type === CoreSensorType.OB1
+  ));
+
   return spacesPage.liveEvents.status === 'COMPLETE' ? <div
     style={{width: '100%', position: 'relative', paddingBottom: 12}}
   >
@@ -96,20 +108,22 @@ export default function SpacesLiveEvents({space, doorway}: {space: CoreSpace, do
           value={space.target_capacity ? (100 * metrics.occupancy / space.target_capacity).toFixed(0) + '%' : '--'}
           compact={true} />
       </Fragment>}
-      <SpaceMetaField
-        label={<div style={{display: 'flex', alignItems: 'center'}}>
-          <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.blue, marginRight: 4}}></div>
-          Entrances
-        </div>}
-        value={commaNumber(metrics.entrances)}
-        compact={true} />
-      <SpaceMetaField
-        label={<div style={{display: 'flex', alignItems: 'center'}}>
-          <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.gray400, marginRight: 4}}></div>
-          Exits
-        </div>}
-        value={commaNumber(metrics.exits)}
-        compact={true} />
+      {hideEntrancesAndExits ? null : <Fragment>
+        <SpaceMetaField
+          label={<div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.blue, marginRight: 4}}></div>
+            Entrances
+          </div>}
+          value={commaNumber(metrics.entrances)}
+          compact={true} />
+        <SpaceMetaField
+          label={<div style={{display: 'flex', alignItems: 'center'}}>
+            <div style={{height:6, width:6, borderRadius:3, backgroundColor:colors.gray400, marginRight: 4}}></div>
+            Exits
+          </div>}
+          value={commaNumber(metrics.exits)}
+          compact={true} />
+      </Fragment>}
     </div>
     <div style={{marginLeft: -16}}>
       <svg ref={svgRef} height={CHART_HEIGHT} width={CHART_WIDTH} preserveAspectRatio="none">

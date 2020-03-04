@@ -79,7 +79,7 @@ import { collectionSpacesBatchSetEvents } from './rx-actions/collection/spaces-l
 import eventPusherStatusChange from './rx-actions/event-pusher/status-change';
 
 import handleVisibilityChange from './helpers/visibility-change';
-import fetchAllObjects from './helpers/fetch-all-objects';
+import fetchAllObjects, { fetchObject } from './helpers/fetch-all-objects';
 import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
 import { configureClients } from './helpers/unsafe-configure-app';
 
@@ -363,15 +363,23 @@ async function handleSpacesPageEventSetup([state, spacesState, doorwaysState]: [
     // Logic to find the last reset at this space
     const localNow = moment.tz(selectedSpace.time_zone);
     const localOneMinuteAgo = localNow.clone().subtract(1, 'minute');
+    const nowTimestamp = moment.tz(selectedSpace.time_zone);
     const resetTime = moment(selectedSpace.daily_reset, 'HH:mm');
     const resetTimestamp = localNow.clone().hour(resetTime.hour()).minute(resetTime.minute()).second(0).millisecond(0);
     if (resetTimestamp > localNow) { resetTimestamp.subtract(1, 'day'); }
+
+    // Fetch space count (used for the current occupancy)
+    const currentCount = await fetchObject<{count: number}>(`spaces/${selectedSpace.id}/count`, {
+      params: {
+        time: formatInISOTime(nowTimestamp),
+      }
+    });
 
     // Fetch all events since the last reset
     const events = await fetchAllObjects<CoreSpaceEvent>(`/spaces/${selectedSpace.id}/events`, {
       params: {
         start_time: formatInISOTime(resetTimestamp),
-        end_time: formatInISOTime(moment.tz(selectedSpace.time_zone)),
+        end_time: formatInISOTime(nowTimestamp),
         doorway_id: selectedDoorway?.id,
         count: true,
       }
@@ -387,7 +395,7 @@ async function handleSpacesPageEventSetup([state, spacesState, doorwaysState]: [
 
     rxDispatch(spacesPageActions.setAllLiveEvents(recentEvents));
     rxDispatch(spacesPageActions.setLiveStats(
-      events.length > 0 ? (events[events.length-1] as Any<FixInRefactor>).count : 0,
+      currentCount.count,
       entrances,
       exits
     ));
