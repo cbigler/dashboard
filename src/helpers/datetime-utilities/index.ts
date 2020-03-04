@@ -1,17 +1,18 @@
-import { DayOfWeek, TimeFilter, TimeOfDay } from '../../types/datetime';
+import { DayOfWeek } from '@density/lib-api-types/core-v2/common';
+import { TimeFilter, TimeOfDay } from '../../types/datetime';
 import { QueryInterval } from '../../types/analytics';
 import { timeOfDayToMilliseconds, millisecondsToTimeOfDay, MINUTE_MILLISECONDS, DAY_MILLISECONDS, HOUR_MILLISECONDS } from './time-string';
-import { roundDownToMultiple, roundUpToMultiple } from '../math';
+import { roundDownToMultiple, roundUpToMultiple } from '@density/lib-helpers/math';
 
 
 export const DAYS_OF_WEEK: readonly DayOfWeek[] = [
-  'Sunday',
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
+  DayOfWeek.SUNDAY,
+  DayOfWeek.MONDAY,
+  DayOfWeek.TUESDAY,
+  DayOfWeek.WEDNESDAY,
+  DayOfWeek.THURSDAY,
+  DayOfWeek.FRIDAY,
+  DayOfWeek.SATURDAY,
 ];
 
 export function abbreviateDayOfWeek(dayOfWeek: DayOfWeek) {
@@ -27,15 +28,15 @@ export function abbreviateDayOfWeek(dayOfWeek: DayOfWeek) {
 }
 export type AbbreviatedDayOfWeek = ReturnType<typeof abbreviateDayOfWeek>;
 
-export function expandDayOfWeek(abbreviation: AbbreviatedDayOfWeek): DayOfWeek {
+export function expandDayOfWeek(abbreviation: AbbreviatedDayOfWeek): DayOfWeek | undefined {
   switch (abbreviation) {
-    case 'Sun': return 'Sunday';
-    case 'Mon': return 'Monday';
-    case 'Tue': return 'Tuesday';
-    case 'Wed': return 'Wednesday';
-    case 'Thu': return 'Thursday';
-    case 'Fri': return 'Friday';
-    case 'Sat': return 'Saturday';
+    case 'Sun': return DayOfWeek.SUNDAY;
+    case 'Mon': return DayOfWeek.MONDAY;
+    case 'Tue': return DayOfWeek.TUESDAY;
+    case 'Wed': return DayOfWeek.WEDNESDAY;
+    case 'Thu': return DayOfWeek.THURSDAY;
+    case 'Fri': return DayOfWeek.FRIDAY;
+    case 'Sat': return DayOfWeek.SATURDAY;
   }
 }
 

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './styles.module.scss';
 import moment from 'moment';
 import Selector, { QueryTextBold } from '../analytics-control-bar-selector';
-import { DATE_RANGES, DateRange, RangeType } from '../../helpers/space-time-utilities';
+import { DATE_RANGES, DateRange, DateRangeType } from '@density/lib-time-helpers/date-range';
 
 import {
   AppBar,
@@ -31,13 +31,13 @@ enum AnalyticsCustomDateRangeChoices {
 }
 
 const BETWEEN_DEFAULT_RANGE: DateRange = {
-  type: RangeType.ABSOLUTE,
+  type: DateRangeType.ABSOLUTE,
   startDate: moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
   endDate: moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
 };
 
 const ON_DEFAULT_RANGE: DateRange = {
-  type: RangeType.ABSOLUTE,
+  type: DateRangeType.ABSOLUTE,
   startDate: moment().format('YYYY-MM-DD'),
   endDate: moment().format('YYYY-MM-DD'),
 };
@@ -48,7 +48,7 @@ function DateSelectorCustom({ workingDateRange, setWorkingDateRange, onSubmit })
 
   useEffect(() => {
     // Figure out the custom date range type if the custom page is visible
-    if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
+    if (workingDateRange && workingDateRange.type === DateRangeType.ABSOLUTE) {
       if (workingDateRange.startDate === workingDateRange.endDate) {
         setCustomDateRangeType(AnalyticsCustomDateRangeChoices.ON);
       } else {
@@ -184,10 +184,10 @@ const AnalyticsControlBarDateRangeFilter: React.FunctionComponent<DateRangeFilte
   let text = 'No date range selected';
   if (value) {
     switch (value.type) {
-    case RangeType.RELATIVE:
+    case DateRangeType.RELATIVE:
       text = value.label || '(unlabeled relative date range)';
       break;
-    case RangeType.ABSOLUTE:
+    case DateRangeType.ABSOLUTE:
       const start = moment.utc(value.startDate).format('MM/DD/YYYY');
       const end = moment.utc(value.endDate).format('MM/DD/YYYY');
       if (start === end) {
@@ -202,7 +202,7 @@ const AnalyticsControlBarDateRangeFilter: React.FunctionComponent<DateRangeFilte
   const [ workingDateRange, setWorkingDateRange ] = useState<DateRange>(TIMEFRAME_CHOICES[0]);
 
   let activePage;
-  if (workingDateRange && workingDateRange.type === RangeType.ABSOLUTE) {
+  if (workingDateRange && workingDateRange.type === DateRangeType.ABSOLUTE) {
     activePage = AnalyticsDateSelectorPages.CUSTOM;
   } else {
     activePage = AnalyticsDateSelectorPages.LIST;
@@ -211,7 +211,7 @@ const AnalyticsControlBarDateRangeFilter: React.FunctionComponent<DateRangeFilte
   return (
     <div className={styles.dateSelector}>
       <span className={styles.dateSelectorLabel}>
-        {value && value.type === RangeType.ABSOLUTE ? (
+        {value && value.type === DateRangeType.ABSOLUTE ? (
           value.startDate === value.endDate ? 'on' : 'from'
         ) : (
           value && value.label && value.label.startsWith('Last') ? 'in the' : 'from'
@@ -252,7 +252,7 @@ const AnalyticsControlBarDateRangeFilter: React.FunctionComponent<DateRangeFilte
               } else if (choice.id === 'ABSOLUTE') {
                 // The "custom date range" choice was picked
                 setWorkingDateRange({
-                  type: RangeType.ABSOLUTE,
+                  type: DateRangeType.ABSOLUTE,
                   startDate: moment().subtract(1, 'week').startOf('week').format('YYYY-MM-DD'),
                   endDate: moment().subtract(1, 'week').endOf('week').format('YYYY-MM-DD'),
                 });

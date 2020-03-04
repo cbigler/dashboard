@@ -1,5 +1,6 @@
 import { Subject, combineLatest, partition } from 'rxjs';
 import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap } from 'rxjs/operators'
+import { realizeDateRange } from '@density/lib-time-helpers/date-range';
 
 import { StoreSubject } from '../../rx-stores'
 import { GlobalAction } from '../../types/rx-actions'
@@ -14,7 +15,7 @@ import { UserState } from '../../rx-stores/user';
 import { SpacesLegacyState } from '../spaces-legacy';
 import { isQueryRunnable, realizeSpacesFromQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
-import { realizeDateRange, getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
+import { getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
 import { runQuery } from '.';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
