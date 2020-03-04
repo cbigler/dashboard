@@ -32,8 +32,10 @@ import { UserActionTypes } from '../../types/users';
 import UserStore from '../../rx-stores/user';
 import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceHierarchyStore from '../../rx-stores/space-hierarchy';
+import { DispatchType } from '../../types/rx-actions';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
-function onStartDeleteUser(dispatch, user) {
+function onStartDeleteUser(dispatch: DispatchType, user: CoreUser) {
   showModal(dispatch, 'MODAL_CONFIRM', {
     prompt: 'Are you sure you want to delete this user?',
     confirmText: 'Delete',
@@ -47,7 +49,17 @@ function onStartDeleteUser(dispatch, user) {
   });
 }
 
-async function onSaveUser(dispatch, {id, role, space_ids, spaceFilteringActive}) {
+async function onSaveUser(dispatch: DispatchType, {
+  id,
+  role,
+  space_ids,
+  spaceFilteringActive
+}: {
+  id: string,
+  role?: string,
+  space_ids?: string[],
+  spaceFilteringActive?: boolean,
+}) {
   const ok = await collectionUsersUpdate(dispatch, {
     id,
     role,
@@ -111,14 +123,12 @@ export default function AdminUserManagementDetail() {
                     variant="filled"
                     type="primary"
                     disabled={!formValid}
-                    onClick={() => {
-                      
+                    onClick={() => {   
                       onSaveUser(dispatch, {
                         id: selectedUser.id,
                         role: users.editor.role,
-
-                        spaceFilteringActive: users.editor.spaceFilteringActive,
                         space_ids: users.editor.space_ids,
+                        spaceFilteringActive: users.editor.spaceFilteringActive,
                       });
                     }}
                   >Save user</Button>
