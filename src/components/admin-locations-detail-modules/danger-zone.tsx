@@ -12,8 +12,15 @@ import useRxStore from '../../helpers/use-rx-store';
 import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
 import SpaceManagementStore from '../../rx-stores/space-management';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-function AdminLocationsDetailModulesDangerZoneUnconnected({selectedSpace, onShowConfirm}) {
+function AdminLocationsDetailModulesDangerZoneUnconnected({
+  selectedSpace,
+  onShowConfirm
+}: {
+  selectedSpace: CoreSpace,
+  onShowConfirm: (space: CoreSpace) => void
+}) {
   return (
     <AdminLocationsDetailModule error title="Danger Zone">
       <div className={styles.wrapper}>
@@ -42,7 +49,7 @@ const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
   // FIXME: this seems like a dubious way to juggle across stores...
   const selectedSpace = spaceManagement.spaces.data.find(s => s.id === spaces.selected);
   
-  const onShowConfirm = (space) => {
+  const onShowConfirm = (space: CoreSpace) => {
     showModal(dispatch, 'MODAL_CONFIRM', {
       prompt: 'Are you sure you want to delete this space?',
       confirmText: 'Delete',
@@ -59,11 +66,11 @@ const ConnectedAdminLocationsDetailModulesDangerZone: React.FC = () => {
       }
     });
   }
-  return (
+  return selectedSpace ? (
     <AdminLocationsDetailModulesDangerZoneUnconnected
       selectedSpace={selectedSpace}
       onShowConfirm={onShowConfirm}
     />
-  )
+  ) : null;
 }
 export default ConnectedAdminLocationsDetailModulesDangerZone;
