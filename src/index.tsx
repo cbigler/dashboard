@@ -95,6 +95,8 @@ import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 import moment from 'moment-timezone';
 import SpacesStore, { SpacesState } from './rx-stores/spaces';
 import DoorwaysStore, { DoorwaysState } from './rx-stores/doorways';
+import { interval } from 'rxjs';
+import { spaceActions } from './rx-actions/spaces';
 
 configureClients();
 
@@ -455,14 +457,24 @@ spacesPageEventSource.on('space', countChangeEvent => {
 // If the user is logged in, sync the count of all spaces with the server every 5 minutes.
 // This is to ensure that the count on the dashboard and the actual count can't drift really far
 // apart throughout the day if you don't refresh the dashboard.
-setInterval(async () => {
-  const loggedIn = SessionTokenStore.imperativelyGetValue() !== null;
+interval(5 * 60 * 1000).pipe(
+  combineLatest(SessionTokenStore, SpacesPageStore, SpacesStore, DoorwaysStore),
+  take(1),
+).subscribe(async ([tick, sessionTokenState, spacesPageState, spacesState, doorwaysState]) => {
+  if (sessionTokenState !== null) {
 
-  if (loggedIn) {
+    // Update live page
     const spaces = await fetchAllObjects<CoreSpace>('/spaces');
-    (rxDispatch as Any<FixInReview>)(collectionSpacesSet(spaces));
+    rxDispatch(collectionSpacesSet(spaces));
+
+    // Update spaces page
+    const selectedSpace = spacesState.data.get(spacesPageState.spaceId || 'spc_0');
+    if (selectedSpace) {
+      handleSpacesPageEventSetup([spacesPageState, spacesState, doorwaysState]);
+    }
+
   }
-},  5 * 60 * 1000);
+});
 
 // When the page transitions visibility, connect or disconnect the event source
 // This prevents pushed events from piling up and crashing the page when not rendered
