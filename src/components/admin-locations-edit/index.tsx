@@ -9,8 +9,7 @@ import spaceManagementFormUpdate from '../../rx-actions/space-management/form-up
 import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';
 
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
-import { DensityTag, DensityAssignedTeam } from '../../types';
-import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
+import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields, SpaceManagementState } from '../../rx-stores/space-management';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
@@ -33,8 +32,8 @@ import {
   Icons,
 } from '@density/ui/src';
 import useRxStore from '../../helpers/use-rx-store';
-import TagsStore from '../../rx-stores/tags';
-import AssignedTeamsStore from '../../rx-stores/assigned-teams';
+import TagsStore, { TagsState } from '../../rx-stores/tags';
+import AssignedTeamsStore, { AssignedTeamsState } from '../../rx-stores/assigned-teams';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 
@@ -187,11 +186,11 @@ export function SpaceTypeForm({
 }
 
 type AdminLocationsEditProps = {
-  spaceManagement: any,
-  selectedSpace: CoreSpace,
+  spaceManagement: SpaceManagementState,
+  selectedSpace: CoreSpace | undefined,
 
-  tagsCollection: Array<DensityTag>,
-  assignedTeamsCollection: Array<DensityAssignedTeam>,
+  tagsCollection: TagsState,
+  assignedTeamsCollection: AssignedTeamsState,
 
   onChangeField: (string, any) => any,
   onSetDoorwayField: (doorway_id: string, key: string, value: any) => any,
@@ -207,17 +206,21 @@ const SPACE_TYPE_TO_NAME = {
 
 class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocationsFormState> {
   onSave = () => {
-    const spaceFieldsToUpdate = {
-      id: this.props.spaceManagement.spaces.selected,
-      ...convertFormStateToSpaceFields(
-        this.props.spaceManagement.formState,
-        this.props.selectedSpace.space_type,
-      ),
-    };
-    this.props.onSave(
-      this.props.spaceManagement.spaces.selected,
-      spaceFieldsToUpdate,
-    );
+    if (this.props.selectedSpace && this.props.spaceManagement.spaces.selected) {
+      const spaceFieldsToUpdate = {
+        id: this.props.spaceManagement.spaces.selected,
+        ...convertFormStateToSpaceFields(
+          this.props.spaceManagement.formState,
+          this.props.selectedSpace.space_type,
+        ),
+      };
+      this.props.onSave(
+        this.props.spaceManagement.spaces.selected,
+        spaceFieldsToUpdate,
+      );
+    } else {
+      throw new Error('No space is selected, cannot save space.');
+    }
   }
 
   isFormComplete = () => {
@@ -242,7 +245,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
       onSetDoorwayField,
     } = this.props;
 
-    return (
+    return selectedSpace ? (
       <AppFrame>
         <AppPane>
           {spaceManagement.view === 'ERROR' ? (
@@ -314,14 +317,11 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
           ) : null}
         </AppPane>
       </AppFrame>
-    );
+    ) : null;
   }
 }
 
-
-// FIXME: figure out what external props are needed
-const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps) => {
-
+const ConnectedAdminLocationsEdit = () => {
   const dispatch = useRxDispatch();
   const spaceManagement = useRxStore(SpaceManagementStore);
   const tags = useRxStore(TagsStore);
@@ -355,8 +355,6 @@ const ConnectedAdminLocationsEdit: React.FC<Any<FixInRefactor>> = (externalProps
 
   return (
     <AdminLocationsEdit
-      {...externalProps}
-
       tagsCollection={tags}
       assignedTeamsCollection={assigned_teams}
       spaceManagement={spaceManagement}

@@ -5,7 +5,6 @@ import GenericLoadingState from '../generic-loading-state/index';
 import { SpaceTypeForm } from '../admin-locations-edit/index';
 import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields } from '../../rx-stores/space-management';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
-import { DensityTag, DensityAssignedTeam } from '../../types';
 import AdminLocationsDetailEmptyState from '../admin-locations-detail-empty-state/index';
 import { showToast } from '../../rx-actions/toasts';
 import collectionSpacesCreate from '../../rx-actions/collection/spaces-legacy/create';
@@ -25,16 +24,16 @@ import {
 } from '@density/ui/src';
 import useRxStore from '../../helpers/use-rx-store';
 import UserStore from '../../rx-stores/user';
-import TagsStore from '../../rx-stores/tags';
-import AssignedTeamsStore from '../../rx-stores/assigned-teams';
+import TagsStore, { TagsState } from '../../rx-stores/tags';
+import AssignedTeamsStore, { AssignedTeamsState } from '../../rx-stores/assigned-teams';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 
 type AdminLocationsNewProps = {
   user: any,
   spaceManagement: any,
-  tagsCollection: Array<DensityTag>,
-  assignedTeamsCollection: Array<DensityAssignedTeam>,
-  newSpaceParent: CoreSpace,
+  tagsCollection: TagsState,
+  assignedTeamsCollection: AssignedTeamsState,
+  newSpaceParent: CoreSpace | undefined,
   newSpaceType: CoreSpace['space_type'],
   onChangeField: (string, any) => any,
   onSetDoorwayField: (doorway_id: string, key: string, value: any) => any,
@@ -174,9 +173,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
 };
 
 
-// FIXME: figure out what props this requires be provided externally
-const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps) => {
-
+const ConnectedAdminLocationsNew = () => {
   const dispatch = useRxDispatch();
   const user = useRxStore(UserStore);
   const spaceManagement = useRxStore(SpaceManagementStore);
@@ -208,8 +205,6 @@ const ConnectedAdminLocationsNew: React.FC<Any<FixInRefactor>> = (externalProps)
 
   return (
     <AdminLocationsNewUnconnected
-      {...externalProps}
-
       user={user}
       assignedTeamsCollection={assigned_teams}
       tagsCollection={tags}

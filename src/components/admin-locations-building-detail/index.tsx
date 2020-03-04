@@ -36,8 +36,16 @@ import {
   AdminLocationsOperatingHours,
   AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
+import { SpaceManagementState } from '../../rx-stores/space-management';
+import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import { UserState } from '../../rx-stores/user';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-function SpaceList({ user, spaces, renderedSpaces }) {
+function SpaceList({
+  user,
+  spaces,
+  renderedSpaces
+}) {
   return (
     <div className={styles.spaceList}>
       <ListView
@@ -56,12 +64,24 @@ function SpaceList({ user, spaces, renderedSpaces }) {
   );
 }
 
-export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpace, spaceManagement }) {
+export default function AdminLocationsBuildingDetail({
+  user,
+  spaces,
+  selectedSpace,
+  spaceManagement
+}: {
+  user: UserState,
+  spaces: SpacesLegacyState,
+  selectedSpace: CoreSpace | undefined,
+  spaceManagement: SpaceManagementState
+}) {
+  if (!selectedSpace) { return null; }
+
   const visibleSpaces = spaces.data.filter(s => s.parent_id === selectedSpace.id);
   const floors = visibleSpaces.filter(space => space.space_type === 'floor');
   const spacesInEachFloor = floors.map(floor => spaces.data.filter(space => space.parent_id === floor.id));
   const spacesNotInFloor = visibleSpaces.filter(space => space.space_type === 'space');
-  const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
+  const mapShown = selectedSpace && selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
   return (
     <AppFrame>
@@ -71,8 +91,8 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
           <AppBarSection>
             <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
             <div style={{width: 8}}></div>
-            {user.data.permissions.includes('core_write') ? (
-              <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
+            {user.data && user.data.permissions?.includes('core_write') ? (
+              <Button href={`#/admin/locations/${selectedSpace?.id}/edit`}>Edit</Button>
             ) : null}
           </AppBarSection>
         </AppBar>
@@ -82,8 +102,8 @@ export default function AdminLocationsBuildingDetail({ user, spaces, selectedSpa
               <AdminLocationsSpaceMap
                 readonly={true}
                 space_type={selectedSpace.space_type}
-                address={selectedSpace.address}
-                coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+                address={selectedSpace.address || ''}
+                coordinates={(selectedSpace.latitude && selectedSpace.longitude) ? [selectedSpace.latitude, selectedSpace.longitude] : null}
               />
             </div>
           ) : null}

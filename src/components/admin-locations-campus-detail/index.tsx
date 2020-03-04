@@ -35,8 +35,24 @@ import {
   AdminLocationsOperatingHours,
   AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
+import { UserState } from '../../rx-stores/user';
+import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import { SpaceManagementState } from '../../rx-stores/space-management';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace, spaceManagement }) {
+export default function AdminLocationsCampusDetail({
+  user,
+  spaces,
+  selectedSpace,
+  spaceManagement
+}: {
+  user: UserState,
+  spaces: SpacesLegacyState,
+  selectedSpace: CoreSpace | undefined,
+  spaceManagement: SpaceManagementState,
+}) {
+  if (!selectedSpace) { return null; }
+
   const visibleSpaces = spaces.data.filter(s => s.parent_id === (selectedSpace ? selectedSpace.id : null));
   const mapShown = selectedSpace.latitude !== null && selectedSpace.longitude !== null;
 
@@ -48,7 +64,7 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
           <AppBarSection>
             <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
             <div style={{width: 8}}></div>
-            {user.data.permissions.includes('core_write') ? (
+            {user.data && user.data.permissions?.includes('core_write') ? (
               <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
             ) : null}
           </AppBarSection>
@@ -59,8 +75,8 @@ export default function AdminLocationsCampusDetail({ user, spaces, selectedSpace
               <AdminLocationsSpaceMap
                 readonly={true}
                 space_type={selectedSpace.space_type}
-                address={selectedSpace.address}
-                coordinates={[selectedSpace.latitude, selectedSpace.longitude]}
+                address={selectedSpace.address || ''}
+                coordinates={(selectedSpace.latitude && selectedSpace.longitude) ? [selectedSpace.latitude, selectedSpace.longitude] : null}
               />
             </div>
           ) : null}

@@ -1,6 +1,7 @@
 import React, { Fragment, Component } from 'react';
 import classnames from 'classnames';
 import { spaceHierarchyFormatter, spaceHierarchySearcher } from '@density/lib-space-helpers';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import colorVariables from '@density/ui/variables/colors.json';
 
 import styles from './styles.module.scss';
@@ -23,7 +24,7 @@ type AdminSpacePermissionsPickerProps = {
   disabled?: boolean,
   spaces: {
     loading: boolean,
-    data: Array<any>,
+    data: Array<CoreSpace>,
   },
   spaceHierarchy: {
     loading: boolean,

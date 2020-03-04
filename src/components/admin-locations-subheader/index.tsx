@@ -5,7 +5,17 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import { AppBar, AppBarSection, Icons } from '@density/ui/src';
 
-export default function AdminLocationsSubheader({title, subtitle=null, space_id=null, supportsHover=true}) {
+export default function AdminLocationsSubheader({
+  title,
+  subtitle=null,
+  space_id=null,
+  supportsHover=true
+}: {
+  title: React.ReactNode,
+  subtitle?: string | null,
+  space_id?: string | null,
+  supportsHover?: boolean,
+}) {
   const [hover, setHover] = useState(false);
   return (
     <a

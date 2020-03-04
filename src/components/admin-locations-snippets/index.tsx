@@ -120,7 +120,6 @@ export function AdminLocationsDetailDescendantsTotal({
   space_type: CoreSpaceType,
   label: string,
   id: string,
-
 }) {
   return <AdminLocationsLeftPaneDataRowItem
     id={id}

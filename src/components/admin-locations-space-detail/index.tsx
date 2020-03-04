@@ -31,8 +31,23 @@ import {
   AdminLocationsOperatingHours,
   AdminLocationsLeftPane,
 } from '../admin-locations-snippets';
+import { UserState } from '../../rx-stores/user';
+import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import { SpaceManagementState } from '../../rx-stores/space-management';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
-export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace, spaceManagement }) {
+export default function AdminLocationsSpaceDetail({
+  user,
+  spaces,
+  selectedSpace,
+  spaceManagement
+}: {
+  user: UserState,
+  spaces: SpacesLegacyState,
+  spaceManagement: SpaceManagementState,
+  selectedSpace: CoreSpace | undefined
+}) {
+  if (!selectedSpace) { return null; }
   const visibleSpaces = spaces.data.filter(s => s.parent_id === selectedSpace.id);
 
   const leftPaneDataItemContents = (
@@ -57,7 +72,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
             <AppBarSection>
               <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
               <div style={{width: 8}}></div>
-              {user.data.permissions.includes('core_write') ? (
+              {user.data && user.data.permissions?.includes('core_write') ? (
                 <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
               ) : null}
             </AppBarSection>
@@ -78,7 +93,7 @@ export default function AdminLocationsSpaceDetail({ user, spaces, selectedSpace,
             <AppBarSection>
               <Button href={`#/spaces/${selectedSpace.id}`}>Explore</Button>
               <div style={{width: 8}}></div>
-              {user.data.permissions.includes('core_write') ? (
+              {user.data && user.data.permissions?.includes('core_write') ? (
                 <Button href={`#/admin/locations/${selectedSpace.id}/edit`}>Edit</Button>
               ) : null}
             </AppBarSection>

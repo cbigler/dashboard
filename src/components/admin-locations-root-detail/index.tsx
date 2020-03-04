@@ -15,6 +15,9 @@ import {
   AdminLocationsListSensorsTotal,
   AdminLocationsListRightArrow
 } from '../admin-locations-snippets';
+import { UserState } from '../../rx-stores/user';
+import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 
 function SpaceList({ user, spaces, renderedSpaces }) {
@@ -52,7 +55,15 @@ function SpaceList({ user, spaces, renderedSpaces }) {
   );
 }
 
-export default function AdminLocationsRootDetail({ user, spaces, selectedSpace }) {
+export default function AdminLocationsRootDetail({
+  user,
+  spaces,
+  selectedSpace
+}: {
+  user: UserState,
+  spaces: SpacesLegacyState,
+  selectedSpace: CoreSpace | undefined
+}) {
   // Users that have a purview-limited space scope won't have top level spaces have a parent
   // id of null, instead it will be a space that is not in the user's purview
   const topLevelSpaceIds = [
