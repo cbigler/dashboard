@@ -167,8 +167,6 @@ const PasswordSection = ({
   onSubmitPassword: (email: any, currentPassword: any, password: any) => Promise<void>,
   setErrorText: (text: any) => void,
 }) => {
-  const dispatch = useRxDispatch();
-
   const [mode, setMode] = useState(DISPLAY);
 
   const [currentPassword, setCurrentPassword] = useState('');
