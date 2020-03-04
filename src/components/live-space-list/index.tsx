@@ -22,13 +22,14 @@ import filterCollection from '../../helpers/filter-collection/index';
 import autoRefresh from '../../helpers/auto-refresh-hoc';
 import { isDocumentHidden } from '../../helpers/visibility-change';
 import useRxStore from '../../helpers/use-rx-store';
-import ActiveModalStore from '../../rx-stores/active-modal';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
-import EventPusherStatusStore from '../../rx-stores/event-pusher-status';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+import EventPusherStatusStore, { EventPusherStatusState } from '../../rx-stores/event-pusher-status';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 const spaceFilter = filterCollection({fields: ['name']});
 
-function filterHierarchy(spaces, parent_id) {
+function filterHierarchy(spaces: Array<CoreSpace>, parent_id: string) {
   return spaces.filter(space => {
     return (
       space.doorways.length !== 0 && /* must have doorways */
@@ -39,14 +40,23 @@ function filterHierarchy(spaces, parent_id) {
 
 export function LiveSpaceList({
   spaces,
-  eventPusherStatus,
   activeModal,
+  eventPusherStatus,
 
   onSpaceSearch,
   onSpaceChangeParent,
   onResetSpace,
   onOpenModal,
   onCloseModal,
+}: {
+  spaces: SpacesLegacyState,
+  activeModal: ActiveModalState,
+  eventPusherStatus: EventPusherStatusState,
+  onSpaceSearch: (searchQuery: string) => void,
+  onSpaceChangeParent: (parent_id: string) => void,
+  onResetSpace: (space: CoreSpace, newCount: number) => Promise<void>,
+  onOpenModal: (name: Any<FixInRefactor>, data: Any<FixInRefactor>) => void,
+  onCloseModal: () => Promise<void>,
 }) {
   // Filter space list
   // 1. Using the space hierarchy `parent value`
@@ -144,7 +154,7 @@ const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
   const spaces = useRxStore(SpacesLegacyStore);
   const eventPusherStatus = useRxStore(EventPusherStatusStore);
 
-  const onResetSpace = async (space, newCount) => {
+  const onResetSpace = async (space: CoreSpace, newCount: number) => {
     const ok = await spaceResetCount(dispatch, space, newCount);
     if (ok) { hideModal(dispatch); }
   }
@@ -154,23 +164,23 @@ const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
   const onCloseModal = async () => {
     await hideModal(dispatch);
   }
-  const onSpaceSearch = (searchQuery) => {
+  const onSpaceSearch = (searchQuery: string) => {
     dispatch(collectionSpacesFilter('search', searchQuery) as Any<FixInRefactor>);
   }
-  const onSpaceChangeParent = (parent_id) => {
+  const onSpaceChangeParent = (parent_id: string) => {
     dispatch(collectionSpacesFilter('parent', parent_id) as Any<FixInRefactor>);
   }
 
   return (
     <AutoRefreshedLiveSpaceList
-      activeModal={activeModal}
       spaces={spaces}
-      onResetSpace={onResetSpace}
-      onOpenModal={onOpenModal}
-      onCloseModal={onCloseModal}
+      activeModal={activeModal}
       eventPusherStatus={eventPusherStatus}
       onSpaceSearch={onSpaceSearch}
       onSpaceChangeParent={onSpaceChangeParent}
+      onResetSpace={onResetSpace}
+      onOpenModal={onOpenModal}
+      onCloseModal={onCloseModal}
     />
   )
 }

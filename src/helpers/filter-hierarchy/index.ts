@@ -1,11 +1,13 @@
-export function getParentsOfSpace(spaces, initialSpace, throwError = true) {
+import { CoreSpace } from "@density/lib-api-types/core-v2/spaces";
+
+export function getParentsOfSpace(spaces: Array<CoreSpace>, initialSpace: CoreSpace, throwError = true) {
   const parents: any[] = [];
 
   if (!initialSpace) {
     throw new Error(`Invalid space passed to getParentsOfSpace`);
   }
 
-  let space = initialSpace;
+  let space: CoreSpace | undefined = initialSpace;
   while (true) {
     // Check for space hierarchies that are cyclical - ie, we come across a space that has already
     // been visited previously in this calculation.
@@ -23,7 +25,7 @@ export function getParentsOfSpace(spaces, initialSpace, throwError = true) {
     // Find the next parent space for the next loop iteration.
     const parent_id = space.parent_id;
     // eslint-disable-next-line no-loop-func
-    space = spaces.find(s => s.id === space.parent_id);
+    space = spaces.find(s => s.id === space?.parent_id);
     if (!space) {
       if (throwError) {
         throw new Error(`No such space found with id ${parent_id}`);
