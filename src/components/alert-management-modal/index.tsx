@@ -54,7 +54,7 @@ export function AlertManagementModalRaw({
   onCloseModal
 }) {
 
-  const phoneNumberInvalid = !alert.meta.to_num;
+  const phoneNumberInvalid = !alert?.meta?.to_num;
   const cooldownInvalid = parseInt(alert.cooldown) < 0;
   const triggerValueInvalid = isNaN(parseInt(alert.trigger_value));
   const escalationDeltaInvalid = alert.meta.escalation_delta && isNaN(parseInt(alert.meta.escalation_delta));

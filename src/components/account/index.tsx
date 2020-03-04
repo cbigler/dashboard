@@ -40,9 +40,9 @@ import AlertManagementModal, { COOLDOWN_CHOICES } from '../alert-management-moda
 import useRxStore from '../../helpers/use-rx-store';
 import alertsStore from '../../rx-stores/alerts';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import UserStore from '../../rx-stores/user';
-import ActiveModalStore from '../../rx-stores/active-modal';
-import SpacesLegacyStore from '../../rx-stores/spaces-legacy';
+import UserStore, { UserState } from '../../rx-stores/user';
+import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
+import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -54,28 +54,34 @@ const COOLDOWN_CHOICES_MAP = COOLDOWN_CHOICES.reduce((current, next) => {
 }, {});
 
 
-const GeneralInfoSection = props => {
-
-  const { user, onSubmitUserUpdate, setErrorText } = props;
+const GeneralInfoSection = ({
+  user,
+  onSubmitUserUpdate,
+  setErrorText,
+}: {
+  user: UserState,
+  onSubmitUserUpdate: (full_name: any, phone_number: any) => Promise<void>,
+  setErrorText: (text: any) => void,
+}) => {
   const [mode, setMode] = useState(DISPLAY);
   
   // this state is only used for editing the user info, not for display (display is always pulled from props)
-  const [userFullName, setUserFullName] = useState(user.data.full_name || '');
-  const [userPhoneNumber, setUserPhoneNumber] = useState(user.data.phone_number || '');
+  const [userFullName, setUserFullName] = useState(user.data?.full_name || '');
+  const [userPhoneNumber, setUserPhoneNumber] = useState(user.data?.phone_number || '');
 
   const handleEditButtonClick = evt => {
     setMode(EDIT);
   }
 
   const handleCancelButtonClick = evt => {
-    setUserFullName(user.data.full_name || '');
+    setUserFullName(user.data?.full_name || '');
     setMode(DISPLAY);
   }
 
   const handleSaveButtonClick = evt => {
     onSubmitUserUpdate(userFullName, userPhoneNumber)
-      .then(setMode(DISPLAY))
-      .catch(err => setErrorText(err))
+      .then(() => setMode(DISPLAY))
+      .catch(error => setErrorText(error))
   }
 
   return (
@@ -110,7 +116,7 @@ const GeneralInfoSection = props => {
                 type="text"
                 placeholder="Name"
                 width="100%"
-                value={mode === DISPLAY ? user.data.full_name : userFullName}
+                value={mode === DISPLAY ? user.data?.full_name : userFullName}
                 onChange={evt => setUserFullName(evt.target.value)}
                 disabled={mode !== EDIT}
                 id="account-full-name"
@@ -125,7 +131,7 @@ const GeneralInfoSection = props => {
                 type="email"
                 placeholder="Email"
                 width="100%"
-                value={user.data.email}
+                value={user.data?.email}
                 disabled={true}
                 id="account-email"
               />}
@@ -139,7 +145,7 @@ const GeneralInfoSection = props => {
                 type="text"
                 placeholder="+1 888 555 1234"
                 width="100%"
-                value={mode === DISPLAY ? user.data.phone_number : userPhoneNumber}
+                value={mode === DISPLAY ? user.data?.phone_number : userPhoneNumber}
                 onChange={value => setUserPhoneNumber(value)}
                 disabled={mode !== EDIT}
                 id="account-phone-number"
@@ -152,9 +158,15 @@ const GeneralInfoSection = props => {
   )
 }
 
-const PasswordSection = props => {
-
-  const { email, onSubmitPassword } = props;
+const PasswordSection = ({
+  email,
+  onSubmitPassword,
+  setErrorText,
+}: {
+  email: string,
+  onSubmitPassword: (email: any, currentPassword: any, password: any) => Promise<void>,
+  setErrorText: (text: any) => void,
+}) => {
   const dispatch = useRxDispatch();
 
   const [mode, setMode] = useState(DISPLAY);
@@ -191,7 +203,7 @@ const PasswordSection = props => {
   const handleSaveButtonClick = () => {
     return onSubmitPassword(email, currentPassword, newPassword)
       .then(() => setMode(DISPLAY))
-      .catch(error => showToast(dispatch, { text: error, type: 'danger' }));
+      .catch(error => setErrorText(error));
   }
 
   const handleCancelButtonClick = evt => {
@@ -314,12 +326,16 @@ function AlertSection({
   spaces,
   onUpdateAlert,
   onShowModal,
+}: {
+  spaces: SpacesLegacyState,
+  onUpdateAlert: (alert: any) => Promise<void>,
+  onShowModal: (name: any, data: any) => void,
 }) {
   const alerts = useRxStore(alertsStore);
 
   // Prepare the array of necessary data once, so columns can iterate quickly
   const alertData = alerts.data.map(alert => {
-    const space = spaces.data.find(space => space.id === alert.space_id) || {};
+    const space = spaces.data.find(space => space.id === alert.space_id) || {name: undefined};
     return { ...alert, space_name: space.name };
   });
 
@@ -384,7 +400,17 @@ function AlertSection({
   </div>;
 }
 
-export class Account extends React.Component<any, any> {
+export class Account extends React.Component<{
+  user: UserState,
+  spaces: SpacesLegacyState,
+  activeModal: ActiveModalState,
+  loading: boolean,
+  onUpdateAlert: (alert: any) => Promise<void>,
+  onShowModal: (name: any, data: any) => void,
+  onSubmitPassword: (email: any, currentPassword: any, password: any) => Promise<void>,
+  onSubmitUserUpdate: (full_name: any, phone_number: any) => Promise<void>,
+  onHideSuccessToast: () => Promise<void>,
+}, {error: any}> {
   constructor(props) {
     super(props);
     this.state = {
@@ -432,10 +458,11 @@ export class Account extends React.Component<any, any> {
               <GeneralInfoSection
                 user={user}
                 onSubmitUserUpdate={onSubmitUserUpdate}
+                setErrorText={this.setErrorText}
               />
               
               {/* PASSWORD */}
-              {canChangePassword ? (
+              {canChangePassword && user.data ? (
                 <PasswordSection
                   email={user.data.email}
                   onSubmitPassword={onSubmitPassword}
