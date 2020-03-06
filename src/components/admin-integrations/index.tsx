@@ -33,9 +33,6 @@ import { showToast } from '../../rx-actions/toasts';
 import { DensityService } from '../../types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
-import IntegrationsRobinCreateModal from '../admin-integrations-robin-create-modal';
-import IntegrationsServiceDestroyModal from '../admin-integrations-service-destroy-modal';
-
 import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
 import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
 import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
@@ -297,16 +294,6 @@ const AdminIntegrations: React.FC = () => {
     await hideModal(dispatch);
   }
 
-  const onCreateServiceAuthorizationRobin = async (service_authorization) => {
-    const ok = await collectionServiceAuthorizationCreate(dispatch, 'robin', service_authorization);
-    if (ok) { hideModal(dispatch); }
-  }
-
-  const onDestroyServiceAuthorization = async (serviceAuthorizationId) => {
-    const ok = await collectionServiceAuthorizationDestroy(dispatch, serviceAuthorizationId);
-    if (ok) { hideModal(dispatch); }
-  }
-
   const [ search, setSearch ] = useState('');
 
   const filteredServices = filterServices(integrations.services, search);
@@ -329,25 +316,6 @@ const AdminIntegrations: React.FC = () => {
 
   return (
     <Fragment>
-      {activeModal.name === 'integrations-robin-create' ? <IntegrationsRobinCreateModal
-        visible={activeModal.visible}
-        error={integrations.error}
-        loading={integrations.loading}
-
-        onSubmit={onCreateServiceAuthorizationRobin}
-        onDismiss={onCloseModal}
-      /> : null}
-
-      {activeModal.name === 'integrations-service-destroy' ? <IntegrationsServiceDestroyModal
-        visible={activeModal.visible}
-        initialServiceAuthorization={activeModal.data.service_authorization}
-        error={integrations.error}
-        loading={integrations.loading}
-
-        onDismiss={onCloseModal}
-        onDestroyServiceAuthorization={onDestroyServiceAuthorization}
-      /> : null}
-
       {activeModal.name === 'integration-details' ? (
         <AdminIntegrationsDetails
           visible={activeModal.visible}
