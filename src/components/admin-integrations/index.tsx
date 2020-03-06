@@ -1,6 +1,5 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
-import classnames from 'classnames';
 
 import {
   AppBar,
@@ -15,6 +14,9 @@ import {
   Modal,
 } from '@density/ui/src';
 import FormLabel from '../form-label';
+
+import Status, { ServiceStatus } from './status';
+import EmptyCard from './empty-card';
 
 import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
@@ -48,19 +50,20 @@ import filterCollection from '../../helpers/filter-collection';
 
 import core from '../../client/core';
 
+const filterServices = filterCollection({fields: ['display_name']});
 
 function iconForIntegration(serviceName: string) {
   const iconMap = {
-    google_calendar: googleCalendarIcon,
-    outlook: outlookIcon,
-    robin: robinIcon,
-    slack: slackIcon,
-    teem: teemIcon,
-    condeco: condecoIcon,
-    brivo: brivoIcon
+    'google_calendar': googleCalendarIcon,
+    'outlook': outlookIcon,
+    'robin': robinIcon,
+    'slack': slackIcon,
+    'teem': teemIcon,
+    'condeco': condecoIcon,
+    'brivo': brivoIcon
   };
 
-  return iconMap[serviceName] || "";
+  return iconMap[serviceName] || '';
 }
 
 type ServicePreferences = {
@@ -210,190 +213,11 @@ const SERVICE_PREFERENCES: {[serviceName: string]: ServicePreferences} = {
   },
 };
 
-type ServiceStatus = 'success' | 'error' | 'empty';
-
-const STATUS_TO_LABEL = {
-  success: 'Active',
-  error: 'Error',
-  empty: 'Inactive',
-};
-
-const Status: React.FunctionComponent<{
-  includeLabel?: boolean,
-  hideEmptyIcon?: boolean,
-  status: 'success' | 'error' | 'empty'
-}> = ({includeLabel=false, hideEmptyIcon=false, status}) => {
-  const statusIcon = (
-    <div className={classnames(styles.statusIcon, {
-      [styles.success]: status === 'success',
-      [styles.error]: status === 'error',
-      [styles.empty]: !hideEmptyIcon && status === 'empty',
-    })}>
-      {status === 'success' ? (
-        <Icons.Check color="currentColor" width={20} height={20} />
-      ) : null}
-      {status === 'error' ? (
-        <Icons.Error color="currentColor" width={14} height={14} />
-      ) : null}
-      {status === 'empty' && !hideEmptyIcon ? (
-        <Icons.Minus color="currentColor" width={20} height={20} />
-      ) : null}
-    </div>
-  );
-
-  if (includeLabel) {
-    return (
-      <span className={classnames(styles.status, {
-        [styles.success]: status === 'success',
-        [styles.error]: status === 'error',
-        [styles.empty]: status === 'empty',
-      })}>
-        {STATUS_TO_LABEL[status]}
-        {statusIcon}
-      </span>
-    );
-  } else {
-    return statusIcon;
-  }
-};
-
-const EmptyCard: React.FunctionComponent<{ actions: React.ReactNode }> = ({actions, children}) => (
-  <div className={styles.emptyCard}>
-    <div className={styles.emptyCardBody}>
-      <div className={styles.emptyCardBodyIcon}>
-        <Icons.CloudSecure />
-      </div>
-      {children}
-    </div>
-    {actions ? (
-      <div className={styles.emptyCardActions}>
-        {actions}
-      </div>
-    ) : null}
-  </div>
-);
-
 const IntegrationTypeTag: React.FunctionComponent<{}> = ({children}) => (
   <div className={styles.integrationTypeTag}>
     {children}
   </div>
 );
-
-const filterServices = filterCollection({fields: ['display_name']});
-
-const AdminIntegrations: React.FC = () => {
-  const dispatch = useRxDispatch();
-  const activeModal = useRxStore(ActiveModalStore);
-  const integrations = useRxStore(IntegrationsStore);
-
-  const onOpenModal = (name, data) => {
-    showModal(dispatch, name, data);
-  }
-
-  const onCloseModal = async () => {
-    await hideModal(dispatch);
-  }
-
-  const [ search, setSearch ] = useState('');
-
-  const filteredServices = filterServices(integrations.services, search);
-
-  const integrationsByCategory: {[category: string]: Array<DensityService>} = integrations.services.reduce((acc, service) => {
-    const data = acc[service.category] || [];
-
-    if (
-      search.length === 0 || // No search query entered
-      filteredServices.includes(service) // Search query matches
-    ) {
-      data.push(service);
-    }
-
-    return {
-      ...acc,
-      [service.category]: data,
-    };
-  }, {});
-
-  return (
-    <Fragment>
-      {activeModal.name === 'integration-details' ? (
-        <AdminIntegrationsDetails
-          visible={activeModal.visible}
-          onCloseModal={onCloseModal}
-          service={activeModal.data.service}
-          serviceStatus={activeModal.data.serviceStatus}
-        />
-      ) : null}
-
-      <AppBar>
-        <AppBarSection>
-          <InputBox
-            leftIcon={<Icons.Search color={colorVariables.gray} />}
-            width={300}
-            placeholder="Search for integration ..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </AppBarSection>
-        <AppBarSection>
-           Looking for a different integration? Contact us at&nbsp;
-           <a className={styles.contactLink} href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">
-            contact@density.io
-          </a>.
-        </AppBarSection>
-      </AppBar>
-
-      <AppScrollView backgroundColor={colorVariables.gray000}>
-        {Object.entries(integrationsByCategory).map(([category, services]) => (
-          <div className={styles.listSection} key={category}>
-            <h2 className={styles.listSectionHeader}>
-              {category === 'Tailgating' ? 'Access Control' : category}
-            </h2>
-            {services.length > 0 ? (
-              <div className={styles.cardList}>
-                {services.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(service => {
-                  let status: 'empty' | 'success' | 'error' = 'empty';
-                  if (service.service_authorization.id) {
-                    status = 'success';
-                  }
-                  // TODO: somehow set error status sometimes too
-
-                  return (
-                    <div
-                      className={styles.card}
-                      key={service.name}
-                      tabIndex={0}
-                      aria-label={service.display_name}
-                      role="button"
-                      onClick={() => onOpenModal('integration-details', { service, serviceStatus: status })}
-                    >
-                      <div className={styles.row}>
-                        <img
-                          className={styles.icon}
-                          alt=""
-                          src={iconForIntegration(service.name)}
-                        />
-                        <Status hideEmptyIcon status={status} />
-                      </div>
-                      <h3 className={styles.header}>{service.display_name}</h3>
-                      <p>lorem ipsum dolar set amet HARDCODED!</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className={styles.cardListEmpty}>
-                No Services Found
-              </div>
-            )}
-          </div>
-        ))}
-      </AppScrollView>
-    </Fragment>
-  );
-}
-export default AdminIntegrations;
-
 
 const AdminIntegrationsDetails: React.FunctionComponent<{
   visible: boolean,
@@ -451,7 +275,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
           </div>
 
           <div className={styles.modalBodyRight}>
-            {serviceStatus === 'empty' ? (
+            {serviceStatus === 'inactive' ? (
               <Fragment>
                 {activationProcess.type === 'login' ? (
                   <EmptyCard
@@ -478,7 +302,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                 })() : null}
               </Fragment>
             ) : null}
-            {serviceStatus === 'success' ? (
+            {serviceStatus === 'active' ? (
               <Fragment>
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
@@ -563,3 +387,116 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
     </Modal>
   );
 };
+
+const AdminIntegrations: React.FunctionComponent<{}> = () => {
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const integrations = useRxStore(IntegrationsStore);
+
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+
+  const [ search, setSearch ] = useState('');
+
+  const filteredServices = filterServices(integrations.services, search);
+
+  const integrationsByCategory: {[category: string]: Array<DensityService>} = integrations.services.reduce((acc, service) => {
+    const data = acc[service.category] || [];
+
+    if (
+      search.length === 0 || // No search query entered
+      filteredServices.includes(service) // Search query matches
+    ) {
+      data.push(service);
+    }
+
+    return {
+      ...acc,
+      [service.category]: data,
+    };
+  }, {});
+
+  return (
+    <Fragment>
+      {activeModal.name === 'integration-details' ? (
+        <AdminIntegrationsDetails
+          visible={activeModal.visible}
+          onCloseModal={onCloseModal}
+          service={activeModal.data.service}
+          serviceStatus={activeModal.data.serviceStatus}
+        />
+      ) : null}
+
+      <AppBar>
+        <AppBarSection>
+          <InputBox
+            leftIcon={<Icons.Search color={colorVariables.gray} />}
+            width={300}
+            placeholder="Search for integration ..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </AppBarSection>
+        <AppBarSection>
+           Looking for a different integration? Contact us at&nbsp;
+           <a className={styles.contactLink} href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">
+            contact@density.io
+          </a>.
+        </AppBarSection>
+      </AppBar>
+
+      <AppScrollView backgroundColor={colorVariables.gray000}>
+        {Object.entries(integrationsByCategory).map(([category, services]) => (
+          <div className={styles.listSection} key={category}>
+            <h2 className={styles.listSectionHeader}>
+              {category === 'Tailgating' ? 'Access Control' : category}
+            </h2>
+            {services.length > 0 ? (
+              <div className={styles.cardList}>
+                {services.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(service => {
+                  let status: ServiceStatus = 'inactive';
+                  if (service.service_authorization.id) {
+                    status = 'active';
+                  }
+                  // TODO: somehow set error status sometimes too
+
+                  return (
+                    <div
+                      className={styles.card}
+                      key={service.name}
+                      tabIndex={0}
+                      aria-label={service.display_name}
+                      role="button"
+                      onClick={() => onOpenModal('integration-details', { service, serviceStatus: status })}
+                    >
+                      <div className={styles.row}>
+                        <img
+                          className={styles.icon}
+                          alt=""
+                          src={iconForIntegration(service.name)}
+                        />
+                        <Status hideInactiveIcon status={status} />
+                      </div>
+                      <h3 className={styles.header}>{service.display_name}</h3>
+                      <p>lorem ipsum dolar set amet HARDCODED!</p>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className={styles.cardListEmpty}>
+                No Services Found
+              </div>
+            )}
+          </div>
+        ))}
+      </AppScrollView>
+    </Fragment>
+  );
+}
+export default AdminIntegrations;
