@@ -12,6 +12,7 @@ import {
   Icons,
   InputBox,
   Modal,
+  Skeleton,
 } from '@density/ui/src';
 import FormLabel from '../form-label';
 
@@ -39,6 +40,7 @@ import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
 import { DensityService } from '../../types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
+import { ResourceStatus } from '../../types/resource';
 
 import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
@@ -403,37 +405,10 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
 
   const [ search, setSearch ] = useState('');
 
-  const filteredServices = filterServices(integrations.services, search);
-
-  const integrationsByCategory: {[category: string]: Array<DensityService>} = integrations.services.reduce((acc, service) => {
-    const data = acc[service.category] || [];
-
-    if (
-      search.length === 0 || // No search query entered
-      filteredServices.includes(service) // Search query matches
-    ) {
-      data.push(service);
-    }
-
-    return {
-      ...acc,
-      [service.category]: data,
-    };
-  }, {});
-
-  return (
-    <Fragment>
-      {activeModal.name === 'integration-details' ? (
-        <AdminIntegrationsDetails
-          visible={activeModal.visible}
-          onCloseModal={onCloseModal}
-          service={activeModal.data.service}
-          serviceStatus={activeModal.data.serviceStatus}
-        />
-      ) : null}
-
-      <AppBar>
-        <AppBarSection>
+  const header = (
+    <AppBar>
+      <AppBarSection>
+        {integrations.services.status === ResourceStatus.COMPLETE ? (
           <InputBox
             leftIcon={<Icons.Search color={colorVariables.gray} />}
             width={300}
@@ -441,62 +416,115 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
-        </AppBarSection>
-        <AppBarSection>
-           Looking for a different integration? Contact us at&nbsp;
-           <a className={styles.contactLink} href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">
-            contact@density.io
-          </a>.
-        </AppBarSection>
-      </AppBar>
-
-      <AppScrollView backgroundColor={colorVariables.gray000}>
-        {Object.entries(integrationsByCategory).map(([category, services]) => (
-          <div className={styles.listSection} key={category}>
-            <h2 className={styles.listSectionHeader}>
-              {category === 'Tailgating' ? 'Access Control' : category}
-            </h2>
-            {services.length > 0 ? (
-              <div className={styles.cardList}>
-                {services.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(service => {
-                  let status: ServiceStatus = 'inactive';
-                  if (service.service_authorization.id) {
-                    status = 'active';
-                  }
-                  // TODO: somehow set error status sometimes too
-
-                  return (
-                    <div
-                      className={styles.card}
-                      key={service.name}
-                      tabIndex={0}
-                      aria-label={service.display_name}
-                      role="button"
-                      onClick={() => onOpenModal('integration-details', { service, serviceStatus: status })}
-                    >
-                      <div className={styles.row}>
-                        <img
-                          className={styles.icon}
-                          alt=""
-                          src={iconForIntegration(service.name)}
-                        />
-                        <Status hideInactiveIcon status={status} />
-                      </div>
-                      <h3 className={styles.header}>{service.display_name}</h3>
-                      <p>lorem ipsum dolar set amet HARDCODED!</p>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className={styles.cardListEmpty}>
-                No Services Found
-              </div>
-            )}
-          </div>
-        ))}
-      </AppScrollView>
-    </Fragment>
+        ) : (
+          <Skeleton width={300} height={24} />
+        )}
+      </AppBarSection>
+      <AppBarSection>
+         Looking for a different integration? Contact us at&nbsp;
+         <a className={styles.contactLink} href="mailto:contact@density.io" target="_blank" rel="noopener noreferrer">
+          contact@density.io
+        </a>.
+      </AppBarSection>
+    </AppBar>
   );
+
+  switch (integrations.services.status) {
+  case ResourceStatus.IDLE:
+  case ResourceStatus.LOADING:
+    return (
+      <Fragment>
+        {header}
+        <p>Loading</p>
+      </Fragment>
+    );
+  case ResourceStatus.ERROR:
+    return (
+      <Fragment>
+        {header}
+        <p>Error: {integrations.services.error}</p>;
+      </Fragment>
+    );
+  case ResourceStatus.COMPLETE:
+    const filteredServices = filterServices(integrations.services.data, search);
+
+    const integrationsByCategory: {[category: string]: Array<DensityService>} = integrations.services.data.reduce((acc, service) => {
+      const data = acc[service.category] || [];
+
+      if (
+        search.length === 0 || // No search query entered
+        filteredServices.includes(service) // Search query matches
+      ) {
+        data.push(service);
+      }
+
+      return {
+        ...acc,
+        [service.category]: data,
+      };
+    }, {});
+
+    return (
+      <Fragment>
+        {activeModal.name === 'integration-details' ? (
+          <AdminIntegrationsDetails
+            visible={activeModal.visible}
+            onCloseModal={onCloseModal}
+            service={activeModal.data.service}
+            serviceStatus={activeModal.data.serviceStatus}
+          />
+        ) : null}
+
+        {header}
+
+        <AppScrollView backgroundColor={colorVariables.gray000}>
+          {Object.entries(integrationsByCategory).map(([category, services]) => (
+            <div className={styles.listSection} key={category}>
+              <h2 className={styles.listSectionHeader}>
+                {category === 'Tailgating' ? 'Access Control' : category}
+              </h2>
+              {services.length > 0 ? (
+                <div className={styles.cardList}>
+                  {services.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(service => {
+                    let status: ServiceStatus = 'inactive';
+                    if (service.service_authorization.id) {
+                      status = 'active';
+                    }
+                    // TODO: somehow set error status sometimes too
+
+                    return (
+                      <div
+                        className={styles.card}
+                        key={service.name}
+                        tabIndex={0}
+                        aria-label={service.display_name}
+                        role="button"
+                        onClick={() => onOpenModal('integration-details', { service, serviceStatus: status })}
+                      >
+                        <div className={styles.row}>
+                          <img
+                            className={styles.icon}
+                            alt=""
+                            src={iconForIntegration(service.name)}
+                          />
+                          <Status hideInactiveIcon status={status} />
+                        </div>
+                        <h3 className={styles.header}>{service.display_name}</h3>
+                        <p>lorem ipsum dolar set amet HARDCODED!</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className={styles.cardListEmpty}>
+                  No Services Found
+                </div>
+              )}
+            </div>
+          ))}
+        </AppScrollView>
+      </Fragment>
+    );
+  }
 }
 export default AdminIntegrations;

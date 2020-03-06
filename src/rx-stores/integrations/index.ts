@@ -16,15 +16,15 @@ import {
   INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../rx-actions/integrations/room-booking';
 
+import { Resource, RESOURCE_IDLE, ResourceStatus } from '../../types/resource';
+
 import createRxStore from '..';
 
 
 type ViewState = 'LOADING' | 'VISIBLE' | 'COMPLETE' | 'ERROR';
 
 export type IntegrationsState = {
-  services: DensityService[],
-  loading: boolean,
-  error: unknown,
+  services: Resource<Array<DensityService>>,
 
   roomBooking: {
     view: ViewState,
@@ -41,9 +41,7 @@ export type IntegrationsState = {
 }
 
 const initialState: IntegrationsState = {
-  services: [],
-  loading: true,
-  error: false,
+  services: RESOURCE_IDLE,
 
   roomBooking: {
     view: 'LOADING',
@@ -57,7 +55,6 @@ const initialState: IntegrationsState = {
     service: null,
     serviceSpaces: [],
   },
-
 };
 
 export function integrationsReducer(state: IntegrationsState, action: Any<FixInRefactor>): IntegrationsState {
@@ -65,17 +62,25 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
   case COLLECTION_SERVICES_SET:
     return {
       ...state,
-      loading: false,
-      services: action.data,
+      services: {
+        status: ResourceStatus.COMPLETE,
+        data: action.data,
+      },
     };
    case COLLECTION_SERVICES_ERROR:
-     return {...state, error: action.error, loading: false};
+    return {
+      ...state,
+      services: {
+        status: ResourceStatus.ERROR,
+        error: action.error,
+      },
+    };
 
   // An async action has started.
   case COLLECTION_SERVICE_AUTHORIZATIONS_CREATE:
   case COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE:
   case COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY:
-    return {...state, error: null, loading: true};
+    return state;
   
   case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
     return {
