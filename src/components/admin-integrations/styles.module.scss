@@ -1,16 +1,17 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 
 .contactLink {
   color: $blue;
 }
 
-.adminIntegrationsListSection {
+.listSection {
   padding: 24px;
 
   &:last-child { padding-bottom: 64px; }
 }
 
-.adminIntegrationsSectionHeader {
+.listSectionHeader {
   height: 64px;
   display: flex;
   align-items: center;
@@ -22,32 +23,184 @@
   margin-bottom: 32px;
 }
 
-.adminIntegrationsListviewValue {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+
+.cardList {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.adminIntegrationsListviewImage {
+.cardListEmpty {
+  padding-top: 24px;
+  padding-bottom: 24px;
+  color: $gray400;
+  font-size: 16px;
+}
+
+.card {
+  box-sizing: border-box;
+  background-color: #fff;
+  border: 1px solid $gray200;
+  border-radius: $borderRadiusBase;
+
+  margin-right: 24px;
+  margin-bottom: 24px;
+
+  padding: 24px;
+  width: 320px;
+  height: 200px;
+  outline: none;
+  user-select: none;
+  cursor: pointer;
+  transition: all 100ms ease-in-out;
+}
+.card:hover, .card:focus {
+  border-color: $blue;
+  box-shadow: 0 4px 8px 0 rgba(34,42,46,0.10);
+}
+
+.card .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card .row .icon {
+  width: 40px;
+  height: 40px;
+}
+
+.card .header {
+  margin-top: 24px;
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.modalWrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.modalIcon {
   width: 28px;
   height: 28px;
-  border-radius: 6px;
+  margin-right: 8px;
 }
 
-.adminIntegrationsMakeDefaultLink {
-  text-decoration: underline;
-  font-weight: 500;
-  color: $midnight;
-  cursor: pointer;  
+.modalBody {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: row;
 }
 
-.disabledIntegrationsLink {
-  width: 100%;
-  height: 100%;
+.modalBodyLeft {
+  width: 320px;
+  border-right: 1px solid $gray200;
+  padding: 24px;
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.modalBodyLeftHeaderRow {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+}
+
+.modalBodyRight {
+  flex-grow: 1;
+  flex-shrink: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+
+
+
+.integrationTypeTag {
+  display: inline-flex;
+  align-items: center;
+  padding-left: 12px;
+  padding-right: 12px;
+  height: 28px;
+  border: 1px solid $gray300;
+  color: $gray400;
+  border-radius: $borderRadiusBase;
   font-weight: 500;
-  color: $gray500;
-  cursor: default;
+  font-size: 14px;
   user-select: none;
+  cursor: default;
+}
+
+
+
+.status {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  height: 32px;
+}
+.status .statusIcon {
+  margin-left: 8px;
+}
+.status.success { color: $green; }
+.status.error { color: $red; }
+.status.empty { color: $gray400; }
+
+.statusIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: #fff;
+}
+.statusIcon.success { background-color: $green; }
+.statusIcon.error { background-color: $red; }
+.statusIcon.empty {
+  background-color: $gray300;
+  color: $gray500;
+}
+
+.emptyCard {
+  background-color: $blueLight;
+  border-radius: $borderRadiusBase;
+  margin: 24px;
+  line-height: 24px;
+  user-select: none;
+}
+
+.emptyCardBody {
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.emptyCardBodyIcon {
+  margin-bottom: 8px;
+}
+
+.emptyCardActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+
+
+.robinActivationForm {
+  flex-grow: 1;
+  flex-shrink: 1;
+  padding: 24px;
 }

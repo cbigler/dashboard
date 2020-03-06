@@ -174,13 +174,16 @@ export type DensityService = {
 };
 
 // ServiceAuthorization
-export type DensityServiceAuthorization = {
-  id: string,
-  credentials: { [key: string]: string },
-  default: boolean,
-  last_sync: string,
-  user: CoreUser,
-};
+export type DensityServiceAuthorization = (
+  | {
+    id: string,
+    last_sync: string | null,
+    default: boolean,
+    user: CoreUser,
+    credentials?: { [key: string]: string },
+  }
+  | { id: undefined, last_sync: null, default: false }
+);
 
 export type DensitySpaceMapping = {
   id: string,
