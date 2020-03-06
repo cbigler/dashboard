@@ -31,22 +31,21 @@ import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
 import updateModal from '../../rx-actions/modal/update';
 import { showToast } from '../../rx-actions/toasts';
+import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
+import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
+import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
+import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
 import { DensityService } from '../../types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
-import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
-import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
-import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
-
-import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
-import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 import useRxStore from '../../helpers/use-rx-store';
-import ActiveModalStore from '../../rx-stores/active-modal';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import IntegrationsStore from '../../rx-stores/integrations';
-
 import filterCollection from '../../helpers/filter-collection';
+
+import ActiveModalStore from '../../rx-stores/active-modal';
+import IntegrationsStore from '../../rx-stores/integrations';
 
 import core from '../../client/core';
 
@@ -271,7 +270,29 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
               </IntegrationTypeTag>
               <Status status={serviceStatus} includeLabel />
             </div>
+
             <p>lorem ipsum dolar set amet HARDCODED!</p>
+
+            {typeof service.service_authorization.id !== 'undefined' ? (() => {
+              const serviceAuthorizationUser: CoreUser = (service.service_authorization as Any<FixInRefactor>).user;
+              return (
+                <ul>
+                  <li>
+                    Added by: <strong>{serviceAuthorizationUser.full_name}</strong> ({serviceAuthorizationUser.email})
+                  </li>
+                  <li>
+                    Default {service.category} service: <strong>{service.service_authorization.default ? 'Yes' : 'No'}</strong>
+                    {!service.service_authorization.default ? (
+                      <Button onClick={() => {
+                        collectionServiceAuthorizationMakeDefault(dispatch, service.service_authorization.id).then(response => {
+                          updateModal(dispatch, { service: {...service, service_authorization: response.data} });
+                        });
+                      }}>Make Default</Button>
+                    ) : null}
+                  </li>
+                </ul>
+              );
+            })() : null}
           </div>
 
           <div className={styles.modalBodyRight}>
@@ -312,27 +333,6 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                 <p style={{padding: 24}}>
                   Everything is operating as expected.
                 </p>
-
-                {typeof service.service_authorization.id !== 'undefined' ? (() => {
-                  const serviceAuthorizationUser: CoreUser = (service.service_authorization as Any<FixInRefactor>).user;
-                  return (
-                    <ul>
-                      <li>
-                        Added by: <strong>{serviceAuthorizationUser.full_name}</strong> ({serviceAuthorizationUser.email})
-                      </li>
-                      <li>
-                        Default {service.category} service: <strong>{service.service_authorization.default ? 'Yes' : 'No'}</strong>
-                        {!service.service_authorization.default ? (
-                          <Button onClick={() => {
-                            collectionServiceAuthorizationMakeDefault(dispatch, service.service_authorization.id).then(response => {
-                              updateModal(dispatch, { service: {...service, service_authorization: response.data} });
-                            });
-                          }}>Make Default</Button>
-                        ) : null}
-                      </li>
-                    </ul>
-                  );
-                })() : null}
 
                 {hasDoorwayMappings ? (
                   <Button target="_blank" href={`#/admin/integrations/${service.name}/doorway-mappings`}>
