@@ -19,7 +19,7 @@ import { timeOfDayToMilliseconds, millisecondsToTimeOfDay } from '../../helpers/
 import { QueryInterval } from '../../types/analytics';
 import Checkbox from '../checkbox';
 // import { serializeTimeFilter } from '../../helpers/datetime-utilities';
-import { DayOfWeek } from '../../types/datetime';
+import { DayOfWeek } from '@density/lib-common-types';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { DEFAULT_TIME_SEGMENT_LABEL, parseStartAndEndTimesInTimeSegment } from '../../helpers/time-segments';
 import { prettyPrintHoursMinutes, getCurrentLocalTimeAtSpace } from '../../helpers/space-time-utilities';

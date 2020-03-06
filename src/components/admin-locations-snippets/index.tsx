@@ -11,7 +11,7 @@ import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 import { CoreSpace, CoreSpaceType } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { UserState } from '../../rx-stores/user';
-import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET } from '@density/lib-helpers';
+import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET } from '@density/lib-common-helpers';
 import AdminLocationsListViewImage from '../admin-locations-list-view-image';
 import moment from 'moment';
 import InfoPopupNew from '../info-popup-new';

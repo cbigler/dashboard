@@ -275,7 +275,7 @@ export class SpacePickerDropdown extends Component<SpacePickerDropdownProps, {op
               </span>
             )}
             <span className={classnames(styles.chevron)}>
-              <Icons.ChevronDown />
+              <Icons.ChevronDown color={colorVariables.gray700} />
             </span>
           </div>
 

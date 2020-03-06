@@ -1,7 +1,7 @@
 import getInObject from 'lodash/get';
 
+import { DayOfWeek } from '@density/lib-common-types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
-import { DayOfWeek } from '../../types/datetime';
 import { DashboardsState } from '../../rx-stores/dashboards';
 import { UserState } from "../../rx-stores/user";
 

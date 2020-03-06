@@ -6,8 +6,6 @@ import hideModal from '../modal/hide';
 
 import calculateReportData, { clearReportData } from './calculate-report-data';
 
-import { getStartOfWeek } from '../../helpers/space-time-utilities';
-
 export const PAGE_PICK_SAVED_REPORT = 'PAGE_PICK_SAVED_REPORT',
              PAGE_NEW_REPORT_TYPE = 'PAGE_NEW_REPORT_TYPE',
              PAGE_NEW_REPORT_CONFIGURATION = 'PAGE_NEW_REPORT_CONFIGURATION';
@@ -66,10 +64,10 @@ export async function rerenderReportInReportModal(
 ) {
   clearPreviewReportData(dispatch);
 
-  const currentDate = getStartOfWeek(
-    moment(dashboardDate || undefined),
-    dashboardWeekStart,
-  ).format('YYYY-MM-DD');
+  // TODO: until we have designs for "partial days", dashboards default to yesterday
+  const currentDate = dashboardDate ?
+    moment(dashboardDate).format('YYYY-MM-DD') :
+    moment().subtract(1, 'day').format('YYYY-MM-DD');
 
   calculateReportData(
     dispatch,

@@ -4,7 +4,7 @@ import { AppBarSection, InputBox } from '@density/ui/src';
 
 import styles from './metadata.module.scss';
 
-import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET, SQUARE_METERS } from '@density/lib-helpers';
+import { convertUnit, UNIT_DISPLAY_NAMES, SQUARE_FEET, SQUARE_METERS } from '@density/lib-common-helpers';
 
 import FormLabel from '../form-label/index';
 import AdminLocationsDetailModule from './index';

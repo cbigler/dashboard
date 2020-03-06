@@ -4,10 +4,11 @@ import { Button, Checkbox, Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import isEqual from 'lodash/isEqual'; 
 
-import { TimeFilter, TimeOfDay, DayOfWeek } from '../../types/datetime';
+import { DayOfWeek } from '@density/lib-common-types';
+import { TimeFilter, TimeOfDay } from '../../types/datetime';
 import { QueryInterval } from '../../types/analytics';
 
-import { DAYS_OF_WEEK } from '../../helpers/datetime-utilities';
+import { DAYS_OF_WEEK } from '@density/lib-time-helpers/date-range';
 import {
   DAY_MILLISECONDS,
   HOUR_MILLISECONDS,

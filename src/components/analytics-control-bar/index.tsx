@@ -4,7 +4,7 @@ import styles from './styles.module.scss';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
-import { DateRange } from '../../helpers/space-time-utilities';
+import { DateRange } from '@density/lib-time-helpers/date-range';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 

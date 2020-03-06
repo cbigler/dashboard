@@ -7,7 +7,7 @@ import {
   AnalyticsFocusedMetric,
   QuerySelectionType,
 } from '../../../types/analytics'
-import { DATE_RANGES } from '../../../helpers/space-time-utilities';
+import { DATE_RANGES } from '@density/lib-time-helpers/date-range';
 import { getDefaultColumnSortForMetric } from '../../../helpers/analytics-table';
 import { DispatchType } from '../../../types/rx-actions';
 

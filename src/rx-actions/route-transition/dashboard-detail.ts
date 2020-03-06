@@ -8,8 +8,6 @@ import collectionDigestSchedulesSet from '../collection/digest-schedules/set';
 import collectionDigestSchedulesError from '../collection/digest-schedules/error';
 import setDashboardDate from '../miscellaneous/set-dashboard-date';
 
-import { getStartOfWeek } from '../../helpers/space-time-utilities';
-
 import { DensityDashboard, DensityDigestSchedule } from '../../types';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 import UserStore from '../../rx-stores/user';
@@ -35,17 +33,6 @@ async function loadDigestSchedules(dispatch) {
   }
 }
 
-// Determine "start of week" for this organization and the dashboard date
-export async function calculateDashboardDate(dispatch, dashboardWeekStart) {
-  // FIXME: imperative get state
-  const miscellaneous = MiscellaneousStore.imperativelyGetValue();
-  const dashboardDate = getStartOfWeek(
-    moment(miscellaneous.dashboardDate || undefined),
-    dashboardWeekStart
-  ).format('YYYY-MM-DD');
-  dispatch(setDashboardDate(dashboardDate));
-}
-
 async function loadDashboardAndReports(dispatch, id) {
   let dashboardSelectionPromise;
  
@@ -60,12 +47,16 @@ async function loadDashboardAndReports(dispatch, id) {
     throw new Error('User data not available')
   }
 
-  // Determine "start of week" for this organization and the dashboard date
+  // Determine "start of week" for this organization
   const dashboardWeekStart = user.organization.settings.dashboard_week_start;
-  await calculateDashboardDate(dispatch, dashboardWeekStart);
+  
   // FIXME: imperative get state
   const miscellaneous = MiscellaneousStore.imperativelyGetValue();
-  const dashboardDate = miscellaneous.dashboardDate;
+  // TODO: until we have designs for "partial days", dashboards default to yesterday
+  const dashboardDate = miscellaneous.dashboardDate ?
+    moment(miscellaneous.dashboardDate).format('YYYY-MM-DD') :
+    moment().subtract(1, 'day').format('YYYY-MM-DD');
+  dispatch(setDashboardDate(dashboardDate));
 
   // FIXME: need to imperatively get the state for now...
   const dashboardsState = DashboardsStore.imperativelyGetValue();

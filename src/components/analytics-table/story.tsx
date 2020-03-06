@@ -4,7 +4,7 @@ import { storiesOf } from '@storybook/react';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 import AnalyticsTable from './index';
-import { RangeType } from '../../helpers/space-time-utilities';
+import { DateRangeType } from '@density/lib-time-helpers/date-range';
 import { ResourceStatus } from '../../types/resource';
 import { AnalyticsFocusedMetric } from '../../types/analytics';
 
@@ -33,7 +33,7 @@ function random() {
 
 const QUERY = {
   dateRange: {
-    type: RangeType.ABSOLUTE,
+    type: DateRangeType.ABSOLUTE,
     startDate: '2019-01-01',
     endDate: '2019-02-01',
   },

@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-import { SQUARE_FEET } from '@density/lib-helpers';
+import { SQUARE_FEET } from '@density/lib-common-helpers';
 import { CoreSpaceTimeSegment, CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
