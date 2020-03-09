@@ -214,7 +214,7 @@ function getReportConfig(name, type, space, startDate, endDate, otherSettings, t
       time_range: {
         type: 'CUSTOM_RANGE',
         start_date: moment.tz(startDate, space.time_zone),
-        end_date: moment.tz(endDate, space.time_zone).add(1, 'day'),
+        end_date: moment.tz(endDate, space.time_zone),
       }
     },
   };
