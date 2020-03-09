@@ -1,7 +1,9 @@
+import { CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces'; 
 import {
   DensityService,
   DensityServiceSpace,
   DensityDoorwayMapping,
+  DensitySpaceMapping,
 } from '../../types';
 import { ActionTypesOf } from '..';
 import { DispatchType } from '../../types/rx-actions';
@@ -12,8 +14,8 @@ import hideModal from '../../rx-actions/modal/hide';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 import {
-  ServiceStatus,
   ServiceRenderingPreferences,
+  AbstractServiceDoorway,
 } from '../../types/integrations';
 
 export const INTEGRATIONS_MODAL_NAME = 'integration-details';
@@ -26,12 +28,19 @@ export async function openService(
   dispatch(integrationsActions.openService(service));
   showModal(dispatch, INTEGRATIONS_MODAL_NAME);
 
-  if (serviceRenderingPreferences.hasSpaceMappings) {
+  if (serviceRenderingPreferences.spaceMappings.enabled) {
     dispatch(integrationsActions.spaceMappingStart());
 
-    let serviceSpaces: Array<DensityServiceSpace> = [], errorThrown;
+    let serviceSpaces: Array<DensityServiceSpace> = [],
+        spaceMappings: Array<DensitySpaceMapping> = [],
+        hierarchy: Array<CoreSpaceHierarchyNode> = [],
+        errorThrown;
     try {
-      serviceSpaces = await fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces/`, { cache: false });
+      [serviceSpaces, spaceMappings, hierarchy] = await Promise.all([
+        fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces/`, { cache: false }),
+        fetchAllObjects<DensitySpaceMapping>(`/integrations/space_mappings/`, { cache: false }),
+        fetchAllObjects<CoreSpaceHierarchyNode>(`/spaces/hierarchy/`, { cache: false }),
+      ]);
     } catch (err) {
       errorThrown = err;
     }
@@ -39,16 +48,21 @@ export async function openService(
     if (errorThrown) {
       dispatch(integrationsActions.spaceMappingError(errorThrown));
     } else {
-      dispatch(integrationsActions.spaceMappingComplete(serviceSpaces));
+      dispatch(integrationsActions.spaceMappingComplete(spaceMappings, serviceSpaces, hierarchy));
     }
   }
 
-  if (serviceRenderingPreferences.hasDoorwayMappings) {
+  if (serviceRenderingPreferences.doorwayMappings.enabled) {
     dispatch(integrationsActions.doorwayMappingStart());
 
-    let doorwayMappings: Array<DensityDoorwayMapping> = [], errorThrown;
+    let doorwayMappings: Array<DensityDoorwayMapping> = [],
+        serviceDoorways: Array<AbstractServiceDoorway> = [],
+        errorThrown;
     try {
-      doorwayMappings = await fetchAllObjects<DensityDoorwayMapping>(`/integrations/doorway_mappings/`, { cache: false });
+      [doorwayMappings, serviceDoorways] = await Promise.all([
+        fetchAllObjects<DensityDoorwayMapping>(`/integrations/doorway_mappings/`, { cache: false }),
+        serviceRenderingPreferences.doorwayMappings.fetchServiceDoorways(service),
+      ]);
     } catch (err) {
       errorThrown = err;
     }
@@ -57,7 +71,7 @@ export async function openService(
       dispatch(integrationsActions.doorwayMappingError(errorThrown));
     } else {
       const doorwayMappingsForService = doorwayMappings.filter(doorwayMapping => doorwayMapping.service_id === service.id);
-      dispatch(integrationsActions.doorwayMappingComplete(doorwayMappingsForService));
+      dispatch(integrationsActions.doorwayMappingComplete(doorwayMappingsForService, serviceDoorways));
     }
   }
 }
@@ -65,6 +79,10 @@ export async function openService(
 export async function closeService(dispatch: DispatchType) {
   await hideModal(dispatch);
   dispatch(integrationsActions.closeService());
+}
+
+export async function spaceMappingsAdd(dispatch: DispatchType) {
+  dispatch(integrationsActions.spaceMappingsAdd());
 }
 
 export const integrationsActions = {
@@ -91,21 +109,36 @@ export const integrationsActions = {
   spaceMappingStart: () => ({
     type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_START' as const,
   }),
-  spaceMappingComplete: (spaceMappings: Array<DensityServiceSpace>) => ({
+  spaceMappingComplete: (spaceMappings: Array<DensitySpaceMapping>, serviceSpaces: Array<DensityServiceSpace>, hierarchy: Array<CoreSpaceHierarchyNode>) => ({
     type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE' as const,
     spaceMappings,
+    serviceSpaces,
+    hierarchy,
   }),
   spaceMappingError: (error: any) => ({
     type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ERROR' as const,
     error,
   }),
+  spaceMappingsAdd: () => ({
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ADD' as const,
+  }),
+
+  spaceMappingChangeNewSpaceId: (value: string) => ({
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_CHANGE_NEW_DENSITY_SPACE_ID' as const,
+    value,
+  }),
+  spaceMappingChangeServiceSpaceId: (value: string) => ({
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_CHANGE_NEW_SERVICE_SPACE_ID' as const,
+    value,
+  }),
 
   doorwayMappingStart: () => ({
     type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_START' as const,
   }),
-  doorwayMappingComplete: (doorwayMappings: Array<DensityDoorwayMapping>) => ({
+  doorwayMappingComplete: (doorwayMappings: Array<DensityDoorwayMapping>, serviceDoorways: Array<AbstractServiceDoorway>) => ({
     type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_COMPLETE' as const,
     doorwayMappings,
+    serviceDoorways,
   }),
   doorwayMappingError: (error: any) => ({
     type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_ERROR' as const,

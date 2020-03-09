@@ -1,5 +1,3 @@
-import { DensityServiceSpace, DensityService } from '../../types';
-
 import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../rx-actions/collection/service-authorizations/create';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../rx-actions/collection/service-authorizations/update';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../rx-actions/collection/service-authorizations/destroy';
@@ -13,7 +11,7 @@ import {
   INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../rx-actions/integrations/room-booking';
 
-import { Resource, RESOURCE_IDLE, RESOURCE_LOADING, ResourceStatus } from '../../types/resource';
+import { RESOURCE_IDLE, RESOURCE_LOADING, ResourceStatus } from '../../types/resource';
 
 import createRxStore from '..';
 
@@ -27,6 +25,7 @@ const initialState: IntegrationsState = {
   services: RESOURCE_IDLE,
 
   selectedService: {
+    status: 'CLOSED',
     item: null,
   },
 
@@ -74,6 +73,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     return {
       ...state,
       selectedService: {
+        status: 'OPEN',
         item: action.service,
         spaceMappings: RESOURCE_IDLE,
         doorwayMappings: RESOURCE_IDLE,
@@ -84,12 +84,13 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     return {
       ...state,
       selectedService: {
+        status: 'CLOSED',
         item: null,
       },
     }
   }
 
-  if (state.selectedService.item === null) { return state; }
+  if (state.selectedService.status !== 'OPEN') { return state; }
 
   switch (action.type) {
 
@@ -113,7 +114,14 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
 
         spaceMappings: {
           status: ResourceStatus.COMPLETE,
-          data: action.spaceMappings,
+          data: {
+            spaceMappings: action.spaceMappings,
+            serviceSpaces: action.serviceSpaces,
+            hierarchy: action.hierarchy,
+
+            newServiceSpaceId: null,
+            newSpaceId: null,
+          },
         },
       },
     }
@@ -127,6 +135,77 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         spaceMappings: {
           status: ResourceStatus.ERROR,
           error: action.error,
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_CHANGE_NEW_DENSITY_SPACE_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            newSpaceId: action.value,
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_CHANGE_NEW_SERVICE_SPACE_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            newServiceSpaceId: action.value,
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ADD':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    // Ensure both density space id and service space id were set
+    const data = state.selectedService.spaceMappings.data;
+    if (data.newSpaceId === null || data.newServiceSpaceId === null) {
+      return state;
+    }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            newSpaceId: null,
+            newServiceSpaceId: null,
+            spaceMappings: [
+              ...data.spaceMappings,
+              {
+                id: '',
+                service_id: state.selectedService.item.id,
+                space_id: data.newSpaceId,
+                service_space_id: data.newServiceSpaceId,
+              },
+            ],
+          }
         },
       },
     }
@@ -151,7 +230,10 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
 
         doorwayMappings: {
           status: ResourceStatus.COMPLETE,
-          data: action.doorwayMappings,
+          data: {
+            doorwayMappings: action.doorwayMappings,
+            serviceDoorways: action.serviceDoorways,
+          },
         },
       },
     }

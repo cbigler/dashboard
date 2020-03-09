@@ -2,15 +2,35 @@ import {
   DensityService,
   DensityServiceSpace,
   DensityDoorwayMapping,
+  DensitySpaceMapping,
 } from '../types';
 import { Resource } from '../types/resource';
+import { CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces'; 
 
-type SelectedServiceEmpty = { item: null };
+// Since doorway mappings aren't as abstract as space mappings are,
+// create an "abstract form" of a doorway mapping that the interface knows how to consume.
+export type AbstractServiceDoorway = {
+  id: any,
+  name: string,
+}
+
+type SelectedServiceEmpty = { status: 'CLOSED', item: null };
 export type SelectedService = {
+  status: 'OPEN',
   item: DensityService,
 
-  spaceMappings: Resource<Array<DensityServiceSpace>>,
-  doorwayMappings: Resource<Array<DensityDoorwayMapping>>,
+  spaceMappings: Resource<{
+    spaceMappings: Array<DensitySpaceMapping>,
+    serviceSpaces: Array<DensityServiceSpace>,
+    hierarchy: Array<CoreSpaceHierarchyNode>,
+
+    newSpaceId: string | null,
+    newServiceSpaceId: string | null,
+  }>,
+  doorwayMappings: Resource<{
+    doorwayMappings: Array<DensityDoorwayMapping>,
+    serviceDoorways: Array<AbstractServiceDoorway>,
+  }>,
 };
 
 type ViewState = 'LOADING' | 'VISIBLE' | 'COMPLETE' | 'ERROR';
@@ -48,6 +68,21 @@ export type ServiceRenderingPreferences = {
     // "Form": The user needs to fill out a custom form to activate the integration
     | { type: 'form', component: React.FunctionComponent<{service: DensityService}> }
   ),
-  hasSpaceMappings: boolean,
-  hasDoorwayMappings: boolean,
+  spaceMappings: (
+    | { enabled: false }
+    | {
+      enabled: true,
+      // What are they called in the third party system? Spaces? Calendars? Regions?
+      serviceSpaceResourceName: string,
+    }
+  ),
+  doorwayMappings: (
+    | { enabled: false }
+    | {
+      enabled: true,
+      fetchServiceDoorways: (service: DensityService) => Promise<Array<AbstractServiceDoorway>>,
+      // What are they called in the third party system? Doorways? Portals? Access points? Cased openings?
+      serviceDoorwayResourceName: string,
+    }
+  )
 }

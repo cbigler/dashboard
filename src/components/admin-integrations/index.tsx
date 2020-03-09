@@ -13,8 +13,12 @@ import {
   InputBox,
   Modal,
   Skeleton,
+  ListView,
+  ListViewColumn,
 } from '@density/ui/src';
 import FormLabel from '../form-label';
+import { SpacePickerDropdown } from '../space-picker';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import Status from './status';
 import EmptyCard from './empty-card';
@@ -28,8 +32,6 @@ import condecoIcon from '../../assets/images/icon-condeco.svg';
 import brivoIcon from '../../assets/images/icon-brivo.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import showModal from '../../rx-actions/modal/show';
-import hideModal from '../../rx-actions/modal/hide';
 import updateModal from '../../rx-actions/modal/update';
 import { showToast } from '../../rx-actions/toasts';
 import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
@@ -38,7 +40,7 @@ import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/s
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
 import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
-import { DensityService } from '../../types';
+import { DensityService, DensitySpaceMapping, DensityDoorwayMapping } from '../../types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { ResourceStatus } from '../../types/resource';
 
@@ -54,8 +56,11 @@ import {
   SelectedService,
 } from '../../types/integrations';
 import {
+  integrationsActions,
+
   openService,
   closeService,
+  spaceMappingsAdd,
 } from '../../rx-actions/integrations';
 
 import core from '../../client/core';
@@ -128,7 +133,7 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
           <AppBarSection />
           <AppBarSection>
             <ButtonGroup>
-              <Button variant="underline" onClick={() => hideModal(dispatch)}>Cancel</Button>
+              <Button variant="underline" onClick={() => closeService(dispatch)}>Cancel</Button>
               <Button
                 variant="filled"
                 onClick={() => {
@@ -139,7 +144,7 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
                     },
                   }).then(ok => {
                     if (ok) {
-                      hideModal(dispatch);
+                      closeService(dispatch);
                       showToast(dispatch, {
                         text: 'Created robin integration!',
                       });
@@ -162,21 +167,30 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
       type: 'login',
       onClick: () => doGoogleCalendarAuthRedirect(),
     },
-    hasSpaceMappings: true,
-    hasDoorwayMappings: false,
+    spaceMappings: {
+      enabled: true,
+      serviceSpaceResourceName: 'calendar',
+    },
+    doorwayMappings: {enabled: false},
   },
   'outlook': {
     activationProcess: {
       type: 'login',
       onClick: () => doOutlookAuthRedirect(),
     },
-    hasSpaceMappings: true,
-    hasDoorwayMappings: false,
+    spaceMappings: {
+      enabled: true,
+      serviceSpaceResourceName: 'calendar',
+    },
+    doorwayMappings: {enabled: false},
   },
   'robin': {
     activationProcess: { type: 'form', component: RobinActivationForm },
-    hasSpaceMappings: true,
-    hasDoorwayMappings: false,
+    spaceMappings: {
+      enabled: true,
+      serviceSpaceResourceName: 'space',
+    },
+    doorwayMappings: {enabled: false},
   },
   'teem': {
     activationProcess: {
@@ -185,8 +199,11 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
         window.location.href = `https://app.teem.com/oauth/authorize/?client_id=${process.env.REACT_APP_TEEM_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_TEEM_REDIRECT_URL}&response_type=code&scope=reservations`;
       },
     },
-    hasSpaceMappings: true,
-    hasDoorwayMappings: false,
+    spaceMappings: {
+      enabled: true,
+      serviceSpaceResourceName: 'space',
+    },
+    doorwayMappings: {enabled: false},
   },
 
   // Chat
@@ -197,8 +214,8 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
         window.location.href = `https://slack.com/oauth/authorize?client_id=${process.env.REACT_APP_SLACK_CLIENT_ID}&scope=bot,chat:write:bot&redirect_uri=${process.env.REACT_APP_SLACK_REDIRECT_URL}`;
       },
     },
-    hasSpaceMappings: false,
-    hasDoorwayMappings: false,
+    spaceMappings: { enabled: false, },
+    doorwayMappings: { enabled: false },
   },
 
   // Access Control
@@ -210,16 +227,20 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
         window.location.href = authUrl.data;
       }
     },
-    hasSpaceMappings: false,
-    hasDoorwayMappings: true,
+    spaceMappings: { enabled: false },
+    doorwayMappings: {
+      enabled: true,
+      fetchServiceDoorways: service => Promise.resolve([]),
+      serviceDoorwayResourceName: 'access point',
+    },
   },
 };
 
 // This applies to any services that are not specified in the above list.
 const DEFAULT_SERVICE_RENDERING_PREFERENCES = {
   activationProcess: { type: 'support' },
-  hasSpaceMappings: false,
-  hasDoorwayMappings: false,
+  spaceMappings: { enabled: false },
+  doorwayMappings: { enabled: false },
 };
 
 function getServiceRenderingPreferences(service: DensityService): ServiceRenderingPreferences {
@@ -233,13 +254,17 @@ const IntegrationTypeTag: React.FunctionComponent<{}> = ({children}) => (
 );
 
 const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+  const dispatch = useRxDispatch();
+
+  const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
+  if (!serviceRenderingPreferences.spaceMappings.enabled) {
+    return null;
+  }
+
   const header = (
     <AppBarContext.Provider value="CARD_HEADER">
       <AppBar>
         <AppBarTitle>Space Mappings</AppBarTitle>
-        <AppBarSection>
-          <Button variant="filled">Add</Button>
-        </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>
   );
@@ -247,31 +272,79 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
   switch (service.spaceMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
-    return <p>Loading</p>;
+    return <Fragment>
+      {header}
+      <p>Loading</p>
+    </Fragment>;
+
   case ResourceStatus.ERROR:
-    return <p>Error</p>;
+    return <Fragment>
+      {header}
+      <p>Error</p>
+    </Fragment>;
+
   case ResourceStatus.COMPLETE:
+    const spaceHierarchy = spaceHierarchyFormatter(service.spaceMappings.data.hierarchy);
+    const serviceSpaceChoices = service.spaceMappings.data.serviceSpaces
+        .map(s => ({ id: s.service_space_id, label: s.name }));
+
     return (
       <Fragment>
         {header}
 
-        <ul>
-          {service.spaceMappings.data.map(spaceMapping => (
-            <li key={spaceMapping.service_space_id}>
-              {JSON.stringify(spaceMapping)}
-            </li>
-          ))}
-        </ul>
+        <ListView padOuterColumns data={service.spaceMappings.data.spaceMappings}>
+          <ListViewColumn
+            id="Density Space"
+            template={(spaceMapping: DensitySpaceMapping) => (
+              <SpacePickerDropdown
+                placeholder="Select Density Space"
+                value={spaceMapping.space_id}
+                onChange={e => console.log(e)}
+                formattedHierarchy={spaceHierarchy}
+              />
+            )}
+          />
+          <ListViewColumn
+            id="Service Space"
+            title={`${service.item.display_name} ${serviceRenderingPreferences.spaceMappings.serviceSpaceResourceName}`}
+            template={(spaceMapping: DensitySpaceMapping) => (
+              <InputBox
+                type="select"
+                choices={serviceSpaceChoices}
+                value={spaceMapping.service_space_id}
+                onChange={() => null}
+              />
+            )}
+          />
+        </ListView>
 
-        {/*<Button target="_blank" href={`#/admin/integrations/${service.item.name}/space-mappings`}>
-            Configure Space Mappings
-          </Button> */}
+        <div style={{display: 'flex'}}>
+          <SpacePickerDropdown
+            placeholder="Select Density Space"
+            value={service.spaceMappings.data.newSpaceId}
+            onChange={e => dispatch(integrationsActions.spaceMappingChangeNewSpaceId(e.space.id))}
+            formattedHierarchy={spaceHierarchy}
+          />
+          <InputBox
+            type="select"
+            placeholder={`Select ${service.item.display_name} ${serviceRenderingPreferences.spaceMappings.serviceSpaceResourceName}`}
+            choices={serviceSpaceChoices}
+            value={service.spaceMappings.data.newServiceSpaceId}
+            onChange={e => dispatch(integrationsActions.spaceMappingChangeServiceSpaceId(e.id))}
+          />
+          <Button onClick={() => spaceMappingsAdd(dispatch)}>Add</Button>
+        </div>
       </Fragment>
     );
   }
 }
 
 const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+  const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
+  if (!serviceRenderingPreferences.doorwayMappings.enabled) {
+    return null;
+  }
+
   const header = (
     <AppBarContext.Provider value="CARD_HEADER">
       <AppBar>
@@ -286,21 +359,48 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
   switch (service.doorwayMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
-    return <p>Loading</p>;
+    return <Fragment>
+      {header}
+      <p>Loading</p>
+    </Fragment>;
   case ResourceStatus.ERROR:
-    return <p>Error</p>;
+    return <Fragment>
+      {header}
+      <p>Error</p>
+    </Fragment>;
   case ResourceStatus.COMPLETE:
+    const serviceDoorwayChoices = service.doorwayMappings.data.serviceDoorways
+        .map(d => ({id: d.id, label: d.name}));
+
     return (
       <Fragment>
         {header}
 
-        <ul>
-          {service.doorwayMappings.data.map(doorwayMapping => (
-            <li key={doorwayMapping.id}>
-              {JSON.stringify(doorwayMapping)}
-            </li>
-          ))}
-        </ul>
+        <ListView padOuterColumns data={service.doorwayMappings.data.doorwayMappings}>
+          <ListViewColumn
+            id="Density Doorway"
+            template={(doorwayMapping: DensityDoorwayMapping) => (
+              <InputBox
+                type="select"
+                choices={[{id: 'foo', label: 'Foo'}]}
+                value={doorwayMapping.doorway_id}
+                onChange={() => null}
+              />
+            )}
+          />
+          <ListViewColumn
+            id="Service Doorway"
+            title={`${service.item.display_name} ${serviceRenderingPreferences.doorwayMappings.serviceDoorwayResourceName}`}
+            template={(doorwayMapping: DensityDoorwayMapping) => (
+              <InputBox
+                type="select"
+                choices={serviceDoorwayChoices}
+                value={doorwayMapping.service_doorway_id}
+                onChange={() => null}
+              />
+            )}
+          />
+        </ListView>
 
         {/*<Button target="_blank" href={`#/admin/integrations/${service.item.name}/doorway-mappings`}>
           Configure Doorway Mappings
@@ -322,15 +422,19 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
     setServiceDeleteBoxText('');
   }, [ visible ]);
 
+  const dispatch = useRxDispatch();
+
+  if (!service.item) {
+    return null;
+  }
+
   const serviceStatus = getServiceStatus(service.item);
 
   const {
     activationProcess,
-    hasDoorwayMappings,
-    hasSpaceMappings,
+    doorwayMappings,
+    spaceMappings,
   } = getServiceRenderingPreferences(service.item);
-
-  const dispatch = useRxDispatch();
 
   return (
     <Modal
@@ -427,13 +531,9 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   Everything is operating as expected.
                 </p>
 
-                {hasSpaceMappings ? (
-                  <SpaceMappings service={service} />
-                ) : null}
+                <SpaceMappings service={service} />
 
-                {hasDoorwayMappings ? (
-                  <DoorwayMappings service={service} />
-                ) : null}
+                <DoorwayMappings service={service} />
 
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
@@ -451,7 +551,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                     disabled={serviceDeleteBoxText !== service.item.display_name}
                     type="danger"
                     onClick={() => {
-                      hideModal(dispatch);
+                      closeService(dispatch);
                       collectionServiceAuthorizationDestroy(dispatch, service.item.service_authorization.id).then(ok => {
                         if (ok) {
                           showToast(dispatch, {
@@ -480,14 +580,6 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
   const dispatch = useRxDispatch();
   const activeModal = useRxStore(ActiveModalStore);
   const integrations = useRxStore(IntegrationsStore);
-
-  const onOpenModal = (name, data) => {
-    showModal(dispatch, name, data);
-  }
-
-  const onCloseModal = async () => {
-    await hideModal(dispatch);
-  }
 
   const [ search, setSearch ] = useState('');
 
@@ -555,7 +647,7 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
         {activeModal.name === 'integration-details' ? (
           <AdminIntegrationsDetails
             visible={activeModal.visible}
-            onCloseModal={onCloseModal}
+            onCloseModal={() => closeService(dispatch)}
             service={integrations.selectedService as SelectedService}
           />
         ) : null}
