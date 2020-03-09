@@ -53,6 +53,7 @@ async function loadDashboardAndReports(dispatch, id) {
   // FIXME: imperative get state
   const miscellaneous = MiscellaneousStore.imperativelyGetValue();
   const dashboardDate = moment(miscellaneous.dashboardDate || undefined).format('YYYY-MM-DD');
+  dispatch(setDashboardDate(dashboardDate));
 
   // FIXME: need to imperatively get the state for now...
   const dashboardsState = DashboardsStore.imperativelyGetValue();

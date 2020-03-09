@@ -6,6 +6,8 @@ import { sanitizeReportSettings } from '../../helpers/casing';
 import { CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import { DensityDashboard, DensityReport } from '../../types';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
+import setDashboardDate from '../miscellaneous/set-dashboard-date';
+import moment from 'moment-timezone';
 
 export const ROUTE_TRANSITION_DASHBOARD_EDIT = 'ROUTE_TRANSITION_DASHBOARD_EDIT';
 
@@ -32,6 +34,7 @@ export default async function routeTransitionDashboardEdit(dispatch, dashboard_i
   dashboard.report_set = dashboard.report_set.map(r => sanitizeReportSettings(r));
   reportList = reportList.map(r => sanitizeReportSettings(r));
 
+  dispatch(setDashboardDate(moment().format('YYYY-MM-DD')));
   dispatch(dashboardsSetData(dashboard, reportList, timeSegmentLabels));
   dispatch(spaceHierarchySet(spaceHierarchy));
 }
