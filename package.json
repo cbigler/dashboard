@@ -12,7 +12,7 @@
     "@density/lib-api-types": "^2.0.0",
     "@density/lib-common-helpers": "^0.1.4",
     "@density/lib-space-helpers": "^0.2.3",
-    "@density/lib-time-helpers": "^0.1.7",
+    "@density/lib-time-helpers": "^0.1.8",
     "@density/react-dates": "^12.6.0",
     "@density/reports": "^14.1.2",
     "@density/ui": "^21.5.0",
