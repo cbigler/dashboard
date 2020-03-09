@@ -1,16 +1,17 @@
 import core from '../../client/core';
 
-import collectionServicesSet from '../collection/services/set';
-import collectionServicesError from '../collection/services/error';
+import { integrationsActions } from '../../rx-actions/integrations';
 
 export default async function integrationServicesList(dispatch) {
+  dispatch(integrationsActions.loadStarted());
+
   let response;
   try {
-    response = await core().get('/integrations/services/')
+    response = await core().get('/integrations/services/');
   } catch (err) {
-    dispatch(collectionServicesError('Oh shoot, there was an error pulling your integrations!'));
+    dispatch(integrationsActions.loadError('There was an error fetching your integrations - please contact support.'));
     return false;
   }
 
-  dispatch(collectionServicesSet(response.data));
+  dispatch(integrationsActions.loadComplete(response.data));
 }

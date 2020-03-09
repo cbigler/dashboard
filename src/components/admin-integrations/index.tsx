@@ -16,7 +16,7 @@ import {
 } from '@density/ui/src';
 import FormLabel from '../form-label';
 
-import Status, { ServiceStatus } from './status';
+import Status from './status';
 import EmptyCard from './empty-card';
 
 import robinIcon from '../../assets/images/icon-robin.svg';
@@ -48,6 +48,15 @@ import filterCollection from '../../helpers/filter-collection';
 
 import ActiveModalStore from '../../rx-stores/active-modal';
 import IntegrationsStore from '../../rx-stores/integrations';
+import {
+  ServiceStatus,
+  ServiceRenderingPreferences,
+  SelectedService,
+} from '../../types/integrations';
+import {
+  openService,
+  closeService,
+} from '../../rx-actions/integrations';
 
 import core from '../../client/core';
 
@@ -67,17 +76,14 @@ function iconForIntegration(serviceName: string) {
   return iconMap[serviceName] || '';
 }
 
-type ServicePreferences = {
-  activationProcess: (
-    // "Login": The user needs to log into the service in the browser to activate the integration.
-    | { type: 'login', onClick: (service: DensityService) => void }
-    // "Support": The user needs to contact support to set up the integration
-    | { type: 'support' }
-    // "Form": The user needs to fill out a custom form to activate the integration
-    | { type: 'form', component: React.FunctionComponent<{service: DensityService}> }
-  ),
-  hasSpaceMappings: boolean,
-  hasDoorwayMappings: boolean,
+function getServiceStatus(service: DensityService): ServiceStatus {
+  let status: ServiceStatus = 'inactive';
+  if (service.service_authorization.id) {
+    status = 'active';
+  }
+
+  // TODO: somehow set error status sometimes too
+  return status
 }
 
 const RobinActivationForm: React.FunctionComponent<{service: DensityService}> =  () => {
@@ -149,13 +155,8 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
   );
 }
 
-const SERVICE_PREFERENCES: {[serviceName: string]: ServicePreferences} = {
+const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPreferences} = {
   // Room Booking
-  'condeco': {
-    activationProcess: {type: 'support'},
-    hasSpaceMappings: false,
-    hasDoorwayMappings: false,
-  },
   'google_calendar': {
     activationProcess: {
       type: 'login',
@@ -214,18 +215,106 @@ const SERVICE_PREFERENCES: {[serviceName: string]: ServicePreferences} = {
   },
 };
 
+// This applies to any services that are not specified in the above list.
+const DEFAULT_SERVICE_RENDERING_PREFERENCES = {
+  activationProcess: { type: 'support' },
+  hasSpaceMappings: false,
+  hasDoorwayMappings: false,
+};
+
+function getServiceRenderingPreferences(service: DensityService): ServiceRenderingPreferences {
+  return SERVICE_RENDERING_PREFERENCES[service.name] || DEFAULT_SERVICE_RENDERING_PREFERENCES;
+}
+
 const IntegrationTypeTag: React.FunctionComponent<{}> = ({children}) => (
   <div className={styles.integrationTypeTag}>
     {children}
   </div>
 );
 
+const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+  const header = (
+    <AppBarContext.Provider value="CARD_HEADER">
+      <AppBar>
+        <AppBarTitle>Space Mappings</AppBarTitle>
+        <AppBarSection>
+          <Button variant="filled">Add</Button>
+        </AppBarSection>
+      </AppBar>
+    </AppBarContext.Provider>
+  );
+
+  switch (service.spaceMappings.status) {
+  case ResourceStatus.IDLE:
+  case ResourceStatus.LOADING:
+    return <p>Loading</p>;
+  case ResourceStatus.ERROR:
+    return <p>Error</p>;
+  case ResourceStatus.COMPLETE:
+    return (
+      <Fragment>
+        {header}
+
+        <ul>
+          {service.spaceMappings.data.map(spaceMapping => (
+            <li key={spaceMapping.service_space_id}>
+              {JSON.stringify(spaceMapping)}
+            </li>
+          ))}
+        </ul>
+
+        {/*<Button target="_blank" href={`#/admin/integrations/${service.item.name}/space-mappings`}>
+            Configure Space Mappings
+          </Button> */}
+      </Fragment>
+    );
+  }
+}
+
+const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+  const header = (
+    <AppBarContext.Provider value="CARD_HEADER">
+      <AppBar>
+        <AppBarTitle>Doorway Mappings</AppBarTitle>
+        <AppBarSection>
+          <Button variant="filled">Add</Button>
+        </AppBarSection>
+      </AppBar>
+    </AppBarContext.Provider>
+  );
+
+  switch (service.doorwayMappings.status) {
+  case ResourceStatus.IDLE:
+  case ResourceStatus.LOADING:
+    return <p>Loading</p>;
+  case ResourceStatus.ERROR:
+    return <p>Error</p>;
+  case ResourceStatus.COMPLETE:
+    return (
+      <Fragment>
+        {header}
+
+        <ul>
+          {service.doorwayMappings.data.map(doorwayMapping => (
+            <li key={doorwayMapping.id}>
+              {JSON.stringify(doorwayMapping)}
+            </li>
+          ))}
+        </ul>
+
+        {/*<Button target="_blank" href={`#/admin/integrations/${service.item.name}/doorway-mappings`}>
+          Configure Doorway Mappings
+        </Button>*/}
+      </Fragment>
+    );
+  }
+}
+
 const AdminIntegrationsDetails: React.FunctionComponent<{
   visible: boolean,
   onCloseModal: () => void,
-  service: DensityService,
-  serviceStatus: ServiceStatus,
-}> = ({ visible, onCloseModal, service, serviceStatus }) => {
+  service: SelectedService,
+}> = ({ visible, onCloseModal, service }) => {
   const [ serviceDeleteBoxText, setServiceDeleteBoxText ] = useState('');
 
   // Clear the delete box text when the visiblity of the modal changes.
@@ -233,11 +322,13 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
     setServiceDeleteBoxText('');
   }, [ visible ]);
 
+  const serviceStatus = getServiceStatus(service.item);
+
   const {
     activationProcess,
     hasDoorwayMappings,
     hasSpaceMappings,
-  } = SERVICE_PREFERENCES[service.name];
+  } = getServiceRenderingPreferences(service.item);
 
   const dispatch = useRxDispatch();
 
@@ -246,8 +337,8 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
       visible={visible}
       onBlur={onCloseModal}
       onEscape={onCloseModal}
-      width={895}
-      height={637}
+      width={1200}
+      height={895}
     >
       <div className={styles.modalWrapper}>
         <AppBar>
@@ -255,9 +346,9 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
             <img
               className={styles.modalIcon}
               alt=""
-              src={iconForIntegration(service.name)}
+              src={iconForIntegration(service.item.name)}
             />
-            {service.display_name}
+            {service.item.display_name}
           </AppBarTitle>
           <AppBarSection>
             <Button variant="underline" onClick={onCloseModal}>Close</Button>
@@ -268,25 +359,25 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
           <div className={styles.modalBodyLeft}>
             <div className={styles.modalBodyLeftHeaderRow}>
               <IntegrationTypeTag>
-                {service.category === 'Tailgating' ? 'Access Control' : service.category}
+                {service.item.category === 'Tailgating' ? 'Access Control' : service.item.category}
               </IntegrationTypeTag>
               <Status status={serviceStatus} includeLabel />
             </div>
 
             <p>lorem ipsum dolar set amet HARDCODED!</p>
 
-            {typeof service.service_authorization.id !== 'undefined' ? (() => {
-              const serviceAuthorizationUser: CoreUser = (service.service_authorization as Any<FixInRefactor>).user;
+            {typeof service.item.service_authorization.id !== 'undefined' ? (() => {
+              const serviceAuthorizationUser: CoreUser = (service.item.service_authorization as Any<FixInRefactor>).user;
               return (
                 <ul>
                   <li>
                     Added by: <strong>{serviceAuthorizationUser.full_name}</strong> ({serviceAuthorizationUser.email})
                   </li>
                   <li>
-                    Default {service.category} service: <strong>{service.service_authorization.default ? 'Yes' : 'No'}</strong>
-                    {!service.service_authorization.default ? (
+                    Default {service.item.category} service: <strong>{service.item.service_authorization.default ? 'Yes' : 'No'}</strong>
+                    {!service.item.service_authorization.default ? (
                       <Button onClick={() => {
-                        collectionServiceAuthorizationMakeDefault(dispatch, service.service_authorization.id).then(response => {
+                        collectionServiceAuthorizationMakeDefault(dispatch, service.item.service_authorization.id).then(response => {
                           updateModal(dispatch, { service: {...service, service_authorization: response.data} });
                         });
                       }}>Make Default</Button>
@@ -303,12 +394,12 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                 {activationProcess.type === 'login' ? (
                   <EmptyCard
                     actions={
-                      <Button onClick={() => activationProcess.onClick(service)}>
-                        Log in to {service.display_name}
+                      <Button onClick={() => activationProcess.onClick(service.item)}>
+                        Log in to {service.item.display_name}
                       </Button>
                     }
                   >
-                    You need to log in to your <strong>{service.display_name}</strong> account before
+                    You need to log in to your <strong>{service.item.display_name}</strong> account before
                     you can start configuring this integration.
                   </EmptyCard>
                 ) : null}
@@ -321,7 +412,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
 
                 {activationProcess.type === 'form' ? (() => {
                   const Component = activationProcess.component;
-                  return <Component service={service} />;
+                  return <Component service={service.item} />;
                 })() : null}
               </Fragment>
             ) : null}
@@ -336,16 +427,12 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   Everything is operating as expected.
                 </p>
 
-                {hasDoorwayMappings ? (
-                  <Button target="_blank" href={`#/admin/integrations/${service.name}/doorway-mappings`}>
-                    Configure Doorway Mappings
-                  </Button>
+                {hasSpaceMappings ? (
+                  <SpaceMappings service={service} />
                 ) : null}
 
-                {hasSpaceMappings ? (
-                  <Button target="_blank" href={`#/admin/integrations/${service.name}/space-mappings`}>
-                    Configure Space Mappings
-                  </Button>
+                {hasDoorwayMappings ? (
+                  <DoorwayMappings service={service} />
                 ) : null}
 
                 <AppBarContext.Provider value="CARD_HEADER">
@@ -357,23 +444,23 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   Remove this integration - once removed, it must be
                   re-setup again to re-enable.
               
-                  Enter "{service.display_name}" into the box below, and click delete to remove:
+                  Enter "{service.item.display_name}" into the box below, and click delete to remove:
                   <InputBox type="text" value={serviceDeleteBoxText} onChange={e => setServiceDeleteBoxText(e.target.value)} />
 
                   <Button
-                    disabled={serviceDeleteBoxText !== service.display_name}
+                    disabled={serviceDeleteBoxText !== service.item.display_name}
                     type="danger"
                     onClick={() => {
                       hideModal(dispatch);
-                      collectionServiceAuthorizationDestroy(dispatch, service.service_authorization.id).then(ok => {
+                      collectionServiceAuthorizationDestroy(dispatch, service.item.service_authorization.id).then(ok => {
                         if (ok) {
                           showToast(dispatch, {
-                            text: `Removed ${service.display_name} integration.`,
+                            text: `Removed ${service.item.display_name} integration.`,
                           });
                         } else {
                           showToast(dispatch, {
                             type: 'error',
-                            text: `Failed to remove ${service.display_name} integration.`,
+                            text: `Failed to remove ${service.item.display_name} integration.`,
                           });
                         }
                       })
@@ -383,7 +470,6 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
               </Fragment>
             ): null}
           </div>
-
         </div>
       </div>
     </Modal>
@@ -470,8 +556,7 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
           <AdminIntegrationsDetails
             visible={activeModal.visible}
             onCloseModal={onCloseModal}
-            service={activeModal.data.service}
-            serviceStatus={activeModal.data.serviceStatus}
+            service={integrations.selectedService as SelectedService}
           />
         ) : null}
 
@@ -486,12 +571,6 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
               {services.length > 0 ? (
                 <div className={styles.cardList}>
                   {services.sort((a, b) => a.display_name.localeCompare(b.display_name)).map(service => {
-                    let status: ServiceStatus = 'inactive';
-                    if (service.service_authorization.id) {
-                      status = 'active';
-                    }
-                    // TODO: somehow set error status sometimes too
-
                     return (
                       <div
                         className={styles.card}
@@ -499,7 +578,7 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
                         tabIndex={0}
                         aria-label={service.display_name}
                         role="button"
-                        onClick={() => onOpenModal('integration-details', { service, serviceStatus: status })}
+                        onClick={() => openService(dispatch, service, getServiceRenderingPreferences(service))}
                       >
                         <div className={styles.row}>
                           <img
@@ -507,7 +586,7 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
                             alt=""
                             src={iconForIntegration(service.name)}
                           />
-                          <Status hideInactiveIcon status={status} />
+                          <Status hideInactiveIcon status={getServiceStatus(service)} />
                         </div>
                         <h3 className={styles.header}>{service.display_name}</h3>
                         <p>lorem ipsum dolar set amet HARDCODED!</p>

@@ -31,7 +31,8 @@ import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
 import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
-import IntegrationsStore, { IntegrationsState } from '../../rx-stores/integrations';
+import IntegrationsStore from '../../rx-stores/integrations';
+import { IntegrationsState } from '../../types/integrations';
 
 export class AdminSpaceMappings extends React.Component<{
   spaces: SpacesLegacyState['data'],

@@ -4,8 +4,8 @@ import { DensityService, DensityServiceSpace } from '../../types';
 import core from '../../client/core';
 
 import collectionServiceSpacesSet from '../collection/service-spaces/set';
-import collectionServicesError from '../collection/services/error';
-import collectionServicesSet from '../collection/services/set';
+// import collectionServicesError from '../collection/services/error';
+// import collectionServicesSet from '../collection/services/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS = 'ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS';
@@ -23,11 +23,11 @@ export default async function routeTransitionAdminSpaceMappings(dispatch, servic
   }
 
   if (servicesError) {
-    dispatch(collectionServicesError('Could not find third party integrations.'));
+    // dispatch(collectionServicesError('Could not find third party integrations.'));
     return false;
   } else {
     const services = response.data as Array<DensityService>;
-    dispatch(collectionServicesSet(services));
+    // dispatch(collectionServicesSet(services));
     const service = services.find(service => service.name === serviceName)
     fetchAllServiceSpaces(dispatch, service);
   }

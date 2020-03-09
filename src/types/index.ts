@@ -167,6 +167,7 @@ export type DensityBrivoSite = {
 
 // Service
 export type DensityService = {
+  id: string,
   name: string,
   display_name: string,
   category: string,

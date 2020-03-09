@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import { Icons } from '@density/ui/src';
 
-export type ServiceStatus = 'active' | 'error' | 'inactive';
+import { ServiceStatus } from '../../types/integrations';
 
 const STATUS_TO_LABEL = {
   active: 'Active',

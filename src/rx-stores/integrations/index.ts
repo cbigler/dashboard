@@ -1,8 +1,5 @@
 import { DensityServiceSpace, DensityService } from '../../types';
 
-import { COLLECTION_SERVICES_SET } from '../../rx-actions/collection/services/set';
-import { COLLECTION_SERVICES_ERROR } from '../../rx-actions/collection/services/error';
-
 import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../rx-actions/collection/service-authorizations/create';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../rx-actions/collection/service-authorizations/update';
 import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../rx-actions/collection/service-authorizations/destroy';
@@ -16,32 +13,22 @@ import {
   INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../rx-actions/integrations/room-booking';
 
-import { Resource, RESOURCE_IDLE, ResourceStatus } from '../../types/resource';
+import { Resource, RESOURCE_IDLE, RESOURCE_LOADING, ResourceStatus } from '../../types/resource';
 
 import createRxStore from '..';
 
+import { 
+  IntegrationsState,
+} from '../../types/integrations';
+
 
 type ViewState = 'LOADING' | 'VISIBLE' | 'COMPLETE' | 'ERROR';
-
-export type IntegrationsState = {
-  services: Resource<Array<DensityService>>,
-
-  roomBooking: {
-    view: ViewState,
-    service: DensityService | null,
-  },
-
-  spaceMappingsPage: {
-    view: ViewState,
-    error: unknown,
-    loading: boolean,
-    service: DensityService | null,
-    serviceSpaces: DensityServiceSpace[],
-  }
-}
-
 const initialState: IntegrationsState = {
   services: RESOURCE_IDLE,
+
+  selectedService: {
+    item: null,
+  },
 
   roomBooking: {
     view: 'LOADING',
@@ -59,7 +46,13 @@ const initialState: IntegrationsState = {
 
 export function integrationsReducer(state: IntegrationsState, action: Any<FixInRefactor>): IntegrationsState {
   switch (action.type) {
-  case COLLECTION_SERVICES_SET:
+  case 'INTEGRATIONS_LOAD_START':
+    return {
+      ...state,
+      services: RESOURCE_LOADING,
+    };
+
+  case 'INTEGRATIONS_LOAD_COMPLETE':
     return {
       ...state,
       services: {
@@ -67,7 +60,8 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         data: action.data,
       },
     };
-   case COLLECTION_SERVICES_ERROR:
+
+  case 'INTEGRATIONS_LOAD_ERROR':
     return {
       ...state,
       services: {
@@ -76,6 +70,107 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     };
 
+  case 'INTEGRATIONS_SERVICE_OPEN':
+    return {
+      ...state,
+      selectedService: {
+        item: action.service,
+        spaceMappings: RESOURCE_IDLE,
+        doorwayMappings: RESOURCE_IDLE,
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_CLOSE':
+    return {
+      ...state,
+      selectedService: {
+        item: null,
+      },
+    }
+  }
+
+  if (state.selectedService.item === null) { return state; }
+
+  switch (action.type) {
+
+  //
+  // SPACE MAPPINGS
+  //
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_START':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+        spaceMappings: RESOURCE_LOADING,
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: action.spaceMappings,
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ERROR':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.ERROR,
+          error: action.error,
+        },
+      },
+    }
+
+  //
+  // DOORWAY MAPPINGS
+  //
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_START':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+        doorwayMappings: RESOURCE_LOADING,
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_COMPLETE':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: action.doorwayMappings,
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_ERROR':
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.ERROR,
+          error: action.error,
+        },
+      },
+    }
+  }
+
+  switch (action.type) {
   // An async action has started.
   case COLLECTION_SERVICE_AUTHORIZATIONS_CREATE:
   case COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE:

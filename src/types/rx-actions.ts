@@ -9,6 +9,7 @@ import { DoorwayAction } from '../rx-actions/doorways';
 import { SpaceAction } from '../rx-actions/spaces';
 import { SpacesPageAction } from '../rx-actions/spaces-page';
 import { SensorAction } from '../rx-actions/sensors';
+import { IntegrationsAction } from '../rx-actions/integrations';
 
 export type GlobalAction =
   | ReduxAction
@@ -22,6 +23,7 @@ export type GlobalAction =
   | SensorAction
   | SpaceAction
   | SpacesPageAction
+  | IntegrationsAction
 ;
 
 export type DispatchType = (action: GlobalAction) => void;

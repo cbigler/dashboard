@@ -4,8 +4,8 @@ import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 import { DensityService, DensityBrivoSite } from '../../types';
 import core from '../../client/core';
 
-import collectionServicesError from '../collection/services/error';
-import collectionServicesSet from '../collection/services/set';
+// import collectionServicesError from '../collection/services/error';
+// import collectionServicesSet from '../collection/services/set';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
 export const ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS = 'ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS';
@@ -25,11 +25,11 @@ export default async function routeTransitionAdminBrivoMappings(dispatch) {
   }
 
   if (servicesError) {
-    dispatch(collectionServicesError('Could not find third party integrations.'));
+    // dispatch(collectionServicesError('Could not find third party integrations.'));
     return false;
   } else {
-    const services = response.data as Array<DensityService>;
-    dispatch(collectionServicesSet(services));
+    // const services = response.data as Array<DensityService>;
+    // dispatch(collectionServicesSet(services));
     fetchAllBrivoSites(dispatch);
   }
 }
