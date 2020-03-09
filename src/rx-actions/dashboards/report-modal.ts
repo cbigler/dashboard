@@ -64,10 +64,7 @@ export async function rerenderReportInReportModal(
 ) {
   clearPreviewReportData(dispatch);
 
-  // TODO: until we have designs for "partial days", dashboards default to yesterday
-  const currentDate = dashboardDate ?
-    moment(dashboardDate).format('YYYY-MM-DD') :
-    moment().subtract(1, 'day').format('YYYY-MM-DD');
+  const currentDate = moment(dashboardDate || undefined).format('YYYY-MM-DD');
 
   calculateReportData(
     dispatch,

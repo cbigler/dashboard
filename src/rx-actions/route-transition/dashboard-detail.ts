@@ -52,11 +52,7 @@ async function loadDashboardAndReports(dispatch, id) {
   
   // FIXME: imperative get state
   const miscellaneous = MiscellaneousStore.imperativelyGetValue();
-  // TODO: until we have designs for "partial days", dashboards default to yesterday
-  const dashboardDate = miscellaneous.dashboardDate ?
-    moment(miscellaneous.dashboardDate).format('YYYY-MM-DD') :
-    moment().subtract(1, 'day').format('YYYY-MM-DD');
-  dispatch(setDashboardDate(dashboardDate));
+  const dashboardDate = moment(miscellaneous.dashboardDate || undefined).format('YYYY-MM-DD');
 
   // FIXME: need to imperatively get the state for now...
   const dashboardsState = DashboardsStore.imperativelyGetValue();
