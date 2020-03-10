@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   DensityService,
   DensityServiceSpace,
@@ -82,17 +83,28 @@ export type ServiceRenderingPreferences = {
     | { enabled: false }
     | {
       enabled: true,
+
       // What are they called in the third party system? Spaces? Calendars? Regions?
       serviceSpaceResourceName: string,
+
+      // Some welcome text to show when there are no doorway mappings
+      welcomeInstructions?: React.ReactNode,
     }
   ),
   doorwayMappings: (
     | { enabled: false }
     | {
       enabled: true,
+
+      // Doorway mappings are a lot less abstract, and there's no standard way to get "service doorways" like there are
+      // with space mappings. Define a function to "parameterize" this functionality.
       fetchServiceDoorways: (service: DensityService) => Promise<Array<AbstractServiceDoorway>>,
+
       // What are they called in the third party system? Doorways? Portals? Access points? Cased openings?
       serviceDoorwayResourceName: string,
+
+      // Some welcome text to show when there are no doorway mappings
+      welcomeInstructions?: React.ReactNode,
     }
   )
 }

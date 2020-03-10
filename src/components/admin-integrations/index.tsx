@@ -200,6 +200,12 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     spaceMappings: {
       enabled: true,
       serviceSpaceResourceName: 'Space',
+      welcomeInstructions: (
+        <div>
+          <h3>You haven't connected your Brivo Spaces and Density Spaces</h3>
+          <p>Please do this below.</p>
+        </div>
+      ),
     },
     doorwayMappings: {enabled: false},
   },
@@ -254,6 +260,14 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
         return accessPointsBySite.flat();
       },
       serviceDoorwayResourceName: 'Access Point',
+      welcomeInstructions: (
+        <div className={styles.brivoWelcome}>
+          <div>
+            <h3>You haven't mapped any access points.</h3>
+            <p>In order to set up your access control integration, you need to tie together Density Doorways and Brivo Access Points.</p>
+          </div>
+        </div>
+      ),
     },
   },
 };
@@ -291,14 +305,16 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
       <AppBar>
         <AppBarTitle>Space Mappings</AppBarTitle>
         <AppBarSection>
-          <InputBox
-            type="text"
-            placeholder="Search for space mapping"
-            leftIcon={<Icons.Search />}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            width={300}
-          />
+          {service.doorwayMappings.status === ResourceStatus.COMPLETE && service.doorwayMappings.data.doorwayMappings.length > 0 ? (
+            <InputBox
+              type="text"
+              placeholder="Search for space mapping"
+              leftIcon={<Icons.Search />}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              width={300}
+            />
+          ) : null}
         </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>
@@ -379,6 +395,11 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
     return (
       <Fragment>
         {header}
+
+        {/* If there are special instructions when no doorway mappings exist, render them */}
+        {service.spaceMappings.data.spaceMappings.length === 0 ? (
+          serviceRenderingPreferences.spaceMappings.welcomeInstructions
+        ) : null}
 
         <ListView
           padOuterColumns
@@ -507,14 +528,16 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
       <AppBar>
         <AppBarTitle>Doorway Mappings</AppBarTitle>
         <AppBarSection>
-          <InputBox
-            type="text"
-            placeholder="Search for doorway mapping"
-            leftIcon={<Icons.Search />}
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-            width={300}
-          />
+          {service.doorwayMappings.status === ResourceStatus.COMPLETE && service.doorwayMappings.data.doorwayMappings.length > 0 ? (
+            <InputBox
+              type="text"
+              placeholder="Search for doorway mapping"
+              leftIcon={<Icons.Search />}
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              width={300}
+            />
+          ) : null}
         </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>
@@ -568,6 +591,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
         <p>Error</p>
       </Fragment>
     );
+
   case ResourceStatus.COMPLETE:
     const serviceDoorwayChoices = service.doorwayMappings.data.serviceDoorways
         .map(d => ({id: d.id, label: d.name}));
@@ -595,6 +619,11 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
     return (
       <Fragment>
         {header}
+
+        {/* If there are special instructions when no doorway mappings exist, render them */}
+        {service.doorwayMappings.data.doorwayMappings.length === 0 ? (
+          serviceRenderingPreferences.doorwayMappings.welcomeInstructions
+        ) : null}
 
         <ListView
           padOuterColumns
