@@ -107,6 +107,9 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     }
 
   case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    const selectedServiceId = state.selectedService.item.id;
+
     return {
       ...state,
       selectedService: {
@@ -115,7 +118,9 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         spaceMappings: {
           status: ResourceStatus.COMPLETE,
           data: {
-            spaceMappings: action.spaceMappings,
+            spaceMappings: action.spaceMappings
+              .filter(i => i.service_id === selectedServiceId)
+              .map(i => ({...i, status: 'CLEAN' as const})),
             serviceSpaces: action.serviceSpaces,
             hierarchy: action.hierarchy,
 
@@ -135,6 +140,32 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         spaceMappings: {
           status: ResourceStatus.ERROR,
           error: action.error,
+        },
+      },
+    }
+
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_BEGIN_LOADING':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            spaceMappings: state.selectedService.spaceMappings.data.spaceMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'LOADING' as const };
+              } else {
+                return sm;
+              }
+            }),
+          }
         },
       },
     }
@@ -180,8 +211,8 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
 
     // Ensure both density space id and service space id were set
-    const data = state.selectedService.spaceMappings.data;
-    if (data.newSpaceId === null || data.newServiceSpaceId === null) {
+    const spaceData = state.selectedService.spaceMappings.data;
+    if (spaceData.newSpaceId === null || spaceData.newServiceSpaceId === null) {
       return state;
     }
 
@@ -197,15 +228,111 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
             newSpaceId: null,
             newServiceSpaceId: null,
             spaceMappings: [
-              ...data.spaceMappings,
+              ...spaceData.spaceMappings,
               {
-                id: '',
+                id: action.id,
                 service_id: state.selectedService.item.id,
-                space_id: data.newSpaceId,
-                service_space_id: data.newServiceSpaceId,
+                space_id: action.spaceId,
+                service_space_id: action.serviceSpaceId,
+                status: 'CLEAN',
               },
             ],
           }
+        },
+      },
+    }
+
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_UPDATE_CHANGE_DENSITY_SPACE_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            spaceMappings: state.selectedService.spaceMappings.data.spaceMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'DIRTY' as const, space_id: action.spaceId }
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_UPDATE_CHANGE_SERVICE_SPACE_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            spaceMappings: state.selectedService.spaceMappings.data.spaceMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'DIRTY' as const, service_space_id: action.serviceSpaceId }
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_UPDATE_COMPLETE':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            spaceMappings: state.selectedService.spaceMappings.data.spaceMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'CLEAN' as const };
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_DELETE_COMPLETE':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        spaceMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.spaceMappings.data,
+            spaceMappings: state.selectedService.spaceMappings.data.spaceMappings.filter(sm => sm.id !== action.id),
+          },
         },
       },
     }
@@ -233,6 +360,9 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
           data: {
             doorwayMappings: action.doorwayMappings,
             serviceDoorways: action.serviceDoorways,
+            doorways: action.doorways,
+            newDoorwayId: null,
+            newServiceDoorwayId: null,
           },
         },
       },
@@ -247,6 +377,198 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         doorwayMappings: {
           status: ResourceStatus.ERROR,
           error: action.error,
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_BEGIN_LOADING':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            doorwayMappings: state.selectedService.doorwayMappings.data.doorwayMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'LOADING' as const };
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_CHANGE_NEW_DENSITY_DOORWAY_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            newDoorwayId: action.value,
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_CHANGE_NEW_SERVICE_DOORWAY_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            newServiceDoorwayId: action.value,
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_ADD':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    // Ensure both density doorway id and service doorway id were set
+    const doorwayData = state.selectedService.doorwayMappings.data;
+    if (doorwayData.newDoorwayId === null || doorwayData.newServiceDoorwayId === null) {
+      return state;
+    }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            newDoorwayId: null,
+            newServiceDoorwayId: null,
+            doorwayMappings: [
+              ...doorwayData.doorwayMappings,
+              {
+                id: action.id,
+                service_id: state.selectedService.item.id,
+                doorway_id: action.doorwayId,
+                service_doorway_id: action.serviceDoorwayId,
+                status: 'CLEAN',
+              },
+            ],
+          }
+        },
+      },
+    }
+
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_UPDATE_CHANGE_DENSITY_DOORWAY_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            doorwayMappings: state.selectedService.doorwayMappings.data.doorwayMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'DIRTY' as const, doorway_id: action.doorwayId }
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_UPDATE_CHANGE_SERVICE_DOORWAY_ID':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            doorwayMappings: state.selectedService.doorwayMappings.data.doorwayMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'DIRTY' as const, service_doorway_id: action.serviceDoorwayId }
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_UPDATE_COMPLETE':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            doorwayMappings: state.selectedService.doorwayMappings.data.doorwayMappings.map(sm => {
+              if (sm.id === action.id) {
+                return { ...sm, status: 'CLEAN' as const };
+              } else {
+                return sm;
+              }
+            }),
+          }
+        },
+      },
+    }
+
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_DELETE_COMPLETE':
+    if (state.selectedService.status !== 'OPEN') { return state; }
+    if (state.selectedService.doorwayMappings.status !== ResourceStatus.COMPLETE) { return state; }
+
+    return {
+      ...state,
+      selectedService: {
+        ...state.selectedService,
+
+        doorwayMappings: {
+          status: ResourceStatus.COMPLETE,
+          data: {
+            ...state.selectedService.doorwayMappings.data,
+            doorwayMappings: state.selectedService.doorwayMappings.data.doorwayMappings.filter(sm => sm.id !== action.id),
+          },
         },
       },
     }

@@ -40,7 +40,7 @@ import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/s
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
 import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
-import { DensityService, DensitySpaceMapping, DensityDoorwayMapping } from '../../types';
+import { DensityService } from '../../types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { ResourceStatus } from '../../types/resource';
 
@@ -54,6 +54,9 @@ import {
   ServiceStatus,
   ServiceRenderingPreferences,
   SelectedService,
+
+  DensitySpaceMappingWithStatus,
+  DensityDoorwayMappingWithStatus,
 } from '../../types/integrations';
 import {
   integrationsActions,
@@ -61,11 +64,19 @@ import {
   openService,
   closeService,
   spaceMappingsAdd,
+  spaceMappingsUpdate,
+  spaceMappingsDelete,
+  doorwayMappingsAdd,
+  doorwayMappingsUpdate,
+  doorwayMappingsDelete,
 } from '../../rx-actions/integrations';
 
 import core from '../../client/core';
+import fuzzy from 'fuzzy';
 
 const filterServices = filterCollection({fields: ['display_name']});
+
+const NEW_ROW = 'NEW_ROW';
 
 function iconForIntegration(serviceName: string) {
   const iconMap = {
@@ -169,7 +180,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'calendar',
+      serviceSpaceResourceName: 'Calendar',
     },
     doorwayMappings: {enabled: false},
   },
@@ -180,7 +191,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'calendar',
+      serviceSpaceResourceName: 'Calendar',
     },
     doorwayMappings: {enabled: false},
   },
@@ -188,7 +199,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     activationProcess: { type: 'form', component: RobinActivationForm },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'space',
+      serviceSpaceResourceName: 'Space',
     },
     doorwayMappings: {enabled: false},
   },
@@ -201,7 +212,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'space',
+      serviceSpaceResourceName: 'Space',
     },
     doorwayMappings: {enabled: false},
   },
@@ -230,8 +241,19 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     spaceMappings: { enabled: false },
     doorwayMappings: {
       enabled: true,
-      fetchServiceDoorways: service => Promise.resolve([]),
-      serviceDoorwayResourceName: 'access point',
+      fetchServiceDoorways: async service => {
+        const response = await core().get(`/integrations/brivo/sites/?page=1&page_size=5000`);
+        const sites = response.data;
+        const accessPointsBySite = await Promise.all(sites.map(async site => {
+          const response = await core().get(`/integrations/brivo/sites/${site.id}/access_points/?page=1&page_size=5000`);
+          return response.data.map(accessPoint => ({
+            id: `${accessPoint.id}`,
+            name: `${site.siteName}: ${accessPoint.name}`,
+          }));
+        }));
+        return accessPointsBySite.flat();
+      },
+      serviceDoorwayResourceName: 'Access Point',
     },
   },
 };
@@ -255,16 +277,29 @@ const IntegrationTypeTag: React.FunctionComponent<{}> = ({children}) => (
 
 const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
   const dispatch = useRxDispatch();
+  const [searchText, setSearchText] = useState('');
 
   const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
   if (!serviceRenderingPreferences.spaceMappings.enabled) {
     return null;
   }
 
+  const serviceSpaceResourceName = serviceRenderingPreferences.spaceMappings.serviceSpaceResourceName;
+
   const header = (
     <AppBarContext.Provider value="CARD_HEADER">
       <AppBar>
         <AppBarTitle>Space Mappings</AppBarTitle>
+        <AppBarSection>
+          <InputBox
+            type="text"
+            placeholder="Search for space mapping"
+            leftIcon={<Icons.Search />}
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            width={300}
+          />
+        </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>
   );
@@ -272,85 +307,214 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
   switch (service.spaceMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
-    return <Fragment>
-      {header}
-      <p>Loading</p>
-    </Fragment>;
+    return (
+      <Fragment>
+        {header}
+        <ListView
+          padOuterColumns
+          data={[{id: 1}, {id: 2}]}
+        >
+          <ListViewColumn
+            id="Density Space"
+            template={() => (
+              <Skeleton width="100%" height={24} />
+            )}
+          />
+          <ListViewColumn
+            id="Arrow"
+            title=" "
+            template={() => (
+              <Icons.ArrowRight color={colorVariables.gray400} />
+            )}
+            width={50}
+          />
+          <ListViewColumn
+            id="Service Space"
+            title={`${service.item.display_name} ${serviceSpaceResourceName}`}
+            template={() => (
+              <Skeleton width="100%" height={24} />
+            )}
+          />
+          <ListViewColumn
+            id="Actions"
+            title=" "
+            width={100}
+            template={() => null}
+          />
+        </ListView>
+      </Fragment>
+    );
 
   case ResourceStatus.ERROR:
-    return <Fragment>
-      {header}
-      <p>Error</p>
-    </Fragment>;
+    return (
+      <Fragment>
+        {header}
+        <p>Error</p>
+      </Fragment>
+    );
 
   case ResourceStatus.COMPLETE:
     const spaceHierarchy = spaceHierarchyFormatter(service.spaceMappings.data.hierarchy);
     const serviceSpaceChoices = service.spaceMappings.data.serviceSpaces
         .map(s => ({ id: s.service_space_id, label: s.name }));
 
+    const spaceMappingsData = service.spaceMappings.data;
+
+    const newSpaceId = spaceMappingsData.newSpaceId,
+          newServiceSpaceId = spaceMappingsData.newServiceSpaceId;
+
+    const filterSpaceMappings = filterCollection({fields: [
+      // Since the space mapping only has the ids, we have to look up the names in the
+      // service space list and the space hierarchy.
+      spaceMapping => {
+        const result = spaceHierarchy.find(i => i.space.id === spaceMapping.space_id);
+        return result ? result.space.name : '';
+      },
+      spaceMapping => {
+        const result = serviceSpaceChoices.find(i => i.id === spaceMapping.service_space_id);
+        return result ? result.label : '';
+      },
+    ]});
+
     return (
       <Fragment>
         {header}
 
-        <ListView padOuterColumns data={service.spaceMappings.data.spaceMappings}>
+        <ListView
+          padOuterColumns
+          data={[
+            ...filterSpaceMappings(service.spaceMappings.data.spaceMappings, searchText),
+            { id: NEW_ROW },
+          ]}
+        >
           <ListViewColumn
             id="Density Space"
-            template={(spaceMapping: DensitySpaceMapping) => (
-              <SpacePickerDropdown
-                placeholder="Select Density Space"
-                value={spaceMapping.space_id}
-                onChange={e => console.log(e)}
-                formattedHierarchy={spaceHierarchy}
-              />
+            template={(spaceMapping: DensitySpaceMappingWithStatus) => (
+              spaceMapping.id === NEW_ROW ? (
+                <SpacePickerDropdown
+                  placeholder="Select Density Space"
+                  value={newSpaceId}
+                  onChange={e => dispatch(integrationsActions.spaceMappingChangeNewSpaceId(e.space.id))}
+                  formattedHierarchy={spaceHierarchy}
+                  width="100%"
+                />
+              ) : (
+                <SpacePickerDropdown
+                  placeholder="Select Density Space"
+                  value={spaceMapping.space_id}
+                  onChange={e => dispatch(integrationsActions.spaceMappingUpdateChangeDensitySpaceId(spaceMapping.id, e.space.id))}
+                  formattedHierarchy={spaceHierarchy}
+                  width="100%"
+                />
+              )
             )}
+          />
+          <ListViewColumn
+            id="Arrow"
+            title=" "
+            template={(spaceMapping: DensitySpaceMappingWithStatus) => (
+              <Icons.ArrowRight color={colorVariables.gray400} />
+            )}
+            width={50}
           />
           <ListViewColumn
             id="Service Space"
-            title={`${service.item.display_name} ${serviceRenderingPreferences.spaceMappings.serviceSpaceResourceName}`}
-            template={(spaceMapping: DensitySpaceMapping) => (
-              <InputBox
-                type="select"
-                choices={serviceSpaceChoices}
-                value={spaceMapping.service_space_id}
-                onChange={() => null}
-              />
+            title={`${service.item.display_name} ${serviceSpaceResourceName}`}
+            template={(spaceMapping: DensitySpaceMappingWithStatus) => (
+              spaceMapping.id === NEW_ROW ? (
+                <InputBox
+                  type="select"
+                  placeholder={`Select ${service.item.display_name} ${serviceSpaceResourceName}`}
+                  choices={serviceSpaceChoices}
+                  value={newServiceSpaceId}
+                  onChange={e => dispatch(integrationsActions.spaceMappingChangeServiceSpaceId(e.id))}
+                  width="100%"
+                  menuMaxHeight={300}
+                />
+              ): (
+                <InputBox
+                  type="select"
+                  choices={serviceSpaceChoices}
+                  value={spaceMapping.service_space_id}
+                  onChange={e => dispatch(integrationsActions.spaceMappingUpdateChangeServiceSpaceId(spaceMapping.id, e.id))}
+                  width="100%"
+                  menuMaxHeight={300}
+                />
+              )
+            )}
+          />
+          <ListViewColumn
+            id="Actions"
+            title=" "
+            width={100}
+            template={(spaceMapping: DensitySpaceMappingWithStatus) => (
+              spaceMapping.id === NEW_ROW ? (
+                <Button
+                  variant="filled"
+                  disabled={newSpaceId === null || newServiceSpaceId === null}
+                  onClick={() => spaceMappingsAdd(
+                    dispatch,
+                    service.item.id,
+                    newSpaceId as string,
+                    newServiceSpaceId as string
+                  )}
+                >
+                  Create
+                </Button>
+              ) : (
+                spaceMapping.status === 'DIRTY' ? (
+                  <Button
+                    variant="filled"
+                    onClick={() => spaceMappingsUpdate(
+                      dispatch,
+                      spaceMapping.id,
+                      spaceMapping.space_id,
+                      spaceMapping.service_space_id,
+                    )}
+                  >
+                    Update
+                  </Button>
+                ) : (
+                  <Button
+                    variant="underline"
+                    onClick={() => spaceMappingsDelete(dispatch, spaceMapping.id)}
+                  >
+                    Delete
+                  </Button>
+                )
+              )
             )}
           />
         </ListView>
-
-        <div style={{display: 'flex'}}>
-          <SpacePickerDropdown
-            placeholder="Select Density Space"
-            value={service.spaceMappings.data.newSpaceId}
-            onChange={e => dispatch(integrationsActions.spaceMappingChangeNewSpaceId(e.space.id))}
-            formattedHierarchy={spaceHierarchy}
-          />
-          <InputBox
-            type="select"
-            placeholder={`Select ${service.item.display_name} ${serviceRenderingPreferences.spaceMappings.serviceSpaceResourceName}`}
-            choices={serviceSpaceChoices}
-            value={service.spaceMappings.data.newServiceSpaceId}
-            onChange={e => dispatch(integrationsActions.spaceMappingChangeServiceSpaceId(e.id))}
-          />
-          <Button onClick={() => spaceMappingsAdd(dispatch)}>Add</Button>
-        </div>
       </Fragment>
     );
   }
 }
 
 const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+  const dispatch = useRxDispatch();
+  const [searchText, setSearchText] = useState('');
+
   const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
   if (!serviceRenderingPreferences.doorwayMappings.enabled) {
     return null;
   }
+
+  const serviceDoorwayResourceName = serviceRenderingPreferences.doorwayMappings.serviceDoorwayResourceName;
 
   const header = (
     <AppBarContext.Provider value="CARD_HEADER">
       <AppBar>
         <AppBarTitle>Doorway Mappings</AppBarTitle>
         <AppBarSection>
-          <Button variant="filled">Add</Button>
+          <InputBox
+            type="text"
+            placeholder="Search for doorway mapping"
+            leftIcon={<Icons.Search />}
+            value={searchText}
+            onChange={e => setSearchText(e.target.value)}
+            width={300}
+          />
         </AppBarSection>
       </AppBar>
     </AppBarContext.Provider>
@@ -359,52 +523,190 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
   switch (service.doorwayMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
-    return <Fragment>
-      {header}
-      <p>Loading</p>
-    </Fragment>;
+    return (
+      <Fragment>
+        {header}
+        <ListView
+          padOuterColumns
+          data={[{id: 1}, {id: 2}]}
+        >
+          <ListViewColumn
+            id="Density Doorway"
+            template={() => (
+              <Skeleton width="100%" height={24} />
+            )}
+          />
+          <ListViewColumn
+            id="Arrow"
+            title=" "
+            template={() => (
+              <Icons.ArrowRight color={colorVariables.gray400} />
+            )}
+            width={50}
+          />
+          <ListViewColumn
+            id="Service Doorway"
+            title={`${service.item.display_name} ${serviceDoorwayResourceName}`}
+            template={() => (
+              <Skeleton width="100%" height={24} />
+            )}
+          />
+          <ListViewColumn
+            id="Actions"
+            title=" "
+            width={100}
+            template={() => null}
+          />
+        </ListView>
+      </Fragment>
+    );
+
   case ResourceStatus.ERROR:
-    return <Fragment>
-      {header}
-      <p>Error</p>
-    </Fragment>;
+    return (
+      <Fragment>
+        {header}
+        <p>Error</p>
+      </Fragment>
+    );
   case ResourceStatus.COMPLETE:
     const serviceDoorwayChoices = service.doorwayMappings.data.serviceDoorways
         .map(d => ({id: d.id, label: d.name}));
+
+    const doorwayChoices = service.doorwayMappings.data.doorways.map(d => ({id: d.id, label: d.name}));
+
+    const filterDoorwayMappings = filterCollection({fields: [
+      // Since the doorway mapping only has the ids, we have to look up the names in the
+      // service doorway list and the doorway list.
+      (doorwayMapping: DensityDoorwayMappingWithStatus) => {
+        const result = doorwayChoices.find(i => i.id === doorwayMapping.doorway_id);
+        return result ? result.label : '';
+      },
+      (doorwayMapping: DensityDoorwayMappingWithStatus) => {
+        const result = serviceDoorwayChoices.find(i => i.id === doorwayMapping.id);
+        return result ? result.label : '';
+      },
+    ]});
+
+    const doorwayMappingsData = service.doorwayMappings.data;
+
+    const newDoorwayId = doorwayMappingsData.newDoorwayId,
+          newServiceDoorwayId = doorwayMappingsData.newServiceDoorwayId;
 
     return (
       <Fragment>
         {header}
 
-        <ListView padOuterColumns data={service.doorwayMappings.data.doorwayMappings}>
+        <ListView
+          padOuterColumns
+          data={[
+            ...filterDoorwayMappings(service.doorwayMappings.data.doorwayMappings, searchText),
+            { id: NEW_ROW },
+          ]}
+        >
           <ListViewColumn
             id="Density Doorway"
-            template={(doorwayMapping: DensityDoorwayMapping) => (
-              <InputBox
-                type="select"
-                choices={[{id: 'foo', label: 'Foo'}]}
-                value={doorwayMapping.doorway_id}
-                onChange={() => null}
-              />
+            template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
+              doorwayMapping.id === NEW_ROW ? (
+                <InputBox
+                  type="select"
+                  placeholder="Select Density Doorway"
+                  choices={doorwayChoices}
+                  width="100%"
+                  value={newDoorwayId}
+                  onChange={e => dispatch(integrationsActions.doorwayMappingChangeNewDoorwayId(e.id))}
+                  menuMaxHeight={300}
+                />
+              ) : (
+                <InputBox
+                  type="select"
+                  placeholder="Select Density Doorway"
+                  choices={doorwayChoices}
+                  width="100%"
+                  value={doorwayMapping.doorway_id}
+                  onChange={e => dispatch(integrationsActions.doorwayMappingUpdateChangeDensityDoorwayId(doorwayMapping.id, e.id))}
+                  menuMaxHeight={300}
+                />
+              )
             )}
+          />
+          <ListViewColumn
+            id="Arrow"
+            title=" "
+            template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
+              <Icons.ArrowRight color={colorVariables.gray400} />
+            )}
+            width={50}
           />
           <ListViewColumn
             id="Service Doorway"
-            title={`${service.item.display_name} ${serviceRenderingPreferences.doorwayMappings.serviceDoorwayResourceName}`}
-            template={(doorwayMapping: DensityDoorwayMapping) => (
-              <InputBox
-                type="select"
-                choices={serviceDoorwayChoices}
-                value={doorwayMapping.service_doorway_id}
-                onChange={() => null}
-              />
+            title={`${service.item.display_name} ${serviceDoorwayResourceName}`}
+            template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
+              doorwayMapping.id === NEW_ROW ? (
+                <InputBox
+                  type="select"
+                  placeholder={`Select ${service.item.display_name} ${serviceDoorwayResourceName}`}
+                  choices={serviceDoorwayChoices}
+                  value={newServiceDoorwayId}
+                  onChange={e => dispatch(integrationsActions.doorwayMappingChangeServiceDoorwayId(e.id))}
+                  width="100%"
+                  menuMaxHeight={300}
+                />
+              ): (
+                <InputBox
+                  type="select"
+                  placeholder={`Select ${service.item.display_name} ${serviceDoorwayResourceName}`}
+                  choices={serviceDoorwayChoices}
+                  value={doorwayMapping.service_doorway_id}
+                  onChange={e => dispatch(integrationsActions.doorwayMappingUpdateChangeServiceDoorwayId(doorwayMapping.id, e.id))}
+                  width="100%"
+                  menuMaxHeight={300}
+                />
+              )
+            )}
+          />
+          <ListViewColumn
+            id="Actions"
+            title=" "
+            width={100}
+            template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
+              doorwayMapping.id === NEW_ROW ? (
+                <Button
+                  variant="filled"
+                  disabled={newDoorwayId === null || newServiceDoorwayId === null}
+                  onClick={() => doorwayMappingsAdd(
+                    dispatch,
+                    service.item.id,
+                    newDoorwayId as string,
+                    newServiceDoorwayId as string
+                  )}
+                >
+                  Create
+                </Button>
+              ) : (
+                doorwayMapping.status === 'DIRTY' ? (
+                  <Button
+                    variant="filled"
+                    onClick={() => doorwayMappingsUpdate(
+                      dispatch,
+                      doorwayMapping.id,
+                      doorwayMapping.doorway_id,
+                      doorwayMapping.service_doorway_id,
+                    )}
+                  >
+                    Update
+                  </Button>
+                ) : (
+                  <Button
+                    variant="underline"
+                    onClick={() => doorwayMappingsDelete(dispatch, doorwayMapping.id)}
+                  >
+                    Delete
+                  </Button>
+                )
+              )
             )}
           />
         </ListView>
-
-        {/*<Button target="_blank" href={`#/admin/integrations/${service.item.name}/doorway-mappings`}>
-          Configure Doorway Mappings
-        </Button>*/}
       </Fragment>
     );
   }
