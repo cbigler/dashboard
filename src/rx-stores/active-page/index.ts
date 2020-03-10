@@ -10,8 +10,6 @@ import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../rx-actions/route-transiti
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../rx-actions/route-transition/dashboard-detail';
 import { ROUTE_TRANSITION_DASHBOARD_EDIT } from '../../rx-actions/route-transition/dashboard-edit';
 
-import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../rx-actions/route-transition/admin-space-mappings';
-import { ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS } from '../../rx-actions/route-transition/admin-brivo-mappings';
 import { ROUTE_TRANSITION_ADMIN_INTEGRATIONS } from '../../rx-actions/route-transition/admin-integrations';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT } from '../../rx-actions/route-transition/admin-user-management';
 import { ROUTE_TRANSITION_ADMIN_USER_MANAGEMENT_DETAIL } from '../../rx-actions/route-transition/admin-user-management-detail';
@@ -47,8 +45,6 @@ export enum ActivePage {
   ADMIN_USER_MANAGEMENT_DETAIL = 'ADMIN_USER_MANAGEMENT_DETAIL',
   ADMIN_DEVELOPER = 'ADMIN_DEVELOPER',
   ADMIN_DEVICE_STATUS = 'ADMIN_DEVICE_STATUS',
-  ADMIN_SPACE_MAPPINGS = 'ADMIN_SPACE_MAPPINGS',
-  ADMIN_BRIVO_MAPPINGS = 'ADMIN_BRIVO_MAPPINGS',
   ADMIN_INTEGRATIONS = 'ADMIN_INTEGRATIONS',
   ADMIN_LOCATIONS = 'ADMIN_LOCATIONS',
   ADMIN_LOCATIONS_EDIT = 'ADMIN_LOCATIONS_EDIT',
@@ -100,10 +96,6 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.ADMIN_DEVELOPER;
   case ROUTE_TRANSITION_ADMIN_DEVICE_STATUS:
     return ActivePage.ADMIN_DEVICE_STATUS;
-  case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
-    return ActivePage.ADMIN_SPACE_MAPPINGS;
-  case ROUTE_TRANSITION_ADMIN_BRIVO_MAPPINGS:
-    return ActivePage.ADMIN_BRIVO_MAPPINGS;
   case ROUTE_TRANSITION_ADMIN_INTEGRATIONS:
     return ActivePage.ADMIN_INTEGRATIONS;
   case ROUTE_TRANSITION_ADMIN_LOCATIONS:

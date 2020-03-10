@@ -53,8 +53,6 @@ import routeTransitionDashboardList from './rx-actions/route-transition/dashboar
 import routeTransitionDashboardDetail from './rx-actions/route-transition/dashboard-detail';
 import routeTransitionDashboardEdit from './rx-actions/route-transition/dashboard-edit';
 
-import routeTransitionAdminSpaceMappings from './rx-actions/route-transition/admin-space-mappings';
-import routeTransitionAdminBrivoMappings from './rx-actions/route-transition/admin-brivo-mappings';
 import routeTransitionAdminIntegrations from './rx-actions/route-transition/admin-integrations';
 import routeTransitionAdminIntegrationsTeem from './rx-actions/route-transition/admin-integrations-teem';
 import routeTransitionAdminIntegrationsServiceFailure from './rx-actions/route-transition/admin-integrations-service-failure';
@@ -165,8 +163,6 @@ router.addRoute('account/register/:slug', async (slug) => { (rxDispatch as Any<F
 router.addRoute('account/forgot-password/:token', async (token) => { (rxDispatch as Any<FixInReview>)(routeTransitionAccountForgotPassword(token)) });
 
 // Advanced account management (Administration)
-router.addRoute('admin/integrations/:service/space-mappings', async (service) => { routeTransitionAdminSpaceMappings(rxDispatch, service) });
-router.addRoute('admin/integrations/brivo/doorway-mappings', async (service) => { routeTransitionAdminBrivoMappings(rxDispatch) });
 router.addRoute('admin/integrations', async () => await routeTransitionAdminIntegrations(rxDispatch));
 router.addRoute('admin/integrations/brivo/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
 router.addRoute('admin/integrations/brivo/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
