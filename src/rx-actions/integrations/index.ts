@@ -93,7 +93,6 @@ export async function closeService(dispatch: DispatchType) {
 }
 
 export async function servicesList(dispatch) {
-  // dispatch(integrationsActions.loadStarted());
   let response;
   try {
     response = await core().get('/integrations/services/');
@@ -137,116 +136,6 @@ export async function serviceAuthorizationDelete(dispatch: DispatchType, service
   showToast(dispatch, {
     text: `Removed integration.`,
   });
-}
-
-export async function spaceMappingsAdd(dispatch: DispatchType, serviceId: string, spaceId: string, serviceSpaceId: string) {
-  let response, errorThrown;
-  try {
-    response = await core().post(`/integrations/space_mappings/`, {
-      "service_id": serviceId,
-      "space_id": spaceId,
-      "service_space_id": serviceSpaceId,
-    });
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.spaceMappingsAdd(response.data.id, spaceId, serviceSpaceId));
-}
-
-export async function spaceMappingsUpdate(dispatch: DispatchType, spaceMappingId: string, spaceId: string, serviceSpaceId: string) {
-  let errorThrown;
-  try {
-    await core().put(`/integrations/space_mappings/${spaceMappingId}/`, {
-      "space_id": spaceId,
-      "service_space_id": serviceSpaceId,
-    });
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.spaceMappingUpdateComplete(spaceMappingId));
-}
-
-export async function spaceMappingsDelete(dispatch: DispatchType, spaceMappingId: string) {
-  let errorThrown;
-  try {
-    await core().delete(`/integrations/space_mappings/${spaceMappingId}/`);
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.spaceMappingDeleteComplete(spaceMappingId));
-}
-
-export async function doorwayMappingsAdd(dispatch: DispatchType, serviceId: string, doorwayId: string, serviceDoorwayId: string) {
-  let response, errorThrown;
-  try {
-    response = await core().post(`/integrations/doorway_mappings/`, {
-      "service_id": serviceId,
-      "doorway_id": doorwayId,
-      "service_doorway_id": serviceDoorwayId,
-    });
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.doorwayMappingsAdd(response.data.id, doorwayId, serviceDoorwayId));
-}
-
-export async function doorwayMappingsUpdate(dispatch: DispatchType, doorwayMappingId: string, doorwayId: string, serviceDoorwayId: string) {
-  let errorThrown;
-  try {
-    await core().put(`/integrations/doorway_mappings/${doorwayMappingId}/`, {
-      "doorway_id": doorwayId,
-      "service_doorway_id": serviceDoorwayId,
-    });
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.doorwayMappingUpdateComplete(doorwayMappingId));
-}
-
-export async function doorwayMappingsDelete(dispatch: DispatchType, doorwayMappingId: string) {
-  let errorThrown;
-  try {
-    await core().delete(`/integrations/doorway_mappings/${doorwayMappingId}/`);
-  } catch (err) {
-    errorThrown = err;
-  }
-
-  if (errorThrown) {
-    console.error('ERROR', errorThrown);
-    return;
-  }
-
-  dispatch(integrationsActions.doorwayMappingDeleteComplete(doorwayMappingId));
 }
 
 export const integrationsActions = {

@@ -32,7 +32,6 @@ import condecoIcon from '../../assets/images/icon-condeco.svg';
 import brivoIcon from '../../assets/images/icon-brivo.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import updateModal from '../../rx-actions/modal/update';
 import { showToast } from '../../rx-actions/toasts';
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
 import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
@@ -64,17 +63,19 @@ import {
   servicesList,
   serviceAuthorizationDelete,
   serviceAuthorizationMakeDefault,
-
+} from '../../rx-actions/integrations';
+import {
   spaceMappingsAdd,
   spaceMappingsUpdate,
   spaceMappingsDelete,
+} from '../../rx-actions/integrations/space-mapping';
+import {
   doorwayMappingsAdd,
   doorwayMappingsUpdate,
   doorwayMappingsDelete,
-} from '../../rx-actions/integrations';
+} from '../../rx-actions/integrations/doorway-mapping';
 
 import core from '../../client/core';
-import fuzzy from 'fuzzy';
 
 const filterServices = filterCollection({fields: ['display_name']});
 
@@ -783,8 +784,6 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
 
   const {
     activationProcess,
-    doorwayMappings,
-    spaceMappings,
   } = getServiceRenderingPreferences(service);
 
   return (
