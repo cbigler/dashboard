@@ -1,7 +1,3 @@
-import {
-  INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
-} from '../../rx-actions/integrations/room-booking';
-
 import { RESOURCE_IDLE, RESOURCE_LOADING, ResourceStatus } from '../../types/resource';
 
 import createRxStore from '..';

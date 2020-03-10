@@ -34,7 +34,6 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import updateModal from '../../rx-actions/modal/update';
 import { showToast } from '../../rx-actions/toasts';
-import integrationServicesList from '../../rx-actions/integrations/services';
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
 import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
@@ -61,8 +60,11 @@ import {
 
   openService,
   closeService,
+
+  servicesList,
   serviceAuthorizationDelete,
   serviceAuthorizationMakeDefault,
+
   spaceMappingsAdd,
   spaceMappingsUpdate,
   spaceMappingsDelete,
@@ -123,7 +125,7 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
 
     closeService(dispatch);
 
-    integrationServicesList(dispatch);
+    servicesList(dispatch);
     showToast(dispatch, {
       text: `${isCreating ? 'Created' : 'Updated'} Robin Integration!`,
     });

@@ -1,4 +1,3 @@
-import integrationServicesList from '../integrations/services';
 import { showToast } from '../../rx-actions/toasts';
 
 export const ROUTE_TRANSITION_ADMIN_INTEGRATIONS = 'ROUTE_TRANSITION_ADMIN_INTEGRATIONS';
@@ -9,6 +8,5 @@ export default async function routeTransitionAdminIntegrationsServiceSuccess(dis
     text: 'Integration added!',
   });
 
-    // fetch list of all integrations
-  integrationServicesList(dispatch);
+  window.location.hash = '#/admin/integrations';
 }
