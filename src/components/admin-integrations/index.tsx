@@ -102,19 +102,17 @@ function getServiceStatus(service: DensityService): ServiceStatus {
   return status
 }
 
-const RobinActivationForm: React.FunctionComponent<{service: DensityService}> =  () => {
+const RobinActivationForm: React.FunctionComponent<{service: DensityService}> =  ({service}) => {
   const [ accessToken, setAccessToken ] = useState('');
   const [ organizationId, setOrganizationId ] = useState('');
 
   const dispatch = useRxDispatch();
 
+  // Is this form being used to set up a new service, or to re-authorize an existing service?
+  const isCreating = typeof service.service_authorization.id === 'undefined';
+
   return (
     <Fragment>
-      <AppBarContext.Provider value="CARD_HEADER">
-        <AppBar>
-          <AppBarTitle>Set up Integration</AppBarTitle>
-        </AppBar>
-      </AppBarContext.Provider>
       <div className={styles.robinActivationForm}>
         <FormLabel
           label="Robin API Token"
@@ -144,20 +142,35 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
           <AppBarSection />
           <AppBarSection>
             <ButtonGroup>
-              <Button variant="underline" onClick={() => closeService(dispatch)}>Cancel</Button>
+              {isCreating ? (
+                <Button variant="underline" onClick={() => closeService(dispatch)}>Cancel</Button>
+              ) : null}
               <Button
                 variant="filled"
                 onClick={() => {
-                  collectionServiceAuthorizationCreate(dispatch, 'robin', {
-                    credentials: {
-                      robin_access_token: accessToken,
-                      robin_organization_id: organizationId,
-                    },
+                  let promise = Promise.resolve();
+
+                  if (!isCreating) {
+                    promise = collectionServiceAuthorizationDestroy(dispatch, service.service_authorization.id)
+                      .then(ok => {
+                        if (!ok) {
+                          console.error('ERROR deleting service authorization before reinitializing service');
+                        }
+                      });
+                  }
+
+                  promise.then(() => {
+                    return collectionServiceAuthorizationCreate(dispatch, 'robin', {
+                      credentials: {
+                        robin_access_token: accessToken,
+                        robin_organization_id: organizationId,
+                      },
+                    });
                   }).then(ok => {
                     if (ok) {
                       closeService(dispatch);
                       showToast(dispatch, {
-                        text: 'Created robin integration!',
+                        text: `${isCreating ? 'Created' : 'Updated'} Robin Integration!`,
                       });
                     }
                   });
@@ -202,7 +215,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
       serviceSpaceResourceName: 'Space',
       welcomeInstructions: (
         <div>
-          <h3>You haven't connected your Brivo Spaces and Density Spaces</h3>
+          <h3>You haven't connected your Robin Spaces and Density Spaces</h3>
           <p>Please do this below.</p>
         </div>
       ),
@@ -847,7 +860,15 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
 
                 {activationProcess.type === 'form' ? (() => {
                   const Component = activationProcess.component;
-                  return <Component service={service.item} />;
+                  return <Fragment>
+                    <AppBarContext.Provider value="CARD_HEADER">
+                      <AppBar>
+                        <AppBarTitle>Set up Integration</AppBarTitle>
+                      </AppBar>
+                    </AppBarContext.Provider>
+
+                    <Component service={service.item} />
+                  </Fragment>;
                 })() : null}
               </Fragment>
             ) : null}
@@ -897,6 +918,29 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                       })
                     }}
                   >Delete</Button>
+                  
+                  {activationProcess.type === 'login' ? (
+                    <Button onClick={() => activationProcess.onClick(service.item)}>
+                      Re-authorize {service.item.display_name}
+                    </Button>
+                  ) : null}
+
+                  {activationProcess.type === 'support' ? (
+                    <p>To re-authorize this service, plaese contact support.</p>
+                  ) : null}
+
+                  {activationProcess.type === 'form' ? (() => {
+                    const Component = activationProcess.component;
+                    return <Fragment>
+                      <AppBarContext.Provider value="CARD_HEADER">
+                        <AppBar>
+                          <AppBarTitle>Re-Authorize Integration</AppBarTitle>
+                        </AppBar>
+                      </AppBarContext.Provider>
+
+                      <Component service={service.item} />
+                    </Fragment>;
+                  })() : null}
                 </div>
               </Fragment>
             ): null}
