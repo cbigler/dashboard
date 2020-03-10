@@ -32,13 +32,14 @@ export async function openService(
   dispatch(integrationsActions.openService(service));
   showModal(dispatch, INTEGRATIONS_MODAL_NAME);
 
-  if (serviceRenderingPreferences.spaceMappings.enabled) {
-    dispatch(integrationsActions.spaceMappingStart());
+  if (serviceRenderingPreferences.spaceMappings.enabled && typeof service.service_authorization.id !== 'undefined') {
+    dispatch(integrationsActions.spaceMappingLoadStart());
 
     let serviceSpaces: Array<DensityServiceSpace> = [],
         spaceMappings: Array<DensitySpaceMapping> = [],
         hierarchy: Array<CoreSpaceHierarchyNode> = [],
-        errorThrown;
+        errorThrown: any;
+
     try {
       [serviceSpaces, spaceMappings, hierarchy] = await Promise.all([
         fetchAllObjects<DensityServiceSpace>(`/integrations/${service.name}/spaces/`, { cache: false }),
@@ -50,9 +51,9 @@ export async function openService(
     }
 
     if (errorThrown) {
-      dispatch(integrationsActions.spaceMappingError(errorThrown));
+      dispatch(integrationsActions.spaceMappingLoadError(errorThrown));
     } else {
-      dispatch(integrationsActions.spaceMappingComplete(
+      dispatch(integrationsActions.spaceMappingLoadComplete(
         spaceMappings,
         serviceSpaces,
         hierarchy,
@@ -60,14 +61,15 @@ export async function openService(
     }
   }
 
-  if (serviceRenderingPreferences.doorwayMappings.enabled) {
-    dispatch(integrationsActions.doorwayMappingStart());
+  if (serviceRenderingPreferences.doorwayMappings.enabled && typeof service.service_authorization.id !== 'undefined') {
+    dispatch(integrationsActions.doorwayMappingLoadStart());
 
     // FIXME: why don't these types work?
-    let doorwayMappings: any,//Array<DensityDoorwayMapping> = [],
-        serviceDoorways: any,//Array<AbstractServiceDoorway> = [],
-        doorways: any,//Array<CoreDoorway> = [],
-        errorThrown;
+    let doorwayMappings: Any<FixInRefactor>,//Array<DensityDoorwayMapping> = [],
+        serviceDoorways: Any<FixInRefactor>,//Array<AbstractServiceDoorway> = [],
+        doorways: Any<FixInRefactor>,//Array<CoreDoorway> = [],
+        errorThrown: any;
+
     try {
       [doorways, doorwayMappings, serviceDoorways] = await Promise.all([
         fetchAllObjects<CoreDoorway>(`/doorways/`, { cache: false }),
@@ -79,10 +81,10 @@ export async function openService(
     }
 
     if (errorThrown) {
-      dispatch(integrationsActions.doorwayMappingError(errorThrown));
+      dispatch(integrationsActions.doorwayMappingLoadError(errorThrown));
     } else {
       const doorwayMappingsForService = doorwayMappings.filter(doorwayMapping => doorwayMapping.service_id === service.id);
-      dispatch(integrationsActions.doorwayMappingComplete(doorwayMappingsForService, serviceDoorways, doorways));
+      dispatch(integrationsActions.doorwayMappingLoadComplete(doorwayMappingsForService, serviceDoorways, doorways));
     }
   }
 }
@@ -102,25 +104,27 @@ export async function servicesList(dispatch) {
   }
 
   dispatch(integrationsActions.loadComplete(response.data));
+  return true;
 }
 
 export async function serviceAuthorizationMakeDefault(dispatch: DispatchType, serviceAuthorization: DensityServiceAuthorization) {
   try {
     await core().put(`/integrations/service_authorizations/${serviceAuthorization.id}/`, {'default': true});
   } catch (err) {
-    console.error('ERROR: error making service authorization default');
+    showToast(dispatch, {
+      type: 'error',
+      text: `Error updating service authorization`,
+    });
     return;
   }
 
-  servicesList(dispatch);
-  showToast(dispatch, {
-    text: `Successfully Set Default`,
-  });
+  const ok = await servicesList(dispatch);
+  if (ok) {
+    showToast(dispatch, { text: `Successfully set default` });
+  }
 }
 
 export async function serviceAuthorizationDelete(dispatch: DispatchType, serviceAuthorization: DensityServiceAuthorization) {
-  closeService(dispatch);
-
   try {
     await core().delete(`/integrations/service_authorizations/${serviceAuthorization.id}/`);
   } catch (err) {
@@ -132,10 +136,13 @@ export async function serviceAuthorizationDelete(dispatch: DispatchType, service
   }
 
   closeService(dispatch);
-  servicesList(dispatch);
-  showToast(dispatch, {
-    text: `Removed integration.`,
-  });
+
+  const ok = await servicesList(dispatch);
+  if (ok) {
+    showToast(dispatch, {
+      text: `Removed integration.`,
+    });
+  }
 }
 
 export const integrationsActions = {
@@ -162,21 +169,21 @@ export const integrationsActions = {
   //
   // SPACE MAPPINGS
   //
-  spaceMappingStart: () => ({
-    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_START' as const,
+  spaceMappingLoadStart: () => ({
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_START' as const,
   }),
-  spaceMappingComplete: (
+  spaceMappingLoadComplete: (
     spaceMappings: Array<DensitySpaceMapping>,
     serviceSpaces: Array<DensityServiceSpace>,
     hierarchy: Array<CoreSpaceHierarchyNode>
   ) => ({
-    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE' as const,
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_COMPLETE' as const,
     spaceMappings,
     serviceSpaces,
     hierarchy,
   }),
-  spaceMappingError: (error: any) => ({
-    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ERROR' as const,
+  spaceMappingLoadError: (error: any) => ({
+    type: 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_ERROR' as const,
     error,
   }),
   spaceMappingsAdd: (id: string, spaceId: string, serviceSpaceId: string) => ({
@@ -224,17 +231,17 @@ export const integrationsActions = {
   //
   // DOORWAY MAPPINGS
   //
-  doorwayMappingStart: () => ({
-    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_START' as const,
+  doorwayMappingLoadStart: () => ({
+    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_START' as const,
   }),
-  doorwayMappingComplete: (doorwayMappings: Array<DensityDoorwayMapping>, serviceDoorways: Array<AbstractServiceDoorway>, doorways: Array<CoreDoorway>) => ({
-    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_COMPLETE' as const,
+  doorwayMappingLoadComplete: (doorwayMappings: Array<DensityDoorwayMapping>, serviceDoorways: Array<AbstractServiceDoorway>, doorways: Array<CoreDoorway>) => ({
+    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_COMPLETE' as const,
     doorwayMappings,
     serviceDoorways,
     doorways,
   }),
-  doorwayMappingError: (error: any) => ({
-    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_ERROR' as const,
+  doorwayMappingLoadError: (error: any) => ({
+    type: 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_ERROR' as const,
     error,
   }),
 

@@ -28,6 +28,8 @@ export async function doorwayMappingsAdd(dispatch: DispatchType, serviceId: stri
 }
 
 export async function doorwayMappingsUpdate(dispatch: DispatchType, doorwayMappingId: string, doorwayId: string, serviceDoorwayId: string) {
+  dispatch(integrationsActions.doorwayMappingBeginLoading(doorwayMappingId));
+
   let errorThrown;
   try {
     await core().put(`/integrations/doorway_mappings/${doorwayMappingId}/`, {
@@ -50,6 +52,8 @@ export async function doorwayMappingsUpdate(dispatch: DispatchType, doorwayMappi
 }
 
 export async function doorwayMappingsDelete(dispatch: DispatchType, doorwayMappingId: string) {
+  dispatch(integrationsActions.doorwayMappingBeginLoading(doorwayMappingId));
+
   let errorThrown;
   try {
     await core().delete(`/integrations/doorway_mappings/${doorwayMappingId}/`);

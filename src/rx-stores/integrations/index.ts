@@ -77,6 +77,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
     }
   }
 
+  // All actions below this point only do something when a service is selected.
   if (state.selectedService.status !== 'OPEN') { return state; }
 
   switch (action.type) {
@@ -84,7 +85,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
   //
   // SPACE MAPPINGS
   //
-  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_START':
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_START':
     return {
       ...state,
       selectedService: {
@@ -93,7 +94,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     }
 
-  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE':
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_COMPLETE':
     if (state.selectedService.status !== 'OPEN') { return state; }
     const selectedServiceId = state.selectedService.id;
 
@@ -118,7 +119,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     }
 
-  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_ERROR':
+  case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_LOAD_ERROR':
     return {
       ...state,
       selectedService: {
@@ -130,7 +131,6 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         },
       },
     }
-
 
   case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_BEGIN_LOADING':
     if (state.selectedService.status !== 'OPEN') { return state; }
@@ -229,7 +229,6 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     }
 
-
   case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_UPDATE_CHANGE_DENSITY_SPACE_ID':
     if (state.selectedService.status !== 'OPEN') { return state; }
     if (state.selectedService.spaceMappings.status !== ResourceStatus.COMPLETE) { return state; }
@@ -327,7 +326,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
   //
   // DOORWAY MAPPINGS
   //
-  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_START':
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_START':
     return {
       ...state,
       selectedService: {
@@ -336,7 +335,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     }
 
-  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_COMPLETE':
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_COMPLETE':
     return {
       ...state,
       selectedService: {
@@ -355,7 +354,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       },
     }
 
-  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_ERROR':
+  case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_LOAD_ERROR':
     return {
       ...state,
       selectedService: {
@@ -464,7 +463,6 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         },
       },
     }
-
 
   case 'INTEGRATIONS_SERVICE_DOORWAY_MAPPINGS_UPDATE_CHANGE_DENSITY_DOORWAY_ID':
     if (state.selectedService.status !== 'OPEN') { return state; }

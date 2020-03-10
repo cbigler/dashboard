@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import styles from './styles.module.scss';
+import moment from 'moment';
 
 import {
   AppBar,
@@ -18,8 +19,6 @@ import {
 } from '@density/ui/src';
 import FormLabel from '../form-label';
 import { SpacePickerDropdown } from '../space-picker';
-import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
-
 import Status from './status';
 import EmptyCard from './empty-card';
 
@@ -32,17 +31,10 @@ import condecoIcon from '../../assets/images/icon-condeco.svg';
 import brivoIcon from '../../assets/images/icon-brivo.svg';
 import colorVariables from '@density/ui/variables/colors.json';
 
-import { showToast } from '../../rx-actions/toasts';
-import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
-import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
-
-import { DensityService } from '../../types';
-import { CoreUser } from '@density/lib-api-types/core-v2/users';
-import { ResourceStatus } from '../../types/resource';
-
 import useRxStore from '../../helpers/use-rx-store';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import filterCollection from '../../helpers/filter-collection';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 
 import ActiveModalStore from '../../rx-stores/active-modal';
 import IntegrationsStore from '../../rx-stores/integrations';
@@ -54,6 +46,13 @@ import {
   DensitySpaceMappingWithStatus,
   DensityDoorwayMappingWithStatus,
 } from '../../types/integrations';
+import { DensityService } from '../../types';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
+import { ResourceStatus } from '../../types/resource';
+
+import { showToast } from '../../rx-actions/toasts';
+import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
+import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 import {
   integrationsActions,
 
@@ -81,7 +80,11 @@ const filterServices = filterCollection({fields: ['display_name']});
 
 const NEW_ROW = 'NEW_ROW';
 
-function iconForIntegration(serviceName: string) {
+// If an integration hasn't synced successfully in this number of seconds,
+// consider it broken.
+const OLD_SYNC_THRESHOLD_SECONDS = 86400 * 7; // One UTC week
+
+function iconSrcForIntegration(serviceName: string) {
   const iconMap = {
     'google_calendar': googleCalendarIcon,
     'outlook': outlookIcon,
@@ -96,13 +99,28 @@ function iconForIntegration(serviceName: string) {
 }
 
 function getServiceStatus(service: DensityService): ServiceStatus {
-  let status: ServiceStatus = 'inactive';
   if (service.service_authorization.id) {
-    status = 'active';
-  }
+    // If the sync has never run, well... it's unclear what to do here.
+    //
+    // Some services don't seem to implement "syncing" behavior (brivo...)
+    // To be on the safe side, show "active" status.
+    const lastSync = service.service_authorization.last_sync;
+    if (lastSync === null) {
+      return 'active' as const;
+    }
 
-  // TODO: somehow set error status sometimes too
-  return status
+    // If the last sync is really old, it's also not working.
+    const lastSyncIsOld = moment.utc(lastSync).isBefore(
+      moment.utc().subtract(OLD_SYNC_THRESHOLD_SECONDS, 'seconds')
+    );
+    if (lastSyncIsOld) {
+      return 'error' as const;
+    }
+
+    return 'active' as const;
+  } else {
+    return 'inactive' as const;
+  }
 }
 
 const RobinActivationForm: React.FunctionComponent<{service: DensityService}> =  ({service}) => {
@@ -214,7 +232,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     activationProcess: { type: 'form', component: RobinActivationForm },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'Space',
+      serviceSpaceResourceName: 'Robin Space',
       welcomeInstructions: (
         <div>
           <h3>You haven't connected your Robin Spaces and Density Spaces</h3>
@@ -233,7 +251,7 @@ const SERVICE_RENDERING_PREFERENCES: {[serviceName: string]: ServiceRenderingPre
     },
     spaceMappings: {
       enabled: true,
-      serviceSpaceResourceName: 'Space',
+      serviceSpaceResourceName: 'Teem Space',
     },
     doorwayMappings: {enabled: false},
   },
@@ -361,7 +379,7 @@ const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, 
           />
           <ListViewColumn
             id="Service Space"
-            title={`${service.display_name} ${serviceSpaceResourceName}`}
+            title={serviceSpaceResourceName}
             template={() => (
               <Skeleton width="100%" height={24} />
             )}
@@ -455,12 +473,12 @@ const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, 
           />
           <ListViewColumn
             id="Service Space"
-            title={`${service.display_name} ${serviceSpaceResourceName}`}
+            title={serviceSpaceResourceName}
             template={(spaceMapping: DensitySpaceMappingWithStatus) => (
               spaceMapping.id === NEW_ROW ? (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.display_name} ${serviceSpaceResourceName}`}
+                  placeholder={`Select ${serviceSpaceResourceName}`}
                   choices={serviceSpaceChoices}
                   value={newServiceSpaceId}
                   onChange={e => dispatch(integrationsActions.spaceMappingChangeServiceSpaceId(e.id))}
@@ -470,6 +488,7 @@ const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, 
               ): (
                 <InputBox
                   type="select"
+                  placeholder={`Select ${serviceSpaceResourceName}`}
                   choices={serviceSpaceChoices}
                   value={spaceMapping.service_space_id}
                   onChange={e => dispatch(integrationsActions.spaceMappingUpdateChangeServiceSpaceId(spaceMapping.id, e.id))}
@@ -511,12 +530,16 @@ const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, 
                     Update
                   </Button>
                 ) : (
-                  <Button
-                    variant="underline"
-                    onClick={() => spaceMappingsDelete(dispatch, spaceMapping.id)}
-                  >
-                    Delete
-                  </Button>
+                  spaceMapping.status === 'LOADING' ? (
+                    <Button disabled>Loading</Button>
+                  ) : (
+                    <Button
+                      variant="underline"
+                      onClick={() => spaceMappingsDelete(dispatch, spaceMapping.id)}
+                    >
+                      Delete
+                    </Button>
+                  )
                 )
               )
             )}
@@ -584,7 +607,7 @@ const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService
           />
           <ListViewColumn
             id="Service Doorway"
-            title={`${service.display_name} ${serviceDoorwayResourceName}`}
+            title={serviceDoorwayResourceName}
             template={() => (
               <Skeleton width="100%" height={24} />
             )}
@@ -683,12 +706,12 @@ const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService
           />
           <ListViewColumn
             id="Service Doorway"
-            title={`${service.display_name} ${serviceDoorwayResourceName}`}
+            title={serviceDoorwayResourceName}
             template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
               doorwayMapping.id === NEW_ROW ? (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.display_name} ${serviceDoorwayResourceName}`}
+                  placeholder={`Select ${serviceDoorwayResourceName}`}
                   choices={serviceDoorwayChoices}
                   value={newServiceDoorwayId}
                   onChange={e => dispatch(integrationsActions.doorwayMappingChangeServiceDoorwayId(e.id))}
@@ -698,7 +721,7 @@ const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService
               ): (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.display_name} ${serviceDoorwayResourceName}`}
+                  placeholder={`Select ${serviceDoorwayResourceName}`}
                   choices={serviceDoorwayChoices}
                   value={doorwayMapping.service_doorway_id}
                   onChange={e => dispatch(integrationsActions.doorwayMappingUpdateChangeServiceDoorwayId(doorwayMapping.id, e.id))}
@@ -740,12 +763,16 @@ const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService
                     Update
                   </Button>
                 ) : (
-                  <Button
-                    variant="underline"
-                    onClick={() => doorwayMappingsDelete(dispatch, doorwayMapping.id)}
-                  >
-                    Delete
-                  </Button>
+                  doorwayMapping.status === 'LOADING' ? (
+                    <Button disabled>Loading</Button>
+                  ) : (
+                    <Button
+                      variant="underline"
+                      onClick={() => doorwayMappingsDelete(dispatch, doorwayMapping.id)}
+                    >
+                      Delete
+                    </Button>
+                  )
                 )
               )
             )}
@@ -800,7 +827,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
             <img
               className={styles.modalIcon}
               alt=""
-              src={iconForIntegration(service.name)}
+              src={iconSrcForIntegration(service.name)}
             />
             {service.display_name}
           </AppBarTitle>
@@ -818,7 +845,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
               <Status status={serviceStatus} includeLabel />
             </div>
 
-            <p>lorem ipsum dolar set amet HARDCODED!</p>
+            <p>{service.description}</p>
 
             {typeof service.service_authorization.id !== 'undefined' ? (() => {
               const serviceAuthorizationUser: CoreUser = (service.service_authorization as Any<FixInRefactor>).user;
@@ -875,22 +902,85 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   </Fragment>;
                 })() : null}
               </Fragment>
-            ) : null}
-            {serviceStatus === 'active' ? (
+            ) : (
               <Fragment>
+
+                {/*
+                  * SUMMARY SECTION
+                  */}
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
                     <AppBarTitle>Integration Summary</AppBarTitle>
                   </AppBar>
                 </AppBarContext.Provider>
                 <p style={{padding: 24}}>
-                  Everything is operating as expected.
+                  Last Sync: {service.service_authorization.last_sync ? (
+                    <Fragment>
+                      <strong>{moment(service.service_authorization.last_sync).format('MMM DD, YYYY HH:MM:SS')}</strong>
+
+                      &nbsp;
+                      ({moment.utc(service.service_authorization.last_sync).fromNow()})
+
+                      {moment.utc(service.service_authorization.last_sync).isBefore(
+                        moment.utc().subtract(OLD_SYNC_THRESHOLD_SECONDS, 'seconds')
+                      ) ? (
+                        <Fragment>- Note: this integration seems to be inresponsive. Are your credentials correct?</Fragment>
+                      ) : null}
+                    </Fragment>
+                  ) : 'Never'}
                 </p>
 
-                <SpaceMappings selectedService={selectedService} service={service} />
+                {/*
+                  * SPACE / DOORWAY MAPPINGS SECTION
+                  */}
+                {serviceStatus === 'active' ? (
+                  <Fragment>
+                    <SpaceMappings selectedService={selectedService} service={service} />
 
-                <DoorwayMappings selectedService={selectedService} service={service} />
+                    <DoorwayMappings selectedService={selectedService} service={service} />
+                  </Fragment>
+                ) : null}
 
+                {/*
+                  * REAUTHENTICATE INTEGRATION SECTION
+                  */}
+                <AppBarContext.Provider value="CARD_HEADER">
+                  <AppBar>
+                    <AppBarTitle>Reauthenticate Integration</AppBarTitle>
+                  </AppBar>
+                </AppBarContext.Provider>
+                {activationProcess.type === 'login' ? (
+                  <div style={{padding: 24}}>
+                    <p>
+                      If you'd like to change which account this integration is connected to,
+                      you can reauthenticate this integration below.
+                    </p>
+                    <Button onClick={() => activationProcess.onClick(service)}>
+                      Reauthenticate {service.display_name}
+                    </Button>
+                  </div>
+                ) : null}
+
+                {activationProcess.type === 'support' ? (
+                  <div style={{padding: 24}}>
+                    <p>
+                      If you'd like to change which account this integration is connected to,
+                      please contact Density Support.
+                    </p>
+                    <Button href="mailto:support@density.io">
+                      Contact support
+                    </Button>
+                  </div>
+                ) : null}
+
+                {activationProcess.type === 'form' ? (() => {
+                  const Component = activationProcess.component;
+                  return <Component service={service} />;
+                })() : null}
+
+                {/*
+                  * DANGER ZONE SECTION
+                  */}
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
                     <AppBarTitle>Danger Zone</AppBarTitle>
@@ -901,39 +991,23 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   re-setup again to re-enable.
               
                   Enter "{service.display_name}" into the box below, and click delete to remove:
-                  <InputBox type="text" value={serviceDeleteBoxText} onChange={e => setServiceDeleteBoxText(e.target.value)} />
+                  <InputBox
+                    type="text"
+                    width={400}
+                    placeholder={`Enter "${service.display_name}"`}
+                    value={serviceDeleteBoxText}
+                    onChange={e => setServiceDeleteBoxText(e.target.value)}
+                  />
 
                   <Button
                     disabled={serviceDeleteBoxText !== service.display_name}
                     type="danger"
                     onClick={() => serviceAuthorizationDelete(dispatch, service.service_authorization)}
                   >Delete</Button>
-                  
-                  {activationProcess.type === 'login' ? (
-                    <Button onClick={() => activationProcess.onClick(service)}>
-                      Re-authorize {service.display_name}
-                    </Button>
-                  ) : null}
-
-                  {activationProcess.type === 'support' ? (
-                    <p>To re-authorize this service, plaese contact support.</p>
-                  ) : null}
-
-                  {activationProcess.type === 'form' ? (() => {
-                    const Component = activationProcess.component;
-                    return <Fragment>
-                      <AppBarContext.Provider value="CARD_HEADER">
-                        <AppBar>
-                          <AppBarTitle>Re-Authorize Integration</AppBarTitle>
-                        </AppBar>
-                      </AppBarContext.Provider>
-
-                      <Component service={service} />
-                    </Fragment>;
-                  })() : null}
                 </div>
+
               </Fragment>
-            ): null}
+            )}
           </div>
         </div>
       </div>
@@ -1042,12 +1116,12 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
                           <img
                             className={styles.icon}
                             alt=""
-                            src={iconForIntegration(service.name)}
+                            src={iconSrcForIntegration(service.name)}
                           />
                           <Status hideInactiveIcon status={getServiceStatus(service)} />
                         </div>
                         <h3 className={styles.header}>{service.display_name}</h3>
-                        <p>lorem ipsum dolar set amet HARDCODED!</p>
+                        <p>{service.description}</p>
                       </div>
                     );
                   })}

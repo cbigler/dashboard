@@ -27,6 +27,8 @@ export async function spaceMappingsAdd(dispatch: DispatchType, serviceId: string
 }
 
 export async function spaceMappingsUpdate(dispatch: DispatchType, spaceMappingId: string, spaceId: string, serviceSpaceId: string) {
+  dispatch(integrationsActions.spaceMappingBeginLoading(spaceMappingId));
+
   let errorThrown;
   try {
     await core().put(`/integrations/space_mappings/${spaceMappingId}/`, {
@@ -49,6 +51,8 @@ export async function spaceMappingsUpdate(dispatch: DispatchType, spaceMappingId
 }
 
 export async function spaceMappingsDelete(dispatch: DispatchType, spaceMappingId: string) {
+  dispatch(integrationsActions.spaceMappingBeginLoading(spaceMappingId));
+
   let errorThrown;
   try {
     await core().delete(`/integrations/space_mappings/${spaceMappingId}/`);
