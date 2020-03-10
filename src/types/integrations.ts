@@ -21,10 +21,10 @@ type MappingStatus = 'CLEAN' | 'DIRTY' | 'LOADING';
 export type DensitySpaceMappingWithStatus = DensitySpaceMapping & { status: MappingStatus };
 export type DensityDoorwayMappingWithStatus = DensityDoorwayMapping & { status: MappingStatus };
 
-type SelectedServiceEmpty = { status: 'CLOSED', item: null };
+type SelectedServiceEmpty = { status: 'CLOSED', id: null };
 export type SelectedService = {
   status: 'OPEN',
-  item: DensityService,
+  id: DensityService['id'],
 
   spaceMappings: Resource<{
     spaceMappings: Array<DensitySpaceMappingWithStatus>,

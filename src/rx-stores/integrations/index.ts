@@ -1,12 +1,3 @@
-import { COLLECTION_SERVICE_AUTHORIZATIONS_CREATE } from '../../rx-actions/collection/service-authorizations/create';
-import { COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE } from '../../rx-actions/collection/service-authorizations/update';
-import { COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY } from '../../rx-actions/collection/service-authorizations/destroy';
-
-import { COLLECTION_SERVICE_SPACES_SET } from '../../rx-actions/collection/service-spaces/set';
-import { COLLECTION_SERVICE_SPACES_ERROR } from '../../rx-actions/collection/service-spaces/error';
-
-import { ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS } from '../../rx-actions/route-transition/admin-space-mappings';
-
 import {
   INTEGRATIONS_ROOM_BOOKING_SET_SERVICE,
 } from '../../rx-actions/integrations/room-booking';
@@ -26,7 +17,7 @@ const initialState: IntegrationsState = {
 
   selectedService: {
     status: 'CLOSED',
-    item: null,
+    id: null,
   },
 
   roomBooking: {
@@ -74,7 +65,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       ...state,
       selectedService: {
         status: 'OPEN',
-        item: action.service,
+        id: action.service.id,
         spaceMappings: RESOURCE_IDLE,
         doorwayMappings: RESOURCE_IDLE,
       },
@@ -85,7 +76,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
       ...state,
       selectedService: {
         status: 'CLOSED',
-        item: null,
+        id: null,
       },
     }
   }
@@ -108,7 +99,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
 
   case 'INTEGRATIONS_SERVICE_SPACE_MAPPINGS_COMPLETE':
     if (state.selectedService.status !== 'OPEN') { return state; }
-    const selectedServiceId = state.selectedService.item.id;
+    const selectedServiceId = state.selectedService.id;
 
     return {
       ...state,
@@ -231,7 +222,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
               ...spaceData.spaceMappings,
               {
                 id: action.id,
-                service_id: state.selectedService.item.id,
+                service_id: state.selectedService.id,
                 space_id: action.spaceId,
                 service_space_id: action.serviceSpaceId,
                 status: 'CLEAN',
@@ -467,7 +458,7 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
               ...doorwayData.doorwayMappings,
               {
                 id: action.id,
-                service_id: state.selectedService.item.id,
+                service_id: state.selectedService.id,
                 doorway_id: action.doorwayId,
                 service_doorway_id: action.serviceDoorwayId,
                 status: 'CLEAN',
@@ -572,56 +563,6 @@ export function integrationsReducer(state: IntegrationsState, action: Any<FixInR
         },
       },
     }
-  }
-
-  switch (action.type) {
-  // An async action has started.
-  case COLLECTION_SERVICE_AUTHORIZATIONS_CREATE:
-  case COLLECTION_SERVICE_AUTHORIZATIONS_UPDATE:
-  case COLLECTION_SERVICE_AUTHORIZATIONS_DESTROY:
-    return state;
-  
-  case ROUTE_TRANSITION_ADMIN_SPACE_MAPPINGS:
-    return {
-      ...state,
-      spaceMappingsPage: {
-        view: 'LOADING',
-        error: false,
-        loading: true,
-        service: null,
-        serviceSpaces: [],
-      },
-    };
-
-  case INTEGRATIONS_ROOM_BOOKING_SET_SERVICE:
-    return {
-      ...state,
-      roomBooking: {
-        ...state.roomBooking,
-        view: 'VISIBLE',
-        service: action.service,
-      },
-    };
-
-  case COLLECTION_SERVICE_SPACES_SET:
-    return {
-      ...state,
-      spaceMappingsPage: {
-        ...state.spaceMappingsPage,
-        view: 'COMPLETE',
-        service: action.service,
-        serviceSpaces: action.data,
-      }
-    }; 
-
-  case COLLECTION_SERVICE_SPACES_ERROR:
-     return {
-       ...state, 
-       spaceMappingsPage: {
-         ...state.spaceMappingsPage,
-         view: 'ERROR',
-       } 
-     };
 
   default:
     return state;

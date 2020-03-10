@@ -5,12 +5,14 @@ import {
   DensityServiceSpace,
   DensityDoorwayMapping,
   DensitySpaceMapping,
+  DensityServiceAuthorization,
 } from '../../types';
 import { ActionTypesOf } from '..';
 import { DispatchType } from '../../types/rx-actions';
 
 import showModal from '../../rx-actions/modal/show';
 import hideModal from '../../rx-actions/modal/hide';
+import { showToast } from '../../rx-actions/toasts';
 
 import fetchAllObjects from '../../helpers/fetch-all-objects';
 
@@ -88,6 +90,53 @@ export async function openService(
 export async function closeService(dispatch: DispatchType) {
   await hideModal(dispatch);
   dispatch(integrationsActions.closeService());
+}
+
+export async function servicesList(dispatch) {
+  // dispatch(integrationsActions.loadStarted());
+  let response;
+  try {
+    response = await core().get('/integrations/services/');
+  } catch (err) {
+    dispatch(integrationsActions.loadError('There was an error fetching your integrations - please contact support.'));
+    return false;
+  }
+
+  dispatch(integrationsActions.loadComplete(response.data));
+}
+
+export async function serviceAuthorizationMakeDefault(dispatch: DispatchType, serviceAuthorization: DensityServiceAuthorization) {
+  try {
+    await core().put(`/integrations/service_authorizations/${serviceAuthorization.id}/`, {'default': true});
+  } catch (err) {
+    console.error('ERROR: error making service authorization default');
+    return;
+  }
+
+  servicesList(dispatch);
+  showToast(dispatch, {
+    text: `Successfully Set Default`,
+  });
+}
+
+export async function serviceAuthorizationDelete(dispatch: DispatchType, serviceAuthorization: DensityServiceAuthorization) {
+  closeService(dispatch);
+
+  try {
+    await core().delete(`/integrations/service_authorizations/${serviceAuthorization.id}/`);
+  } catch (err) {
+    showToast(dispatch, {
+      type: 'error',
+      text: `Failed to remove integration!`,
+    });
+    return;
+  }
+
+  closeService(dispatch);
+  servicesList(dispatch);
+  showToast(dispatch, {
+    text: `Removed integration.`,
+  });
 }
 
 export async function spaceMappingsAdd(dispatch: DispatchType, serviceId: string, spaceId: string, serviceSpaceId: string) {

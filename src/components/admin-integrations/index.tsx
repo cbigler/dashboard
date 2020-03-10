@@ -34,9 +34,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import updateModal from '../../rx-actions/modal/update';
 import { showToast } from '../../rx-actions/toasts';
-import collectionServiceAuthorizationCreate from '../../rx-actions/collection/service-authorizations/create';
-import { collectionServiceAuthorizationMakeDefault } from '../../rx-actions/collection/service-authorizations/update';
-import collectionServiceAuthorizationDestroy from '../../rx-actions/collection/service-authorizations/destroy';
+import integrationServicesList from '../../rx-actions/integrations/services';
 import doGoogleCalendarAuthRedirect from '../../rx-actions/integrations/google-calendar';
 import doOutlookAuthRedirect from '../../rx-actions/integrations/outlook';
 
@@ -63,6 +61,8 @@ import {
 
   openService,
   closeService,
+  serviceAuthorizationDelete,
+  serviceAuthorizationMakeDefault,
   spaceMappingsAdd,
   spaceMappingsUpdate,
   spaceMappingsDelete,
@@ -111,6 +111,24 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
   // Is this form being used to set up a new service, or to re-authorize an existing service?
   const isCreating = typeof service.service_authorization.id === 'undefined';
 
+  async function onSubmit() {
+    try {
+      await core().post(`/integrations/robin/`, {
+        "robin_access_token": accessToken,
+        "robin_organization_id": organizationId,
+      });
+    } catch (err) {
+      return false;
+    }
+
+    closeService(dispatch);
+
+    integrationServicesList(dispatch);
+    showToast(dispatch, {
+      text: `${isCreating ? 'Created' : 'Updated'} Robin Integration!`,
+    });
+  }
+
   return (
     <Fragment>
       <div className={styles.robinActivationForm}>
@@ -151,29 +169,10 @@ const RobinActivationForm: React.FunctionComponent<{service: DensityService}> = 
                   let promise = Promise.resolve();
 
                   if (!isCreating) {
-                    promise = collectionServiceAuthorizationDestroy(dispatch, service.service_authorization.id)
-                      .then(ok => {
-                        if (!ok) {
-                          console.error('ERROR deleting service authorization before reinitializing service');
-                        }
-                      });
+                    promise = core().delete(`/integrations/service_authorizations/${service.service_authorization.id}/`);
                   }
 
-                  promise.then(() => {
-                    return collectionServiceAuthorizationCreate(dispatch, 'robin', {
-                      credentials: {
-                        robin_access_token: accessToken,
-                        robin_organization_id: organizationId,
-                      },
-                    });
-                  }).then(ok => {
-                    if (ok) {
-                      closeService(dispatch);
-                      showToast(dispatch, {
-                        text: `${isCreating ? 'Created' : 'Updated'} Robin Integration!`,
-                      });
-                    }
-                  });
+                  promise.then(() => onSubmit());
                 }}
               >Save</Button>
             </ButtonGroup>
@@ -302,11 +301,11 @@ const IntegrationTypeTag: React.FunctionComponent<{}> = ({children}) => (
   </div>
 );
 
-const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, service: DensityService}> = ({selectedService, service}) => {
   const dispatch = useRxDispatch();
   const [searchText, setSearchText] = useState('');
 
-  const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
+  const serviceRenderingPreferences = getServiceRenderingPreferences(service);
   if (!serviceRenderingPreferences.spaceMappings.enabled) {
     return null;
   }
@@ -318,7 +317,7 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
       <AppBar>
         <AppBarTitle>Space Mappings</AppBarTitle>
         <AppBarSection>
-          {service.doorwayMappings.status === ResourceStatus.COMPLETE && service.doorwayMappings.data.doorwayMappings.length > 0 ? (
+          {selectedService.doorwayMappings.status === ResourceStatus.COMPLETE && selectedService.doorwayMappings.data.doorwayMappings.length > 0 ? (
             <InputBox
               type="text"
               placeholder="Search for space mapping"
@@ -333,7 +332,7 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
     </AppBarContext.Provider>
   );
 
-  switch (service.spaceMappings.status) {
+  switch (selectedService.spaceMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
     return (
@@ -359,7 +358,7 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
           />
           <ListViewColumn
             id="Service Space"
-            title={`${service.item.display_name} ${serviceSpaceResourceName}`}
+            title={`${service.display_name} ${serviceSpaceResourceName}`}
             template={() => (
               <Skeleton width="100%" height={24} />
             )}
@@ -383,11 +382,11 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
     );
 
   case ResourceStatus.COMPLETE:
-    const spaceHierarchy = spaceHierarchyFormatter(service.spaceMappings.data.hierarchy);
-    const serviceSpaceChoices = service.spaceMappings.data.serviceSpaces
+    const spaceHierarchy = spaceHierarchyFormatter(selectedService.spaceMappings.data.hierarchy);
+    const serviceSpaceChoices = selectedService.spaceMappings.data.serviceSpaces
         .map(s => ({ id: s.service_space_id, label: s.name }));
 
-    const spaceMappingsData = service.spaceMappings.data;
+    const spaceMappingsData = selectedService.spaceMappings.data;
 
     const newSpaceId = spaceMappingsData.newSpaceId,
           newServiceSpaceId = spaceMappingsData.newServiceSpaceId;
@@ -410,14 +409,14 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
         {header}
 
         {/* If there are special instructions when no doorway mappings exist, render them */}
-        {service.spaceMappings.data.spaceMappings.length === 0 ? (
+        {selectedService.spaceMappings.data.spaceMappings.length === 0 ? (
           serviceRenderingPreferences.spaceMappings.welcomeInstructions
         ) : null}
 
         <ListView
           padOuterColumns
           data={[
-            ...filterSpaceMappings(service.spaceMappings.data.spaceMappings, searchText),
+            ...filterSpaceMappings(selectedService.spaceMappings.data.spaceMappings, searchText),
             { id: NEW_ROW },
           ]}
         >
@@ -453,12 +452,12 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
           />
           <ListViewColumn
             id="Service Space"
-            title={`${service.item.display_name} ${serviceSpaceResourceName}`}
+            title={`${service.display_name} ${serviceSpaceResourceName}`}
             template={(spaceMapping: DensitySpaceMappingWithStatus) => (
               spaceMapping.id === NEW_ROW ? (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.item.display_name} ${serviceSpaceResourceName}`}
+                  placeholder={`Select ${service.display_name} ${serviceSpaceResourceName}`}
                   choices={serviceSpaceChoices}
                   value={newServiceSpaceId}
                   onChange={e => dispatch(integrationsActions.spaceMappingChangeServiceSpaceId(e.id))}
@@ -488,7 +487,7 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
                   disabled={newSpaceId === null || newServiceSpaceId === null}
                   onClick={() => spaceMappingsAdd(
                     dispatch,
-                    service.item.id,
+                    service.id,
                     newSpaceId as string,
                     newServiceSpaceId as string
                   )}
@@ -525,11 +524,11 @@ const SpaceMappings: React.FunctionComponent<{service: SelectedService}> = ({ser
   }
 }
 
-const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({service}) => {
+const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService, service: DensityService}> = ({selectedService, service}) => {
   const dispatch = useRxDispatch();
   const [searchText, setSearchText] = useState('');
 
-  const serviceRenderingPreferences = getServiceRenderingPreferences(service.item);
+  const serviceRenderingPreferences = getServiceRenderingPreferences(service);
   if (!serviceRenderingPreferences.doorwayMappings.enabled) {
     return null;
   }
@@ -541,7 +540,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
       <AppBar>
         <AppBarTitle>Doorway Mappings</AppBarTitle>
         <AppBarSection>
-          {service.doorwayMappings.status === ResourceStatus.COMPLETE && service.doorwayMappings.data.doorwayMappings.length > 0 ? (
+          {selectedService.doorwayMappings.status === ResourceStatus.COMPLETE && selectedService.doorwayMappings.data.doorwayMappings.length > 0 ? (
             <InputBox
               type="text"
               placeholder="Search for doorway mapping"
@@ -556,7 +555,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
     </AppBarContext.Provider>
   );
 
-  switch (service.doorwayMappings.status) {
+  switch (selectedService.doorwayMappings.status) {
   case ResourceStatus.IDLE:
   case ResourceStatus.LOADING:
     return (
@@ -582,7 +581,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
           />
           <ListViewColumn
             id="Service Doorway"
-            title={`${service.item.display_name} ${serviceDoorwayResourceName}`}
+            title={`${service.display_name} ${serviceDoorwayResourceName}`}
             template={() => (
               <Skeleton width="100%" height={24} />
             )}
@@ -606,10 +605,10 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
     );
 
   case ResourceStatus.COMPLETE:
-    const serviceDoorwayChoices = service.doorwayMappings.data.serviceDoorways
+    const serviceDoorwayChoices = selectedService.doorwayMappings.data.serviceDoorways
         .map(d => ({id: d.id, label: d.name}));
 
-    const doorwayChoices = service.doorwayMappings.data.doorways.map(d => ({id: d.id, label: d.name}));
+    const doorwayChoices = selectedService.doorwayMappings.data.doorways.map(d => ({id: d.id, label: d.name}));
 
     const filterDoorwayMappings = filterCollection({fields: [
       // Since the doorway mapping only has the ids, we have to look up the names in the
@@ -624,7 +623,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
       },
     ]});
 
-    const doorwayMappingsData = service.doorwayMappings.data;
+    const doorwayMappingsData = selectedService.doorwayMappings.data;
 
     const newDoorwayId = doorwayMappingsData.newDoorwayId,
           newServiceDoorwayId = doorwayMappingsData.newServiceDoorwayId;
@@ -634,14 +633,14 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
         {header}
 
         {/* If there are special instructions when no doorway mappings exist, render them */}
-        {service.doorwayMappings.data.doorwayMappings.length === 0 ? (
+        {selectedService.doorwayMappings.data.doorwayMappings.length === 0 ? (
           serviceRenderingPreferences.doorwayMappings.welcomeInstructions
         ) : null}
 
         <ListView
           padOuterColumns
           data={[
-            ...filterDoorwayMappings(service.doorwayMappings.data.doorwayMappings, searchText),
+            ...filterDoorwayMappings(selectedService.doorwayMappings.data.doorwayMappings, searchText),
             { id: NEW_ROW },
           ]}
         >
@@ -681,12 +680,12 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
           />
           <ListViewColumn
             id="Service Doorway"
-            title={`${service.item.display_name} ${serviceDoorwayResourceName}`}
+            title={`${service.display_name} ${serviceDoorwayResourceName}`}
             template={(doorwayMapping: DensityDoorwayMappingWithStatus) => (
               doorwayMapping.id === NEW_ROW ? (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.item.display_name} ${serviceDoorwayResourceName}`}
+                  placeholder={`Select ${service.display_name} ${serviceDoorwayResourceName}`}
                   choices={serviceDoorwayChoices}
                   value={newServiceDoorwayId}
                   onChange={e => dispatch(integrationsActions.doorwayMappingChangeServiceDoorwayId(e.id))}
@@ -696,7 +695,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
               ): (
                 <InputBox
                   type="select"
-                  placeholder={`Select ${service.item.display_name} ${serviceDoorwayResourceName}`}
+                  placeholder={`Select ${service.display_name} ${serviceDoorwayResourceName}`}
                   choices={serviceDoorwayChoices}
                   value={doorwayMapping.service_doorway_id}
                   onChange={e => dispatch(integrationsActions.doorwayMappingUpdateChangeServiceDoorwayId(doorwayMapping.id, e.id))}
@@ -717,7 +716,7 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
                   disabled={newDoorwayId === null || newServiceDoorwayId === null}
                   onClick={() => doorwayMappingsAdd(
                     dispatch,
-                    service.item.id,
+                    service.id,
                     newDoorwayId as string,
                     newServiceDoorwayId as string
                   )}
@@ -757,8 +756,9 @@ const DoorwayMappings: React.FunctionComponent<{service: SelectedService}> = ({s
 const AdminIntegrationsDetails: React.FunctionComponent<{
   visible: boolean,
   onCloseModal: () => void,
-  service: SelectedService,
-}> = ({ visible, onCloseModal, service }) => {
+  selectedService: SelectedService,
+  services: Array<DensityService>,
+}> = ({ visible, onCloseModal, selectedService, services }) => {
   const [ serviceDeleteBoxText, setServiceDeleteBoxText ] = useState('');
 
   // Clear the delete box text when the visiblity of the modal changes.
@@ -768,17 +768,22 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
 
   const dispatch = useRxDispatch();
 
-  if (!service.item) {
+  if (!selectedService.id) {
     return null;
   }
 
-  const serviceStatus = getServiceStatus(service.item);
+  const service = services.find(s => s.id === selectedService.id);
+  if (!service) {
+    return null;
+  }
+
+  const serviceStatus = getServiceStatus(service);
 
   const {
     activationProcess,
     doorwayMappings,
     spaceMappings,
-  } = getServiceRenderingPreferences(service.item);
+  } = getServiceRenderingPreferences(service);
 
   return (
     <Modal
@@ -794,9 +799,9 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
             <img
               className={styles.modalIcon}
               alt=""
-              src={iconForIntegration(service.item.name)}
+              src={iconForIntegration(service.name)}
             />
-            {service.item.display_name}
+            {service.display_name}
           </AppBarTitle>
           <AppBarSection>
             <Button variant="underline" onClick={onCloseModal}>Close</Button>
@@ -807,28 +812,26 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
           <div className={styles.modalBodyLeft}>
             <div className={styles.modalBodyLeftHeaderRow}>
               <IntegrationTypeTag>
-                {service.item.category === 'Tailgating' ? 'Access Control' : service.item.category}
+                {service.category === 'Tailgating' ? 'Access Control' : service.category}
               </IntegrationTypeTag>
               <Status status={serviceStatus} includeLabel />
             </div>
 
             <p>lorem ipsum dolar set amet HARDCODED!</p>
 
-            {typeof service.item.service_authorization.id !== 'undefined' ? (() => {
-              const serviceAuthorizationUser: CoreUser = (service.item.service_authorization as Any<FixInRefactor>).user;
+            {typeof service.service_authorization.id !== 'undefined' ? (() => {
+              const serviceAuthorizationUser: CoreUser = (service.service_authorization as Any<FixInRefactor>).user;
               return (
                 <ul>
                   <li>
                     Added by: <strong>{serviceAuthorizationUser.full_name}</strong> ({serviceAuthorizationUser.email})
                   </li>
                   <li>
-                    Default {service.item.category} service: <strong>{service.item.service_authorization.default ? 'Yes' : 'No'}</strong>
-                    {!service.item.service_authorization.default ? (
-                      <Button onClick={() => {
-                        collectionServiceAuthorizationMakeDefault(dispatch, service.item.service_authorization.id).then(response => {
-                          updateModal(dispatch, { service: {...service, service_authorization: response.data} });
-                        });
-                      }}>Make Default</Button>
+                    Default {service.category} service: <strong>{service.service_authorization.default ? 'Yes' : 'No'}</strong>
+                    {!service.service_authorization.default ? (
+                      <Button onClick={() => serviceAuthorizationMakeDefault(dispatch, service.service_authorization)}>
+                        Make Default
+                      </Button>
                     ) : null}
                   </li>
                 </ul>
@@ -842,12 +845,12 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                 {activationProcess.type === 'login' ? (
                   <EmptyCard
                     actions={
-                      <Button onClick={() => activationProcess.onClick(service.item)}>
-                        Log in to {service.item.display_name}
+                      <Button onClick={() => activationProcess.onClick(service)}>
+                        Log in to {service.display_name}
                       </Button>
                     }
                   >
-                    You need to log in to your <strong>{service.item.display_name}</strong> account before
+                    You need to log in to your <strong>{service.display_name}</strong> account before
                     you can start configuring this integration.
                   </EmptyCard>
                 ) : null}
@@ -867,7 +870,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                       </AppBar>
                     </AppBarContext.Provider>
 
-                    <Component service={service.item} />
+                    <Component service={service} />
                   </Fragment>;
                 })() : null}
               </Fragment>
@@ -883,9 +886,9 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   Everything is operating as expected.
                 </p>
 
-                <SpaceMappings service={service} />
+                <SpaceMappings selectedService={selectedService} service={service} />
 
-                <DoorwayMappings service={service} />
+                <DoorwayMappings selectedService={selectedService} service={service} />
 
                 <AppBarContext.Provider value="CARD_HEADER">
                   <AppBar>
@@ -896,32 +899,18 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                   Remove this integration - once removed, it must be
                   re-setup again to re-enable.
               
-                  Enter "{service.item.display_name}" into the box below, and click delete to remove:
+                  Enter "{service.display_name}" into the box below, and click delete to remove:
                   <InputBox type="text" value={serviceDeleteBoxText} onChange={e => setServiceDeleteBoxText(e.target.value)} />
 
                   <Button
-                    disabled={serviceDeleteBoxText !== service.item.display_name}
+                    disabled={serviceDeleteBoxText !== service.display_name}
                     type="danger"
-                    onClick={() => {
-                      closeService(dispatch);
-                      collectionServiceAuthorizationDestroy(dispatch, service.item.service_authorization.id).then(ok => {
-                        if (ok) {
-                          showToast(dispatch, {
-                            text: `Removed ${service.item.display_name} integration.`,
-                          });
-                        } else {
-                          showToast(dispatch, {
-                            type: 'error',
-                            text: `Failed to remove ${service.item.display_name} integration.`,
-                          });
-                        }
-                      })
-                    }}
+                    onClick={() => serviceAuthorizationDelete(dispatch, service.service_authorization)}
                   >Delete</Button>
                   
                   {activationProcess.type === 'login' ? (
-                    <Button onClick={() => activationProcess.onClick(service.item)}>
-                      Re-authorize {service.item.display_name}
+                    <Button onClick={() => activationProcess.onClick(service)}>
+                      Re-authorize {service.display_name}
                     </Button>
                   ) : null}
 
@@ -938,7 +927,7 @@ const AdminIntegrationsDetails: React.FunctionComponent<{
                         </AppBar>
                       </AppBarContext.Provider>
 
-                      <Component service={service.item} />
+                      <Component service={service} />
                     </Fragment>;
                   })() : null}
                 </div>
@@ -1023,7 +1012,8 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
           <AdminIntegrationsDetails
             visible={activeModal.visible}
             onCloseModal={() => closeService(dispatch)}
-            service={integrations.selectedService as SelectedService}
+            selectedService={integrations.selectedService as SelectedService}
+            services={integrations.services.data}
           />
         ) : null}
 
