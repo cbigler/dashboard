@@ -193,6 +193,16 @@ export default function AppNavbar({
               />
           ) : null}
 
+          {/* Support link (opens in new tab) */}
+          <AppNavbarItem
+            selected={false}
+            showOnMobile={true}
+            path="https://help.density.io/"
+            targetBlank={true}
+            icon={<Icons.Chat />}
+            text="Support"
+          />
+
           {/* Mobile logout button */}
           <AppNavbarItem
             selected={false}
@@ -202,16 +212,6 @@ export default function AppNavbar({
             style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Logout />}
             text=""
-          />
-
-          <AppNavbarItem
-            selected={false}
-            showOnMobile={true}
-            path="https://help.density.io/"
-            targetBlank={true}
-            style={{ marginRight: -8, marginTop: 2 }}
-            icon={<Icons.Chat />}
-            text="Support"
           />
 
           {/* Desktop menus */}

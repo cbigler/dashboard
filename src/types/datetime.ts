@@ -1,4 +1,4 @@
-export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+import { DayOfWeek } from '@density/lib-common-types';
 
 export type TimeOfDay = {
   hour: number,

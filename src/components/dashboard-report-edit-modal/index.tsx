@@ -2,7 +2,7 @@ import React, { ReactNode, Fragment } from 'react';
 import debounce from 'lodash/debounce';
 import moment from 'moment';
 import styles from './styles.module.scss';
-import Report, { REPORTS, TIME_RANGES } from '@density/reports';
+import Report, { REPORTS } from '@density/reports';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';
 import getCommonRangesForSpace from '../../helpers/common-ranges';
 import MarkdownEditor from '../markdown-editor/index';
@@ -560,18 +560,18 @@ function DashboardReportEditModal({
                                 activeModal.data.report.settings[fieldName]
                               }
                               choices={[
-                                {id: TIME_RANGES.LAST_WEEK, label: 'Last Week' },
-                                {id: TIME_RANGES.LAST_4_WEEKS, label: 'Last 4 weeks' },
-                                {id: TIME_RANGES.WEEK_TO_DATE, label: 'Week to date' },
-                                {id: TIME_RANGES.LAST_7_DAYS, label: 'Last 7 days' },
-                                {id: TIME_RANGES.LAST_28_DAYS, label: 'Last 28 days' },
+                                {id: 'LAST_WEEK', label: 'Last Week' },
+                                {id: 'LAST_4_WEEKS', label: 'Last 4 weeks' },
+                                {id: 'WEEK_TO_DATE', label: 'Week to date' },
+                                {id: 'LAST_7_DAYS', label: 'Last 7 days' },
+                                {id: 'LAST_28_DAYS', label: 'Last 28 days' },
                                 {id: 'CUSTOM_RANGE', label: 'Absolute time period...' },
                               ]}
                               onChange={choice => {
                                 if (choice.id === 'CUSTOM_RANGE') {
                                   let displayTimeZone = 'America/New_York'; // Default value
 
-                                  // Use a huristic to try to guess what time zone should be
+                                  // Use a heuristic to try to guess what time zone should be
                                   // defaulted to.
                                   if (activeModal.data.report.settings.space_id) {
                                     const matchingSpace = spaces.data.find(

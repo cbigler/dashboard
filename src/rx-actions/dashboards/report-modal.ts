@@ -6,8 +6,6 @@ import hideModal from '../modal/hide';
 
 import calculateReportData, { clearReportData } from './calculate-report-data';
 
-import { getStartOfWeek } from '../../helpers/space-time-utilities';
-
 export const PAGE_PICK_SAVED_REPORT = 'PAGE_PICK_SAVED_REPORT',
              PAGE_NEW_REPORT_TYPE = 'PAGE_NEW_REPORT_TYPE',
              PAGE_NEW_REPORT_CONFIGURATION = 'PAGE_NEW_REPORT_CONFIGURATION';
@@ -66,10 +64,7 @@ export async function rerenderReportInReportModal(
 ) {
   clearPreviewReportData(dispatch);
 
-  const currentDate = getStartOfWeek(
-    moment(dashboardDate || undefined),
-    dashboardWeekStart,
-  ).format('YYYY-MM-DD');
+  const currentDate = moment(dashboardDate || undefined).format('YYYY-MM-DD');
 
   calculateReportData(
     dispatch,

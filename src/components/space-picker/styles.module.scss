@@ -19,18 +19,18 @@
   padding-left: 16px;
   padding-right: 16px;
   padding-bottom: 3px;
-  border: 1px solid $inputFieldBorderColor;
+  border: 1px solid $gray300;
   border-radius: $borderRadiusBase;
   background-color: #fff;
   font-family: $fontBase;
   cursor: pointer;
-  color: $midnight;
+  color: $gray700;
   user-select: none;
   transition: all 100ms ease-in-out;
   outline: none;
 }
 
-.box.focus { border-color: $midnight; }
+.box.focus { border-color: $blue; }
 
 .placeholder { color: $inputFieldPlaceholderColor; }
 

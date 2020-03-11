@@ -1,6 +1,7 @@
-import { AnalyticsReport, AnalyticsFocusedMetric, QuerySelection, QueryInterval, AnalyticsDatapoint, AnalyticsMetrics, TableColumn, SortDirection } from "../../types/analytics";
-import { DateRange } from "../../helpers/space-time-utilities";
-import { DayOfWeek, TimeFilter } from "../../types/datetime";
+import { AnalyticsReport, AnalyticsFocusedMetric, QuerySelection, QueryInterval, AnalyticsDatapoint, AnalyticsMetrics, TableColumn, SortDirection } from '../../types/analytics';
+import { DayOfWeek } from '@density/lib-common-types';
+import { DateRange } from '@density/lib-time-helpers/date-range';
+import { TimeFilter } from '../../types/datetime';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 export enum AnalyticsActionType {

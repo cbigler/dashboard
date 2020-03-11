@@ -36,7 +36,7 @@ import {
   SortDirection,
 } from '../../types/analytics';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
-import { DATE_RANGES } from '../../helpers/space-time-utilities';
+import { DATE_RANGES } from '@density/lib-time-helpers/date-range';
 
 import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
 import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';

@@ -1,4 +1,4 @@
-import { DayOfWeek } from './datetime';
+import { DayOfWeek } from '@density/lib-common-types';
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
 
 export type DensityReport = {

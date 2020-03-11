@@ -3,7 +3,7 @@ import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
 
-import { DATE_RANGES } from '../../helpers/space-time-utilities';
+import { DATE_RANGES } from '@density/lib-time-helpers/date-range';
 import DateRangeFilter from './index';
 
 function State({ initialState, children }) {

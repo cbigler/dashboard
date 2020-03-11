@@ -1,7 +1,7 @@
 import { CoreSpace, CoreSpaceType, CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces'; 
 import { DensitySpaceCountMetrics, DensityReport } from '.';
 
-import { DateRange } from '../helpers/space-time-utilities';
+import { DateRange } from '@density/lib-time-helpers/date-range';
 import { TimeFilter } from './datetime';
 import { Resource } from './resource';
 

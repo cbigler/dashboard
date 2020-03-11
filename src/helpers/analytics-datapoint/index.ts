@@ -3,7 +3,7 @@ import moment from 'moment-timezone';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { AnalyticsDatapoint, QueryInterval } from '../../types/analytics';
 import { TimeFilter, TimeOfDay } from '../../types/datetime';
-import { DAYS_OF_WEEK } from '../datetime-utilities';
+import { DAYS_OF_WEEK } from '@density/lib-time-helpers/date-range';
 import { timeOfDayToMilliseconds, parseTimeString } from '../datetime-utilities/time-string';
 import { ChartDataFetchingResult } from '../../rx-stores/analytics';
 

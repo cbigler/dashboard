@@ -10,8 +10,9 @@ module.exports = function addPaths(rule) {
       // Publishing these packages without bundling is not "correct" for NPM
       // But I'd rather punt on the associated problems and break the rules
       // Also, we get much better source maps to these dependencies this way
+      path.resolve('./node_modules/@density/lib-common-types'),
       path.resolve('./node_modules/@density/lib-api-types'),
-      path.resolve('./node_modules/@density/lib-helpers'),
+      path.resolve('./node_modules/@density/lib-common-helpers'),
       path.resolve('./node_modules/@density/lib-space-helpers'),
       path.resolve('./node_modules/@density/lib-time-helpers'),
       path.resolve('./node_modules/@density/ui/src'),

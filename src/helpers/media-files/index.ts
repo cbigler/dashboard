@@ -1,4 +1,4 @@
-import { asyncSleep } from '@density/lib-helpers';
+import { asyncSleep } from '@density/lib-common-helpers';
 import core from '../../client/core';
 import { fetchObject } from '../fetch-all-objects';
 

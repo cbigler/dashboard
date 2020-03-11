@@ -4,10 +4,10 @@ import {
   DATE_RANGES,
   realizeDateRange,
   realizeRelativeDuration,
-  RangeType,
-  splitTimeRangeIntoSubrangesWithSameOffset,
-} from './index';
-import { DayOfWeek } from '../../types/datetime';
+  DateRangeType,
+} from '@density/lib-time-helpers/date-range';
+import { DayOfWeek } from '@density/lib-common-types';
+import { splitTimeRangeIntoSubrangesWithSameOffset } from './index';
 
 const NYC_SPACE = { name: 'New York Space', time_zone: 'America/New_York' };
 const LA_SPACE = { name: 'Los Angeles Space', time_zone: 'America/Los_Angeles' };
@@ -23,7 +23,7 @@ describe('time-conversions', function() {
   describe('realizeDateRange', () => {
     it('should realize absolute date ranges', () => {
       const {startDate, endDate} = realizeDateRange({
-        type: RangeType.ABSOLUTE,
+        type: DateRangeType.ABSOLUTE,
         startDate: '2019-01-01',
         endDate: '2019-02-01',
       }, 'America/Los_Angeles');
@@ -46,7 +46,7 @@ describe('time-conversions', function() {
       const now = moment.tz('2019-03-15T10:00:00', 'America/Los_Angeles');
       const {startDate, endDate} = realizeDateRange(DATE_RANGES.LAST_WEEK, 'America/Los_Angeles', {
         now,
-        organizationalWeekStartDay: 'Wednesday',
+        organizationalWeekStartDay: DayOfWeek.WEDNESDAY,
       });
       assert.equal(startDate.format(), '2019-03-06T00:00:00-08:00');
       assert.equal(endDate.format(), '2019-03-12T23:59:59-07:00');
@@ -290,7 +290,7 @@ describe('Realization of relative ranges, with now being Friday 9/20/2019', () =
 
   const tz = 'America/Chicago';
   const now = moment.tz('2019-09-20T20:33:57', tz);
-  const organizationalWeekStartDay = 'Sunday';
+  const organizationalWeekStartDay = DayOfWeek.SUNDAY;
 
   expect(now.format('dddd')).toBe('Friday');
   expect(now.hour()).toBe(20)
@@ -381,7 +381,7 @@ describe('Realization of relative ranges, with now being Monday 9/23/2019 and we
 
   const tz = 'America/New_York';
   const now = moment.tz('2019-09-23T13:48:31', tz);
-  const organizationalWeekStartDay = 'Wednesday';
+  const organizationalWeekStartDay = DayOfWeek.WEDNESDAY;
 
   expect(now.format('dddd')).toBe('Monday');
   expect(now.date()).toBe(23)
@@ -471,7 +471,7 @@ describe('Realization of relative ranges, with now being Monday 9/23/2019 and we
 
 describe('realization of relative durations', () => {
   // testing a weird case for RoundedCo
-  const organizationalWeekStartDay: DayOfWeek = 'Wednesday';
+  const organizationalWeekStartDay = DayOfWeek.WEDNESDAY;
   const now = moment.tz('2019-09-23T14:17:45', 'America/New_York');
 
   test('realizing the start of the current org week', () => {
