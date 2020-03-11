@@ -21,6 +21,8 @@ import FormLabel from '../form-label';
 import { SpacePickerDropdown } from '../space-picker';
 import Status from './status';
 import EmptyCard from './empty-card';
+import GenericLoadingState from '../generic-loading-state';
+import GenericErrorState from '../generic-error-state';
 
 import robinIcon from '../../assets/images/icon-robin.svg';
 import googleCalendarIcon from '../../assets/images/icon-google-calendar.svg';
@@ -398,7 +400,9 @@ const SpaceMappings: React.FunctionComponent<{selectedService: SelectedService, 
     return (
       <Fragment>
         {header}
-        <p>Error</p>
+        <div className={styles.centeredMappingError}>
+          <GenericErrorState />
+        </div>
       </Fragment>
     );
 
@@ -626,7 +630,9 @@ const DoorwayMappings: React.FunctionComponent<{selectedService: SelectedService
     return (
       <Fragment>
         {header}
-        <p>Error</p>
+        <div className={styles.centeredMappingError}>
+          <GenericErrorState />
+        </div>
       </Fragment>
     );
 
@@ -1052,14 +1058,18 @@ const AdminIntegrations: React.FunctionComponent<{}> = () => {
     return (
       <Fragment>
         {header}
-        <p>Loading</p>
+        <div className={styles.centered}>
+          <GenericLoadingState />
+        </div>
       </Fragment>
     );
   case ResourceStatus.ERROR:
     return (
       <Fragment>
         {header}
-        <p>Error: {integrations.services.error}</p>;
+        <div className={styles.centered}>
+          <GenericErrorState />
+        </div>
       </Fragment>
     );
   case ResourceStatus.COMPLETE:
