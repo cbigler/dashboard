@@ -13,7 +13,6 @@ import {
   ListView,
   ListViewColumn,
   ListViewColumnSpacer,
-  ListViewClickableLink,
 } from '@density/ui/src';
 
 import colorVariables from '@density/ui/variables/colors.json';
@@ -114,10 +113,6 @@ const AdminDeveloper: React.FunctionComponent = () => {
   }
   const onUpdateWebhookData = (webhook) => {
     updateModal(dispatch, { webhook });
-  }
-  const onSaveWebhook = async (webhook) => {
-    const ok = await collectionWebhooksUpdate(dispatch, webhook);
-    if (ok) { await hideModal(dispatch); }
   }
   const onDestroyWebhook = async (webhook) => {
     const ok = await collectionWebhooksDestroy(dispatch, webhook);
