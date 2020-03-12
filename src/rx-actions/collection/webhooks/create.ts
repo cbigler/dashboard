@@ -9,9 +9,11 @@ export default async function collectionWebhooksCreate(dispatch, item) {
 
   try {
     const response = await core().post('/webhooks', {
+      type: item.type,
       name: item.name,
       description: item.description,
       endpoint: item.endpoint,
+      headers: item.headers,
     });
     dispatch(collectionWebhooksPush(response.data));
     return response.data;

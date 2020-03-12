@@ -46,7 +46,7 @@ const PERMISSION_TEXT = {
   [READWRITE]: 'Read-write'
 }
 
-export function TokenKeyHider ({value, onCopyToken}) {
+export function TokenKeyHider({value, onCopyToken}) {
   const [hidden, setHidden] = useState(true);
   return <span className={styles.adminDeveloperListviewValue}>
     <span
@@ -67,25 +67,65 @@ export function TokenKeyHider ({value, onCopyToken}) {
   </span>
 }
 
+const AdminDeveloper: React.FunctionComponent = () => {
+  const dispatch = useRxDispatch();
+  const activeModal = useRxStore(ActiveModalStore);
+  const webhooks = useRxStore(WebhooksStore);
+  const tokens = useRxStore(TokensStore);
 
-export function AdminDeveloper({
-  tokens,
-  webhooks,
-  activeModal,
-  onCreateToken,
-  onUpdateToken,
-  onSaveToken,
-  onDestroyToken,
-  onCreateWebhook,
-  onUpdateWebhook,
-  onSaveWebhook,
-  onDestroyWebhook,
-  onOpenModal,
-  onCloseModal,
-  onCopyToken,
-}) {
+  const onOpenModal = (name, data) => {
+    showModal(dispatch, name, data);
+  }
+  const onCloseModal = async () => {
+    await hideModal(dispatch);
+  }
+
+  const onCreateToken = async (token) => {
+    const ok = await collectionTokensCreate(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onUpdateToken = (token) => {
+    updateModal(dispatch, { token });
+  }
+  const onSaveToken = async (token) => {
+    const ok = await collectionTokensUpdate(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onDestroyToken = async (token) => {
+    const ok = await collectionTokensDestroy(dispatch, token);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onCopyToken = (value) => {
+    const element = document.createElement('input');
+    element.value = value;
+    document.body.appendChild(element);
+    element.select();
+    document.execCommand('copy');
+    document.body.removeChild(element);
+    showToast(dispatch, { text: 'Copied token to clipboard' });
+  }
+
+  const onCreateWebhook = async (webhook) => {
+    const ok = await collectionWebhooksCreate(dispatch, webhook);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onUpdateWebhook = async (webhook) => {
+    const ok = await collectionWebhooksUpdate(dispatch, webhook);
+    if (ok) { hideModal(dispatch); }
+  }
+  const onUpdateWebhookData = (webhook) => {
+    updateModal(dispatch, { webhook });
+  }
+  const onSaveWebhook = async (webhook) => {
+    const ok = await collectionWebhooksUpdate(dispatch, webhook);
+    if (ok) { await hideModal(dispatch); }
+  }
+  const onDestroyWebhook = async (webhook) => {
+    const ok = await collectionWebhooksDestroy(dispatch, webhook);
+    if (ok) { await hideModal(dispatch); }
+  }
+
   return <Fragment>
-
     {activeModal.name === 'token-create' ? <TokenCreateModal
       visible={activeModal.visible}
       token={activeModal.data.token}
@@ -109,19 +149,17 @@ export function AdminDeveloper({
       visible={activeModal.visible}
       webhook={activeModal.data.webhook}
 
-      onUpdate={onUpdateWebhook}
+      onUpdate={onUpdateWebhookData}
       onSubmit={onCreateWebhook}
       onDismiss={onCloseModal}
     /> : null}
-    {activeModal.name === 'webhook-update' ? <WebhookUpdateModal
+    {activeModal.name === 'webhook-update' ? <WebhookCreateModal
       visible={activeModal.visible}
       webhook={activeModal.data.webhook}
-      isDestroying={activeModal.data.isDestroying}
 
-      onUpdate={onUpdateWebhook}
-      onSubmit={onSaveWebhook}
+      onUpdate={onUpdateWebhookData}
+      onSubmit={onUpdateWebhook}
       onDismiss={onCloseModal}
-      onDestroyWebhook={onDestroyWebhook}
     /> : null}
 
     <AppBar>
@@ -139,7 +177,16 @@ export function AdminDeveloper({
         <Button
           variant="filled"
           type="primary"
-          onClick={() => onOpenModal('webhook-create', {webhook: {name: '', description: '', endpoint: ''}})}
+          onClick={() => onOpenModal('webhook-create', {
+            webhook: {
+              name: '',
+              type: 'COUNT_EVENTS',
+              description: '',
+              endpoint: '',
+              headers: {},
+              enabled: true,
+            },
+          })}
         >Add webhook</Button>
       </AppBarSection>
     </AppBar>
@@ -214,103 +261,18 @@ export function AdminDeveloper({
             width={30}
             align="right"
             template={item => <Icons.Trash color={colorVariables.gray500} />}
-            onClick={item => onOpenModal('webhook-update', {webhook: item, isDestroying: true})} />
+            onClick={item => {
+              showModal(dispatch, 'MODAL_CONFIRM', {
+                title: 'Delete Webhook',
+                prompt: `Are you sure you'd like to delete ${item.name}?`,
+                confirmText: 'Confirm',
+                callback: () => onDestroyWebhook(item),
+              }); 
+            }} />
         </ListView>
       </div>
     </AppScrollView>
   </Fragment>;
 }
 
-
-const ConnectedAdminDeveloper: React.FC = () => {
-  const dispatch = useRxDispatch();
-  const activeModal = useRxStore(ActiveModalStore);
-  const webhooks = useRxStore(WebhooksStore);
-  const tokens = useRxStore(TokensStore);
-
-  const onOpenModal = (name, data) => {
-    showModal(dispatch, name, data);
-  }
-  const onCloseModal = async () => {
-    await hideModal(dispatch);
-  }
-
-  const onCreateToken = async (token) => {
-    const ok = await collectionTokensCreate(dispatch, token);
-    if (ok) { hideModal(dispatch); }
-  }
-  const onUpdateToken = (token) => {
-    updateModal(dispatch, { token });
-  }
-  const onSaveToken = async (token) => {
-    const ok = await collectionTokensUpdate(dispatch, token);
-    if (ok) { hideModal(dispatch); }
-  }
-  const onDestroyToken = async (token) => {
-    const ok = await collectionTokensDestroy(dispatch, token);
-    if (ok) { hideModal(dispatch); }
-  }
-  const onCopyToken = (value) => {
-    const element = document.createElement('input');
-    element.value = value;
-    document.body.appendChild(element);
-    element.select();
-    document.execCommand('copy');
-    document.body.removeChild(element);
-    showToast(dispatch, { text: 'Copied token to clipboard' });
-  }
-
-  const onCreateWebhook = async (webhook) => {
-    const ok = await collectionWebhooksCreate(dispatch, webhook);
-    if (ok) { hideModal(dispatch); }
-  }
-  const onUpdateWebhook = (webhook) => {
-    updateModal(dispatch, { webhook });
-  }
-  const onSaveWebhook = async (webhook) => {
-    const ok = await collectionWebhooksUpdate(dispatch, webhook);
-    if (ok) { await hideModal(dispatch); }
-  }
-  const onDestroyWebhook = async (webhook) => {
-    const ok = await collectionWebhooksDestroy(dispatch, webhook);
-    if (ok) { await hideModal(dispatch); }
-  }
-
-  // FIXME: these don't appear to be used, but they were provided by "connect" previously
-  // const onFilterTokenList = (value) => {
-  //   dispatch(collectionTokensFilter('search', value) as Any<FixInRefactor>);
-  // }
-  // const onFilterWebhookList = (value) => {
-  //   dispatch(collectionWebhooksFilter('search', value) as Any<FixInRefactor>);
-  // }
-
-  return (
-    <AdminDeveloper
-      tokens={tokens}
-      activeModal={activeModal}
-      webhooks={webhooks}
-      
-      onOpenModal={onOpenModal}
-      onCloseModal={onCloseModal}
-
-      onCreateToken={onCreateToken}
-      onSaveToken={onSaveToken}
-      onUpdateToken={onUpdateToken}
-      onDestroyToken={onDestroyToken}
-
-      onCreateWebhook={onCreateWebhook}
-      onSaveWebhook={onSaveWebhook}
-      onUpdateWebhook={onUpdateWebhook}
-      onDestroyWebhook={onDestroyWebhook}
-
-      // onFilterTokenList={onFilterTokenList}
-      // onFilterWebhookList={onFilterWebhookList}
-
-      onCopyToken={onCopyToken}
-
-    />
-  )
-}
-
-export default ConnectedAdminDeveloper;
-
+export default AdminDeveloper;
