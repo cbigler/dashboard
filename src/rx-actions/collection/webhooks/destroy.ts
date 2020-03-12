@@ -1,6 +1,7 @@
 import collectionWebhooksDelete from './delete';
-import collectionWebhooksError from './error';
 import core from '../../../client/core';
+
+import { showToast } from '../../toasts';
 
 export const COLLECTION_WEBHOOKS_DESTROY = 'COLLECTION_WEBHOOKS_DESTROY';
 
@@ -9,10 +10,12 @@ export default async function collectionWebhooksDestroy(dispatch, item) {
 
   try {
     await core().delete(`/webhooks/${item.id}`);
-    dispatch(collectionWebhooksDelete(item));
-    return true;
   } catch (err) {
-    dispatch(collectionWebhooksError(err));
+    showToast(dispatch, { type: 'error', text: 'Error deleting webhook.' });
     return false;
   }
+
+  showToast(dispatch, { text: 'Deleted webhook.' });
+  dispatch(collectionWebhooksDelete(item));
+  return true;
 }
