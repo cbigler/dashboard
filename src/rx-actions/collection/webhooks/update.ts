@@ -9,9 +9,12 @@ export default async function collectionWebhooksUpdate(dispatch, item) {
 
   try {
     const response = await core().put(`/webhooks/${item.id}`, {
+      type: item.type,
       name: item.name,
       description: item.description,
       endpoint: item.endpoint,
+      headers: item.headers,
+      enabled: item.enabled,
     });
     dispatch(collectionWebhooksPush(response.data));
     return response.data;

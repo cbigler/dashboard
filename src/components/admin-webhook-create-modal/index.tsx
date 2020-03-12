@@ -1,6 +1,7 @@
-import styles from './styles.module.scss';
+import React, { Fragment, useState, useRef } from 'react';
 
-import React from 'react';
+import styles from './styles.module.scss';
+import classnames from 'classnames';
 
 import {
   Button,
@@ -11,90 +12,157 @@ import {
   AppBarContext,
   AppBarSection,
   Modal,
+  ListView,
+  ListViewColumn,
+  Switch,
 } from '@density/ui/src';
 
 import FormLabel from '../form-label';
+
+enum WebhookTypeChoices {
+  COUNT_EVENTS = 'COUNT_EVENTS',
+  TAILGATING_EVENTS = 'TAILGATING_EVENTS',
+}
+
+const WEBHOOK_TYPE_CHOICES = [
+  {id: WebhookTypeChoices.COUNT_EVENTS, label: 'Count Events'},
+  {id: WebhookTypeChoices.TAILGATING_EVENTS, label: 'Tailgating Events'},
+];
 
 export default function WebhookCreateModal({
   visible,
   webhook,
   onDismiss,
   onUpdate,
-  onSubmit
+  onSubmit,
 }) {
+  const isEditing = typeof webhook.id !== 'undefined';
   return (
     <Modal
       visible={visible}
-      width={895}
-      height={500}
+      width={976}
       onBlur={onDismiss}
       onEscape={onDismiss}
     >
       <AppBar>
-        <AppBarTitle>Create Webhook</AppBarTitle>
+        <AppBarTitle>{isEditing ? 'Update' : 'Create'} Webhook</AppBarTitle>
       </AppBar>
+
       <div className={styles.webhookCreateColumns}>
-        <div className={`${styles.webhookCreateColumn} ${styles.left}`}>
+        <div className={classnames(styles.webhookCreateColumn, styles.left)}>
+          <FormLabel
+            htmlFor="webhook-create-type"
+            label="Message type"
+            input={<InputBox
+              type="select"
+              width="100%"
+              id="webhook-create-type"
+              choices={WEBHOOK_TYPE_CHOICES}
+              value={webhook.type}
+              onChange={e => onUpdate({...webhook, type: e.id})}
+            />}
+          />
           <FormLabel
             htmlFor="webhook-create-name"
-            label="Webhook name"
+            label="Name"
             input={<InputBox
               type="text"
               width="100%"
               id="webhook-create-name"
-              value={webhook.name}
+              value={webhook.name || ''}
               onChange={e => onUpdate({...webhook, name: e.target.value})}
             />}
           />
           <FormLabel
             htmlFor="webhook-create-desc"
-            label="Webhook description"
+            label="Description"
             input={<InputBox
               type="textarea"
               id="webhook-create-desc"
-              value={webhook.description}
+              value={webhook.description || ''}
               height="5em"
               onChange={e => onUpdate({...webhook, description: e.target.value})}
             />}
           />
+          {isEditing ? (
+            <FormLabel
+              htmlFor="webhook-create-enabled"
+              label="Enabled"
+              input={<Switch
+                id="webhook-create-enabled"
+                value={webhook.enabled}
+                onChange={e => onUpdate({...webhook, enabled: e.target.checked})}
+              />}
+            />
+          ) : null}
           <FormLabel
             htmlFor="webhook-create-endpoint"
-            label="Webhook URL"
+            label="URL"
             input={<InputBox
               type="text"
               width="100%"
               leftIcon={<strong>POST</strong>}
               id="webhook-create-endpoint"
-              placeholder="(ie, http://example.com)"
+              placeholder="(ie, https://example.com)"
               value={webhook.endpoint}
               onChange={e => onUpdate({...webhook, endpoint: e.target.value})}
+              disabled={!webhook.enabled}
+            />}
+          />
+          <FormLabel
+            htmlFor="webhook-create-headers"
+            label="Custom Headers"
+            input={<WebhookHeaderControl
+              headers={webhook.headers}
+              onChange={headers => onUpdate({...webhook, headers})}
+              disabled={!webhook.enabled}
             />}
           />
         </div>
 
-        <div className={`${styles.webhookCreateColumn} ${styles.right}`}>
+        <div className={classnames(styles.webhookCreateColumn, styles.right)}>
           <div className={styles.webhookCreateExample}>
-            <p>Webhooks will be sent as POST requests to the URL specified in JSON.</p>
-            <p>
-              Here's an example webhook payload:
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://docs.density.io/v2/#webhooks-receiving"
-              >More information</a>
-            </p>
-            <pre className={styles.webhookCreateExamplePayload}>{
-              JSON.stringify({
-                "space_id": "spc_12284369797403919085",
-                "doorway_id": "drw_16131794227371328677",
-                "direction": 1,
-                "count": 32
-              }, null, 2)
-            }</pre>
+            {webhook.type === WebhookTypeChoices.COUNT_EVENTS ? (
+              <Fragment>
+                <p>
+                  A webhook will be sent as a POST request to the URL specified in JSON whenever
+                  the count changes at any space in your organization.
+                </p>
+                <p>
+                  Here's an example count event webhook payload:
+                  <a
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href="https://docs.density.io/v2/#webhooks-receiving"
+                  >More information</a>
+                </p>
+                <pre className={styles.webhookCreateExamplePayload}>{
+                  JSON.stringify({
+                    "space_id": "spc_12284369797403919085",
+                    "doorway_id": "drw_16131794227371328677",
+                    "direction": 1,
+                    "count": 32
+                  }, null, 2)
+                }</pre>
+              </Fragment>
+            ) : null}
+            {webhook.type === WebhookTypeChoices.TAILGATING_EVENTS ? (
+              <Fragment>
+                <p>
+                  A webhook will be sent as a POST request to the URL specified in JSON whenever
+                  a tailgating event at any of your doorways occurs.
+                </p>
+                <p>Here's an example tailgating event webhook payload:</p>
+                <pre className={styles.webhookCreateExamplePayload}>{
+                  JSON.stringify({
+                    "to be": "determined"
+                  }, null, 2)
+                }</pre>
+              </Fragment>
+            ) : null}
           </div>
         </div>
       </div>
-      
       <AppBarContext.Provider value="BOTTOM_ACTIONS">
         <AppBar>
           <AppBarSection />
@@ -105,16 +173,128 @@ export default function WebhookCreateModal({
                 type="primary"
                 variant="filled"
                 disabled={webhook.endpoint.length === 0}
-                onClick={() => onSubmit({
-                  name: webhook.name,
-                  description: webhook.description,
-                  endpoint: webhook.endpoint,
-                })}
-              >Save webhook</Button>
+                onClick={() => onSubmit(webhook)}
+              >Save</Button>
             </ButtonGroup>
           </AppBarSection>
         </AppBar>
       </AppBarContext.Provider>
     </Modal>
+  );
+}
+
+type Headers = {[name: string]: string};
+
+type WebhookHeaderControlProps = {
+  headers: Headers,
+  onChange: (headers: Headers) => void,
+  disabled: boolean,
+};
+
+const NEW_ROW = 'NEW_ROW';
+
+const WebhookHeaderControl: React.FunctionComponent<WebhookHeaderControlProps> = ({headers, disabled, onChange}) => {
+  const nameRef = useRef<HTMLInputElement>(null);
+
+  const [ newHeaderName, setNewHeaderName ] = useState('');
+  const [ newHeaderValue, setNewHeaderValue ] = useState('');
+
+  const newHeaderNameDuplicate = typeof (
+    Object.keys(headers)
+      .find(name => name.toLowerCase() === newHeaderName.toLowerCase())
+  ) !== 'undefined';
+
+  const addButtonEnabled = newHeaderName.length > 0 && newHeaderValue.length > 0 && !newHeaderNameDuplicate;
+
+  return (
+    <div style={{marginLeft: -24, marginRight: -24, maxHeight: 300, overflowY: 'auto'}}>
+      <ListView
+        padOuterColumns
+        data={[
+          ...Object.entries(headers).map(([name, value], id) => ({id, name, value})),
+          { id: NEW_ROW },
+        ]}
+      >
+        <ListViewColumn
+          id="Header Name"
+          template={({id, name, value}) => (
+            id === NEW_ROW ? (
+              <InputBox
+                type="text"
+                value={newHeaderName}
+                onChange={e => setNewHeaderName(e.target.value)}
+                placeholder="Header Name"
+                invalid={newHeaderNameDuplicate ? true : undefined}
+                ref={nameRef}
+                disabled={disabled}
+              />
+            ) : (
+              name
+            )
+          )}
+        />
+        <ListViewColumn
+          id="Header Value"
+          template={({id, name, value}) => (
+            id === NEW_ROW ? (
+              <InputBox
+                type="text"
+                value={newHeaderValue}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
+                    if (!addButtonEnabled) { return; }
+
+                    e.preventDefault();
+                    onChange({...headers, [newHeaderName]: newHeaderValue});
+                    setNewHeaderName('');
+                    setNewHeaderValue('');
+                    if (nameRef.current) {
+                      nameRef.current.focus();
+                    }
+                  }
+                }}
+                onChange={e => setNewHeaderValue(e.target.value)}
+                placeholder="Header Value"
+                disabled={disabled}
+              />
+            ) : (
+              <InputBox
+                type="text"
+                value={value}
+                onChange={e => onChange({...headers, [name]: e.target.value})}
+                placeholder="Header Value"
+                disabled={disabled}
+              />
+            )
+          )}
+        />
+        <ListViewColumn
+          id="Actions"
+          title=" "
+          width={100}
+          template={({id, name, value}) => (
+            id === NEW_ROW ? (
+              <Button
+                onClick={() => {
+                  onChange({...headers, [newHeaderName]: newHeaderValue});
+                  setNewHeaderName('');
+                  setNewHeaderValue('');
+                }}
+                disabled={disabled || !addButtonEnabled}
+              >Add</Button>
+            ) : (
+              <Button
+                onClick={e => {
+                  const headersCopy = { ...headers };
+                  delete headersCopy[name];
+                  onChange(headersCopy);
+                }}
+                disabled={disabled}
+              >Remove</Button>
+            )
+          )}
+        />
+      </ListView>
+    </div>
   );
 }
