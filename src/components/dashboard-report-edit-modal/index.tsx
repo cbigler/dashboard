@@ -137,7 +137,7 @@ function getEmptyRequiredFields(report) {
     .filter(control => control.parameters.required)
     .filter(control => {
       const value = report.settings[control.parameters.field];
-      return !value || value.length === 0;
+      return value === undefined || value === null || value.length === 0;
     });
 }
 
