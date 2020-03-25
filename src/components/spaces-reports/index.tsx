@@ -326,34 +326,48 @@ export function DailyExits(props: SpacesReportProps) {
   />;
 }
 
-const entrancesPerHourOtherSettings = {
+const entrancesPerHourOtherSettingsTimeSegmentSelected = {
+  metric: 'VISITS',
+  aggregation: 'NONE',
+  include_weekends: true,
+};
+const entrancesPerHourOtherSettingsTimeSegmentNotSelected = {
   metric: 'VISITS',
   aggregation: 'NONE',
   include_weekends: true,
   hour_start: 6,
-  hour_end: 20
+  hour_end: 20,
 };
 export function EntrancesPerHour(props: SpacesReportProps) {
   return <EphemeralReport
     name="Entrances per Hour"
     type="HOURLY_BREAKDOWN"
-    otherSettings={entrancesPerHourOtherSettings}
+    otherSettings={props.timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ? 
+      entrancesPerHourOtherSettingsTimeSegmentNotSelected :
+      entrancesPerHourOtherSettingsTimeSegmentSelected}
     {...props}
   />;
 }
 
-const averagePeakOccupancyPerHourOtherSettings = {
+const averagePeakOccupancyPerHourOtherSettingsTimeSegmentSelected = {
+  metric: 'PEAKS',
+  aggregation: 'AVERAGE',
+  include_weekends: true,
+};
+const averagePeakOccupancyPerHourOtherSettingsTimeSegmentNotSelected = {
   metric: 'PEAKS',
   aggregation: 'AVERAGE',
   include_weekends: true,
   hour_start: 6,
-  hour_end: 20
+  hour_end: 20,
 };
 export function AveragePeakOccupancyPerHour(props: SpacesReportProps) {
   return <EphemeralReport
     name="Average Peak Occupancy per Hour"
     type="HOURLY_BREAKDOWN"
-    otherSettings={averagePeakOccupancyPerHourOtherSettings}
+    otherSettings={props.timeSegmentLabel === DEFAULT_TIME_SEGMENT_LABEL ?
+      averagePeakOccupancyPerHourOtherSettingsTimeSegmentNotSelected :
+      averagePeakOccupancyPerHourOtherSettingsTimeSegmentSelected}
     {...props}
   />;
 }
