@@ -157,7 +157,15 @@ export default function WebhookCreateModal({
                 <p>Here's an example tailgating event webhook payload:</p>
                 <pre className={styles.webhookCreateExamplePayload}>{
                   JSON.stringify({
-                    "to be": "determined"
+                    "type": "tailgating_event",
+                    "request_id": "5245250ce4a447e18f513b1863c80ea0",
+                    "version": "v3",
+                    "payload": {
+                      "trajectory": -1,
+                      "doorway_id": "drw_643916192641188838",
+                      "serial_number": "ZDEMO",
+                      "timestamp": "2019-03-18T20:53:03.647Z",
+                    },
                   }, null, 2)
                 }</pre>
               </Fragment>

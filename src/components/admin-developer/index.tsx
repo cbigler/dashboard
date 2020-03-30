@@ -254,7 +254,9 @@ const AdminDeveloper: React.FunctionComponent = () => {
             id="Name"
             width={240}
             template={item => (
-              <strong className={styles.adminDeveloperListviewValue}>{item.name}</strong>
+              <strong className={styles.adminDeveloperListviewValue}>
+                {item.name || <Fragment>&mdash;</Fragment>}
+              </strong>
             )}
           />
           <ListViewColumn
@@ -263,12 +265,11 @@ const AdminDeveloper: React.FunctionComponent = () => {
             template={item => item.type === WebhookTypeChoices.COUNT_EVENTS ? 'Count' : 'Tailgating'}
           />
           <ListViewColumn
-            id="Payload URL"
+            id="URL"
             template={item => (
               <span className={styles.adminDeveloperListviewValue}>{item.endpoint}</span>
             )}
           />
-          <ListViewColumnSpacer />
           <ListViewColumn
             id="Edit"
             title=" "
