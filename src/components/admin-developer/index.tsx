@@ -71,19 +71,11 @@ const AdminDeveloper: React.FunctionComponent = () => {
   const webhooks = useRxStore(WebhooksStore);
   const tokens = useRxStore(TokensStore);
 
-  const onOpenModal = (name, data) => {
-    showModal(dispatch, name, data);
-  }
-  const onCloseModal = async () => {
-    await hideModal(dispatch);
-  }
-
   const onCreateToken = async (token) => {
     const ok = await collectionTokensCreate(dispatch, token);
-    if (ok) { hideModal(dispatch); }
-  }
-  const onUpdateToken = (token) => {
-    updateModal(dispatch, { token });
+    if (ok) {
+      hideModal(dispatch);
+    }
   }
   const onSaveToken = async (token) => {
     const ok = await collectionTokensUpdate(dispatch, token);
@@ -111,9 +103,6 @@ const AdminDeveloper: React.FunctionComponent = () => {
     const ok = await collectionWebhooksUpdate(dispatch, webhook);
     if (ok) { hideModal(dispatch); }
   }
-  const onUpdateWebhookData = (webhook) => {
-    updateModal(dispatch, { webhook });
-  }
   const onDestroyWebhook = async (webhook) => {
     const ok = await collectionWebhooksDestroy(dispatch, webhook);
     if (ok) { await hideModal(dispatch); }
@@ -124,18 +113,18 @@ const AdminDeveloper: React.FunctionComponent = () => {
       visible={activeModal.visible}
       token={activeModal.data.token}
 
-      onUpdate={onUpdateToken}
+      onUpdate={token => updateModal(dispatch, { token })}
       onSubmit={onCreateToken}
-      onDismiss={onCloseModal}
+      onDismiss={() => hideModal(dispatch)}
     /> : null}
     {activeModal.name === 'token-update' ? <TokenUpdateModal
       visible={activeModal.visible}
       token={activeModal.data.token}
       isDestroying={activeModal.data.isDestroying}
 
-      onUpdate={onUpdateToken}
+      onUpdate={token => updateModal(dispatch, { token })}
       onSubmit={onSaveToken}
-      onDismiss={onCloseModal}
+      onDismiss={() => hideModal(dispatch)}
       onDestroyToken={onDestroyToken}
     /> : null}
 
@@ -143,17 +132,17 @@ const AdminDeveloper: React.FunctionComponent = () => {
       visible={activeModal.visible}
       webhook={activeModal.data.webhook}
 
-      onUpdate={onUpdateWebhookData}
+      onUpdate={webhook => updateModal(dispatch, { webhook })}
       onSubmit={onCreateWebhook}
-      onDismiss={onCloseModal}
+      onDismiss={() => hideModal(dispatch)}
     /> : null}
     {activeModal.name === 'webhook-update' ? <WebhookModal
       visible={activeModal.visible}
       webhook={activeModal.data.webhook}
 
-      onUpdate={onUpdateWebhookData}
+      onUpdate={webhook => updateModal(dispatch, { webhook })}
       onSubmit={onUpdateWebhook}
-      onDismiss={onCloseModal}
+      onDismiss={() => hideModal(dispatch)}
     /> : null}
 
     <AppBar>
@@ -171,7 +160,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
             <Button
               variant="filled"
               type="primary"
-              onClick={() => onOpenModal('token-create', {token: {name: '', description: '', token_type: READONLY}})}
+              onClick={() => showModal(dispatch, 'token-create', {token: {name: '', description: '', token_type: READONLY}})}
             >Add token</Button>
           </AppBarSection>
         </AppBar>
@@ -203,7 +192,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
             template={item => (
               <Button
                 variant="underline"
-                onClick={() => onOpenModal('token-update', {token: item, isDestroying: false})}
+                onClick={() => showModal(dispatch, 'token-update', {token: item, isDestroying: false})}
               >Edit</Button>
             )}
           />
@@ -213,7 +202,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
             width={48}
             align="right"
             template={item => <Icons.Trash color={colorVariables.gray500} />}
-            onClick={item => onOpenModal('token-update', {token: item, isDestroying: true})} />
+            onClick={item => showModal(dispatch, 'token-update', {token: item, isDestroying: true})} />
         </ListView>
       </div>
       <div className={styles.section}>
@@ -222,7 +211,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
           <AppBarSection>
             <ButtonGroup>
               <Button
-                onClick={() => onOpenModal('webhook-create', {
+                onClick={() => showModal(dispatch, 'webhook-create', {
                   webhook: {
                     name: '',
                     type: WebhookTypeChoices.TAILGATING_EVENTS,
@@ -235,7 +224,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
               >Add tailgating webhook</Button>
               <Button
                 variant="filled"
-                onClick={() => onOpenModal('webhook-create', {
+                onClick={() => showModal(dispatch, 'webhook-create', {
                   webhook: {
                     name: '',
                     type: WebhookTypeChoices.COUNT_EVENTS,
@@ -278,7 +267,7 @@ const AdminDeveloper: React.FunctionComponent = () => {
             template={item => (
               <Button
                 variant="underline"
-                onClick={() => onOpenModal('webhook-update', {webhook: item})}
+                onClick={() => showModal(dispatch, 'webhook-update', {webhook: item})}
               >Edit</Button>
             )}
           />
