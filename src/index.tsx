@@ -52,6 +52,7 @@ import routeTransitionAccountForgotPassword from './rx-actions/route-transition/
 import routeTransitionDashboardList from './rx-actions/route-transition/dashboard-list';
 import routeTransitionDashboardDetail from './rx-actions/route-transition/dashboard-detail';
 import routeTransitionDashboardEdit from './rx-actions/route-transition/dashboard-edit';
+import routeTransitionRoadmap from './rx-actions/route-transition/roadmap';
 
 import routeTransitionAdminSpaceMappings from './rx-actions/route-transition/admin-space-mappings';
 import routeTransitionAdminBrivoMappings from './rx-actions/route-transition/admin-brivo-mappings';
@@ -187,6 +188,7 @@ router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDis
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
 router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
+router.addRoute('roadmap', () => routeTransitionRoadmap(rxDispatch));
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events

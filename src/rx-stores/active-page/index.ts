@@ -5,6 +5,7 @@ import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-trans
 import { ROUTE_TRANSITION_SPACES } from '../../rx-actions/route-transition/spaces';
 import { ROUTE_TRANSITION_SPACES_SPACE } from '../../rx-actions/route-transition/spaces-space';
 import { ROUTE_TRANSITION_SPACES_DOORWAY } from '../../rx-actions/route-transition/spaces-doorway';
+import { ROUTE_TRANSITION_ROADMAP } from '../../rx-actions/route-transition/roadmap';
 
 import { ROUTE_TRANSITION_DASHBOARD_LIST } from '../../rx-actions/route-transition/dashboard-list';
 import { ROUTE_TRANSITION_DASHBOARD_DETAIL } from '../../rx-actions/route-transition/dashboard-detail';
@@ -20,6 +21,7 @@ import { ROUTE_TRANSITION_ADMIN_DEVICE_STATUS } from '../../rx-actions/route-tra
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../rx-actions/route-transition/admin-locations-edit';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
+
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../rx-actions/route-transition/logout';
 
@@ -54,6 +56,7 @@ export enum ActivePage {
   ADMIN_LOCATIONS_EDIT = 'ADMIN_LOCATIONS_EDIT',
   ADMIN_LOCATIONS_NEW = 'ADMIN_LOCATIONS_NEW',
   ANALYTICS = 'ANALYTICS',
+  ROADMAP = 'ROADMAP',
 }
 
 export type ActivePageState = ActivePage;
@@ -112,6 +115,9 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.ADMIN_LOCATIONS_EDIT;
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return ActivePage.ADMIN_LOCATIONS_NEW;
+
+  case ROUTE_TRANSITION_ROADMAP:
+    return ActivePage.ROADMAP;
 
   case AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS:
     return ActivePage.ANALYTICS;

@@ -29,6 +29,7 @@ import impersonateSet from '../../rx-actions/impersonate';
 import { defaultState as impersonateDefaultState } from '../../rx-stores/impersonate';
 
 import Dashboard from '../dashboard';
+import Roadmap from '../roadmap';
 import AppNavbar from '../app-navbar';
 import UnknownPage from '../unknown-page';
 import ImpersonateModal from '../impersonate-modal';
@@ -179,6 +180,8 @@ function ActivePage({activePage, user, settings}) {
     return <DashboardsEdit />;
   case "ANALYTICS":
     return <Analytics />;
+  case "ROADMAP":
+    return <Roadmap />;
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.
