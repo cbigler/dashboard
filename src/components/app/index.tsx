@@ -181,7 +181,7 @@ function ActivePage({activePage, user, settings}) {
   case "ANALYTICS":
     return <Analytics />;
   case "ROADMAP":
-    return <Roadmap />;
+    return stringToBoolean(settings.roadmap_enabled) ? null : <Roadmap />;
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

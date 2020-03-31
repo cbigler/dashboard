@@ -194,13 +194,13 @@ export default function AppNavbar({
           ) : null}
 
           {/* Roadmap link (under feature-flag) */}
-          <AppNavbarItem
+          {stringToBoolean(settings.roadmap_enabled) && <AppNavbarItem
             selected={page === 'ROADMAP'}
             showOnMobile={false}
             path="#/roadmap"
             icon={<Icons.Chat />}
             text="Roadmap"
-          />
+          />}
 
           {/* Support link (opens in new tab) */}
           <AppNavbarItem
