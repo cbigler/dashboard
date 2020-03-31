@@ -198,7 +198,7 @@ export default function AppNavbar({
             selected={page === 'ROADMAP'}
             showOnMobile={false}
             path="#/roadmap"
-            icon={<Icons.Chat />}
+            icon={<Icons.Ebook />}
             text="Roadmap"
           />}
 
