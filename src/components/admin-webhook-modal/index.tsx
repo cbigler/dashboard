@@ -161,7 +161,6 @@ export default function WebhookCreateModal({
                     "request_id": "5245250ce4a447e18f513b1863c80ea0",
                     "version": "v3",
                     "payload": {
-                      "trajectory": -1,
                       "doorway_id": "drw_643916192641188838",
                       "serial_number": "ZDEMO",
                       "timestamp": "2019-03-18T20:53:03.647Z",
