@@ -11,6 +11,7 @@
     "@density/charts": "^1.2.2",
     "@density/lib-api-types": "^2.0.1",
     "@density/lib-common-helpers": "^0.1.8",
+    "@density/lib-common-types": "^1.0.2",
     "@density/lib-space-helpers": "^0.2.7",
     "@density/lib-time-helpers": "^1.0.3",
     "@density/react-dates": "^12.6.0",
