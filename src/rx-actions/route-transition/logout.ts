@@ -5,11 +5,13 @@ import collectionTokensSet from '../collection/tokens/set';
 import collectionWebhooksSet from '../collection/webhooks/set';
 import collectionServicesSet from '../collection/services/set';
 import { UserActionTypes } from '../../types/users';
+import accounts from '../../client/accounts';
 
 export const ROUTE_TRANSITION_LOGOUT = 'ROUTE_TRANSITION_LOGOUT';
 
 export default function routeTransitionLogout(dispatch) {
   dispatch({ type: ROUTE_TRANSITION_LOGOUT });
+  accounts().delete('/logout');
   dispatch(sessionTokenUnset());
   dispatch(collectionSpacesSet([]));
   dispatch(collectionSpaceHierarchySet([]));
