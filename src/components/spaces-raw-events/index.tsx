@@ -30,6 +30,7 @@ import { downloadFile } from '../../helpers/download-file';
 import { showToast, hideToast } from '../../rx-actions/toasts';
 import { useAutoWidth } from '../../helpers/use-auto-width';
 import { ListViewColumnSpacer } from '@density/ui';
+import { sanitizeCSVDocument } from '../../helpers/csv';
 
 export function getCSVURL() {
   const baseV1 = (core().defaults.baseURL || 'https://api.density.io/v2').replace('/v2', '/v1');
@@ -99,9 +100,11 @@ export default function SpacesRawEvents() {
 
                 hideToast(dispatch, toastId);
 
+                const sanitizedData = sanitizeCSVDocument(`${headerRow}\r\n${csvData.join('\r\n')}`)
+
                 downloadFile(
                   fileName,
-                  `${headerRow}\r\n${csvData.join('\r\n')}`,
+                  sanitizedData,
                   'text/csv;charset=utf8;'
                 );
               }}

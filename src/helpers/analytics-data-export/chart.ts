@@ -10,6 +10,7 @@ import {
 } from "../../types/analytics";
 import { downloadFile } from '../download-file';
 import formatMetricName from '../analytics-formatters/metric-name';
+import { sanitizeCSVDocument } from '../csv';
 
 type DailyDataRow = {
   'Space': string,
@@ -114,6 +115,6 @@ export function exportAnalyticsChartData(inputDatapoints: AnalyticsDatapoint[], 
     csvData = d3Dsv.csvFormat(rows, ['Space', 'Timestamp', 'Local Time', metricColumnName])
   }
 
-
-  downloadFile(fileName, csvData, 'text/csv;charset=utf8;');
+  const sanitizedData = sanitizeCSVDocument(csvData)
+  downloadFile(fileName, sanitizedData, 'text/csv;charset=utf8;');
 }

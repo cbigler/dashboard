@@ -13,6 +13,7 @@ import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { downloadFile } from '../download-file';
 import formatMetricName from '../analytics-formatters/metric-name';
 import { TableDataItem, sum, average, getTableColumnKeys, RowData, computeTableData } from '../analytics-table';
+import { sanitizeCSVDocument } from '../csv';
 
 
 function getPeakMetricValue(tableDataItem: TableDataItem, selectedMetric: AnalyticsFocusedMetric): number | null {
@@ -216,5 +217,6 @@ export function exportAnalyticsTableData(report: AnalyticsReport, spaces: CoreSp
   })
   
   const csvData = d3Dsv.csvFormat(formattedRows, rawTableData.columnHeaders as any)
-  downloadFile(fileName, csvData, 'text/csv;charset=utf8;');
+  const sanitizedData = sanitizeCSVDocument(csvData)
+  downloadFile(fileName, sanitizedData, 'text/csv;charset=utf8;');
 }
