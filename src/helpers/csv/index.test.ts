@@ -36,4 +36,25 @@ describe('sanitizeCellText', () => {
         const result = sanitizeCellText(text)
         expect(result).toEqual(text)
     })
+    it('should allow ISO timestamps', () => {
+        const text = '2020-04-20T12:34:56Z'
+        const result = sanitizeCellText(text)
+        expect(result).toEqual(text)
+    })
+    it('should allow Excel-friendly timestamps', () => {
+        const text = '2020-04-20 12:34:56'
+        const result = sanitizeCellText(text)
+        expect(result).toEqual(text)
+    })
+    it('should strip forbidden control characters', () => {
+        expect(sanitizeCellText('@foo')).toEqual('foo')
+        expect(sanitizeCellText('=foo')).toEqual('foo')
+        expect(sanitizeCellText('==foo')).toEqual('foo')
+        expect(sanitizeCellText('+foo')).toEqual('foo')
+        expect(sanitizeCellText('+=foo')).toEqual('foo')
+        expect(sanitizeCellText('-=foo')).toEqual('foo')
+        expect(sanitizeCellText('!foo')).toEqual('foo')
+        expect(sanitizeCellText('=!foo')).toEqual('foo')
+        expect(sanitizeCellText('!=foo')).toEqual('foo')
+    })
 })

@@ -1,22 +1,19 @@
 import { csvParseRows, csvFormatRows } from 'd3-dsv';
 
 
-// \w matches alphanumeric characters
-// \040 matches the space character
-// \- matches the minus sign character
-// [^] negates a set
-// | is a logical OR
-// (?:) is a non-capturing group
-// \d matches numeric digits
-// This regex matches anything that is not alphanumeric, space, or minus sign,
-//   and also matches minus signs that are followed by non-digits
-
 /* eslint-disable no-useless-escape */
-const FORBIDDEN = /[^\w\040\.\-]|(?:\-[^\d])/g;
+const LEADING_MINUS_SIGN_FOLLOWED_BY_NON_DIGIT = /^\-(?=[^\d])/g;
+const FORBIDDEN = /^[\@\=\+\!]+/g;
 /* eslint-enable no-useless-escape */
 
 export function sanitizeCellText(cellText: string): string {
-  return cellText.replace(FORBIDDEN, '');
+  // remove leading and trailing whitespace
+  const trimmed = cellText.trim();
+
+  // strip forbidden sequences
+  return trimmed
+    .replace(LEADING_MINUS_SIGN_FOLLOWED_BY_NON_DIGIT, '')
+    .replace(FORBIDDEN, '')
 }
 
 export function sanitizeCSVDocument(csvText: string): string {
