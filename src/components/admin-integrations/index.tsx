@@ -42,6 +42,7 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 import IntegrationsStore from '../../rx-stores/integrations';
 
 import core from '../../client/core';
+import { ON_PREM } from '../../fields';
 
 
 function iconForIntegration(serviceName: string) {
@@ -85,6 +86,14 @@ export function AdminIntegrations({
   onDestroyServiceAuthorization,
   onCloseModal,
 }) {
+  if (ON_PREM) {
+    return (
+      <div className={styles.onPremBackground}>
+        <p>This functionality is unavailable for on-prem installations.</p>
+      </div>
+    );
+  }
+
   return <Fragment>
     {activeModal.name === 'integrations-robin-create' ? <IntegrationsRobinCreateModal
       visible={activeModal.visible}

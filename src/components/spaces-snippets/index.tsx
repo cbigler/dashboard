@@ -25,6 +25,8 @@ import InfoPopupNew from '../info-popup-new';
 import SpacesGraphic from './graphic';
 import { SpacesPageState } from '../../rx-stores/spaces-page/reducer';
 
+import { ON_PREM } from '../../fields';
+
 export function SpacesEmptyState() {
   return <AppPane>
     <div style={{
@@ -260,7 +262,9 @@ export function SpaceMetaBar({
         </AppBarSection>
         {((user as Any<FixInRefactor>)?.permissions || []).includes('core_write') ? (
           <AppBarSection>
-            <AlertPopupList selectedSpace={selectedSpace} />
+            {!ON_PREM ? (
+              <AlertPopupList selectedSpace={selectedSpace} />
+            ) : null}
             <div style={{width: 8}}></div>
             <InfoPopupNew
               placement="bottom-end"
@@ -476,26 +480,28 @@ export function SpaceRightSidebar({
           }}>{tag}</div>)}
         </div>
       </SpaceDetailCard> : null}
-      <SpaceDetailCard
-        background={hasRoomBooking ? colors.gray100 : colors.blueLight}
-        titleBorderColor={colors.gray400}
-        title="Room Booking"
-      >
-        <p style={{fontSize: 16}}>
-          {hasRoomBooking ?
-          'Room booking data is enabled for this space.' :
-          'Connect to your room booking service to unlock reports about meetings.'}
-        </p>
-        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 16}}>
-          <Button href="#/admin/integrations">
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <Icons.Calendar color={colors.blueDark} />
-              &nbsp;
-              {hasRoomBooking ? 'Manage this integration' : 'Integrate room booking'}
-            </div>
-          </Button>
-        </div>
-      </SpaceDetailCard>
+      {!ON_PREM ? (
+        <SpaceDetailCard
+          background={hasRoomBooking ? colors.gray100 : colors.blueLight}
+          titleBorderColor={colors.gray400}
+          title="Room Booking"
+        >
+          <p style={{fontSize: 16}}>
+            {hasRoomBooking ?
+            'Room booking data is enabled for this space.' :
+            'Connect to your room booking service to unlock reports about meetings.'}
+          </p>
+          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 16}}>
+            <Button href="#/admin/integrations">
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Icons.Calendar color={colors.blueDark} />
+                &nbsp;
+                {hasRoomBooking ? 'Manage this integration' : 'Integrate room booking'}
+              </div>
+            </Button>
+          </div>
+        </SpaceDetailCard>
+      ) : null}
     </div>
   </AppScrollView>
 }
@@ -606,26 +612,29 @@ export function DoorwayRightSidebar({
       <SpaceDetailCard background={colors.gray100} titleBorderColor={colors.gray300} title="Spaces" actions="Sensor Position">
         <DoorwayDetailSpaceList spaces={spaces} doorwaySpaces={selectedDoorway.spaces} />
       </SpaceDetailCard>
-      <SpaceDetailCard
-        background={hasAccessControl ? colors.gray100 : colors.blueLight}
-        titleBorderColor={colors.gray400}
-        title="Access Control"
-      >
-        <p style={{fontSize: 16}}>
-          {hasAccessControl ?
-            'Access control is enabled for this doorway.' :
-            'You haven’t linked this doorway to an access control provider.'}
-        </p>
-        <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 16}}>
-          <Button href="#/admin/integrations">
-            <div style={{display: 'flex', alignItems: 'center'}}>
-              <Icons.Calendar color={colors.blueDark} />
-              &nbsp;
-              {hasAccessControl ? 'Manage access control' : 'Integrate access control'}
-            </div>
-          </Button>
-        </div>
-      </SpaceDetailCard>
+
+      {!ON_PREM ? (
+        <SpaceDetailCard
+          background={hasAccessControl ? colors.gray100 : colors.blueLight}
+          titleBorderColor={colors.gray400}
+          title="Access Control"
+        >
+          <p style={{fontSize: 16}}>
+            {hasAccessControl ?
+              'Access control is enabled for this doorway.' :
+              'You haven’t linked this doorway to an access control provider.'}
+          </p>
+          <div style={{display: 'flex', justifyContent: 'flex-end', marginTop: 16}}>
+            <Button href="#/admin/integrations">
+              <div style={{display: 'flex', alignItems: 'center'}}>
+                <Icons.Calendar color={colors.blueDark} />
+                &nbsp;
+                {hasAccessControl ? 'Manage access control' : 'Integrate access control'}
+              </div>
+            </Button>
+          </div>
+        </SpaceDetailCard>
+      ) : null}
     </div>
   </AppScrollView>
 }

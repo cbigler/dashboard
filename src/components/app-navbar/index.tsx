@@ -11,6 +11,8 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 
 import { ROLE_INFO } from '../../helpers/permissions/index';
 
+import { ON_PREM } from '../../fields';
+
 function getUserLabel(user, hidden) {
   if (hidden) {
     return ""
@@ -170,7 +172,7 @@ export default function AppNavbar({
 
         <ul className={styles.appNavbarRight}>
           {/* Impersonation interface */}
-          {(impersonate || can(user, PERMISSION_CODES.impersonate)) ? (
+          {!ON_PREM && (impersonate || can(user, PERMISSION_CODES.impersonate)) ? (
             impersonate && impersonate.enabled && impersonate.selectedUser ?
               <li
                 className={classnames(styles.appNavbarItem, { [styles.showOnMobile]: true })}
@@ -194,14 +196,16 @@ export default function AppNavbar({
           ) : null}
 
           {/* Support link (opens in new tab) */}
-          <AppNavbarItem
-            selected={false}
-            showOnMobile={true}
-            path="https://help.density.io/"
-            targetBlank={true}
-            icon={<Icons.Chat />}
-            text="Support"
-          />
+          {!ON_PREM ? (
+            <AppNavbarItem
+              selected={false}
+              showOnMobile={true}
+              path="https://help.density.io/"
+              targetBlank={true}
+              icon={<Icons.Chat />}
+              text="Support"
+            />
+          ) : null}
 
           {/* Mobile logout button */}
           <AppNavbarItem
@@ -242,7 +246,7 @@ export default function AppNavbar({
                 icon={<Icons.Team />}
                 selected={['ADMIN_USER_MANAGEMENT'].includes(page)}
               />
-              {can(user, PERMISSION_CODES.developerToolsManage) ? <AppNavbarMenuItem
+              {can(user, PERMISSION_CODES.developerToolsManage) && !ON_PREM ? <AppNavbarMenuItem
                 path="#/admin/integrations"
                 text="Integrations"
                 icon={<Icons.Integrations2 />}

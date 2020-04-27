@@ -472,7 +472,7 @@ export class Account extends React.Component<{
               ) : null}
 
               {/* ALERTS */}
-              {canManageAlerts ? (
+              {canManageAlerts && !ON_PREM ? (
                 <AlertSection
                   spaces={spaces}
                   onUpdateAlert={onUpdateAlert}

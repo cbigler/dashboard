@@ -43,6 +43,8 @@ import { getSelectedDashboard } from '../../helpers/legacy';
 import MiscellaneousStore from '../../rx-stores/miscellaneous';
 import ResizeCounterStore from '../../rx-stores/resize-counter';
 
+import { ON_PREM } from '../../fields';
+
 function DashboardMainScrollViewContent({
   dashboards,
   selectedDashboard,
@@ -330,7 +332,7 @@ const Dashboard: React.FunctionComponent<{
                           </div>
                         </div>
                       : null}
-                      {!isDemoUser && !isReadOnlyUser ? (
+                      {!ON_PREM && !isDemoUser && !isReadOnlyUser ? (
                         <DashboardDigestPopupList
                           selectedDashboard={selectedDashboard}
                           onEditDigest={digest => {

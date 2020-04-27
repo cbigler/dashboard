@@ -18,6 +18,8 @@ import AdminLocations from '../admin-locations';
 import AdminSpaceMappings from '../admin-space-mappings';
 import AdminBrivoMappings from '../admin-brivo-mappings';
 
+import { ON_PREM } from '../../fields';
+
 
 export default function Admin({
   user,
@@ -44,7 +46,7 @@ export default function Admin({
               >
                 User Management
               </AppBarSubnavLink>
-              {can(user, PERMISSION_CODES.developerToolsManage) ? 
+              {can(user, PERMISSION_CODES.developerToolsManage) && !ON_PREM ? 
                 <AppBarSubnavLink
                   href="#/admin/integrations"
                   active={['ADMIN_INTEGRATIONS', 'ADMIN_SPACE_MAPPINGS', 'ADMIN_BRIVO_MAPPINGS'].includes(activePage)}
