@@ -3,12 +3,12 @@ import { errorHandler } from './index';
 
 let _client = axios.create();
 
-type CoreClientConfigOptions = {
+type ErrorCollectorClientConfigOptions = {
   host?: string,
   token?: string,
 }
 
-export function config(dispatch: Any<FixInRefactor>, options: CoreClientConfigOptions) {
+export function config(dispatch: Any<FixInRefactor>, options: ErrorCollectorClientConfigOptions) {
   const { host, token } = options;
 
   if (host !== undefined) {

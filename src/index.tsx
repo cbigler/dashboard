@@ -24,7 +24,7 @@ import WebsocketEventPusher, { CONNECTION_STATES } from './helpers/websocket-eve
 import mixpanelTrack from './helpers/tracking/mixpanel-track';
 import unsafeHandleWindowResize from './helpers/unsafe-handle-window-resize';
 import unsafeNavigateToLandingPage from './helpers/unsafe-navigate-to-landing-page/index';
-import fields from './fields';
+import fields, { ON_PREM } from './fields';
 
 // The main app component that renders everything.
 import App from './components/app/index';
@@ -96,7 +96,6 @@ import moment from 'moment-timezone';
 import SpacesStore, { SpacesState } from './rx-stores/spaces';
 import DoorwaysStore, { DoorwaysState } from './rx-stores/doorways';
 import { interval } from 'rxjs';
-import { ON_PREM } from './fields';
 
 configureClients();
 
@@ -105,7 +104,7 @@ if (ON_PREM) {
 }
 
 // Send metrics to google analytics and mixpanel when the page url changes.
-if (process.env.REACT_APP_GA_TRACKING_CODE) {
+if (process.env.REACT_APP_GA_TRACKING_CODE && !ON_PREM) {
   ReactGA.initialize(process.env.REACT_APP_GA_TRACKING_CODE);
 }
 function trackHashChange() {

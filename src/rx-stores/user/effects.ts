@@ -4,6 +4,8 @@ import setupHotjar from '../../helpers/tracking/hotjar';
 import { UserState } from '.';
 import { StoreSubject } from '..';
 
+import { ON_PREM } from '../../fields';
+
 function isUserImpersonating() {
   try {
     const impersonate = JSON.parse(window.localStorage.impersonate);
@@ -21,10 +23,12 @@ export default function registerSideEffects(
   // NOTE: USER_SET not yet added to GlobalAction types, hence the Any<FixInRefactor>
   userStore.subscribe((userState: UserState) => {
 
-    // skip tracking if user is impersonating
-    if (isUserImpersonating()) return;
+    // Skip tracking if user is impersonating
+    if (isUserImpersonating()) { return; }
+    // Also skip tracking if this is an on-prem build
+    if (ON_PREM) { return; }
 
-    if (process.env.REACT_APP_HOTJAR_SITE_ID) {
+    if (process.env.REACT_APP_HOTJAR_SITE_ID && !ON_PREM) {
       setupHotjar(process.env.REACT_APP_HOTJAR_SITE_ID, 6);
     }
 
