@@ -224,7 +224,7 @@ export function splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, par
 export async function requestCountsForLocalRange(space, start, end, params={}) {
   const subranges = splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, params);
   return await subranges.map(subrange => {
-    return fetchAllObjects(`/spaces/counts`, {
+    return fetchAllObjects(`http://pipeline-health.production.density.io:3001/spaces/counts`, {
       params: {
         start_time: formatInISOTime(subrange.start),
         end_time: formatInISOTime(subrange.end),
