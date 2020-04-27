@@ -37,6 +37,8 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 import WebhooksStore from '../../rx-stores/webhooks';
 import TokensStore from '../../rx-stores/tokens';
 
+import { ON_PREM } from '../../fields';
+
 
 const READONLY = 'readonly', READWRITE = 'readwrite';
 const PERMISSION_TEXT = {
@@ -210,18 +212,20 @@ const AdminDeveloper: React.FunctionComponent = () => {
           <AppBarTitle>Webhooks</AppBarTitle>
           <AppBarSection>
             <ButtonGroup>
-              <Button
-                onClick={() => showModal(dispatch, 'webhook-create', {
-                  webhook: {
-                    name: '',
-                    type: WebhookTypeChoices.TAILGATING_EVENTS,
-                    description: '',
-                    endpoint: '',
-                    headers: {},
-                    enabled: true,
-                  },
-                })}
-              >Add tailgating webhook</Button>
+              {!ON_PREM ? (
+                <Button
+                  onClick={() => showModal(dispatch, 'webhook-create', {
+                    webhook: {
+                      name: '',
+                      type: WebhookTypeChoices.TAILGATING_EVENTS,
+                      description: '',
+                      endpoint: '',
+                      headers: {},
+                      enabled: true,
+                    },
+                  })}
+                >Add tailgating webhook</Button>
+              ) : null}
               <Button
                 variant="filled"
                 onClick={() => showModal(dispatch, 'webhook-create', {

@@ -44,6 +44,8 @@ import UserStore, { UserState } from '../../rx-stores/user';
 import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
 import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 
+import { ON_PREM } from '../../fields';
+
 // modes for management sections
 const DISPLAY = 'DISPLAY';
 const EDIT = 'EDIT';
@@ -469,7 +471,7 @@ export class Account extends React.Component<{
               ) : null}
 
               {/* ALERTS */}
-              {canManageAlerts ? (
+              {canManageAlerts && !ON_PREM ? (
                 <AlertSection
                   spaces={spaces}
                   onUpdateAlert={onUpdateAlert}
