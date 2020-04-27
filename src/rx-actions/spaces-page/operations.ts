@@ -11,7 +11,7 @@ export async function loadDailyOccupancy(dispatch: DispatchType, spaceId: string
   dispatch(spacesPageActions.setDailyDate(date, indicateLoading));
   
   const localDate = moment.tz(date, spaceTimeZone);
-  const response = await core().get(`/spaces/${spaceId}/counts`, {
+  const response = await core().get(`http://pipeline-health.production.density.io:3001/spaces/counts`, {
     params: {
       interval: '5m',
       order: 'asc',
@@ -19,14 +19,15 @@ export async function loadDailyOccupancy(dispatch: DispatchType, spaceId: string
       end_time: localDate.clone().startOf('day').add(1, 'day').toISOString(),
       page_size: 5000,
       slow: getGoSlow(),
+      space_list: spaceId,
     }
   });
 
-  if (typeof response.data.results === 'undefined') {
-    throw new Error(`Response did not contain .results key! (data=${response.data})`);
+  if (typeof response.data.results === 'undefined' || typeof response.data.results[spaceId] === 'undefined') {
+    throw new Error(`Response did not contain results! (data=${response.data})`);
   }
 
-  dispatch(spacesPageActions.setDailyOccupancy(response.data.results.reverse()));
+  dispatch(spacesPageActions.setDailyOccupancy(response.data.results[spaceId].reverse()));
 }
 
 export async function loadRawEvents(dispatch: DispatchType, spaces: SpacesState, spacesPage: SpacesPageState) {

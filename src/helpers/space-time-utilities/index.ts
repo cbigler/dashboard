@@ -224,17 +224,18 @@ export function splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, par
 export async function requestCountsForLocalRange(space, start, end, params={}) {
   const subranges = splitTimeRangeIntoSubrangesWithSameOffset(space, start, end, params);
   return await subranges.map(subrange => {
-    return fetchAllObjects(`/spaces/${space.id}/counts`, {
+    return fetchAllObjects(`/spaces/counts`, {
       params: {
         start_time: formatInISOTime(subrange.start),
         end_time: formatInISOTime(subrange.end),
         slow: getGoSlow(),
+        space_list: space.id,
         ...params,
       }
     });
   }).reduce((promise, request, index) => {
     return promise.then(async results => {
-      const subrangeData = await request;
+      const subrangeData = (await request)[space.id];
       if (subranges[index].gap && results.length > 0 && subrangeData.length > 0) {
         // The gap bucket's metrics are combined with the last bucket in the array.
         const lastBucket = results.pop();

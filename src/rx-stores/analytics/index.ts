@@ -542,7 +542,7 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
     const client = core();
 
     // for the chart data, no time filter is used and always use 15m interval
-    let response = await client.get<SpacesCountsAPIResponse>('/spaces/counts', {
+    let response = await client.get<SpacesCountsAPIResponse>('http://pipeline-health.production.density.io:3001/spaces/counts', {
       params: Object.assign({}, sharedParams, {
         interval: '15m',
       })
@@ -572,7 +572,7 @@ export async function runQuery(startDate: Moment, endDate: Moment, interval: Que
   }
 
   async function getTableMetrics() {
-    const response = await core().get<SpacesCountsMetricsAPIResponse>('/spaces/counts/metrics', {
+    const response = await core().get<SpacesCountsMetricsAPIResponse>('http://pipeline-health.production.density.io:3001/spaces/counts', {
       params: Object.assign({}, sharedParams, tableRequestTimeFilterParams)
     })
     return response.data.metrics;
