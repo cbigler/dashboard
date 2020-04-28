@@ -28,6 +28,9 @@ function getPeakMetricValue(tableDataItem: TableDataItem, selectedMetric: Analyt
       return getInObject(tableDataItem.metricData, 'exits.peak.value', null);
     case AnalyticsFocusedMetric.EVENTS:
     case AnalyticsFocusedMetric.OPPORTUNITY:
+    case AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE:
+    case AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR:
+    case AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST:
       return null;
   }
 }
@@ -44,6 +47,9 @@ function getAverageMetricValue(tableDataItem: TableDataItem, selectedMetric: Ana
       return getInObject(tableDataItem.metricData, 'exits.average', null);
     case AnalyticsFocusedMetric.EVENTS:
     case AnalyticsFocusedMetric.OPPORTUNITY:
+    case AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE:
+    case AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR:
+    case AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST:
       return null;
   }
 }
@@ -59,6 +65,9 @@ function getTotalMetricValue(tableDataItem: TableDataItem, selectedMetric: Analy
     case AnalyticsFocusedMetric.EXITS:
       return getInObject(tableDataItem.metricData, 'exits.total', null);
     case AnalyticsFocusedMetric.EVENTS:
+    case AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE:
+    case AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR:
+    case AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST:
       return null;
   }
 }

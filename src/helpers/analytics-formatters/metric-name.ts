@@ -17,6 +17,12 @@ export default function formatMetricName(metric: AnalyticsFocusedMetric) {
       return 'Events';
     case AnalyticsFocusedMetric.OPPORTUNITY:
       return 'Available Capacity';
+    case AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE:
+      return 'Cu. Ft. / Minute';
+    case AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR:
+      return 'Vent. Watts / Hour';
+    case AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST:
+      return 'Energy Cost / Month';
   }
   // if we change the enum members for AnalyticsFocusedMetric this will error if not all cases are handled
   assertNever(metric);

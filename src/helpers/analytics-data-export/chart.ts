@@ -39,6 +39,12 @@ function rollupMetricValueForGroupedDatapoints(group: AnalyticsDatapoint[], sele
       return d3Array.sum(group, d => d.exits) || 0;
     case AnalyticsFocusedMetric.EVENTS:
       return d3Array.sum(group, d => d.events) || 0;
+    case AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE:
+      return (d3Array.max(group, d => d.max) || 0) * 40;
+    case AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR:
+      return (d3Array.max(group, d => d.max) || 0) * 40 * 0.58;
+    case AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST:
+      return (d3Array.max(group, d => d.max) || 0) * 40 * 0.58 * .1279 * 24 * 30 / 1000;
     default:
       return 0;
   }

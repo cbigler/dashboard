@@ -24,6 +24,9 @@ const ALL_METRIC_CHOICES = [
   AnalyticsFocusedMetric.OPPORTUNITY,
   AnalyticsFocusedMetric.ENTRANCES,
   AnalyticsFocusedMetric.EXITS,
+  AnalyticsFocusedMetric.VENT_CUBIC_FEET_PER_MINUTE,
+  AnalyticsFocusedMetric.VENT_WATTS_PER_HOUR,
+  AnalyticsFocusedMetric.VENT_ENERGY_MONTHLY_COST,
 ].map(metric => {
   return {
     id: metric,

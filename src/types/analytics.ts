@@ -104,6 +104,9 @@ export enum AnalyticsFocusedMetric {
   MAX = 'max', // max occupancy/count
   UTILIZATION = 'utilization',
   OPPORTUNITY = 'opportunity',
+  VENT_CUBIC_FEET_PER_MINUTE = 'cfm',
+  VENT_WATTS_PER_HOUR = 'watts_hour',
+  VENT_ENERGY_MONTHLY_COST = 'energy_month',
 }
 
 export enum AnalyticsMetricOpportunityUnit {
