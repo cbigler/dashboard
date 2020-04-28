@@ -21,7 +21,7 @@ import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transit
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../rx-actions/route-transition/admin-locations-edit';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
 
-import { ROUTE_TRANSITION_QUEUE_SPACE_DETAIL } from '../../rx-actions/route-transition/queue-space-detail';
+import { QueueActionTypes } from '../../rx-actions/queue';
 
 import { ROUTE_TRANSITION_LOGOUT } from '../../rx-actions/route-transition/logout';
 
@@ -115,7 +115,7 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.ADMIN_LOCATIONS_EDIT;
   case ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW:
     return ActivePage.ADMIN_LOCATIONS_NEW;
-  case ROUTE_TRANSITION_QUEUE_SPACE_DETAIL:
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL:
     return ActivePage.QUEUE_SPACE_DETAIL;
 
   case AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS:
