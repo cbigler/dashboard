@@ -30,19 +30,20 @@ export const skipUpdate = Symbol('skipUpdate');
 
 export type Reducer<T, A> = (state: T, action: A) => T | typeof skipUpdate
 
+// A list of all stores that have been registered in the application.
+export const storeDirectory: {[displayName: string]: StoreSubject<any>} = {};
+
 // Helper to create stores for this application
 export default function createRxStore<T>(
   displayName: string,
   initialState: T,
   reducer: Reducer<T, GlobalAction>,
 ) {
-
   // StoreSubject is a special variant of an RxJS BehaviorSubject
   const store = new StoreSubject(initialState);
 
   // Subscribe to the global action stream
   actions.subscribe((action: GlobalAction) => {
-    
     // Run the reducer function using the store's value and the next action
     const state = reducer(store.imperativelyGetValue(), action);
 
@@ -52,6 +53,8 @@ export default function createRxStore<T>(
       store.next(state);
     }
   });
+
+  storeDirectory[displayName] = store;
   return store;
 }
 

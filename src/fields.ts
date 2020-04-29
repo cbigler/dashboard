@@ -43,3 +43,6 @@ export default [
     default: process.env.REACT_APP_ENVIRONMENT || 'production',
   },
 ];
+
+export const ON_PREM = true;
+export const ON_PREM_ERROR_COLLECTOR_HOST = 'http://localhost:5000';

@@ -1,8 +1,9 @@
 import { getActiveEnvironments, getGoSlow } from '../../components/environment-switcher/index';
-import fields from '../../fields';
+import fields, { ON_PREM, ON_PREM_ERROR_COLLECTOR_HOST } from '../../fields';
 
 import { config as configCore } from '../../client/core';
 import { config as configAccounts } from '../../client/accounts';
+import { config as configErrorCollector } from '../../client/error-collector';
 
 import { rxDispatch } from '../../rx-stores/index';
 
@@ -29,6 +30,10 @@ export function configureClients() {
     JSON.parse(localStorage.sessionToken) : null;
   const impersonateUser = localStorage.impersonate ?
     (JSON.parse(localStorage.impersonate).selectedUser || {}).id : null;
+
   configCore(rxDispatch, { host: environments.core, token, impersonateUser, goSlow });
   configAccounts(rxDispatch, { host: environments.accounts, token, impersonateUser });
+  if (ON_PREM) {
+    configErrorCollector(rxDispatch, { host: ON_PREM_ERROR_COLLECTOR_HOST, token });
+  }
 }
