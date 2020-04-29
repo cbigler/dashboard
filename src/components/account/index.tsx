@@ -1,6 +1,6 @@
 import styles from './styles.module.scss';
 
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import {
   InputBox,
@@ -18,7 +18,6 @@ import {
   ListViewColumnSpacer,
   ListViewClickableLink,
 } from '@density/ui/src';
-// import AppBar, { AppBarSection, AppBarTitle } from '@density/ui/src';
 
 import { rxDispatch } from '../../rx-stores/index';
 
@@ -43,6 +42,8 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 import UserStore, { UserState } from '../../rx-stores/user';
 import ActiveModalStore, { ActiveModalState } from '../../rx-stores/active-modal';
 import SpacesLegacyStore, { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
+
+import { ON_PREM } from '../../fields';
 
 // modes for management sections
 const DISPLAY = 'DISPLAY';
@@ -93,17 +94,17 @@ const GeneralInfoSection = ({
         {mode === DISPLAY && user.data && !user.data.is_demo ? (
           <Button onClick={handleEditButtonClick}>Edit</Button>
         ) : null}
-        {mode === EDIT ? ([
+        {mode === EDIT ? <Fragment>
           <Button
             variant="underline"
             onClick={handleCancelButtonClick}
-          >Cancel</Button>,
+          >Cancel</Button>
           <Button
             type="primary"
             variant="filled"
             onClick={handleSaveButtonClick}
           >Save changes</Button>
-        ]) : null}
+        </Fragment> : null}
       </div>
 
       <div className={styles.accountPageSectionBody}>
@@ -137,21 +138,23 @@ const GeneralInfoSection = ({
               />}
             />
           </div>
-          <div className={styles.generalInfoFormFieldContainer}>
-            <FormLabel
-              htmlFor="account-phone-number"
-              label="Phone number"
-              input={<PhoneInputBox
-                type="text"
-                placeholder="+1 888 555 1234"
-                width="100%"
-                value={mode === DISPLAY ? user.data?.phone_number : userPhoneNumber}
-                onChange={value => setUserPhoneNumber(value)}
-                disabled={mode !== EDIT}
-                id="account-phone-number"
-              />}
-            />
-          </div>
+          {!ON_PREM ? (
+            <div className={styles.generalInfoFormFieldContainer}>
+              <FormLabel
+                htmlFor="account-phone-number"
+                label="Phone number"
+                input={<PhoneInputBox
+                  type="text"
+                  placeholder="+1 888 555 1234"
+                  width="100%"
+                  value={mode === DISPLAY ? user.data?.phone_number : userPhoneNumber}
+                  onChange={value => setUserPhoneNumber(value)}
+                  disabled={mode !== EDIT}
+                  id="account-phone-number"
+                />}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
@@ -477,9 +480,11 @@ export class Account extends React.Component<{
                 />
               ) : null}
               
-              <div className={styles.accountDeactivateContainer}>
-                <span>If you&apos;d like to deactivate your account, please <a href="mailto:support@density.io?subject=I want to deactivate my Density account"> contact support</a>.</span>
-              </div>
+              {!ON_PREM ? (
+                <div className={styles.accountDeactivateContainer}>
+                  <span>If you&apos;d like to deactivate your account, please <a href="mailto:support@density.io?subject=I want to deactivate my Density account"> contact support</a>.</span>
+                </div>
+              ) : null}
             </div>
           </AppScrollView>
         </AppPane>

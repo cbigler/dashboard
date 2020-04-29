@@ -96,6 +96,7 @@ import moment from 'moment-timezone';
 import SpacesStore, { SpacesState } from './rx-stores/spaces';
 import DoorwaysStore, { DoorwaysState } from './rx-stores/doorways';
 import { interval } from 'rxjs';
+import { ON_PREM } from './fields';
 
 configureClients();
 
