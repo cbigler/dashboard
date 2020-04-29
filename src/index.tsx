@@ -99,6 +99,9 @@ import { interval } from 'rxjs';
 
 configureClients();
 
+if (ON_PREM) {
+  import('./error-collector');
+}
 
 // Send metrics to google analytics and mixpanel when the page url changes.
 if (process.env.REACT_APP_GA_TRACKING_CODE && !ON_PREM) {
