@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import classnames from 'classnames';
 
 import { CoreUser } from '@density/lib-api-types/core-v2/users';
@@ -30,6 +30,8 @@ import UserStore from '../../rx-stores/user';
 import MiscellaneousStore from '../../rx-stores/miscellaneous';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import redirectAfterLogin from '../../rx-actions/miscellaneous/redirect-after-login';
+
+import { ON_PREM } from '../../fields';
 
 
 export const  LOGIN = 'LOGIN',
@@ -201,31 +203,34 @@ export class Login extends React.Component<any, any> {
         >{this.state.view === LOGIN ? 'Continue' : 'Login'}</Button>
       </div>
 
-      <p className={styles.loginSsoDivider}>or</p>
+      {!ON_PREM ? (
+        <Fragment>
+          <p className={styles.loginSsoDivider}>or</p>
+          <div className={styles.loginSsoButtonGroup}>
+            <div className={classnames(styles.loginSubmitButton, styles.sso, styles.google, {[styles.loading]: this.state.loading})}>
+              <Button
+                variant="filled"
+                onClick={() => {
+                  // Store the orginating origin in localStorage from the oauth request. This is used so
+                  // that we can redirect to the login route on the correct version of the dashboard as
+                  // soon as possible in the oauth callback. For example, a user tried to login via oauth
+                  // on a preview link, and normally, it would redirect to the staging dashboard, not the
+                  // preview link. Store the current url so we can redirect back to here after logging in.
+                  const hashIndex = window.location.href.indexOf('#');
+                  window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
 
-      <div className={styles.loginSsoButtonGroup}>
-        <div className={classnames(styles.loginSubmitButton, styles.sso, styles.google, {[styles.loading]: this.state.loading})}>
-          <Button
-            variant="filled"
-            onClick={() => {
-              // Store the orginating origin in localStorage from the oauth request. This is used so
-              // that we can redirect to the login route on the correct version of the dashboard as
-              // soon as possible in the oauth callback. For example, a user tried to login via oauth
-              // on a preview link, and normally, it would redirect to the staging dashboard, not the
-              // preview link. Store the current url so we can redirect back to here after logging in.
-              const hashIndex = window.location.href.indexOf('#');
-              window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
-
-              webAuth.authorize({
-                connection: 'google-oauth2',
-              });
-            }}
-          >
-            <img className={styles.iconSsoLogin} src={logoGoogleG} alt="Google Logo" />
-            Log in with Google
-          </Button>
-        </div>
-      </div>
+                  webAuth.authorize({
+                    connection: 'google-oauth2',
+                  });
+                }}
+              >
+                <img className={styles.iconSsoLogin} src={logoGoogleG} alt="Google Logo" />
+                Log in with Google
+              </Button>
+            </div>
+          </div>
+        </Fragment>
+      ) : null}
       {/* /loginSsoSection */}
 
 
