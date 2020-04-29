@@ -4,224 +4,91 @@
 @import "@density/ui/variables/fonts.scss";
 
 
-.accountPage {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+.queueDetailPage {
+  display: flex;
+  flex-flow: row wrap;
+  width: 100%;
   height: 100%;
-  background-color: $gray000;
-  // each section has 24px margin, so +40 to get to 64px at the top and bottom
-  padding-top: 40px;
-  padding-bottom: 40px;
-  padding-left: 24px;
-  padding-right: 24px;
-  // not sure why this isn't the default...
   box-sizing: border-box;
 }
 
-.accountPageSection {
-  max-width: 800px;
-  margin-top: 24px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 24px;
-  background-color: $white;
-  border: 1px solid $gray200;
-  border-radius: 4px;
-}
-
-.accountPageSectionHeader {
+%queueSection {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  height: 60px;
-  padding-top: 0;
-  padding-right: 24px;
-  padding-bottom: 0;
-  padding-left: 24px;
-  border-bottom: 1px solid $gray200;
-
-  // FIXME: yuck...
-  button { margin-left: 0.5rem; }
-}
-
-.accountPageSectionHeaderText {
+  flex-direction: column;
+  flex-basis: 100%;
+  height: 100%;
   flex: 1;
-  font-size: 1.2rem;
-  font-weight: 500;  
-  color: $gray700;
-}
 
-.accountPageSubsectionHeader {
-  font-size: 18px;
-  font-weight: 500;
-  padding-bottom: 8px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid $gray200;
-}
-
-.accountPageSectionBody {
-  padding: 24px 0;
-  overflow-x: auto;
-}
-
-/**
- * GENERAL INFO SECTION
- */
-
-.generalInfoForm {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: -16px;
-}
-.generalInfoFormFieldContainer {
-  box-sizing: border-box;
-  width: 100%;
-  max-width: 100%;
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  padding: 0 24px;
-  margin-bottom: 16px;
-
-  // FIXME: bad, bad, bad
   > * {
-    width: 100%;
-  }
-
-  // if we're not on a phone, show the fields in 2 columns
-  @media screen and (min-width: $screenSmMin) {
-    width: 50%;
-    max-width: 50%;
+    flex-grow: 0;
   }
 }
 
-/**
- * PASSWORD SECTION
- */
-.passwordForm {}
-.passwordFormFieldContainer {
-  margin-bottom: 26px;
+// Action Section
+.queueActionSection {
+  @extend %queueSection;
+  background: $green;
+  color: #ffffff;
 
-  // FIXME: also bad
-  label {
-    color: $gray600;
+  &.wait {
+    background: $red;
   }
 }
-.passwordFormActions {
+
+%queueActionStatusSection {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
-}
-.passwordFormAction {
-  margin-left: 0.5rem;
-}
+  align-items: baseline;
+  padding-left: 80px;
+  margin-top: 15px;
 
-// Change color of all text in text fields
-.accountNameContainer input,
-.accountEmailContainer input,
-.accountOrganizationContainer input {
-  color: $gray700;
-}
 
-.accountChangePasswordValue {
-  cursor: pointer;
-  text-decoration: underline;
-  float: right;
-
-  color: $midnight;
-}
-
-.accountPageSectionPopoutFormContainer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  width: calc(100% - 48px);
-  padding: 0 24px;
-}
-
-.accountPageSectionPopoutForm {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-}
-.accountPageSectionPopoutFormText {
-  flex-grow: 1;
-  padding: 1rem 0;
-  color: $gray700;
-  align-self: flex-start;
-
-  header {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-  }
-}
-.accountPageSectionPopoutFormTrigger {
-  align-self: flex-end;
-  color: $midnight;
-  font-weight: bold;
-  text-decoration: underline;
-  cursor: pointer;
-}
-
-.accountPageSectionPopoutFormContent {
-  flex: 1;
-  width: 100%;
-  padding-top: 16px;
-}
-// The password reset form.
-.accountChangePasswordFormHeader {
-  margin-bottom: 10px;
-  font-size: $fontSizeBase;
-}
-
-.accountChangePasswordFormContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.accountChangePasswordFormFieldWrapper {
-  margin-bottom: 24px;
-}
-
-.accountPasswordResetIcon {
-  font-family: Densicons;
-  font-size: 18px;
-}
-
-.accountPasswordResetToast {
-  margin-top: 70px;
-}
-@media (min-width: $screenXsMax) {
-  .accountPasswordResetToast {
-    margin-top: 0px;
-
-    position: absolute;
-    z-index: 1000;
-    top: 120px;
-
-    max-width: 420px;
-    left: calc(50% - 210px);
+  > h2 {
+    font-size: 93px;
+    font-weight: 900;
+    margin-left: 10px;
   }
 }
 
-.accountConsent {
-  display: flex;
-  align-items: center;
-  padding: 0 1rem;
+.queueSettings {
+  padding-top: 44px;
+  padding-left: 44px;
+  opacity: .2;
+
+  &:hover {
+    opacity: 1
+  }
 }
 
-.accountCheckbox {
-  margin-right: 8px;
+.queueCapacity {
+  @extend %queueActionStatusSection;
 }
 
-.accountDeactivateContainer {
-  display: flex;
-  justify-content: center;
-  font-size: smaller;
-  margin-top: 40px;
+
+.queueWaitTime {
+  @extend %queueActionStatusSection;
+
+  // this stinks, but the svg icon is not full width
+  > svg {
+    margin-left: -10px;
+    transform: translateY(10px);
+  }
+
+  > h2 {
+    margin-left: 6px;
+  }
+}
+
+.queueActionText {
+  margin-top: auto;
+  margin-bottom: 0;
+  transform: translate(-18px, 76px);
+  font-size: 500px;
+  font-weight: 900;
+}
+
+// Action Section
+.queueDetailSection {
+  @extend %queueSection;
+  background: #ffffff;
 }
