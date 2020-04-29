@@ -23,11 +23,18 @@ import { isNullOrUndefined } from 'util';
 
 
 export type QueueSettings = {
-
+  display_wait_time: boolean
+  go_cooldown_seconds: number
+  message: string
+  queue_capacity: number
+  threshold_metric: "CAPACITY"|"UTILIZATION"|"PEOPLE_PER_SQFT"
+  threshold_value: number
+  support_email: string
 }
 
 export type QueueState = {
   orgSettings: QueueSettings,
+  tallyEnabled: boolean,
   selected: Resource<{
     space: CoreSpace,
     spaceDwellMean: number,
@@ -39,6 +46,7 @@ export type QueueState = {
 const initialState: QueueState = {
   orgSettings: {} as QueueSettings,
   selected: RESOURCE_IDLE,
+  tallyEnabled: localStorage.getItem('queueTallyEnabled') == 'true'
 };
 
 export function queueReducer(state: QueueState, action: GlobalAction): QueueState {
@@ -56,7 +64,11 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
         status: ResourceStatus.COMPLETE
       },
     };
-
+  case QueueActionTypes.QUEUE_SET_TALLY_ENABLED:
+    return {
+      ...state,
+      tallyEnabled: action.enabled
+    }
   default:
     return state;
   }
@@ -77,7 +89,7 @@ actions
       take(1),
       map((user) => {
         let settings = user.data?.organization.settings['queue_settings'];
-
+        console.log('Org settings', settings)
         if (isNullOrUndefined(settings)) {
           console.error('no queue settings defined');
           settings = {};
@@ -87,6 +99,7 @@ actions
         // it should be used as an override.
         if (action.id in settings) {
           settings = settings[action.id];
+          console.log('Space settings', settings)
         }
 
         return [action, settings] as [any, QueueSettings]
@@ -140,6 +153,21 @@ function fetchSelectedSensorSerial(spaceId: string) {
     })
   );
 }
+
+// =================================
+// SIDE EFFECT: when the detail page is loaded
+// grab the selected space, selected sensor, and optionally overriding
+// space settings
+// =================================
+actions
+  .pipe(
+    filter(action => {
+      return action.type === QueueActionTypes.QUEUE_SET_TALLY_ENABLED
+    })
+  )
+  .subscribe((action) => {
+    console.log('tally setting', action)
+  });
 
 
 const QueueStore = createRxStore('QueueStore', initialState, queueReducer);

@@ -29,10 +29,6 @@
   @extend %queueSection;
   background: $green;
   color: #ffffff;
-
-  &.wait {
-    background: $red;
-  }
 }
 
 %queueActionStatusSection {
@@ -50,14 +46,55 @@
   }
 }
 
-.queueSettings {
+.queueSettingsButton {
   padding-top: 44px;
   padding-left: 44px;
+  width: 40px;
+  height: 40px;
   opacity: .2;
+  cursor: pointer;
 
   &:hover {
     opacity: 1
   }
+}
+
+.queueSettings {
+  position: absolute;
+  left: 36px;
+  top: 28px;
+  padding: 16px 8px 8px 8px;
+  background: #ffffff;
+  z-index: 9;
+  color: $midnight;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+  display: flex;
+  flex-direction: column;
+}
+
+.queueSettingsHeader {
+  display: flex;
+  flex-direction: row;
+}
+
+.queueSettingsCloseButton {
+  cursor: pointer;
+}
+
+.queueSettingsTitle {
+  font-size: 32px;
+}
+
+.queueSetting {
+  background: $grayLighter;
+  padding: 16px;
+}
+
+.queueSettingHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
 .queueCapacity {
@@ -91,4 +128,118 @@
 .queueDetailSection {
   @extend %queueSection;
   background: #ffffff;
+  margin: 80px auto;
+  padding-left: 40px;
+  padding-right: 80px;
+
+  display: flex;
+  align-items: center;
 }
+
+
+.queueSpaceNameSection {
+  padding-left: 50px;
+  position: relative;
+}
+
+.queueSpaceNameCircle {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: $blue;
+  position: absolute;
+  z-index: 1;
+}
+
+.queueSpaceName {
+  width: 100%;
+  font-size: 48px;
+  font-weight: 900;
+  margin-bottom: 0;
+  z-index: 2;
+}
+
+.queueMessageSection {
+  margin-top: 125px;
+}
+
+.queueMessage {
+  font-size: 40px;
+  font-weight: 500;
+  margin-bottom: 40px;
+}
+
+.queueTallySection {
+  background: $grayLight;
+  margin-top: 100px;
+  padding: 80px;
+  border-radius: 50%;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.queueOccupancyContainer {
+  display:flex;
+  align-items: baseline;
+  margin: auto;
+  position: relative;
+}
+
+.queueOccupancyLabel {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  margin: 0;
+  font-size: 32px;
+  font-weight: 900;
+  color: $grayDark;
+}
+
+.queueOccupancy {
+  font-size: 200px;
+  font-weight: 900;
+  margin: 0;
+  color: $midnight;
+}
+
+.queueTallyController {
+  width: 131px;
+  height: 238px;
+  background-size: 131px 238px;
+  position: absolute;
+  right: -93px;
+  top: 0;
+}
+
+%queueTallyButton {
+  width: 54px;
+  height: 54px;
+  position: absolute;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 900;
+  border-radius: 50%;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.queueTallyIngress {
+  @extend %queueTallyButton;
+  background: $midnight;
+  top: 10px;
+  left: 10px;
+}
+
+.queueTallyEgress {
+  @extend %queueTallyButton;
+  background: $red;
+  bottom: 8px;
+  right: 12px;
+}
+
+
+

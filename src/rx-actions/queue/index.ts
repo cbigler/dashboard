@@ -3,7 +3,8 @@ import { QueueSettings } from '../../rx-stores/queue';
 
 export enum QueueActionTypes {
   ROUTE_TRANSITION_QUEUE_SPACE_DETAIL = 'ROUTE_TRANSITION_QUEUE_SPACE_DETAIL',
-  QUEUE_DETAIL_DATA_LOADED = 'QUEUE_DETAIL_DATA_LOADED'
+  QUEUE_DETAIL_DATA_LOADED = 'QUEUE_DETAIL_DATA_LOADED',
+  QUEUE_SET_TALLY_ENABLED = 'QUEUE_SET_TALLY_ENABLED'
 }
 
 export type QueueAction =
@@ -17,4 +18,8 @@ export type QueueAction =
     spaceDwellMean: number,
     virtualSensorSerial: string,
     settings: QueueSettings
+  }
+  | {
+    type: QueueActionTypes.QUEUE_SET_TALLY_ENABLED;
+    enabled: boolean;
   }
