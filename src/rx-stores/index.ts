@@ -1,4 +1,4 @@
-import { Subject, BehaviorSubject, of } from 'rxjs';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { GlobalAction } from '../types/rx-actions';
 
 // Debug message helpers

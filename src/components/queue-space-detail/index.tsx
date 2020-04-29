@@ -1,10 +1,11 @@
 
 import React, { useState } from 'react';
+import * as moment from "moment";
+
 import {
   Icons,
   Switch,
 } from '@density/ui/src';
-
 import colorVariables from '@density/ui/variables/colors.json';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
@@ -46,7 +47,7 @@ function calculateWaitTime(
   settings: QueueSettings
 ): number | null {
   if (!settings.display_wait_time || isNullOrUndefined(spaceDwellMean)) {
-    return null;
+    return 1;
   }
   console.log(space);
   // get the last ingress event, add the mean dwell time to it
@@ -82,7 +83,6 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
   const percentFull = Math.round(space.current_count / settings.queue_capacity * 100);
   const shouldGo = calculateGoAction(space, settings);
   const waitTime = calculateWaitTime(space, spaceDwellMean, settings);
-  console.log(space)
 
   return (
     <div className={styles.queueDetailPage}>
@@ -107,7 +107,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             <div className={styles.queueSettingHeader}>
               <h2 className={styles.queueSettingTitle}>Tally Mode</h2>
               <Switch
-                checked={tallyEnabled}
+                value={tallyEnabled}
                 onChange={()=>
                   dispatch({
                     type: QueueActionTypes.QUEUE_SET_TALLY_ENABLED,
@@ -131,7 +131,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
           <CapacityChart
             outerRadius={48}
             outerBorderWidth={9}
-            percentFull={percentFull}
+            percentFull={Math.min(percentFull, 100)}
             color='#ffffff'
           />
           <h2>{percentFull}% full</h2>
@@ -142,7 +142,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             width={87}
             height={96}
           />
-          <h2>Wait Time</h2>
+          <h2>{waitTime} minute{waitTime > 1 ? "s" : ""}</h2>
         </div> : null}
         <h1 className={styles.queueActionText}>
           { shouldGo ? "Go" : "Wait"}
@@ -172,11 +172,23 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             }}>
               <div
                 className={styles.queueTallyIngress}
-                onClick={console.log}
+                onClick={()=>
+                  dispatch({
+                    type: QueueActionTypes.QUEUE_CREATE_TALLY_EVENT,
+                    virtualSensorSerial: virtualSensorSerial,
+                    timestamp: moment.utc(),
+                    trajectory: 1
+                })}
               >+</div>
               <div
                 className={styles.queueTallyEgress}
-                onClick={console.log}
+                onClick={()=>
+                  dispatch({
+                    type: QueueActionTypes.QUEUE_CREATE_TALLY_EVENT,
+                    virtualSensorSerial: virtualSensorSerial,
+                    timestamp: moment.utc(),
+                    trajectory: -1
+                })}
               >-</div>
             </div>
           </div>

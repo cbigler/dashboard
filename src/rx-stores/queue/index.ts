@@ -9,15 +9,16 @@ import {
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 
+import core from '../../client/core';
 import createRxStore, { actions, rxDispatch } from '..';
-import UserStore, { UserState } from '../user';
+import UserStore from '../user';
 import {
   Resource,
   RESOURCE_IDLE,
   ResourceStatus,
 } from '../../types/resource';
 import { GlobalAction } from '../../types/rx-actions';
-import { QueueActionTypes, QueueAction } from '../../rx-actions/queue';
+import { QueueActionTypes } from '../../rx-actions/queue';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
 import { isNullOrUndefined } from 'util';
 
@@ -46,8 +47,9 @@ export type QueueState = {
 const initialState: QueueState = {
   orgSettings: {} as QueueSettings,
   selected: RESOURCE_IDLE,
-  tallyEnabled: localStorage.getItem('queueTallyEnabled') == 'true'
+  tallyEnabled: localStorage.getItem('queueTallyEnabled') === 'true'
 };
+
 
 export function queueReducer(state: QueueState, action: GlobalAction): QueueState {
   switch (action.type) {
@@ -89,7 +91,6 @@ actions
       take(1),
       map((user) => {
         let settings = user.data?.organization.settings['queue_settings'];
-        console.log('Org settings', settings)
         if (isNullOrUndefined(settings)) {
           console.error('no queue settings defined');
           settings = {};
@@ -99,7 +100,6 @@ actions
         // it should be used as an override.
         if (action.id in settings) {
           settings = settings[action.id];
-          console.log('Space settings', settings)
         }
 
         return [action, settings] as [any, QueueSettings]
@@ -155,9 +155,8 @@ function fetchSelectedSensorSerial(spaceId: string) {
 }
 
 // =================================
-// SIDE EFFECT: when the detail page is loaded
-// grab the selected space, selected sensor, and optionally overriding
-// space settings
+// SIDE EFFECT: update local storage when the tally enabled
+// value changes. Initial load pulls from local storage
 // =================================
 actions
   .pipe(
@@ -165,8 +164,27 @@ actions
       return action.type === QueueActionTypes.QUEUE_SET_TALLY_ENABLED
     })
   )
-  .subscribe((action) => {
-    console.log('tally setting', action)
+  .subscribe((action: any) => {
+    localStorage.setItem('queueTallyEnabled', action.enabled ? 'true' : 'false')
+  });
+
+// =================================
+// SIDE EFFECT: POST queue events
+// =================================
+actions
+  .pipe(
+    filter(action => {
+      return action.type === QueueActionTypes.QUEUE_CREATE_TALLY_EVENT
+    }),
+    switchMap((action: any) => {
+      return core().post(`/sensors/${action.virtualSensorSerial}/events`, {
+        trajectory: action.trajectory,
+        timestamp: action.timestamp.utc(),
+      });
+    })
+  )
+  .subscribe((result: any) => {
+    console.log(result);
   });
 
 
