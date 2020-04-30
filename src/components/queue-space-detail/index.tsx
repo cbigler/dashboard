@@ -213,7 +213,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
       {/* Right Section */}
       <div className={styles.queueDetailSection}>
         <div className={styles.queueDetailLogoSection}>
-          <img className={styles.queueDetailLogo} src="https://dashboard.density.io/static/media/logo-black.ff062828.svg" title="Density Inc."/>
+          <img className={styles.queueDetailLogo} src="https://dashboard.density.io/static/media/logo-black.ff062828.svg" alt="Density Inc."/>
         </div>
         <h1 className={styles.queueSpaceName} style={{
           textAlign: tallyEnabled ? "center" : "left"
