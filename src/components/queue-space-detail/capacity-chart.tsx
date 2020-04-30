@@ -16,6 +16,7 @@ const CapacityChart: React.FunctionComponent<{
     <div style={{
       width: outerRadius,
       height: outerRadius,
+      marginRight: 12,
       borderRadius: '50%',
       border: `${outerBorderWidth}px solid ${color}`,
     }}

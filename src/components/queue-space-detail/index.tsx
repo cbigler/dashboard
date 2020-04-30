@@ -136,6 +136,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
 
   return (
     <div className={styles.queueDetailPage}>
+      {/* Action Section */}
       <div className={styles.queueActionSection} style={{
         backgroundColor: shouldGo ? colorVariables.green : colorVariables.red
       }}>
@@ -184,7 +185,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             percentFull={Math.min(percentFull, 100)}
             color='#ffffff'
           />
-          <h2>{percentFull}% full</h2>
+          <h2 className={styles.queueActionStatusMetaSectionTitle}>{percentFull}% full</h2>
         </div>
         { !isNullOrUndefined(waitTime) ? <div className={styles.queueWaitTime}>
           <Icons.StopWatch
@@ -192,12 +193,16 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             width={87}
             height={96}
           />
-          <h2>{waitTimeToString(waitTime)}</h2>
+          <h2 className={styles.queueActionStatusMetaSectionTitle}>{waitTimeToString(waitTime)}</h2>
         </div> : null}
-        <h1 className={styles.queueActionText}>
-          { shouldGo ? "Go" : "Wait"}
-        </h1>
+        <div className={styles.queueActionTextSection}>
+          <h1 className={styles.queueActionText}>
+            { shouldGo ? "Go" : "Wait"}
+          </h1>
+        </div>
       </div>
+
+      {/* Right Section */}
       <div className={styles.queueDetailSection}>
         <h1 className={styles.queueSpaceName} style={{
           textAlign: tallyEnabled ? "center" : "left"
