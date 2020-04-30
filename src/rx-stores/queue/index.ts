@@ -5,7 +5,8 @@ import {
   map,
   switchMap,
 } from 'rxjs/operators';
-import * as moment from 'moment';
+// import * as moment from 'moment';
+import moment from 'moment-timezone';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreWebsocketEventPayload, CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
@@ -141,10 +142,8 @@ actions
       })
     )),
     switchMap(([action, settings]) => forkJoin(
-      // pull the space
-      fetchSelectedSpace(action.id),
-      // pull recent space events
-      fetchSelectedSpaceEvents(action.id),
+      // pull the space and its events
+      fetchSelectedSpaceAndEvents(action.id),
       // pull the space dwell
       fetchSelectedSpaceDwell(action.id),
       // pull the sensor
@@ -154,8 +153,7 @@ actions
     ))
   )
   .subscribe(([
-    space,
-    spaceEvents,
+    [space, spaceEvents],
     spaceDwellMean,
     virtualSensorSerial,
     settings
@@ -173,18 +171,29 @@ actions
   });
 
 
-function fetchSelectedSpace(spaceId: string) {
-  return fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false });
+function fetchSelectedSpaceAndEvents(spaceId: string) {
+  return from(fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false })).pipe(
+    switchMap((space) => forkJoin(
+      of(space),
+      fetchSelectedSpaceEvents(space)
+    ))
+  );
 }
 
-function fetchSelectedSpaceEvents(spaceId: string) {
-  const now = moment.utc();
-  const yesterday = now.clone().subtract(1, 'days');
+function fetchSelectedSpaceEvents(space: CoreSpace) {
+  const localNow = moment.tz(space.time_zone);
+  const resetTime = moment(space.daily_reset, 'HH:mm');
+  const resetTimestamp = localNow.clone()
+    .hour(resetTime.hour())
+    .minute(resetTime.minute())
+    .second(0)
+    .millisecond(0);
+  if (resetTimestamp > localNow) { resetTimestamp.subtract(1, 'day'); }
 
-  return fetchAllObjects<CoreSpaceEvent>(`/spaces/${spaceId}/events`, {
+  return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
     params: {
-      start_time: yesterday.toISOString(),
-      end_time: now.toISOString(),
+      start_time: resetTimestamp.utc().toISOString(),
+      end_time: localNow.utc().toISOString(),
     }
   });
 }
