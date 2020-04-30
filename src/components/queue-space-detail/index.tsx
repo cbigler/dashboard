@@ -111,7 +111,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
     return () => {
       dispatch({type: QueueActionTypes.QUEUE_WILL_UNMOUNT})
     };
-  });
+  }, [dispatch]);
 
   if (
     selected.status === ResourceStatus.LOADING ||
