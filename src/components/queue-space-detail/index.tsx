@@ -15,6 +15,7 @@ import useRxStore from '../../helpers/use-rx-store';
 import QueueStore, { QueueSettings } from '../../rx-stores/queue';
 import { QueueActionTypes } from '../../rx-actions/queue';
 import { ResourceStatus } from '../../types/resource';
+import classnames from 'classnames';
 
 import styles from './styles.module.scss';
 import CapacityChart from './capacity-chart';
@@ -153,6 +154,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
 
   return (
     <div className={styles.queueDetailPage}>
+      {/* Action Section */}
       <div className={styles.queueActionSection} style={{
         backgroundColor: shouldGo ? colorVariables.green : colorVariables.red
       }}>
@@ -164,8 +166,8 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
               onClick={() => setSettingsVisible(false)}>
               <Icons.Close
                 color={colorVariables.midnight}
-                width={40}
-                height={40}
+                width={24}
+                height={24}
               />
             </div>
             <h1 className={styles.queueSettingsTitle}>Settings</h1>
@@ -190,8 +192,8 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
           onClick={()=> setSettingsVisible(true)}>
           <Icons.Cog
             color={'#0D183A'}
-            width={40}
-            height={40}
+            width={24}
+            height={24}
           />
         </div>
         <div className={styles.queueCapacity}>
@@ -201,7 +203,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             percentFull={Math.min(percentFull, 100)}
             color='#ffffff'
           />
-          <h2>{percentFull}% full</h2>
+          <h2 className={styles.queueActionStatusMetaSectionTitle}>{percentFull}% full</h2>
         </div>
         { !isNullOrUndefined(waitTime) ? <div className={styles.queueWaitTime}>
           <Icons.StopWatch
@@ -209,16 +211,21 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             width={87}
             height={96}
           />
-          <h2>{waitTimeToString(waitTime)}</h2>
+          <h2 className={styles.queueActionStatusMetaSectionTitle}>{waitTimeToString(waitTime)}</h2>
         </div> : null}
-        <h1 className={styles.queueActionText}>
-          { shouldGo ? "Go" : "Wait"}
-        </h1>
+        <div className={styles.queueActionTextSection}>
+          <h1 className={styles.queueActionText}>
+            { shouldGo ? "Go" : "Wait"}
+          </h1>
+        </div>
       </div>
+
+      {/* Right Section */}
       <div className={styles.queueDetailSection}>
-        <h1 className={styles.queueSpaceName} style={{
-          textAlign: tallyEnabled ? "center" : "left"
-        }}>
+        <div className={styles.queueDetailLogoSection}>
+          <img className={styles.queueDetailLogo} src="https://dashboard.density.io/static/media/logo-black.ff062828.svg" alt="Density Inc."/>
+        </div>
+        <h1 className={styles.queueSpaceName}>
           {space.name}
         </h1>
         { tallyEnabled ? (
@@ -264,7 +271,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             <p className={styles.queueMessage}>
               {settings.message}
             </p>
-            <p className={styles.queueMessage}>
+            <p className={classnames(styles.queueMessage, styles.queueMessageSupport)}>
               For more information, contact <a href={`mailto:${supportEmail}`}>{supportEmail}</a>
             </p>
           </div>
