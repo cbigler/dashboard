@@ -1,9 +1,10 @@
-import { forkJoin, of, from, Observable } from 'rxjs';
+import { forkJoin, of, from, Observable, interval } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
+  takeUntil
 } from 'rxjs/operators';
 // import * as moment from 'moment';
 import moment from 'moment-timezone';
@@ -223,6 +224,27 @@ function fetchSelectedSensorSerial(spaceId: string) {
 }
 
 // =================================
+// SIDE EFFECT: refresh the space count / events every
+// minute, to make sure that stuff is up to date and
+// resets are accounted for
+// =================================
+const refreshInterval = 60 * 1000;
+const unmount = actions.pipe(
+  filter(action => {
+    return action.type === QueueActionTypes.QUEUE_WILL_UNMOUNT
+  }));
+
+actions
+  .pipe(
+    filter(action => {
+      return action.type === QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL
+    }),
+    switchMap((action: any)=> interval(refreshInterval).pipe(map(()=> action))),
+    takeUntil(unmount),
+    switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
+  ).subscribe();
+
+// =================================
 // SIDE EFFECT: map websocket state to store
 // =================================
 new Observable(subscriber => {
@@ -235,7 +257,6 @@ new Observable(subscriber => {
       state: socketConnectionState
     })
   });
-
 
 // =================================
 // SIDE EFFECT: subscribe to websocket count changes for the selected space

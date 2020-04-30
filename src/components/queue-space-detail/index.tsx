@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as moment from "moment";
 
 import {
@@ -105,6 +105,13 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
   const selected = state.selected;
   const tallyEnabled = state.tallyEnabled;
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  // unmount effect
+  useEffect(() => {
+    return () => {
+      dispatch({type: QueueActionTypes.QUEUE_WILL_UNMOUNT})
+    };
+  }, []);
 
   if (
     selected.status === ResourceStatus.LOADING ||
