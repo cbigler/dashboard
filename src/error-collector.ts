@@ -40,7 +40,7 @@ window.onerror = (...args) => {
     }
   });
 
-  errorCollector().post('/errors', body).catch(error => {
+  errorCollector().post('/errors/dashboard', body).catch(error => {
     console.error('Error sending unhandled error to error collector:', error);
   });
 }
@@ -60,7 +60,7 @@ window.onunhandledrejection = (e) => {
     }
   });
 
-  errorCollector().post('/errors', body).catch(error => {
+  errorCollector().post('/errors/dashboard', body).catch(error => {
     console.error('Error sending unhandled error to error collector:', error);
   });
 };
