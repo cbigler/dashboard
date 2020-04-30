@@ -42,6 +42,10 @@ function calculateGoAction(
     }
 }
 
+// calculates the wait time in minutes
+// requires:
+// - mean dwell time
+// - events since last reset
 function calculateWaitTime(
   spaceEvents: CoreSpaceEvent[],
   spaceDwellMean: number,
@@ -108,8 +112,14 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
 
   // unmount effect
   useEffect(() => {
+    var meta = document.createElement('meta');
+    meta.name = "viewport";
+    meta.content = "width=device-width, initial-scale=1.0";
+    document.head.append(meta);
+
     return () => {
       dispatch({type: QueueActionTypes.QUEUE_WILL_UNMOUNT})
+      meta.remove();
     };
   }, [dispatch]);
 
