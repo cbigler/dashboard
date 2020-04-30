@@ -111,6 +111,11 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
 
 }
 
+const unmount = actions.pipe(
+  filter(action => {
+    return action.type === QueueActionTypes.QUEUE_WILL_UNMOUNT
+  }));
+
 // =================================
 // SIDE EFFECT: when the detail page is loaded
 // grab the selected space, selected sensor, and optionally overriding
@@ -229,10 +234,6 @@ function fetchSelectedSensorSerial(spaceId: string) {
 // resets are accounted for
 // =================================
 const refreshInterval = 60 * 1000;
-const unmount = actions.pipe(
-  filter(action => {
-    return action.type === QueueActionTypes.QUEUE_WILL_UNMOUNT
-  }));
 
 actions
   .pipe(
@@ -243,6 +244,15 @@ actions
     takeUntil(unmount),
     switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
   ).subscribe();
+
+// =================================
+// SIDE EFFECT: disconnect from the websocket server on unmount
+// =================================
+
+unmount.subscribe(()=> {
+  websocketPusher.disconnect()
+});
+
 
 // =================================
 // SIDE EFFECT: map websocket state to store
