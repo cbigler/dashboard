@@ -7,6 +7,7 @@ import { QueueSettings } from '../../rx-stores/queue';
 
 export enum QueueActionTypes {
   ROUTE_TRANSITION_QUEUE_SPACE_DETAIL = 'ROUTE_TRANSITION_QUEUE_SPACE_DETAIL',
+  QUEUE_WILL_UNMOUNT = 'QUEUE_WILL_UNMOUNT',
   QUEUE_DETAIL_DATA_LOADED = 'QUEUE_DETAIL_DATA_LOADED',
   QUEUE_SET_TALLY_ENABLED = 'QUEUE_SET_TALLY_ENABLED',
   QUEUE_CREATE_TALLY_EVENT = 'QUEUE_CREATE_TALLY_EVENT',
@@ -26,6 +27,9 @@ export type QueueAction =
   | {
     type: QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL;
     id: string;
+  }
+  | {
+    type: QueueActionTypes.QUEUE_WILL_UNMOUNT;
   }
   | {
     type: QueueActionTypes.QUEUE_DETAIL_DATA_LOADED;

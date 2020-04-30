@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as moment from "moment";
 
 import {
@@ -59,7 +59,7 @@ function calculateWaitTime(
     return 0;
   }
 
-  const entrances = spaceEvents.reverse().filter((e)=> e.direction > 0);
+  const entrances = spaceEvents.filter((e)=> e.direction > 0);
   const numExits = spaceEvents.filter((e)=> e.direction < 0).length;
 
   // if there are no entrances, can't calculate wait time
@@ -71,7 +71,7 @@ function calculateWaitTime(
   }
 
   // find the first entrances that doesn't have a matching exit
-  const firstUnmatchedEntrance = entrances.splice(numExits - 1)[0];
+  const firstUnmatchedEntrance = entrances.splice(numExits)[0];
 
   // estimate when the first unmatched entrance _should_ exit
   const estimatedExitTime = moment.utc(firstUnmatchedEntrance.timestamp)
@@ -105,6 +105,13 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
   const selected = state.selected;
   const tallyEnabled = state.tallyEnabled;
   const [settingsVisible, setSettingsVisible] = useState(false);
+
+  // unmount effect
+  useEffect(() => {
+    return () => {
+      dispatch({type: QueueActionTypes.QUEUE_WILL_UNMOUNT})
+    };
+  }, [dispatch]);
 
   if (
     selected.status === ResourceStatus.LOADING ||

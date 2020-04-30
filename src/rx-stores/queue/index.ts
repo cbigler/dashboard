@@ -1,11 +1,13 @@
-import { forkJoin, of, from, Observable } from 'rxjs';
+import { forkJoin, of, from, Observable, interval } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
+  takeUntil
 } from 'rxjs/operators';
-import * as moment from 'moment';
+// import * as moment from 'moment';
+import moment from 'moment-timezone';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreWebsocketEventPayload, CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
@@ -109,6 +111,11 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
 
 }
 
+const unmount = actions.pipe(
+  filter(action => {
+    return action.type === QueueActionTypes.QUEUE_WILL_UNMOUNT
+  }));
+
 // =================================
 // SIDE EFFECT: when the detail page is loaded
 // grab the selected space, selected sensor, and optionally overriding
@@ -141,10 +148,8 @@ actions
       })
     )),
     switchMap(([action, settings]) => forkJoin(
-      // pull the space
-      fetchSelectedSpace(action.id),
-      // pull recent space events
-      fetchSelectedSpaceEvents(action.id),
+      // pull the space and its events
+      fetchSelectedSpaceAndEvents(action.id),
       // pull the space dwell
       fetchSelectedSpaceDwell(action.id),
       // pull the sensor
@@ -154,8 +159,7 @@ actions
     ))
   )
   .subscribe(([
-    space,
-    spaceEvents,
+    [space, spaceEvents],
     spaceDwellMean,
     virtualSensorSerial,
     settings
@@ -173,18 +177,29 @@ actions
   });
 
 
-function fetchSelectedSpace(spaceId: string) {
-  return fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false });
+function fetchSelectedSpaceAndEvents(spaceId: string) {
+  return from(fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false })).pipe(
+    switchMap((space) => forkJoin(
+      of(space),
+      fetchSelectedSpaceEvents(space)
+    ))
+  );
 }
 
-function fetchSelectedSpaceEvents(spaceId: string) {
-  const now = moment.utc();
-  const yesterday = now.clone().subtract(1, 'days');
+function fetchSelectedSpaceEvents(space: CoreSpace) {
+  const localNow = moment.tz(space.time_zone);
+  const resetTime = moment(space.daily_reset, 'HH:mm');
+  const resetTimestamp = localNow.clone()
+    .hour(resetTime.hour())
+    .minute(resetTime.minute())
+    .second(0)
+    .millisecond(0);
+  if (resetTimestamp > localNow) { resetTimestamp.subtract(1, 'day'); }
 
-  return fetchAllObjects<CoreSpaceEvent>(`/spaces/${spaceId}/events`, {
+  return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
     params: {
-      start_time: yesterday.toISOString(),
-      end_time: now.toISOString(),
+      start_time: resetTimestamp.utc().toISOString(),
+      end_time: localNow.utc().toISOString(),
     }
   });
 }
@@ -214,6 +229,32 @@ function fetchSelectedSensorSerial(spaceId: string) {
 }
 
 // =================================
+// SIDE EFFECT: refresh the space count / events every
+// minute, to make sure that stuff is up to date and
+// resets are accounted for
+// =================================
+const refreshInterval = 60 * 1000;
+
+actions
+  .pipe(
+    filter(action => {
+      return action.type === QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL
+    }),
+    switchMap((action: any)=> interval(refreshInterval).pipe(map(()=> action))),
+    takeUntil(unmount),
+    switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
+  ).subscribe();
+
+// =================================
+// SIDE EFFECT: disconnect from the websocket server on unmount
+// =================================
+
+unmount.subscribe(()=> {
+  websocketPusher.disconnect()
+});
+
+
+// =================================
 // SIDE EFFECT: map websocket state to store
 // =================================
 new Observable(subscriber => {
@@ -226,7 +267,6 @@ new Observable(subscriber => {
       state: socketConnectionState
     })
   });
-
 
 // =================================
 // SIDE EFFECT: subscribe to websocket count changes for the selected space
