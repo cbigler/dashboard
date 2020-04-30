@@ -8,6 +8,7 @@ import {
 } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 
 import useRxDispatch from '../../helpers/use-rx-dispatch';
 import useRxStore from '../../helpers/use-rx-store';
@@ -42,16 +43,59 @@ function calculateGoAction(
 }
 
 function calculateWaitTime(
-  space: CoreSpace,
+  spaceEvents: CoreSpaceEvent[],
   spaceDwellMean: number,
-  settings: QueueSettings
+  settings: QueueSettings,
+  shouldGo: boolean,
 ): number | null {
+  // wait time is not set to display
+  // space does not have dwell time calculations yet
   if (!settings.display_wait_time || isNullOrUndefined(spaceDwellMean)) {
-    return 1;
+    return null;
   }
-  console.log(space);
-  // get the last ingress event, add the mean dwell time to it
-  return 1
+
+  // no wait time if the space isn't at capacity
+  if (shouldGo) {
+    return 0;
+  }
+
+  const entrances = spaceEvents.reverse().filter((e)=> e.direction > 0);
+  const numExits = spaceEvents.filter((e)=> e.direction < 0).length;
+
+  // if there are no entrances, can't calculate wait time
+  // also, there shouldn't be more exits than entrances
+  // if the space is over capacity. Likely a drift issue, we can't calculate
+  // the dwell time
+  if (entrances.length === 0 || numExits >= entrances.length) {
+    return null;
+  }
+
+  // find the first entrances that doesn't have a matching exit
+  const firstUnmatchedEntrance = entrances.splice(numExits - 1)[0];
+
+  // estimate when the first unmatched entrance _should_ exit
+  const estimatedExitTime = moment.utc(firstUnmatchedEntrance.timestamp)
+    .add(spaceDwellMean, 'minutes');
+
+  // calculate difference between estimated exit timestamp and now
+  const timeUntilExit = moment.duration(
+    estimatedExitTime.diff(moment.utc())
+  ).asMinutes();
+
+  // at a minimum, show 1 minute of wait time
+  return Math.max(Math.round(timeUntilExit), 1)
+}
+
+function waitTimeToString(waitTime: number): string {
+  if (waitTime === 0) {
+    return 'No wait';
+  }
+  else if (waitTime === 1) {
+    return '1 minute';
+  }
+  else {
+    return `${waitTime} minutes`;
+  }
 }
 
 
@@ -74,6 +118,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
 
   const {
     space,
+    spaceEvents,
     spaceDwellMean,
     virtualSensorSerial,
     settings
@@ -82,7 +127,12 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
   const supportEmail = settings.support_email || 'support@density.io';
   const percentFull = Math.round(space.current_count / settings.queue_capacity * 100);
   const shouldGo = calculateGoAction(space, settings);
-  const waitTime = calculateWaitTime(space, spaceDwellMean, settings);
+  const waitTime = calculateWaitTime(
+    spaceEvents,
+    spaceDwellMean,
+    settings,
+    shouldGo
+  );
 
   return (
     <div className={styles.queueDetailPage}>
@@ -136,13 +186,13 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
           />
           <h2>{percentFull}% full</h2>
         </div>
-        { waitTime ? <div className={styles.queueWaitTime}>
+        { !isNullOrUndefined(waitTime) ? <div className={styles.queueWaitTime}>
           <Icons.StopWatch
             color='#ffffff'
             width={87}
             height={96}
           />
-          <h2>{waitTime} minute{waitTime > 1 ? "s" : ""}</h2>
+          <h2>{waitTimeToString(waitTime)}</h2>
         </div> : null}
         <h1 className={styles.queueActionText}>
           { shouldGo ? "Go" : "Wait"}

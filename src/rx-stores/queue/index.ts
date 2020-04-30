@@ -1,12 +1,14 @@
-import { forkJoin, of, from } from 'rxjs';
+import { forkJoin, of, from, Observable } from 'rxjs';
 import {
   filter,
   take,
   map,
   switchMap,
 } from 'rxjs/operators';
+import * as moment from 'moment';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreWebsocketEventPayload, CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 
 import core from '../../client/core';
@@ -18,8 +20,9 @@ import {
   ResourceStatus,
 } from '../../types/resource';
 import { GlobalAction } from '../../types/rx-actions';
-import { QueueActionTypes } from '../../rx-actions/queue';
+import { QueueActionTypes, QUEUE_SOCKET_CONNECTION_STATES } from '../../rx-actions/queue';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
+import WebsocketEventPusher from '../../helpers/websocket-event-pusher/index';
 import { isNullOrUndefined } from 'util';
 
 
@@ -36,8 +39,10 @@ export type QueueSettings = {
 export type QueueState = {
   orgSettings: QueueSettings,
   tallyEnabled: boolean,
+  websocketState: QUEUE_SOCKET_CONNECTION_STATES,
   selected: Resource<{
     space: CoreSpace,
+    spaceEvents: CoreSpaceEvent[],
     spaceDwellMean: number,
     virtualSensorSerial: string,
     settings: QueueSettings
@@ -47,9 +52,11 @@ export type QueueState = {
 const initialState: QueueState = {
   orgSettings: {} as QueueSettings,
   selected: RESOURCE_IDLE,
-  tallyEnabled: localStorage.getItem('queueTallyEnabled') === 'true'
+  tallyEnabled: localStorage.getItem('queueTallyEnabled') === 'true',
+  websocketState: QUEUE_SOCKET_CONNECTION_STATES.CLOSED
 };
 
+const websocketPusher = new WebsocketEventPusher();
 
 export function queueReducer(state: QueueState, action: GlobalAction): QueueState {
   switch (action.type) {
@@ -59,6 +66,7 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
       selected: {
         data: {
           space: action.space,
+          spaceEvents: action.spaceEvents,
           spaceDwellMean: action.spaceDwellMean,
           virtualSensorSerial: action.virtualSensorSerial,
           settings: action.settings,
@@ -70,6 +78,30 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
     return {
       ...state,
       tallyEnabled: action.enabled
+    }
+  case QueueActionTypes.QUEUE_WEBSOCKET_STATUS_CHANGE:
+    return {
+      ...state,
+      websocketState: action.state
+    }
+  case QueueActionTypes.QUEUE_WEBSOCKET_COUNT_CHANGE:
+    if (state.selected.status !== ResourceStatus.COMPLETE) {
+      return state;
+    }
+
+    return {
+      ...state,
+      selected: {
+        ...state.selected,
+        data: {
+          ...state.selected.data,
+          space: {
+            ...state.selected.data.space,
+            current_count: action.currentCount
+          },
+          spaceEvents: [...state.selected.data.spaceEvents, action.newEvent]
+        }
+      }
     }
   default:
     return state;
@@ -96,10 +128,13 @@ actions
           settings = {};
         }
 
-        // if the space ID exists as a key within the org settings,
-        // it should be used as an override.
+        // if the space ID exists as a key within the org settings, use that
+        // otherwise use the default.
         if (action.id in settings) {
           settings = settings[action.id];
+        }
+        else {
+          settings = settings.hasOwnProperty('default') ? settings['default'] : {};
         }
 
         return [action, settings] as [any, QueueSettings]
@@ -108,26 +143,50 @@ actions
     switchMap(([action, settings]) => forkJoin(
       // pull the space
       fetchSelectedSpace(action.id),
+      // pull recent space events
+      fetchSelectedSpaceEvents(action.id),
       // pull the space dwell
       fetchSelectedSpaceDwell(action.id),
       // pull the sensor
       fetchSelectedSensorSerial(action.id),
       // pass through the settings
-      of(settings)
+      of(settings),
     ))
   )
-  .subscribe(([space, spaceDwellMean, virtualSensorSerial, settings]) => {
+  .subscribe(([
+    space,
+    spaceEvents,
+    spaceDwellMean,
+    virtualSensorSerial,
+    settings
+  ]) => {
+      websocketPusher.connect();
+
       return rxDispatch({
         type: QueueActionTypes.QUEUE_DETAIL_DATA_LOADED,
         space,
+        spaceEvents,
         spaceDwellMean,
         virtualSensorSerial,
         settings
       });
   });
 
+
 function fetchSelectedSpace(spaceId: string) {
   return fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false });
+}
+
+function fetchSelectedSpaceEvents(spaceId: string) {
+  const now = moment.utc();
+  const yesterday = now.clone().subtract(1, 'days');
+
+  return fetchAllObjects<CoreSpaceEvent>(`/spaces/${spaceId}/events`, {
+    params: {
+      start_time: yesterday.toISOString(),
+      end_time: now.toISOString(),
+    }
+  });
 }
 
 function fetchSelectedSpaceDwell(spaceId: string) {
@@ -153,6 +212,51 @@ function fetchSelectedSensorSerial(spaceId: string) {
     })
   );
 }
+
+// =================================
+// SIDE EFFECT: map websocket state to store
+// =================================
+new Observable(subscriber => {
+  websocketPusher.on('connectionStateChange', (state) => subscriber.next(state));
+})
+  .subscribe((socketConnectionState: any) => {
+
+    return rxDispatch({
+      type: QueueActionTypes.QUEUE_WEBSOCKET_STATUS_CHANGE,
+      state: socketConnectionState
+    })
+  });
+
+
+// =================================
+// SIDE EFFECT: subscribe to websocket count changes for the selected space
+// =================================
+new Observable(subscriber => {
+  websocketPusher.on('space', (spaceCountChange) => {
+    subscriber.next(spaceCountChange);
+  });
+}).pipe(
+  switchMap((spaceCountChange: any)=> { return forkJoin(
+    of(spaceCountChange),
+    QueueStore.pipe(take(1)),
+  )}),
+  filter(([spaceCountChange, queueStore]) => {
+    if (queueStore.selected.status !== ResourceStatus.COMPLETE) {
+      return false
+    }
+
+    return spaceCountChange.space_id === queueStore.selected.data.space.id
+  })
+).subscribe(([spaceCountChange, _]: [CoreWebsocketEventPayload, unknown]) => {
+  rxDispatch({
+    type: QueueActionTypes.QUEUE_WEBSOCKET_COUNT_CHANGE,
+    currentCount: spaceCountChange.count,
+    newEvent: {
+      direction: spaceCountChange.direction,
+      timestamp: spaceCountChange.timestamp
+    } as CoreSpaceEvent
+  })
+});
 
 // =================================
 // SIDE EFFECT: update local storage when the tally enabled
@@ -183,9 +287,8 @@ actions
       });
     })
   )
-  .subscribe((result: any) => {
-    console.log(result);
-  });
+  // events are consumed via the websocket server
+  .subscribe();
 
 
 const QueueStore = createRxStore('QueueStore', initialState, queueReducer);

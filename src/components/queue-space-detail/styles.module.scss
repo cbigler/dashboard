@@ -55,7 +55,7 @@
   cursor: pointer;
 
   &:hover {
-    opacity: 1
+    opacity: 1;
   }
 }
 
@@ -119,7 +119,7 @@
 .queueActionText {
   margin-top: auto;
   margin-bottom: 0;
-  transform: translate(-18px, 76px);
+  transform: translate(-18px, 99px);
   font-size: 500px;
   font-weight: 900;
 }
@@ -224,7 +224,12 @@
   font-weight: 900;
   border-radius: 50%;
   color: #ffffff;
+  user-select: none;
   cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 0px 10px rgba(0, 0, 0, .4)
+  }
 }
 
 .queueTallyIngress {
