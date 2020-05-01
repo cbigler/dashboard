@@ -3,23 +3,40 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
-$screenSizePortrait: 500px;
-$bodyPadding: 40px;
-$textTitle: 64px;
 
-@media screen and (max-width: $screenSizePortrait) {
-  $bodyPadding: 18px;
-}
+//
+// Variables
+// --------------------------------------------------
+
+// Scaffolding
+// ----------------
+$screenSizeScreenSmall:     500px;
+$bodyPadding:               40px;
+$bodyPaddingScreenSmall:    18px;
+
+// Typography
+// ----------------
+$textTitle:                 64px;
+$textTitleScreenSmall:      40px;
+$textMessage:               24px;
+$textMessageScreenSmall:    18px;
+
+
+
 
 //
 // Scaffolding
 // --------------------------------------------------
 .queueDetailPage {
   display: flex;
-  flex-direction: row;
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
+}
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueDetailPage {
+    flex-direction: column-reverse;
+  }
 }
 
 %queueSection {
@@ -31,7 +48,7 @@ $textTitle: 64px;
   height: 100%;
   width: 50%;
 }
-@media screen and (max-width: $screenSizePortrait) {
+@media screen and (max-width: $screenSizeScreenSmall) {
   .queueActionStatusMetaSectionTitle {
     flex-direction: column;
   }
@@ -57,15 +74,22 @@ $textTitle: 64px;
 // Settings Header
 // --------------------
 .queueSettingsButton {
-  padding-top: $bodyPadding;
-  padding-left: $bodyPadding;
   width: 24px;
   height: 64px;
+  padding-top: $bodyPadding;
+  padding-left: $bodyPadding;
   opacity: .2;
   cursor: pointer;
 
   &:hover {
     opacity: 1;
+  }
+}
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueSettingsButton {
+    height: 40px;
+    padding-top: $bodyPaddingScreenSmall;
+    padding-left: $bodyPaddingScreenSmall;
   }
 }
 
@@ -135,9 +159,10 @@ $textTitle: 64px;
   height: 100px;
   padding-left: $bodyPadding;
 }
-@media screen and (max-width: $screenSizePortrait) {
+@media screen and (max-width: $screenSizeScreenSmall) {
   %queueActionStatusMetaSection {
     height: 100px;
+    padding-left: $bodyPaddingScreenSmall;
   }
 }
 
@@ -149,7 +174,11 @@ $textTitle: 64px;
   font-size: $textTitle;
   font-weight: 900;
 }
-
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueActionStatusMetaSectionTitle {
+    font-size: $textTitleScreenSmall;
+  }
+}
 
 .queueCapacity {
   @extend %queueActionStatusMetaSection;
@@ -187,7 +216,7 @@ $textTitle: 64px;
   font-size: 25vw;
   font-weight: 900;
 }
-@media screen and (max-width: $screenSizePortrait) {
+@media screen and (max-width: $screenSizeScreenSmall) {
   .queueActionText {
     font-size: 50vw;
     bottom: -11vw;
@@ -208,6 +237,14 @@ $textTitle: 64px;
   padding-left: $bodyPadding;
   padding-right: $bodyPadding;
 }
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueDetailSection {
+    padding-top: $bodyPaddingScreenSmall;
+    padding-bottom: $bodyPaddingScreenSmall;
+    padding-left: $bodyPaddingScreenSmall;
+    padding-right: $bodyPaddingScreenSmall;
+  }
+}
 
 .queueDetailLogoSection {
   height: 80px;
@@ -216,7 +253,14 @@ $textTitle: 64px;
 
   img {
     height: 24px;
-    padding-top: 0.5vh;
+  }
+}
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueDetailLogoSection {
+    height: 40px;
+    padding-top: 8px;
+
+    img { height: 20px; }
   }
 }
 
@@ -239,6 +283,11 @@ $textTitle: 64px;
   // white-space: nowrap;
   // text-overflow: ellipsis;
 }
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueSpaceName {
+    font-size: $textTitleScreenSmall;
+  }
+}
 
 .queueMessageSection {
   display: flex;
@@ -250,10 +299,15 @@ $textTitle: 64px;
   flex-grow: 1;
   flex-shrink: 0;
   margin-bottom: 40px;
-  font-size: 24px;
+  font-size: $textMessage;
   font-weight: 500;
 
   a {color: $blue;}
+}
+@media screen and (max-width: $screenSizeScreenSmall) {
+  .queueMessage {
+    font-size: $textMessageScreenSmall;
+  }
 }
 
 .queueMessageSupport {
@@ -338,6 +392,3 @@ $textTitle: 64px;
   bottom: 8px;
   right: 12px;
 }
-
-
-
