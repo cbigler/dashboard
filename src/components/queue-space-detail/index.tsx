@@ -234,12 +234,12 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
               <h6 className={styles.queueOccupancyLabel}>Occupancy</h6>
               <h2 className={styles.queueOccupancy}>
                 {space.current_count}
+                <Icons.Person
+                  color={colorVariables.midnight}
+                  width={40}
+                  height={40}
+                />
               </h2>
-              <Icons.Person
-                color={colorVariables.midnight}
-                width={64}
-                height={64}
-              />
             </div>
             <div className={styles.queueTallyController} style={{
               backgroundImage: `url(${tallyControllerBg}`
