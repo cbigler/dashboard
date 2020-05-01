@@ -3,6 +3,14 @@
 @import "@density/ui/variables/spacing.scss";
 @import "@density/ui/variables/fonts.scss";
 
+$screenSizePortrait: 500px;
+$bodyPadding: 40px;
+$textTitle: 64px;
+
+@media screen and (max-width: $screenSizePortrait) {
+  $bodyPadding: 18px;
+}
+
 //
 // Scaffolding
 // --------------------------------------------------
@@ -23,14 +31,14 @@
   height: 100%;
   width: 50%;
 }
-
-@media screen and (max-width: 768px) {
-  .queueDetailPage {
+@media screen and (max-width: $screenSizePortrait) {
+  .queueActionStatusMetaSectionTitle {
     flex-direction: column;
   }
 
   %queueSection {
     height: 50%;
+    width: 100%;
   }
 }
 
@@ -49,11 +57,10 @@
 // Settings Header
 // --------------------
 .queueSettingsButton {
-  padding-top: 4vh;
-  padding-bottom: 4vh;
-  padding-left: 4vw;
+  padding-top: $bodyPadding;
+  padding-left: $bodyPadding;
   width: 24px;
-  height: 24px;
+  height: 64px;
   opacity: .2;
   cursor: pointer;
 
@@ -64,9 +71,9 @@
 
 .queueSettings {
   position: absolute;
-  left: 36px;
-  top: 28px;
-  padding: 16px 8px 8px 8px;
+  left: 30px;
+  top: 22px;
+  padding-bottom: 8px;
   background: #ffffff;
   z-index: 9;
   color: $midnight;
@@ -78,26 +85,44 @@
 
 .queueSettingsHeader {
   display: flex;
-  flex-direction: row;
+  align-items: center;
+  box-sizing: border-box;
+  height: 64px;
+  padding-left: 4px;
 }
 
 .queueSettingsCloseButton {
+  height: 36px;
+  width: 36px;
+  margin-right: 8px;
+  overflow: hidden;
   cursor: pointer;
 }
 
 .queueSettingsTitle {
-  font-size: 32px;
+  margin: 0;
+  font-size: 24px;
 }
 
 .queueSetting {
-  background: $grayLighter;
   padding: 16px;
+  margin-left: 8px;
+  margin-right: 8px;
+  border-radius: 4px;
+
+  &:hover { background: $grayLighter; }
 }
 
 .queueSettingHeader {
   display: flex;
-  flex-direction: row;
+  align-items: center;
   justify-content: space-between;
+  padding-bottom: 4px;
+}
+
+.queueSettingHeaderTitle {
+  margin: 0;
+  font-size: 16px;
 }
 
 
@@ -107,18 +132,24 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  height: 10.5vw;
-  padding-left: 4vw;
+  height: 100px;
+  padding-left: $bodyPadding;
+}
+@media screen and (max-width: $screenSizePortrait) {
+  %queueActionStatusMetaSection {
+    height: 100px;
+  }
 }
 
 // Queue Action Meta
 // --------------------
 .queueActionStatusMetaSectionTitle {
-  font-size: 6vw;
-  font-weight: 900;
   margin-bottom: 0;
   margin-left: 10px;
+  font-size: $textTitle;
+  font-weight: 900;
 }
+
 
 .queueCapacity {
   @extend %queueActionStatusMetaSection;
@@ -156,7 +187,13 @@
   font-size: 25vw;
   font-weight: 900;
 }
-
+@media screen and (max-width: $screenSizePortrait) {
+  .queueActionText {
+    font-size: 50vw;
+    bottom: -11vw;
+    left: -3vw;
+  }
+}
 
 
 
@@ -166,19 +203,19 @@
 .queueDetailSection {
   @extend %queueSection;
   background: #ffffff;
-  padding-top: 4vh;
-  padding-bottom: 4vh;
-  padding-left: 4vw;
-  padding-right: 4vw;
+  padding-top: $bodyPadding;
+  padding-bottom: $bodyPadding;
+  padding-left: $bodyPadding;
+  padding-right: $bodyPadding;
 }
 
 .queueDetailLogoSection {
-  height: 10vh;
+  height: 80px;
   flex-grow: 0;
   flex-shrink: 0;
 
   img {
-    height: 2.5vh;
+    height: 24px;
     padding-top: 0.5vh;
   }
 }
@@ -192,10 +229,10 @@
   flex-shrink: 0;
   flex-grow: 0;
   width: 100%;
-  max-height: 20vh;
+  max-height: 160px;
   padding-bottom: 4vh;
   margin-bottom: 0;
-  font-size: 6vw;
+  font-size: $textTitle;
   font-weight: 900;
   color: $midnight;
   // overflow: hidden;
@@ -213,7 +250,7 @@
   flex-grow: 1;
   flex-shrink: 0;
   margin-bottom: 40px;
-  font-size: 2vw;
+  font-size: 24px;
   font-weight: 500;
 
   a {color: $blue;}

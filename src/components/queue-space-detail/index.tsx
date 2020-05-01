@@ -166,15 +166,15 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
               onClick={() => setSettingsVisible(false)}>
               <Icons.Close
                 color={colorVariables.midnight}
-                width={24}
-                height={24}
+                width={36}
+                height={36}
               />
             </div>
             <h1 className={styles.queueSettingsTitle}>Settings</h1>
           </div>
           <div className={styles.queueSetting}>
             <div className={styles.queueSettingHeader}>
-              <h2 className={styles.queueSettingTitle}>Tally Mode</h2>
+              <h2 className={styles.queueSettingHeaderTitle}>Tally Mode</h2>
               <Switch
                 value={tallyEnabled}
                 onChange={()=>
