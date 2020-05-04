@@ -210,6 +210,17 @@ $textMessageScreenLarge:    28px;
 
 .queueCapacity {
   @extend %queueActionStatusMetaSection;
+
+  &.extraPaddingTop {
+    padding-top: $bodyPadding + 64px;
+
+    @media screen and (max-width: $screenSizeScreenSmall) {
+      padding-top: $bodyPaddingScreenSmall + 40px;
+    }
+    @media screen and (min-width: $screenSizeScreenLarge) {
+      padding-top: $bodyPaddingScreenLarge + 64px;
+    }
+  }
 }
 
 

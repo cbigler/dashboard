@@ -205,16 +205,22 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             <p className={styles.queueSettingBody}>Enable manual counting for this space.</p>
           </div>
         </div>) : null}
-        <div
-          className={styles.queueSettingsButton}
-          onClick={()=> setSettingsVisible(true)}>
-          <Icons.Cog
-            color={'#0D183A'}
-            width={24}
-            height={24}
-          />
-        </div>
-        <div className={styles.queueCapacity}>
+        {settings.enable_settings ? (
+          <div
+            className={styles.queueSettingsButton}
+            onClick={()=> setSettingsVisible(true)}>
+            <Icons.Cog
+              color={'#0D183A'}
+              width={24}
+              height={24}
+            />
+          </div>
+        ) : null}
+        <div className={
+          classnames(
+            styles.queueCapacity,
+            { [styles.extraPaddingTop]: !settings.enable_settings }
+        )}>
           <CapacityChart
             outerRadius={48}
             outerBorderWidth={9}

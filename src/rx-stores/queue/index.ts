@@ -31,8 +31,8 @@ import { isNullOrUndefined } from 'util';
 const DEFAULT_ORG_LOGO = 'https://dashboard.density.io/static/media/logo-black.ff062828.svg';
 
 export type QueueSettings = {
+  enable_settings: boolean
   display_wait_time: boolean
-  go_cooldown_seconds: number
   message: string
   queue_capacity: number
   threshold_metric: "CAPACITY"|"UTILIZATION"|"PEOPLE_PER_SQFT"
@@ -141,18 +141,20 @@ actions
           queueSettings = {};
         }
 
-        // if the space ID exists as a key within the org settings, use that
-        // otherwise use the default.
-        if (action.id in queueSettings) {
-          queueSettings = queueSettings[action.id];
-        }
-        else {
-          queueSettings = queueSettings.hasOwnProperty('default') ? queueSettings['default'] : {};
+        const defaultSettings = queueSettings.hasOwnProperty('default') ? queueSettings['default'] : {};
+        const spaceSettings: QueueSettings = {
+          enable_settings: queueSettings[action.id]?.enable_settings || defaultSettings.enable_settings,
+          display_wait_time: queueSettings[action.id]?.display_wait_time || defaultSettings.display_wait_time,
+          message: queueSettings[action.id]?.message || defaultSettings.message,
+          queue_capacity: queueSettings[action.id]?.queue_capacity || defaultSettings.queue_capacity,
+          threshold_metric: queueSettings[action.id]?.threshold_metric || defaultSettings.threshold_metric,
+          threshold_value: queueSettings[action.id]?.threshold_value || defaultSettings.threshold_value,
+          support_email: queueSettings[action.id]?.support_email || defaultSettings.support_email,
         }
 
         const orgLogoURL = orgSettings?.['logo_url'] || DEFAULT_ORG_LOGO;
 
-        return [action, queueSettings, orgLogoURL] as [any, QueueSettings, string]
+        return [action, spaceSettings, orgLogoURL] as [any, QueueSettings, string]
       })
     )),
     switchMap(([action, settings, orgLogoURL]) => forkJoin(
