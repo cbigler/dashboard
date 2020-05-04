@@ -101,6 +101,7 @@ configureClients();
 
 if (ON_PREM) {
   import('./error-collector');
+  import('./on-prem-fonts.scss');
 }
 
 // Send metrics to google analytics and mixpanel when the page url changes.
