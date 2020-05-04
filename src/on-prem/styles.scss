@@ -1,0 +1,156 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+
+$fontsPath: "fonts";
+
+// The 'Aeonik' Web Font
+@font-face { /* REGULAR */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-regular.f841f92e.eot');
+  src: url('#{$fontsPath}/aeonik-regular.f841f92e.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-regular.a0dd3136.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-regular.62e26876.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face { /* REGULAR ITALICS */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-regularitalic.17284a7f.eot');
+  src: url('#{$fontsPath}/aeonik-regularitalic.17284a7f.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-regularitalic.4fd7708a.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-regularitalic.1f65deec.woff') format('woff');
+  font-weight: normal;
+  font-style: italic;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face { /* BOLD */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-bold.06523ced.eot');
+  src: url('#{$fontsPath}/aeonik-bold.06523ced.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-bold.07255666.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-bold.ccac5264.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@font-face { /* BOLD */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-bold.06523ced.eot');
+  src: url('#{$fontsPath}/aeonik-bold.06523ced.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-bold.07255666.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-bold.ccac5264.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face { /* BOLD ITALICS */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-bolditalic.79c87750.eot');
+  src: url('#{$fontsPath}/aeonik-bolditalic.79c87750.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-bolditalic.3c206f24.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-bolditalic.f3fecfb8.woff') format('woff');
+  font-weight: 700;
+  font-style: italic;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@font-face { /* BOLD ITALICS */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-bolditalic.79c87750.eot');
+  src: url('#{$fontsPath}/aeonik-bolditalic.79c87750.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-bolditalic.3c206f24.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-bolditalic.f3fecfb8.woff') format('woff');
+  font-weight: bold;
+  font-style: italic;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face { /* MEDIUM */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-medium.7a81f68d.eot');
+  src: url('#{$fontsPath}/aeonik-medium.7a81f68d.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-medium.0b69a6eb.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-medium.87075dd8.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+@font-face { /* MEDIUM ITALICS */
+  font-family: 'Aeonik';
+  src: url('#{$fontsPath}/aeonik-mediumitalic.40ee839f.eot');
+  src: url('#{$fontsPath}/aeonik-mediumitalic.40ee839f.eot?#iefix') format('embedded-opentype'),
+    url('#{$fontsPath}/aeonik-mediumitalic.68adccc3.woff2') format('woff2'),
+    url('#{$fontsPath}/aeonik-mediumitalic.f6483939.woff') format('woff');
+  font-weight: 500;
+  font-style: italic;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+// Densicons is an icon font with Density icons inside. It's deprecated and shouldn't be used but
+// included since existing projects still depend on it.
+@font-face {
+  font-family: 'Densicons';
+  src: url("#{$fontsPath}/densicons.3128b3ea.ttf") format("truetype"),
+    url("#{$fontsPath}/densicons.2574e5bf.eot") format("opentype"),
+    url("#{$fontsPath}/densicons.98a2334f.woff") format("woff"),
+    url("#{$fontsPath}/densicons.f269c043.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-variant-numeric: tabular-nums;
+  color: $textColorBase;
+}
+
+p { line-height: 1.4; }
+
+h1 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+h3 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  font-weight: 500;
+}
+
+h4 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  line-height: 1.2;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+h5 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: $fontSizeBase;
+  line-height: 1.2;
+  font-weight: 500;
+  color: $gray500;
+}

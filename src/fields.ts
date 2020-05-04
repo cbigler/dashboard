@@ -44,5 +44,5 @@ export default [
   },
 ];
 
-export const ON_PREM = true;
-export const ON_PREM_ERROR_COLLECTOR_HOST = 'http://localhost:5000';
+export const ON_PREM = false;
+export const ON_PREM_ERROR_COLLECTOR_HOST = '';
