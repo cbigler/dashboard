@@ -128,7 +128,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
     selected.status === ResourceStatus.LOADING ||
     selected.status === ResourceStatus.IDLE
   ) {
-    return (<h2>Hold up, k?</h2>)
+    return (<h2></h2>)
   }
   else if (selected.status === ResourceStatus.ERROR) {
     return (<h2>Uh oh.</h2>)
@@ -139,7 +139,8 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
     spaceEvents,
     spaceDwellMean,
     virtualSensorSerial,
-    settings
+    settings,
+    orgLogoURL,
   } = selected.data;
 
   const supportEmail = settings.support_email || 'support@density.io';
@@ -223,7 +224,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
       {/* Right Section */}
       <div className={styles.queueDetailSection}>
         <div className={styles.queueDetailLogoSection}>
-          <img className={styles.queueDetailLogo} src="https://dashboard.density.io/static/media/logo-black.ff062828.svg" alt="Density Inc."/>
+          <img className={styles.queueDetailLogo} src={orgLogoURL} alt="Density Inc."/>
         </div>
         <h1 className={styles.queueSpaceName}>
           {space.name}

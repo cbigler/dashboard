@@ -28,6 +28,8 @@ import WebsocketEventPusher from '../../helpers/websocket-event-pusher/index';
 import { isNullOrUndefined } from 'util';
 
 
+const DEFAULT_ORG_LOGO = 'https://dashboard.density.io/static/media/logo-black.ff062828.svg';
+
 export type QueueSettings = {
   display_wait_time: boolean
   go_cooldown_seconds: number
@@ -47,7 +49,8 @@ export type QueueState = {
     spaceEvents: CoreSpaceEvent[],
     spaceDwellMean: number,
     virtualSensorSerial: string,
-    settings: QueueSettings
+    settings: QueueSettings,
+    orgLogoURL: string,
   }>,
 }
 
@@ -72,6 +75,7 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
           spaceDwellMean: action.spaceDwellMean,
           virtualSensorSerial: action.virtualSensorSerial,
           settings: action.settings,
+          orgLogoURL: action.orgLogoURL
         },
         status: ResourceStatus.COMPLETE
       },
@@ -129,25 +133,29 @@ actions
     switchMap((action: any) => UserStore.pipe(
       take(1),
       map((user) => {
-        let settings = user.data?.organization.settings['queue_settings'];
-        if (isNullOrUndefined(settings)) {
+        let orgSettings = user.data?.organization.settings;
+        let queueSettings = orgSettings?.['queue_settings'];
+
+        if (isNullOrUndefined(queueSettings)) {
           console.error('no queue settings defined');
-          settings = {};
+          queueSettings = {};
         }
 
         // if the space ID exists as a key within the org settings, use that
         // otherwise use the default.
-        if (action.id in settings) {
-          settings = settings[action.id];
+        if (action.id in queueSettings) {
+          queueSettings = queueSettings[action.id];
         }
         else {
-          settings = settings.hasOwnProperty('default') ? settings['default'] : {};
+          queueSettings = queueSettings.hasOwnProperty('default') ? queueSettings['default'] : {};
         }
 
-        return [action, settings] as [any, QueueSettings]
+        const orgLogoURL = orgSettings?.['logo_url'] || DEFAULT_ORG_LOGO;
+
+        return [action, queueSettings, orgLogoURL] as [any, QueueSettings, string]
       })
     )),
-    switchMap(([action, settings]) => forkJoin(
+    switchMap(([action, settings, orgLogoURL]) => forkJoin(
       // pull the space and its events
       fetchSelectedSpaceAndEvents(action.id),
       // pull the space dwell
@@ -156,13 +164,16 @@ actions
       fetchSelectedSensorSerial(action.id),
       // pass through the settings
       of(settings),
+      // pass through the org URL
+      of(orgLogoURL),
     ))
   )
   .subscribe(([
     [space, spaceEvents],
     spaceDwellMean,
     virtualSensorSerial,
-    settings
+    settings,
+    orgLogoURL,
   ]) => {
       websocketPusher.connect();
 
@@ -172,7 +183,8 @@ actions
         spaceEvents,
         spaceDwellMean,
         virtualSensorSerial,
-        settings
+        settings,
+        orgLogoURL
       });
   });
 

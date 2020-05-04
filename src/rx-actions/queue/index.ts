@@ -38,6 +38,7 @@ export type QueueAction =
     spaceDwellMean: number;
     virtualSensorSerial: string;
     settings: QueueSettings;
+    orgLogoURL: string;
   }
   | {
     type: QueueActionTypes.QUEUE_SET_TALLY_ENABLED;
