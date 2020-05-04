@@ -426,6 +426,10 @@ $textMessageScreenLarge:    28px;
   height: 238px;
   transform: translate(80px, -172px);
   background-size: 131px 238px;
+
+  @media screen and (max-width: $screenSizeScreenSmall) {
+    transform: translate(40px, -160px);
+  }
 }
 
 %queueTallyButton {
