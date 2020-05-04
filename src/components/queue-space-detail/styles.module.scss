@@ -11,15 +11,19 @@
 // Scaffolding
 // ----------------
 $screenSizeScreenSmall:     500px;
+$screenSizeScreenLarge:     1300px;
 $bodyPadding:               40px;
 $bodyPaddingScreenSmall:    18px;
+$bodyPaddingScreenLarge:    64px;
 
 // Typography
 // ----------------
 $textTitle:                 64px;
 $textTitleScreenSmall:      40px;
+$textTitleScreenLarge:      56px;
 $textMessage:               24px;
 $textMessageScreenSmall:    18px;
+$textMessageScreenLarge:    28px;
 
 
 
@@ -90,6 +94,12 @@ $textMessageScreenSmall:    18px;
     height: 40px;
     padding-top: $bodyPaddingScreenSmall;
     padding-left: $bodyPaddingScreenSmall;
+  }
+}
+@media screen and (min-width: $screenSizeScreenLarge) {
+  .queueSettingsButton {
+    padding-top: $bodyPaddingScreenLarge;
+    padding-left: $bodyPaddingScreenLarge;
   }
 }
 
@@ -165,6 +175,12 @@ $textMessageScreenSmall:    18px;
     padding-left: $bodyPaddingScreenSmall;
   }
 }
+@media screen and (min-width: $screenSizeScreenLarge) {
+  %queueActionStatusMetaSection {
+    height: 100px;
+    padding-left: $bodyPaddingScreenLarge;
+  }
+}
 
 // Queue Action Meta
 // --------------------
@@ -177,6 +193,12 @@ $textMessageScreenSmall:    18px;
 @media screen and (max-width: $screenSizeScreenSmall) {
   .queueActionStatusMetaSectionTitle {
     font-size: $textTitleScreenSmall;
+  }
+}
+@media screen and (min-width: $screenSizeScreenLarge) {
+  %queueActionStatusMetaSection {
+    height: 100px;
+    padding-left: $bodyPaddingScreenLarge;
   }
 }
 
@@ -223,6 +245,13 @@ $textMessageScreenSmall:    18px;
     left: -3vw;
   }
 }
+@media screen and (min-width: $screenSizeScreenLarge) {
+  // .queueActionText {
+  //   font-size: 50vw;
+  //   bottom: -11vw;
+  //   left: -3vw;
+  // }
+}
 
 
 
@@ -245,6 +274,14 @@ $textMessageScreenSmall:    18px;
     padding-right: $bodyPaddingScreenSmall;
   }
 }
+@media screen and (min-width: $screenSizeScreenLarge) {
+  .queueDetailSection {
+    padding-top: $bodyPaddingScreenLarge;
+    padding-bottom: $bodyPaddingScreenLarge;
+    padding-left: $bodyPaddingScreenLarge;
+    padding-right: $bodyPaddingScreenLarge;
+  }
+}
 
 .queueDetailLogoSection {
   height: 80px;
@@ -256,6 +293,14 @@ $textMessageScreenSmall:    18px;
   }
 }
 @media screen and (max-width: $screenSizeScreenSmall) {
+  .queueDetailLogoSection {
+    height: 40px;
+    padding-top: 8px;
+
+    img { height: 20px; }
+  }
+}
+@media screen and (min-width: $screenSizeScreenLarge) {
   .queueDetailLogoSection {
     height: 40px;
     padding-top: 8px;
@@ -288,6 +333,11 @@ $textMessageScreenSmall:    18px;
     font-size: $textTitleScreenSmall;
   }
 }
+@media screen and (min-width: $screenSizeScreenLarge) {
+  .queueSpaceName {
+    font-size: $textTitleScreenLarge;
+  }
+}
 
 .queueMessageSection {
   display: flex;
@@ -309,6 +359,11 @@ $textMessageScreenSmall:    18px;
     font-size: $textMessageScreenSmall;
   }
 }
+@media screen and (min-width: $screenSizeScreenLarge) {
+  .queueMessage {
+    font-size: $textMessageScreenLarge;
+  }
+}
 
 .queueMessageSupport {
   flex-grow: 0;
@@ -317,49 +372,54 @@ $textMessageScreenSmall:    18px;
 }
 
 .queueTallySection {
-  background: $grayLight;
-  margin-top: 100px;
-  padding: 80px;
-  border-radius: 50%;
-  width: 250px;
-  height: 250px;
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  flex-grow: 1;
+  flex-shrink: 1;
+  justify-content: center;
 }
 
 .queueOccupancyContainer {
   display:flex;
-  align-items: baseline;
-  margin: auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
+  width: 100px;
+  height: 100px;
+  padding: 80px;
+  margin: auto;
+  background: $grayLight;
+  border-radius: 50%;
 }
 
 .queueOccupancyLabel {
-  position: absolute;
-  top: 0;
-  right: 25px;
+  // position: absolute;
+  // top: 0;
+  // right: 25px;
   margin: 0;
-  font-size: 32px;
+  font-size: 16px;
   font-weight: 900;
   color: $grayDark;
 }
 
 .queueOccupancy {
-  font-size: 200px;
+  font-size: 90px;
   font-weight: 900;
   margin: 0;
   color: $midnight;
 }
 
 .queueTallyController {
+  position: absolute;
+  left: 50%;
+  top: 50%;
   width: 131px;
   height: 238px;
+  transform: translate(40px, -156px);
   background-size: 131px 238px;
-  position: absolute;
-  right: -93px;
-  top: 0;
 }
 
 %queueTallyButton {
