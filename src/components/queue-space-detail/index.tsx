@@ -124,14 +124,31 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
     };
   }, [dispatch]);
 
+  // LOADING / ERROR render
   if (
     selected.status === ResourceStatus.LOADING ||
-    selected.status === ResourceStatus.IDLE
+    selected.status === ResourceStatus.IDLE ||
+    selected.status === ResourceStatus.ERROR
   ) {
-    return (<h2></h2>)
-  }
-  else if (selected.status === ResourceStatus.ERROR) {
-    return (<h2>Uh oh.</h2>)
+    const isError = selected.status === ResourceStatus.ERROR;
+    return (
+      <div className={styles.queueDetailPage}>
+        <div className={styles.queueActionSection} style={{
+          backgroundColor: !isError ? colorVariables.green : colorVariables.red
+        }}>
+            { isError ? (
+              <h3 className={styles.queueLoadingErrorText}>
+                Whoops, there was a problem loading Queue. Please reach out to <a href="mailto:$support@density.io">support@density.io</a>
+              </h3>
+            ) : (
+              <h3 className={styles.queueLoadingErrorText}>
+                Loading ...
+              </h3>
+            )}
+          </div>
+          <div className={styles.queueDetailSection}></div>
+      </div>
+    )
   }
 
   const {
