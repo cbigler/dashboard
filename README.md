@@ -5,6 +5,24 @@
 Status](https://david-dm.org/densityco/nicss.svg)](https://david-dm.org/densityco/web-dashboard)
 ![License](https://img.shields.io/badge/License-MIT-green.svg)
 
+--------
+
+# NOTE: THIS IS THE ON PREM BRANCH
+Some changes have been made in order to support not having internet access that are a bit specific
+to on prem:
+1. All errors are sent to a service called the "error collector", which receives these errors and
+   includes them in any log bundles we'd be able to receive.
+2. All external assets have been extracted and are now served locally. This includes:
+  - density fonts on the CDN
+    - To do this, I modified density ui to not include the fonts (commented out the stylesheet
+      import in `src/fonts/index.ts`), and published this modified density ui to a special `onprem`
+      tag on npm.
+    - Then I copied this font importing logic into sensei explicitly
+3. A new constant was created called `ON_PREM` that is used in a number of places to switch what is
+   visible or not visible when running in an on prem environment.
+
+--------
+
 Density is a modern infrastructure for counting people. The Dashboard is a tool on top of the software platform, exposing insights through live and trend data, and allowing you to manage your account and installs.
 
 Density's core product is our API. While it is [thoroughly documented](http://docs.density.io), we're open sourcing our Dashboard as a guide to integrating our API and data into a tangible product; providing usage patterns that we're confident in.
