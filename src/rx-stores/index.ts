@@ -42,7 +42,7 @@ export default function createRxStore<T>(
 
   // Subscribe to the global action stream
   actions.subscribe((action: GlobalAction) => {
-    
+
     // Run the reducer function using the store's value and the next action
     const state = reducer(store.imperativelyGetValue(), action);
 
