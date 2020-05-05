@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import * as moment from "moment";
 
@@ -176,8 +175,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
       <div className={styles.queueActionSection} style={{
         backgroundColor: shouldGo ? colorVariables.green : colorVariables.red
       }}>
-        { settingsVisible ? (
-        <div className={styles.queueSettings}>
+        <div className={classnames(styles.queueSettings, {[styles.visible]: settingsVisible})}>
           <div className={styles.queueSettingsHeader}>
             <div
               className={styles.queueSettingsCloseButton}
@@ -204,7 +202,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
             </div>
             <p className={styles.queueSettingBody}>Enable manual counting for this space.</p>
           </div>
-        </div>) : null}
+        </div>
         <div
           className={styles.queueSettingsButton}
           onClick={()=> setSettingsVisible(true)}>
