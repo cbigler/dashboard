@@ -56,6 +56,7 @@ export enum ActivePage {
   ADMIN_LOCATIONS_EDIT = 'ADMIN_LOCATIONS_EDIT',
   ADMIN_LOCATIONS_NEW = 'ADMIN_LOCATIONS_NEW',
   ANALYTICS = 'ANALYTICS',
+  QUEUE_SPACE_LIST = 'QUEUE_SPACE_LIST',
   QUEUE_SPACE_DETAIL = 'QUEUE_SPACE_DETAIL',
 }
 
@@ -117,6 +118,8 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.ADMIN_LOCATIONS_NEW;
   case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL:
     return ActivePage.QUEUE_SPACE_DETAIL;
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_LIST:
+    return ActivePage.QUEUE_SPACE_LIST;
 
   case AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS:
     return ActivePage.ANALYTICS;

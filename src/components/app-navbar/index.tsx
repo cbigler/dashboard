@@ -166,6 +166,13 @@ export default function AppNavbar({
             icon={<Icons.StopWatch />}
             text="Live"
           />
+          {stringToBoolean(settings.queue_enabled) ? <AppNavbarItem
+            selected={['QUEUE_SPACE_LIST', 'QUEUE_SPACE_DETAIL'].includes(page)}
+            showOnMobile={true}
+            path="#/queue/spaces"
+            icon={<Icons.PersonHuddle />}
+            text="Queue"
+          /> : null}
         </ul>
 
         <ul className={styles.appNavbarRight}>

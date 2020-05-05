@@ -20,6 +20,7 @@ import AdminLocationsNew from '../admin-locations-new/index';
 import DashboardsList from '../dashboards-list/index';
 import DashboardsEdit from '../dashboard-edit/index';
 import Analytics from '../analytics';
+import QueueSpaceList from '../queue-space-list/index';
 import QueueSpaceDetail from '../queue-space-detail/index';
 import Dialogger from '../dialogger';
 import Toaster from '../toaster';
@@ -183,6 +184,8 @@ function ActivePage({activePage, user, settings}) {
     return <Analytics />;
   case "QUEUE_SPACE_DETAIL":
     return <QueueSpaceDetail />
+  case "QUEUE_SPACE_LIST":
+    return <QueueSpaceList />
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.

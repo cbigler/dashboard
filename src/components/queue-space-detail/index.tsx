@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import * as moment from "moment";
 
@@ -107,8 +106,8 @@ function waitTimeToString(waitTime: number): string {
 const QueueSpaceDetail: React.FunctionComponent = () => {
   const state = useRxStore(QueueStore);
   const dispatch = useRxDispatch();
-  const selected = state.selected;
-  const tallyEnabled = state.tallyEnabled;
+  const selected = state.detail.selected;
+  const tallyEnabled = state.detail.tallyEnabled;
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   // unmount effect
@@ -119,7 +118,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
     document.head.append(meta);
 
     return () => {
-      dispatch({type: QueueActionTypes.QUEUE_WILL_UNMOUNT})
+      dispatch({type: QueueActionTypes.QUEUE_DETAIL_WILL_UNMOUNT})
       meta.remove();
     };
   }, [dispatch]);
@@ -138,7 +137,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
         }}>
             { isError ? (
               <h3 className={styles.queueLoadingErrorText}>
-                Whoops, there was a problem loading Queue. Please reach out to <a href="mailto:$support@density.io">support@density.io</a>
+                Whoops, there was a problem loading Queue. Please reach out to <a href="mailto:support@density.io">support@density.io</a>
               </h3>
             ) : (
               <h3 className={styles.queueLoadingErrorText}>
@@ -176,8 +175,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
       <div className={styles.queueActionSection} style={{
         backgroundColor: shouldGo ? colorVariables.green : colorVariables.red
       }}>
-        { settingsVisible ? (
-        <div className={styles.queueSettings}>
+        <div className={classnames(styles.queueSettings, {[styles.visible]: settingsVisible})}>
           <div className={styles.queueSettingsHeader}>
             <div
               className={styles.queueSettingsCloseButton}
@@ -197,14 +195,14 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
                 value={tallyEnabled}
                 onChange={()=>
                   dispatch({
-                    type: QueueActionTypes.QUEUE_SET_TALLY_ENABLED,
+                    type: QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED,
                     enabled: !tallyEnabled
                 })}
               />
             </div>
             <p className={styles.queueSettingBody}>Enable manual counting for this space.</p>
           </div>
-        </div>) : null}
+        </div>
         {settings.enable_settings ? (
           <div
             className={styles.queueSettingsButton}
@@ -272,7 +270,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
                 className={styles.queueTallyIngress}
                 onClick={()=>
                   dispatch({
-                    type: QueueActionTypes.QUEUE_CREATE_TALLY_EVENT,
+                    type: QueueActionTypes.QUEUE_DETAIL_CREATE_TALLY_EVENT,
                     virtualSensorSerial: virtualSensorSerial,
                     timestamp: moment.utc(),
                     trajectory: 1
@@ -282,7 +280,7 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
                 className={styles.queueTallyEgress}
                 onClick={()=>
                   dispatch({
-                    type: QueueActionTypes.QUEUE_CREATE_TALLY_EVENT,
+                    type: QueueActionTypes.QUEUE_DETAIL_CREATE_TALLY_EVENT,
                     virtualSensorSerial: virtualSensorSerial,
                     timestamp: moment.utc(),
                     trajectory: -1

@@ -4,9 +4,8 @@ import {
   take,
   map,
   switchMap,
-  takeUntil
+  takeUntil,
 } from 'rxjs/operators';
-// import * as moment from 'moment';
 import moment from 'moment-timezone';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
@@ -19,6 +18,7 @@ import UserStore from '../user';
 import {
   Resource,
   RESOURCE_IDLE,
+  RESOURCE_LOADING,
   ResourceStatus,
 } from '../../types/resource';
 import { GlobalAction } from '../../types/rx-actions';
@@ -30,6 +30,15 @@ import { isNullOrUndefined } from 'util';
 
 const DEFAULT_ORG_LOGO = 'https://dashboard.density.io/static/media/logo-black.ff062828.svg';
 
+export type QueueListState = {
+  resource: Resource<{
+    spaces: Array<CoreSpace>,
+    orgSettings: {[id: string]: QueueSettings} | null,
+    visibleSpaceIds: Array<CoreSpace['id']>,
+  }>,
+  searchText: string,
+};
+
 export type QueueSettings = {
   enable_settings: boolean
   display_wait_time: boolean
@@ -40,7 +49,7 @@ export type QueueSettings = {
   support_email: string
 }
 
-export type QueueState = {
+export type QueueDetailState = {
   orgSettings: QueueSettings,
   tallyEnabled: boolean,
   websocketState: QUEUE_SOCKET_CONNECTION_STATES,
@@ -54,16 +63,70 @@ export type QueueState = {
   }>,
 }
 
+export type QueueState = {
+  list: QueueListState,
+  detail: QueueDetailState,
+}
+
 const initialState: QueueState = {
-  orgSettings: {} as QueueSettings,
-  selected: RESOURCE_IDLE,
-  tallyEnabled: localStorage.getItem('queueTallyEnabled') === 'true',
-  websocketState: QUEUE_SOCKET_CONNECTION_STATES.CLOSED
+  list: {
+    resource: RESOURCE_IDLE,
+    searchText: '',
+  },
+  detail: {
+    orgSettings: {} as QueueSettings,
+    selected: RESOURCE_IDLE,
+    tallyEnabled: localStorage.getItem('queueTallyEnabled') === 'true',
+    websocketState: QUEUE_SOCKET_CONNECTION_STATES.CLOSED
+  },
 };
 
 const websocketPusher = new WebsocketEventPusher();
 
 export function queueReducer(state: QueueState, action: GlobalAction): QueueState {
+  switch (action.type) {
+  case QueueActionTypes.QUEUE_LIST_DATA_LOAD_COMPLETE:
+  case QueueActionTypes.QUEUE_LIST_DATA_LOAD_ERROR:
+  case QueueActionTypes.QUEUE_LIST_CHANGE_SEARCH_TEXT:
+    return {...state, list: queueListReducer(state.list, action)};
+
+  case QueueActionTypes.QUEUE_DETAIL_DATA_LOADED:
+  case QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED:
+  case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE:
+  case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE:
+    return {...state, detail: queueDetailReducer(state.detail, action)};
+
+  default:
+    return state;
+  }
+}
+
+export function queueListReducer(state: QueueListState, action: GlobalAction): QueueListState {
+  switch (action.type) {
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_LIST:
+    return { ...state, resource: RESOURCE_LOADING }
+  case QueueActionTypes.QUEUE_LIST_DATA_LOAD_COMPLETE:
+    return {
+      ...state,
+      resource: {
+        status: ResourceStatus.COMPLETE,
+        data: {
+          spaces: action.spaces,
+          orgSettings: action.orgSettings,
+          visibleSpaceIds: action.visibleSpaceIds,
+        },
+      },
+    };
+  case QueueActionTypes.QUEUE_LIST_DATA_LOAD_ERROR:
+    return { ...state, resource: {status: ResourceStatus.ERROR, error: action.error} };
+  case QueueActionTypes.QUEUE_LIST_CHANGE_SEARCH_TEXT:
+    return { ...state, searchText: action.text };
+  default:
+    return state;
+  }
+}
+
+export function queueDetailReducer(state: QueueDetailState, action: GlobalAction): QueueDetailState {
   switch (action.type) {
   case QueueActionTypes.QUEUE_DETAIL_DATA_LOADED:
     return {
@@ -80,17 +143,17 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
         status: ResourceStatus.COMPLETE
       },
     };
-  case QueueActionTypes.QUEUE_SET_TALLY_ENABLED:
+  case QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED:
     return {
       ...state,
       tallyEnabled: action.enabled
     }
-  case QueueActionTypes.QUEUE_WEBSOCKET_STATUS_CHANGE:
+  case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE:
     return {
       ...state,
       websocketState: action.state
     }
-  case QueueActionTypes.QUEUE_WEBSOCKET_COUNT_CHANGE:
+  case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE:
     if (state.selected.status !== ResourceStatus.COMPLETE) {
       return state;
     }
@@ -112,13 +175,49 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
   default:
     return state;
   }
-
 }
 
-const unmount = actions.pipe(
+const unmountDetail = actions.pipe(
   filter(action => {
-    return action.type === QueueActionTypes.QUEUE_WILL_UNMOUNT
+    return action.type === QueueActionTypes.QUEUE_DETAIL_WILL_UNMOUNT
   }));
+
+// =================================
+// SIDE EFFECT: when the list page is loaded,
+// fetch a list of all spaces and render it to the page.
+// =================================
+actions
+  .pipe(
+    filter(action => action.type === QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_LIST),
+    switchMap((action: any) => UserStore.pipe(
+      take(1),
+      map((user) => {
+        let orgSettings = user.data?.organization.settings as Any<FixInRefactor>;
+        let queueSettings = orgSettings?.queue_settings || null;
+        let queueSpaceIds = orgSettings?.queue_space_ids || null;
+        return [
+          action,
+          queueSettings,
+          queueSpaceIds
+        ] as [any, {[id: string]: QueueSettings} | null, Array<CoreSpace['id']>];
+      }),
+    )),
+    switchMap(([action, settings, queueSpaceIds]) => forkJoin(
+      // pull a list of all spaces
+      fetchAllSpaces(),
+      // pass through the settings and space ids
+      of(settings),
+      of(queueSpaceIds),
+    ))
+  )
+  .subscribe(([spaces, orgSettings, visibleSpaceIds]) => {
+    return rxDispatch({
+      type: QueueActionTypes.QUEUE_LIST_DATA_LOAD_COMPLETE,
+      spaces,
+      orgSettings,
+      visibleSpaceIds,
+    });
+  });
 
 // =================================
 // SIDE EFFECT: when the detail page is loaded
@@ -191,6 +290,10 @@ actions
   });
 
 
+function fetchAllSpaces() {
+  return from(fetchAllObjects<CoreSpace>(`/spaces`, { cache: false }));
+}
+
 function fetchSelectedSpaceAndEvents(spaceId: string) {
   return from(fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false })).pipe(
     switchMap((space) => forkJoin(
@@ -255,7 +358,7 @@ actions
       return action.type === QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL
     }),
     switchMap((action: any)=> interval(refreshInterval).pipe(map(()=> action))),
-    takeUntil(unmount),
+    takeUntil(unmountDetail),
     switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
   ).subscribe();
 
@@ -263,7 +366,7 @@ actions
 // SIDE EFFECT: disconnect from the websocket server on unmount
 // =================================
 
-unmount.subscribe(()=> {
+unmountDetail.subscribe(()=> {
   websocketPusher.disconnect()
 });
 
@@ -277,7 +380,7 @@ new Observable(subscriber => {
   .subscribe((socketConnectionState: any) => {
 
     return rxDispatch({
-      type: QueueActionTypes.QUEUE_WEBSOCKET_STATUS_CHANGE,
+      type: QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE,
       state: socketConnectionState
     })
   });
@@ -294,16 +397,16 @@ new Observable(subscriber => {
     of(spaceCountChange),
     QueueStore.pipe(take(1)),
   )}),
-  filter(([spaceCountChange, queueStore]) => {
-    if (queueStore.selected.status !== ResourceStatus.COMPLETE) {
+  filter(([spaceCountChange, queueState]) => {
+    if (queueState.detail.selected.status !== ResourceStatus.COMPLETE) {
       return false
     }
 
-    return spaceCountChange.space_id === queueStore.selected.data.space.id
+    return spaceCountChange.space_id === queueState.detail.selected.data.space.id
   })
 ).subscribe(([spaceCountChange, _]: [CoreWebsocketEventPayload, unknown]) => {
   rxDispatch({
-    type: QueueActionTypes.QUEUE_WEBSOCKET_COUNT_CHANGE,
+    type: QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE,
     currentCount: spaceCountChange.count,
     newEvent: {
       direction: spaceCountChange.direction,
@@ -319,7 +422,7 @@ new Observable(subscriber => {
 actions
   .pipe(
     filter(action => {
-      return action.type === QueueActionTypes.QUEUE_SET_TALLY_ENABLED
+      return action.type === QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED
     })
   )
   .subscribe((action: any) => {
@@ -332,7 +435,7 @@ actions
 actions
   .pipe(
     filter(action => {
-      return action.type === QueueActionTypes.QUEUE_CREATE_TALLY_EVENT
+      return action.type === QueueActionTypes.QUEUE_DETAIL_CREATE_TALLY_EVENT
     }),
     switchMap((action: any) => {
       return core().post(`/sensors/${action.virtualSensorSerial}/events`, {

@@ -68,6 +68,7 @@ import routeTransitionAdminLocations from './rx-actions/route-transition/admin-l
 import routeTransitionAdminLocationsEdit from './rx-actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './rx-actions/route-transition/admin-locations-new';
 import routeTransitionQueueSpaceDetail from './rx-actions/route-transition/queue-space-detail';
+import routeTransitionQueueSpaceList from './rx-actions/route-transition/queue-space-list';
 import { AnalyticsActionType } from './rx-actions/analytics';
 
 import sessionTokenSet from './rx-actions/session-token/set';
@@ -189,6 +190,7 @@ router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsE
 router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
 router.addRoute('queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id));
+router.addRoute('queue/spaces', () => routeTransitionQueueSpaceList(rxDispatch));
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events
