@@ -48,7 +48,7 @@ const QueueSpaceList: React.FunctionComponent = () => {
   const dispatch = useRxDispatch();
 
   const [hoveredSpaceId, setHoveredSpaceId] = useState<CoreSpace['id'] | null>(null);
- 
+
   const header = (
     <AppBar>
       <AppBarTitle>Queue Spaces</AppBarTitle>
@@ -104,10 +104,7 @@ const QueueSpaceList: React.FunctionComponent = () => {
         <div className={styles.spaceList}>
           <div className={styles.intro}>
             <h1>Queue<sup>BETA</sup></h1>
-            <p>
-              This is a tool for managing line lengths for stores.<br/>
-              Someone who's better at writing will write what this says.
-            </p>
+            <p>Give your employees or customers real-time occupancy information they can use to make safe decisions about their day.</p>
           </div>
           {!orgSettings ? (
             <div className={styles.centered}>
