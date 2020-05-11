@@ -45,6 +45,7 @@ export type QueueAction =
   | {
     type: QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL;
     id: string;
+    queryParams?: { [key: string]: any };
   }
   | {
     type: QueueActionTypes.QUEUE_DETAIL_WILL_UNMOUNT;

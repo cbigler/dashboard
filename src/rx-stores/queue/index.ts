@@ -9,6 +9,8 @@ import {
 import moment from 'moment-timezone';
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreOrganization } from '@density/lib-api-types/core-v2/organizations';
+import { CoreUser } from '@density/lib-api-types/core-v2/users';
 import { CoreWebsocketEventPayload, CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 import { CoreDoorway } from '@density/lib-api-types/core-v2/doorways';
 
@@ -61,6 +63,12 @@ export type QueueDetailState = {
     settings: QueueSettings,
     orgLogoURL: string,
   }>,
+
+  queryParams?: {
+    token_type?: 'session' | 'token',
+    token?: string,
+    organization_id?: CoreOrganization['id'],
+  },
 }
 
 export type QueueState = {
@@ -131,6 +139,11 @@ export function queueListReducer(state: QueueListState, action: GlobalAction): Q
 
 export function queueDetailReducer(state: QueueDetailState, action: GlobalAction): QueueDetailState {
   switch (action.type) {
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL:
+    return {
+      ...state,
+      queryParams: action.queryParams,
+    };
   case QueueActionTypes.QUEUE_DETAIL_DATA_LOADED:
     return {
       ...state,
@@ -248,12 +261,9 @@ actions
     filter(action => {
       return action.type === QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL
     }),
-    switchMap((action: any) => UserStore.pipe(
-      take(1),
-      map((user) => {
-        let orgSettings = user.data?.organization.settings;
+    switchMap((action: any) => {
+      function mapQueueSettingsToReturnValue(orgSettings) {
         let queueSettings = orgSettings?.['queue_settings'];
-
         if (isNullOrUndefined(queueSettings)) {
           console.error('no queue settings defined');
           queueSettings = {};
@@ -273,19 +283,62 @@ actions
         const orgLogoURL = orgSettings?.['logo_url'] || DEFAULT_ORG_LOGO;
 
         return [action, spaceSettings, orgLogoURL] as [any, QueueSettings, string]
-      })
-    )),
+      }
+
+      if (action.queryParams) {
+        const headers = generateQueryParamTokenHeaders(action.queryParams.token);
+
+        // NOTE: because tok_xxx tokens cannot access user endpoints, there's two code paths here.
+        // For a business reason, this needs to get done ASAP. So:
+        // 1. If `token_type` is `session`, we've got a session token. Make a request to `/users/me`.
+        // 2. If `token type` is `token`, we've got a regular token. Make a request to a future
+        //    endpoint to get the info we need.
+        if (action.queryParams.token_type === 'session') {
+          return from(fetchObject<CoreUser>(`/users/me`, { cache: false, headers })).pipe(
+            map(user => {
+              let orgSettings = user?.organization.settings;
+              return mapQueueSettingsToReturnValue(orgSettings);
+            }),
+          );
+        } else {
+          if (!action.queryParams.organization_id) {
+            throw new Error('token_type of "token" requires "organization_id" parameter');
+          }
+
+          // When a regular token is specified, then request the organiization instead of the user
+          // TODO: future code here
+          return from(fetchObject<CoreOrganization>(
+            `/organizations/${action.queryParams.organization_id}`,
+            { cache: false, headers },
+          )).pipe(
+            map(organization => mapQueueSettingsToReturnValue(
+              (organization as any).settings /* FIXME: hmm, organization doesn't have the `settings` value? */
+            )),
+          );
+        }
+      } else {
+        return UserStore.pipe(
+          take(1),
+          map((user) => {
+            let orgSettings = user.data?.organization.settings;
+            return mapQueueSettingsToReturnValue(orgSettings);
+          })
+        );
+      }
+    }),
     switchMap(([action, settings, orgLogoURL]) => forkJoin(
       // pull the space and its events
-      fetchSelectedSpaceAndEvents(action.id),
+      fetchSelectedSpaceAndEvents(action.id, action.queryParams?.token),
       // pull the space dwell
-      fetchSelectedSpaceDwell(action.id),
+      fetchSelectedSpaceDwell(action.id, action.queryParams?.token),
       // pull the sensor
-      fetchSelectedSensorSerial(action.id),
+      fetchSelectedSensorSerial(action.id, action.queryParams?.token),
       // pass through the settings
       of(settings),
       // pass through the org URL
       of(orgLogoURL),
+      // pass through query params
+      of (action.queryParams),
     ))
   )
   .subscribe(([
@@ -294,35 +347,49 @@ actions
     virtualSensorSerial,
     settings,
     orgLogoURL,
+    queryParams,
   ]) => {
+    if (queryParams) {
+      websocketPusher.connectWithExplicitToken(queryParams.token);
+    } else {
       websocketPusher.connect();
+    }
 
-      return rxDispatch({
-        type: QueueActionTypes.QUEUE_DETAIL_DATA_LOADED,
-        space,
-        spaceEvents,
-        spaceDwellMean,
-        virtualSensorSerial,
-        settings,
-        orgLogoURL
-      });
+    return rxDispatch({
+      type: QueueActionTypes.QUEUE_DETAIL_DATA_LOADED,
+      space,
+      spaceEvents,
+      spaceDwellMean,
+      virtualSensorSerial,
+      settings,
+      orgLogoURL
+    });
   });
 
+
+function generateQueryParamTokenHeaders(token?: string) {
+  const headers = {};
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
 
 function fetchAllSpaces() {
   return from(fetchAllObjects<CoreSpace>(`/spaces`, { cache: false }));
 }
 
-function fetchSelectedSpaceAndEvents(spaceId: string) {
-  return from(fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false })).pipe(
+function fetchSelectedSpaceAndEvents(spaceId: string, queryParamToken?: string) {
+  const headers = generateQueryParamTokenHeaders(queryParamToken);
+  return from(fetchObject<CoreSpace>(`/spaces/${spaceId}`, { cache: false, headers})).pipe(
     switchMap((space) => forkJoin(
       of(space),
-      fetchSelectedSpaceEvents(space)
+      fetchSelectedSpaceEvents(space, queryParamToken),
     ))
   );
 }
 
-function fetchSelectedSpaceEvents(space: CoreSpace) {
+function fetchSelectedSpaceEvents(space: CoreSpace, queryParamToken?: string) {
   const localNow = moment.tz(space.time_zone);
   const resetTime = moment(space.daily_reset, 'HH:mm');
   const resetTimestamp = localNow.clone()
@@ -332,23 +399,30 @@ function fetchSelectedSpaceEvents(space: CoreSpace) {
     .millisecond(0);
   if (resetTimestamp > localNow) { resetTimestamp.subtract(1, 'day'); }
 
+  const headers = generateQueryParamTokenHeaders(queryParamToken);
+
   return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
     params: {
       start_time: resetTimestamp.utc().toISOString(),
       end_time: localNow.utc().toISOString(),
-    }
+    },
+    headers,
   });
 }
 
-function fetchSelectedSpaceDwell(spaceId: string) {
-  return from(fetchObject(`/spaces/${spaceId}/dwell`, { cache: false })).pipe(
+function fetchSelectedSpaceDwell(spaceId: string, queryParamToken?: string) {
+  const headers = generateQueryParamTokenHeaders(queryParamToken);
+  return from(fetchObject(`/spaces/${spaceId}/dwell`, { cache: false, headers })).pipe(
     map((spaceDwell) => spaceDwell.mean)
   );
 }
 
-function fetchSelectedSensorSerial(spaceId: string) {
+function fetchSelectedSensorSerial(spaceId: string, queryParamToken?: string) {
+  const headers = generateQueryParamTokenHeaders(queryParamToken);
   return from(fetchAllObjects<CoreDoorway>(`/doorways/`, {
-    params: {space_id: spaceId}, cache: false
+    params: {space_id: spaceId},
+    cache: false,
+    headers,
   })).pipe(
     map((doorways)=> {
        const hasSensors = doorways.filter((d) => !isNullOrUndefined(d.sensor_serial_number))
@@ -462,11 +536,19 @@ actions
     filter(action => {
       return action.type === QueueActionTypes.QUEUE_DETAIL_CREATE_TALLY_EVENT
     }),
-    switchMap((action: any) => {
+    switchMap(action => forkJoin(
+      of(action),
+      QueueStore.pipe(take(1)),
+    )),
+    switchMap((a) => {
+      const action: any = a[0],
+            queueState = a[1];
+      const headers = generateQueryParamTokenHeaders(queueState.detail.queryParams?.token);
+
       return core().post(`/sensors/${action.virtualSensorSerial}/events`, {
         trajectory: action.trajectory,
         timestamp: action.timestamp.utc(),
-      });
+      }, { headers });
     })
   )
   // events are consumed via the websocket server
