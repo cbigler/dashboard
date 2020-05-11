@@ -189,22 +189,28 @@ router.addRoute('/admin/locations/:id', id => routeTransitionAdminLocations(rxDi
 router.addRoute('/admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
 router.addRoute('/admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('/analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
-router.addRoute('/queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id));
+router.addRoute('/queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id, parseHashQueryParams()));
 router.addRoute('/queue/spaces', () => routeTransitionQueueSpaceList(rxDispatch));
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events
 (window as any).resizeHandler = unsafeHandleWindowResize(() => (rxDispatch as Any<FixInReview>)(incrementResizeCounter()));
 
+// Parse query params out of hash path
+function parseHashQueryParams() {
+  const locationHash = window.location.hash;
+
+  // Parse query params out of hash path
+  const queryParamsInLocationHash = (new URL(locationHash.slice(1), window.location.href)).search;
+  return queryString.parse(queryParamsInLocationHash, { ignoreQueryPrefix: true });
+}
+
 // Make sure that the user is logged in prior to going to a page.
 async function preRouteAuthentication() {
   const loggedIn = SessionTokenStore.imperativelyGetValue() !== null;
   const locationHash = window.location.hash;
   const accessTokenMatch = locationHash.match(/^#access_token=([^&]+)/);
-
-  // Parse query params out of hash path
-  const queryParamsInLocationHash = (new URL(locationHash.slice(1), window.location.href)).search;
-  const qs = queryString.parse(queryParamsInLocationHash, { ignoreQueryPrefix: true });
+  const qs = parseHashQueryParams();
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
