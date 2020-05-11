@@ -146,51 +146,51 @@ trackHashChange();
 // Create a router to listen to the store and dispatch actions when the hash changes.
 // Uses conduit, an open source router we made at Density: https://github.com/DensityCo/conduit
 const router = createRouter();
-router.addRoute('login', async () => { (rxDispatch as Any<FixInReview>)(routeTransitionLogin(null)) });
-router.addRoute('logout', async () => routeTransitionLogout(rxDispatch));
-router.addRoute('access_token=:oauth', async () => {});
+router.addRoute('/login', async () => { (rxDispatch as Any<FixInReview>)(routeTransitionLogin(null)) });
+router.addRoute('/logout', async () => routeTransitionLogout(rxDispatch));
+router.addRoute('/access_token=:oauth', async () => {});
 
-router.addRoute('dashboards', () => routeTransitionDashboardList(rxDispatch));
-router.addRoute('dashboards/:id/edit', id => routeTransitionDashboardEdit(rxDispatch, id));
-router.addRoute('dashboards/:id', id => routeTransitionDashboardDetail(rxDispatch, id));
+router.addRoute('/dashboards', () => routeTransitionDashboardList(rxDispatch));
+router.addRoute('/dashboards/:id/edit', id => routeTransitionDashboardEdit(rxDispatch, id));
+router.addRoute('/dashboards/:id', id => routeTransitionDashboardDetail(rxDispatch, id));
 
-router.addRoute('spaces', () => routeTransitionSpaces(rxDispatch));
-router.addRoute('spaces/:id', id => routeTransitionSpacesSpace(rxDispatch, id));
-router.addRoute('spaces/:id/doorways/:id', (space_id, doorway_id) => routeTransitionSpacesDoorway(rxDispatch, space_id, doorway_id));
-router.addRoute('spaces/live', () => routeTransitionLiveSpaceList(rxDispatch));
-router.addRoute('spaces/live/:id', id => routeTransitionLiveSpaceDetail(rxDispatch, id));
+router.addRoute('/spaces', () => routeTransitionSpaces(rxDispatch));
+router.addRoute('/spaces/:id', id => routeTransitionSpacesSpace(rxDispatch, id));
+router.addRoute('/spaces/:id/doorways/:id', (space_id, doorway_id) => routeTransitionSpacesDoorway(rxDispatch, space_id, doorway_id));
+router.addRoute('/spaces/live', () => routeTransitionLiveSpaceList(rxDispatch));
+router.addRoute('/spaces/live/:id', id => routeTransitionLiveSpaceDetail(rxDispatch, id));
 
-router.addRoute('account', () => routeTransitionAccount(rxDispatch));
+router.addRoute('/account', () => routeTransitionAccount(rxDispatch));
 
 // User registration and password resetting
-router.addRoute('account/register/:slug', async (slug) => { (rxDispatch as Any<FixInReview>)(routeTransitionAccountRegister(slug)) });
-router.addRoute('account/forgot-password/:token', async (token) => { (rxDispatch as Any<FixInReview>)(routeTransitionAccountForgotPassword(token)) });
+router.addRoute('/account/register/:slug', async (slug) => { (rxDispatch as Any<FixInReview>)(routeTransitionAccountRegister(slug)) });
+router.addRoute('/account/forgot-password/:token', async (token) => { (rxDispatch as Any<FixInReview>)(routeTransitionAccountForgotPassword(token)) });
 
 // Advanced account management (Administration)
-router.addRoute('admin/integrations/:service/space-mappings', async (service) => { routeTransitionAdminSpaceMappings(rxDispatch, service) });
-router.addRoute('admin/integrations/brivo/doorway-mappings', async (service) => { routeTransitionAdminBrivoMappings(rxDispatch) });
-router.addRoute('admin/integrations', async () => await routeTransitionAdminIntegrations(rxDispatch));
-router.addRoute('admin/integrations/brivo/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
-router.addRoute('admin/integrations/brivo/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
-router.addRoute('admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
-router.addRoute('admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
-router.addRoute('admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
-router.addRoute('admin/integrations/outlook/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
-router.addRoute('admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
-router.addRoute('admin/integrations/teem/:accessToken/:expiresIn/:refreshToken/:token_type', (accessToken, expiresIn, refreshToken, token_type) => routeTransitionAdminIntegrationsTeem(rxDispatch, accessToken, expiresIn, refreshToken, token_type));
-router.addRoute('admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(rxDispatch, code));
-router.addRoute('admin/user-management', () => routeTransitionAdminUserManagement(rxDispatch));
-router.addRoute('admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(rxDispatch, id));
-router.addRoute('admin/developer', () => routeTransitionAdminDeveloper(rxDispatch));
-router.addRoute('admin/device-status', () => routeTransitionAdminDeviceStatus(rxDispatch));
-router.addRoute('admin/locations', () => routeTransitionAdminLocations(rxDispatch, null));
-router.addRoute('admin/locations/create/:space_type', (space_type) => routeTransitionAdminLocationsNew(rxDispatch, null, space_type));
-router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDispatch, id));
-router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
-router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
-router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
-router.addRoute('queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id));
-router.addRoute('queue/spaces', () => routeTransitionQueueSpaceList(rxDispatch));
+router.addRoute('/admin/integrations/:service/space-mappings', async (service) => { routeTransitionAdminSpaceMappings(rxDispatch, service) });
+router.addRoute('/admin/integrations/brivo/doorway-mappings', async (service) => { routeTransitionAdminBrivoMappings(rxDispatch) });
+router.addRoute('/admin/integrations', async () => await routeTransitionAdminIntegrations(rxDispatch));
+router.addRoute('/admin/integrations/brivo/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('/admin/integrations/brivo/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
+router.addRoute('/admin/integrations/google-calendar/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('/admin/integrations/google-calendar/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
+router.addRoute('/admin/integrations/outlook/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('/admin/integrations/outlook/success', (code) => routeTransitionAdminIntegrationsServiceSuccess(rxDispatch));
+router.addRoute('/admin/integrations/teem/fail', (code) => routeTransitionAdminIntegrationsServiceFailure(rxDispatch));
+router.addRoute('/admin/integrations/teem/:accessToken/:expiresIn/:refreshToken/:token_type', (accessToken, expiresIn, refreshToken, token_type) => routeTransitionAdminIntegrationsTeem(rxDispatch, accessToken, expiresIn, refreshToken, token_type));
+router.addRoute('/admin/integrations/slack/:code', (code) => routeTransitionAdminIntegrationsSlack(rxDispatch, code));
+router.addRoute('/admin/user-management', () => routeTransitionAdminUserManagement(rxDispatch));
+router.addRoute('/admin/user-management/:id', id => routeTransitionAdminUserManagementDetail(rxDispatch, id));
+router.addRoute('/admin/developer', () => routeTransitionAdminDeveloper(rxDispatch));
+router.addRoute('/admin/device-status', () => routeTransitionAdminDeviceStatus(rxDispatch));
+router.addRoute('/admin/locations', () => routeTransitionAdminLocations(rxDispatch, null));
+router.addRoute('/admin/locations/create/:space_type', (space_type) => routeTransitionAdminLocationsNew(rxDispatch, null, space_type));
+router.addRoute('/admin/locations/:id', id => routeTransitionAdminLocations(rxDispatch, id));
+router.addRoute('/admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
+router.addRoute('/admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
+router.addRoute('/analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
+router.addRoute('/queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id));
+router.addRoute('/queue/spaces', () => routeTransitionQueueSpaceList(rxDispatch));
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events
@@ -201,6 +201,10 @@ async function preRouteAuthentication() {
   const loggedIn = SessionTokenStore.imperativelyGetValue() !== null;
   const locationHash = window.location.hash;
   const accessTokenMatch = locationHash.match(/^#access_token=([^&]+)/);
+
+  // Parse query params out of hash path
+  const queryParamsInLocationHash = (new URL(locationHash.slice(1), window.location.href)).search;
+  const qs = queryString.parse(queryParamsInLocationHash, { ignoreQueryPrefix: true });
 
   // If the hash has an OAuth access token, exchange it for an API token
   if (accessTokenMatch) {
@@ -231,11 +235,13 @@ async function preRouteAuthentication() {
       });
     }).catch(err => {
       window.localStorage.auth0LoginError = err.toString();
-      router.navigate('login', {});
+      router.navigate('/login', {});
     });
   // If on the account registration page (the only page that doesn't require the user to be logged in)
   // then don't worry about any of this.
   } else if (
+    // The queue page has the ability to be authenticated by a token in the url
+    (locationHash.startsWith("#/queue/spaces") && qs.token) ||
     locationHash.startsWith("#/account/register") ||
     locationHash.startsWith("#/account/forgot-password")
   ) {
@@ -244,7 +250,7 @@ async function preRouteAuthentication() {
   // If the user isn't logged in, send them to the login page.
   } else if (!loggedIn) {
     (rxDispatch as Any<FixInReview>)(redirectAfterLogin(locationHash));
-    router.navigate('login', {});
+    router.navigate('/login', {});
     return;
 
   // Otherwise, fetch the logged in user's info since there's a session token available.
@@ -260,7 +266,7 @@ async function preRouteAuthentication() {
       } else {
         // User token expired (and no user object was returned) so redirect to login page.
         (rxDispatch as Any<FixInReview>)(redirectAfterLogin(locationHash));
-        router.navigate('login', {});
+        router.navigate('/login', {});
       }
     });
   }

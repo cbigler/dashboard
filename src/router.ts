@@ -47,11 +47,12 @@ export default function createRouter() {
   }
 
   async function handle() {
-    const path = window.location.hash.slice(1).replace(/(^\/|\/$)/, '');
-    const route = checkPath(path);
+    const rawPath = window.location.hash.slice(1).replace(/(^\/|\/$)/, '');
+    const url = new URL(rawPath, window.location.origin);
+    const route = checkPath(url.pathname);
     if (route) {
       let params: string[];
-      const parsedParams = route.regexp.exec(path);
+      const parsedParams = route.regexp.exec(url.pathname);
       if (!parsedParams) {
         params = [];
       } else {
@@ -65,7 +66,7 @@ export default function createRouter() {
       }
       return true;
     } else {
-      console.warn('Route to ' + path + ' not found!');
+      console.warn('Route to ' + url.pathname + ' not found!');
       return false
     }
   }
