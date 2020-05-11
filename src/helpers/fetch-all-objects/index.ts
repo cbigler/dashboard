@@ -10,6 +10,7 @@ function generateCacheKey(url, params, body) {
 type FetchAllObjectsOptions = {
   params?: object,
   body?: object,
+  headers?: object,
 
   cache?: boolean,
   cacheExpiryTimeMs?: number,
@@ -37,7 +38,8 @@ export default async function fetchAllObjects<T = any>(
     // Value not cached, make request and add to cache if cache should be used
     responseData = await fetchAllPages(async page => {
       const response = await core().get(url, {
-        params: { ...opts.params, page, page_size: 5000 }
+        params: { ...opts.params, page, page_size: 5000 },
+        headers: opts.headers,
       });
       return response.data;
     });
@@ -74,7 +76,7 @@ export async function fetchObject<T = any>(
     response = CACHE[cacheKey];
   } else {
     // Value not cached, make request and add to cache if cache should be used
-    response = await core().get(url, { params: opts.params });
+    response = await core().get(url, { params: opts.params, headers: opts.headers });
     if (opts.cache) {
       CACHE[cacheKey] = response;
 
