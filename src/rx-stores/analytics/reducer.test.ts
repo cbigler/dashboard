@@ -11,10 +11,11 @@ import { UserState, userReducer, initialState as initialUserState } from '../use
 import { SpacesLegacyState, spacesLegacyReducer, initialState as initialSpacesLegacyState } from '../spaces-legacy';
 import { createTestStore, createTestActionStream } from '../../helpers/test-utilities/state-management';
 
-import { analyticsReducer } from '.';
+import analyticsReducer from './reducer';
 import { registerSideEffects } from './effects';
 import { CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import { TimeFilter } from '../../types/datetime';
+import { DayOfWeek } from '@density/lib-api-types/node_modules/@density/lib-common-types';
 
 
 describe('AnalyticsStore', () => {
@@ -122,7 +123,7 @@ describe('snapping the TimeFilter to a QueryInterval properly', () => {
     sampleA = [{
       start: { hour: 9, minute: 0, second: 0, millisecond: 0 },
       end: { hour: 17, minute: 0, second: 0, millisecond: 0 },
-      days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+      days: [DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY, DayOfWeek.THURSDAY, DayOfWeek.FRIDAY]
     }];
     state = {
       status: ResourceStatus.COMPLETE,

@@ -13,13 +13,14 @@ import {
 import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { UserState } from '../../rx-stores/user';
 import { SpacesLegacyState } from '../spaces-legacy';
-import { isQueryRunnable, realizeSpacesFromQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
+import { ChartDataFetchingResult, TableDataFetchingResult } from '.';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
 import { runQuery } from '.';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
 import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
+import { isQueryRunnable, realizeSpacesFromQuery } from '../../helpers/analytics-report';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
 import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
 
