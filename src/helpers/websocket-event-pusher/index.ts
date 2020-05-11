@@ -28,6 +28,7 @@ export default class WebsocketEventPusher extends EventEmitter {
   connectionState: string;
   gracefulDisconnect: boolean;
   pingIntervalId: any;
+  injectedExplicitToken?: string;
 
   constructor(WebSocket=(window as any).WebSocket) {
     super();
@@ -43,7 +44,6 @@ export default class WebsocketEventPusher extends EventEmitter {
   }
 
   async connect(iteration=0) {
-
     this.log('CONNECT TO SOCKET');
     if (!this.WebSocket) {
       return false;
@@ -61,7 +61,23 @@ export default class WebsocketEventPusher extends EventEmitter {
       return false;
     }
 
-    if (!core().defaults.headers.common['Authorization']) {
+    // Add the token into the core api client information, if `.connectWithExplicitToken` was
+    // called.
+    let defaults = core().defaults;
+    if (this.injectedExplicitToken) {
+      defaults = {
+        ...defaults,
+        headers: {
+          ...defaults.headers,
+          common: {
+            ...defaults.headers.common,
+            'Authorization': `Bearer ${this.injectedExplicitToken}`,
+          },
+        },
+      };
+    }
+
+    if (!defaults.headers.common['Authorization']) {
       this.log(' ... NO TOKEN SET, NOT CONNECTING TO SOCKET.');
       return false;
     }
@@ -72,7 +88,7 @@ export default class WebsocketEventPusher extends EventEmitter {
     this.emit('connectionStateChange', this.connectionState);
 
     try {
-      const client = axios.create(core().defaults);
+      const client = axios.create(defaults);
       const response = await client.post('/sockets');
 
       if (response.data.url) {
@@ -162,5 +178,14 @@ export default class WebsocketEventPusher extends EventEmitter {
 
     this.connectionState = CONNECTION_STATES.CLOSED;
     this.emit('connectionStateChange', this.connectionState);
+  }
+
+  // If for some reason, you'd like to connect to the sockets server with a token explicitly instead
+  // of using the one stored in the user store, this method will let you do that.
+  //
+  // This is used (at least) by the queue page to support an explit token in the query string.
+  async connectWithExplicitToken(token?: string) {
+    this.injectedExplicitToken = token;
+    return this.connect();
   }
 }
