@@ -85,15 +85,18 @@ const websocketPusher = new WebsocketEventPusher();
 
 export function queueReducer(state: QueueState, action: GlobalAction): QueueState {
   switch (action.type) {
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_LIST:
   case QueueActionTypes.QUEUE_LIST_DATA_LOAD_COMPLETE:
   case QueueActionTypes.QUEUE_LIST_DATA_LOAD_ERROR:
   case QueueActionTypes.QUEUE_LIST_CHANGE_SEARCH_TEXT:
     return {...state, list: queueListReducer(state.list, action)};
 
+  case QueueActionTypes.ROUTE_TRANSITION_QUEUE_SPACE_DETAIL:
   case QueueActionTypes.QUEUE_DETAIL_DATA_LOADED:
   case QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED:
   case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE:
   case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE:
+  case QueueActionTypes.QUEUE_DETAIL_SYNC_EVENTS:
     return {...state, detail: queueDetailReducer(state.detail, action)};
 
   default:
@@ -172,6 +175,22 @@ export function queueDetailReducer(state: QueueDetailState, action: GlobalAction
         }
       }
     }
+  case QueueActionTypes.QUEUE_DETAIL_SYNC_EVENTS:
+    if (state.selected.status !== ResourceStatus.COMPLETE) {
+      return state;
+    }
+
+    return {
+      ...state,
+      selected: {
+        data: {
+          ...state.selected.data,
+          space: action.space,
+          spaceEvents: action.spaceEvents,
+        },
+        status: ResourceStatus.COMPLETE
+      },
+    };
   default:
     return state;
   }
@@ -359,8 +378,14 @@ actions
     }),
     switchMap((action: any)=> interval(refreshInterval).pipe(map(()=> action))),
     takeUntil(unmountDetail),
-    switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
-  ).subscribe();
+    switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id, action.queryParams.token))
+  ).subscribe(([space, spaceEvents]) => {
+    rxDispatch({
+      type: QueueActionTypes.QUEUE_DETAIL_SYNC_EVENTS,
+      space,
+      spaceEvents,
+    });
+  });
 
 // =================================
 // SIDE EFFECT: disconnect from the websocket server on unmount

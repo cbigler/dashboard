@@ -18,6 +18,7 @@ export enum QueueActionTypes {
   QUEUE_DETAIL_CREATE_TALLY_EVENT = 'QUEUE_DETAIL_CREATE_TALLY_EVENT',
   QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE = 'QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE',
   QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE = 'QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE',
+  QUEUE_DETAIL_SYNC_EVENTS = 'QUEUE_DETAIL_SYNC_EVENTS',
 }
 
 export enum QUEUE_SOCKET_CONNECTION_STATES {
@@ -75,4 +76,9 @@ export type QueueAction =
     type: QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE;
     currentCount: number;
     newEvent: CoreSpaceEvent;
+  }
+  | {
+    type: QueueActionTypes.QUEUE_DETAIL_SYNC_EVENTS;
+    space: CoreSpace;
+    spaceEvents: CoreSpaceEvent[];
   }
