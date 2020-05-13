@@ -179,9 +179,10 @@ workflows:
           filters:
             branches:
               ignore: trunk
-      - preview-storybook:
-          requires:
-            - build
+      # NOTE: the storybook build seems to be unreliable.
+      # - preview-storybook:
+      #     requires:
+      #       - build
 
       # Trunk is built and deployed to `https://dashboard.density.rodeo`
       - staging:

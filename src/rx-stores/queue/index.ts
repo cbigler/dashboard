@@ -259,6 +259,9 @@ actions
     switchMap(([action, settings, orgLogoURL]) => forkJoin(
       // pull the space and its events
       fetchSelectedSpaceAndEvents(action.id),
+      // Pull the space current count, because the /space/:space_id/count endpoint doesn't seem to
+      // return the current count correctly at the moment. See PRD-861.
+      fetchSpaceCurrentCount(action.id),
       // pull the space dwell
       fetchSelectedSpaceDwell(action.id),
       // pull the sensor
@@ -271,6 +274,7 @@ actions
   )
   .subscribe(([
     [space, spaceEvents],
+    currentCount,
     spaceDwellMean,
     virtualSensorSerial,
     settings,
@@ -280,7 +284,7 @@ actions
 
       return rxDispatch({
         type: QueueActionTypes.QUEUE_DETAIL_DATA_LOADED,
-        space,
+        space: { ...space, current_count: currentCount },
         spaceEvents,
         spaceDwellMean,
         virtualSensorSerial,
@@ -300,6 +304,12 @@ function fetchSelectedSpaceAndEvents(spaceId: string) {
       of(space),
       fetchSelectedSpaceEvents(space)
     ))
+  );
+}
+
+function fetchSpaceCurrentCount(spaceId: string) {
+  return from(fetchObject<{count: number}>(`/spaces/${spaceId}/count?time=${moment.utc().format()}`, { cache: false })).pipe(
+    map(response => response.count)
   );
 }
 
@@ -404,10 +414,17 @@ new Observable(subscriber => {
 
     return spaceCountChange.space_id === queueState.detail.selected.data.space.id
   })
-).subscribe(([spaceCountChange, _]: [CoreWebsocketEventPayload, unknown]) => {
+).subscribe(([spaceCountChange, queueState]: [CoreWebsocketEventPayload, QueueState]) => {
+  if (queueState.detail.selected.status !== ResourceStatus.COMPLETE) {
+    return;
+  }
+
   rxDispatch({
     type: QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE,
-    currentCount: spaceCountChange.count,
+    // FIXME: the below frontend aggregation is not ideal. It would be much better if
+    // this could rely on the spaceCountChange.current_count value, but this doesn't seem
+    // to always have the correct count in it. See PRD-861.
+    currentCount: queueState.detail.selected.data.space.current_count + spaceCountChange.direction,
     newEvent: {
       direction: spaceCountChange.direction,
       timestamp: spaceCountChange.timestamp
