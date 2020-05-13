@@ -2,8 +2,8 @@ import { skipUpdate } from '..';
 import { ResourceStatus, ResourceComplete, RESOURCE_IDLE, RESOURCE_LOADING } from '../../types/resource';
 import { AnalyticsState, AnalyticsStateRaw, AnalyticsReport } from '../../types/analytics';
 import { GlobalAction } from '../../types/rx-actions';
-import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { getDefaultColumnSortForMetric } from '../../helpers/analytics-table';
+import { AnalyticsActionType } from '../../rx-actions/analytics';
 
 // A helper to allow the reducer to update the state of an individual report easily.
 function updateReport(

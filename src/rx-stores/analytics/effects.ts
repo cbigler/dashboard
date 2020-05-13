@@ -1,28 +1,27 @@
 import { Subject, combineLatest, partition } from 'rxjs';
 import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap } from 'rxjs/operators';
+
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { realizeDateRange } from '@density/lib-time-helpers/date-range';
 
-import { StoreSubject } from '../../rx-stores';
 import { GlobalAction } from '../../types/rx-actions';
 import { ResourceComplete, ResourceStatus } from '../../types/resource';
-import {
-  AnalyticsReport,
-  AnalyticsState,
-  AnalyticsStateRaw,
-} from '../../types/analytics';
-import { AnalyticsActionType } from '../../rx-actions/analytics';
-import { UserState } from '../../rx-stores/user';
-import { SpacesLegacyState } from '../spaces-legacy';
-import { ChartDataFetchingResult, TableDataFetchingResult } from '.';
+import { AnalyticsReport, AnalyticsState, AnalyticsStateRaw } from '../../types/analytics';
+
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
-import { runQuery } from '.';
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
 import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
 import { isQueryRunnable, realizeSpacesFromQuery } from '../../helpers/analytics-report';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
 import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
+
+import { AnalyticsActionType } from '../../rx-actions/analytics';
+
+import { StoreSubject } from '..';
+import { UserState } from '../user';
+import { SpacesLegacyState } from '../spaces-legacy';
+import { runQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
 
 
 type RunQueryFunction = typeof runQuery;
