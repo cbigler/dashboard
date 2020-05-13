@@ -1,0 +1,305 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+// Variables
+// ---------------------------------
+$loginSectionWidth: 560px;
+$zIndexToast: 2000;
+
+
+// Scaffolding
+// ---------------------------------
+
+.loginView {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  background-color: #fff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.loginSection {
+  flex-grow: 0;
+  box-sizing: border-box;
+  height: 100%;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: #fff;
+}
+
+// TODO: Add sectino to the right that shows a product blog post
+// .loginPostSection {
+//   flex-grow: 1;
+//   flex-shrink: 1;
+//   height: 100%;
+//   background-color: #DDE6FF;
+// }
+
+// Banner
+// ---------------------------------
+
+.loginDensityLogo {
+  display: block;
+  height: 24px;
+  margin-bottom: 24px;
+}
+.loginDensityLogo img {
+  height: 100%;
+  width: auto;
+}
+
+.loginLead {
+  margin-bottom: 64px;
+  color: $midnight;
+  font-weight: bold;
+}
+
+
+// Log In Form
+// ---------------------------------
+
+
+.loginSsoSectionHeading {
+  font-size: 14px;
+  font-weight: bold;
+  color: $midnight;
+  margin-bottom: 4px;
+}
+
+.loginSsoButtonGroup {
+  display: flex;
+}
+
+.loginSubmitButton {
+  width: 100%;
+}
+
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
+}
+
+.formControlLabel {
+  display: block;
+  font-size: 12px;
+  color: $midnight;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 4px;
+}
+
+.loginInputDisabled {
+  position: relative;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: 41px; //Stupid hack to remove jitter when switch from input :(
+  width: 100%;
+  padding-bottom: 4px;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-bottom: 16px;
+  background-color: $gray300;
+  border: 1px solid $gray300;
+  border-radius: 4px;
+  color: $midnight;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #DDE6FF;
+    border-color: #DDE6FF;
+  }
+}
+
+.loginInputDisabledIcon {
+  position: absolute;
+  top: 3px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  border-radius: 4px;
+}
+
+// Hacking the provider SSO button
+.loginSubmitButton.sso {
+  width: 100%;
+  margin-top: 0;
+}
+
+.loginSubmitButton.sso button {
+  display: -webkit-box; /* OLD - iOS 6-, Safari 3.1-6 */
+  display: -moz-box; /* OLD - Firefox 19- (buggy but mostly works) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 40px;
+  width: 100%;
+  padding-bottom: 2px;
+  padding-left: 16px;
+  padding-right: 16px;
+  background-color: #fff;
+  border: 1px solid $gray400;
+  text-align: center;
+  line-height: normal;
+  color: $midnight;
+}
+.loginSubmitButton .iconSsoLogin {
+  margin-bottom: -1px;
+  padding-right: 8px;
+  vertical-align: middle;
+  height: 18px;
+}
+.loginSubmitButton.sso button:hover {
+  border-color: #DDE6FF;
+  background-color: #DDE6FF;
+  color: #5581FF;
+  box-shadow: none;
+}
+.loginSubmitButton.sso button:active,
+.loginSubmitButton.sso button:focus {
+  border-color: #5581FF;
+  background-color: #DDE6FF;
+  color: #5581FF;
+  box-shadow: none;
+  box-shadow: 0 0 0 1px #5581FF;
+}
+
+// Divider for SSO and standard auth
+.loginSsoDivider {
+  padding-top: 16px;
+  padding-bottom: 16px;
+  font-size: 12px;
+  font-weight: bold;  
+  text-align: center;
+}
+
+.loginActionSecondary {
+  display: flex;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: $midnight;
+  cursor: pointer;
+
+  svg { margin-right: 8px; }
+
+  &:hover {
+    color: $midnight;
+  }
+}
+
+.loginOktaAlert {
+  padding: 16px;
+  margin-top: 24px;
+  background-color: #FFEED6;
+  border-radius: 4px;
+  
+  svg {
+    margin-bottom: 8px;
+  }
+}
+
+.loginOktaAlertText {
+  font-size: 14px;
+}
+
+// Footer
+// ---------------------------------
+
+.loginTermsAndPrivacy {
+  padding-top: 100px;
+  padding-bottom: 64px;
+  font-size: 14px;
+  font-weight: bold;
+  color: $gray500;
+
+  a { color: $gray400; }
+  a:hover { color: $midnight; }
+}
+
+// Log in toast
+// ---------------------------------
+.loginToast {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  z-index: $zIndexToast;
+  box-sizing: border-box;
+  width: $loginSectionWidth - 48px;
+  margin-left: -($loginSectionWidth - 48px)/2;
+}
+.loginToastHeader {
+  color: $red;
+  font-size: $fontSize4;
+  font-weight: $fontWeight4;
+  margin-bottom: 8px;
+  margin-top: 8px;
+}
+.loginToastIcon {
+  font-family: "Densicons";
+  font-size: $fontSize3;
+}
+
+
+// ------------------------------------------------
+// Forgot Password View
+// ------------------------------------------------
+.loginPasswordResetTitle {
+  font-size: $fontSize3;
+  font-weight: normal;
+  margin-bottom: 40px;
+}
+
+.loginFormReset .inputStackItemContainer,
+.loginFormReset .inputStackItemContainer:first-child,
+.loginFormReset .inputStackItemContainer:last-child {
+  border-radius: 5px;
+}
+.loginFormResetHeader { margin-bottom: 24px; }
+
+
+
+
+// ------------------------------------------------
+// Desktop Styles
+// ------------------------------------------------
+@media (min-width: 450px) {
+  // anything above mobile
+  .loginSection {
+    width: $loginSectionWidth;
+    padding-left: 88px;
+    padding-right: 88px;
+  }
+}

@@ -7,6 +7,8 @@ import accounts from '../../client/accounts';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 import Login from '../login/index';
+import LoginForgotPassword from '../login/forgot-password';
+import Logout from '../logout/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
 import AccountForgotPassword from '../account-forgot-password/index';
@@ -113,6 +115,8 @@ const App: React.FunctionComponent<{
           // On these special pages, don't render a navbar
           case 'BLANK':
           case 'LOGIN':
+          case 'LOGIN_FORGOT_PASSWORD':
+          case 'LOGOUT':
           case 'ACCOUNT_REGISTRATION':
           case 'ACCOUNT_FORGOT_PASSWORD':
           case 'LIVE_SPACE_DETAIL':
@@ -145,6 +149,8 @@ function ActivePage({activePage, user, settings}) {
   switch (activePage) {
   case "LOGIN":
     return <Login />;
+  case "LOGIN_FORGOT_PASSWORD":
+    return <LoginForgotPassword />;
   case "ADMIN_USER_MANAGEMENT":
   case "ADMIN_DEVELOPER":
   case "ADMIN_INTEGRATIONS":
@@ -189,8 +195,9 @@ function ActivePage({activePage, user, settings}) {
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.
-  case "BLANK":
   case "LOGOUT":
+    return <Logout />;
+  case "BLANK":
     return null;
 
   default:
