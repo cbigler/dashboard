@@ -1,22 +1,15 @@
 import { Moment } from 'moment';
 import { of, from, merge, combineLatest } from 'rxjs';
-import {
-  filter,
-  take,
-  map,
-  switchMap,
-  catchError,
-} from 'rxjs/operators';
+import { filter, take, map, switchMap, catchError } from 'rxjs/operators';
 
 import core from '../../client/core';
-import createRxStore, { rxDispatch, actions } from '..';
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
-import {
-  DensityReport,
-} from '../../types';
+import createRxStore, { rxDispatch, actions } from '..';
+
+import { DensityReport } from '../../types';
 import { TimeFilter } from '../../types/datetime';
-import { AnalyticsActionType } from '../../rx-actions/analytics';
 import { ResourceStatus } from '../../types/resource';
+import { SpacesCountsAPIResponse, SpacesCountsMetricsAPIResponse } from '../../types/api';
 import {
   AnalyticsMetrics,
   AnalyticsState,
@@ -24,26 +17,28 @@ import {
   QueryInterval,
   StoredAnalyticsReport,
 } from '../../types/analytics';
-import fetchAllObjects from '../../helpers/fetch-all-objects';
 
+import fetchAllObjects from '../../helpers/fetch-all-objects';
+import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
+import { serializeTimeFilter } from '../../helpers/datetime-utilities';
+import { computeTableData } from '../../helpers/analytics-table';
+import { computeChartData } from '../../helpers/analytics-chart';
+import { ColorManager, COLORS } from '../../helpers/analytics-color-scale';
+import { convertStoredAnalyticsReportToAnalyticsReport } from '../../helpers/analytics-report';
+
+import { AnalyticsActionType } from '../../rx-actions/analytics';
+import createReport from '../../rx-actions/analytics/operations/create-report';
 import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
 import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
 import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hierarchy/set';
-import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
+
 import UserStore from '../user';
 import SpacesLegacyStore from '../spaces-legacy';
 import SpaceHierarchyStore from '../space-hierarchy';
 import { registerSideEffects } from './effects';
-import { serializeTimeFilter } from '../../helpers/datetime-utilities';
-import { SpacesCountsAPIResponse, SpacesCountsMetricsAPIResponse } from '../../types/api';
-import { computeTableData } from '../../helpers/analytics-table';
-import { computeChartData } from '../../helpers/analytics-chart';
-import { convertStoredAnalyticsReportToAnalyticsReport } from '../../helpers/analytics-report';
-import { ColorManager, COLORS } from '../../helpers/analytics-color-scale';
-import createReport from '../../rx-actions/analytics/operations/create-report';
-import { getGoSlow } from '../../components/environment-switcher';
-
 import analyticsReducer, { initialState } from './reducer';
+
+import { getGoSlow } from '../../components/environment-switcher';
 
 export type ChartDataFetchingResult = {
   [space_id: string]: Array<{
