@@ -33,6 +33,15 @@ const Login: React.FunctionComponent = () => {
       // User needs to login - redirect to the auth0 process
       const redirectUrl = `${window.location.origin}#access_token=%TOKEN%`;
       const baseUrl = accounts().defaults.baseURL;
+
+      // Store the orginating origin in localStorage from the oauth request. This is used so
+      // that we can redirect to the login route on the correct version of the dashboard as
+      // soon as possible in the oauth callback. For example, a user tried to login via oauth
+      // on a preview link, and normally, it would redirect to the staging dashboard, not the
+      // preview link. Store the current url so we can redirect back to here after logging in.
+      const hashIndex = window.location.href.indexOf('#');
+      window.localStorage.loginOAuthOrigin = window.location.href.slice(0, hashIndex).replace(/\/$/, '');
+
       window.location.href = `${baseUrl}/app/login?redirect_url=${encodeURIComponent(redirectUrl)}`;
     }
   }, []);
