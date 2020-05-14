@@ -11,6 +11,7 @@ import ErrorBar from '../error-bar/index';
 import accounts from '../../client/accounts';
 import rxConnect from '../../helpers/rx-connect-hoc';
 import AccountStore from '../../rx-stores/account';
+import { showToast } from '../../rx-actions/toasts'
 
 export class AccountForgotPassword extends React.Component<any, any> {
   constructor(props) {
@@ -89,12 +90,12 @@ export default rxConnect(AccountStore, state => {
 }, dispatch => {
   return {
     onUserLoggedIn() {
-      // Set a value in localstorage to indicate that the user just reset their password. This
-      // allows us to display a sucess popup on the login page after redirecting.
-      window.localStorage.referredFromForgotPassword = 'true';
+      showToast(dispatch, { text: 'Password reset successful!' });
 
-      // Reload the page, and navigate to the login page.
-      window.location.href = '#/login';
+      // After a timeout, redirect back to the login page.
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     },
   };
 })(AccountForgotPassword);

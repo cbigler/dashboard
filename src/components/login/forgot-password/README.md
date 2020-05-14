@@ -1,8 +1,7 @@
-# Login
+# Login Forgot Password
 
-The login page allows a user to enter their username and password, then click a button to login.
-It's a statful component that handles its own request to the accounts api and fetches a response
-with a token.
+This component can be redirected to from other applications (the mobile app, the auth0 login page,
+etc) to allow users to reset their password.
 
 ## Component Props
 (none, connected)
