@@ -189,8 +189,18 @@ router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDis
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
 router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
-router.addRoute('queue/spaces/:id', id => routeTransitionQueueSpaceDetail(rxDispatch, id));
-router.addRoute('queue/spaces', () => routeTransitionQueueSpaceList(rxDispatch));
+router.addRoute("display/spaces/:id", (id) =>
+  routeTransitionQueueSpaceDetail(rxDispatch, id)
+);
+router.addRoute("display/spaces", () =>
+  routeTransitionQueueSpaceList(rxDispatch)
+);
+router.addRoute("queue/spaces/:id", async (id) => {
+  window.location.href = `#/display/spaces/${id}`;
+});
+router.addRoute("queue/spaces", async () => {
+  window.location.href = `#/display/spaces`;
+});
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events
@@ -505,7 +515,6 @@ ReactDOM.render(
       />
     </div>
   ),
-  document.getElementById('root')
-);
+  document.getElementById('root'));
 
 unregisterServiceWorker();

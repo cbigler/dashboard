@@ -51,7 +51,7 @@ const QueueSpaceList: React.FunctionComponent = () => {
 
   const header = (
     <AppBar>
-      <AppBarTitle>Queue Spaces</AppBarTitle>
+      <AppBarTitle>Safe Display Spaces</AppBarTitle>
       <AppBarSection>
         <InputBox
           type="text"
@@ -103,12 +103,12 @@ const QueueSpaceList: React.FunctionComponent = () => {
         {header}
         <div className={styles.spaceList}>
           <div className={styles.intro}>
-            <h1>Queue<sup>BETA</sup></h1>
+            <h1>Safe Display<sup>BETA</sup></h1>
             <p>Give your employees or customers real-time occupancy information they can use to make safe decisions about their day.</p>
           </div>
           {!orgSettings ? (
             <div className={styles.centered}>
-              <h4>Queue is not enabled</h4>
+              <h4>Safe Display is not enabled</h4>
               <span>Please <a href="mailto:support@density.io">contact support</a> to get started.</span>
             </div>
           ) : (
@@ -116,7 +116,7 @@ const QueueSpaceList: React.FunctionComponent = () => {
               <ListView
                 data={spaces}
                 padOuterColumns
-                onClickRow={space => { window.location.href = `#/queue/spaces/${space.id}`; }}
+                onClickRow={space => { window.location.href = `#/display/spaces/${space.id}`; }}
               >
                 <ListViewColumn
                   id="Space Name"
