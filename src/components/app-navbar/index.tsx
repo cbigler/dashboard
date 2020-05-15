@@ -37,7 +37,7 @@ class AppNavbarMenu extends Component<any, any> {
   render() {
     const { opened } = this.state;
     const { header, children } = this.props;
-    
+
     return <div className={styles.appNavbarMenu}>
       <div
         ref={r => { this.selectBoxValueRef = r; }}
@@ -104,7 +104,7 @@ function AppNavbarItem({
         [styles.hideOnDesktop]: hideOnDesktop
       })}
       style={style}
-    > 
+    >
       <a href={path} onClick={onClick} target={targetBlank ? "_blank" : ""}>
         {icon ? <span className={styles.appNavbarIcon}>
           {selected ? React.cloneElement(icon, {color: colorVariables.midnight}) : icon}
@@ -169,9 +169,9 @@ export default function AppNavbar({
           {stringToBoolean(settings.queue_enabled) ? <AppNavbarItem
             selected={['QUEUE_SPACE_LIST', 'QUEUE_SPACE_DETAIL'].includes(page)}
             showOnMobile={true}
-            path="#/queue/spaces"
+            path="#/display/spaces"
             icon={<Icons.PersonHuddle />}
-            text="Queue"
+            text="Safe Display"
           /> : null}
         </ul>
 
