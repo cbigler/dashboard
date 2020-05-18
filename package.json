@@ -64,7 +64,7 @@
     "@types/jest": "^25.2.2",
     "@types/lodash": "^4.14.149",
     "@types/mixpanel": "^2.14.2",
-    "@types/moment-timezone": "^0.5.10",
+    "@types/moment-timezone": "^0.5.13",
     "@types/node": "^12.12.24",
     "@types/qs": "^6.9.0",
     "@types/react": "^16.9.17",
