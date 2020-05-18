@@ -29,17 +29,7 @@ import useRxDispatch from '../../../helpers/use-rx-dispatch';
 import redirectAfterLogin from '../../../rx-actions/miscellaneous/redirect-after-login';
 
 
-export class Login extends React.Component<any, any> {
-    // // If we were just at the forgot password page, then show a popup to the user telling them
-    // // that their password reset was successful.
-    // referredFromForgotPassword: window.localStorage && window.localStorage.referredFromForgotPassword === 'true',
-    // // Also, unset that forgot password referer flag now that it has been noted into the state of
-    // // the login page component (on future page loads, the forgot password page is no longer the
-    // // referrer)
-    // if (window.localStorage && window.localStorage.referredFromForgotPassword) {
-    //   delete window.localStorage.referredFromForgotPassword;
-    // }
-
+export class LoginForgotPassword extends React.Component<any, any> {
   state = {
     email: '',
 
@@ -75,10 +65,10 @@ export class Login extends React.Component<any, any> {
   }
 
   render() {
-    return <div className={styles.loginView}>
+    return <div className={styles.loginForgotPasswordView}>
       { this.state.loading ? <CardLoading indeterminate={true} /> : null }
 
-      <div className={styles.loginSection}>
+      <div className={styles.loginForgotPasswordSection}>
         {/* Render a toast if the password reset request worked */}
         {this.state.forgotPasswordConfirmation ? <div className={styles.loginToast}>
           <ToastContext.Provider value="MULTILINE">
@@ -139,17 +129,17 @@ export class Login extends React.Component<any, any> {
           </div>
         ) : null}
 
-        <div className={styles.loginDensityLogo}>
+        <div className={styles.loginForgotPasswordDensityLogo}>
           <img src={logoDensityBlack} alt="Density Logo" />
         </div>
 
-        <p className={styles.loginLead}>
+        <p className={styles.loginForgotPasswordLead}>
           Reset the password to your Density account.
         </p>
 
         {/* Login inputs */}
-        <div className={classnames(styles.loginFormContainer, styles.loginFormReset)}>
-          <p className={styles.loginFormResetHeader}>We'll send a recovery link to:</p>
+        <div className={styles.loginForgotPasswordFormReset}>
+          <p className={styles.loginForgotPasswordFormResetHeader}>We'll send a recovery link to:</p>
           <div className={styles.formControl}>
             <InputStackItem
               type="email"
@@ -162,7 +152,7 @@ export class Login extends React.Component<any, any> {
           </div>
 
           {/* Submit the form! */}
-          <div className={classnames(styles.loginSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
+          <div className={classnames(styles.loginForgotPasswordSubmitButton, styles.email, {[styles.loading]: this.state.loading})}>
             <Button
               onClick={this.onForgotPassword}
               disabled={!this.isFormValid()}
@@ -172,12 +162,12 @@ export class Login extends React.Component<any, any> {
 
           {/* Move to back to login page */}
           <div
-            className={styles.loginActionSecondary}
+            className={styles.loginForgotPasswordActionSecondary}
             onClick={() => window.history.back()}
           ><Icons.ArrowLeft /> Back to login</div>
         </div>
 
-        <p className={styles.loginTermsAndPrivacy}>
+        <p className={styles.loginForgotPasswordTermsAndPrivacy}>
           <a href="https://www.density.io/privacy-policy/" target="_blank" rel="noopener noreferrer"> Privacy Policy</a>{' '}
           and <a href="https://www.density.io/terms-of-sale/" target="_blank" rel="noopener noreferrer">Terms of Service</a>.
         </p>
@@ -188,7 +178,7 @@ export class Login extends React.Component<any, any> {
 }
 
 
-const ConnectedLogin: React.FunctionComponent = () => {
+const ConnectedLoginForgotPassword: React.FunctionComponent = () => {
   const dispatch = useRxDispatch();
   const user = useRxStore(UserStore);
   const miscellaneous = useRxStore(MiscellaneousStore);
@@ -204,7 +194,7 @@ const ConnectedLogin: React.FunctionComponent = () => {
   };
 
   return (
-    <Login
+    <LoginForgotPassword
       user={user}
       redirectAfterLogin={redirectAfterLoginState}
       onUserSuccessfullyLoggedIn={onUserSuccessfullyLoggedIn}
@@ -212,4 +202,4 @@ const ConnectedLogin: React.FunctionComponent = () => {
   )
 }
 
-export default ConnectedLogin;
+export default ConnectedLoginForgotPassword;
