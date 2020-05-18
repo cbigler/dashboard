@@ -1,6 +1,5 @@
 import assert from 'assert';
 import sinon from 'sinon';
-import lolex from 'lolex';
 
 import WebsocketEventPusher, { CONNECTION_STATES } from './index';
 
@@ -18,7 +17,7 @@ describe.skip('websocket-event-pusher', function() {
     let clock, eventSource, wsResponse, wsMock;
     beforeEach(() => new Promise((resolve, reject) => {
       // Set up mocked timers
-      clock = lolex.install();
+      clock = sinon.useFakeTimers();
 
       // Define a token
       configCore(rxDispatch, {token: 'ses_XXX'});
@@ -169,7 +168,7 @@ describe.skip('websocket-event-pusher', function() {
       // Verify that the socket has started reconnecting.
       assert.equal(eventSource.connectionState, CONNECTION_STATES.WAITING_FOR_SOCKET_URL);
 
-      // Wait 250ms longer (unfortuntely, we need to wait for a promise to resolve, and `lolex`l:w
+      // Wait 250ms longer (unfortuntely, we need to wait for a promise to resolve, and `useFakeTimers`
       // can't handle that since it's mocking out `setTimeout` to be synchronous)
       await timeout(250);
 

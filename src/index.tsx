@@ -67,6 +67,8 @@ import routeTransitionAdminDeviceStatus from './rx-actions/route-transition/admi
 import routeTransitionAdminLocations from './rx-actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './rx-actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './rx-actions/route-transition/admin-locations-new';
+import routeTransitionQueueSpaceDetail from './rx-actions/route-transition/queue-space-detail';
+import routeTransitionQueueSpaceList from './rx-actions/route-transition/queue-space-list';
 import { AnalyticsActionType } from './rx-actions/analytics';
 
 import sessionTokenSet from './rx-actions/session-token/set';
@@ -133,7 +135,7 @@ function trackHashChange() {
     mixpanelTrack('Pageview', {
       ...analyticsParameters,
       url: window.location.hash,
-    });  
+    });
   }
 
   // google analytics: track page view
@@ -191,6 +193,18 @@ router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDis
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
 router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
+router.addRoute("display/spaces/:id", (id) =>
+  routeTransitionQueueSpaceDetail(rxDispatch, id)
+);
+router.addRoute("display/spaces", () =>
+  routeTransitionQueueSpaceList(rxDispatch)
+);
+router.addRoute("queue/spaces/:id", async (id) => {
+  window.location.href = `#/display/spaces/${id}`;
+});
+router.addRoute("queue/spaces", async () => {
+  window.location.href = `#/display/spaces`;
+});
 
 // FIXME: why can't this just use state management? why is this on window?
 // Add a handler to debounce & handle window resize events
@@ -218,7 +232,7 @@ async function preRouteAuthentication() {
       const hashIndex = window.location.href.indexOf('#');
       const newHref = loginOAuthOrigin + window.location.href.slice(hashIndex);
 
-      console.warn(`Redirecting from ${window.location.href} to ${newHref} because oauth callback hit a different domain than it originated at`); 
+      console.warn(`Redirecting from ${window.location.href} to ${newHref} because oauth callback hit a different domain than it originated at`);
       window.location.href = newHref;
     }
     return accounts().post('/tokens/exchange/auth0', null, {
@@ -305,7 +319,7 @@ SessionTokenStore.pipe(combineLatest(ActivePageStore)).subscribe(([token, page])
   ) {
     spacesPageEventSource.disconnect();
   }
-  if (onSpacesPage && 
+  if (onSpacesPage &&
     (spacesPageEventSource.connectionState !== CONNECTION_STATES.CONNECTED || currentToken !== token)
   ) {
     currentToken = token;
@@ -335,7 +349,7 @@ livePageEventSource.on('connected', async () => {
   }));
 
   const eventsAtSpaces = spaceEventSets.reduce((acc, next, index) => {
-    acc[spaces[index].id] = next.map(i => ({ 
+    acc[spaces[index].id] = next.map(i => ({
       countChange: i.direction,
       timestamp: i.timestamp
     }));
@@ -505,7 +519,6 @@ ReactDOM.render(
       />
     </div>
   ),
-  document.getElementById('root')
-);
+  document.getElementById('root'));
 
 unregisterServiceWorker();
