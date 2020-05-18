@@ -38,29 +38,17 @@ import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hiera
 import createReport from '../../rx-actions/analytics/operations/create-report';
 
 
-type RunQueryFunction = typeof runQuery;
-
-// trying out this pattern for dependency injection
-export function registerSideEffects(
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR QUERY
+// ----------------------------------------------------------------------------
+export function registerQueryEffects(
   actionStream: Subject<GlobalAction>,
   analyticsStore: StoreSubject<AnalyticsState>,
   userStore: StoreSubject<UserState>,
   spacesStore: StoreSubject<SpacesLegacyState>,
-  spaceHierarchyStore: StoreSubject<SpaceHierarchyState>,
   dispatch: (action: GlobalAction) => void,
-  runQuery: RunQueryFunction,
+  runQueryFunction: typeof runQuery,
 ) {
-
-  actionStream.subscribe(action => {
-    if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT) {
-      const { datapoints, interval, selectedMetric, hiddenSpaceIds } = action;
-      exportAnalyticsChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
-    } else if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT) {
-      const { report, spaces } = action;
-      exportAnalyticsTableData(report, spaces);
-    }
-  })
-
   const activeReportUpdates = actionStream.pipe(
     // Filter only the actions that should cause the query to be rerun
     filter(action => {
@@ -163,7 +151,7 @@ export function registerSideEffects(
       let tableData: TableDataFetchingResult;
 
       try {
-        [chartData, tableData] = await runQuery(
+        [chartData, tableData] = await runQueryFunction(
           startDate,
           endDate,
           activeReport.query.interval,
@@ -217,9 +205,19 @@ export function registerSideEffects(
     });
   });
 
-  // ----------------------------------------------------------------------------
-  // ROUTE TRANSITION
-  // ----------------------------------------------------------------------------
+}
+
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR ROUTE TRANSITIONS
+// ----------------------------------------------------------------------------
+export function registerRouteTransitionEffects(
+  actionStream: Subject<GlobalAction>,
+  analyticsStore: StoreSubject<AnalyticsState>,
+  spacesStore: StoreSubject<SpacesLegacyState>,
+  spaceHierarchyStore: StoreSubject<SpaceHierarchyState>,
+  dispatch: (action: GlobalAction) => void,
+) {
 
   const routeTransitionStream = actionStream.pipe(
     filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
@@ -298,9 +296,19 @@ export function registerSideEffects(
       ])),
     ),
   ).subscribe(action => dispatch(action as Any<InAHurry>));
+}
 
-  // Some magic to preload a space when analytics is loaded and this key is present in localStorage.
-  // TODO: Make this less crazy!
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR PRELOADED-SPACE REPORTS
+// ----------------------------------------------------------------------------
+export function registerPreloadReportEffects(
+  actionStream: Subject<GlobalAction>,
+  analyticsStore: StoreSubject<AnalyticsState>,
+  dispatch: (action: GlobalAction) => void,
+) {
+  // Preload a space when analytics is loaded and this key is present in localStorage.
+  // TODO: Make this not depend on localStorage!
   actionStream.pipe(
     filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
     switchMap(() => analyticsStore.pipe(
@@ -314,5 +322,22 @@ export function registerSideEffects(
       createReport(dispatch, preload.spaceIds);
     }
   });
+}
 
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR EXPORTING DATA
+// ----------------------------------------------------------------------------
+export function registerExportDataEffects(
+  actionStream: Subject<GlobalAction>,
+) {
+  actionStream.subscribe(action => {
+    if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT) {
+      const { datapoints, interval, selectedMetric, hiddenSpaceIds } = action;
+      exportAnalyticsChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
+    } else if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT) {
+      const { report, spaces } = action;
+      exportAnalyticsTableData(report, spaces);
+    }
+  })
 }

@@ -18,16 +18,29 @@ import UserStore from '../user';
 import SpacesLegacyStore from '../spaces-legacy';
 import SpaceHierarchyStore from '../space-hierarchy';
 import analyticsReducer, { initialState } from './reducer';
-import { registerSideEffects } from './effects';
+import {
+  registerQueryEffects,
+  registerRouteTransitionEffects,
+  registerPreloadReportEffects,
+  registerExportDataEffects
+} from './effects';
 
 
-// ANALYTICS STORE
+// Create the analytics store
 const AnalyticsStore = createRxStore<AnalyticsState>('AnalyticsStore', initialState, analyticsReducer);
 export default AnalyticsStore;
 
-registerSideEffects(actions, AnalyticsStore, UserStore, SpacesLegacyStore, SpaceHierarchyStore, rxDispatch, runQuery);
+
+// Register all side-effects
+registerQueryEffects(actions, AnalyticsStore, UserStore, SpacesLegacyStore, rxDispatch, runQuery);
+registerRouteTransitionEffects(actions, AnalyticsStore, SpacesLegacyStore, SpaceHierarchyStore, rxDispatch);
+registerPreloadReportEffects(actions, AnalyticsStore, rxDispatch);
+registerExportDataEffects(actions);
 
 
+// Also export this stream which projects the analytics state into an "active report"
+// This moves some preprocessing logic that would have to go in a render function
+// Over to the "write side", meaning that it only runs once per update
 export const activeReportDataStream = AnalyticsStore.pipe(
   switchMap(
     () => SpacesLegacyStore.pipe(take(1)),
@@ -97,4 +110,4 @@ export const activeReportDataStream = AnalyticsStore.pipe(
       };
     }
   ) 
-)
+);

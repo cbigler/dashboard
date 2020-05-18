@@ -1,22 +1,30 @@
 import { Subject } from 'rxjs';
 
-import { AnalyticsActionType } from '../../rx-actions/analytics';
+import { DayOfWeek } from '@density/lib-common-types';
+import { CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
 import { ResourceStatus } from '../../types/resource';
+import { TimeFilter } from '../../types/datetime';
 import { AnalyticsState, QuerySelectionType } from '../../types/analytics';
+
 import { StoreSubject } from '..';
 import { GlobalAction } from '../../types/rx-actions';
 
-import createReport from '../../rx-actions/analytics/operations/create-report'
+import { createTestStore, createTestActionStream } from '../../helpers/test-utilities/state-management';
+import { AnalyticsActionType } from '../../rx-actions/analytics';
+import createReport from '../../rx-actions/analytics/operations/create-report';
+
 import { UserState, userReducer, initialState as initialUserState } from '../user';
 import { SpacesLegacyState, spacesLegacyReducer, initialState as initialSpacesLegacyState } from '../spaces-legacy';
 import { SpaceHierarchyState, spaceHierarchyReducer, initialState as initialSpaceHierarchyState } from '../space-hierarchy';
-import { createTestStore, createTestActionStream } from '../../helpers/test-utilities/state-management';
 
 import analyticsReducer from './reducer';
-import { registerSideEffects } from './effects';
-import { CoreSpaceFunction } from '@density/lib-api-types/core-v2/spaces';
-import { TimeFilter } from '../../types/datetime';
-import { DayOfWeek } from '@density/lib-api-types/node_modules/@density/lib-common-types';
+import {
+  registerQueryEffects,
+  registerRouteTransitionEffects,
+  registerPreloadReportEffects,
+  registerExportDataEffects
+} from './effects';
+
 
 
 describe('AnalyticsStore', () => {
@@ -57,7 +65,10 @@ describe('AnalyticsStore', () => {
   test('Triggering a query to run by updating the query selections', async () => {
     
     const mockRunQuery = jest.fn();
-    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, spaceHierarchyStore, dispatch, mockRunQuery);
+    registerQueryEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, dispatch, mockRunQuery);
+    registerRouteTransitionEffects(actionStream, analyticsStore, spacesLegacyStore, spaceHierarchyStore, dispatch);
+    registerPreloadReportEffects(actionStream, analyticsStore, dispatch);
+    registerExportDataEffects(actionStream);
     await createReport(dispatch);
     
     let state = analyticsStore.imperativelyGetValue();
@@ -83,7 +94,10 @@ describe('AnalyticsStore', () => {
   // For now, disabling this test
   xtest('Handling a bad query response from the API', async (done) => {
     const mockRunQuery = jest.fn().mockRejectedValue(new Error('Query failed'));
-    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, spaceHierarchyStore, dispatch, mockRunQuery);
+    registerQueryEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, dispatch, mockRunQuery);
+    registerRouteTransitionEffects(actionStream, analyticsStore, spacesLegacyStore, spaceHierarchyStore, dispatch);
+    registerPreloadReportEffects(actionStream, analyticsStore, dispatch);
+    registerExportDataEffects(actionStream);
     await createReport(dispatch);
     
     // get state

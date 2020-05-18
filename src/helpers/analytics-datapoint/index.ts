@@ -5,7 +5,7 @@ import { AnalyticsDatapoint, QueryInterval } from '../../types/analytics';
 import { TimeFilter, TimeOfDay } from '../../types/datetime';
 import { DAYS_OF_WEEK } from '@density/lib-time-helpers/date-range';
 import { timeOfDayToMilliseconds, parseTimeString } from '../datetime-utilities/time-string';
-import { ChartDataFetchingResult } from '../../rx-stores/analytics';
+import { ChartDataFetchingResult } from '../analytics-report';
 
 // simple time string of only HH:mm rather than handling HH:mm:ss or HH:mm:ss.sss
 function parseSimpleTimeString(simpleTimeString: string): TimeOfDay {
