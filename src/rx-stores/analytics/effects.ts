@@ -1,51 +1,54 @@
-import { Subject, combineLatest, partition } from 'rxjs';
-import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap } from 'rxjs/operators';
+import { Subject, combineLatest, partition, of, merge, from } from 'rxjs';
+import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap, catchError } from 'rxjs/operators';
+
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import { realizeDateRange } from '@density/lib-time-helpers/date-range';
 
-import { StoreSubject } from '../../rx-stores';
+import { DensityReport } from '../../types';
 import { GlobalAction } from '../../types/rx-actions';
 import { ResourceComplete, ResourceStatus } from '../../types/resource';
-import {
-  AnalyticsReport,
-  AnalyticsState,
-  AnalyticsStateRaw,
-} from '../../types/analytics';
-import { AnalyticsActionType } from '../../rx-actions/analytics';
-import { UserState } from '../../rx-stores/user';
-import { SpacesLegacyState } from '../spaces-legacy';
-import { isQueryRunnable, realizeSpacesFromQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
+import { AnalyticsReport, AnalyticsState, AnalyticsStateRaw, StoredAnalyticsReport } from '../../types/analytics';
+
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
-import { runQuery } from '.';
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
 import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
 import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
+import {
+  runQuery,
+  isQueryRunnable,
+  realizeSpacesFromQuery,
+  convertStoredAnalyticsReportToAnalyticsReport,
+  ChartDataFetchingResult,
+  TableDataFetchingResult,
+} from '../../helpers/analytics-report';
+
+import { AnalyticsActionType } from '../../rx-actions/analytics';
+
+import { StoreSubject } from '..';
+import { UserState } from '../user';
+import { SpacesLegacyState } from '../spaces-legacy';
+import { SpaceHierarchyState } from '../space-hierarchy';
+
+import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
+import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
+import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hierarchy/set';
+import createReport from '../../rx-actions/analytics/operations/create-report';
 
 
-type RunQueryFunction = typeof runQuery;
-
-// trying out this pattern for dependency injection
-export function registerSideEffects(
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR QUERY
+// ----------------------------------------------------------------------------
+export function registerQueryEffects(
   actionStream: Subject<GlobalAction>,
   analyticsStore: StoreSubject<AnalyticsState>,
   userStore: StoreSubject<UserState>,
   spacesStore: StoreSubject<SpacesLegacyState>,
   dispatch: (action: GlobalAction) => void,
-  runQuery: RunQueryFunction,
+  runQueryFunction: typeof runQuery,
 ) {
-
-  actionStream.subscribe(action => {
-    if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT) {
-      const { datapoints, interval, selectedMetric, hiddenSpaceIds } = action;
-      exportAnalyticsChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
-    } else if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT) {
-      const { report, spaces } = action;
-      exportAnalyticsTableData(report, spaces);
-    }
-  })
-
   const activeReportUpdates = actionStream.pipe(
     // Filter only the actions that should cause the query to be rerun
     filter(action => {
@@ -148,7 +151,7 @@ export function registerSideEffects(
       let tableData: TableDataFetchingResult;
 
       try {
-        [chartData, tableData] = await runQuery(
+        [chartData, tableData] = await runQueryFunction(
           startDate,
           endDate,
           activeReport.query.interval,
@@ -202,4 +205,139 @@ export function registerSideEffects(
     });
   });
 
+}
+
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR ROUTE TRANSITIONS
+// ----------------------------------------------------------------------------
+export function registerRouteTransitionEffects(
+  actionStream: Subject<GlobalAction>,
+  analyticsStore: StoreSubject<AnalyticsState>,
+  spacesStore: StoreSubject<SpacesLegacyState>,
+  spaceHierarchyStore: StoreSubject<SpaceHierarchyState>,
+  dispatch: (action: GlobalAction) => void,
+) {
+
+  const routeTransitionStream = actionStream.pipe(
+    filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
+    switchMap(() => combineLatest(
+      spacesStore.pipe(take(1)),
+      spaceHierarchyStore.pipe(take(1)),
+      analyticsStore.pipe(take(1)),
+    )),
+  );
+
+  const whileInitialDataNotPopulated = () => source => source.pipe(
+    filter(([spacesState, spaceHierarchyState, analyticsState]) => (
+      analyticsState.status !== ResourceStatus.COMPLETE
+    )),
+  );
+
+  const spacesLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      if (spacesState.view !== 'VISIBLE' && spacesState.data.length > 1) {
+        return of();
+      } else {
+        return fetchAllObjects<CoreSpace>('/spaces');
+      }
+    }),
+    map(spaces => collectionSpacesSet(spaces)),
+  );
+
+  const spaceHierarchyLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      if (spaceHierarchyState.view !== 'VISIBLE' && spaceHierarchyState.data.length > 1) {
+        return of();
+      } else {
+        return fetchAllObjects<Array<CoreSpaceHierarchyNode>>('/spaces/hierarchy');
+      }
+    }),
+    map(spaces => collectionSpaceHierarchySet(spaces)),
+  );
+
+  const reportsLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      return fetchAllObjects<DensityReport>('/reports');
+    }),
+  );
+
+  merge(
+    routeTransitionStream.pipe(
+      whileInitialDataNotPopulated(),
+      map(() => ({ type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING })),
+    ),
+
+    // Dispatch actions as data is loaded
+    spacesLoadStream.pipe(catchError(e => of())),
+    spaceHierarchyLoadStream.pipe(catchError(e => of())),
+
+    // When all resources are done loading, mark the analytics page as done loading
+    combineLatest(
+      spacesLoadStream,
+      spaceHierarchyLoadStream,
+      reportsLoadStream,
+    ).pipe(
+      map(([spaces, hierarchy, reports]) => ({
+        type: AnalyticsActionType.ANALYTICS_RESOURCE_COMPLETE,
+        data: (
+          reports
+            .filter(r => r.type === 'LINE_CHART')
+            .map((r) => convertStoredAnalyticsReportToAnalyticsReport(r as StoredAnalyticsReport))
+        ),
+        activeReportId: null,
+      })),
+      catchError(error => from([
+        collectionSpacesError(error),
+        { type: AnalyticsActionType.ANALYTICS_RESOURCE_ERROR, error },
+      ])),
+    ),
+  ).subscribe(action => dispatch(action as Any<InAHurry>));
+}
+
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR PRELOADED-SPACE REPORTS
+// ----------------------------------------------------------------------------
+export function registerPreloadReportEffects(
+  actionStream: Subject<GlobalAction>,
+  analyticsStore: StoreSubject<AnalyticsState>,
+  dispatch: (action: GlobalAction) => void,
+) {
+  // Preload a space when analytics is loaded and this key is present in localStorage.
+  // TODO: Make this not depend on localStorage!
+  actionStream.pipe(
+    filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
+    switchMap(() => analyticsStore.pipe(
+      filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
+      take(1),
+    )),
+  ).subscribe(() => {
+    const preload = localStorage.sessionAnalyticsPreload ? JSON.parse(localStorage.sessionAnalyticsPreload) : {};
+    if (preload.spaceIds) {
+      delete localStorage.sessionAnalyticsPreload;
+      createReport(dispatch, preload.spaceIds);
+    }
+  });
+}
+
+
+// ----------------------------------------------------------------------------
+// SIDE EFFECTS FOR EXPORTING DATA
+// ----------------------------------------------------------------------------
+export function registerExportDataEffects(
+  actionStream: Subject<GlobalAction>,
+) {
+  actionStream.subscribe(action => {
+    if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_CHART_DATA_EXPORT) {
+      const { datapoints, interval, selectedMetric, hiddenSpaceIds } = action;
+      exportAnalyticsChartData(datapoints, interval, selectedMetric, hiddenSpaceIds);
+    } else if (action.type === AnalyticsActionType.ANALYTICS_REQUEST_TABLE_DATA_EXPORT) {
+      const { report, spaces } = action;
+      exportAnalyticsTableData(report, spaces);
+    }
+  })
 }

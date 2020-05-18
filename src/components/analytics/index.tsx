@@ -38,7 +38,7 @@ import createReport from '../../rx-actions/analytics/operations/create-report';
 import openPartialReport from '../../rx-actions/analytics/operations/open-partial-report';
 import updateReport from '../../rx-actions/analytics/operations/update-report';
 import deleteReport from '../../rx-actions/analytics/operations/delete-report';
-import { isQueryRunnable } from '../../rx-stores/analytics';
+import { isQueryRunnable } from '../../helpers/analytics-report';
 import mixpanelTrack from '../../helpers/tracking/mixpanel-track';
 
 import showModal from '../../rx-actions/modal/show';
