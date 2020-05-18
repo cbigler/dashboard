@@ -1,27 +1,41 @@
-import { Subject, combineLatest, partition } from 'rxjs';
-import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap } from 'rxjs/operators';
+import { Subject, combineLatest, partition, of, merge, from } from 'rxjs';
+import { filter, switchMap, take, distinctUntilChanged, map, share, tap, flatMap, catchError } from 'rxjs/operators';
 
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import { realizeDateRange } from '@density/lib-time-helpers/date-range';
 
+import { DensityReport } from '../../types';
 import { GlobalAction } from '../../types/rx-actions';
 import { ResourceComplete, ResourceStatus } from '../../types/resource';
-import { AnalyticsReport, AnalyticsState, AnalyticsStateRaw } from '../../types/analytics';
+import { AnalyticsReport, AnalyticsState, AnalyticsStateRaw, StoredAnalyticsReport } from '../../types/analytics';
 
+import fetchAllObjects from '../../helpers/fetch-all-objects';
 import { getUserDashboardWeekStart } from '../../helpers/legacy';
 import { getBrowserLocalTimeZone } from '../../helpers/space-time-utilities';
 import { processAnalyticsChartData } from '../../helpers/analytics-datapoint';
 import { processAnalyticsTableData } from '../../helpers/analytics-metrics';
-import { isQueryRunnable, realizeSpacesFromQuery } from '../../helpers/analytics-report';
 import { exportAnalyticsChartData } from '../../helpers/analytics-data-export/chart';
 import { exportAnalyticsTableData } from '../../helpers/analytics-data-export/table';
+import {
+  runQuery,
+  isQueryRunnable,
+  realizeSpacesFromQuery,
+  convertStoredAnalyticsReportToAnalyticsReport,
+  ChartDataFetchingResult,
+  TableDataFetchingResult,
+} from '../../helpers/analytics-report';
 
 import { AnalyticsActionType } from '../../rx-actions/analytics';
 
 import { StoreSubject } from '..';
 import { UserState } from '../user';
 import { SpacesLegacyState } from '../spaces-legacy';
-import { runQuery, ChartDataFetchingResult, TableDataFetchingResult } from '.';
+import { SpaceHierarchyState } from '../space-hierarchy';
+
+import collectionSpacesSet from '../../rx-actions/collection/spaces-legacy/set';
+import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
+import collectionSpaceHierarchySet from '../../rx-actions/collection/space-hierarchy/set';
+import createReport from '../../rx-actions/analytics/operations/create-report';
 
 
 type RunQueryFunction = typeof runQuery;
@@ -32,6 +46,7 @@ export function registerSideEffects(
   analyticsStore: StoreSubject<AnalyticsState>,
   userStore: StoreSubject<UserState>,
   spacesStore: StoreSubject<SpacesLegacyState>,
+  spaceHierarchyStore: StoreSubject<SpaceHierarchyState>,
   dispatch: (action: GlobalAction) => void,
   runQuery: RunQueryFunction,
 ) {
@@ -200,6 +215,104 @@ export function registerSideEffects(
       metrics,
       selectedSpaceIds: selectedSpaces.map(i => i.id),
     });
+  });
+
+  // ----------------------------------------------------------------------------
+  // ROUTE TRANSITION
+  // ----------------------------------------------------------------------------
+
+  const routeTransitionStream = actionStream.pipe(
+    filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
+    switchMap(() => combineLatest(
+      spacesStore.pipe(take(1)),
+      spaceHierarchyStore.pipe(take(1)),
+      analyticsStore.pipe(take(1)),
+    )),
+  );
+
+  const whileInitialDataNotPopulated = () => source => source.pipe(
+    filter(([spacesState, spaceHierarchyState, analyticsState]) => (
+      analyticsState.status !== ResourceStatus.COMPLETE
+    )),
+  );
+
+  const spacesLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      if (spacesState.view !== 'VISIBLE' && spacesState.data.length > 1) {
+        return of();
+      } else {
+        return fetchAllObjects<CoreSpace>('/spaces');
+      }
+    }),
+    map(spaces => collectionSpacesSet(spaces)),
+  );
+
+  const spaceHierarchyLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      if (spaceHierarchyState.view !== 'VISIBLE' && spaceHierarchyState.data.length > 1) {
+        return of();
+      } else {
+        return fetchAllObjects<Array<CoreSpaceHierarchyNode>>('/spaces/hierarchy');
+      }
+    }),
+    map(spaces => collectionSpaceHierarchySet(spaces)),
+  );
+
+  const reportsLoadStream = routeTransitionStream.pipe(
+    whileInitialDataNotPopulated(),
+    switchMap(([spacesState, spaceHierarchyState, analyticsState]) => {
+      return fetchAllObjects<DensityReport>('/reports');
+    }),
+  );
+
+  merge(
+    routeTransitionStream.pipe(
+      whileInitialDataNotPopulated(),
+      map(() => ({ type: AnalyticsActionType.ANALYTICS_RESOURCE_LOADING })),
+    ),
+
+    // Dispatch actions as data is loaded
+    spacesLoadStream.pipe(catchError(e => of())),
+    spaceHierarchyLoadStream.pipe(catchError(e => of())),
+
+    // When all resources are done loading, mark the analytics page as done loading
+    combineLatest(
+      spacesLoadStream,
+      spaceHierarchyLoadStream,
+      reportsLoadStream,
+    ).pipe(
+      map(([spaces, hierarchy, reports]) => ({
+        type: AnalyticsActionType.ANALYTICS_RESOURCE_COMPLETE,
+        data: (
+          reports
+            .filter(r => r.type === 'LINE_CHART')
+            .map((r) => convertStoredAnalyticsReportToAnalyticsReport(r as StoredAnalyticsReport))
+        ),
+        activeReportId: null,
+      })),
+      catchError(error => from([
+        collectionSpacesError(error),
+        { type: AnalyticsActionType.ANALYTICS_RESOURCE_ERROR, error },
+      ])),
+    ),
+  ).subscribe(action => dispatch(action as Any<InAHurry>));
+
+  // Some magic to preload a space when analytics is loaded and this key is present in localStorage.
+  // TODO: Make this less crazy!
+  actionStream.pipe(
+    filter(action => action.type === AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS),
+    switchMap(() => analyticsStore.pipe(
+      filter(analyticsState => analyticsState.status === ResourceStatus.COMPLETE),
+      take(1),
+    )),
+  ).subscribe(() => {
+    const preload = localStorage.sessionAnalyticsPreload ? JSON.parse(localStorage.sessionAnalyticsPreload) : {};
+    if (preload.spaceIds) {
+      delete localStorage.sessionAnalyticsPreload;
+      createReport(dispatch, preload.spaceIds);
+    }
   });
 
 }

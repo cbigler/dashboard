@@ -9,6 +9,7 @@ import { GlobalAction } from '../../types/rx-actions';
 import createReport from '../../rx-actions/analytics/operations/create-report'
 import { UserState, userReducer, initialState as initialUserState } from '../user';
 import { SpacesLegacyState, spacesLegacyReducer, initialState as initialSpacesLegacyState } from '../spaces-legacy';
+import { SpaceHierarchyState, spaceHierarchyReducer, initialState as initialSpaceHierarchyState } from '../space-hierarchy';
 import { createTestStore, createTestActionStream } from '../../helpers/test-utilities/state-management';
 
 import analyticsReducer from './reducer';
@@ -32,12 +33,14 @@ describe('AnalyticsStore', () => {
   let dispatch: (action: GlobalAction) => void;
   let analyticsStore: StoreSubject<AnalyticsState>;
   let spacesLegacyStore: StoreSubject<SpacesLegacyState>;
+  let spaceHierarchyStore: StoreSubject<SpaceHierarchyState>;
   let userStore: StoreSubject<UserState>;
 
   beforeEach(() => {
     [actionStream, dispatch] = createTestActionStream();
     analyticsStore = createTestStore(initialAnalyticsState, analyticsReducer, actionStream);
     spacesLegacyStore = createTestStore(initialSpacesLegacyState, spacesLegacyReducer, actionStream);
+    spaceHierarchyStore = createTestStore(initialSpaceHierarchyState, spaceHierarchyReducer, actionStream);
     userStore = createTestStore(initialUserState, userReducer, actionStream)
   })
 
@@ -54,7 +57,7 @@ describe('AnalyticsStore', () => {
   test('Triggering a query to run by updating the query selections', async () => {
     
     const mockRunQuery = jest.fn();
-    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, dispatch, mockRunQuery);
+    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, spaceHierarchyStore, dispatch, mockRunQuery);
     await createReport(dispatch);
     
     let state = analyticsStore.imperativelyGetValue();
@@ -80,7 +83,7 @@ describe('AnalyticsStore', () => {
   // For now, disabling this test
   xtest('Handling a bad query response from the API', async (done) => {
     const mockRunQuery = jest.fn().mockRejectedValue(new Error('Query failed'));
-    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, dispatch, mockRunQuery);
+    registerSideEffects(actionStream, analyticsStore, userStore, spacesLegacyStore, spaceHierarchyStore, dispatch, mockRunQuery);
     await createReport(dispatch);
     
     // get state

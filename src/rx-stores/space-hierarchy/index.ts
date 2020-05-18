@@ -9,7 +9,7 @@ export type SpaceHierarchyState = {
   data: Any<FixInRefactor>[]
 }
 
-const initialState: SpaceHierarchyState = {
+export const initialState: SpaceHierarchyState = {
   view: 'LOADING',
   loading: true,
   error: null,
