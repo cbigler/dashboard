@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export default function isMultiWeekSelection(startDate, endDate) {
   const startDateMoment = moment(startDate);

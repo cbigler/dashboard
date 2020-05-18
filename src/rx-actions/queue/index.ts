@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment-timezone";
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';

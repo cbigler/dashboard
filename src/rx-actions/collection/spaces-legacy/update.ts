@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import fetchAllObjects from '../../../helpers/fetch-all-objects';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import formatTagName from '../../../helpers/format-tag-name/index';

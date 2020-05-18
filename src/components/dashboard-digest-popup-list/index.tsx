@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { AppBar, AppBarSection, AppBarTitle, AppBarContext, Icons } from '@density/ui/src';
 import colorVariables from '@density/ui/variables/colors.json';
 

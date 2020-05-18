@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 import { CoreSpaceTimeSegment } from '@density/lib-api-types/core-v2/spaces';
 

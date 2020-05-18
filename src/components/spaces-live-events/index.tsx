@@ -12,7 +12,7 @@ import styles from './styles.module.scss'
 import colors from '@density/ui/variables/colors.json'
 
 import * as d3Scale from 'd3-scale';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { CoreSensorType } from '@density/lib-api-types/core-v2/sensors';
 
 const CHART_HEIGHT = 80;

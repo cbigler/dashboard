@@ -1,5 +1,5 @@
 import React, { useRef, RefObject } from 'react';
-import moment, { Moment } from 'moment';
+import moment, { Moment } from 'moment-timezone';
 
 import commaNumber from 'comma-number';
 import * as d3Scale from 'd3-scale';

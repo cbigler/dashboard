@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styles from './styles.module.scss';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import Selector, { QueryTextBold } from '../analytics-control-bar-selector';
 import { DATE_RANGES, DateRange, DateRangeType } from '@density/lib-time-helpers/date-range';
 

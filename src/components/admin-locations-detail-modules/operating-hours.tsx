@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import uuid from 'uuid';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import styles from './operating-hours.module.scss';
 import classnames from 'classnames';
 
