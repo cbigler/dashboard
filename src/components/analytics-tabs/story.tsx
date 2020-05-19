@@ -2,7 +2,7 @@
 import React, { Fragment, useState } from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import AnalyticsTabs from './index';
 
@@ -36,7 +36,7 @@ function handleCloseReport(state, id) {
 }
 
 function handleAddNewReport(state) {
-  const newReport = {id: uuid.v4(), name: 'Untitled Report', isSaved: false};
+  const newReport = {id: uuidv4(), name: 'Untitled Report', isSaved: false};
   return {
     ...state,
     activeId: newReport.id,

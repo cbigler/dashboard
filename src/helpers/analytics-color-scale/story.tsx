@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 import { storiesOf } from '@storybook/react';
-import uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import { COLORS, colorScale } from '.';
 
-const ids = [...Array(10)].map(_ => uuid()) as string[];
+const ids = [...Array(10)].map(_ => uuidv4()) as string[];
 
 
 storiesOf('Analytics Color Scale', module)

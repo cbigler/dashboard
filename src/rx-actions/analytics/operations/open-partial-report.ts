@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { AnalyticsActionType } from '..';
 import { RESOURCE_IDLE } from '../../../types/resource';
 import {
@@ -19,7 +19,7 @@ export default async function openPartialReport(dispatch: DispatchType, partialR
 
   const report: AnalyticsReportUnsaved = {
     ...partialReport,
-    id: uuid.v4(),
+    id: uuidv4(),
     name: 'Untitled Report',
     queryResult: RESOURCE_IDLE,
 

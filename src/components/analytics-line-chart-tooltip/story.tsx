@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
 import React from 'react';
 import { storiesOf } from '@storybook/react';
-import uuid from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 
 import AnalyticsLineChartTooltip from './index';
 import { AnalyticsDatapoint, AnalyticsFocusedMetric } from '../../types/analytics';
@@ -28,7 +28,7 @@ import { withState } from '../../helpers/storybook';
 //   return Object.assign(
 //     {},
 //     MODEL_DATAPOINT,
-//     {space_id: uuid()},
+//     {space_id: uuidv4()},
 //     overrides,
 //   );
 // }

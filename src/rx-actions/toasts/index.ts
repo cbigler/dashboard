@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 export const TRANSITION_TO_SHOW_TOAST = 'TRANSITION_TO_SHOW_TOAST';
 export const TOAST_SHOW = 'TOAST_SHOW';
@@ -13,7 +13,7 @@ export function showToast(dispatch, {
   type = undefined as string | undefined,
   timeout = 2000 as (number | null),
 }) {
-  id = id || uuid();
+  id = id || uuidv4();
   dispatch({
     type: TRANSITION_TO_SHOW_TOAST,
     toast: { id, text, title, icon, type },

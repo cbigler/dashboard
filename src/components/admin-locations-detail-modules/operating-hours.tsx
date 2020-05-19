@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 import styles from './operating-hours.module.scss';
 import classnames from 'classnames';
@@ -261,7 +261,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                       const newOperatingHours = parentOperatingHours.map(i => ({
                         ...i,
                         operationToPerform: 'CREATE',
-                        id: uuid.v4(),
+                        id: uuidv4(),
                       }));
 
                       onChangeField('operatingHours', newOperatingHours);
@@ -525,7 +525,7 @@ function AdminLocationsDetailModulesOperatingHoursUnconnected({
                     // NOTE: An ephemeral id is needed so that time segments that haven't been sent to
                     // the server yet have a unique identifier. This uuid will be discarded after the
                     // time segment is sent to the server and has a real id.
-                    const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuid.v4();
+                    const id = 'TEMPORARY_ID_THAT_IS_GENERATED_BY_THE_CLIENT:'+uuidv4();
 
                     const operatingHoursItem = {
                       label: null,
