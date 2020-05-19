@@ -35,8 +35,8 @@ export default function InfoPopupNew({
 
   return <Tooltip
     classes={classes}
-    title={contents}
-    placement={placement || "bottom-start"}
+    title={contents || ''}
+    placement={placement || 'bottom-start'}
     enterDelay={enterDelay || 700}
   >
     <div style={{whiteSpace: wrap ? undefined : 'nowrap'}}>{target}</div>
