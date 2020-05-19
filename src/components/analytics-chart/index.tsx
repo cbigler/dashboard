@@ -728,11 +728,12 @@ const Chart: React.FC<{
         </g>
       </svg>
       {tooltip.visible ? (
-        <div style={Object.assign({}, {
+        <div style={{
           position: 'absolute',
           top: padding.top,
           pointerEvents: 'none',
-        }, getTooltipPositionStyles(tooltip.xPosition))}>
+          ...getTooltipPositionStyles(tooltip.xPosition)
+        }}>
           <AnalyticsLineChartTooltip
             datetimeLabel={tooltip.datetimeLabel}
             datapoints={tooltip.datapoints}

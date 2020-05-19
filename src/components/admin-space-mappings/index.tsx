@@ -136,7 +136,7 @@ export class AdminSpaceMappings extends React.Component<{
                 width={360}
                 template={space => (
                   <span className={styles.adminIntegrationsListviewValue}>
-                    {space.ancestry.length ? <Fragment>{space.ancestry[0].name} > </Fragment> : null}
+                    {space.ancestry.length ? <Fragment>{space.ancestry[0].name} {'>'} </Fragment> : null}
                     <strong>{space.name}</strong>
                   </span>
                 )}
