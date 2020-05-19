@@ -19,6 +19,10 @@ const ERROR_FIELDS = {
   storeStateSnapshots: () => {
     const snapshots = {};
     for (let displayName in storeDirectory) {
+      if (displayName === 'SessionTokenStore') {
+        snapshots[displayName] = '<redacted>';
+        continue
+      }
       snapshots[displayName] = storeDirectory[displayName].imperativelyGetValue();
     }
     return snapshots;
