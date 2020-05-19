@@ -1,7 +1,7 @@
 version: 2
 
 jobs:
-  build:
+  test:
     docker:
       - image: circleci/node:12
     resource_class: large
@@ -170,24 +170,24 @@ workflows:
   version: 2
   build-test-and-approval-deploy:
     jobs:
-      - build
+      - test
 
       # For all non-trunk pushes, build/deploy to `https://dashboard.density.rodeo/preview/SHA`
       - preview:
           requires:
-            - build
+            - test
           filters:
             branches:
               ignore: trunk
       # NOTE: the storybook build seems to be unreliable.
       # - preview-storybook:
       #     requires:
-      #       - build
+      #       - test
 
       # Trunk is built and deployed to `https://dashboard.density.rodeo`
       - staging:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: trunk
@@ -200,7 +200,7 @@ workflows:
 
       - production:
           requires:
-            - build
+            - test
             - staging
             - hold-production
           filters:
