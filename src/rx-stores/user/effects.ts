@@ -28,7 +28,7 @@ export default function registerSideEffects(
     // Also skip tracking if this is an on-prem build
     if (ON_PREM) { return; }
 
-    if (process.env.REACT_APP_HOTJAR_SITE_ID && !ON_PREM) {
+    if (process.env.REACT_APP_HOTJAR_SITE_ID) {
       setupHotjar(process.env.REACT_APP_HOTJAR_SITE_ID, 6);
     }
 
