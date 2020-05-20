@@ -23,7 +23,7 @@
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
     "comma-number": "^2.0.1",
-    "core-js": "^3.6.4",
+    "core-js": "^3.6.5",
     "d3-array": "^2.4.0",
     "d3-dsv": "^1.2.0",
     "d3-scale": "^3.2.1",
