@@ -36,7 +36,7 @@
     "lodash": "^4.17.15",
     "mapbox-gl": "^1.10.1",
     "mixpanel-browser": "^2.34.0",
-    "moment": "^2.25.3",
+    "moment": "^2.26.0",
     "moment-timezone": "^0.5.31",
     "normalize.css": "^8.0.1",
     "path-to-regexp": "^6.1.0",
