@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment-timezone';
 import collectionSpacesPush from './push';
 import collectionSpacesError from './error';
@@ -76,7 +76,7 @@ export default async function collectionSpacesCreate(dispatch, item) {
     }
 
     if (item.newImageFile) {
-      const id = uuid();
+      const id = uuidv4();
       showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
       const upload = await uploadMedia(`/uploads/space_image/${response.data.id}`, item.newImageFile);
       await hideToast(dispatch, id);

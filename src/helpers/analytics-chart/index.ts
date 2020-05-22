@@ -67,7 +67,7 @@ export function computeChartData(
   }
 
   if (interval === QueryInterval.ONE_DAY) {
-    const dataset = d3Array.rollup(
+    const dataset: Map<string, Map<string, number>> = (d3Array.rollup as Function)(
       datapoints,
       (v: AnalyticsDatapoint[]) => {
         switch (selectedMetric) {
@@ -88,9 +88,8 @@ export function computeChartData(
         }
       },
       (d: AnalyticsDatapoint) => d.space_id,
-      // @ts-ignore
       (d: AnalyticsDatapoint) => d.localBucketDay,
-    )
+    );
 
     const series: ChartSegmentMultipleDays['series'] = [];
     const localBucketDaysWithData = new Set<string>();
@@ -133,7 +132,7 @@ export function computeChartData(
 
 
   } else { // interval is NOT 1-day
-    const dataset = d3Array.rollup(
+    const dataset: Map<string, Map<string, Map<string, number>>> = (d3Array.rollup as Function)(
       datapoints,
       (v: AnalyticsDatapoint[]) => {
         switch (selectedMetric) {
@@ -154,7 +153,6 @@ export function computeChartData(
         }
       },
       (d: AnalyticsDatapoint) => d.localBucketDay,
-      // @ts-ignore
       (d: AnalyticsDatapoint) => d.space_id,
       (d: AnalyticsDatapoint) => d.localBucketTime,
     )

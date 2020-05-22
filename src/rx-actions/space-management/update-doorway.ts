@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { showToast, hideToast } from '../../rx-actions/toasts';
 import hideModal from '../modal/hide';
@@ -27,7 +27,7 @@ export async function uploadDoorwayImages(dispatch, doorway_id, item) {
   hideModal(dispatch);
 
   if (uploadPromises.length > 0) {
-    const id = uuid.v4();
+    const id = uuidv4();
     showToast(dispatch, {
       id,
       text: `Processing doorway ${uploadPromises.length === 1 ? 'image' : 'images'}...`,

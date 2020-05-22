@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import classnames from 'classnames';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import styles from './styles.module.scss';
 import commaNumber from 'comma-number';
@@ -76,7 +76,7 @@ export default function SpacesRawEvents() {
                 const headerRow = 'Timestamp,Local Time,Event,Current Count,Count Change,Doorway Name,Doorway ID';
                 let csvData: string[] = [];
 
-                const toastId = uuid.v4();
+                const toastId = uuidv4();
                 showToast(dispatch, { text: 'Preparing CSV export...', id: toastId, timeout: 60000 });
 
                 while(startDate < endDate) {

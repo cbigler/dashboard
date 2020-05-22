@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment-timezone';
 import fetchAllObjects from '../../../helpers/fetch-all-objects';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
@@ -86,7 +86,7 @@ export default async function collectionSpacesUpdate(dispatch, item) {
     // Upload any new image data for this space
     // Wait for the image to be complete, but ignore it (we overwrite all spaces below)
     if (item.newImageFile) {
-      const id = uuid();
+      const id = uuidv4();
       showToast(dispatch, {text: 'Processing...', timeout: 10000, id});
       const upload = await uploadMedia(`/uploads/space_image/${item.id}`, item.newImageFile);
       await hideToast(dispatch, id);
