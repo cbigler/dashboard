@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
-import { Moment } from 'moment';
+import { Moment } from 'moment-timezone';
 import classnames from 'classnames';
 import commaNumber from 'comma-number';
 import colors from '@density/ui/variables/colors.json';

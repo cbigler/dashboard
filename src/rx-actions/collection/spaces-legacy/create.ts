@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import collectionSpacesPush from './push';
 import collectionSpacesError from './error';
 import core from '../../../client/core';

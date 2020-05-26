@@ -1,7 +1,7 @@
 import styles from './styles.module.scss';
 
 import React, { Fragment } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import classnames from 'classnames';
 
 import AdminSpacePermissionsPicker from '../admin-space-permissions-picker/index';

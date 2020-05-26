@@ -1,0 +1,136 @@
+@import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/fonts.scss";
+@import "@density/ui/variables/spacing.scss";
+
+// Variables
+// ---------------------------------
+$loginSectionWidth: 560px;
+$zIndexToast: 2000;
+
+
+// Scaffolding
+// ---------------------------------
+
+.loginForgotPasswordView {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  background-color: #fff;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.loginForgotPasswordSection {
+  flex-grow: 0;
+  box-sizing: border-box;
+  height: 100%;
+  padding-top: 64px;
+  padding-bottom: 64px;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: #fff;
+}
+
+// Banner
+// ---------------------------------
+
+.loginForgotPasswordDensityLogo {
+  display: block;
+  height: 24px;
+  margin-bottom: 24px;
+}
+.loginForgotPasswordDensityLogo img {
+  height: 100%;
+  width: auto;
+}
+
+.loginForgotPasswordLead {
+  margin-bottom: 64px;
+  color: $midnight;
+  font-weight: bold;
+}
+
+.loginForgotPasswordSubmitButton {
+  width: 100%;
+}
+
+.formControl {
+  height: 57px;
+  margin-bottom: 16px;
+  opacity: 1;
+  pointer-events: auto;
+  transition: height 200ms ease-in-out, opacity 200ms 100ms ease-in-out;
+
+  &.hide { display: none; }
+
+  &.fade {
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms 100ms ease-in-out;
+  }
+  
+  &.slide {
+    height: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+    transition: height 100ms ease-in-out, opacity 200ms ease-in-out;
+  }
+}
+
+.loginForgotPasswordActionSecondary {
+  display: flex;
+  align-items: center;
+  margin-top: 40px;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: $midnight;
+  cursor: pointer;
+
+  svg { margin-right: 8px; }
+
+  &:hover {
+    color: $midnight;
+  }
+}
+
+// Footer
+// ---------------------------------
+
+.loginForgotPasswordTermsAndPrivacy {
+  padding-top: 100px;
+  padding-bottom: 64px;
+  font-size: 14px;
+  font-weight: bold;
+  color: $gray500;
+
+  a { color: $gray400; }
+  a:hover { color: $midnight; }
+}
+
+// Log in toast
+// ---------------------------------
+.loginForgotPasswordToast {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  z-index: $zIndexToast;
+  box-sizing: border-box;
+  width: $loginSectionWidth - 48px;
+  margin-left: -($loginSectionWidth - 48px)/2;
+}
+
+
+// ------------------------------------------------
+// Forgot Password View
+// ------------------------------------------------
+.loginForgotPasswordFormReset .inputStackItemContainer,
+.loginForgotPasswordFormReset .inputStackItemContainer:first-child,
+.loginForgotPasswordFormReset .inputStackItemContainer:last-child {
+  border-radius: 5px;
+}
+.loginForgotPasswordFormResetHeader { margin-bottom: 24px; }

@@ -1,5 +1,5 @@
 import React from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import * as d3Scale from 'd3-scale';
 import * as d3Time from 'd3-time';
 // @ts-ignore

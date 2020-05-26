@@ -1,6 +1,6 @@
 import React, { ReactNode, Fragment } from 'react';
 import debounce from 'lodash/debounce';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import styles from './styles.module.scss';
 import Report, { REPORTS } from '@density/reports';
 import isOutsideRange from '../../helpers/date-range-picker-is-outside-range';

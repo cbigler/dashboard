@@ -2,7 +2,7 @@ import assert from 'assert';
 import generateResetTimeChoices from './index';
 
 import mockdate from 'mockdate';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 const SPACE_IN_NY = {name: 'foo', time_zone: 'America/New_York'};
 const SPACE_IN_LA = {name: 'foo', time_zone: 'America/Los_Angeles'};

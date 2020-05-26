@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classnames from 'classnames';
 import styles from './styles.module.scss';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { Icons } from '@density/ui/src';
 
 import generateResetTimeChoices from '../../helpers/generate-reset-time-choices/index';

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { COLLECTION_SPACES_SET } from '../../rx-actions/collection/spaces-legacy/set';
 import { COLLECTION_SPACES_PUSH } from '../../rx-actions/collection/spaces-legacy/push';

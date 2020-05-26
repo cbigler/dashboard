@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import getInObject from 'lodash/get';
 
 import showModal from '../modal/show';

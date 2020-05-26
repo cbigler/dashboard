@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import dashboardsSet from '../dashboards/set';
 import dashboardsError from '../dashboards/error';

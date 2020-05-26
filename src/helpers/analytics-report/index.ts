@@ -1,5 +1,5 @@
 import getInObject from 'lodash/get';
-import { Moment } from 'moment';
+import { Moment } from 'moment-timezone';
 import { CoreSpace } from "@density/lib-api-types/core-v2/spaces";
 import { DATE_RANGES } from '@density/lib-time-helpers/date-range';
 

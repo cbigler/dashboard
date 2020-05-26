@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import { REDIRECT_AFTER_LOGIN } from '../../rx-actions/miscellaneous/redirect-after-login';
 import { SHOW_DASHBOARDS_SIDEBAR } from '../../rx-actions/miscellaneous/show-dashboards-sidebar';

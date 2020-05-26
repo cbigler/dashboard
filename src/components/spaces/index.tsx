@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { formatSpaceFunction } from '@density/lib-space-helpers';
 import classnames from 'classnames';
 

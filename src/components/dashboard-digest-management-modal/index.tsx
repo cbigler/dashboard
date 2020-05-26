@@ -2,7 +2,7 @@ import styles from './styles.module.scss';
 
 import React, { Fragment, useState, useEffect } from 'react';
 import classnames from 'classnames';
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 import {
   AppBar,
