@@ -13,12 +13,9 @@ import accounts from '../../client/accounts';
 import { showToast } from '../../rx-actions/toasts';
 
 import useRxDispatch from '../../helpers/use-rx-dispatch';
-import useRxStore from '../../helpers/use-rx-store';
 
 export default function Logout() {
   const dispatch: Any<FixInRefactor> = useRxDispatch();
-  const user = useRxStore(UserStore);
-  const userLoggedIn = user.data !== null;
 
   /* eslint-disable react-hooks/exhaustive-deps */
   useEffect(() => {
@@ -37,10 +34,8 @@ export default function Logout() {
         window.location.hash = '#/account';
       }
     }
-    if (userLoggedIn) {
-      performLogout();
-    }
-  }, [ userLoggedIn ]);
+    performLogout();
+  }, []);
   /* eslint-enable react-hooks/exhaustive-deps */
 
   return (
