@@ -49,11 +49,6 @@ export default function Logout() {
 
       <h1>You have been logged out.</h1>
       <p>Please <a href="#/login">login</a> again to view the Density Dashboard.</p>
-
-      {/* Logout from auth0, invalidating the global auth0 session */}
-      {/* eslint-disable jsx-a11y/iframe-has-title */}
-      <iframe style={{display: 'none'}} src="https://densityio.auth0.com/v2/logout"></iframe>
-      {/* eslint-enable jsx-a11y/iframe-has-title */}
     </div>
   );
 }

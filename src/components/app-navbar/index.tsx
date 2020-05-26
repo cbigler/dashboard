@@ -131,6 +131,12 @@ export default function AppNavbar({
     can(user, PERMISSION_CODES.readonlyUserManage)
   );
 
+  const logoutDashboardUrl = (() => {
+    const u = new URL(window.location.href);
+    u.hash = '#/logout';
+    return u.toString();
+  })();
+
   return (
     <div className={styles.appNavbarContainer}>
       <div className={styles.appNavbar}>
@@ -215,7 +221,7 @@ export default function AppNavbar({
             selected={false}
             showOnMobile={false}
             hideOnDesktop={true}
-            path="#/logout"
+            path={`https://densityio.auth0.com/v2/logout?returnTo=${encodeURIComponent(logoutDashboardUrl)}`}
             style={{ marginRight: -8, marginTop: 2 }}
             icon={<Icons.Logout />}
             text=""
@@ -286,7 +292,7 @@ export default function AppNavbar({
               selected={['ACCOUNT'].includes(page)}
             />
             <AppNavbarMenuItem
-              path="#/logout"
+              path={`https://densityio.auth0.com/v2/logout?returnTo=${encodeURIComponent(logoutDashboardUrl)}`}
               text="Logout"
               icon={<Icons.Power />}
               selected={false}
