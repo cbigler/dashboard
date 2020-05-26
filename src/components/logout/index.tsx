@@ -8,7 +8,6 @@ import collectionTokensSet from '../../rx-actions/collection/tokens/set';
 import collectionWebhooksSet from '../../rx-actions/collection/webhooks/set';
 import collectionServicesSet from '../../rx-actions/collection/services/set';
 import { UserActionTypes } from '../../types/users';
-import UserStore from '../../rx-stores/user';
 import accounts from '../../client/accounts';
 import { showToast } from '../../rx-actions/toasts';
 
