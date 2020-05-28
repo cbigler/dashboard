@@ -1,8 +1,11 @@
 import React from 'react';
 import styles from './styles.module.scss';
 
+import useRxStore from '../../../helpers/use-rx-store';
+import MiscellaneousStore from '../../../rx-stores/miscellaneous';
+
 export default function LoginError() {
-  const loginError = window.localStorage.auth0LoginError;
+  const loginError = useRxStore(MiscellaneousStore).loginError;
   delete window.localStorage.auth0LoginError;
   return (
     <div className={styles.centered}>

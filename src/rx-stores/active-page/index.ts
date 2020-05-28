@@ -1,5 +1,6 @@
 import { ROUTE_TRANSITION_LOGIN } from '../../rx-actions/route-transition/login';
 import { ROUTE_TRANSITION_LOGIN_FORGOT_PASSWORD } from '../../rx-actions/route-transition/login-forgot-password';
+import { ROUTE_TRANSITION_LOGIN_ERROR } from '../../rx-actions/route-transition/login-error';
 import { ROUTE_TRANSITION_ACCOUNT } from '../../rx-actions/route-transition/account';
 import { ROUTE_TRANSITION_LIVE_SPACE_LIST } from '../../rx-actions/route-transition/live-space-list';
 import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-transition/live-space-detail';
@@ -35,6 +36,7 @@ export enum ActivePage {
   BLANK = 'BLANK',
   LOGIN = 'LOGIN',
   LOGIN_FORGOT_PASSWORD = 'LOGIN_FORGOT_PASSWORD',
+  LOGIN_ERROR = 'LOGIN_ERROR',
   LOGOUT = 'LOGOUT',
   LIVE_SPACE_LIST = 'LIVE_SPACE_LIST',
   LIVE_SPACE_DETAIL = 'LIVE_SPACE_DETAIL',
@@ -73,6 +75,8 @@ export function activePageReducer(state: ActivePageState, action: Any<FixInRefac
     return ActivePage.LOGIN;
   case ROUTE_TRANSITION_LOGIN_FORGOT_PASSWORD:
     return ActivePage.LOGIN_FORGOT_PASSWORD;
+  case ROUTE_TRANSITION_LOGIN_ERROR:
+    return ActivePage.LOGIN_ERROR;
 
   case ROUTE_TRANSITION_LIVE_SPACE_LIST:
     return ActivePage.LIVE_SPACE_LIST;

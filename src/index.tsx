@@ -41,6 +41,7 @@ import createRouter from './router';
 import { impersonateUnset } from './rx-actions/impersonate';
 import routeTransitionLogin from './rx-actions/route-transition/login';
 import routeTransitionLoginForgotPassword from './rx-actions/route-transition/login-forgot-password';
+import routeTransitionLoginError from './rx-actions/route-transition/login-error';
 import routeTransitionLogout from './rx-actions/route-transition/logout';
 import routeTransitionSpaces from './rx-actions/route-transition/spaces';
 import routeTransitionSpacesSpace from './rx-actions/route-transition/spaces-space';
@@ -148,6 +149,7 @@ trackHashChange();
 // Uses conduit, an open source router we made at Density: https://github.com/DensityCo/conduit
 const router = createRouter();
 router.addRoute('login/forgot-password', async () => { (rxDispatch as Any<FixInReview>)(routeTransitionLoginForgotPassword()) });
+router.addRoute('login/error/:error', async (error) => { (rxDispatch as Any<FixInReview>)(routeTransitionLoginError(decodeURIComponent(error))) });
 router.addRoute('login', async () => { (rxDispatch as Any<FixInReview>)(routeTransitionLogin(null)) });
 router.addRoute('logout', async () => routeTransitionLogout(rxDispatch));
 router.addRoute('access_token=:oauth', async () => {});
@@ -242,14 +244,20 @@ async function preRouteAuthentication() {
         unsafeNavigateToLandingPage(data.organization.settings, null, true);
       });
     }).catch(err => {
-      window.localStorage.auth0LoginError = err.toString();
-      router.navigate('login', {});
+      let loginError;
+      if (typeof err.response.body !== 'undefined' && err.response.body.detail) {
+        loginError = err.response.body.detail;
+      } else {
+        loginError = err.toString();
+      }
+      router.navigate(`login/error/:error`, {error: encodeURIComponent(loginError)});
     });
   // If on the account registration page (the only page that doesn't require the user to be logged in)
   // then don't worry about any of this.
   } else if (
     locationHash.startsWith("#/logout") ||
     locationHash.startsWith("#/login/forgot-password") ||
+    locationHash.startsWith("#/login/error") ||
     locationHash.startsWith("#/account/register") ||
     locationHash.startsWith("#/account/forgot-password")
   ) {
