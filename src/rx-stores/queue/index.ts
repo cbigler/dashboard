@@ -91,6 +91,7 @@ export function queueReducer(state: QueueState, action: GlobalAction): QueueStat
     return {...state, list: queueListReducer(state.list, action)};
 
   case QueueActionTypes.QUEUE_DETAIL_DATA_LOADED:
+  case QueueActionTypes.QUEUE_DETAIL_POLL:
   case QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED:
   case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_STATUS_CHANGE:
   case QueueActionTypes.QUEUE_DETAIL_WEBSOCKET_COUNT_CHANGE:
@@ -141,6 +142,21 @@ export function queueDetailReducer(state: QueueDetailState, action: GlobalAction
           orgLogoURL: action.orgLogoURL
         },
         status: ResourceStatus.COMPLETE
+      },
+    };
+  case QueueActionTypes.QUEUE_DETAIL_POLL:
+    if (state.selected.status !== ResourceStatus.COMPLETE) {
+      return state;
+    }
+    return {
+      ...state,
+      selected: {
+        status: ResourceStatus.COMPLETE,
+        data: {
+          ...state.selected.data,
+          space: (action as any).space,
+          spaceEvents: (action as any).spaceEvents,
+        },
       },
     };
   case QueueActionTypes.QUEUE_DETAIL_SET_TALLY_ENABLED:
@@ -360,7 +376,7 @@ function fetchSelectedSensorSerial(spaceId: string) {
 // minute, to make sure that stuff is up to date and
 // resets are accounted for
 // =================================
-const refreshInterval = 60 * 1000;
+const refreshInterval = 30 * 1000; // 60 * 1000;
 
 actions
   .pipe(
@@ -369,8 +385,20 @@ actions
     }),
     switchMap((action: any)=> interval(refreshInterval).pipe(map(()=> action))),
     takeUntil(unmountDetail),
-    switchMap((action: any)=> fetchSelectedSpaceAndEvents(action.id))
-  ).subscribe();
+    switchMap((action: any) => forkJoin(
+      fetchSelectedSpaceAndEvents(action.id),
+      // Pull the space current count, because the /space/:space_id/count endpoint doesn't seem to
+      // return the current count correctly at the moment. See PRD-861.
+      fetchSpaceCurrentCount(action.id),
+    )),
+   )
+  .subscribe(([[space, spaceEvents], currentCount]) => {
+    rxDispatch({
+      type: QueueActionTypes.QUEUE_DETAIL_POLL,
+      space: { ...space, current_count: currentCount },
+      spaceEvents,
+    });
+  });
 
 // =================================
 // SIDE EFFECT: disconnect from the websocket server on unmount
