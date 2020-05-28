@@ -1,4 +1,4 @@
-import React, { Fragment, Component } from 'react';
+import React, { Fragment, Component, useState } from 'react';
 import styles from './styles.module.scss';
 import GenericErrorState from '../generic-error-state/index';
 import GenericLoadingState from '../generic-loading-state/index';
@@ -59,6 +59,8 @@ export function SpaceTypeForm({
   onSetDoorwayField,
   operationType,
 }: AdminLocationsFormProps) {
+  const [currentSection, setCurrentSection] = useState('General');
+
   const MODULES = {
     generalInfo: (
       <AdminLocationsDetailModulesGeneralInfo
@@ -130,55 +132,96 @@ export function SpaceTypeForm({
   };
 
   const MODULES_BY_SPACE_TYPE = {
-    campus: [
-      MODULES.generalInfo,
-      MODULES.address,
-      MODULES.doorways,
-      MODULES.operatingHours,
-      MODULES.tags,
-      MODULES.teams,
-      MODULES.dangerZone,
-    ],
-    building: [
-      MODULES.generalInfo,
-      MODULES.address,
-      MODULES.doorways,
-      MODULES.operatingHours,
-      MODULES.metadata,
-      MODULES.tags,
-      MODULES.teams,
-      MODULES.dangerZone,
-    ],
-    floor: [
-      MODULES.generalInfo,
-      MODULES.doorways,
-      MODULES.operatingHours,
-      MODULES.metadata,
-      MODULES.tags,
-      MODULES.teams,
-      MODULES.dangerZone,
-    ],
-    space: [
-      MODULES.generalInfo,
-      MODULES.metadata,
-      MODULES.doorways,
-      MODULES.operatingHours,
-      MODULES.tags,
-      MODULES.teams,
-      MODULES.dangerZone,
-    ],
+    campus: {
+      'General': [
+        MODULES.generalInfo,
+        MODULES.tags,
+        MODULES.teams,
+        MODULES.dangerZone,
+      ],
+      'Operating Hours': [
+        MODULES.operatingHours,
+      ],
+      'Doorway Mappings': [
+        MODULES.doorways,
+      ],
+      'Address': [
+        MODULES.address,
+      ]
+    },
+    building: {
+      'General': [
+        MODULES.generalInfo,
+        MODULES.metadata,
+        MODULES.tags,
+        MODULES.teams,
+        MODULES.dangerZone,
+      ],
+      'Operating Hours': [
+        MODULES.operatingHours,
+      ],
+      'Doorway Mappings': [
+        MODULES.doorways,
+      ],
+      'Address': [
+        MODULES.address,
+      ]
+    },
+    floor: {
+      'General': [
+        MODULES.generalInfo,
+        MODULES.tags,
+        MODULES.teams,
+        MODULES.dangerZone,
+      ],
+      'Operating Hours': [
+        MODULES.operatingHours,
+      ],
+      'Doorway Mappings': [
+        MODULES.doorways,
+      ],
+    },
+    space: {
+      'General': [
+        MODULES.generalInfo,
+        MODULES.metadata,
+        MODULES.tags,
+        MODULES.teams,
+        MODULES.dangerZone,
+      ],
+      'Operating Hours': [
+        MODULES.operatingHours,
+      ],
+      'Doorway Mappings': [
+        MODULES.doorways,
+      ],
+    },
   };
 
   return (
     <div className={styles.moduleContainer}>
-      <div className={styles.moduleInner}>
-        {MODULES_BY_SPACE_TYPE[space_type].map((mod, index) => (
+      <div className={styles.moduleLeftNav}>
+        {Object.keys(MODULES_BY_SPACE_TYPE[space_type]).map((key, index) => (
+          <div
+            key={key}
+            className={styles.moduleLink}
+            onClick={() => setCurrentSection(key)}
+          >{key}</div>
+        ))}
+      </div>
+      <div className={styles.moduleMainSection}>
+        {Object.keys(MODULES_BY_SPACE_TYPE[space_type]).map((key, index) => (
           // Note: normally using the index would be not optimal as a key, but the order of these
           // modules in the array is stable / isn't going to change so I think it is preferrable to
           // adding an explicit key to each one.
-          <div key={index} className={styles.moduleWrapper}>
-            {mod}
-          </div>
+          currentSection === key ? 
+            <div key={key}>
+              {MODULES_BY_SPACE_TYPE[space_type][key].map((module, index) => (
+                <div key={index} className={styles.moduleWrapper}>
+                  {module}
+                </div>
+              ))}
+            </div> : null
         ))}
       </div>
     </div>

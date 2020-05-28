@@ -3,14 +3,23 @@
 
 .moduleContainer {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: center;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   background-color: $gray000;
   height: 100%;
 }
-.moduleInner { padding-top: 64px; }
+.moduleLeftNav {
+  padding: 64px;
+}
+.moduleMainSection {
+  margin-top: 64px;
+}
+.moduleLink {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  cursor: pointer;
+}
 .moduleWrapper {
   margin-bottom: 24px;
   padding-left: 16px;
