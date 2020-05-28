@@ -175,7 +175,7 @@ export default function AppNavbar({
           {stringToBoolean(settings.queue_enabled) ? <AppNavbarItem
             selected={['QUEUE_SPACE_LIST', 'QUEUE_SPACE_DETAIL'].includes(page)}
             showOnMobile={true}
-            path="#/display/spaces"
+            path="https://safe.density.io/#/displays"
             icon={<Icons.PersonHuddle />}
             text="Safe Display"
           /> : null}
