@@ -1,6 +1,7 @@
 import moment from 'moment-timezone';
 
 import { REDIRECT_AFTER_LOGIN } from '../../rx-actions/miscellaneous/redirect-after-login';
+import { ROUTE_TRANSITION_LOGIN_ERROR } from '../../rx-actions/route-transition/login-error';
 import { SHOW_DASHBOARDS_SIDEBAR } from '../../rx-actions/miscellaneous/show-dashboards-sidebar';
 import { HIDE_DASHBOARDS_SIDEBAR } from '../../rx-actions/miscellaneous/hide-dashboards-sidebar';
 import { SET_DASHBOARD_DATE, SCRUB_DASHBOARD_DATE } from '../../rx-actions/miscellaneous/set-dashboard-date';
@@ -11,12 +12,14 @@ export type MiscellaneousState = {
   redirectAfterLogin: string | null,
   dashboardDate: Any<FixInRefactor>,
   dashboardSidebarVisible: boolean,
+  loginError: string | null,
 }
 
 export const initialState: MiscellaneousState = {
   redirectAfterLogin: null,
   dashboardDate: null,
   dashboardSidebarVisible: true,
+  loginError: null,
 };
 
 function shiftDateByWeeks(state, weeks) {
@@ -36,6 +39,8 @@ export function miscellaneousReducer(state: MiscellaneousState, action: Any<FixI
       return { ...state, dashboardDate: action.date };
     case SCRUB_DASHBOARD_DATE:
       return { ...state, dashboardDate: shiftDateByWeeks(state, action.weeks) };
+    case ROUTE_TRANSITION_LOGIN_ERROR:
+      return { ...state, loginError: action.error };
     default:
       return state;
   }

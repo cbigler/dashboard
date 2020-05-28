@@ -8,6 +8,7 @@ import stringToBoolean from '../../helpers/string-to-boolean';
 
 import Login from '../login/index';
 import LoginForgotPassword from '../login/forgot-password';
+import LoginError from '../login/error';
 import Logout from '../logout/index';
 import Account from '../account/index';
 import AccountRegistration from '../account-registration/index';
@@ -116,6 +117,7 @@ const App: React.FunctionComponent<{
           case 'BLANK':
           case 'LOGIN':
           case 'LOGIN_FORGOT_PASSWORD':
+          case 'LOGIN_ERROR':
           case 'LOGOUT':
           case 'ACCOUNT_REGISTRATION':
           case 'ACCOUNT_FORGOT_PASSWORD':
@@ -151,6 +153,8 @@ function ActivePage({activePage, user, settings}) {
     return <Login />;
   case "LOGIN_FORGOT_PASSWORD":
     return <LoginForgotPassword />;
+  case "LOGIN_ERROR":
+    return <LoginError />;
   case "ADMIN_USER_MANAGEMENT":
   case "ADMIN_DEVELOPER":
   case "ADMIN_INTEGRATIONS":
