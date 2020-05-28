@@ -21,6 +21,9 @@ jobs:
           name: "Install dependencies"
           command: npm i
       - run:
+          name: "Run type checking"
+          command: npm run typecheck
+      - run:
           name: "Run tests"
           command: npm test
       - save_cache:

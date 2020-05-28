@@ -72,6 +72,7 @@
     "enzyme-adapter-react-16": "^1.15.1",
     "mockdate": "^2.0.5",
     "node-sass": "^4.14.1",
+    "prettier": "^2.0.5",
     "react-app-rewired": "^2.1.6",
     "react-docgen-typescript-loader": "^3.5.0",
     "react-docgen-typescript-webpack-plugin": "^1.1.0",
@@ -82,6 +83,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
+    "typecheck": "tsc --noEmit -p .",
     "test": "react-scripts test --env=jsdom --verbose=true",
     "make-component": "./utilities/make-component",
     "make-helper": "./utilities/make-helper",
