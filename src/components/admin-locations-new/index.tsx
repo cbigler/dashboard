@@ -43,7 +43,7 @@ type AdminLocationsNewProps = {
 const SPACE_TYPE_TO_NAME = {
   campus: 'Campus',
   building: 'Building',
-  floor: 'Level',
+  floor: 'Floor',
   space: 'Space',
 };
 
@@ -150,6 +150,7 @@ class AdminLocationsNewUnconnected extends Component<AdminLocationsNewProps, Adm
               {spaceManagement.view === 'VISIBLE' ? (
                 <SpaceTypeForm
                   space_type={newSpaceType}
+                  spaces={this.props.spaceManagement.spaces.data}
                   spaceHierarchy={this.props.spaceManagement.spaceHierarchy}
                   formState={this.props.spaceManagement.formState}
                   tagsCollection={this.props.tagsCollection}

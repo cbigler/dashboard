@@ -8,6 +8,7 @@ import spaceManagementReset from '../../rx-actions/space-management/reset';
 import spaceManagementFormUpdate from '../../rx-actions/space-management/form-update';
 import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/form-doorway-update';
 
+import colorVariables from '@density/ui/variables/colors.json';
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
 import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields, SpaceManagementState } from '../../rx-stores/space-management';
 
@@ -40,6 +41,7 @@ import useRxDispatch from '../../helpers/use-rx-dispatch';
 type AdminLocationsFormProps = {
   space_type: CoreSpace["space_type"],
   spaceHierarchy: Array<CoreSpaceHierarchyNode>,
+  spaces: CoreSpace[],
   formState: { [key: string]: any },
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
@@ -48,9 +50,19 @@ type AdminLocationsFormProps = {
   operationType: 'CREATE' | 'UPDATE',
 };
 
+function RecursiveBreadcrumb({ spaces, id }: { spaces: CoreSpace[], id: string }) {
+  const space = spaces.find(x => x.id === id);
+  const parent = space ? spaces.find(x => x.id === space.parent_id) : null;
+  return <Fragment>
+    {parent ? <Fragment><RecursiveBreadcrumb spaces={spaces} id={parent.id} />&nbsp;{'>'}&nbsp;</Fragment> : null}
+    {space ? space.name : null}
+  </Fragment>
+}
+
 // A component that renders all the space management modules for the given space type
 export function SpaceTypeForm({
   space_type,
+  spaces,
   spaceHierarchy,
   formState,
   tagsCollection,
@@ -135,8 +147,6 @@ export function SpaceTypeForm({
     campus: {
       'General': [
         MODULES.generalInfo,
-        MODULES.tags,
-        MODULES.teams,
         MODULES.dangerZone,
       ],
       'Operating Hours': [
@@ -147,14 +157,16 @@ export function SpaceTypeForm({
       ],
       'Address': [
         MODULES.address,
-      ]
+      ],
+      'Tags and Teams': [
+        MODULES.tags,
+        MODULES.teams,
+      ],
     },
     building: {
       'General': [
         MODULES.generalInfo,
         MODULES.metadata,
-        MODULES.tags,
-        MODULES.teams,
         MODULES.dangerZone,
       ],
       'Operating Hours': [
@@ -165,13 +177,15 @@ export function SpaceTypeForm({
       ],
       'Address': [
         MODULES.address,
-      ]
+      ],
+      'Tags and Teams': [
+        MODULES.tags,
+        MODULES.teams,
+      ],
     },
     floor: {
       'General': [
         MODULES.generalInfo,
-        MODULES.tags,
-        MODULES.teams,
         MODULES.dangerZone,
       ],
       'Operating Hours': [
@@ -179,14 +193,16 @@ export function SpaceTypeForm({
       ],
       'Doorway Mappings': [
         MODULES.doorways,
+      ],
+      'Tags and Teams': [
+        MODULES.tags,
+        MODULES.teams,
       ],
     },
     space: {
       'General': [
         MODULES.generalInfo,
         MODULES.metadata,
-        MODULES.tags,
-        MODULES.teams,
         MODULES.dangerZone,
       ],
       'Operating Hours': [
@@ -194,6 +210,10 @@ export function SpaceTypeForm({
       ],
       'Doorway Mappings': [
         MODULES.doorways,
+      ],
+      'Tags and Teams': [
+        MODULES.tags,
+        MODULES.teams,
       ],
     },
   };
@@ -201,12 +221,25 @@ export function SpaceTypeForm({
   return (
     <div className={styles.moduleContainer}>
       <div className={styles.moduleLeftNav}>
+        <div className={styles.moduleLeftNavHeader}>
+          <div className={styles.moduleLeftNavTitle}>
+            {formState.name || <span style={{color: colorVariables.gray400}}>New {SPACE_TYPE_TO_NAME[formState.space_type]}</span>}
+          </div>
+          {formState.parent_id ? 
+            <div className={styles.moduleLeftNavBreadcrumb}>
+              <RecursiveBreadcrumb spaces={spaces} id={formState.parent_id}/>
+            </div> : null}
+        </div>
         {Object.keys(MODULES_BY_SPACE_TYPE[space_type]).map((key, index) => (
           <div
             key={key}
             className={styles.moduleLink}
+            style={{fontWeight: currentSection === key ? 'bold' : undefined}}
             onClick={() => setCurrentSection(key)}
-          >{key}</div>
+          >
+            {key}
+            {currentSection === key ? <div className={styles.itemSelectedIndicator}></div> : undefined}
+          </div>
         ))}
       </div>
       <div className={styles.moduleMainSection}>
@@ -343,6 +376,7 @@ class AdminLocationsEdit extends Component<AdminLocationsEditProps, AdminLocatio
                 <SpaceTypeForm
                   space_type={selectedSpace.space_type}
                   spaceHierarchy={spaceManagement.spaceHierarchy}
+                  spaces={spaceManagement.spaces.data}
                   formState={spaceManagement.formState}
                   tagsCollection={tagsCollection}
                   assignedTeamsCollection={assignedTeamsCollection}

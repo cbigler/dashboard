@@ -2,11 +2,6 @@
 @import "@density/ui/variables/fonts.scss";
 @import "@density/ui/variables/spacing.scss";
 
-.lists {
-  -webkit-overflow-scrolling: touch;
-  overflow-y: auto;
-  max-height: 400px;
-}
 .list {
   min-height: 144px;
   padding-top: 24px;
@@ -15,9 +10,10 @@
   padding-bottom: 32px;
 }
 .list.shaded {
-  margin-bottom: -1px;
   background-color: $gray000;
   border-top: 1px solid $gray200;
+  border-bottom-left-radius: $borderRadiusBase;
+  border-bottom-right-radius: $borderRadiusBase;
 }
 .name {
   white-space: nowrap;

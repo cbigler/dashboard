@@ -685,7 +685,7 @@ function AdminLocationsDetailModulesDoorways({
         />
       ) : null}
 
-      <AdminLocationsDetailModule title="Doorways" includePadding={false}>
+      <AdminLocationsDetailModule title="Doorway Mappings" includePadding={false}>
         <AppBar>
           <AppBarSection>
             <InputBox

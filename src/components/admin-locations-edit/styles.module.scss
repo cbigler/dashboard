@@ -1,31 +1,61 @@
 @import "@density/ui/variables/colors.scss";
+@import "@density/ui/variables/spacing.scss";
 .appBarWrapper { background-color: #fff; }
 
 .moduleContainer {
   display: flex;
   justify-content: center;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  background-color: $gray000;
   height: 100%;
 }
 .moduleLeftNav {
-  padding: 64px;
+  margin-top: 64px;
+  padding: 12px 24px;
+  width: 320px;
+  background-color: $gray000;
+  border-radius: $borderRadiusBase;
+  border: 1px solid $gray200;
+  align-self: flex-start;
+}
+.moduleLeftNavHeader {
+  margin-left: -24px;
+  margin-right: -24px;
+  margin-bottom: 12px;
+  padding-left: 24px;
+  padding-right: 24px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid $gray200;
+}
+.moduleLeftNavTitle {
+  font-size: 24px;
+  font-weight: 500;
+  color: $midnight;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.moduleLeftNavBreadcrumb {
+  color: $gray400;
+  font-size: 18px;
+  margin-bottom: 12px;
 }
 .moduleMainSection {
-  margin-top: 64px;
+  padding: 64px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .moduleLink {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  padding-right: 8px;
   cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .moduleWrapper {
   margin-bottom: 24px;
   padding-left: 16px;
   padding-right: 16px;
   width: 100%;
-  max-width: 848px;
   box-sizing: border-box;
 }
 
@@ -41,4 +71,11 @@
   align-items: center;
   justify-content: center;
   height: calc(100vh - 40px);
+}
+
+.itemSelectedIndicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 4px;
+  background: $blue;
 }
