@@ -23,8 +23,6 @@ import AdminLocationsNew from '../admin-locations-new/index';
 import DashboardsList from '../dashboards-list/index';
 import DashboardsEdit from '../dashboard-edit/index';
 import Analytics from '../analytics';
-import QueueSpaceList from '../queue-space-list/index';
-import QueueSpaceDetail from '../queue-space-detail/index';
 import Dialogger from '../dialogger';
 import Toaster from '../toaster';
 
@@ -122,7 +120,6 @@ const App: React.FunctionComponent<{
           case 'ACCOUNT_REGISTRATION':
           case 'ACCOUNT_FORGOT_PASSWORD':
           case 'LIVE_SPACE_DETAIL':
-          case 'QUEUE_SPACE_DETAIL':
             return null;
 
           // Render the logged-in navbar by default
@@ -192,10 +189,6 @@ function ActivePage({activePage, user, settings}) {
     return <DashboardsEdit />;
   case "ANALYTICS":
     return <Analytics />;
-  case "QUEUE_SPACE_DETAIL":
-    return <QueueSpaceDetail />
-  case "QUEUE_SPACE_LIST":
-    return <QueueSpaceList />
 
   // When logging out, navigate to this page (it's empty) to ensure that removing things like the
   // token doesn't cause weird stuff in components that expect it to exist.
