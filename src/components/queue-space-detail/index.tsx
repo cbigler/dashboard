@@ -299,6 +299,9 @@ const QueueSpaceDetail: React.FunctionComponent = () => {
           </div>
         )}
       </div>
+
+      {/* Version */}
+      <p className={styles.version}>Version 0.1.0</p>
     </div>
   );
 }
