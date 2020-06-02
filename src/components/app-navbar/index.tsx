@@ -10,6 +10,7 @@ import can, { PERMISSION_CODES } from '../../helpers/permissions';
 import stringToBoolean from '../../helpers/string-to-boolean';
 
 import { ROLE_INFO } from '../../helpers/permissions/index';
+import generateDisplayPrototypeUrl from '../../helpers/generate-display-prototype-url';
 
 function getUserLabel(user, hidden) {
   if (hidden) {
@@ -137,6 +138,8 @@ export default function AppNavbar({
     return u.toString();
   })();
 
+  const safeDisplayUrl = generateDisplayPrototypeUrl('/displays');
+
   return (
     <div className={styles.appNavbarContainer}>
       <div className={styles.appNavbar}>
@@ -173,9 +176,9 @@ export default function AppNavbar({
             text="Live"
           />
           {stringToBoolean(settings.queue_enabled) ? <AppNavbarItem
-            selected={['QUEUE_SPACE_LIST', 'QUEUE_SPACE_DETAIL'].includes(page)}
+            selected={false}
             showOnMobile={true}
-            path="#/display/spaces"
+            path={safeDisplayUrl}
             icon={<Icons.PersonHuddle />}
             text="Safe Display"
           /> : null}

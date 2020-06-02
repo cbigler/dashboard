@@ -69,8 +69,6 @@ import routeTransitionAdminDeviceStatus from './rx-actions/route-transition/admi
 import routeTransitionAdminLocations from './rx-actions/route-transition/admin-locations';
 import routeTransitionAdminLocationsEdit from './rx-actions/route-transition/admin-locations-edit';
 import routeTransitionAdminLocationsNew from './rx-actions/route-transition/admin-locations-new';
-import routeTransitionQueueSpaceDetail from './rx-actions/route-transition/queue-space-detail';
-import routeTransitionQueueSpaceList from './rx-actions/route-transition/queue-space-list';
 import { AnalyticsActionType } from './rx-actions/analytics';
 
 import sessionTokenSet from './rx-actions/session-token/set';
@@ -86,6 +84,7 @@ import handleVisibilityChange from './helpers/visibility-change';
 import fetchAllObjects, { fetchObject } from './helpers/fetch-all-objects';
 import { formatInISOTime, getCurrentLocalTimeAtSpace } from './helpers/space-time-utilities';
 import { configureClients } from './helpers/unsafe-configure-app';
+import generateDisplayPrototypeUrl from './helpers/generate-display-prototype-url';
 
 import SessionTokenStore from './rx-stores/session-token';
 import { SessionTokenState } from './types/session-token';
@@ -193,17 +192,17 @@ router.addRoute('admin/locations/:id', id => routeTransitionAdminLocations(rxDis
 router.addRoute('admin/locations/:id/edit', id => routeTransitionAdminLocationsEdit(rxDispatch, id));
 router.addRoute('admin/locations/:id/create/:space_type', (id, space_type) => routeTransitionAdminLocationsNew(rxDispatch, id, space_type));
 router.addRoute('analytics', async () => rxDispatch({ type: AnalyticsActionType.ROUTE_TRANSITION_ANALYTICS }));
-router.addRoute("display/spaces/:id", (id) =>
-  routeTransitionQueueSpaceDetail(rxDispatch, id)
-);
-router.addRoute("display/spaces", () =>
-  routeTransitionQueueSpaceList(rxDispatch)
-);
+router.addRoute("display/spaces/:id", async (id) => {
+  window.location.href = generateDisplayPrototypeUrl(`/displays/${id}`);
+});
+router.addRoute("display/spaces", async () => {
+  window.location.href = generateDisplayPrototypeUrl(`/displays`);
+});
 router.addRoute("queue/spaces/:id", async (id) => {
-  window.location.href = `#/display/spaces/${id}`;
+  window.location.href = generateDisplayPrototypeUrl(`/displays/${id}`);
 });
 router.addRoute("queue/spaces", async () => {
-  window.location.href = `#/display/spaces`;
+  window.location.href = generateDisplayPrototypeUrl(`/displays`);
 });
 
 // FIXME: why can't this just use state management? why is this on window?
