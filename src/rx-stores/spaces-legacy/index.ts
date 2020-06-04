@@ -22,7 +22,6 @@ import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-trans
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../rx-actions/route-transition/admin-locations-edit';
-import { SORT_A_Z, SORT_NEWEST } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../rx-actions/modal/show';
 import { HIDE_MODAL } from '../../rx-actions/modal/hide';
 
