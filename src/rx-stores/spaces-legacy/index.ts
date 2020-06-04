@@ -22,7 +22,7 @@ import { ROUTE_TRANSITION_LIVE_SPACE_DETAIL } from '../../rx-actions/route-trans
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS } from '../../rx-actions/route-transition/admin-locations';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_NEW } from '../../rx-actions/route-transition/admin-locations-new';
 import { ROUTE_TRANSITION_ADMIN_LOCATIONS_EDIT } from '../../rx-actions/route-transition/admin-locations-edit';
-import { SORT_A_Z } from '../../helpers/sort-collection/index';
+import { SORT_A_Z, SORT_NEWEST } from '../../helpers/sort-collection/index';
 import { SHOW_MODAL } from '../../rx-actions/modal/show';
 import { HIDE_MODAL } from '../../rx-actions/modal/hide';
 
@@ -34,11 +34,6 @@ import createRxStore from '..';
 // Store at maximum 500 events per space
 const EVENT_QUEUE_LENGTH = 500;
 
-// How long should data be fetched when running utilization calculations?
-const DATA_DURATION_WEEK = 'DATA_DURATION_WEEK';
-      // DATA_DURATION_MONTH = 'DATA_DURATION_MONTH';
-
-
 export type SpacesLegacyState = {
   view: 'LOADING' | 'VISIBLE' | 'ERROR',
   data: CoreSpace[],
@@ -46,21 +41,19 @@ export type SpacesLegacyState = {
   error: unknown,
   selected: CoreSpace['id'] | null,
   filters: {
-    doorway_id: Any<FixInRefactor>,
+    doorway_id: string | null,
     search: string,
-    sort: Any<FixInRefactor>,
-    parent: Any<FixInRefactor>,
-    timeSegmentLabel: Any<FixInRefactor>,
-    dataDuration: Any<FixInRefactor>,
-    metricToDisplay: Any<FixInRefactor>,
-    dailyRawEventsPage: number,
-
-    startDate: Any<FixInRefactor>,
-    endDate: Any<FixInRefactor>,
-    date: Any<FixInRefactor>,
+    parent: string | null,
+    timeSegmentLabel: string,
+    startDate: string | null,
+    endDate: string | null,
+    date: string | null,
   },
   events: {
-    [space_id: string]: Any<FixInRefactor>[]
+    [space_id: string]: Array<{
+      timestamp: string,
+      countChange: number,
+    }>
   }
 }
 
@@ -73,14 +66,8 @@ export const initialState: SpacesLegacyState = {
   filters: {
     doorway_id: null,
     search: '',
-    sort: SORT_A_Z,
     parent: null,
-
     timeSegmentLabel: DEFAULT_TIME_SEGMENT_LABEL,
-    dataDuration: DATA_DURATION_WEEK,
-
-    metricToDisplay: 'entrances',
-    dailyRawEventsPage: 1,
 
     // Used for date ranges
     startDate: null,
@@ -93,7 +80,7 @@ export const initialState: SpacesLegacyState = {
   // An object that maps space id to an array of events
   events: {
     /* For example:
-    'spc_XXXX': [{timestamp: '2017-07-24T12:37:42.946Z', direction: 1}],
+    'spc_XXXX': [{timestamp: '2017-07-24T12:37:42.946Z', countChange: 1}],
     */
   },
 };
