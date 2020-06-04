@@ -20,7 +20,15 @@ import { SpacesLegacyState } from '../../rx-stores/spaces-legacy';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 
-function SpaceList({ user, spaces, renderedSpaces }) {
+function SpaceList({
+  user,
+  spaces,
+  renderedSpaces,
+}: {
+  user: UserState,
+  spaces: SpacesLegacyState,
+  renderedSpaces: CoreSpace[],
+}) {
   return (
     <div className={styles.spaceList}>
       <ListView
