@@ -11,8 +11,8 @@ import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-leg
 describe('spaces', function() {
   it('should set spaces when given a bunch of spaces', function() {
     const result = spacesLegacyReducer(initialState, collectionSpacesSet([
-      {id: 0, name: 'foo', current_count: 5},
-      {id: 1, name: 'bar', current_count: 8},
+      {id: '0', name: 'foo', current_count: 5},
+      {id: '1', name: 'bar', current_count: 8},
     ]));
 
     assert.deepEqual(result, {
@@ -20,22 +20,22 @@ describe('spaces', function() {
       view: 'VISIBLE',
       loading: false,
       data: [
-        {id: 0, name: 'foo', current_count: 5},
-        {id: 1, name: 'bar', current_count: 8},
+        {id: '0', name: 'foo', current_count: 5},
+        {id: '1', name: 'bar', current_count: 8},
       ],
     });
   });
   it('should push space when given a space update', function() {
     // Add a new space.
     const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush({
-      id: 0,
+      id: '0',
       name: 'foo',
       current_count: 4,
     }));
 
     // Update space in collection
     const spaceUpdatedInCollection = spacesLegacyReducer(spaceInCollection, collectionSpacesPush({
-      id: 0,
+      id: '0',
       name: 'new name',
     }));
 
@@ -48,7 +48,7 @@ describe('spaces', function() {
   });
   it('should push space when given a new space', function() {
     const result = spacesLegacyReducer(initialState, collectionSpacesPush({
-      id: 0,
+      id: '0',
       name: 'foo',
       current_count: 5,
     }));
@@ -57,7 +57,7 @@ describe('spaces', function() {
       ...initialState,
       view: 'VISIBLE',
       loading: false,
-      data: [{id: 0, name: 'foo', current_count: 5}],
+      data: [{id: '0', name: 'foo', current_count: 5}],
     });
   });
   it('should filter space collection when given a filter', function() {
@@ -70,7 +70,7 @@ describe('spaces', function() {
   });
   it('should delete a space from the spaces collection', function() {
     const SPACE = {
-      id: 0,
+      id: '0',
       name: 'foo',
       current_count: 5,
     };
@@ -102,16 +102,16 @@ describe('spaces', function() {
   it('should clear the parent space filter on set if the parent space was deleted', function() {
     // Set two spaces
     const resulta = spacesLegacyReducer(initialState, collectionSpacesSet([
-      {id: 0, name: 'foo', current_count: 5},
-      {id: 1, name: 'bar', current_count: 8},
+      {id: '0', name: 'foo', current_count: 5},
+      {id: '1', name: 'bar', current_count: 8},
     ]));
 
     // Set the selected parent space equal to one of those spaces
-    initialState.filters.parent = 1;
+    initialState.filters.parent = '1';
 
     // Set one space
     const resultb = spacesLegacyReducer(resulta, collectionSpacesSet([
-      {id: 0, name: 'foo', current_count: 5},
+      {id: '0', name: 'foo', current_count: 5},
     ]));
 
     // Ensure that the parent filter has been cleared, since the space that was in there no longer
