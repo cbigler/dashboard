@@ -165,10 +165,10 @@ const ConnectedAutoRefreshedLiveSpaceList: React.FC = () => {
     await hideModal(dispatch);
   }
   const onSpaceSearch = (searchQuery: string) => {
-    dispatch(collectionSpacesFilter('search', searchQuery) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter('search', searchQuery));
   }
   const onSpaceChangeParent = (parent_id: string) => {
-    dispatch(collectionSpacesFilter('parent', parent_id) as Any<FixInRefactor>);
+    dispatch(collectionSpacesFilter('parent', parent_id));
   }
 
   return (

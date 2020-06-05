@@ -6,6 +6,7 @@ import { COLLECTION_SPACES_PUSH } from '../rx-actions/collection/spaces-legacy/p
 import { COLLECTION_SPACES_UPDATE } from '../rx-actions/collection/spaces-legacy/update';
 import { COLLECTION_SPACE_HIERARCHY_SET } from '../rx-actions/collection/space-hierarchy/set';
 import collectionSpacesCountChange from '../rx-actions/collection/spaces-legacy/count-change';
+import collectionSpacesFilter from '../rx-actions/collection/spaces-legacy/filter';
 import collectionSpacesSetEvents, { collectionSpacesBatchSetEvents } from '../rx-actions/collection/spaces-legacy/set-events';
 import collectionSpacesSetDefaultTimeRange from '../rx-actions/collection/spaces-legacy/set-default-time-range';
 import { TRANSITION_TO_SHOW_MODAL, SHOW_MODAL } from '../rx-actions/modal/show';
@@ -17,6 +18,7 @@ export type CollectionSpacesSet = { type: typeof COLLECTION_SPACES_SET, data: Ar
 export type CollectionSpacesCountChange = ReturnType<typeof collectionSpacesCountChange>;
 export type CollectionSpacesDelete = { type: typeof COLLECTION_SPACES_DELETE, item: CoreSpace };
 export type CollectionSpacesError = { type: typeof COLLECTION_SPACES_ERROR, error: Error | string };
+export type CollectionSpacesFilter = ReturnType<typeof collectionSpacesFilter>;
 export type CollectionSpacesPush = { type: typeof COLLECTION_SPACES_PUSH, item: CoreSpace };
 export type CollectionSpacesSetDefaultTimeRange = ReturnType<typeof collectionSpacesSetDefaultTimeRange>;
 export type CollectionSpacesSetEvents = ReturnType<typeof collectionSpacesSetEvents>;
@@ -37,6 +39,7 @@ export type ReduxAction = (
   CollectionSpacesCountChange |
   CollectionSpacesDelete |
   CollectionSpacesError |
+  CollectionSpacesFilter |
   CollectionSpacesPush |
   CollectionSpacesSetDefaultTimeRange |
   CollectionSpacesSetEvents |
