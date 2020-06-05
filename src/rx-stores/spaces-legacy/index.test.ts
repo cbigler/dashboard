@@ -24,11 +24,12 @@ describe('spaces', function() {
   });
   it('should push space when given a space update', function() {
     // Add a new space.
-    const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush({
+    const newSpace = createSpace({
       id: '0',
       name: 'foo',
       current_count: 4,
-    }));
+    })
+    const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush(newSpace));
 
     // Update space in collection
     const spaceUpdatedInCollection = spacesLegacyReducer(spaceInCollection, collectionSpacesPush({
@@ -36,12 +37,10 @@ describe('spaces', function() {
       name: 'new name',
     }));
 
-    assert.deepEqual(spaceUpdatedInCollection, {
-      ...initialState,
-      view: 'VISIBLE',
-      loading: false,
-      data: [{id: 0, name: 'new name', current_count: 4}],
-    });
+    expect(spaceUpdatedInCollection.view).toEqual('VISIBLE')
+    expect(spaceUpdatedInCollection.loading).toEqual(false)
+    expect(spaceUpdatedInCollection.data.length).toEqual(1)
+    expect(spaceUpdatedInCollection.data[0]).toMatchObject({id: '0', name: 'new name', current_count: 4})
   });
   it('should push space when given a new space', function() {
     const result = spacesLegacyReducer(initialState, collectionSpacesPush({
@@ -66,11 +65,11 @@ describe('spaces', function() {
     });
   });
   it('should delete a space from the spaces collection', function() {
-    const SPACE = {
+    const SPACE = createSpace({
       id: '0',
       name: 'foo',
       current_count: 5,
-    };
+    });
 
     // Add a space, then delete a space
     const spaceInCollection = spacesLegacyReducer(initialState, collectionSpacesPush(SPACE));

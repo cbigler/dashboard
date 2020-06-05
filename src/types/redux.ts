@@ -1,6 +1,6 @@
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import collectionSpacesSet from '../rx-actions/collection/spaces-legacy/set';
-import collectionSpacesDelete, { COLLECTION_SPACES_DELETE } from '../rx-actions/collection/spaces-legacy/delete';
+import collectionSpacesDelete from '../rx-actions/collection/spaces-legacy/delete';
 import collectionSpacesError from '../rx-actions/collection/spaces-legacy/error';
 import collectionSpacesPush from '../rx-actions/collection/spaces-legacy/push';
 import collectionSpacesCountChange from '../rx-actions/collection/spaces-legacy/count-change';
