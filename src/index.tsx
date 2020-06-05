@@ -371,7 +371,7 @@ livePageEventSource.on('space', countChangeEvent => {
   // So we're sending out many "count changes" in the case of an OB1 reset
   let absoluteDelta = Math.abs(countChangeEvent.direction);
   while (absoluteDelta > 0) {
-    (rxDispatch as Any<FixInReview>)(collectionSpacesCountChange({
+    rxDispatch(collectionSpacesCountChange({
       id: countChangeEvent.space_id,
       timestamp: countChangeEvent.timestamp,
       countChange: countChangeEvent.direction > 0 ? 1 : -1,
