@@ -10,7 +10,7 @@ import spaceManagementFormDoorwayUpdate from '../../rx-actions/space-management/
 
 import colorVariables from '@density/ui/variables/colors.json';
 import { CoreSpace, CoreSpaceHierarchyNode } from '@density/lib-api-types/core-v2/spaces';
-import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields, SpaceManagementState } from '../../rx-stores/space-management';
+import SpaceManagementStore, { AdminLocationsFormState, convertFormStateToSpaceFields, SpaceManagementState, AdminLocationsSpaceFieldUpdate } from '../../rx-stores/space-management';
 
 import {
   AdminLocationsDetailModulesGeneralInfo,
@@ -406,7 +406,7 @@ const ConnectedAdminLocationsEdit = () => {
 
   const selectedSpace = spaceManagement.spaces.data.find(s => s.id === spaceManagement.spaces.selected)
 
-  const onSave = async (space_id, spaceFieldUpdate) => {
+  const onSave = async (space_id: string, spaceFieldUpdate: AdminLocationsSpaceFieldUpdate) => {
     const ok = await collectionSpacesUpdate(dispatch, {
       ...spaceFieldUpdate,
       id: space_id,

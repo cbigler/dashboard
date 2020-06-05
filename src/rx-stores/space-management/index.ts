@@ -275,12 +275,16 @@ function calculateInitialFormState({
   };
 }
 
+export type AdminLocationsSpaceFieldUpdate = ReturnType<typeof convertFormStateToSpaceFields> & {
+  id: string,
+}
+
 // Given the state of the form, convert that state back into fields that can be sent in the body of
 // a PUT to the space.
 export function convertFormStateToSpaceFields(
   formState: AdminLocationsFormState,
   space_type: CoreSpace["space_type"],
-): object {
+) {
   function parseIntOrNull(string) {
     const result = parseInt(string, 10);
     if (isNaN(result)) {

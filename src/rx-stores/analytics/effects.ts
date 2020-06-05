@@ -243,7 +243,7 @@ export function registerRouteTransitionEffects(
         return fetchAllObjects<CoreSpace>('/spaces');
       }
     }),
-    map(spaces => collectionSpacesSet(spaces)),
+    map(spaces => collectionSpacesSet(spaces as Array<CoreSpace>)),
   );
 
   const spaceHierarchyLoadStream = routeTransitionStream.pipe(

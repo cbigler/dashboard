@@ -7,23 +7,20 @@ import collectionSpacesFilter from '../../rx-actions/collection/spaces-legacy/fi
 import collectionSpacesDelete from '../../rx-actions/collection/spaces-legacy/delete';
 import collectionSpacesError from '../../rx-actions/collection/spaces-legacy/error';
 import { COLLECTION_SPACES_UPDATE } from '../../rx-actions/collection/spaces-legacy/update'; 
+import { createSpace } from '../../helpers/test-utilities/objects/space';
 
 describe('spaces', function() {
   it('should set spaces when given a bunch of spaces', function() {
     const result = spacesLegacyReducer(initialState, collectionSpacesSet([
-      {id: '0', name: 'foo', current_count: 5},
-      {id: '1', name: 'bar', current_count: 8},
+      createSpace({id: '0', name: 'foo', current_count: 5}),
+      createSpace({id: '1', name: 'bar', current_count: 8}),
     ]));
 
-    assert.deepEqual(result, {
-      ...initialState,
-      view: 'VISIBLE',
-      loading: false,
-      data: [
-        {id: '0', name: 'foo', current_count: 5},
-        {id: '1', name: 'bar', current_count: 8},
-      ],
-    });
+    expect(result.view).toEqual('VISIBLE')
+    expect(result.loading).toEqual(false)
+    expect(result.data.length).toEqual(2)
+    expect(result.data[0]).toMatchObject({id: '0', name: 'foo', current_count: 5})
+    expect(result.data[1]).toMatchObject({id: '1', name: 'bar', current_count: 8})
   });
   it('should push space when given a space update', function() {
     // Add a new space.
@@ -97,13 +94,13 @@ describe('spaces', function() {
     const state = spacesLegacyReducer(errorState, {type: COLLECTION_SPACES_UPDATE});
 
     // Initial state should then have error: null
-    assert.deepEqual(state, {...initialState, error: null, loading: true});
+    expect(state.error).toEqual(null)
   });
   it('should clear the parent space filter on set if the parent space was deleted', function() {
     // Set two spaces
     const resulta = spacesLegacyReducer(initialState, collectionSpacesSet([
-      {id: '0', name: 'foo', current_count: 5},
-      {id: '1', name: 'bar', current_count: 8},
+      createSpace({id: '0', name: 'foo', current_count: 5}),
+      createSpace({id: '1', name: 'bar', current_count: 8}),
     ]));
 
     // Set the selected parent space equal to one of those spaces
@@ -111,7 +108,7 @@ describe('spaces', function() {
 
     // Set one space
     const resultb = spacesLegacyReducer(resulta, collectionSpacesSet([
-      {id: '0', name: 'foo', current_count: 5},
+      createSpace({id: '0', name: 'foo', current_count: 5}),
     ]));
 
     // Ensure that the parent filter has been cleared, since the space that was in there no longer

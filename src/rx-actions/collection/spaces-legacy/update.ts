@@ -9,6 +9,8 @@ import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
 import { showToast, hideToast } from '../../toasts';
+import { DispatchType } from '../../../types/rx-actions';
+import { AdminLocationsSpaceFieldUpdate } from '../../../rx-stores/space-management';
 
 export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
 
@@ -23,13 +25,14 @@ function convertSecondsIntoTime(seconds) {
     .format('HH:mm:ss');
 }
 
-export default async function collectionSpacesUpdate(dispatch, item) {
+export default async function collectionSpacesUpdate(dispatch: DispatchType, item: AdminLocationsSpaceFieldUpdate) {
   dispatch({ type: COLLECTION_SPACES_UPDATE, item });
 
   try {
     await core().put(`/spaces/${item.id}`, {
       name: item.name,
-      description: item.description,
+      // REVIEW: this field does not seem to exist in the forms, commenting out for now
+      //description: item.description,
       parent_id: item.parent_id,
       space_type: item.space_type,
       'function': item['function'],
