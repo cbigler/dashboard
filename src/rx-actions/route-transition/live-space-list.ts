@@ -8,17 +8,20 @@ import {
 
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import fetchAllObjects from '../../helpers/fetch-all-objects';
+import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
+import { SpacesLegacySpaceEvent } from '../../rx-stores/spaces-legacy';
+import { DispatchType } from '../../types/rx-actions';
 
 export const ROUTE_TRANSITION_LIVE_SPACE_LIST = 'ROUTE_TRANSITION_LIVE_SPACE_LIST';
 
-export default async function routeTransitionLiveSpaceList(dispatch) {
-  dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_LIST });
+export default async function routeTransitionLiveSpaceList(dispatch: DispatchType) {
+  dispatch({ type: ROUTE_TRANSITION_LIVE_SPACE_LIST } as Any<FixInRefactor>);
 
   const spaces = await fetchAllObjects<CoreSpace>('/spaces');
   dispatch(collectionSpacesSet(spaces));
 
-  const spaceEventSets: any = await Promise.all(spaces.map(space => {
-    return fetchAllObjects(`/spaces/${space.id}/events`, {
+  const spaceEventSets = await Promise.all(spaces.map(space => {
+    return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
       cache: false,
       params: {
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
@@ -33,7 +36,7 @@ export default async function routeTransitionLiveSpaceList(dispatch) {
       timestamp: i.timestamp
     }));
     return acc;
-  }, {});
+  }, {} as {[spaceId: string]: Array<SpacesLegacySpaceEvent>});
 
   dispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
 }

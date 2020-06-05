@@ -33,6 +33,11 @@ import createRxStore from '..';
 // Store at maximum 500 events per space
 const EVENT_QUEUE_LENGTH = 500;
 
+export type SpacesLegacySpaceEvent = {
+  timestamp: string,
+  countChange: number,
+}
+
 export type SpacesLegacyState = {
   view: 'LOADING' | 'VISIBLE' | 'ERROR',
   data: CoreSpace[],
@@ -49,10 +54,7 @@ export type SpacesLegacyState = {
     date: string | null,
   },
   events: {
-    [space_id: string]: Array<{
-      timestamp: string,
-      countChange: number,
-    }>
+    [space_id: string]: Array<SpacesLegacySpaceEvent>
   }
 }
 

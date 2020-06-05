@@ -10,6 +10,7 @@ import {
   formatInISOTime,
 } from '../../helpers/space-time-utilities/index';
 import fetchAllObjects, { fetchObject } from '../../helpers/fetch-all-objects';
+import { CoreSpaceEvent } from '@density/lib-api-types/core-v2/events';
 
 export const ROUTE_TRANSITION_LIVE_SPACE_DETAIL = 'ROUTE_TRANSITION_LIVE_SPACE_DETAIL';
 
@@ -23,7 +24,7 @@ export default async function routeTransitionLiveSpaceDetail(dispatch, id) {
     // Fetch all initial events for the space that was loaded.
     // This is used to populate this space's events collection with all the events from the last
     // minute so that the real time event charts all display as "full" when the page reloads.
-    const spaceEventSet = await fetchAllObjects(`/spaces/${space.id}/events`, {
+    const spaceEventSet = await fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
       cache: false,
       params: {
         id: space.id,

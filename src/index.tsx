@@ -99,6 +99,7 @@ import moment from 'moment-timezone';
 import SpacesStore, { SpacesState } from './rx-stores/spaces';
 import DoorwaysStore, { DoorwaysState } from './rx-stores/doorways';
 import { interval } from 'rxjs';
+import { SpacesLegacySpaceEvent } from './rx-stores/spaces-legacy';
 
 configureClients();
 
@@ -346,7 +347,7 @@ livePageEventSource.on('connected', async () => {
   const spaces = await fetchAllObjects<CoreSpace>('/spaces');
   rxDispatch(collectionSpacesSet(spaces));
 
-  const spaceEventSets: any = await Promise.all(spaces.map(space => {
+  const spaceEventSets = await Promise.all(spaces.map(space => {
     return fetchAllObjects<CoreSpaceEvent>(`/spaces/${space.id}/events`, {
       params: {
         start_time: formatInISOTime(getCurrentLocalTimeAtSpace(space).subtract(1, 'minute')),
@@ -361,8 +362,8 @@ livePageEventSource.on('connected', async () => {
       timestamp: i.timestamp
     }));
     return acc;
-  }, {});
-  (rxDispatch as Any<FixInReview>)(collectionSpacesBatchSetEvents(eventsAtSpaces));
+  }, {} as {[spaceId: string]: Array<SpacesLegacySpaceEvent>});
+  rxDispatch(collectionSpacesBatchSetEvents(eventsAtSpaces));
 });
 
 livePageEventSource.on('space', countChangeEvent => {
