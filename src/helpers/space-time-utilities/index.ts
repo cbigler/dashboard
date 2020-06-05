@@ -3,6 +3,7 @@ import moment from 'moment-timezone';
 import { getGoSlow } from '../../components/environment-switcher';
 import fetchAllObjects from '../fetch-all-objects';
 import { QueryInterval } from '../../types/analytics';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 
 
 export function getBrowserLocalTimeZone() {
@@ -27,7 +28,7 @@ export function serializeMomentToDateString(dateInstance) {
 // ----------------------------------------------------------------------------
 // TIME-RELATED OPERATIONS
 // ----------------------------------------------------------------------------
-export function getCurrentLocalTimeAtSpace(space) {
+export function getCurrentLocalTimeAtSpace(space: CoreSpace) {
   return moment.utc().tz(space.time_zone);
 }
 
@@ -53,7 +54,7 @@ export function parseFromReactDates(momentInstance, space) {
   return momentInstance.tz(space.time_zone).startOf('day');
 }
 
-export function formatInISOTime(timestamp) {
+export function formatInISOTime(timestamp: moment.Moment) {
   return timestamp.utc().toISOString();
 }
 export function formatInISOTimeAtSpace(timestamp, space) {
