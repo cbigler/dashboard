@@ -84,6 +84,7 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "typecheck": "tsc --noEmit -p .",
+    "anycheck": "tsc --noEmit --noImplicitAny -p . || true",
     "test": "react-scripts test --env=jsdom --verbose=true",
     "make-component": "./utilities/make-component",
     "make-helper": "./utilities/make-helper",
