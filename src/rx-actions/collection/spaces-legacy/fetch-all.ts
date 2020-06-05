@@ -3,12 +3,13 @@ import fetchAllObjects from '../../../helpers/fetch-all-objects';
 
 import collectionSpacesError from './error';
 import collectionSpacesSet from './set';
+import { DispatchType } from '../../../types/rx-actions';
 
 export const COLLECTION_SPACES_FETCH_ALL_START = 'COLLECTION_SPACES_FETCH_ALL_START';
 
-export default async function collectionSpacesFetchAll(dispatch) {
+export default async function collectionSpacesFetchAll(dispatch: DispatchType) {
   dispatch({ type: COLLECTION_SPACES_FETCH_ALL_START });
-  let spaces;
+  let spaces: Array<CoreSpace>;
   try {
     spaces = await fetchAllObjects<CoreSpace>('/spaces');
   } catch (err) {
