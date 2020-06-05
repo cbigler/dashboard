@@ -6,6 +6,9 @@ import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
 import { showToast, hideToast } from '../../toasts';
 import formatTagName from '../../../helpers/format-tag-name/index';
+import { DispatchType } from '../../../types/rx-actions';
+import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
+import { AdminLocationsSpaceFormResult } from '../../../rx-stores/space-management';
 
 export const COLLECTION_SPACES_CREATE = 'COLLECTION_SPACES_CREATE';
 
@@ -20,13 +23,14 @@ function convertSecondsIntoTime(seconds) {
     .format('HH:mm:ss');
 }
 
-export default async function collectionSpacesCreate(dispatch, item) {
+export default async function collectionSpacesCreate(dispatch: DispatchType, item: AdminLocationsSpaceFormResult) {
   dispatch({ type: COLLECTION_SPACES_CREATE, item });
 
   try {
-    const response = await core().post('/spaces', {
+    const response = await core().post<CoreSpace>('/spaces', {
       name: item.name,
-      description: item.description,
+      // REVIEW: The "description" field does not seem to be in the form, commenting out for now
+      // description: item.description,
       parent_id: item.parent_id,
       space_type: item.space_type,
       'function': item['function'],
@@ -86,7 +90,7 @@ export default async function collectionSpacesCreate(dispatch, item) {
         response.data.image_url = upload.media[0].signedUrl;
       }
     } else {
-      response.data.image_url = item.newImageData;
+      response.data.image_url = item.newImageData ? item.newImageData : null;
     }
 
     // When saving the space, create any links that were configured or changed in the doorways

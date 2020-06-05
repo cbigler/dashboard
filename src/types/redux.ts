@@ -7,12 +7,13 @@ import collectionSpacesCountChange from '../rx-actions/collection/spaces-legacy/
 import collectionSpacesFilter from '../rx-actions/collection/spaces-legacy/filter';
 import collectionSpacesSetEvents, { collectionSpacesBatchSetEvents } from '../rx-actions/collection/spaces-legacy/set-events';
 import collectionSpacesSetDefaultTimeRange from '../rx-actions/collection/spaces-legacy/set-default-time-range';
+import { COLLECTION_SPACES_CREATE } from '../rx-actions/collection/spaces-legacy/create';
 import { COLLECTION_SPACES_UPDATE } from '../rx-actions/collection/spaces-legacy/update';
 import { COLLECTION_SPACE_HIERARCHY_SET } from '../rx-actions/collection/space-hierarchy/set';
 import { TRANSITION_TO_SHOW_MODAL, SHOW_MODAL } from '../rx-actions/modal/show';
 import { TRANSITION_TO_HIDE_MODAL, HIDE_MODAL } from '../rx-actions/modal/hide';
 import { UPDATE_MODAL } from '../rx-actions/modal/update';
-import { AdminLocationsSpaceFieldUpdate } from '../rx-stores/space-management';
+import { AdminLocationsSpaceFormResult } from '../rx-stores/space-management';
 
 export type CollectionSpacesCountChange = ReturnType<typeof collectionSpacesCountChange>;
 export type CollectionSpacesDelete = ReturnType<typeof collectionSpacesDelete>;
@@ -23,7 +24,10 @@ export type CollectionSpacesSet = ReturnType<typeof collectionSpacesSet>;
 export type CollectionSpacesSetDefaultTimeRange = ReturnType<typeof collectionSpacesSetDefaultTimeRange>;
 export type CollectionSpacesSetEvents = ReturnType<typeof collectionSpacesSetEvents>;
 export type CollectionSpacesBatchSetEvents = ReturnType<typeof collectionSpacesBatchSetEvents>;
-export type CollectionSpacesUpdate = { type: typeof COLLECTION_SPACES_UPDATE, item: AdminLocationsSpaceFieldUpdate };
+
+export type CollectionSpacesCreate = { type: typeof COLLECTION_SPACES_CREATE, item: AdminLocationsSpaceFormResult };
+export type CollectionSpacesUpdate = { type: typeof COLLECTION_SPACES_UPDATE, item: AdminLocationsSpaceFormResult };
+
 export type CollectionSpaceHierarchySet = { type: typeof COLLECTION_SPACE_HIERARCHY_SET, data: Array<CoreSpace> };
 
 export type TransitionToShowModal = { type: typeof TRANSITION_TO_SHOW_MODAL, name: string, data: object };
@@ -44,6 +48,7 @@ export type ReduxAction = (
   CollectionSpacesSetDefaultTimeRange |
   CollectionSpacesSetEvents |
   CollectionSpacesBatchSetEvents |
+  CollectionSpacesCreate |
   CollectionSpacesUpdate |
   CollectionSpaceHierarchySet |
   TransitionToShowModal |

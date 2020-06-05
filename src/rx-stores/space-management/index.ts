@@ -97,6 +97,7 @@ export type AdminLocationsFormState = {
   overrideDefault: boolean,
   overrideDefaultControlHidden: boolean,
   image_url: string,
+  newImageData?: string,
   newImageFile?: any,
   tags?: Array<{
     name: string,
@@ -275,7 +276,7 @@ function calculateInitialFormState({
   };
 }
 
-export type AdminLocationsSpaceFieldUpdate = ReturnType<typeof convertFormStateToSpaceFields> & {
+export type AdminLocationsSpaceFormResult = ReturnType<typeof convertFormStateToSpaceFields> & {
   id: string,
 }
 
@@ -317,6 +318,7 @@ export function convertFormStateToSpaceFields(
     daily_reset: formState.daily_reset,
     time_zone: formState.time_zone,
 
+    newImageData: formState.newImageData,
     newImageFile: formState.newImageFile,
     operatingHours: formState.operatingHours,
 
