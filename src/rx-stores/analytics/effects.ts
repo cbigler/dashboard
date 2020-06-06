@@ -228,7 +228,7 @@ export function registerRouteTransitionEffects(
     )),
   );
 
-  const whileInitialDataNotPopulated = () => source => source.pipe(
+  const whileInitialDataNotPopulated = () => (source: typeof routeTransitionStream) => source.pipe(
     filter(([spacesState, spaceHierarchyState, analyticsState]) => (
       analyticsState.status !== ResourceStatus.COMPLETE
     )),
