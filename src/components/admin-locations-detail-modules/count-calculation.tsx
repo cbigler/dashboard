@@ -1,13 +1,7 @@
 import React from 'react';
 
 import AdminLocationsDetailModule from './index';
-import SpacePicker from '../space-picker';
-import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
-
-import colorVariables from '@density/ui/variables/colors.json';
-import spacingVariables from '@density/ui/variables/spacing.json';
-import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
-import { Switch, RadioButton, RadioButtonContext } from '@density/ui';
+import { RadioButton, RadioButtonContext } from '@density/ui';
 
 export default function AdminLocationsDetailModulesCountCalculation({
   value,
@@ -15,7 +9,7 @@ export default function AdminLocationsDetailModulesCountCalculation({
 }) {
   return (
     <AdminLocationsDetailModule title="Count Calculation">
-      <p>You can learn more about count calculation <a href="#">here</a>.</p>
+      <p>You can learn more about count calculation <a href="#/faq">here</a>.</p>
       <RadioButtonContext.Provider value='USER_FORM'>
         <br />
         <RadioButton
