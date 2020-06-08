@@ -14,6 +14,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 
 import { spaceHierarchySearcher } from '@density/lib-space-helpers';
 import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
+import { AppBarContext } from '@density/ui';
 
 export enum SelectControlTypes {
   RADIOBUTTON = 'RADIOBUTTON',
@@ -33,8 +34,10 @@ type SpacePickerProps = {
   height?: number | string,
   canSelectMultiple?: boolean,
   selectControl?: SelectControlTypes,
+  disabled?: boolean,
   isItemDisabled?: (SpaceHierarchyDisplayItem) => boolean,
   onCloseDropdown?: () => void,
+  cardPickerContext?: boolean,
 };
 
 function convertValueToSpaceIds(
@@ -80,12 +83,14 @@ export default function SpacePicker({
   formattedHierarchy,
 
   canSelectMultiple=false,
+  disabled=false,
   isItemDisabled=(s) => false,
   height,
   showSearchBox=true,
   searchBoxPlaceholder=`ex: "New York"`,
   onCloseDropdown=() => {},
   selectControl=undefined,
+  cardPickerContext=false,
 }: SpacePickerProps) {
   const [searchText, setSearchText] = useState('');
 
@@ -121,22 +126,25 @@ export default function SpacePicker({
 
   return (
     <div>
-      {showSearchBox ? <div className={styles.searchBar}>
-        <AppBar>
-          <InputBox
-            type="text"
-            leftIcon={<Icons.Search />}
-            placeholder={searchBoxPlaceholder}
-            width="100%"
-            value={searchText}
-            onChange={e => setSearchText(e.target.value)}
-          />
-        </AppBar>
+      {showSearchBox ? <div className={styles.searchBar} style={{backgroundColor: cardPickerContext ? 'transparent' : undefined}}>
+        <AppBarContext.Provider value={cardPickerContext ? 'TRANSPARENT' : 'NORMAL'}>
+          <AppBar padding={cardPickerContext ? 0 : undefined}>
+            <InputBox
+              type="text"
+              leftIcon={<Icons.Search />}
+              placeholder={searchBoxPlaceholder}
+              width="100%"
+              value={searchText}
+              onChange={e => setSearchText(e.target.value)}
+              disabled={disabled}
+            />
+          </AppBar>
+        </AppBarContext.Provider>
       </div> : null}
 
       <div className={styles.scrollContainer} style={{height}}>
         {formattedHierarchy.map(item => {
-          const spaceDisabled = !item.space.has_purview || isItemDisabled(item);
+          const spaceDisabled = disabled || !item.space.has_purview || isItemDisabled(item);
           const isChecked = Boolean(selectedSpaceIds.find(id => id === item.space.id));
 
           return (
@@ -146,7 +154,7 @@ export default function SpacePicker({
                 [styles.depth0]: item.depth === 0,
                 [styles.disabled]: spaceDisabled,
               })}
-              style={{marginLeft: item.depth * 24}}
+              style={{marginLeft: item.depth * 24, paddingLeft: cardPickerContext ? 0 : undefined}}
               onMouseUp={e => {
                 if (!spaceDisabled) {
                   callOnChange(item, !isChecked);

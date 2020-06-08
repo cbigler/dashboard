@@ -365,6 +365,26 @@ export function AdminLocationsOtherLinkedDoorways({space, doorway}: {space: Core
   }
 }
 
+export function AdminLocationsComponentSpaceList({spaces, spaceIds}: {spaces: ReadonlyMap<string, CoreSpace>, spaceIds: Array<string>}) {
+  return <div className={classnames(styles.doorwayList, {[styles.shaded]: true})}>
+    <ListView data={spaceIds} padOuterColumns={false}>
+      <ListViewColumn
+        id="Linked Spaces"
+        template={id => {
+          const space = spaces.get(id)
+          return <div className={styles.doorwayContainer}>
+            <div className={styles.doorwayIcon}>
+              <Icons.Space width={20} height={20} color={colorVariables.gray700} />
+            </div>
+            <InfoPopupNew target={<div className={styles.doorway_name}>{space?.name || id}</div>} contents={space?.name || id}></InfoPopupNew>
+          </div>
+        }}
+        width={320}
+      />
+    </ListView>
+  </div>
+}
+
 export function AdminLocationsDoorwayList({space, doorways}: {space: CoreSpace, doorways: Array<CoreDoorway>}) {
   const linkedDoorways = doorways.filter(doorway => doorway.spaces.map(s => s.id).indexOf(space.id) > -1);
   return linkedDoorways.length > 0 ? (

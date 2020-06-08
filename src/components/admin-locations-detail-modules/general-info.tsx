@@ -9,13 +9,12 @@ import AdminLocationsImageUpload from '../admin-locations-image-upload/index';
 import { fileToDataURI } from '../../helpers/media-files';
 
 import AdminLocationsDetailModule from './index';
-import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
 import { SpacePickerDropdown } from '../space-picker';
 
 import { SPACE_FUNCTION_CHOICES } from '@density/lib-space-helpers';
 
-function getSpaceParentHierarchy(spaceHierarchy, formState) {
-  return spaceHierarchyFormatter(spaceHierarchy).filter(item => {
+function getSpaceParentHierarchy(formattedHierarchy, formState) {
+  return formattedHierarchy.filter(item => {
     return formState.id !== item.space.id &&
       (formState.space_type !== 'building' || item.space.space_type === 'campus') &&
       (formState.space_type !== 'floor' || item.space.space_type === 'building');
@@ -33,13 +32,13 @@ function getSpaceTypeLabel(space_type) {
 
 export default function AdminLocationsDetailModulesGeneralInfo({
   space_type,
-  spaceHierarchy,
+  formattedHierarchy,
   formState,
   onChangeField
 }) {
 
-  const formattedHierarchy = space_type !== 'campus' ?
-    getSpaceParentHierarchy(spaceHierarchy, formState) : [];
+  formattedHierarchy = space_type !== 'campus' ?
+    getSpaceParentHierarchy(formattedHierarchy, formState) : [];
 
   return (
     <AdminLocationsDetailModule title="General Info">

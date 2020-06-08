@@ -98,6 +98,8 @@ export type AdminLocationsFormState = {
   overrideDefaultControlHidden: boolean,
   image_url: string,
   newImageFile?: any,
+  countingMode: 'no-count' | 'doorways' | 'composite',
+  componentSpaces: Array<string>,
   tags?: Array<{
     name: string,
     operationToPerform: 'CREATE' | 'DELETE' | null,
@@ -238,6 +240,9 @@ function calculateInitialFormState({
     target_capacity: space.target_capacity || '',
     floor_level: space.floor_level || '',
 
+    // Data settings module
+    countingMode: 'doorways',
+    componentSpaces: space.componentSpaces || [],
 
     // Address module
     address: space.address || '',

@@ -36,13 +36,17 @@ import useRxStore from '../../helpers/use-rx-store';
 import TagsStore, { TagsState } from '../../rx-stores/tags';
 import AssignedTeamsStore, { AssignedTeamsState } from '../../rx-stores/assigned-teams';
 import useRxDispatch from '../../helpers/use-rx-dispatch';
+import AdminLocationsDetailModulesComponentSpaces from '../admin-locations-detail-modules/component-spaces';
+import { spaceHierarchyFormatter } from '@density/lib-space-helpers';
+import { DisplaySpaceHierarchyNode } from '@density/lib-space-helpers/types';
+import AdminLocationsDetailModulesCountCalculation from '../admin-locations-detail-modules/count-calculation';
 
 
 type AdminLocationsFormProps = {
   space_type: CoreSpace["space_type"],
   spaceHierarchy: Array<CoreSpaceHierarchyNode>,
   spaces: CoreSpace[],
-  formState: { [key: string]: any },
+  formState: AdminLocationsFormState,
   tagsCollection: { [key: string]: any },
   assignedTeamsCollection: { [key: string]: any },
   onChangeField: (string, any) => any,
@@ -72,12 +76,16 @@ export function SpaceTypeForm({
   operationType,
 }: AdminLocationsFormProps) {
   const [currentSection, setCurrentSection] = useState('General');
+  const formattedHierarchy = spaceHierarchyFormatter(spaceHierarchy);
+
+  // TODO: make space management use the new spaces collection
+  const spacesMap = new Map<string, CoreSpace>(spaces.map(x => [x.id, x]));
 
   const MODULES = {
     generalInfo: (
       <AdminLocationsDetailModulesGeneralInfo
         space_type={space_type}
-        spaceHierarchy={spaceHierarchy}
+        formattedHierarchy={formattedHierarchy}
         formState={formState}
         onChangeField={onChangeField}
       />
@@ -134,6 +142,23 @@ export function SpaceTypeForm({
         onChangeDoorwaysFilter={filter => onChangeField('doorwaysFilter', filter)}
       />
     ),
+    countCalculation: (
+      <AdminLocationsDetailModulesCountCalculation
+        value={formState.countingMode}
+        onChange={value => onChangeField('countingMode', value)}
+      />
+    ),
+    componentSpaces: (
+      <AdminLocationsDetailModulesComponentSpaces
+        countingMode={formState.countingMode}
+        spaces={spacesMap}
+        formattedHierarchy={formattedHierarchy}
+        selectedSpaces={formattedHierarchy.filter(x => formState.componentSpaces.indexOf(x.space.id) > -1)}
+        onChange={(items: DisplaySpaceHierarchyNode[]) => {
+          onChangeField('componentSpaces', items.map(x => x.space.id));
+        }}
+      />
+    ),
     dangerZone: (
       <Fragment>
         {operationType === 'UPDATE' ? (
@@ -162,6 +187,10 @@ export function SpaceTypeForm({
         MODULES.tags,
         MODULES.teams,
       ],
+      'Data Settings': [
+        MODULES.countCalculation,
+        MODULES.componentSpaces,
+      ],
     },
     building: {
       'General': [
@@ -182,6 +211,10 @@ export function SpaceTypeForm({
         MODULES.tags,
         MODULES.teams,
       ],
+      'Data Settings': [
+        MODULES.countCalculation,
+        MODULES.componentSpaces,
+      ],
     },
     floor: {
       'General': [
@@ -197,6 +230,10 @@ export function SpaceTypeForm({
       'Tags and Teams': [
         MODULES.tags,
         MODULES.teams,
+      ],
+      'Data Settings': [
+        MODULES.countCalculation,
+        MODULES.componentSpaces,
       ],
     },
     space: {
@@ -214,6 +251,10 @@ export function SpaceTypeForm({
       'Tags and Teams': [
         MODULES.tags,
         MODULES.teams,
+      ],
+      'Data Settings': [
+        MODULES.countCalculation,
+        MODULES.componentSpaces,
       ],
     },
   };

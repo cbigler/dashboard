@@ -29,11 +29,12 @@ export default function AdminLocationsDetailModule({
   error=false,
   includePadding=true,
   hideOverflow=false,
+  backgroundColor='#ffffff',
   actions=null as ReactNode | null,
   children,
 }) {
   return (
-    <div className={classnames(styles.module, {
+    <div style={{backgroundColor: backgroundColor}} className={classnames(styles.module, {
       [styles.moduleHideOverflow]: hideOverflow,
       [styles.moduleError]: error
     })}>
