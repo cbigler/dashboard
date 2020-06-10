@@ -3,6 +3,13 @@ import React from 'react';
 import AdminLocationsDetailModule from './index';
 import { RadioButton, RadioButtonContext } from '@density/ui';
 
+export enum SpaceCountingMode {
+  NONE = 'none',
+  DOORWAYS = 'doorways',
+  SUM_EXPLICIT = 'sum_explicit',
+  SUM_CHILDREN = 'sum_children',
+}
+
 export default function AdminLocationsDetailModulesCountCalculation({
   value,
   onChange,
@@ -14,23 +21,23 @@ export default function AdminLocationsDetailModulesCountCalculation({
         <br />
         <RadioButton
           name="admin-location-management-count-calculation-mode"
-          checked={value === 'no-count'}
-          onChange={e => onChange('no-count')}
-          value={'no-count'}
+          checked={value === SpaceCountingMode.NONE}
+          onChange={e => onChange(SpaceCountingMode.NONE)}
+          value={SpaceCountingMode.NONE}
           text={<strong>Disable count data for this space</strong>} />
         <br />
         <RadioButton
           name="admin-location-management-count-calculation-mode"
-          checked={value === 'doorways'}
-          onChange={e => onChange('doorways')}
-          value={'doorways'}
+          checked={value === SpaceCountingMode.DOORWAYS}
+          onChange={e => onChange(SpaceCountingMode.DOORWAYS)}
+          value={SpaceCountingMode.DOORWAYS}
           text={<strong>Calculate count based on doorway events</strong>} />
         <br />
         <RadioButton
           name="admin-location-management-count-calculation-mode"
-          checked={value === 'composite'}
-          onChange={e => onChange('composite')}
-          value={'composite'}
+          checked={value === SpaceCountingMode.SUM_EXPLICIT}
+          onChange={e => onChange(SpaceCountingMode.SUM_EXPLICIT)}
+          value={SpaceCountingMode.SUM_EXPLICIT}
           text={<strong>Calculate count based on the sum of selected spaces</strong>} />
       </RadioButtonContext.Provider>
     </AdminLocationsDetailModule>

@@ -9,6 +9,7 @@ import collectionSpacesError from './error';
 import core from '../../../client/core';
 import uploadMedia from '../../../helpers/media-files';
 import { showToast, hideToast } from '../../toasts';
+import { SpaceCountingMode } from '../../../components/admin-locations-detail-modules/count-calculation';
 
 export const COLLECTION_SPACES_UPDATE = 'COLLECTION_SPACES_UPDATE';
 
@@ -37,7 +38,8 @@ export default async function collectionSpacesUpdate(dispatch, item) {
       annual_rent: item.annual_rent,
       size_area: item.size_area,
       size_area_unit: item.size_area_unit,
-      currency_unit: item.currencyUnit,
+      currency_unit: item.currency_unit,
+      counting_mode: item.counting_mode,
       capacity: item.capacity,
       target_capacity: item.target_capacity,
       floor_level: item.floor_level,
@@ -50,6 +52,19 @@ export default async function collectionSpacesUpdate(dispatch, item) {
 
       inherits_time_segments: item.inherits_time_segments,
     });
+
+    // TODO: share code with "create" view
+    // TODO: handle errors before doing this step
+    if (item.counting_mode === SpaceCountingMode.SUM_EXPLICIT) {
+      await core().put(`spaces/${item.id}/set_component_spaces`, {
+        component_spaces: item.component_spaces
+      });
+    // TODO: Don't always do this second query
+    } else {
+      await core().put(`spaces/${item.id}/set_component_spaces`, {
+        component_spaces: []
+      });
+    }
 
     if (item.operatingHours) {
       await Promise.all(item.operatingHours.map(async operatingHoursItem => {

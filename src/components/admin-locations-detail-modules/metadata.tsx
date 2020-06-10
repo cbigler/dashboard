@@ -72,8 +72,8 @@ export default function AdminLocationsDetailModulesMetadata({space_type, formSta
           ]}
           disabled
           width={158}
-          value={formState.currencyUnit}
-          onChange={choice => onChangeField('currencyUnit', choice.id)}
+          value={formState.currency_unit}
+          onChange={choice => onChangeField('currency_unit', choice.id)}
         />
       </span>
     </AppBarSection>

@@ -23,6 +23,7 @@ import { SPACE_MANAGEMENT_PUSH_DOORWAY } from '../../rx-actions/space-management
 import { SPACE_MANAGEMENT_DELETE_DOORWAY } from '../../rx-actions/space-management/delete-doorway';
 import createRxStore from '..';
 import { COLLECTION_SPACES_DESTROY } from '../../rx-actions/collection/spaces-legacy/destroy';
+import { SpaceCountingMode } from '../../components/admin-locations-detail-modules/count-calculation';
 
 
 export type SpaceManagementState = {
@@ -81,7 +82,7 @@ export type AdminLocationsFormState = {
   annual_rent: any,
   size_area: any,
   size_area_unit: 'square_feet' | 'square_meters',
-  currencyUnit: 'USD',
+  currency_unit: 'USD',
   capacity: string,
   target_capacity: string,
   floor_level: string,
@@ -98,8 +99,8 @@ export type AdminLocationsFormState = {
   overrideDefaultControlHidden: boolean,
   image_url: string,
   newImageFile?: any,
-  countingMode: 'no-count' | 'doorways' | 'composite',
-  componentSpaces: Array<string>,
+  counting_mode: SpaceCountingMode,
+  component_spaces: Array<string>,
   tags?: Array<{
     name: string,
     operationToPerform: 'CREATE' | 'DELETE' | null,
@@ -235,14 +236,14 @@ function calculateInitialFormState({
     annual_rent: space.annual_rent || '',
     size_area: space.size_area || '',
     size_area_unit: space.size_area_unit || userDataSizeAreaDisplayUnit || SQUARE_FEET,
-    currencyUnit: space.currencyUnit || 'USD',
+    currency_unit: space.currency_unit || 'USD',
     capacity: space.capacity || '',
     target_capacity: space.target_capacity || '',
     floor_level: space.floor_level || '',
 
     // Data settings module
-    countingMode: 'doorways',
-    componentSpaces: space.componentSpaces || [],
+    counting_mode: space.counting_mode || 'doorways',
+    component_spaces: space.component_spaces || [],
 
     // Address module
     address: space.address || '',
@@ -307,9 +308,11 @@ export function convertFormStateToSpaceFields(
     annual_rent: space_type === 'building' ? parseIntOrNull(formState.annual_rent) : undefined,
     size_area: space_type !== 'campus' ? parseIntOrNull(formState.size_area) : undefined,
     size_area_unit: space_type === 'building' ? formState.size_area_unit : undefined,
-    currencyUnit: formState.currencyUnit,
+    currency_unit: formState.currency_unit,
     capacity: space_type !== 'campus' ? parseIntOrNull(formState.capacity) : undefined,
     target_capacity: space_type !== 'campus' ? parseIntOrNull(formState.target_capacity) : undefined,
+    counting_mode: formState.counting_mode,
+    component_spaces: formState.component_spaces,
 
     address: formState.address && formState.address.length > 0 ? formState.address : null,
     latitude: formState.coordinates ? formState.coordinates[0] : null,

@@ -144,18 +144,18 @@ export function SpaceTypeForm({
     ),
     countCalculation: (
       <AdminLocationsDetailModulesCountCalculation
-        value={formState.countingMode}
-        onChange={value => onChangeField('countingMode', value)}
+        value={formState.counting_mode}
+        onChange={value => onChangeField('counting_mode', value)}
       />
     ),
     componentSpaces: (
       <AdminLocationsDetailModulesComponentSpaces
-        countingMode={formState.countingMode}
+        countingMode={formState.counting_mode}
         spaces={spacesMap}
         formattedHierarchy={formattedHierarchy}
-        selectedSpaces={formattedHierarchy.filter(x => formState.componentSpaces.indexOf(x.space.id) > -1)}
+        selectedSpaces={formattedHierarchy.filter(x => formState.component_spaces.indexOf(x.space.id) > -1)}
         onChange={(items: DisplaySpaceHierarchyNode[]) => {
-          onChangeField('componentSpaces', items.map(x => x.space.id));
+          onChangeField('component_spaces', items.map(x => x.space.id));
         }}
       />
     ),
