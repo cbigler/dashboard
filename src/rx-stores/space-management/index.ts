@@ -242,7 +242,7 @@ function calculateInitialFormState({
     floor_level: space.floor_level || '',
 
     // Data settings module
-    counting_mode: space.counting_mode || 'doorways',
+    counting_mode: space.counting_mode || SpaceCountingMode.DOORWAYS,
     component_spaces: space.component_spaces || [],
 
     // Address module

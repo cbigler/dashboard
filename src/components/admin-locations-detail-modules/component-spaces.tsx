@@ -8,6 +8,7 @@ import colorVariables from '@density/ui/variables/colors.json';
 import spacingVariables from '@density/ui/variables/spacing.json';
 import { CoreSpace } from '@density/lib-api-types/core-v2/spaces';
 import { AdminLocationsComponentSpaceList } from '../admin-locations-snippets';
+import { SpaceCountingMode } from './count-calculation';
 
 export default function AdminLocationsDetailModulesComponentSpaces({
   spaces,
@@ -23,13 +24,13 @@ export default function AdminLocationsDetailModulesComponentSpaces({
   onChange: (items: DisplaySpaceHierarchyNode[]) => void,
 }) {
   return (
-    <AdminLocationsDetailModule backgroundColor={countingMode === 'composite' ? colorVariables.white : colorVariables.gray100} title="Component Spaces">
+    <AdminLocationsDetailModule backgroundColor={countingMode === SpaceCountingMode.SUM_EXPLICIT ? colorVariables.white : colorVariables.gray100} title="Component Spaces">
       <div style={{display: 'flex'}}>
         <SpacePicker
           cardPickerContext={true}
-          disabled={countingMode !== 'composite'}
+          disabled={countingMode !== SpaceCountingMode.SUM_EXPLICIT}
           canSelectMultiple={true}
-          value={countingMode === 'composite' ? selectedSpaces : []}
+          value={countingMode === SpaceCountingMode.SUM_EXPLICIT ? selectedSpaces : []}
           formattedHierarchy={formattedHierarchy}
           onChange={onChange}
         />
